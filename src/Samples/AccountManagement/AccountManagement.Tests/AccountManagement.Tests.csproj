@@ -10,6 +10,14 @@
     <RootNamespace>AccountManagement</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningsNotAsErrors>NU1903;NU1902;NU1904;</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningsNotAsErrors>NU1903;NU1902;NU1904;</WarningsNotAsErrors>
+  </PropertyGroup>
+
     
   <ItemGroup>
     <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
