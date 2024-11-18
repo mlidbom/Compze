@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Composable.Persistence.MsSql.SystemExtensions;
 using Composable.SystemCE;
 using Composable.Testing.Databases;
@@ -16,7 +16,7 @@ namespace Composable.Persistence.MsSql.Testing.Databases
         public MsSqlDatabasePool()
         {
             _masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                   ?? "Data Source=localhost;Initial Catalog=master;Integrated Security=True;";
+                                   ?? "Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;";
 
             _masterConnectionPool = IMsSqlConnectionPool.CreateInstance(_masterConnectionString);
         }

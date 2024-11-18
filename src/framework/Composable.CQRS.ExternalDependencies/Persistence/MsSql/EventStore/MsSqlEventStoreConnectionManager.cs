@@ -1,5 +1,5 @@
 using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Transactions;
 using Composable.Persistence.MsSql.SystemExtensions;
 using JetBrains.Annotations;

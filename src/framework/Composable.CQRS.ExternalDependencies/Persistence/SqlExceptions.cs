@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Linq;
 using Composable.SystemCE;
 using IBM.Data.DB2.Core;
