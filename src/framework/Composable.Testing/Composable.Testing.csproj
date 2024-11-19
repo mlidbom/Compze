@@ -13,6 +13,7 @@
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>Composable.Testing</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

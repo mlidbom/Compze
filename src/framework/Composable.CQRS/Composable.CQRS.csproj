@@ -12,6 +12,7 @@
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>Composable</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
     
   <ItemGroup>

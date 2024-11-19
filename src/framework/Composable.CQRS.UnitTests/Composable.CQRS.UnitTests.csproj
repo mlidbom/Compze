@@ -8,6 +8,7 @@
     <Nullable>disable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>Composable.Tests</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
 
 

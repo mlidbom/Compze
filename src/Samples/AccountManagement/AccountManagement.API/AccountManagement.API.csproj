@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>AccountManagement</RootNamespace>
     <NeutralLanguage>en</NeutralLanguage>
+    <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

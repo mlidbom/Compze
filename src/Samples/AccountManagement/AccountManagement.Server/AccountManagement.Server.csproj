@@ -9,6 +9,7 @@
     <OutputType>Exe</OutputType>
     <StartupObject />
     <ApplicationIcon />
+    <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
     
   <ItemGroup>
