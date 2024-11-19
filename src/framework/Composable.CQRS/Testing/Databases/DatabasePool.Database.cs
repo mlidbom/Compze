@@ -16,7 +16,7 @@ namespace Composable.Testing.Databases
                                                                                             GetterSetter.ForInt32(@this => @this.Id, (@this, value) => @this.Id = value),
                                                                                             GetterSetter.ForBoolean(@this => @this.IsReserved, (@this, value) => @this.IsReserved = value),
                                                                                             GetterSetter.ForDateTime(@this => @this.ReservationExpirationTime, (@this, value) => @this.ReservationExpirationTime = value),
-                                                                                            GetterSetter.ForString(@this => @this.ReservationName, (@this, value) => @this.ReservationName = value),
+                                                                                            GetterSetter.ForString(@this => @this.ReservationName, (@this, value) => @this.ReservationName = value.NotNull()),
                                                                                             GetterSetter.ForGuid(@this => @this.ReservedByPoolId, (@this, value) => @this.ReservedByPoolId = value),
                                                                                             GetterSetter.ForBoolean(@this => @this.IsClean, (@this, value) => @this.IsClean = value)
                                                                                         };

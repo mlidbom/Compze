@@ -15,7 +15,7 @@ namespace Composable.Testing.Databases
         [UsedImplicitly] protected class SharedState : BinarySerialized<SharedState>
         {
             const int CleanDatabaseNumberTarget = 10;
-            protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[] {GetterSetter.ForBinarySerializableList(@this => @this._databases, (@this, value) => @this._databases = value)};
+            protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[] {GetterSetter.ForBinarySerializableList(@this => @this._databases, (@this, value) => @this._databases = value.NotNull())};
 
             List<Database> _databases = new List<Database>();
 

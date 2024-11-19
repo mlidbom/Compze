@@ -129,7 +129,7 @@ namespace Composable.Messaging.Buses.Implementation
             {
                 while(e.Queue.TryDequeue(out var response, TimeSpan.Zero))
                 {
-                    _serverSocket.SendMultipartMessage(response);
+                    _serverSocket.SendMultipartMessage(response.NotNull());
                 }
             }
 
