@@ -29,7 +29,7 @@ namespace Composable.Serialization
             }
         }
 
-        void Serialize(BinaryWriter writer)
+        internal void Serialize(BinaryWriter writer)
         {
             for(var index = 0; index < MemberGetterSettersReversed.Length; index++)
             {
@@ -51,10 +51,15 @@ namespace Composable.Serialization
 
         internal static TInheritor Deserialize(byte[] data)
         {
-            using var reader = new BinaryReader(new MemoryStream(data));
-            var instance = DefaultConstructor();
-            instance.Deserialize(reader);
-            return instance;
+           using var reader = new BinaryReader(new MemoryStream(data));
+           return DeserializeReader(reader);
+        }
+
+        internal static TInheritor DeserializeReader(BinaryReader reader)
+        {
+           var instance = DefaultConstructor();
+           instance.Deserialize(reader);
+           return instance;
         }
 
         protected abstract class MemberGetterSetter
