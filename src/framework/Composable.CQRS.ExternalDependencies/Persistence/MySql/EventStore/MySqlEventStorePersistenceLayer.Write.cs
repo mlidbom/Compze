@@ -77,7 +77,7 @@ END IF;
             var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
             var selectStatement = $@"
-SELECT  {Event.ReadOrder},        
+SELECT  CAST({Event.ReadOrder} AS char(39)),        
         (select cast({Event.ReadOrder} as char(39)) from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc limit 1) PreviousReadOrder,
         (select cast({Event.ReadOrder} as char(39)) from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} limit 1) NextReadOrder
 FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
