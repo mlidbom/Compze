@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Composable.DependencyInjection.Microsoft;
 using Composable.DependencyInjection.SimpleInjector;
 using Composable.DependencyInjection.Windsor;
 using Composable.SystemCE.LinqCE;
@@ -23,6 +24,7 @@ namespace Composable.DependencyInjection.Testing
                 ComposableDependencyInjectionContainer _ => new ComposableDependencyInjectionContainer(sourceContainer.RunMode),
                 WindsorDependencyInjectionContainer _ => new WindsorDependencyInjectionContainer(sourceContainer.RunMode),
                 SimpleInjectorDependencyInjectionContainer _ => new SimpleInjectorDependencyInjectionContainer(sourceContainer.RunMode),
+                MicrosoftDependencyInjectionContainer => new MicrosoftDependencyInjectionContainer(sourceContainer.RunMode),
                 _ => throw new ArgumentOutOfRangeException()
 #pragma warning restore CA2000 // Dispose objects before losing scope
             };

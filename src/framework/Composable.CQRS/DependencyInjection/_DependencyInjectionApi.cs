@@ -40,7 +40,7 @@ namespace Composable.DependencyInjection
 
     public enum DIContainer
     {
-        Com, Sim, Win
+        Com, Sim, Win, Microsoft
     }
 
     enum Lifestyle

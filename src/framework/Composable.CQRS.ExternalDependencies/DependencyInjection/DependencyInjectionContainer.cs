@@ -1,4 +1,5 @@
 ﻿using System;
+using Composable.DependencyInjection.Microsoft;
 using Composable.DependencyInjection.SimpleInjector;
 using Composable.DependencyInjection.Windsor;
 using Composable.Messaging.Buses;
@@ -31,6 +32,7 @@ namespace Composable.DependencyInjection
                 DIContainer.Com => new ComposableDependencyInjectionContainer(runMode),
                 DIContainer.Sim => new SimpleInjectorDependencyInjectionContainer(runMode),
                 DIContainer.Win => new WindsorDependencyInjectionContainer(runMode),
+                DIContainer.Microsoft => new MicrosoftDependencyInjectionContainer(runMode),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
