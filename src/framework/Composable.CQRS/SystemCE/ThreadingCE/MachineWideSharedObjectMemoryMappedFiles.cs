@@ -11,13 +11,13 @@ using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Composable.SystemCE.ThreadingCE
 {
-   class MachineWideSharedObjectMemoryMappedFiles
+   class MachineWideSharedObject
    {
       protected static readonly string DataFolder = ComposableTempFolder.EnsureFolderExists("MemoryMappedFiles");
    }
 
    //[SupportedOSPlatform("windows")]
-   class MachineWideSharedObjectMemoryMappedFiles<TObject> : MachineWideSharedObjectMemoryMappedFiles, IDisposable where TObject : BinarySerialized<TObject>
+   class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : BinarySerialized<TObject>
    {
       const int LengthIndicatorIntegerLengthInBytes = 4;
       readonly bool _usePersistentFile;
@@ -29,14 +29,14 @@ namespace Composable.SystemCE.ThreadingCE
       // ReSharper disable once StaticMemberInGenericType
       static readonly IThreadShared<Dictionary<string, MemoryMappedFile>> Cache = ThreadShared.WithDefaultTimeout(new Dictionary<string, MemoryMappedFile>());
 
-      internal static MachineWideSharedObjectMemoryMappedFiles<TObject> For(string name, bool usePersistentFile = false, long capacity = 1000_000) => new MachineWideSharedObjectMemoryMappedFiles<TObject>(name, usePersistentFile, capacity);
+      internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false, long capacity = 1000_000) => new MachineWideSharedObject<TObject>(name, usePersistentFile, capacity);
 
-      MachineWideSharedObjectMemoryMappedFiles(string name, bool usePersistentFile, long capacity)
+      MachineWideSharedObject(string name, bool usePersistentFile, long capacity)
       {
          _usePersistentFile = usePersistentFile;
          _capacity = capacity;
          var name1 = $"Composable_{name}";
-         var fileName = $"{nameof(MachineWideSharedObjectMemoryMappedFiles<TObject>)}_{name1}";
+         var fileName = $"{nameof(MachineWideSharedObject<TObject>)}_{name1}";
          _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
 
          if (usePersistentFile)

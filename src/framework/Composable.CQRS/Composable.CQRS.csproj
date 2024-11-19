@@ -17,10 +17,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>CA1416;</WarningsNotAsErrors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>CA1416;</WarningsNotAsErrors>
   </PropertyGroup>
     
   <ItemGroup>

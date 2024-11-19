@@ -80,9 +80,7 @@ namespace Composable.DependencyInjection
 
             bool TryGetFromCache<TService>(out ComponentRegistration currentComponent, [NotNullWhen(true)] out TService? resolve) where TService : class
             {
-                object cachedSingletonInstance;
-                ComponentRegistration[] registrations;
-                (registrations, cachedSingletonInstance) = _rootCache.TryGet<TService>();
+               var (registrations, cachedSingletonInstance) = _rootCache.TryGet<TService>();
                 resolve = default;
 
                 if(cachedSingletonInstance is TService singleton)

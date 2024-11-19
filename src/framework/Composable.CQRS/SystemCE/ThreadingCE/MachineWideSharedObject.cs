@@ -6,21 +6,21 @@ using Composable.Serialization;
 
 namespace Composable.SystemCE.ThreadingCE
 {
-    class MachineWideSharedObject
+    class MachineWideSharedObjectFiles
     {
         protected static readonly string DataFolder = ComposableTempFolder.EnsureFolderExists("SharedFiles");
     }
 
-    class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : BinarySerialized<TObject>
+    class MachineWideSharedObjectFiles<TObject> : MachineWideSharedObjectFiles, IDisposable where TObject : BinarySerialized<TObject>
     {
        readonly string _filePath;
        readonly MachineWideSingleThreaded _synchronizer;
        bool _disposed;
        readonly bool _usePersistentFile;
 
-       internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false) => new MachineWideSharedObject<TObject>(name, usePersistentFile);
+       internal static MachineWideSharedObjectFiles<TObject> For(string name, bool usePersistentFile = false) => new MachineWideSharedObjectFiles<TObject>(name, usePersistentFile);
 
-       MachineWideSharedObject(string name, bool usePersistentFile)
+       MachineWideSharedObjectFiles(string name, bool usePersistentFile)
        {
           var fileName = $"Composable_{name}";
           foreach(var invalidChar in Path.GetInvalidFileNameChars())
