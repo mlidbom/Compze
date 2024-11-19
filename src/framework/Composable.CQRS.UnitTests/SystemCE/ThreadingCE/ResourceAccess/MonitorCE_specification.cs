@@ -63,7 +63,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess
             [Test] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace()
                 => RunWithChangedStackTraceTimeout(
                     fetchStackTraceTimeout: 60.Milliseconds(),
-                    () => RunScenario(ownerThreadBlockTime: 15.Milliseconds(), monitorTimeout: 5.Milliseconds()).Message.Should().Contain(nameof(DisposeOwningThreadLock)));
+                    () => RunScenario(ownerThreadBlockTime: 30.Milliseconds(), monitorTimeout: 5.Milliseconds()).Message.Should().Contain(nameof(DisposeOwningThreadLock)));
 
             [Test] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace()
             {
