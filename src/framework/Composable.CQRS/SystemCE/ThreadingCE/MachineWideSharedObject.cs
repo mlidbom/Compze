@@ -1,145 +1,118 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.MemoryMappedFiles;
-using System.Runtime.Versioning;
 using Composable.Contracts;
 using Composable.Persistence;
 using Composable.Serialization;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Composable.SystemCE.ThreadingCE
 {
     class MachineWideSharedObject
     {
-        protected static readonly string DataFolder = ComposableTempFolder.EnsureFolderExists("MemoryMappedFiles");
+        protected static readonly string DataFolder = ComposableTempFolder.EnsureFolderExists("SharedFiles");
     }
 
-    //[SupportedOSPlatform("windows")]
     class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : BinarySerialized<TObject>
     {
-        const int LengthIndicatorIntegerLengthInBytes = 4;
-        readonly bool _usePersistentFile;
-        readonly long _capacity;
-        readonly MemoryMappedFile _file;
-        readonly MachineWideSingleThreaded _synchronizer;
-        bool _disposed;
+       readonly string _filePath;
+       readonly MachineWideSingleThreaded _synchronizer;
+       bool _disposed;
+       readonly bool _usePersistentFile;
 
-        // ReSharper disable once StaticMemberInGenericType
-        static readonly IThreadShared<Dictionary<string, MemoryMappedFile>> Cache = ThreadShared.WithDefaultTimeout(new Dictionary<string, MemoryMappedFile>());
+       internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false) => new MachineWideSharedObject<TObject>(name, usePersistentFile);
 
-        internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false, long capacity = 1000_000) => new MachineWideSharedObject<TObject>(name, usePersistentFile, capacity);
+       MachineWideSharedObject(string name, bool usePersistentFile)
+       {
+          var fileName = $"Composable_{name}";
+          foreach(var invalidChar in Path.GetInvalidFileNameChars())
+             fileName = fileName.Replace(invalidChar, '_');
 
-        MachineWideSharedObject(string name, bool usePersistentFile, long capacity)
-        {
-            _usePersistentFile = usePersistentFile;
-            _capacity = capacity;
-            var name1 = $"Composable_{name}";
-            var fileName = $"{nameof(MachineWideSharedObject<TObject>)}_{name1}";
-            _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
+          _usePersistentFile = usePersistentFile;
+          _filePath = Path.Combine(DataFolder, fileName);
+          _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
 
-            if(usePersistentFile)
-            {
-                _file = Cache.Update(
-                    cache => cache.GetOrAdd(name,
-                                            () => _synchronizer.Execute(() =>
-                                            {
-                                                foreach(var invalidChar in Path.GetInvalidFileNameChars())
-                                                    fileName = fileName.Replace(invalidChar, '_');
+          _synchronizer.Execute(() =>
+          {
+             if(!File.Exists(_filePath))
+             {
+                Set(BinarySerialized<TObject>.DefaultConstructor(), 1);
+             } else
+             {
+                var (_, refCount) = ReadFile();
+                Set(GetCopy(), refCount + 1);
+             }
+          });
+       }
 
-                                                fileName = Path.Combine(DataFolder, fileName);
+       internal TObject Update(Action<TObject> action)
+       {
+          Contract.Assert.That(!_disposed, "Attempt to use disposed object.");
 
-                                                try
-                                                {
-                                                    return MemoryMappedFile.OpenExisting(name1, desiredAccessRights: MemoryMappedFileRights.ReadWrite, inheritability: HandleInheritability.Inheritable);
-                                                }
-                                                catch(FileNotFoundException)
-                                                {
-                                                    var fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
-                                                    return MemoryMappedFile.CreateFromFile(fileStream: fileStream, mapName: name1, capacity: capacity, access: MemoryMappedFileAccess.ReadWrite, inheritability: HandleInheritability.None, leaveOpen: false);
-                                                }
-                                            })));
-            } else
-            {
-                _file = MemoryMappedFile.CreateOrOpen(name1, _capacity, MemoryMappedFileAccess.ReadWrite);
-            }
-        }
+          return _synchronizer.Execute(() =>
+          {
+             var (instance, refCount) = ReadFile();
+             action(instance);
+             Set(instance, refCount);
+             return instance;
+          });
+       }
 
-        internal TObject Update(Action<TObject> action)
-        {
-            Contract.Assert.That(!_disposed, "Attempt to use disposed object.");
-            var instance = default(TObject);
-            UseViewAccessor(accessor =>
-            {
-                instance = GetCopy(accessor);
-                action(instance);
-                Set(instance, accessor);
-            });
-            return Assert.Result.NotNull(instance);
-        }
+       void Set(TObject value, int refCount)
+       {
+          using var stream = new MemoryStream();
+          using var writer = new BinaryWriter(stream);
+          writer.Write(refCount);
+          value.Serialize(writer);
+          File.WriteAllBytes(_filePath, stream.ToArray());
+       }
 
-        void Set(TObject value, MemoryMappedViewAccessor accessor)
-        {
-            var buffer = value.Serialize();
+       (TObject instance, int refCount) ReadFile()
+       {
+          var buffer = File.ReadAllBytes(_filePath);
+          using var stream = new MemoryStream(buffer);
+          using var reader = new BinaryReader(stream);
+          var refCount = reader.ReadInt32();
+          return (BinarySerialized<TObject>.DeserializeReader(reader), refCount);
+       }
 
-            var requiredCapacity = buffer.Length + LengthIndicatorIntegerLengthInBytes;
-            if(requiredCapacity >= _capacity)
-            {
-                throw new Exception($"Deserialized object exceeds storage capacity of:{_capacity} bytes with size: {requiredCapacity} bytes.");
-            }
+       internal TObject GetCopy()
+       {
+          Contract.Assert.That(!_disposed, "Attempt to use disposed object.");
 
-            accessor.Write(0, buffer.Length); //First bytes are an int that tells how far to read when deserializing.
-            accessor.WriteArray(LengthIndicatorIntegerLengthInBytes, buffer, 0, buffer.Length);
-        }
+          return _synchronizer.Execute(() =>
+          {
+             if(!File.Exists(_filePath))
+             {
+                var value = BinarySerialized<TObject>.DefaultConstructor();
+                Set(value, 1);
+                return value;
+             }
 
-        internal TObject GetCopy()
-        {
-            var instance = default(TObject);
-            UseViewAccessor(accessor => instance = GetCopy(accessor));
-            return Assert.Result.NotNull(instance);
-        }
+             return ReadFile().instance;
+          });
+       }
 
-        TObject GetCopy(MemoryMappedViewAccessor accessor)
-        {
-            Contract.Assert.That(!_disposed, "Attempt to use disposed object.");
-            var value = default(TObject);
-
-            var objectLength = accessor.ReadInt32(0);
-            if(objectLength != 0)
-            {
-                var buffer = new byte[objectLength];
-                accessor.ReadArray(LengthIndicatorIntegerLengthInBytes, buffer, 0, buffer.Length);
-
-                value = BinarySerialized<TObject>.Deserialize(buffer);
-            }
-
-            if(Equals(value, default(TObject)))
-            {
-                Set(value = BinarySerialized<TObject>.DefaultConstructor(), accessor);
-            }
-
-            return value;
-        }
-
-        void UseViewAccessor(Action<MemoryMappedViewAccessor> action)
-        {
-            _synchronizer.Execute(
-                () =>
+       public void Dispose()
+       {
+          if(!_disposed)
+          {
+             _synchronizer.Execute(() =>
+             {
+                if(File.Exists(_filePath))
                 {
-                    using var viewAccessor = _file!.CreateViewAccessor();
-                    action(viewAccessor);
-                });
-        }
+                   var (instance, refCount) = ReadFile();
+                   refCount--;
+                   if(refCount <= 0 && !_usePersistentFile)
+                   {
+                      File.Delete(_filePath);
+                   } else
+                   {
+                      Set(instance, refCount);
+                   }
+                }
+             });
+          }
 
-        public void Dispose()
-        {
-            if(!_disposed && !_usePersistentFile)
-            {
-                _file.Dispose();
-            }
-
-            _disposed = true;
-        }
+          _disposed = true;
+       }
     }
 }
