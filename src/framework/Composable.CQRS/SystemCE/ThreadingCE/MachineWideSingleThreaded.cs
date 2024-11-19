@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
@@ -30,11 +31,14 @@ namespace Composable.SystemCE.ThreadingCE
                                                               {
                                                                   var mutex = new Mutex(initiallyOwned: false, name: lockId1);
 
-                                                                  MutexSecurity mutexSecurity = new MutexSecurity();
-                                                                  mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
-                                                                                                                  MutexRights.FullControl,
-                                                                                                                  AccessControlType.Allow));
-                                                                  mutex.SetAccessControl(mutexSecurity);
+                                                                  if(OperatingSystem.IsWindows())
+                                                                  {
+                                                                     MutexSecurity mutexSecurity = new MutexSecurity();
+                                                                     mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                                                                                                                     MutexRights.FullControl,
+                                                                                                                     AccessControlType.Allow));
+                                                                     mutex.SetAccessControl(mutexSecurity);
+                                                                  }
 
                                                                   return mutex;
                                                               }
