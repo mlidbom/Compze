@@ -18,11 +18,6 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants></DefineConstants>
-    <WarningsNotAsErrors>NU1903;NU1902;NU1904;</WarningsNotAsErrors>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <WarningsNotAsErrors>NU1903;NU1902;NU1904;</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

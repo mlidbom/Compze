@@ -9,14 +9,6 @@
     <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningsNotAsErrors>NU1903;NU1902;NU1904;</WarningsNotAsErrors>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <WarningsNotAsErrors>NU1903;NU1902;NU1904;</WarningsNotAsErrors>
-  </PropertyGroup>
-
 
   <ItemGroup>
 	  <PackageReference Include="FluentAssertions" Version="6.12.2" />
