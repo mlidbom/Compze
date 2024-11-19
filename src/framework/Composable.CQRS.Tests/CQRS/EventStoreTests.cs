@@ -121,7 +121,7 @@ namespace Composable.Tests.CQRS
 
             var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder()
                                              .ToList();
-            Assert.AreEqual(aggregatesWithEvents.Count, allAggregateIds.Count);
+            Assert.That(aggregatesWithEvents.Count, Is.EqualTo(allAggregateIds.Count));
         });
 
         //Todo: This does not check that only aggregates of the correct type are returned since there are only events of type SomeEvent in the store..
@@ -140,7 +140,7 @@ namespace Composable.Tests.CQRS
             TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(@this => EventStore.SaveSingleAggregateEvents(@this.Value)));
             var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder<ISomeEvent>()
                                              .ToList();
-            Assert.AreEqual(aggregatesWithEvents.Count, allAggregateIds.Count);
+            Assert.That(aggregatesWithEvents.Count, Is.EqualTo(allAggregateIds.Count));
         });
 
         [Test]

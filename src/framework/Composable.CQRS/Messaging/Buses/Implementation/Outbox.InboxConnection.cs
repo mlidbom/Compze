@@ -121,7 +121,7 @@ namespace Composable.Messaging.Buses.Implementation
             {
                 _sendQueue.ReceiveReady += (sender, netMQQueueEventArgs) =>
                 {
-                    while(netMQQueueEventArgs.Queue.TryDequeue(out var message, TimeSpan.Zero)) socket.Send(message);
+                    while(netMQQueueEventArgs.Queue.TryDequeue(out var message, TimeSpan.Zero)) socket.Send(message.NotNull());
                 };
             }
 

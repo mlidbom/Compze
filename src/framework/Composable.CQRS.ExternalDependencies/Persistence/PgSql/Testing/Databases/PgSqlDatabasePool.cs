@@ -45,7 +45,7 @@ namespace Composable.Persistence.PgSql.Testing.Databases
 
             ResetConnectionPool(db);
             var exists = (string?)_masterConnectionPool.ExecuteScalar($"SELECT datname FROM pg_database WHERE datname = '{databaseName.ToLowerInvariant()}'");
-            if (!exists.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(exists))
             {
                 ResetDatabase(db);
             } else

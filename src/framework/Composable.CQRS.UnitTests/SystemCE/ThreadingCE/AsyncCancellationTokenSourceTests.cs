@@ -17,7 +17,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE
         {
             _tokenSource.CancelAsync();
             //It seems unlikely that a thread has been spawned and changed the value between this thread executing the previous line and this line
-            Assert.True(_tokenSource.Token.IsCancellationRequested);
+            Assert.That(_tokenSource.Token.IsCancellationRequested, Is.True);
         }
 
         [Test] public void WithCallbacksCancelIsInvokedAsynchronously()
@@ -25,8 +25,8 @@ namespace Composable.Tests.SystemCE.ThreadingCE
             _tokenSource.Token.Register(() => Thread.Sleep(100));
             var now = DateTime.UtcNow;
             _tokenSource.CancelAsync();
-            Assert.LessOrEqual((DateTime.UtcNow - now),
-                               TimeSpan.FromMilliseconds(50),
+            Assert.That((DateTime.UtcNow - now),
+                               Is.LessThanOrEqualTo(TimeSpan.FromMilliseconds(50)),
                                "If we syncronously wait for the sleep in the registered callback we should not get here for at least 1000 milliseconds");
         }
 
@@ -38,7 +38,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE
             registration.Dispose();
             _tokenSource.CancelAsync();
             //It seems unlikely that a thread has been spawned and changed the value between this thread executing the previous line and this line
-            Assert.False(_tokenSource.Token.IsCancellationRequested);
+            Assert.That(_tokenSource.Token.IsCancellationRequested, Is.False);
         }
     }
 }

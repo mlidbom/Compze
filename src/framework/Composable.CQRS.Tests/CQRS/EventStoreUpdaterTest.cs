@@ -297,7 +297,7 @@ namespace Composable.Tests.CQRS
                                         Assert.That(loadedUser2.Password, Is.EqualTo(user2.Password));
                                     });
 
-            UseInTransactionalScope(session => Assert.IsFalse(session.TryGet(user1.Id, out User _)));
+            UseInTransactionalScope(session => Assert.That(session.TryGet(user1.Id, out User _), Is.False));
         }
 
         [Test]

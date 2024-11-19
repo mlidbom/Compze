@@ -65,8 +65,8 @@ namespace Composable.Serialization
 
         protected abstract class MemberGetterSetter<TValue> : MemberGetterSetter
         {
-            public delegate void SetterFunction(TInheritor inheritor, [AllowNull]TValue value);
-            [return: MaybeNull]public delegate TValue GetterFunction(TInheritor inheritor);
+            public delegate void SetterFunction(TInheritor inheritor, TValue? value);
+            public delegate TValue? GetterFunction(TInheritor inheritor);
 
             protected readonly GetterFunction Getter;
             protected readonly SetterFunction Setter;

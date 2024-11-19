@@ -123,7 +123,7 @@ namespace Composable.Persistence.DocumentDb
             _usageGuard.AssertNoContextChangeOccurred(this);
             _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
-            if(TryGetInternal(id, value.GetType(), out TValue _, useUpdateLock: false))
+            if(TryGetInternal(id, value.GetType(), out TValue? _, useUpdateLock: false))
             {
                 throw new AttemptToSaveAlreadyPersistedValueException(id, value);
             }
@@ -161,7 +161,7 @@ namespace Composable.Persistence.DocumentDb
             _usageGuard.AssertNoContextChangeOccurred(this);
             _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
-            if(!TryGet(id, out T _))
+            if(!TryGet(id, out T? _))
             {
                 throw new NoSuchDocumentException(id, typeof(T));
             }

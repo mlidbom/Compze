@@ -29,6 +29,5 @@ namespace Composable.SystemCE.CollectionsCE.GenericCE
         public HashSetCEx(IEqualityComparer<TItem> comparer) : base(comparer) {}
         public HashSetCEx(int capacity) : base(capacity) {}
         public HashSetCEx(int capacity, IEqualityComparer<TItem> comparer) : base(capacity, comparer) {}
-        protected HashSetCEx(SerializationInfo info, StreamingContext context) : base(info, context) {}
     }
 }
