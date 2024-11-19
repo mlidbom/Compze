@@ -96,8 +96,8 @@ namespace Composable.Persistence.Common.AdoCE
                                 var createConnectionTask = OpenConnectionAsyncFlex(syncOrAsync);
                                 Transaction.Current!.OnCompleted(action: () => _transactionConnections.Update(transactionConnectionsAfterTransaction =>
                                 {
+                                   transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier);
                                     createConnectionTask.Result.Dispose();
-                                    transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier);
                                 }));
                                 return createConnectionTask;
                             }));

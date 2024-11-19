@@ -19,7 +19,7 @@ namespace Composable.Persistence.MySql.Testing.Databases
         public MySqlDatabasePool()
         {
             var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                      ?? "Server=localhost;Database=mysql;Uid=root;Pwd=;";
+                                      ?? "Server=localhost;Database=mysql;Uid=root;Pwd=;MaximumPoolSize=10;MinimumPoolSize=0;ConnectionLifeTime=10;";
 
             _masterConnectionPool = IMySqlConnectionPool.CreateInstance(masterConnectionString);
             _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new MySqlConnectionStringBuilder(masterConnectionString));

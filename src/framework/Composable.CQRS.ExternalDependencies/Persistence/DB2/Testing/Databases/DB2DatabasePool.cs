@@ -21,7 +21,7 @@ namespace Composable.Persistence.DB2.Testing.Databases
         public DB2DatabasePool()
         {
             _masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                   ?? "SERVER=localhost;DATABASE=CDBPOOL;User ID=db2admin;Password=Development!1;";
+                                   ?? "SERVER=localhost;DATABASE=CDBPOOL;User ID=db2admin;Password=Development!1;Max Pool Size=10;Min Pool Size=0;Connection Lifetime=60;";
 
             _masterConnectionPool = IDB2ConnectionPool.CreateInstance(_masterConnectionString);
         }
