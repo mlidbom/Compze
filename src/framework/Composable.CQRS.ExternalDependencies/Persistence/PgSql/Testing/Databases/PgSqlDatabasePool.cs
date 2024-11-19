@@ -20,14 +20,20 @@ namespace Composable.Persistence.PgSql.Testing.Databases
         public PgSqlDatabasePool()
         {
             var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                      ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;Maximum Pool Size=10;Minimum Pool Size=0;Connection Idle Lifetime=10;";
+                                      ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";
 
             _masterConnectionPool = IPgSqlConnectionPool.CreateInstance(masterConnectionString);
             _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new NpgsqlConnectionStringBuilder(masterConnectionString));
         }
 
         protected override string ConnectionStringFor(Database db)
-            => _connectionStringBuilder.Update(@this => @this.Mutate(me => me.Database = db.Name.ToLowerInvariant()).ConnectionString);
+            => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
+            {
+               me.Database = db.Name.ToLowerInvariant();
+               me.MinPoolSize = 1;
+               me.MaxPoolSize = 10;
+               me.ConnectionIdleLifetime = 10;
+            }).ConnectionString);
 
         protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
         {

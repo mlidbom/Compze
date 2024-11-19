@@ -29,8 +29,8 @@ namespace Composable.Persistence.Oracle.Testing.Databases
             => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
             {
                 me.UserID = db.Name.ToUpperInvariant();
-                me.MaxPoolSize = 5;
                 me.MinPoolSize = 1;
+                me.MaxPoolSize = 5;
                 me.ConnectionLifeTime = 10;
                 me.Password = db.Name.ToUpperInvariant();
                 me.DBAPrivilege = "";

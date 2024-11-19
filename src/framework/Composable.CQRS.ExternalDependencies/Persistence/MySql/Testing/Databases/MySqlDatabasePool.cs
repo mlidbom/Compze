@@ -19,14 +19,20 @@ namespace Composable.Persistence.MySql.Testing.Databases
         public MySqlDatabasePool()
         {
             var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                      ?? "Server=localhost;Database=mysql;Uid=root;Pwd=;MaximumPoolSize=10;MinimumPoolSize=0;ConnectionLifeTime=10;";
+                                      ?? "Server=localhost;Database=mysql;Uid=root;Pwd=;";
 
             _masterConnectionPool = IMySqlConnectionPool.CreateInstance(masterConnectionString);
             _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new MySqlConnectionStringBuilder(masterConnectionString));
         }
 
         protected override string ConnectionStringFor(Database db)
-            => _connectionStringBuilder.Update(@this => @this.Mutate(me => me.Database = db.Name).ConnectionString);
+            => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
+            {
+               me.Database = db.Name;
+               me.MinimumPoolSize = 1;
+               me.MaximumPoolSize = 10;
+               me.ConnectionLifeTime = 10;
+            }).ConnectionString);
 
         protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
         {
