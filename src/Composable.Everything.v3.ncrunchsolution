@@ -99,6 +99,7 @@
     </HotSpotsLineExclusionList>
     <InstrumentationMode>Optimised</InstrumentationMode>
     <RdiConfigured>True</RdiConfigured>
+    <RestrictToString>False</RestrictToString>
     <SlidingBuildDelayInMilliseconds>1000</SlidingBuildDelayInMilliseconds>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
