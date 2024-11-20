@@ -60,25 +60,15 @@ public partial class Password
          var policyFailures = Policy.GetPolicyFailures(password).ToList();
          if (policyFailures.Any())
          {
-            switch (policyFailures.First())
+            yield return policyFailures.First() switch
             {
-               case Policy.Failures.BorderedByWhitespace:
-                  yield return owner.CreateValidationResult(RegisterAccountCommandResources.Password_BorderedByWhitespace, passwordMember);
-                  break;
-               case Policy.Failures.MissingLowerCaseCharacter:
-                  yield return owner.CreateValidationResult(RegisterAccountCommandResources.Password_MissingLowerCaseCharacter, passwordMember);
-                  break;
-               case Policy.Failures.MissingUppercaseCharacter:
-                  yield return owner.CreateValidationResult(RegisterAccountCommandResources.Password_MissingUpperCaseCharacter, passwordMember);
-                  break;
-               case Policy.Failures.ShorterThanFourCharacters:
-                  yield return owner.CreateValidationResult(RegisterAccountCommandResources.Password_ShorterThanFourCharacters, passwordMember);
-                  break;
-               case Policy.Failures.Null:
-                  throw new Exception("Null should have been caught by the Required attribute");
-               default:
-                  throw new Exception($"Unknown password failure type {policyFailures.First()}");
-            }
+               Policy.Failures.BorderedByWhitespace => owner.CreateValidationResult(RegisterAccountCommandResources.Password_BorderedByWhitespace, passwordMember),
+               Policy.Failures.MissingLowerCaseCharacter => owner.CreateValidationResult(RegisterAccountCommandResources.Password_MissingLowerCaseCharacter, passwordMember),
+               Policy.Failures.MissingUppercaseCharacter => owner.CreateValidationResult(RegisterAccountCommandResources.Password_MissingUpperCaseCharacter, passwordMember),
+               Policy.Failures.ShorterThanFourCharacters => owner.CreateValidationResult(RegisterAccountCommandResources.Password_ShorterThanFourCharacters, passwordMember),
+               Policy.Failures.Null => throw new Exception("Null should have been caught by the Required attribute"),
+               _ => throw new Exception($"Unknown password failure type {policyFailures.First()}")
+            };
          }
       }
    }
