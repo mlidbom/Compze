@@ -15,11 +15,11 @@ namespace Composable.Messaging.Buses;
 
 class ServerEndpointBuilder : IEndpointBuilder
 {
-   readonly IDependencyInjectionContainer _container;
    readonly TypeMapper _typeMapper;
    bool _builtSuccessfully;
 
-   public IDependencyInjectionContainer Container => _container;
+   public IDependencyInjectionContainer Container { get; }
+
    public ITypeMappingRegistar TypeMapper => _typeMapper;
    readonly IGlobalBusStateTracker _globalStateTracker;
    readonly MessageHandlerRegistry _registry;
@@ -33,7 +33,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       SetupContainer();
       SetupInternalTypeMap();
       MessageTypes.Internal.RegisterHandlers(RegisterHandlers);
-      var serviceLocator = _container.CreateServiceLocator();
+      var serviceLocator = Container.CreateServiceLocator();
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<IGlobalBusStateTracker>(),
                                   serviceLocator.Resolve<ITransport>(),
@@ -52,7 +52,7 @@ class ServerEndpointBuilder : IEndpointBuilder
    public ServerEndpointBuilder(IEndpointHost host, IGlobalBusStateTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
    {
       _host = host;
-      _container = container;
+      Container = container;
       _globalStateTracker = globalStateTracker;
 
 
@@ -61,7 +61,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       _typeMapper = new TypeMapper();
 
       _registry = new MessageHandlerRegistry(_typeMapper);
-      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => _container.CreateServiceLocator()));
+      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.CreateServiceLocator()));
 
    }
 
@@ -70,23 +70,23 @@ class ServerEndpointBuilder : IEndpointBuilder
       //todo: Find cleaner way of doing this.
       if(_host is IEndpointRegistry endpointRegistry)
       {
-         _container.Register(Singleton.For<IEndpointRegistry>().Instance(endpointRegistry));
+         Container.Register(Singleton.For<IEndpointRegistry>().Instance(endpointRegistry));
       } else
       {
-         _container.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
+         Container.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
       }
 
-      if(_container.RunMode == RunMode.Production)
+      if(Container.RunMode == RunMode.Production)
       {
-         _container.Register(Singleton.For<IUtcTimeTimeSource>().CreatedBy(() => new DateTimeNowTimeSource()).DelegateToParentServiceLocatorWhenCloning());
+         Container.Register(Singleton.For<IUtcTimeTimeSource>().CreatedBy(() => new DateTimeNowTimeSource()).DelegateToParentServiceLocatorWhenCloning());
       } else
       {
-         _container.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>().CreatedBy(() => TestingTimeSource.FollowingSystemClock).DelegateToParentServiceLocatorWhenCloning());
+         Container.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>().CreatedBy(() => TestingTimeSource.FollowingSystemClock).DelegateToParentServiceLocatorWhenCloning());
       }
 
-      _container.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
+      Container.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
 
-      _container.Register(
+      Container.Register(
          Singleton.For<ITypeMappingRegistar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
 
 
@@ -104,7 +104,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       if(!Configuration.IsPureClientEndpoint)
       {
-         _container.Register(
+         Container.Register(
             Singleton.For<EndpointId>().CreatedBy(() => Configuration.Id),
             Singleton.For<EndpointConfiguration>().CreatedBy(() => Configuration),
 
@@ -143,7 +143,7 @@ class ServerEndpointBuilder : IEndpointBuilder
          _disposed = true;
          if(!_builtSuccessfully)
          {
-            _container.Dispose();
+            Container.Dispose();
          }
       }
    }

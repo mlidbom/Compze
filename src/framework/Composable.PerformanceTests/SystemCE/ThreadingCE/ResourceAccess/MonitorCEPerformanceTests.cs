@@ -18,12 +18,11 @@ public class MonitorCEPerformanceTests
 {
    class MyLong
    {
-      long _value;
-      public long Value => _value;
+      public long Value { get; private set; }
 
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-      internal long Read_Unsafe() => _value;
+      internal long Read_Unsafe() => Value;
 
       internal long Read_Locked()
       {
@@ -41,7 +40,7 @@ public class MonitorCEPerformanceTests
       internal long Read_MonitorCE_Read() => _monitor.Read(Read_Unsafe);
 
 
-      internal void Increment_Unsafe() => _value++;
+      internal void Increment_Unsafe() => Value++;
 
       internal void Increment_Locked()
       {

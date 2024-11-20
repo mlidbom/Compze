@@ -7,17 +7,15 @@ namespace Composable.Tests.Contracts;
 [TestFixture]
 public class ExpressionValueExtractorTests
 {
-   readonly string _testString = "TestString";
-
-   string TestString => _testString;
+   string TestString { get; } = "TestString";
 
    readonly object _wrappedIntOne = 1;
 
    [Test]
    public void ExtractsValuesFromFieldAccessingLambdas()
    {
-      var result = ContractsExpression.ExtractValue(() => _testString);
-      Assert.That(result, Is.SameAs(_testString));
+      var result = ContractsExpression.ExtractValue(() => TestString);
+      Assert.That(result, Is.SameAs(TestString));
 
       var result2 = ContractsExpression.ExtractValue(() => _wrappedIntOne);
       Assert.That(result2, Is.SameAs(_wrappedIntOne));
@@ -27,14 +25,14 @@ public class ExpressionValueExtractorTests
    public void ExtractsValueFromPropertyAccessLambda()
    {
       var result = ContractsExpression.ExtractValue(() => TestString);
-      Assert.That(result, Is.SameAs(_testString));
+      Assert.That(result, Is.SameAs(TestString));
    }
 
    [Test]
    public void ExtractsValueFromParameterAccess()
    {
-      var result = ReturnExtractedParameterValue(_testString);
-      Assert.That(result, Is.SameAs(_testString));
+      var result = ReturnExtractedParameterValue(TestString);
+      Assert.That(result, Is.SameAs(TestString));
    }
 
    static TValue ReturnExtractedParameterValue<TValue>(TValue param)

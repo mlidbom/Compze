@@ -14,7 +14,8 @@ class ThreadGate : IThreadGate
 
    public TimeSpan DefaultTimeout { get; }
 
-   public bool IsOpen => _isOpen;
+   public bool IsOpen { get; private set; }
+
    public long Queued => _monitor.Read(() => _queuedThreads.Count);
    public long Passed => _monitor.Read(() => _passedThreads.Count);
    public long Requested => _monitor.Read(() => _requestsThreads.Count);
@@ -28,7 +29,7 @@ class ThreadGate : IThreadGate
    {
       _monitor.Update(() =>
       {
-         _isOpen = true;
+         IsOpen = true;
          _lockOnNextPass = false;
       });
       return this;
@@ -38,8 +39,8 @@ class ThreadGate : IThreadGate
    {
       _monitor.Update(() =>
       {
-         Contract.Assert.That(!_isOpen, "Gate must be closed to call this method.");
-         _isOpen = true;
+         Contract.Assert.That(!IsOpen, "Gate must be closed to call this method.");
+         IsOpen = true;
          _lockOnNextPass = true;
       });
       return this.AwaitClosed();
@@ -73,7 +74,7 @@ Current state of gate:
 
    public IThreadGate Close()
    {
-      _monitor.Update(() => _isOpen = false);
+      _monitor.Update(() => IsOpen = false);
       return this;
    }
 
@@ -87,12 +88,12 @@ Current state of gate:
          _queuedThreads.AddLast(currentThread);
       });
 
-      using(_monitor.EnterUpdateLockWhen(() => _isOpen))
+      using(_monitor.EnterUpdateLockWhen(() => IsOpen))
       {
          if(_lockOnNextPass)
          {
             _lockOnNextPass = false;
-            _isOpen = false;
+            IsOpen = false;
          }
 
          _queuedThreads.Remove(currentThread);
@@ -120,7 +121,6 @@ Current state of gate:
    Action<ThreadSnapshot> _passThroughAction = _ => {};
    Action<ThreadSnapshot> _prePassThroughAction = _ => {};
    Action<ThreadSnapshot> _postPassThroughAction = _ => {};
-   bool _isOpen;
    readonly List<ThreadSnapshot> _requestsThreads = [];
    readonly LinkedList<ThreadSnapshot> _queuedThreads = [];
    readonly List<ThreadSnapshot> _passedThreads = [];

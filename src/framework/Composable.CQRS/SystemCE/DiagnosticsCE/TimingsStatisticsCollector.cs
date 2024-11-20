@@ -40,8 +40,8 @@ class TimingsStatisticsCollector
    long _totalCalls;
 
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-   TimeSpan _totalTime;
-   public TimeSpan TotalTime => _totalTime;
+   public TimeSpan TotalTime { get; private set; }
+
    public long TotalCalls => _totalCalls;
    public string Name { get; }
 
@@ -93,7 +93,7 @@ class TimingsStatisticsCollector
    void RegisterCall(TimeSpan time)
    {
       Interlocked.Increment(ref _totalCalls);
-      using(_monitor.EnterUpdateLock()) _totalTime += time;
+      using(_monitor.EnterUpdateLock()) TotalTime += time;
       // ReSharper disable once ForCanBeConvertedToForeach
       for(int i = 0; i < _callStats.Length; ++i)
       {
