@@ -33,11 +33,7 @@ class PerformanceTest : DuplicateByPluggableComponentTest
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);
       await _host.StartAsync();
       //Warmup
-      StopwatchCE.TimeExecutionThreaded(() =>
-      {
-         var a = _scenarioApi.Register.Execute();
-         _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(a.Account.Id));
-      }, iterations: 10);
+      StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
 
    [Test] public void SingleThreaded_creates_XX_accounts_in_30_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_() =>
