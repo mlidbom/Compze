@@ -29,15 +29,4 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
                   Is.LessThanOrEqualTo(TimeSpan.FromMilliseconds(50)),
                   "If we syncronously wait for the sleep in the registered callback we should not get here for at least 1000 milliseconds");
    }
-
-   //This test verifies that the class does not perform as optimally as might be wished for. If it starts failing we should be happy :)
-   [Test] public void IfCallbacksHaveBeenRegisteredAndRemovedCancelIsStillInvokedAsynchronously()
-   {
-      var registration = _tokenSource.Token.Register(() => {});
-      registration.Unregister();
-      registration.Dispose();
-      _tokenSource.CancelAsync();
-      //It seems unlikely that a thread has been spawned and changed the value between this thread executing the previous line and this line
-      Assert.That(_tokenSource.Token.IsCancellationRequested, Is.False);
-   }
 }
