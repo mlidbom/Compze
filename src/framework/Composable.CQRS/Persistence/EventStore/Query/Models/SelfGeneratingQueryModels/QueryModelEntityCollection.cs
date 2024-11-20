@@ -7,7 +7,7 @@ namespace Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryMode
 public class QueryModelEntityCollection<TEntity, TEntityId> : IReadonlyQueryModelEntityCollection<TEntity, TEntityId> where TEntityId : notnull
 {
    readonly Dictionary<TEntityId, TEntity> _entities = new();
-   readonly List<TEntity> _entitiesInCreationOrder = new();
+   readonly List<TEntity> _entitiesInCreationOrder = [];
 
 
    public IReadOnlyList<TEntity> InCreationOrder => _entitiesInCreationOrder;

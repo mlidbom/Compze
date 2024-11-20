@@ -13,7 +13,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
 {
    readonly ILogger _log = Logger.For<TestingEndpointHostBase>();
 
-   readonly List<Exception> _expectedExceptions = new();
+   readonly List<Exception> _expectedExceptions = [];
    public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => GlobalBusStateTracker = new GlobalBusStateTracker();
 
    public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(@this => @this.Address is not null)

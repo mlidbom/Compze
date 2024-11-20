@@ -14,7 +14,7 @@ namespace Composable.Testing.Threading;
 /// Throws <see cref="AggregateException"/> on dispose if any throw exceptions or do not complete within timeout. </summary>
 public sealed class TestingTaskRunner : IDisposable
 {
-   readonly List<Task> _monitoredTasks = new();
+   readonly List<Task> _monitoredTasks = [];
    readonly TimeSpan _timeout;
 
    public static TestingTaskRunner WithTimeout(TimeSpan timeout) => new(timeout);

@@ -69,7 +69,7 @@ partial class ComposableDependencyInjectionContainer
       bool _isDisposed;
       readonly int[] _serviceTypeIndexToComponentIndex;
       readonly object[] _instances;
-      readonly LinkedList<IDisposable> _disposables = new();
+      readonly LinkedList<IDisposable> _disposables = [];
 
       public void Set(object instance, ComponentRegistration registration)
       {

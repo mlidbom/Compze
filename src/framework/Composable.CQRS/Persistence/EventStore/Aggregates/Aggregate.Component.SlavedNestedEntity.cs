@@ -97,7 +97,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             protected EntityCollectionManagerBase
                (IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
             {
-               _managedEntities = new EntityCollection<TEntity, TEntityId>();
+               _managedEntities = [];
                appliersRegistrar
                  .For<TEntityEvent>(e => _managedEntities[IdGetter.GetId(e)].ApplyEvent(e));
             }

@@ -11,7 +11,7 @@ namespace Composable.DependencyInjection.Microsoft;
 public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator, IServiceLocatorKernel
 {
    readonly IServiceCollection _services;
-   readonly List<ComponentRegistration> _registeredComponents = new();
+   readonly List<ComponentRegistration> _registeredComponents = [];
    IServiceProvider? _serviceProvider;
    bool _isDisposed;
 

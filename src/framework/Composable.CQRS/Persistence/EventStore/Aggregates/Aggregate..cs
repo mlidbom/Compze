@@ -46,14 +46,14 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       _eventHandlersDispatcher.Register().IgnoreUnhandled<TAggregateEvent>();
    }
 
-   readonly List<IAggregateEvent> _unCommittedEvents = new();
+   readonly List<IAggregateEvent> _unCommittedEvents = [];
    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventAppliersDispatcher = new();
    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventHandlersDispatcher = new();
 
    int _reentrancyLevel;
    bool _applyingEvents;
 
-   readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = new();
+   readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = [];
    protected TEvent Publish<TEvent>(TEvent theEvent) where TEvent : TAggregateEventImplementation
    {
       Contract.Assert.That(!_applyingEvents, "You cannot raise events from within event appliers");

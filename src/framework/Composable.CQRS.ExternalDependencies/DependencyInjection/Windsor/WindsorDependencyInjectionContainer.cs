@@ -14,7 +14,7 @@ namespace Composable.DependencyInjection.Windsor;
 class WindsorDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator
 {
    readonly IWindsorContainer _windsorContainer;
-   readonly List<ComponentRegistration> _registeredComponents = new();
+   readonly List<ComponentRegistration> _registeredComponents = [];
    bool _locked;
    internal WindsorDependencyInjectionContainer(IRunMode runMode)
    {

@@ -7,7 +7,7 @@ namespace Composable.Persistence.EventStore.Aggregates;
 public class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, TEntityId> where TEntityId : notnull
 {
    readonly Dictionary<TEntityId, TEntity> _entities = new();
-   readonly List<TEntity> _entitiesInCreationOrder = new();
+   readonly List<TEntity> _entitiesInCreationOrder = [];
 
 
    public IReadOnlyList<TEntity> InCreationOrder => _entitiesInCreationOrder;

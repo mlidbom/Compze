@@ -30,7 +30,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
    {
       internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = new();
 
-      readonly List<Exception> _busExceptions = new();
+      readonly List<Exception> _busExceptions = [];
 
       public IReadOnlyList<Exception> GetExceptions() => _busExceptions.ToList();
 

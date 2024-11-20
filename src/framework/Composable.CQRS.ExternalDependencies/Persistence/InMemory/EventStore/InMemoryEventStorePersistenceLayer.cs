@@ -127,7 +127,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
 
    class State
    {
-      List<EventDataRow> _events = new();
+      List<EventDataRow> _events = [];
       IThreadShared<State> _state = null!;
 
       public IReadOnlyList<EventDataRow> Events

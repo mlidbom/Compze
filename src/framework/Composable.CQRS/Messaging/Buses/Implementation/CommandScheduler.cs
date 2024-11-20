@@ -19,7 +19,7 @@ class CommandScheduler : IDisposable
    readonly IUtcTimeTimeSource _timeSource;
    readonly ITaskRunner _taskRunner;
    Timer? _scheduledMessagesTimer;
-   readonly List<ScheduledCommand> _scheduledMessages = new();
+   readonly List<ScheduledCommand> _scheduledMessages = [];
    readonly MonitorCE _guard = MonitorCE.WithTimeout(1.Seconds());
 
    public CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner)

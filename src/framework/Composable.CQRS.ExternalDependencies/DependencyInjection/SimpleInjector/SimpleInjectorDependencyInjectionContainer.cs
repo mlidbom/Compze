@@ -11,7 +11,7 @@ namespace Composable.DependencyInjection.SimpleInjector;
 public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator, IServiceLocatorKernel
 {
    readonly Container _container;
-   readonly List<ComponentRegistration> _registeredComponents = new();
+   readonly List<ComponentRegistration> _registeredComponents = [];
    internal SimpleInjectorDependencyInjectionContainer(IRunMode runMode)
    {
       RunMode = runMode;

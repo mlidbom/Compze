@@ -48,7 +48,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
             readonly QueryModelEntityCollection<TEntity, TEntityId> _managedEntities;
             protected EntityCollectionManagerBase(IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
             {
-               _managedEntities = new QueryModelEntityCollection<TEntity, TEntityId>();
+               _managedEntities = [];
                appliersRegistrar
                  .For<TEntityEvent>(e => _managedEntities[IdGetter.GetId(e)].ApplyEvent(e));
             }

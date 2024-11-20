@@ -45,7 +45,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
           Action<TEntityEventImplementation> raiseEventThroughParent,
           IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
          {
-            ManagedEntities = new EntityCollection<TEntity, TEntityId>();
+            ManagedEntities = [];
             _raiseEventThroughParent = raiseEventThroughParent;
             appliersRegistrar
               .For<TEntityCreatedEvent>(
