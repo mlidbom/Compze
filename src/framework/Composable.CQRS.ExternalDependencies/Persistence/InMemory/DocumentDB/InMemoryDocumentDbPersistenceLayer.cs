@@ -5,13 +5,12 @@ using System.Linq;
 using Composable.Persistence.DocumentDb;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.LinqCE;
-using DocumentRow = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.WriteRow;
 namespace Composable.Persistence.InMemory.DocumentDB;
 
 //Performance: Write tests to expose lack of Transactional locks and transactional overlay and then implement it.
 class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {
-   readonly Dictionary<string, List<DocumentRow>> _db = new(StringComparer.InvariantCultureIgnoreCase);
+   readonly Dictionary<string, List<IDocumentDbPersistenceLayer.WriteRow>> _db = new(StringComparer.InvariantCultureIgnoreCase);
    readonly object _lockObject = new();
 
    public void Add(IDocumentDbPersistenceLayer.WriteRow row)
@@ -49,7 +48,7 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       }
    }
 
-   public void Update(IReadOnlyList<DocumentRow> toUpdate)
+   public void Update(IReadOnlyList<IDocumentDbPersistenceLayer.WriteRow> toUpdate)
    {
       lock (_lockObject)
       {
