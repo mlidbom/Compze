@@ -7,21 +7,21 @@ using Composable.SystemCE.LinqCE;
 
 namespace Composable.SystemCE.ThreadingCE;
 
-class MachineWideSharedObjectFiles
+class MachineWideSharedObject
 {
    protected static readonly string DataFolder = ComposableTempFolder.EnsureFolderExists("SharedFiles");
 }
 
-class MachineWideSharedObjectFiles<TObject> : MachineWideSharedObjectFiles, IDisposable where TObject : BinarySerialized<TObject>
+class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : BinarySerialized<TObject>
 {
    readonly string _filePath;
    readonly MachineWideSingleThreaded _synchronizer;
    bool _disposed;
    readonly bool _usePersistentFile;
 
-   internal static MachineWideSharedObjectFiles<TObject> For(string name, bool usePersistentFile = false) => new(name, usePersistentFile);
+   internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false) => new(name, usePersistentFile);
 
-   MachineWideSharedObjectFiles(string name, bool usePersistentFile)
+   MachineWideSharedObject(string name, bool usePersistentFile)
    {
       var fileName = $"Composable_{name}";
       // ReSharper disable once AccessToModifiedClosure

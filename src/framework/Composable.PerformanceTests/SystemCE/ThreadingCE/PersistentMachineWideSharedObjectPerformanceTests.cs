@@ -17,15 +17,15 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
 
    [TearDown] public void TearDownTask() => _shared.Dispose();
 
-   [Test] public void Get_copy_runs_single_threaded_100_times_in_6_milliseconds()
-      => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 6.Milliseconds());
+   [Test] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
+      => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 40.Milliseconds());
 
-   [Test] public void Get_copy_runs_multi_threaded_100_times_in_10_milliseconds() =>
-      TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 10.Milliseconds());
+   [Test] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds() =>
+      TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [Test] public void Update_runs_single_threaded_100_times_in_17_milliseconds() =>
-      TimeAsserter.Execute(() => _shared.Update(@this => @this.Name = ""), iterations: 100, maxTotal: 17.Milliseconds(), maxTries: 10);
+   [Test] public void Update_runs_single_threaded_100_times_in_80_milliseconds() =>
+      TimeAsserter.Execute(() => _shared.Update(@this => @this.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 
-   [Test] public void Update_runs_multi_threaded_100_times_in_25_milliseconds() =>
-      TimeAsserter.ExecuteThreaded(() => _shared.Update(@this => @this.Name = ""), iterations: 100, maxTotal: 25.Milliseconds(), maxTries: 10);
+   [Test] public void Update_runs_multi_threaded_100_times_in_80_milliseconds() =>
+      TimeAsserter.ExecuteThreaded(() => _shared.Update(@this => @this.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 }

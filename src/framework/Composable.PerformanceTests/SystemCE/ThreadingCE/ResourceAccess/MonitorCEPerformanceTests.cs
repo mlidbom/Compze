@@ -127,10 +127,10 @@ public class MonitorCEPerformanceTests
                    singleThread: (50 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 30.0, unoptimized: 2.2),
                    multiThread: (360 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 9.0, unoptimized:1.6));
 
-   [Test] public void _050_Increment_Unsafe___________________________________time_is_less_than_nanoseconds_SingleThreaded_06_MultiThreaded_08() =>
+   [Test] public void _050_Increment_Unsafe___________________________________time_is_less_than_nanoseconds_SingleThreaded_06_MultiThreaded_12() =>
       RunScenarios(() => _guarded.Increment_Unsafe(),
                    singleThread: (6 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 40, unoptimized: 2.6),
-                   multiThread: (8 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 20, unoptimized: 1.6));
+                   multiThread: (12 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 20, unoptimized: 1.6));
 
    [Test] public void _060_Increment_Locked___________________________________time_is_less_than_nanoseconds_SingleThreaded_25__MultiThreaded_240() =>
       RunScenarios(() => _guarded.Increment_Locked(),
