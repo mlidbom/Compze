@@ -6,6 +6,7 @@ using Composable.Contracts;
 using Composable.Logging;
 using Composable.Persistence;
 using Composable.SystemCE;
+using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ReflectionCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
@@ -68,7 +69,7 @@ abstract partial class DatabasePool : StrictlyManagedResourceBase<DatabasePool>
                if(machineWide.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase))
                {
                   Log.Info($"Reserved pool database: {reservedDatabase.Name}");
-                  _transientCache = machineWide.DatabasesReservedBy(_poolId);
+                  ThreadSafe.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
                }
             });
 
@@ -99,7 +100,6 @@ abstract partial class DatabasePool : StrictlyManagedResourceBase<DatabasePool>
    {
       if(_disposed) return;
       _disposed = true;
-
 
       MachineWideState.Update(machineWide => machineWide.ReleaseReservationsFor(_poolId));
       MachineWideState.Dispose();
