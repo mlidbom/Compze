@@ -15,7 +15,7 @@ public static class IValidatableObjectCE
       Contract.ArgumentNotNull(accessor, nameof(accessor));
 
       var expr = accessor.Body;
-      while (expr.NodeType == ExpressionType.Convert || expr.NodeType == ExpressionType.ConvertChecked)
+      while (expr.NodeType is ExpressionType.Convert or ExpressionType.ConvertChecked)
          expr = ((UnaryExpression)expr).Operand;
 
       if (expr is not MemberExpression expression)
