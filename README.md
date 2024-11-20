@@ -8,24 +8,24 @@
 
 
 ## Set up development environment
-* Just open Composable.Everything.sln in Visual Studio 2017 and you should be good to go.
-* To run the tests you need administator access to a SQL server installation. If you don't have one the development edition is free to download and use.
+* Just open Composable.Everything.sln in Visual Studio 2022 or Rider and you should be good to go.
+* To run the tests you need administrator access to a SQL server installation. If you don't have one the development edition is free to download and use.
 
 ### Running the sample project
-* The connectionstring AccountManagement in AccountManagement.Server/App.config must be valid.
+* The connection string AccountManagement in AccountManagement.Server/App.config must be valid.
  * The configured user must have full permissions to create tables etc in the database in the connection string.
  * Given that just "Start debugging" or "Start without debugging" in visual studio.
 
-### Environment varibles you should know about when running the tests
+### Environment variables you should know about when running the tests
 
-**COMPOSABLE_SQL_SERVER_DATABASE_POOL_MASTER_CONNECTIONSTRING**: Let's you override the connection string to use for the database pool.
+**COMPOSABLE_SQL_SERVER_DATABASE_POOL_MASTER_CONNECTIONSTRING**: Lets you override the connection string to use for the database pool.
 
 **COMPOSABLE_MACHINE_SLOWNESS**: 
 Lets you adjust the expectations for the performance tests.  
 For example: If you set it to 2.0 performance tests are allowed to take 2.0 times as long to complete without failing.
 
 **COMPOSABLE_TEMP_DRIVE**:
-Let's you move where temp data is stored out of the default system temp folder. 
+Lets you move where temp data is stored out of the default system temp folder. 
 Among other things the databases in the database pool are stored here.
 If possible set this to a path on a fast SSD or, even better, a RAM drive.
 
@@ -37,7 +37,7 @@ If possible set this to a path on a fast SSD or, even better, a RAM drive.
   * Check options
     * Add ruby executables to your path
     * Associate .rb and .rbw files with this ruby installation
-  * Otherwise use all the default options all through the wizard.
+  * Otherwise, use all the default options all through the wizard.
 * Download the 32 bit devkit for this version of ruby from: https://rubyinstaller.org/downloads/
   * Extract it to: C:\RubyDevKit\
   * Open a command prompt in C:\RubyDevKit\
