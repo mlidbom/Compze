@@ -11,49 +11,49 @@ namespace Composable.Tests.Contracts;
 [TestFixture]
 public class ObjectNotNullOrDefaultTests
 {
-    [Test]
-    public void ThrowsArgumentNullExceptionIfAnyValueIsNull()
-    {
-        var anObject = new object();
-        object nullObject = null;
-        var emptyString = "";
+   [Test]
+   public void ThrowsArgumentNullExceptionIfAnyValueIsNull()
+   {
+      var anObject = new object();
+      object nullObject = null;
+      var emptyString = "";
 
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullObject).NotNullOrDefault());
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => anObject, () => nullObject).NotNullOrDefault());
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => emptyString, () => nullObject, () => anObject).NotNullOrDefault());
-    }
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullObject).NotNullOrDefault());
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => anObject, () => nullObject).NotNullOrDefault());
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => emptyString, () => nullObject, () => anObject).NotNullOrDefault());
+   }
 
-    [Test]
-    public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()
-    {
-        var anObject = new object();
-        var emptyString = "";
-        var zero = 0;
-        var defaultMyStructure = new MyStructure();
-        var aMyStructure = new MyStructure(1);
+   [Test]
+   public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()
+   {
+      var anObject = new object();
+      var emptyString = "";
+      var zero = 0;
+      var defaultMyStructure = new MyStructure();
+      var aMyStructure = new MyStructure(1);
 
-        Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => zero).NotNullOrDefault());
-        Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => anObject, () => zero).NotNullOrDefault());
-        Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => emptyString, () => anObject, () => defaultMyStructure).NotNullOrDefault());
-        Contract.Argument(() => emptyString, () => anObject, () => aMyStructure).NotNullOrDefault();
+      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => zero).NotNullOrDefault());
+      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => anObject, () => zero).NotNullOrDefault());
+      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => emptyString, () => anObject, () => defaultMyStructure).NotNullOrDefault());
+      Contract.Argument(() => emptyString, () => anObject, () => aMyStructure).NotNullOrDefault();
 
 
-        InspectionTestHelper.BatchTestInspection<ObjectIsDefaultContractViolationException, object>(
-            inspected => inspected.NotNullOrDefault(),
-            badValues: new List<object> {zero, defaultMyStructure},
-            goodValues: new List<object> {new(), "", Guid.NewGuid()});
-    }
+      InspectionTestHelper.BatchTestInspection<ObjectIsDefaultContractViolationException, object>(
+         inspected => inspected.NotNullOrDefault(),
+         badValues: new List<object> {zero, defaultMyStructure},
+         goodValues: new List<object> {new(), "", Guid.NewGuid()});
+   }
 
-    struct MyStructure
-    {
-        // ReSharper disable NotAccessedField.Local
+   struct MyStructure
+   {
+      // ReSharper disable NotAccessedField.Local
 #pragma warning disable IDE0052 //Review OK: This member is used through reflection.
-        readonly int _value;
+      readonly int _value;
 #pragma warning restore IDE0052 // Remove unread private members
-        // ReSharper restore NotAccessedField.Local
+      // ReSharper restore NotAccessedField.Local
 
-        public MyStructure(int value) => _value = value;
-    }
+      public MyStructure(int value) => _value = value;
+   }
 }
 
 // ReSharper restore ConvertToConstant.Local

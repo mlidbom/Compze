@@ -9,5 +9,5 @@ interface IVersioningQueryModelGenerator : IQueryModelGenerator
 
 interface IVersioningQueryModelGenerator<TDocument> : IVersioningQueryModelGenerator
 {
-    Option<TDocument> TryGenerate(Guid id, int version);
+   Option<TDocument> TryGenerate(Guid id, int version);
 }

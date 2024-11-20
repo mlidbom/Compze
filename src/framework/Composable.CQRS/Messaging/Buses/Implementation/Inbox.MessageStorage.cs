@@ -7,31 +7,31 @@ namespace Composable.Messaging.Buses.Implementation;
 
 class InboxMessageStorage : Inbox.IMessageStorage
 {
-    readonly IServiceBusPersistenceLayer.IInboxPersistenceLayer _persistenceLayer;
+   readonly IServiceBusPersistenceLayer.IInboxPersistenceLayer _persistenceLayer;
 
-    public InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => _persistenceLayer = persistenceLayer;
+   public InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => _persistenceLayer = persistenceLayer;
 
-    public void SaveIncomingMessage(TransportMessage.InComing message)
-        => _persistenceLayer.SaveMessage(message.MessageId, message.MessageTypeId.GuidValue, message.Body);
+   public void SaveIncomingMessage(TransportMessage.InComing message)
+      => _persistenceLayer.SaveMessage(message.MessageId, message.MessageTypeId.GuidValue, message.Body);
 
-    public void MarkAsSucceeded(TransportMessage.InComing message)
-        => _persistenceLayer.MarkAsSucceeded(message.MessageId);
+   public void MarkAsSucceeded(TransportMessage.InComing message)
+      => _persistenceLayer.MarkAsSucceeded(message.MessageId);
 
-    public void RecordException(TransportMessage.InComing message, Exception exception)
-    {
-        var affectedRows = _persistenceLayer.RecordException(message.MessageId,
-                                                             exception.StackTrace ?? string.Empty,
-                                                             exception.Message,
-                                                             exception.GetType().GetFullNameCompilable());
+   public void RecordException(TransportMessage.InComing message, Exception exception)
+   {
+      var affectedRows = _persistenceLayer.RecordException(message.MessageId,
+                                                           exception.StackTrace ?? string.Empty,
+                                                           exception.Message,
+                                                           exception.GetType().GetFullNameCompilable());
 
-        Assert.Result.Assert(affectedRows == 1);
-    }
+      Assert.Result.Assert(affectedRows == 1);
+   }
 
-    public void MarkAsFailed(TransportMessage.InComing message)
-    {
-        var affectedRows = _persistenceLayer.MarkAsFailed(message.MessageId);
-        Assert.Result.Assert(affectedRows == 1);
-    }
+   public void MarkAsFailed(TransportMessage.InComing message)
+   {
+      var affectedRows = _persistenceLayer.MarkAsFailed(message.MessageId);
+      Assert.Result.Assert(affectedRows == 1);
+   }
 
-    public Task StartAsync() => _persistenceLayer.InitAsync();
+   public Task StartAsync() => _persistenceLayer.InitAsync();
 }

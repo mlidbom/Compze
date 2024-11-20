@@ -7,6 +7,6 @@ namespace Composable.Persistence.PgSql.SystemExtensions;
 
 static class MyNpgsqlCommandExtensions
 {
-    public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this NpgsqlCommand @this, Func<NpgsqlDataReader, T> select) =>
-        DbCommandCE.ExecuteReaderAndSelect(@this, select);
+   public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this NpgsqlCommand @this, Func<NpgsqlDataReader, T> select) =>
+      DbCommandCE.ExecuteReaderAndSelect(@this, select);
 }

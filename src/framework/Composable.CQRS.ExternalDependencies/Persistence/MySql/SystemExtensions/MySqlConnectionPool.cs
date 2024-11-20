@@ -9,27 +9,27 @@ namespace Composable.Persistence.MySql.SystemExtensions;
 
 interface IMySqlConnectionPool : IDbConnectionPool<IComposableMySqlConnection, MySqlCommand>
 {
-    public static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-    public static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
+   public static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
+   public static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
-    class MySqlConnectionPool : IMySqlConnectionPool
-    {
-        readonly OptimizedLazy<IDbConnectionPool<IComposableMySqlConnection, MySqlCommand>> _pool;
+   class MySqlConnectionPool : IMySqlConnectionPool
+   {
+      readonly OptimizedLazy<IDbConnectionPool<IComposableMySqlConnection, MySqlCommand>> _pool;
 
-        public MySqlConnectionPool(Func<string> getConnectionString)
-        {
-            _pool = new OptimizedLazy<IDbConnectionPool<IComposableMySqlConnection, MySqlCommand>>(
-                () =>
-                {
-                    var connectionString = getConnectionString();
-                    return DbConnectionManager<IComposableMySqlConnection, MySqlCommand>.ForConnectionString(
-                        connectionString,
-                        PoolableConnectionFlags.Defaults,
-                        IComposableMySqlConnection.Create);
-                });
-        }
+      public MySqlConnectionPool(Func<string> getConnectionString)
+      {
+         _pool = new OptimizedLazy<IDbConnectionPool<IComposableMySqlConnection, MySqlCommand>>(
+            () =>
+            {
+               var connectionString = getConnectionString();
+               return DbConnectionManager<IComposableMySqlConnection, MySqlCommand>.ForConnectionString(
+                  connectionString,
+                  PoolableConnectionFlags.Defaults,
+                  IComposableMySqlConnection.Create);
+            });
+      }
 
-        public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMySqlConnection, Task<TResult>> func)
-            => _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
-    }
+      public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMySqlConnection, Task<TResult>> func)
+         => _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
+   }
 }

@@ -8,6 +8,6 @@ namespace Composable.GenericAbstractions.Time;
 /// </summary>
 public interface IUtcTimeTimeSource
 {
-    ///<summary>Returns the current time as UTC time.</summary>
-    DateTime UtcNow { get; }
+   ///<summary>Returns the current time as UTC time.</summary>
+   DateTime UtcNow { get; }
 }

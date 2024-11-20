@@ -7,7 +7,7 @@ namespace Composable.Tests.CQRS;
 
 static class EventStorageTestHelper
 {
-    //Not all storage providers stores with more than 6 decimal points precision
-    internal static void StripSeventhDecimalPointFromSecondFractionOnUtcUpdateTime(IReadOnlyList<IAggregateEvent> events)
-        => events.Cast<AggregateEvent>().ForEach(@event => @event.UtcTimeStamp = @event.UtcTimeStamp.AddTicks(-(@event.UtcTimeStamp.Ticks % (10))));
+   //Not all storage providers stores with more than 6 decimal points precision
+   internal static void StripSeventhDecimalPointFromSecondFractionOnUtcUpdateTime(IReadOnlyList<IAggregateEvent> events)
+      => events.Cast<AggregateEvent>().ForEach(@event => @event.UtcTimeStamp = @event.UtcTimeStamp.AddTicks(-(@event.UtcTimeStamp.Ticks % (10))));
 }

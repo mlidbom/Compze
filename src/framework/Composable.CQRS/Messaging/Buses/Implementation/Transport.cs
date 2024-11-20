@@ -13,89 +13,89 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Transport : ITransport, IDisposable
 {
-    readonly IGlobalBusStateTracker _globalBusStateTracker;
-    readonly ITypeMapper _typeMapper;
+   readonly IGlobalBusStateTracker _globalBusStateTracker;
+   readonly ITypeMapper _typeMapper;
 #pragma warning disable CA2213 // Disposable fields should be disposed: This is a bug in the analyzer.
-    readonly NetMQPoller _poller;
+   readonly NetMQPoller _poller;
 #pragma warning restore CA2213 // Disposable fields should be disposed
-    readonly IRemotableMessageSerializer _serializer;
+   readonly IRemotableMessageSerializer _serializer;
 
-    bool _running;
-    readonly Router _router;
-    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
-    readonly AssertAndRun _runningAndNotDisposed;
+   bool _running;
+   readonly Router _router;
+   IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
+   readonly AssertAndRun _runningAndNotDisposed;
 
-    public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-    {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
-        _runningAndNotDisposed = new AssertAndRun(() => Assert.State.Assert(_running, _poller != null, _poller.IsRunning));
-        _router = new Router(typeMapper);
-        _serializer = serializer;
-        _globalBusStateTracker = globalBusStateTracker;
-        _typeMapper = typeMapper;
+   public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+   {
+      // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
+      _runningAndNotDisposed = new AssertAndRun(() => Assert.State.Assert(_running, _poller != null, _poller.IsRunning));
+      _router = new Router(typeMapper);
+      _serializer = serializer;
+      _globalBusStateTracker = globalBusStateTracker;
+      _typeMapper = typeMapper;
 
-        _poller = new NetMQPoller();
-        _poller.RunAsync($"{nameof(Outbox)}_{nameof(NetMQPoller)}");
-        _running = true;
-    }
+      _poller = new NetMQPoller();
+      _poller.RunAsync($"{nameof(Outbox)}_{nameof(NetMQPoller)}");
+      _running = true;
+   }
 
-    public async Task ConnectAsync(EndPointAddress remoteEndpoint)
-    {
-        _runningAndNotDisposed.Assert();
-        var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpoint, _poller!, _typeMapper, _serializer);
+   public async Task ConnectAsync(EndPointAddress remoteEndpoint)
+   {
+      _runningAndNotDisposed.Assert();
+      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpoint, _poller!, _typeMapper, _serializer);
 
-        await clientConnection.Init().NoMarshalling();
+      await clientConnection.Init().NoMarshalling();
 
-        ThreadSafe.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
+      ThreadSafe.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 
-        _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledMessageTypes);
-    }
+      _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledMessageTypes);
+   }
 
-    public IInboxConnection ConnectionToHandlerFor(IRemotableCommand command) =>
-        _runningAndNotDisposed.Do(() => _router.ConnectionToHandlerFor(command));
+   public IInboxConnection ConnectionToHandlerFor(IRemotableCommand command) =>
+      _runningAndNotDisposed.Do(() => _router.ConnectionToHandlerFor(command));
 
-    public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceEvent @event) =>
-        _runningAndNotDisposed.Do(() => _router.SubscriberConnectionsFor(@event));
+   public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceEvent @event) =>
+      _runningAndNotDisposed.Do(() => _router.SubscriberConnectionsFor(@event));
 
-    public async Task PostAsync(IAtMostOnceHypermediaCommand atMostOnceCommand)
-    {
-        _runningAndNotDisposed.Assert();
-        var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-        await connection.PostAsync(atMostOnceCommand).NoMarshalling();
-    }
+   public async Task PostAsync(IAtMostOnceHypermediaCommand atMostOnceCommand)
+   {
+      _runningAndNotDisposed.Assert();
+      var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
+      await connection.PostAsync(atMostOnceCommand).NoMarshalling();
+   }
 
-    public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> atMostOnceCommand)
-    {
-        _runningAndNotDisposed.Assert();
-        var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-        return await connection.PostAsync(atMostOnceCommand).NoMarshalling();
-    }
+   public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> atMostOnceCommand)
+   {
+      _runningAndNotDisposed.Assert();
+      var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
+      return await connection.PostAsync(atMostOnceCommand).NoMarshalling();
+   }
 
-    public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
-    {
-        _runningAndNotDisposed.Assert();
-        var connection = _router.ConnectionToHandlerFor(query);
-        return await connection.GetAsync(query).NoMarshalling();
-    }
+   public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
+   {
+      _runningAndNotDisposed.Assert();
+      var connection = _router.ConnectionToHandlerFor(query);
+      return await connection.GetAsync(query).NoMarshalling();
+   }
 
-    public void Stop() => _runningAndNotDisposed.Do(() =>
-    {
-        _running = false;
-        _poller.StopAsync();
-    });
+   public void Stop() => _runningAndNotDisposed.Do(() =>
+   {
+      _running = false;
+      _poller.StopAsync();
+   });
 
-    bool _disposed;
-    public void Dispose()
-    {
-        if(!_disposed)
-        {
-            _disposed = true;
-            if(_running)
-            {
-                Stop();
-            }
-            _poller.Dispose();
-            _inboxConnections.Values.DisposeAll();
-        }
-    }
+   bool _disposed;
+   public void Dispose()
+   {
+      if(!_disposed)
+      {
+         _disposed = true;
+         if(_running)
+         {
+            Stop();
+         }
+         _poller.Dispose();
+         _inboxConnections.Values.DisposeAll();
+      }
+   }
 }

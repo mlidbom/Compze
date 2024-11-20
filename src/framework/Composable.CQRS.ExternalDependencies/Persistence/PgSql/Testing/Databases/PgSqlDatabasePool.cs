@@ -12,57 +12,57 @@ namespace Composable.Persistence.PgSql.Testing.Databases;
 
 sealed class PgSqlDatabasePool : DatabasePool
 {
-    readonly IPgSqlConnectionPool _masterConnectionPool;
+   readonly IPgSqlConnectionPool _masterConnectionPool;
 
-    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
-    readonly IThreadShared<NpgsqlConnectionStringBuilder> _connectionStringBuilder;
+   const string ConnectionStringConfigurationParameterName = "COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
+   readonly IThreadShared<NpgsqlConnectionStringBuilder> _connectionStringBuilder;
 
-    public PgSqlDatabasePool()
-    {
-        var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                  ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";
+   public PgSqlDatabasePool()
+   {
+      var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
+                                ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";
 
-        _masterConnectionPool = IPgSqlConnectionPool.CreateInstance(masterConnectionString);
-        _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new NpgsqlConnectionStringBuilder(masterConnectionString));
-    }
+      _masterConnectionPool = IPgSqlConnectionPool.CreateInstance(masterConnectionString);
+      _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new NpgsqlConnectionStringBuilder(masterConnectionString));
+   }
 
-    protected override string ConnectionStringFor(Database db)
-        => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
-        {
-            me.Database = db.Name.ToLowerInvariant();
-            me.MinPoolSize = 1;
-            me.MaxPoolSize = 10;
-            me.ConnectionIdleLifetime = 10;
-        }).ConnectionString);
+   protected override string ConnectionStringFor(Database db)
+      => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
+      {
+         me.Database = db.Name.ToLowerInvariant();
+         me.MinPoolSize = 1;
+         me.MaxPoolSize = 10;
+         me.ConnectionIdleLifetime = 10;
+      }).ConnectionString);
 
-    protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
-    {
-        var databaseName = db.Name.ToLowerInvariant();
-        //            if(!_databaseRootFolderOverride.IsNullEmptyOrWhiteSpace())
-        //            {
-        //                createDatabaseCommand += $@"
-        //ON      ( NAME = {databaseName}_data, FILENAME = '{_databaseRootFolderOverride}\{databaseName}.mdf')
-        //LOG ON  ( NAME = {databaseName}_log, FILENAME = '{_databaseRootFolderOverride}\{databaseName}.ldf');";
-        //            }
+   protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
+   {
+      var databaseName = db.Name.ToLowerInvariant();
+      //            if(!_databaseRootFolderOverride.IsNullEmptyOrWhiteSpace())
+      //            {
+      //                createDatabaseCommand += $@"
+      //ON      ( NAME = {databaseName}_data, FILENAME = '{_databaseRootFolderOverride}\{databaseName}.mdf')
+      //LOG ON  ( NAME = {databaseName}_log, FILENAME = '{_databaseRootFolderOverride}\{databaseName}.ldf');";
+      //            }
 
-        //            createDatabaseCommand += $@"
-        //ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
-        //ALTER DATABASE[{ databaseName}] SET READ_COMMITTED_SNAPSHOT ON";
+      //            createDatabaseCommand += $@"
+      //ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
+      //ALTER DATABASE[{ databaseName}] SET READ_COMMITTED_SNAPSHOT ON";
 
-        ResetConnectionPool(db);
-        var exists = (string?)_masterConnectionPool.ExecuteScalar($"SELECT datname FROM pg_database WHERE datname = '{databaseName.ToLowerInvariant()}'");
-        if (!string.IsNullOrEmpty(exists))
-        {
-            ResetDatabase(db);
-        } else
-        {
-            _masterConnectionPool.ExecuteNonQuery($@"CREATE DATABASE {databaseName};");
-        }
-    }
+      ResetConnectionPool(db);
+      var exists = (string?)_masterConnectionPool.ExecuteScalar($"SELECT datname FROM pg_database WHERE datname = '{databaseName.ToLowerInvariant()}'");
+      if (!string.IsNullOrEmpty(exists))
+      {
+         ResetDatabase(db);
+      } else
+      {
+         _masterConnectionPool.ExecuteNonQuery($@"CREATE DATABASE {databaseName};");
+      }
+   }
 
-    protected override void ResetDatabase(Database db) =>
-        IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(
-            command => command.SetCommandText(@"
+   protected override void ResetDatabase(Database db) =>
+      IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(
+         command => command.SetCommandText(@"
 DO $$
 DECLARE
         dbRecord RECORD;
@@ -80,12 +80,12 @@ BEGIN
 	GRANT ALL ON SCHEMA public TO postgres;
 
 END; $$;")
-                              .PrepareStatement()
-                              .ExecuteNonQuery());
+                           .PrepareStatement()
+                           .ExecuteNonQuery());
 
-    void ResetConnectionPool(Database db)
-    {
-        using var connection = new NpgsqlConnection(ConnectionStringFor(db));
-        NpgsqlConnection.ClearPool(connection);
-    }
+   void ResetConnectionPool(Database db)
+   {
+      using var connection = new NpgsqlConnection(ConnectionStringFor(db));
+      NpgsqlConnection.ClearPool(connection);
+   }
 }

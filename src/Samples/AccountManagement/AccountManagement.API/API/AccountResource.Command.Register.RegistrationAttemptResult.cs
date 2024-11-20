@@ -8,22 +8,22 @@ namespace AccountManagement.API;
 
 public partial class AccountResource
 {
-    public static partial class Command
-    {
-        public partial class Register
-        {
-            public class RegistrationAttemptResult
+   public static partial class Command
+   {
+      public partial class Register
+      {
+         public class RegistrationAttemptResult
+         {
+            [JsonConstructor]internal RegistrationAttemptResult(RegistrationAttemptStatus status, AccountResource? registeredAccount)
             {
-                [JsonConstructor]internal RegistrationAttemptResult(RegistrationAttemptStatus status, AccountResource? registeredAccount)
-                {
-                    Assert.Argument.Assert(status != RegistrationAttemptStatus.Successful || registeredAccount is not null);
-                    Status = status;
-                    RegisteredAccount = registeredAccount;
-                }
-
-                public RegistrationAttemptStatus Status { get; private set; }
-                public AccountResource? RegisteredAccount { get; private set; }
+               Assert.Argument.Assert(status != RegistrationAttemptStatus.Successful || registeredAccount is not null);
+               Status = status;
+               RegisteredAccount = registeredAccount;
             }
-        }
-    }
+
+            public RegistrationAttemptStatus Status { get; private set; }
+            public AccountResource? RegisteredAccount { get; private set; }
+         }
+      }
+   }
 }

@@ -10,82 +10,82 @@ namespace Composable.Serialization;
 
 class RenamingSupportingJsonSerializer : IJsonSerializer
 {
-    readonly JsonSerializerSettings _jsonSettings;
-    readonly RenamingDecorator _renamingDecorator;
-    protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, ITypeMapper typeMapper)
-    {
-        _jsonSettings = jsonSettings;
-        _renamingDecorator = new RenamingDecorator(typeMapper);
-    }
+   readonly JsonSerializerSettings _jsonSettings;
+   readonly RenamingDecorator _renamingDecorator;
+   protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, ITypeMapper typeMapper)
+   {
+      _jsonSettings = jsonSettings;
+      _renamingDecorator = new RenamingDecorator(typeMapper);
+   }
 
-    public string Serialize(object instance)
-    {
-        var json = JsonConvert.SerializeObject(instance, Formatting.Indented, _jsonSettings);
-        json = _renamingDecorator.ReplaceTypeNames(json);
-        return json;
-    }
+   public string Serialize(object instance)
+   {
+      var json = JsonConvert.SerializeObject(instance, Formatting.Indented, _jsonSettings);
+      json = _renamingDecorator.ReplaceTypeNames(json);
+      return json;
+   }
 
-    public object Deserialize(Type type, string json)
-    {
-        json = _renamingDecorator.RestoreTypeNames(json);
-        return JsonConvert.DeserializeObject(json, type, _jsonSettings)!;
-    }
+   public object Deserialize(Type type, string json)
+   {
+      json = _renamingDecorator.RestoreTypeNames(json);
+      return JsonConvert.DeserializeObject(json, type, _jsonSettings)!;
+   }
 }
 
 class RenamingDecorator
 {
-    readonly ITypeMapper _typeMapper;
+   readonly ITypeMapper _typeMapper;
 
-    static readonly OptimizedLazy<Regex> FindTypeNames = new(() => new Regex(@"""\$type""\: ""([^""]*)""", RegexOptions.Compiled));
+   static readonly OptimizedLazy<Regex> FindTypeNames = new(() => new Regex(@"""\$type""\: ""([^""]*)""", RegexOptions.Compiled));
 
-    public RenamingDecorator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
+   public RenamingDecorator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
 
-    public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
+   public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
 
-    string ReplaceTypeNamesWithTypeIds(Match match)
-    {
-        var type = Type.GetType(match.Groups[1].Value);
-        var typeId = _typeMapper.GetId(type!);
-        return $@"""$type"": ""{typeId.GuidValue}""";
-    }
+   string ReplaceTypeNamesWithTypeIds(Match match)
+   {
+      var type = Type.GetType(match.Groups[1].Value);
+      var typeId = _typeMapper.GetId(type!);
+      return $@"""$type"": ""{typeId.GuidValue}""";
+   }
 
-    public string RestoreTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeIdsWithTypeNames);
+   public string RestoreTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeIdsWithTypeNames);
 
-    string ReplaceTypeIdsWithTypeNames(Match match)
-    {
-        var typeId = new TypeId(Guid.Parse(match.Groups[1].Value));
-        var type = _typeMapper.GetType(typeId);
-        return $@"""$type"": ""{type.AssemblyQualifiedName}""";
-    }
+   string ReplaceTypeIdsWithTypeNames(Match match)
+   {
+      var typeId = new TypeId(Guid.Parse(match.Groups[1].Value));
+      var type = _typeMapper.GetType(typeId);
+      return $@"""$type"": ""{type.AssemblyQualifiedName}""";
+   }
 }
 
 
 class EventStoreSerializer : IEventStoreSerializer
 {
-    internal static readonly JsonSerializerSettings JsonSettings = Serialization.JsonSettings.SqlEventStoreSerializerSettings;
+   internal static readonly JsonSerializerSettings JsonSettings = Serialization.JsonSettings.SqlEventStoreSerializerSettings;
 
-    readonly RenamingSupportingJsonSerializer _serializer;
+   readonly RenamingSupportingJsonSerializer _serializer;
 
-    public EventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
+   public EventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
 
-    public string Serialize(AggregateEvent @event) => _serializer.Serialize(@event);
-    public IAggregateEvent Deserialize(Type eventType, string json) => (IAggregateEvent)_serializer.Deserialize(eventType, json);
+   public string Serialize(AggregateEvent @event) => _serializer.Serialize(@event);
+   public IAggregateEvent Deserialize(Type eventType, string json) => (IAggregateEvent)_serializer.Deserialize(eventType, json);
 }
 
 class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
 {
-    public DocumentDbSerializer(ITypeMapper typeMapper) : base(JsonSettings.SqlEventStoreSerializerSettings, typeMapper) {}
+   public DocumentDbSerializer(ITypeMapper typeMapper) : base(JsonSettings.SqlEventStoreSerializerSettings, typeMapper) {}
 }
 
 class RemotableMessageSerializer : IRemotableMessageSerializer
 {
-    readonly RenamingSupportingJsonSerializer _serializer;
+   readonly RenamingSupportingJsonSerializer _serializer;
 
-    public RemotableMessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
+   public RemotableMessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
 
-    public string SerializeResponse(object response) => _serializer.Serialize(response);
-    public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);
+   public string SerializeResponse(object response) => _serializer.Serialize(response);
+   public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);
 
-    public string SerializeMessage(IRemotableMessage message) => _serializer.Serialize(message);
-    public IRemotableMessage DeserializeMessage(Type messageType, string json) => (IRemotableMessage)_serializer.Deserialize(messageType, json);
+   public string SerializeMessage(IRemotableMessage message) => _serializer.Serialize(message);
+   public IRemotableMessage DeserializeMessage(Type messageType, string json) => (IRemotableMessage)_serializer.Deserialize(messageType, json);
 }

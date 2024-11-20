@@ -8,57 +8,57 @@ namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
 
 static partial class RootEvent
 {
-    public static partial class Entity
-    {
-        public interface IRoot : RootEvent.IRoot
-        {
-            int EntityId { get; }
-        }
+   public static partial class Entity
+   {
+      public interface IRoot : RootEvent.IRoot
+      {
+         int EntityId { get; }
+      }
 
-        internal interface Created : IRoot, PropertyUpdated.Name {}
+      internal interface Created : IRoot, PropertyUpdated.Name {}
 
-        interface Renamed : IRoot, PropertyUpdated.Name {}
+      interface Renamed : IRoot, PropertyUpdated.Name {}
 
-        internal interface Removed : IRoot {}
+      internal interface Removed : IRoot {}
 
-        internal static class PropertyUpdated
-        {
-            public interface Name : IRoot
+      internal static class PropertyUpdated
+      {
+         public interface Name : IRoot
+         {
+            string Name { get; }
+         }
+      }
+
+      internal static class Implementation
+      {
+         public abstract class Root : RootEvent.Implementation.Root, Entity.IRoot
+         {
+            public int EntityId { get; protected set; }
+
+            [UsedImplicitly] public class IdGetterSetter : IGetSetAggregateEntityEventEntityId<int, Root, IRoot>
             {
-                string Name { get; }
+               public void SetEntityId(Root @event, int id) => @event.EntityId = id;
+               public int GetId(IRoot @event) => @event.EntityId;
             }
-        }
+         }
 
-        internal static class Implementation
-        {
-            public abstract class Root : RootEvent.Implementation.Root, Entity.IRoot
+         public class Created : Root, Entity.Created
+         {
+            public Created(int entityId, string name)
             {
-                public int EntityId { get; protected set; }
-
-                [UsedImplicitly] public class IdGetterSetter : IGetSetAggregateEntityEventEntityId<int, Root, IRoot>
-                {
-                    public void SetEntityId(Root @event, int id) => @event.EntityId = id;
-                    public int GetId(IRoot @event) => @event.EntityId;
-                }
+               EntityId = entityId;
+               Name = name;
             }
+            public string Name { get; }
+         }
 
-            public class Created : Root, Entity.Created
-            {
-                public Created(int entityId, string name)
-                {
-                    EntityId = entityId;
-                    Name = name;
-                }
-                public string Name { get; }
-            }
+         public class Renamed : Root, Entity.Renamed
+         {
+            public Renamed(string name) => Name = name;
+            public string Name { get; }
+         }
 
-            public class Renamed : Root, Entity.Renamed
-            {
-                public Renamed(string name) => Name = name;
-                public string Name { get; }
-            }
-
-            public class Removed : Root, Entity.Removed {}
-        }
-    }
+         public class Removed : Root, Entity.Removed {}
+      }
+   }
 }

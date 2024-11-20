@@ -9,75 +9,75 @@ namespace Composable.SystemCE.TransactionsCE;
 /// Use this class for all our transaction participants so we only have to get it right once.</summary>
 abstract class VolatileTransactionParticipant : IEnlistmentNotification
 {
-    readonly EnlistmentOptions _enlistmentOptions;
-    internal VolatileTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None) => _enlistmentOptions = enlistmentOptions;
+   readonly EnlistmentOptions _enlistmentOptions;
+   internal VolatileTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None) => _enlistmentOptions = enlistmentOptions;
 
-    protected abstract void OnCommit();
-    protected abstract void OnRollback();
-    protected abstract void OnPrepare();
+   protected abstract void OnCommit();
+   protected abstract void OnRollback();
+   protected abstract void OnPrepare();
 
-    protected virtual void OnEnlist() {}
+   protected virtual void OnEnlist() {}
 
-    protected virtual void OnInDoubt() {}
+   protected virtual void OnInDoubt() {}
 
-    readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
-    Transaction? _enlistedIn;
-    internal void EnsureEnlistedInAnyAmbientTransaction() => _guard.Update(() =>
-    {
-        var ambientTransaction = Transaction.Current;
-        if(ambientTransaction == null) return;
+   readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
+   Transaction? _enlistedIn;
+   internal void EnsureEnlistedInAnyAmbientTransaction() => _guard.Update(() =>
+   {
+      var ambientTransaction = Transaction.Current;
+      if(ambientTransaction == null) return;
 
-        if(_enlistedIn == null)
-        {
-            _enlistedIn = ambientTransaction;
-            OnEnlist();
-            ambientTransaction.EnlistVolatile(this, _enlistmentOptions);
-        } else if(_enlistedIn != ambientTransaction)
-        {
-            throw new Exception($"Somehow switched to a new transaction. Original: {_enlistedIn.TransactionInformation.LocalIdentifier} new: {ambientTransaction.TransactionInformation.LocalIdentifier}");
-        }
-    });
+      if(_enlistedIn == null)
+      {
+         _enlistedIn = ambientTransaction;
+         OnEnlist();
+         ambientTransaction.EnlistVolatile(this, _enlistmentOptions);
+      } else if(_enlistedIn != ambientTransaction)
+      {
+         throw new Exception($"Somehow switched to a new transaction. Original: {_enlistedIn.TransactionInformation.LocalIdentifier} new: {ambientTransaction.TransactionInformation.LocalIdentifier}");
+      }
+   });
 
-    void IEnlistmentNotification.Prepare(PreparingEnlistment preparingEnlistment)
-    {
-        try
-        {
-            if(_enlistmentOptions.HasFlag(EnlistmentOptions.EnlistDuringPrepareRequired))
-            {
-                using var transactionScope = new TransactionScope(_enlistedIn!);
-                OnPrepare();
-                transactionScope.Complete();
-            } else
-            {
-                OnPrepare();
-            }
+   void IEnlistmentNotification.Prepare(PreparingEnlistment preparingEnlistment)
+   {
+      try
+      {
+         if(_enlistmentOptions.HasFlag(EnlistmentOptions.EnlistDuringPrepareRequired))
+         {
+            using var transactionScope = new TransactionScope(_enlistedIn!);
+            OnPrepare();
+            transactionScope.Complete();
+         } else
+         {
+            OnPrepare();
+         }
 
-            preparingEnlistment.Prepared();
-        }
-        catch(Exception exception)
-        {
-            preparingEnlistment.ForceRollback(exception);
-        }
-    }
+         preparingEnlistment.Prepared();
+      }
+      catch(Exception exception)
+      {
+         preparingEnlistment.ForceRollback(exception);
+      }
+   }
 
-    void IEnlistmentNotification.Commit(Enlistment enlistment)
-    {
-        OnCommit();
-        enlistment.Done();
-        _enlistedIn = null;
-    }
+   void IEnlistmentNotification.Commit(Enlistment enlistment)
+   {
+      OnCommit();
+      enlistment.Done();
+      _enlistedIn = null;
+   }
 
-    void IEnlistmentNotification.Rollback(Enlistment enlistment)
-    {
-        OnRollback();
-        enlistment.Done();
-        _enlistedIn = null;
-    }
+   void IEnlistmentNotification.Rollback(Enlistment enlistment)
+   {
+      OnRollback();
+      enlistment.Done();
+      _enlistedIn = null;
+   }
 
-    void IEnlistmentNotification.InDoubt(Enlistment enlistment)
-    {
-        OnInDoubt();
-        enlistment.Done();
-        _enlistedIn = null;
-    }
+   void IEnlistmentNotification.InDoubt(Enlistment enlistment)
+   {
+      OnInDoubt();
+      enlistment.Done();
+      _enlistedIn = null;
+   }
 }

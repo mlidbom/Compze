@@ -12,41 +12,41 @@ namespace AccountManagement.Domain;
 /// </summary>
 public class Email : ValueObject<Email>
 {
-    static readonly Regex BasicEmailValidationRegex = new(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$");
-    [JsonProperty] public string StringValue { get; }
+   static readonly Regex BasicEmailValidationRegex = new(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$");
+   [JsonProperty] public string StringValue { get; }
 
-    public override string ToString() => StringValue;
+   public override string ToString() => StringValue;
 
-    [JsonConstructor] Email(string stringValue)
-    {
-        AssertIsValid(stringValue);
-        StringValue = stringValue;
-    }
+   [JsonConstructor] Email(string stringValue)
+   {
+      AssertIsValid(stringValue);
+      StringValue = stringValue;
+   }
 
-    public static bool IsValidEmail(string emailAddress)
-    {
-        if(string.IsNullOrWhiteSpace(emailAddress)) return false;
-        if(!BasicEmailValidationRegex.IsMatch(emailAddress)) return false;
-        if(emailAddress.Contains("..")) return false;
-        if(emailAddress.Contains("@.") || emailAddress.Contains(".@")) return false;
+   public static bool IsValidEmail(string emailAddress)
+   {
+      if(string.IsNullOrWhiteSpace(emailAddress)) return false;
+      if(!BasicEmailValidationRegex.IsMatch(emailAddress)) return false;
+      if(emailAddress.Contains("..")) return false;
+      if(emailAddress.Contains("@.") || emailAddress.Contains(".@")) return false;
 
-        return true;
-    }
+      return true;
+   }
 
-    public static Email Parse(string emailAddress) => new(emailAddress);
+   public static Email Parse(string emailAddress) => new(emailAddress);
 
-    //Note how all the exceptions contain the invalid email address. Always make sure that exceptions contain the relevant information.
-    static void AssertIsValid(string emailAddress)
-    {
-        if(!IsValidEmail(emailAddress))
-        {
-            throw new InvalidEmailException(emailAddress);
-        }
-    }
+   //Note how all the exceptions contain the invalid email address. Always make sure that exceptions contain the relevant information.
+   static void AssertIsValid(string emailAddress)
+   {
+      if(!IsValidEmail(emailAddress))
+      {
+         throw new InvalidEmailException(emailAddress);
+      }
+   }
 }
 
 public class InvalidEmailException : ArgumentException
 {
-    // ReSharper disable once ConstantNullCoalescingCondition Resharper is WRONG about nullable reference types.
-    internal InvalidEmailException(string message) : base($"Supplied string: '{message ?? "[null]"}'") {}
+   // ReSharper disable once ConstantNullCoalescingCondition Resharper is WRONG about nullable reference types.
+   internal InvalidEmailException(string message) : base($"Supplied string: '{message ?? "[null]"}'") {}
 }

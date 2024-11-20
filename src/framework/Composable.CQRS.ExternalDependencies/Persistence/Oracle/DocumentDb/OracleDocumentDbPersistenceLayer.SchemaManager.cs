@@ -7,22 +7,22 @@ namespace Composable.Persistence.Oracle.DocumentDb;
 
 partial class OracleDocumentDbPersistenceLayer
 {
-    const string OracleGuidType = "CHAR(36)";
+   const string OracleGuidType = "CHAR(36)";
 
-    class SchemaManager
-    {
-        readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-        bool _initialized = false;
-        readonly IOracleConnectionPool _connectionPool;
-        public SchemaManager(IOracleConnectionPool connectionPool) => _connectionPool = connectionPool;
+   class SchemaManager
+   {
+      readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+      bool _initialized = false;
+      readonly IOracleConnectionPool _connectionPool;
+      public SchemaManager(IOracleConnectionPool connectionPool) => _connectionPool = connectionPool;
 
-        internal void EnsureInitialized() => _monitor.Update(() =>
-        {
-            if(!_initialized)
+      internal void EnsureInitialized() => _monitor.Update(() =>
+      {
+         if(!_initialized)
+         {
+            TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
             {
-                TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
-                {
-                    _connectionPool.ExecuteNonQuery($@"
+               _connectionPool.ExecuteNonQuery($@"
 declare existing_table_count integer;
 begin
     select count(*) into existing_table_count from user_tables where table_name='{Document.TableName.ToUpperInvariant()}';
@@ -44,10 +44,10 @@ begin
     end if;
 end;
 ");
-                });
-            }
+            });
+         }
 
-            _initialized = true;
-        });
-    }
+         _initialized = true;
+      });
+   }
 }

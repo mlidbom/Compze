@@ -8,15 +8,15 @@ namespace Composable.Persistence.Oracle.EventStore;
 
 partial class OracleEventStorePersistenceLayer : IEventStorePersistenceLayer
 {
-    const string OracleGuidType = "CHAR(36)";
-    bool _initialized;
+   const string OracleGuidType = "CHAR(36)";
+   bool _initialized;
 
-    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
-    {
-        if(!_initialized)
-        {
-            _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                          command => command.SetCommandText($@"
+   public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+   {
+      if(!_initialized)
+      {
+         _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                       command => command.SetCommandText($@"
 declare existing_table_count integer;
 begin
     select count(*) into existing_table_count from user_tables where table_name='{Event.TableName.ToUpperInvariant()}';
@@ -65,9 +65,9 @@ begin
     end if;
 end;
 ")
-                                                            .ExecuteNonQuery());
+                                                         .ExecuteNonQuery());
 
-            _initialized = true;
-        }
-    });
+         _initialized = true;
+      }
+   });
 }

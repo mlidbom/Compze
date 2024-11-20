@@ -6,5 +6,5 @@ namespace Composable.Persistence.Common.AdoCE;
 
 interface IPoolableConnection : IDisposable, IAsyncDisposable
 {
-    Task OpenAsyncFlex(SyncOrAsync syncOrAsync);
+   Task OpenAsyncFlex(SyncOrAsync syncOrAsync);
 }

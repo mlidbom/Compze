@@ -16,62 +16,62 @@ namespace Composable.DDD;
 /// </summary>
 [DebuggerDisplay("{" + nameof(ToString) + "()}")]
 public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity<TKey>
-    where TEntity : Entity<TEntity, TKey>
+   where TEntity : Entity<TEntity, TKey>
 {
-    ///<summary>Construct an instance with <param name="id"> as the <see cref="Id"/></param>.</summary>
-    protected Entity(TKey id) => _id = id;
+   ///<summary>Construct an instance with <param name="id"> as the <see cref="Id"/></param>.</summary>
+   protected Entity(TKey id) => _id = id;
 
-    TKey _id;
+   TKey _id;
 
-    /// <inheritdoc />
-    [NotNull]public virtual TKey Id
-    {
-        get => Assert.Result.NotNullOrDefault(_id);
-        private set => _id = Assert.Argument.NotNullOrDefault(value);
-    }
+   /// <inheritdoc />
+   [NotNull]public virtual TKey Id
+   {
+      get => Assert.Result.NotNullOrDefault(_id);
+      private set => _id = Assert.Argument.NotNullOrDefault(value);
+   }
 
-    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>
-    [Obsolete("Should probably never be used except by infrastructure code.")]
-    protected void SetIdBeVerySureYouKnowWhatYouAreDoing(TKey id)
-    {
-        Id = id;
-    }
+   ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>
+   [Obsolete("Should probably never be used except by infrastructure code.")]
+   protected void SetIdBeVerySureYouKnowWhatYouAreDoing(TKey id)
+   {
+      Id = id;
+   }
 
-    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
-    [Obsolete("Should probably never be used except by infrastructure code.")]
-    protected TKey GetIdBypassContractValidation() => _id;
+   ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
+   [Obsolete("Should probably never be used except by infrastructure code.")]
+   protected TKey GetIdBypassContractValidation() => _id;
 
-    /// <summary>
-    /// Implements equals using persistent reference semantics.
-    /// If two instances have the same Id, Equals will return true.
-    /// </summary>
-    public virtual bool Equals(TEntity? other) => other is not null && other.Id.Equals(Id);
+   /// <summary>
+   /// Implements equals using persistent reference semantics.
+   /// If two instances have the same Id, Equals will return true.
+   /// </summary>
+   public virtual bool Equals(TEntity? other) => other is not null && other.Id.Equals(Id);
 
-    /// <summary>
-    /// Implements equals using persistent reference semantics.
-    /// If two instances have the same Id, Equals will return true.
-    /// </summary>
-    public override bool Equals(object? other) => (other is TEntity actualOther) && Equals(actualOther);
+   /// <summary>
+   /// Implements equals using persistent reference semantics.
+   /// If two instances have the same Id, Equals will return true.
+   /// </summary>
+   public override bool Equals(object? other) => (other is TEntity actualOther) && Equals(actualOther);
 
-    /// <inheritdoc />
-    public override int GetHashCode() => Id.GetHashCode();
+   /// <inheritdoc />
+   public override int GetHashCode() => Id.GetHashCode();
 
-    ///<summary>True if both instances have the same ID</summary>
-    public static bool operator ==(Entity<TEntity, TKey>? lhs, Entity<TEntity, TKey>? rhs)
-    {
-        if (ReferenceEquals(lhs, rhs))
-        {
-            return true;
-        }
+   ///<summary>True if both instances have the same ID</summary>
+   public static bool operator ==(Entity<TEntity, TKey>? lhs, Entity<TEntity, TKey>? rhs)
+   {
+      if (ReferenceEquals(lhs, rhs))
+      {
+         return true;
+      }
 
-        return lhs is not null && lhs.Equals(rhs);
-    }
+      return lhs is not null && lhs.Equals(rhs);
+   }
 
-    ///<summary>True if both instances do not have the same ID</summary>
-    public static bool operator !=(Entity<TEntity, TKey> lhs, Entity<TEntity, TKey> rhs) => !(lhs == rhs);
+   ///<summary>True if both instances do not have the same ID</summary>
+   public static bool operator !=(Entity<TEntity, TKey> lhs, Entity<TEntity, TKey> rhs) => !(lhs == rhs);
 
-    ///<summary>Returns a string similar to: MyType:MyId</summary>
-    public override string ToString() => $"{GetType().Name}:{Id}";
+   ///<summary>Returns a string similar to: MyType:MyId</summary>
+   public override string ToString() => $"{GetType().Name}:{Id}";
 }
 
 /// <summary>
@@ -86,35 +86,35 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
 [DebuggerDisplay("{GetType().Name} Id={Id}")]
 public class Entity<TEntity> : Entity<TEntity, Guid>, IPersistentEntity<Guid>, IEquatable<TEntity> where TEntity : Entity<TEntity>
 {
-    /// <summary>
-    /// Creates an instance using the supplied <paramref name="id"/> as the Id.
-    /// </summary>
-    protected Entity(Guid id):base(id)
-    {
-    }
+   /// <summary>
+   /// Creates an instance using the supplied <paramref name="id"/> as the Id.
+   /// </summary>
+   protected Entity(Guid id):base(id)
+   {
+   }
 
-    /// <summary>
-    /// Creates a new instance with an automatically generated Id
-    /// </summary>
-    protected Entity():base(Guid.NewGuid())
-    {
-    }
+   /// <summary>
+   /// Creates a new instance with an automatically generated Id
+   /// </summary>
+   protected Entity():base(Guid.NewGuid())
+   {
+   }
 
-    ///<summary>True if both instances have the same ID</summary>
-    public static bool operator ==(Entity<TEntity>? lhs, Entity<TEntity>? rhs)
-    {
-        if (ReferenceEquals(lhs, rhs))
-        {
-            return true;
-        }
+   ///<summary>True if both instances have the same ID</summary>
+   public static bool operator ==(Entity<TEntity>? lhs, Entity<TEntity>? rhs)
+   {
+      if (ReferenceEquals(lhs, rhs))
+      {
+         return true;
+      }
 
-        return lhs is not null && lhs.Equals(rhs);
-    }
+      return lhs is not null && lhs.Equals(rhs);
+   }
 
-    ///<summary>True if both instances do not have the same ID</summary>
-    public static bool operator !=(Entity<TEntity> lhs, Entity<TEntity> rhs) => !(lhs == rhs);
+   ///<summary>True if both instances do not have the same ID</summary>
+   public static bool operator !=(Entity<TEntity> lhs, Entity<TEntity> rhs) => !(lhs == rhs);
 
-    public new bool Equals(TEntity? other) => base.Equals(other);
-    public override bool Equals(object? obj) => base.Equals(obj);
-    public override int GetHashCode() => base.GetHashCode();
+   public new bool Equals(TEntity? other) => base.Equals(other);
+   public override bool Equals(object? obj) => base.Equals(obj);
+   public override int GetHashCode() => base.GetHashCode();
 }

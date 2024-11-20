@@ -5,6 +5,6 @@ namespace Composable.DDD;
 /// </summary>
 public interface IHasPersistentIdentity<out TKeyType>
 {
-    /// <summary>The unique identifier for this instance.</summary>
-    TKeyType Id { get; }
+   /// <summary>The unique identifier for this instance.</summary>
+   TKeyType Id { get; }
 }

@@ -5,6 +5,6 @@
 /// </summary>
 interface IWrapper<out T>
 {
-    ///<summary>The wrapped value.</summary>
-    T Wrapped { get; }
+   ///<summary>The wrapped value.</summary>
+   T Wrapped { get; }
 }

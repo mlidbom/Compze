@@ -15,48 +15,48 @@ namespace Composable.Persistence.PgSql.DependencyInjection;
 
 public static class PgSqlPersistenceLayerRegistrar
 {
-    public static void RegisterPgSqlPersistenceLayer(this IEndpointBuilder @this) =>
-        @this.Container.RegisterPgSqlPersistenceLayer(@this.Configuration.ConnectionStringName);
+   public static void RegisterPgSqlPersistenceLayer(this IEndpointBuilder @this) =>
+      @this.Container.RegisterPgSqlPersistenceLayer(@this.Configuration.ConnectionStringName);
 
-    public static void RegisterPgSqlPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
-    {
-        //Connection management
-        if(container.RunMode.IsTesting)
-        {
-            container.Register(Singleton.For<PgSqlDatabasePool>()
-                                        .CreatedBy(((IConfigurationParameterProvider _) => new PgSqlDatabasePool()))
-                                        .DelegateToParentServiceLocatorWhenCloning());
+   public static void RegisterPgSqlPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
+   {
+      //Connection management
+      if(container.RunMode.IsTesting)
+      {
+         container.Register(Singleton.For<PgSqlDatabasePool>()
+                                     .CreatedBy(((IConfigurationParameterProvider _) => new PgSqlDatabasePool()))
+                                     .DelegateToParentServiceLocatorWhenCloning());
 
-            container.Register(
-                Singleton.For<IPgSqlConnectionPool>()
-                         .CreatedBy((PgSqlDatabasePool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName)))
-            );
-        } else
-        {
-            container.Register(
-                Singleton.For<IPgSqlConnectionPool>()
-                         .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IPgSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
-                         .DelegateToParentServiceLocatorWhenCloning());
-        }
+         container.Register(
+            Singleton.For<IPgSqlConnectionPool>()
+                     .CreatedBy((PgSqlDatabasePool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName)))
+         );
+      } else
+      {
+         container.Register(
+            Singleton.For<IPgSqlConnectionPool>()
+                     .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IPgSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
+                     .DelegateToParentServiceLocatorWhenCloning());
+      }
 
-        //Service bus
-        container.Register(
-            Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()
-                     .CreatedBy((IPgSqlConnectionPool endpointSqlConnection) => new PgSqlOutboxPersistenceLayer(endpointSqlConnection)),
-            Singleton.For<IServiceBusPersistenceLayer.IInboxPersistenceLayer>()
-                     .CreatedBy((IPgSqlConnectionPool endpointSqlConnection) => new PgSqlInboxPersistenceLayer(endpointSqlConnection)));
+      //Service bus
+      container.Register(
+         Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()
+                  .CreatedBy((IPgSqlConnectionPool endpointSqlConnection) => new PgSqlOutboxPersistenceLayer(endpointSqlConnection)),
+         Singleton.For<IServiceBusPersistenceLayer.IInboxPersistenceLayer>()
+                  .CreatedBy((IPgSqlConnectionPool endpointSqlConnection) => new PgSqlInboxPersistenceLayer(endpointSqlConnection)));
 
-        //DocumentDB
-        container.Register(
-            Singleton.For<IDocumentDbPersistenceLayer>()
-                     .CreatedBy((IPgSqlConnectionPool connectionProvider) => new PgSqlDocumentDbPersistenceLayer(connectionProvider)));
+      //DocumentDB
+      container.Register(
+         Singleton.For<IDocumentDbPersistenceLayer>()
+                  .CreatedBy((IPgSqlConnectionPool connectionProvider) => new PgSqlDocumentDbPersistenceLayer(connectionProvider)));
 
 
-        //Event store
-        container.Register(
-            Singleton.For<PgSqlEventStoreConnectionManager>()
-                     .CreatedBy((IPgSqlConnectionPool sqlConnectionProvider) => new PgSqlEventStoreConnectionManager(sqlConnectionProvider)),
-            Singleton.For<IEventStorePersistenceLayer>()
-                     .CreatedBy((PgSqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new PgSqlEventStorePersistenceLayer(connectionManager)));
-    }
+      //Event store
+      container.Register(
+         Singleton.For<PgSqlEventStoreConnectionManager>()
+                  .CreatedBy((IPgSqlConnectionPool sqlConnectionProvider) => new PgSqlEventStoreConnectionManager(sqlConnectionProvider)),
+         Singleton.For<IEventStorePersistenceLayer>()
+                  .CreatedBy((PgSqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new PgSqlEventStorePersistenceLayer(connectionManager)));
+   }
 }

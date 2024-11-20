@@ -4,7 +4,7 @@ namespace Composable.Testing.Threading;
 
 class ThreadSnapshot
 {
-    public Thread Thread { get; } = Thread.CurrentThread;
+   public Thread Thread { get; } = Thread.CurrentThread;
 
-    public TransactionSnapshot? Transaction { get; } = TransactionSnapshot.TakeSnapshot();
+   public TransactionSnapshot? Transaction { get; } = TransactionSnapshot.TakeSnapshot();
 }

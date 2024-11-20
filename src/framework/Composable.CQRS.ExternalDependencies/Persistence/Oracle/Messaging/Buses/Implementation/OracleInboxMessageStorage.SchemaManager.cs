@@ -9,13 +9,13 @@ namespace Composable.Persistence.Oracle.Messaging.Buses.Implementation;
 
 partial class OracleInboxPersistenceLayer
 {
-    const string OracleGuidType = "CHAR(36)";
-    static class SchemaManager
-    {
-        public static async Task EnsureTablesExistAsync(IOracleConnectionPool connectionFactory)
-        {
-            await  connectionFactory.UseCommandAsync(
-                command => command.SetCommandText($@"
+   const string OracleGuidType = "CHAR(36)";
+   static class SchemaManager
+   {
+      public static async Task EnsureTablesExistAsync(IOracleConnectionPool connectionFactory)
+      {
+         await  connectionFactory.UseCommandAsync(
+            command => command.SetCommandText($@"
 
 declare existing_table_count integer;
 begin
@@ -43,7 +43,7 @@ begin
     end if;
 end;
 ")
-                                  .ExecuteNonQueryAsync()).NoMarshalling();
-        }
-    }
+                              .ExecuteNonQueryAsync()).NoMarshalling();
+      }
+   }
 }

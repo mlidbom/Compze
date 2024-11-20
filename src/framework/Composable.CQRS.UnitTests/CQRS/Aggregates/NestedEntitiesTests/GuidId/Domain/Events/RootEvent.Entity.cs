@@ -9,57 +9,57 @@ namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Eve
 
 static partial class RootEvent
 {
-    public static partial class Entity
-    {
-        public interface IRoot : RootEvent.IRoot
-        {
-            Guid EntityId { get; }
-        }
+   public static partial class Entity
+   {
+      public interface IRoot : RootEvent.IRoot
+      {
+         Guid EntityId { get; }
+      }
 
-        public interface Created : IRoot, PropertyUpdated.Name {}
+      public interface Created : IRoot, PropertyUpdated.Name {}
 
-        interface Renamed : IRoot, PropertyUpdated.Name {}
+      interface Renamed : IRoot, PropertyUpdated.Name {}
 
-        public interface Removed : IRoot {}
+      public interface Removed : IRoot {}
 
-        public static class PropertyUpdated
-        {
-            public interface Name : IRoot
+      public static class PropertyUpdated
+      {
+         public interface Name : IRoot
+         {
+            string Name { get; }
+         }
+      }
+
+      internal static class Implementation
+      {
+         public abstract class Root : RootEvent.Implementation.Root, Entity.IRoot
+         {
+            public Guid EntityId { get; protected set; }
+
+            [UsedImplicitly] public class IdGetterSetter : IGetSetAggregateEntityEventEntityId<Guid, Root, IRoot>
             {
-                string Name { get; }
+               public void SetEntityId(Root @event, Guid id) => @event.EntityId = id;
+               public Guid GetId(IRoot @event) => @event.EntityId;
             }
-        }
+         }
 
-        internal static class Implementation
-        {
-            public abstract class Root : RootEvent.Implementation.Root, Entity.IRoot
+         public class Created : Root, Entity.Created
+         {
+            public Created(Guid entityId, string name)
             {
-                public Guid EntityId { get; protected set; }
-
-                [UsedImplicitly] public class IdGetterSetter : IGetSetAggregateEntityEventEntityId<Guid, Root, IRoot>
-                {
-                    public void SetEntityId(Root @event, Guid id) => @event.EntityId = id;
-                    public Guid GetId(IRoot @event) => @event.EntityId;
-                }
+               EntityId = entityId;
+               Name = name;
             }
+            public string Name { get; }
+         }
 
-            public class Created : Root, Entity.Created
-            {
-                public Created(Guid entityId, string name)
-                {
-                    EntityId = entityId;
-                    Name = name;
-                }
-                public string Name { get; }
-            }
+         public class Renamed : Root, Entity.Renamed
+         {
+            public Renamed(string name) => Name = name;
+            public string Name { get; }
+         }
 
-            public class Renamed : Root, Entity.Renamed
-            {
-                public Renamed(string name) => Name = name;
-                public string Name { get; }
-            }
-
-            public class Removed : Root, Entity.Removed {}
-        }
-    }
+         public class Removed : Root, Entity.Removed {}
+      }
+   }
 }

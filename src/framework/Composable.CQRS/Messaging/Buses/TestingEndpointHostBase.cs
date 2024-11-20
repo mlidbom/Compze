@@ -11,65 +11,65 @@ namespace Composable.Messaging.Buses;
 
 public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-    readonly ILogger _log = Logger.For<TestingEndpointHostBase>();
+   readonly ILogger _log = Logger.For<TestingEndpointHostBase>();
 
-    readonly List<Exception> _expectedExceptions = new();
-    public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => GlobalBusStateTracker = new GlobalBusStateTracker();
+   readonly List<Exception> _expectedExceptions = new();
+   public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => GlobalBusStateTracker = new GlobalBusStateTracker();
 
-    public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(@this => @this.Address is not null)
-                                                                    .Select(@this => @this.Address!)
-                                                                    .ToList();
+   public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(@this => @this.Address is not null)
+                                                                   .Select(@this => @this.Address!)
+                                                                   .ToList();
 
-    void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) { Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride)); }
-    public IEndpoint RegisterTestingEndpoint(string? name = null, EndpointId? id = null, Action<IEndpointBuilder>? setup = null)
-    {
-        var endpointId = id ?? new EndpointId(Guid.NewGuid());
-        name ??= $"TestingEndpoint-{endpointId.GuidValue}";
-        setup ??= (_ => {});
-        return RegisterEndpoint(name, endpointId, setup);
-    }
+   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) { Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride)); }
+   public IEndpoint RegisterTestingEndpoint(string? name = null, EndpointId? id = null, Action<IEndpointBuilder>? setup = null)
+   {
+      var endpointId = id ?? new EndpointId(Guid.NewGuid());
+      name ??= $"TestingEndpoint-{endpointId.GuidValue}";
+      setup ??= (_ => {});
+      return RegisterEndpoint(name, endpointId, setup);
+   }
 
-    public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
-        RegisterClientEndpoint(builder =>
-        {
-            ExtraEndpointConfiguration(builder);
-            Endpoints.Select(otherEndpoint => otherEndpoint.ServiceLocator.Resolve<TypeMapper>())
-                     .ForEach(otherTypeMapper => ((TypeMapper)builder.TypeMapper).IncludeMappingsFrom(otherTypeMapper));
-        });
+   public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
+      RegisterClientEndpoint(builder =>
+      {
+         ExtraEndpointConfiguration(builder);
+         Endpoints.Select(otherEndpoint => otherEndpoint.ServiceLocator.Resolve<TypeMapper>())
+                  .ForEach(otherTypeMapper => ((TypeMapper)builder.TypeMapper).IncludeMappingsFrom(otherTypeMapper));
+      });
 
-    internal virtual void ExtraEndpointConfiguration(IEndpointBuilder builder){}
+   internal virtual void ExtraEndpointConfiguration(IEndpointBuilder builder){}
 
-    public TException AssertThrown<TException>() where TException : Exception
-    {
-        WaitForEndpointsToBeAtRest();
-        var matchingException = GetThrownExceptions().OfType<TException>().SingleOrDefault();
-        if(matchingException == null)
-        {
-            throw new Exception("Matching exception not thrown.");
-        }
+   public TException AssertThrown<TException>() where TException : Exception
+   {
+      WaitForEndpointsToBeAtRest();
+      var matchingException = GetThrownExceptions().OfType<TException>().SingleOrDefault();
+      if(matchingException == null)
+      {
+         throw new Exception("Matching exception not thrown.");
+      }
 
-        _expectedExceptions.Add(matchingException);
-        return matchingException;
-    }
+      _expectedExceptions.Add(matchingException);
+      return matchingException;
+   }
 
-    bool _disposed;
-    protected override void Dispose(bool disposing) => _log.ExceptionsAndRethrow(() =>
-    {
-        if(!_disposed)
-        {
-            _disposed = true;
-            WaitForEndpointsToBeAtRest();
+   bool _disposed;
+   protected override void Dispose(bool disposing) => _log.ExceptionsAndRethrow(() =>
+   {
+      if(!_disposed)
+      {
+         _disposed = true;
+         WaitForEndpointsToBeAtRest();
 
-            var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
+         var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
-            base.Dispose(disposing);
+         base.Dispose(disposing);
 
-            if(unHandledExceptions.Any())
-            {
-                throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions.ToArray());
-            }
-        }
-    });
+         if(unHandledExceptions.Any())
+         {
+            throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions.ToArray());
+         }
+      }
+   });
 
-    List<Exception> GetThrownExceptions() => GlobalBusStateTracker.GetExceptions().ToList();
+   List<Exception> GetThrownExceptions() => GlobalBusStateTracker.GetExceptions().ToList();
 }

@@ -27,8 +27,8 @@ namespace Composable.GenericAbstractions.Hierarchies;
 /// </summary>
 interface IHierarchy<out T> where T : IHierarchy<T>
 {
-    /// <summary>
-    /// Returns the collection direct descendants of this node.
-    /// </summary>
-    IEnumerable<T> Children { get; }
+   /// <summary>
+   /// Returns the collection direct descendants of this node.
+   /// </summary>
+   IEnumerable<T> Children { get; }
 }

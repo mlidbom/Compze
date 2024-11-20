@@ -6,5 +6,5 @@ namespace Composable.SystemCE;
 
 static class DisposableCECollections
 {
-    internal static void DisposeAll(this IEnumerable<IDisposable> disposables) => disposables.ForEach(disposable => disposable.Dispose());
+   internal static void DisposeAll(this IEnumerable<IDisposable> disposables) => disposables.ForEach(disposable => disposable.Dispose());
 }

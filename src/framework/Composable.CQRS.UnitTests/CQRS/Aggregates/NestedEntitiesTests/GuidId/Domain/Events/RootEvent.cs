@@ -8,30 +8,30 @@ namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Eve
 
 static partial class RootEvent
 {
-    public interface IRoot : IAggregateEvent {}
+   public interface IRoot : IAggregateEvent {}
 
-    interface Created : IRoot, IAggregateCreatedEvent, PropertyUpdated.Name {}
+   interface Created : IRoot, IAggregateCreatedEvent, PropertyUpdated.Name {}
 
-    public static class PropertyUpdated
-    {
-        public interface Name : RootEvent.IRoot
-        {
-            string Name { get; }
-        }
-    }
+   public static class PropertyUpdated
+   {
+      public interface Name : RootEvent.IRoot
+      {
+         string Name { get; }
+      }
+   }
 
-    internal static class Implementation
-    {
-        public abstract class Root : AggregateEvent, IRoot
-        {
-            protected Root() { }
-            protected Root(Guid aggregateId) : base(aggregateId) { }
-        }
+   internal static class Implementation
+   {
+      public abstract class Root : AggregateEvent, IRoot
+      {
+         protected Root() { }
+         protected Root(Guid aggregateId) : base(aggregateId) { }
+      }
 
-        public class Created : Root, RootEvent.Created
-        {
-            public Created(Guid id, string name) : base(id) => Name = name;
-            public string Name { get; }
-        }
-    }
+      public class Created : Root, RootEvent.Created
+      {
+         public Created(Guid id, string name) : base(id) => Name = name;
+         public string Name { get; }
+      }
+   }
 }

@@ -8,15 +8,15 @@ namespace Composable.Persistence.MySql.EventStore;
 
 partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
 {
-    const string MySqlGuidType = "CHAR(36)";
-    bool _initialized;
+   const string MySqlGuidType = "CHAR(36)";
+   bool _initialized;
 
-    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
-    {
-        if(!_initialized)
-        {
-            _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                          command => command.ExecuteNonQuery($@"
+   public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+   {
+      if(!_initialized)
+      {
+         _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                       command => command.ExecuteNonQuery($@"
 
 
     CREATE TABLE IF NOT EXISTS {Event.TableName}
@@ -57,7 +57,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 "));
 
-            _initialized = true;
-        }
-    });
+         _initialized = true;
+      }
+   });
 }

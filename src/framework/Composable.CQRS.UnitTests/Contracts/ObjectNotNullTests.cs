@@ -12,37 +12,37 @@ namespace Composable.Tests.Contracts;
 [TestFixture]
 public class ObjectNotNullTests
 {
-    [Test]
-    public void ThrowsObjectNullExceptionForNullValues()
-    {
-        InspectionTestHelper.BatchTestInspection<ObjectIsNullContractViolationException, object>(
-            inspected => inspected.NotNull(),
-            badValues: new List<object> {null, null},
-            goodValues: new List<object> {new(), "", Guid.NewGuid()});
+   [Test]
+   public void ThrowsObjectNullExceptionForNullValues()
+   {
+      InspectionTestHelper.BatchTestInspection<ObjectIsNullContractViolationException, object>(
+         inspected => inspected.NotNull(),
+         badValues: new List<object> {null, null},
+         goodValues: new List<object> {new(), "", Guid.NewGuid()});
 
 
-        var nullString = (string)null;
-        var anObject = new object();
+      var nullString = (string)null;
+      var anObject = new object();
 
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullString).NotNull());
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => anObject, () => nullString).NotNull());
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullString).NotNull())
-              .Message.Should().Contain("nullString");
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullString).NotNull());
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => anObject, () => nullString).NotNull());
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullString).NotNull())
+            .Message.Should().Contain("nullString");
 
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Invariant(nullString, nameof(nullString)).NotNull());
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Invariant(anObject, nameof(anObject), nullString, nameof(nullString)).NotNull());
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Invariant(nullString, nameof(nullString)).NotNull())
-              .Message.Should().Contain("nullString");
-    }
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Invariant(nullString, nameof(nullString)).NotNull());
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Invariant(anObject, nameof(anObject), nullString, nameof(nullString)).NotNull());
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Invariant(nullString, nameof(nullString)).NotNull())
+            .Message.Should().Contain("nullString");
+   }
 
-    [Test]
-    public void UsesArgumentNameForExceptionmessage()
-    {
-        string nullString = null;
+   [Test]
+   public void UsesArgumentNameForExceptionmessage()
+   {
+      string nullString = null;
 
-        Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullString).NotNull())
-              .Message.Should().Contain("nullString");
-    }
+      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullString).NotNull())
+            .Message.Should().Contain("nullString");
+   }
 }
 
 // ReSharper restore ConvertToConstant.Local

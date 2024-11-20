@@ -16,9 +16,9 @@ public interface IHypermediaMessage : IRequireAResponse {}
 public interface IHasReturnValue<out TResult> : IHypermediaMessage {}
 public interface IEvent : IMessage {}
 public interface IWrapperEvent<out TEvent> : IEvent //Todo: IWrapperEvent name is not great...
-    where TEvent : IEvent
+   where TEvent : IEvent
 {
-    TEvent Event { get; }
+   TEvent Event { get; }
 }
 public interface ICommand : IMessage {}
 public interface ICommand<out TResult> : ICommand, IHasReturnValue<TResult> {}
@@ -29,7 +29,7 @@ public interface IQuery<out TResult> : IHasReturnValue<TResult> {}
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the query is sufficient to create the result. For such queries implement this interface. That way no network roundtrip etc is required to perform the query. Greatly enhancing performance</summary>
 public interface ICreateMyOwnResultQuery<out TResult> : IQuery<TResult>
 {
-    TResult CreateResult();
+   TResult CreateResult();
 }
 
 //Todo: Do we need both Remotable and Strictly local?
@@ -52,8 +52,8 @@ public interface IRemotableCreateMyOwnResultQuery<out TResult> : IRemotableQuery
 /// The <see cref="MessageId"/> must be maintained when binding a command to a UI or the guarantee will be lost.</summary>
 public interface IAtMostOnceMessage : IRemotableMessage, IMustBeHandledTransactionally
 {
-    ///<summary>Used by the infrastructure to guarantee that the same message is never delivered more than once. Must be generated when the message is created and then NEVER modified. Must be maintained when binding a command in a UI etc.</summary>
-    Guid MessageId { get; }
+   ///<summary>Used by the infrastructure to guarantee that the same message is never delivered more than once. Must be generated when the message is created and then NEVER modified. Must be maintained when binding a command in a UI etc.</summary>
+   Guid MessageId { get; }
 }
 public interface IAtMostOnceHypermediaCommand : IAtMostOnceMessage, IRemotableCommand, IHypermediaMessage {}
 public interface IAtMostOnceCommand<out TResult> : IAtMostOnceHypermediaCommand, IRemotableCommand<TResult> {}
@@ -68,7 +68,7 @@ public interface IExactlyOnceCommand : IRemotableCommand, IExactlyOnceMessage {}
 //Todo: Should this exist? Or should the wrapped event alone carry this data and metadata? Isn't having it here as well duplication that might cause conflicts with the declaration of the wrapped events?
 //Urgent: Remove for now.
 public interface IExactlyOnceWrapperEvent<out TEventInterface> : IWrapperEvent<TEventInterface>, IExactlyOnceEvent
-    where TEventInterface : IExactlyOnceEvent
+   where TEventInterface : IExactlyOnceEvent
 {
-    Guid IAtMostOnceMessage.MessageId => Event.MessageId;
+   Guid IAtMostOnceMessage.MessageId => Event.MessageId;
 }

@@ -2,5 +2,5 @@
 
 interface IAggregateTypeValidator
 {
-    void AssertIsValid<TAggregate>();
+   void AssertIsValid<TAggregate>();
 }

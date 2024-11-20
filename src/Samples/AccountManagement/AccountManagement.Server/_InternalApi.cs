@@ -13,35 +13,35 @@ namespace AccountManagement;
 
 static class InternalApi
 {
-    static ComposableApi ComposableApi => new();
-    internal static Query Queries => new();
-    internal static Command Commands => new();
-    internal static AccountQueryModel.Api AccountQueryModel => new();
+   static ComposableApi ComposableApi => new();
+   internal static Query Queries => new();
+   internal static Command Commands => new();
+   internal static AccountQueryModel.Api AccountQueryModel => new();
 
-    internal class Query
-    {
-        internal TryGetByEmailQuery TryGetByEmail(Email email) => new(email);
+   internal class Query
+   {
+      internal TryGetByEmailQuery TryGetByEmail(Email email) => new(email);
 
-        internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => ComposableApi.EventStore.Queries.GetForUpdate<Account>(id);
+      internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => ComposableApi.EventStore.Queries.GetForUpdate<Account>(id);
 
-        internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => ComposableApi.EventStore.Queries.GetReadOnlyCopy<Account>(id);
+      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => ComposableApi.EventStore.Queries.GetReadOnlyCopy<Account>(id);
 
-        internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => ComposableApi.EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
+      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => ComposableApi.EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
-        internal class TryGetByEmailQuery : IStrictlyLocalQuery<TryGetByEmailQuery, Option<Account>>
-        {
-            public TryGetByEmailQuery(Email accountId)
-            {
-                Contract.ArgumentNotNullOrDefault(accountId, nameof(Account));
-                Email = accountId;
-            }
+      internal class TryGetByEmailQuery : IStrictlyLocalQuery<TryGetByEmailQuery, Option<Account>>
+      {
+         public TryGetByEmailQuery(Email accountId)
+         {
+            Contract.ArgumentNotNullOrDefault(accountId, nameof(Account));
+            Email = accountId;
+         }
 
-            internal Email Email { get; private set; }
-        }
-    }
+         internal Email Email { get; private set; }
+      }
+   }
 
-    internal class Command
-    {
-        internal EventStoreApi.Command.SaveAggregate<Account> Save(Account account) => ComposableApi.EventStore.Commands.Save(account);
-    }
+   internal class Command
+   {
+      internal EventStoreApi.Command.SaveAggregate<Account> Save(Account account) => ComposableApi.EventStore.Commands.Save(account);
+   }
 }

@@ -9,30 +9,30 @@ namespace AccountManagement.UnitTests.UI.Commands;
 [TestFixture]
 public class EmailAttributeTests
 {
-    [Test]
-    public void IsNotValidIfEmailIsNull()
-    {
-        CommandValidator.ValidationFailures(new ACommand {Email = null})
-                        .Should().NotBeEmpty();
-    }
+   [Test]
+   public void IsNotValidIfEmailIsNull()
+   {
+      CommandValidator.ValidationFailures(new ACommand {Email = null})
+                      .Should().NotBeEmpty();
+   }
 
-    [Test]
-    public void IsValidIfEmailIsEmpty()
-    {
-        CommandValidator.ValidationFailures(new ACommand {Email = ""})
-                        .Should().BeEmpty();
-    }
+   [Test]
+   public void IsValidIfEmailIsEmpty()
+   {
+      CommandValidator.ValidationFailures(new ACommand {Email = ""})
+                      .Should().BeEmpty();
+   }
 
-    [Test]
-    public void IsNotValidIfEmailIsInvalid()
-    {
-        CommandValidator.ValidationFailures(new ACommand {Email = "InvalidEmail"})
-                        .Should().NotBeEmpty();
-    }
+   [Test]
+   public void IsNotValidIfEmailIsInvalid()
+   {
+      CommandValidator.ValidationFailures(new ACommand {Email = "InvalidEmail"})
+                      .Should().NotBeEmpty();
+   }
 
-    class ACommand
-    {
-        [Email]
-        public string Email { [UsedImplicitly] get; set; }
-    }
+   class ACommand
+   {
+      [Email]
+      public string Email { [UsedImplicitly] get; set; }
+   }
 }

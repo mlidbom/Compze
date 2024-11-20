@@ -7,37 +7,37 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
 
 [TestFixture] public class AsyncCancellationTokenSourceTests
 {
-    AsyncCancellationTokenSource _tokenSource;
+   AsyncCancellationTokenSource _tokenSource;
 
-    [SetUp] public void SetupTask() => _tokenSource = new AsyncCancellationTokenSource();
+   [SetUp] public void SetupTask() => _tokenSource = new AsyncCancellationTokenSource();
 
-    [TearDown] public void TearDownTask() => _tokenSource.Dispose();
+   [TearDown] public void TearDownTask() => _tokenSource.Dispose();
 
-    [Test] public void WithNoCallbacksRegisteredCancelIsInvokedSynchronously()
-    {
-        _tokenSource.CancelAsync();
-        //It seems unlikely that a thread has been spawned and changed the value between this thread executing the previous line and this line
-        Assert.That(_tokenSource.Token.IsCancellationRequested, Is.True);
-    }
+   [Test] public void WithNoCallbacksRegisteredCancelIsInvokedSynchronously()
+   {
+      _tokenSource.CancelAsync();
+      //It seems unlikely that a thread has been spawned and changed the value between this thread executing the previous line and this line
+      Assert.That(_tokenSource.Token.IsCancellationRequested, Is.True);
+   }
 
-    [Test] public void WithCallbacksCancelIsInvokedAsynchronously()
-    {
-        _tokenSource.Token.Register(() => Thread.Sleep(100));
-        var now = DateTime.UtcNow;
-        _tokenSource.CancelAsync();
-        Assert.That((DateTime.UtcNow - now),
-                    Is.LessThanOrEqualTo(TimeSpan.FromMilliseconds(50)),
-                    "If we syncronously wait for the sleep in the registered callback we should not get here for at least 1000 milliseconds");
-    }
+   [Test] public void WithCallbacksCancelIsInvokedAsynchronously()
+   {
+      _tokenSource.Token.Register(() => Thread.Sleep(100));
+      var now = DateTime.UtcNow;
+      _tokenSource.CancelAsync();
+      Assert.That((DateTime.UtcNow - now),
+                  Is.LessThanOrEqualTo(TimeSpan.FromMilliseconds(50)),
+                  "If we syncronously wait for the sleep in the registered callback we should not get here for at least 1000 milliseconds");
+   }
 
-    //This test verifies that the class does not perform as optimally as might be wished for. If it starts failing we should be happy :)
-    [Test] public void IfCallbacksHaveBeenRegisteredAndRemovedCancelIsStillInvokedAsynchronously()
-    {
-        var registration = _tokenSource.Token.Register(() => {});
-        registration.Unregister();
-        registration.Dispose();
-        _tokenSource.CancelAsync();
-        //It seems unlikely that a thread has been spawned and changed the value between this thread executing the previous line and this line
-        Assert.That(_tokenSource.Token.IsCancellationRequested, Is.False);
-    }
+   //This test verifies that the class does not perform as optimally as might be wished for. If it starts failing we should be happy :)
+   [Test] public void IfCallbacksHaveBeenRegisteredAndRemovedCancelIsStillInvokedAsynchronously()
+   {
+      var registration = _tokenSource.Token.Register(() => {});
+      registration.Unregister();
+      registration.Dispose();
+      _tokenSource.CancelAsync();
+      //It seems unlikely that a thread has been spawned and changed the value between this thread executing the previous line and this line
+      Assert.That(_tokenSource.Token.IsCancellationRequested, Is.False);
+   }
 }

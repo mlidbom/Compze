@@ -2,6 +2,6 @@
 
 public interface IEventModifier
 {
-    void Replace(params AggregateEvent[] events);
-    void InsertBefore(params AggregateEvent[] insert);
+   void Replace(params AggregateEvent[] events);
+   void InsertBefore(params AggregateEvent[] insert);
 }

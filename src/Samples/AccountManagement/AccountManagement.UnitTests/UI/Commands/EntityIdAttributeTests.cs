@@ -10,23 +10,23 @@ namespace AccountManagement.UnitTests.UI.Commands;
 [TestFixture]
 public class EntityIdAttributeTests
 {
-    [Test]
-    public void IsValidIfIdIsNull()
-    {
-        CommandValidator.ValidationFailures(new ACommand {AnId = null})
-                        .Should().NotBeEmpty();
-    }
+   [Test]
+   public void IsValidIfIdIsNull()
+   {
+      CommandValidator.ValidationFailures(new ACommand {AnId = null})
+                      .Should().NotBeEmpty();
+   }
 
-    [Test]
-    public void IsNotValidIfIdIsEmpty()
-    {
-        CommandValidator.ValidationFailures(new ACommand {AnId = Guid.Empty})
-                        .Should().NotBeEmpty();
-    }
+   [Test]
+   public void IsNotValidIfIdIsEmpty()
+   {
+      CommandValidator.ValidationFailures(new ACommand {AnId = Guid.Empty})
+                      .Should().NotBeEmpty();
+   }
 
-    class ACommand
-    {
-        [EntityId]
-        public Guid? AnId { [UsedImplicitly] get; set; }
-    }
+   class ACommand
+   {
+      [EntityId]
+      public Guid? AnId { [UsedImplicitly] get; set; }
+   }
 }

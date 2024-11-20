@@ -6,5 +6,5 @@ namespace Composable.SystemCE;
 
 static class ActionCE
 {
-    internal static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
+   internal static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
 }

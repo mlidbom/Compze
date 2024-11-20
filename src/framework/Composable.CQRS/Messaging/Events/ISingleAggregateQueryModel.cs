@@ -5,5 +5,5 @@ namespace Composable.Messaging.Events;
 
 public interface ISingleAggregateQueryModel : IHasPersistentIdentity<Guid>
 {
-    void SetId(Guid id);
+   void SetId(Guid id);
 }

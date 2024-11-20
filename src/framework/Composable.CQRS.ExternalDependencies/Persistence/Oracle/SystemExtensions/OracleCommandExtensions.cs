@@ -7,6 +7,6 @@ namespace Composable.Persistence.Oracle.SystemExtensions;
 
 static class OracleCommandExtensions
 {
-    public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this OracleCommand @this, Func<OracleDataReader, T> select) =>
-        DbCommandCE.ExecuteReaderAndSelect(@this, select);
+   public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this OracleCommand @this, Func<OracleDataReader, T> select) =>
+      DbCommandCE.ExecuteReaderAndSelect(@this, select);
 }

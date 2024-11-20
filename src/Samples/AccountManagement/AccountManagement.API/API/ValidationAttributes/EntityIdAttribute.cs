@@ -5,5 +5,5 @@ namespace AccountManagement.API.ValidationAttributes;
 
 public class EntityIdAttribute : GuidValidationAttribute
 {
-    protected override bool IsValid(Guid value) => value != Guid.Empty;
+   protected override bool IsValid(Guid value) => value != Guid.Empty;
 }

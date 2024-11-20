@@ -8,36 +8,36 @@ namespace AccountManagement.UserStories.Scenarios;
 
 class ChangePasswordScenario : ScenarioBase<AccountResource>
 {
-    readonly IEndpoint _clientEndpoint;
+   readonly IEndpoint _clientEndpoint;
 
-    public string OldPassword;
-    public string NewPassword;
-    public AccountResource Account { get; private set; }
+   public string OldPassword;
+   public string NewPassword;
+   public AccountResource Account { get; private set; }
 
-    public ChangePasswordScenario WithNewPassword(string newPassword) => this.Mutate(@this => @this.NewPassword = newPassword);
-    public ChangePasswordScenario WithOldPassword(string oldPassword) => this.Mutate(@this => @this.OldPassword = oldPassword);
+   public ChangePasswordScenario WithNewPassword(string newPassword) => this.Mutate(@this => @this.NewPassword = newPassword);
+   public ChangePasswordScenario WithOldPassword(string oldPassword) => this.Mutate(@this => @this.OldPassword = oldPassword);
 
-    public static ChangePasswordScenario Create(IEndpoint domainEndpoint)
-    {
-        var registerAccountScenario = new RegisterAccountScenario(domainEndpoint);
-        var account = registerAccountScenario.Execute().Account;
+   public static ChangePasswordScenario Create(IEndpoint domainEndpoint)
+   {
+      var registerAccountScenario = new RegisterAccountScenario(domainEndpoint);
+      var account = registerAccountScenario.Execute().Account;
 
-        return new ChangePasswordScenario(domainEndpoint, account, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
-    }
+      return new ChangePasswordScenario(domainEndpoint, account, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
+   }
 
-    public ChangePasswordScenario(IEndpoint clientEndpoint, AccountResource account, string oldPassword, string newPassword)
-    {
-        Assert.Argument.NotNull(account);
-        _clientEndpoint = clientEndpoint;
-        Account = account;
-        OldPassword = oldPassword;
-        NewPassword = newPassword;
-    }
+   public ChangePasswordScenario(IEndpoint clientEndpoint, AccountResource account, string oldPassword, string newPassword)
+   {
+      Assert.Argument.NotNull(account);
+      _clientEndpoint = clientEndpoint;
+      Account = account;
+      OldPassword = oldPassword;
+      NewPassword = newPassword;
+   }
 
-    public override AccountResource Execute()
-    {
-        Account.Commands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteAsClientRequestOn(_clientEndpoint);
+   public override AccountResource Execute()
+   {
+      Account.Commands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteAsClientRequestOn(_clientEndpoint);
 
-        return Account = Api.Query.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
-    }
+      return Account = Api.Query.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
+   }
 }

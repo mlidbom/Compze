@@ -7,20 +7,20 @@ namespace Composable.Persistence.PgSql.DocumentDb;
 
 partial class PgSqlDocumentDbPersistenceLayer
 {
-    class SchemaManager
-    {
-        readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-        bool _initialized = false;
-        readonly IPgSqlConnectionPool _connectionPool;
-        public SchemaManager(IPgSqlConnectionPool connectionPool) => _connectionPool = connectionPool;
+   class SchemaManager
+   {
+      readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+      bool _initialized = false;
+      readonly IPgSqlConnectionPool _connectionPool;
+      public SchemaManager(IPgSqlConnectionPool connectionPool) => _connectionPool = connectionPool;
 
-        internal void EnsureInitialized() => _monitor.Update(() =>
-        {
-            if(!_initialized)
+      internal void EnsureInitialized() => _monitor.Update(() =>
+      {
+         if(!_initialized)
+         {
+            TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
             {
-                TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
-                {
-                    _connectionPool.PrepareAndExecuteNonQuery($@"
+               _connectionPool.PrepareAndExecuteNonQuery($@"
 CREATE TABLE IF NOT EXISTS {Document.TableName} 
 (
     {Document.Id}          VARCHAR(500)                NOT NULL,
@@ -33,10 +33,10 @@ CREATE TABLE IF NOT EXISTS {Document.TableName}
 )
 
 ");
-                });
-            }
+            });
+         }
 
-            _initialized = true;
-        });
-    }
+         _initialized = true;
+      });
+   }
 }

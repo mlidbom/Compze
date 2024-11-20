@@ -5,26 +5,26 @@ namespace Composable.GenericAbstractions;
 
 public class OptimizedInitializer
 {
-    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-    bool _initialized;
-    readonly Action _initialize;
+   readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+   bool _initialized;
+   readonly Action _initialize;
 
-    internal void EnsureInitialized()
-    {
-        if(!_initialized)
-        {
-            _monitor.Update(() =>
+   internal void EnsureInitialized()
+   {
+      if(!_initialized)
+      {
+         _monitor.Update(() =>
+         {
+            if(!_initialized)
             {
-                if(!_initialized)
-                {
-                    _initialize();
-                    _initialized = true;
-                }
-            });
-        }
-    }
+               _initialize();
+               _initialized = true;
+            }
+         });
+      }
+   }
 
-    public bool IsInitialized => _initialized;
+   public bool IsInitialized => _initialized;
 
-    internal OptimizedInitializer(Action initialize) => _initialize = initialize;
+   internal OptimizedInitializer(Action initialize) => _initialize = initialize;
 }

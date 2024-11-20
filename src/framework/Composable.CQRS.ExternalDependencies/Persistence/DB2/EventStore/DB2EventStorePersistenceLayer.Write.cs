@@ -18,17 +18,17 @@ namespace Composable.Persistence.DB2.EventStore;
 //Performance: explore db2 alternatives to commented out MSSql hints throughout the persistence layer.
 partial class DB2EventStorePersistenceLayer
 {
-    public void InsertSingleAggregateEvents(IReadOnlyList<EventDataRow> events)
-    {
-        _connectionManager.UseConnection(connection =>
-        {
-            foreach(var data in events)
+   public void InsertSingleAggregateEvents(IReadOnlyList<EventDataRow> events)
+   {
+      _connectionManager.UseConnection(connection =>
+      {
+         foreach(var data in events)
+         {
+            try
             {
-                try
-                {
-                    connection.UseCommand(
-                        command => command.SetCommandText(
-                                               $@"
+               connection.UseCommand(
+                  command => command.SetCommandText(
+                                        $@"
 BEGIN
     IF (@{Event.InsertedVersion} = 1) THEN
         insert into {Lock.TableName}({Lock.AggregateId}) values(@{Lock.AggregateId});
@@ -46,46 +46,46 @@ BEGIN
     END IF;
 END;
 ")
-                                          .AddParameter(Event.AggregateId, data.AggregateId)
-                                          .AddParameter(Event.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                          .AddParameter(Event.EventType, data.EventType)
-                                          .AddParameter(Event.EventId, data.EventId)
-                                          .AddParameter(Event.UtcTimeStamp, data.UtcTimeStamp)
-                                          .AddNClobParameter(Event.Event, data.EventJson)
-                                          .AddParameter(Event.ReadOrderIntegerPart, DB2Type.Decimal, (data.StorageInformation.ReadOrder?.ToDB2DecimalIntegerPart() ?? new DB2Decimal(0)))
-                                          .AddParameter(Event.ReadOrderFractionPart, DB2Type.Decimal, (data.StorageInformation.ReadOrder?.ToDB2DecimalFractionPart() ?? new DB2Decimal(0)))
-                                          .AddParameter(Event.EffectiveVersion, DB2Type.Integer, data.StorageInformation.EffectiveVersion)
-                                          .AddNullableParameter(Event.TargetEvent, DB2Type.VarChar, data.StorageInformation.RefactoringInformation?.TargetEvent.ToString())
-                                          .AddNullableParameter(Event.RefactoringType, DB2Type.SmallInt, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (int?)data.StorageInformation.RefactoringInformation.RefactoringType)
-                                          .ExecuteNonQuery());
-                }
-                catch(DB2Exception e) when (SqlExceptions.DB2.IsPrimaryKeyViolation(e))
-                {
-                    //todo: Make sure we have test coverage for this.
-                    throw new EventDuplicateKeyException(e);
-                }
+                                    .AddParameter(Event.AggregateId, data.AggregateId)
+                                    .AddParameter(Event.InsertedVersion, data.StorageInformation.InsertedVersion)
+                                    .AddParameter(Event.EventType, data.EventType)
+                                    .AddParameter(Event.EventId, data.EventId)
+                                    .AddParameter(Event.UtcTimeStamp, data.UtcTimeStamp)
+                                    .AddNClobParameter(Event.Event, data.EventJson)
+                                    .AddParameter(Event.ReadOrderIntegerPart, DB2Type.Decimal, (data.StorageInformation.ReadOrder?.ToDB2DecimalIntegerPart() ?? new DB2Decimal(0)))
+                                    .AddParameter(Event.ReadOrderFractionPart, DB2Type.Decimal, (data.StorageInformation.ReadOrder?.ToDB2DecimalFractionPart() ?? new DB2Decimal(0)))
+                                    .AddParameter(Event.EffectiveVersion, DB2Type.Integer, data.StorageInformation.EffectiveVersion)
+                                    .AddNullableParameter(Event.TargetEvent, DB2Type.VarChar, data.StorageInformation.RefactoringInformation?.TargetEvent.ToString())
+                                    .AddNullableParameter(Event.RefactoringType, DB2Type.SmallInt, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (int?)data.StorageInformation.RefactoringInformation.RefactoringType)
+                                    .ExecuteNonQuery());
             }
-        });
-    }
+            catch(DB2Exception e) when (SqlExceptions.DB2.IsPrimaryKeyViolation(e))
+            {
+               //todo: Make sure we have test coverage for this.
+               throw new EventDuplicateKeyException(e);
+            }
+         }
+      });
+   }
 
-    public void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions)
-    {
-        var commandText = $@"
+   public void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions)
+   {
+      var commandText = $@"
 BEGIN
 
 {versions.Select((spec, _) =>
-                     $@"UPDATE {Event.TableName} SET {Event.EffectiveVersion} = {spec.EffectiveVersion} WHERE {Event.EventId} = '{spec.EventId}';").Join(Environment.NewLine)}
+                    $@"UPDATE {Event.TableName} SET {Event.EffectiveVersion} = {spec.EffectiveVersion} WHERE {Event.EventId} = '{spec.EventId}';").Join(Environment.NewLine)}
 
 END;";
-        _connectionManager.UseCommand(command => command.SetCommandText(commandText).ExecuteNonQuery());
+      _connectionManager.UseCommand(command => command.SetCommandText(commandText).ExecuteNonQuery());
 
-    }
+   }
 
-    public EventNeighborhood LoadEventNeighborHood(Guid eventId)
-    {
-        var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
+   public EventNeighborhood LoadEventNeighborHood(Guid eventId)
+   {
+      var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
-        var selectStatement = $@"
+      var selectStatement = $@"
 SELECT  {Event.ReadOrderIntegerPart} CONCAT '.' CONCAT {Event.ReadOrderFractionPart},
 
         (select {Event.ReadOrderIntegerPart} CONCAT '.' CONCAT {Event.ReadOrderFractionPart} from {Event.TableName} e1 
@@ -104,33 +104,33 @@ SELECT  {Event.ReadOrderIntegerPart} CONCAT '.' CONCAT {Event.ReadOrderFractionP
 FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
 where {Event.EventId} = @{Event.EventId}";
 
-        EventNeighborhood? neighborhood = null;
+      EventNeighborhood? neighborhood = null;
 
-        _connectionManager.UseCommand(
-            command =>
-            {
-                using var reader = command.SetCommandText(selectStatement)
-                                          .AddParameter(Event.EventId, eventId)
-                                          .ExecuteReader();
-                reader.Read();
+      _connectionManager.UseCommand(
+         command =>
+         {
+            using var reader = command.SetCommandText(selectStatement)
+                                      .AddParameter(Event.EventId, eventId)
+                                      .ExecuteReader();
+            reader.Read();
 
-                var effectiveReadOrder = ReadOrder.Parse(reader.GetString(0), bypassScaleTest: true);
-                var previousEventReadOrder = reader[1] is string prevString ? ReadOrder.Parse(prevString, bypassScaleTest: true): (ReadOrder?)null;
-                var nextEventReadOrder = reader[2] is string nextString ? ReadOrder.Parse(nextString, bypassScaleTest: true): (ReadOrder?)null;
-                neighborhood = new EventNeighborhood(effectiveReadOrder: effectiveReadOrder,
-                                                     previousEventReadOrder: previousEventReadOrder,
-                                                     nextEventReadOrder: nextEventReadOrder);
-            });
+            var effectiveReadOrder = ReadOrder.Parse(reader.GetString(0), bypassScaleTest: true);
+            var previousEventReadOrder = reader[1] is string prevString ? ReadOrder.Parse(prevString, bypassScaleTest: true): (ReadOrder?)null;
+            var nextEventReadOrder = reader[2] is string nextString ? ReadOrder.Parse(nextString, bypassScaleTest: true): (ReadOrder?)null;
+            neighborhood = new EventNeighborhood(effectiveReadOrder: effectiveReadOrder,
+                                                 previousEventReadOrder: previousEventReadOrder,
+                                                 nextEventReadOrder: nextEventReadOrder);
+         });
 
-        return Assert.Result.NotNull(neighborhood);
-    }
+      return Assert.Result.NotNull(neighborhood);
+   }
 
-    public void DeleteAggregate(Guid aggregateId) =>
-        _connectionManager.UseCommand(
-            command =>
-            {
-                command.SetCommandText($"DELETE FROM {Event.TableName} /*With(ROWLOCK)*/ WHERE {Event.AggregateId} = @{Event.AggregateId}")
-                       .AddParameter(Event.AggregateId, aggregateId)
-                       .ExecuteNonQuery();
-            });
+   public void DeleteAggregate(Guid aggregateId) =>
+      _connectionManager.UseCommand(
+         command =>
+         {
+            command.SetCommandText($"DELETE FROM {Event.TableName} /*With(ROWLOCK)*/ WHERE {Event.AggregateId} = @{Event.AggregateId}")
+                   .AddParameter(Event.AggregateId, aggregateId)
+                   .ExecuteNonQuery();
+         });
 }

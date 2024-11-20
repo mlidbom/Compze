@@ -8,15 +8,15 @@ namespace Composable.Persistence.PgSql.EventStore;
 
 partial class PgSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
 {
-    const string PgSqlGuidType = "CHAR(36)";
-    bool _initialized;
+   const string PgSqlGuidType = "CHAR(36)";
+   bool _initialized;
 
-    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
-    {
-        if(!_initialized)
-        {
-            _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                          command => command.PrepareAndExecuteNonQuery($@"
+   public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+   {
+      if(!_initialized)
+      {
+         _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                       command => command.PrepareAndExecuteNonQuery($@"
 
 
     CREATE TABLE IF NOT EXISTS {Event.TableName}
@@ -61,7 +61,7 @@ partial class PgSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
 
 "));
 
-            _initialized = true;
-        }
-    });
+         _initialized = true;
+      }
+   });
 }

@@ -8,86 +8,85 @@ using NUnit.Framework;
 // ReSharper disable MemberCanBePrivate.Local we want the inspection of the objects to include all properties...
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace Composable.Tests.Serialization.BinarySerializeds
+namespace Composable.Tests.Serialization.BinarySerializeds;
+
+[TestFixture] public class Roundtripping_tests
 {
-    [TestFixture] public class Roundtripping_tests
-    {
-        class SingleStringProperty : BinarySerialized<SingleStringProperty>
-        {
-            public string Name { get; set; } = "Default";
-            protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[] {GetterSetter.ForString(instance => instance.Name, (instance, value) => instance.Name = value)};
-        }
+   class SingleStringProperty : BinarySerialized<SingleStringProperty>
+   {
+      public string Name { get; set; } = "Default";
+      protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[] {GetterSetter.ForString(instance => instance.Name, (instance, value) => instance.Name = value)};
+   }
 
-        [Test] public void Class_with_single_property_roundtrips_correctly()
-        {
-            var singleString = new SingleStringProperty {Name = "NonDefault"};
+   [Test] public void Class_with_single_property_roundtrips_correctly()
+   {
+      var singleString = new SingleStringProperty {Name = "NonDefault"};
 
-            var data = singleString.Serialize();
-            var roundTripped = SingleStringProperty.Deserialize(data);
+      var data = singleString.Serialize();
+      var roundTripped = SingleStringProperty.Deserialize(data);
 
-            roundTripped.Should().BeEquivalentTo(singleString);
-        }
+      roundTripped.Should().BeEquivalentTo(singleString);
+   }
 
-        [Test] public void Instance_with_all_property_types_and_null_recursive_property_list_and_array_roundtrip_correctly()
-        {
-            var allPropertyTypesCountingFrom1 = new HasAllPropertyTypes(true, 2, 'a', new decimal(3.2), 4.1, 5, 6, 7, 8, 9, 10, 11.1f, 12, "13", Guid.Parse("00000000-0000-0000-0000-000000000014"), DateTime.FromBinary(15));
+   [Test] public void Instance_with_all_property_types_and_null_recursive_property_list_and_array_roundtrip_correctly()
+   {
+      var allPropertyTypesCountingFrom1 = new HasAllPropertyTypes(true, 2, 'a', new decimal(3.2), 4.1, 5, 6, 7, 8, 9, 10, 11.1f, 12, "13", Guid.Parse("00000000-0000-0000-0000-000000000014"), DateTime.FromBinary(15));
 
 
-            var data = allPropertyTypesCountingFrom1.Serialize();
-            var roundTripped = HasAllPropertyTypes.Deserialize(data);
+      var data = allPropertyTypesCountingFrom1.Serialize();
+      var roundTripped = HasAllPropertyTypes.Deserialize(data);
 
-            roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
-        }
+      roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
+   }
 
-        [Test] public void Instance_with_recursive_property_with_all_value_type_roundtrip_correctly()
-        {
-            var allPropertyTypesCountingFrom1 = new HasAllPropertyTypes(true, 2, 'a', new decimal(3.2), 4.1, 5, 6, 7, 8, 9, 10, 11.1f, 12, "13", Guid.Parse("00000000-0000-0000-0000-000000000014"), DateTime.FromBinary(15))
-                                                {
-                                                    RecursiveProperty = new HasAllPropertyTypes(true, 2, 'a', new decimal(3.2), 4.1, 5, 6, 7, 8, 9, 10, 11.1f, 12, "13", Guid.Parse("00000000-0000-0000-0000-000000000014"), DateTime.FromBinary(15))
-                                                };
-
-
-            var data = allPropertyTypesCountingFrom1.Serialize();
-            var roundTripped = HasAllPropertyTypes.Deserialize(data);
-
-            roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
-        }
-
-        [Test] public void Instance_with_recursive_list_property_with_one_null_value_roundtrip_correctly()
-        {
-            var allPropertyTypesCountingFrom1 = HasAllPropertyTypes.CreateInstanceWithSaneValues();
-
-            allPropertyTypesCountingFrom1.RecursiveListProperty = new List<HasAllPropertyTypes>
-                                                                  {
-                                                                      HasAllPropertyTypes.CreateInstanceWithSaneValues(),
-                                                                      null,
-                                                                      HasAllPropertyTypes.CreateInstanceWithSaneValues()
-                                                                  };
+   [Test] public void Instance_with_recursive_property_with_all_value_type_roundtrip_correctly()
+   {
+      var allPropertyTypesCountingFrom1 = new HasAllPropertyTypes(true, 2, 'a', new decimal(3.2), 4.1, 5, 6, 7, 8, 9, 10, 11.1f, 12, "13", Guid.Parse("00000000-0000-0000-0000-000000000014"), DateTime.FromBinary(15))
+                                          {
+                                             RecursiveProperty = new HasAllPropertyTypes(true, 2, 'a', new decimal(3.2), 4.1, 5, 6, 7, 8, 9, 10, 11.1f, 12, "13", Guid.Parse("00000000-0000-0000-0000-000000000014"), DateTime.FromBinary(15))
+                                          };
 
 
-            var data = allPropertyTypesCountingFrom1.Serialize();
-            var roundTripped = HasAllPropertyTypes.Deserialize(data);
+      var data = allPropertyTypesCountingFrom1.Serialize();
+      var roundTripped = HasAllPropertyTypes.Deserialize(data);
 
-            roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
-        }
+      roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
+   }
+
+   [Test] public void Instance_with_recursive_list_property_with_one_null_value_roundtrip_correctly()
+   {
+      var allPropertyTypesCountingFrom1 = HasAllPropertyTypes.CreateInstanceWithSaneValues();
+
+      allPropertyTypesCountingFrom1.RecursiveListProperty = new List<HasAllPropertyTypes>
+                                                            {
+                                                               HasAllPropertyTypes.CreateInstanceWithSaneValues(),
+                                                               null,
+                                                               HasAllPropertyTypes.CreateInstanceWithSaneValues()
+                                                            };
 
 
-        [Test] public void Instance_with_recursive_array_property_with_one_null_value_roundtrip_correctly()
-        {
-            var allPropertyTypesCountingFrom1 = HasAllPropertyTypes.CreateInstanceWithSaneValues();
+      var data = allPropertyTypesCountingFrom1.Serialize();
+      var roundTripped = HasAllPropertyTypes.Deserialize(data);
 
-            allPropertyTypesCountingFrom1.RecursiveArrayProperty = new[]
-                                                                  {
-                                                                      HasAllPropertyTypes.CreateInstanceWithSaneValues(),
-                                                                      null,
-                                                                      HasAllPropertyTypes.CreateInstanceWithSaneValues()
-                                                                  };
+      roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
+   }
 
 
-            var data = allPropertyTypesCountingFrom1.Serialize();
-            var roundTripped = HasAllPropertyTypes.Deserialize(data);
+   [Test] public void Instance_with_recursive_array_property_with_one_null_value_roundtrip_correctly()
+   {
+      var allPropertyTypesCountingFrom1 = HasAllPropertyTypes.CreateInstanceWithSaneValues();
 
-            roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
-        }
-    }
+      allPropertyTypesCountingFrom1.RecursiveArrayProperty = new[]
+                                                             {
+                                                                HasAllPropertyTypes.CreateInstanceWithSaneValues(),
+                                                                null,
+                                                                HasAllPropertyTypes.CreateInstanceWithSaneValues()
+                                                             };
+
+
+      var data = allPropertyTypesCountingFrom1.Serialize();
+      var roundTripped = HasAllPropertyTypes.Deserialize(data);
+
+      roundTripped.Should().BeEquivalentTo(allPropertyTypesCountingFrom1);
+   }
 }

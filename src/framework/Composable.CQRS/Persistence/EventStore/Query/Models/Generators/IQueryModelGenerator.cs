@@ -7,5 +7,5 @@ public interface IQueryModelGenerator { }
 
 interface IQueryModelGenerator<TDocument> : IQueryModelGenerator
 {
-    Option<TDocument> TryGenerate(Guid id);
+   Option<TDocument> TryGenerate(Guid id);
 }

@@ -7,6 +7,6 @@ namespace Composable.Persistence.DB2.SystemExtensions;
 
 static class DB2CommandExtensions
 {
-    public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this DB2Command @this, Func<DB2DataReader, T> select)
-        => DbCommandCE.ExecuteReaderAndSelect(@this, select);
+   public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this DB2Command @this, Func<DB2DataReader, T> select)
+      => DbCommandCE.ExecuteReaderAndSelect(@this, select);
 }

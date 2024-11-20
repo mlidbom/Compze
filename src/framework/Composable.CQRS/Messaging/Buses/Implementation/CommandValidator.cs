@@ -6,21 +6,21 @@ namespace Composable.Messaging.Buses.Implementation;
 
 static class CommandValidator
 {
-    public static void AssertCommandIsValid(ICommand command)
-    {
-        var failures = ValidationFailures(command);
-        if(failures.Any())
-        {
-            throw new CommandValidationFailureException(failures);
-        }
-    }
+   public static void AssertCommandIsValid(ICommand command)
+   {
+      var failures = ValidationFailures(command);
+      if(failures.Any())
+      {
+         throw new CommandValidationFailureException(failures);
+      }
+   }
 
-    static IReadOnlyList<ValidationResult> ValidationFailures(object command)
-    {
-        var context = new ValidationContext(command, serviceProvider: null, items: null);
-        var results = new List<ValidationResult>();
+   static IReadOnlyList<ValidationResult> ValidationFailures(object command)
+   {
+      var context = new ValidationContext(command, serviceProvider: null, items: null);
+      var results = new List<ValidationResult>();
 
-        Validator.TryValidateObject(command, context, results, validateAllProperties: true);
-        return results;
-    }
+      Validator.TryValidateObject(command, context, results, validateAllProperties: true);
+      return results;
+   }
 }

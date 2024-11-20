@@ -8,13 +8,13 @@ namespace Composable.Persistence.PgSql.Messaging.Buses.Implementation;
 
 partial class PgSqlInboxPersistenceLayer
 {
-    const string PgSqlGuidType = "CHAR(36)";
-    static class SchemaManager
-    {
-        public static async Task EnsureTablesExistAsync(IPgSqlConnectionPool connectionFactory)
-        {
+   const string PgSqlGuidType = "CHAR(36)";
+   static class SchemaManager
+   {
+      public static async Task EnsureTablesExistAsync(IPgSqlConnectionPool connectionFactory)
+      {
 
-            await connectionFactory.PrepareAndExecuteNonQueryAsync($@"
+         await connectionFactory.PrepareAndExecuteNonQueryAsync($@"
 
 
     CREATE TABLE IF NOT EXISTS {Message.TableName}
@@ -39,6 +39,6 @@ partial class PgSqlInboxPersistenceLayer
 
 ").NoMarshalling();
 
-        }
-    }
+      }
+   }
 }

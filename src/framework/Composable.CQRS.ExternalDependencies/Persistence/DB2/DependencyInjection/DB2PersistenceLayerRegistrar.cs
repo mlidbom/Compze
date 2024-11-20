@@ -15,48 +15,48 @@ namespace Composable.Persistence.DB2.DependencyInjection;
 
 public static class DB2PersistenceLayerRegistrar
 {
-    public static void RegisterDB2PersistenceLayer(this IEndpointBuilder @this) =>
-        @this.Container.RegisterDB2PersistenceLayer(@this.Configuration.ConnectionStringName);
+   public static void RegisterDB2PersistenceLayer(this IEndpointBuilder @this) =>
+      @this.Container.RegisterDB2PersistenceLayer(@this.Configuration.ConnectionStringName);
 
-    public static void RegisterDB2PersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
-    {
-        //Connection management
-        if(container.RunMode.IsTesting)
-        {
-            container.Register(Singleton.For<DB2DatabasePool>()
-                                        .CreatedBy(((IConfigurationParameterProvider _) => new DB2DatabasePool()))
-                                        .DelegateToParentServiceLocatorWhenCloning());
+   public static void RegisterDB2PersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
+   {
+      //Connection management
+      if(container.RunMode.IsTesting)
+      {
+         container.Register(Singleton.For<DB2DatabasePool>()
+                                     .CreatedBy(((IConfigurationParameterProvider _) => new DB2DatabasePool()))
+                                     .DelegateToParentServiceLocatorWhenCloning());
 
-            container.Register(
-                Singleton.For<IDB2ConnectionPool>()
-                         .CreatedBy((DB2DatabasePool pool) => IDB2ConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
-            );
-        } else
-        {
-            container.Register(
-                Singleton.For<IDB2ConnectionPool>()
-                         .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IDB2ConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
-                         .DelegateToParentServiceLocatorWhenCloning());
-        }
+         container.Register(
+            Singleton.For<IDB2ConnectionPool>()
+                     .CreatedBy((DB2DatabasePool pool) => IDB2ConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
+         );
+      } else
+      {
+         container.Register(
+            Singleton.For<IDB2ConnectionPool>()
+                     .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IDB2ConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
+                     .DelegateToParentServiceLocatorWhenCloning());
+      }
 
-        //Service bus
-        container.Register(
-            Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()
-                     .CreatedBy((IDB2ConnectionPool endpointSqlConnection) => new DB2OutboxPersistenceLayer(endpointSqlConnection)),
-            Singleton.For<IServiceBusPersistenceLayer.IInboxPersistenceLayer>()
-                     .CreatedBy((IDB2ConnectionPool endpointSqlConnection) => new DB2InboxPersistenceLayer(endpointSqlConnection)));
+      //Service bus
+      container.Register(
+         Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()
+                  .CreatedBy((IDB2ConnectionPool endpointSqlConnection) => new DB2OutboxPersistenceLayer(endpointSqlConnection)),
+         Singleton.For<IServiceBusPersistenceLayer.IInboxPersistenceLayer>()
+                  .CreatedBy((IDB2ConnectionPool endpointSqlConnection) => new DB2InboxPersistenceLayer(endpointSqlConnection)));
 
-        //DocumentDB
-        container.Register(
-            Singleton.For<IDocumentDbPersistenceLayer>()
-                     .CreatedBy((IDB2ConnectionPool connectionProvider) => new DB2DocumentDbPersistenceLayer(connectionProvider)));
+      //DocumentDB
+      container.Register(
+         Singleton.For<IDocumentDbPersistenceLayer>()
+                  .CreatedBy((IDB2ConnectionPool connectionProvider) => new DB2DocumentDbPersistenceLayer(connectionProvider)));
 
 
-        //Event store
-        container.Register(
-            Singleton.For<DB2EventStoreConnectionManager>()
-                     .CreatedBy((IDB2ConnectionPool sqlConnectionProvider) => new DB2EventStoreConnectionManager(sqlConnectionProvider)),
-            Singleton.For<IEventStorePersistenceLayer>()
-                     .CreatedBy((DB2EventStoreConnectionManager connectionManager, ITypeMapper _) => new DB2EventStorePersistenceLayer(connectionManager)));
-    }
+      //Event store
+      container.Register(
+         Singleton.For<DB2EventStoreConnectionManager>()
+                  .CreatedBy((IDB2ConnectionPool sqlConnectionProvider) => new DB2EventStoreConnectionManager(sqlConnectionProvider)),
+         Singleton.For<IEventStorePersistenceLayer>()
+                  .CreatedBy((DB2EventStoreConnectionManager connectionManager, ITypeMapper _) => new DB2EventStorePersistenceLayer(connectionManager)));
+   }
 }

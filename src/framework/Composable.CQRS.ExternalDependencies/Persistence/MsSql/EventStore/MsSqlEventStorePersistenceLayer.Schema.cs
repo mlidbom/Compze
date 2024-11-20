@@ -8,14 +8,14 @@ namespace Composable.Persistence.MsSql.EventStore;
 
 partial class MsSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
 {
-    bool _initialized;
+   bool _initialized;
 
-    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
-    {
-        if(!_initialized)
-        {
-            _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                          command => command.ExecuteNonQuery($@"
+   public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+   {
+      if(!_initialized)
+      {
+         _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                       command => command.ExecuteNonQuery($@"
 IF NOT EXISTS(SELECT NAME FROM sys.tables WHERE name = '{Event.TableName}')
 BEGIN
     CREATE TABLE dbo.{Event.TableName}
@@ -53,7 +53,7 @@ BEGIN
 END 
 "));
 
-            _initialized = true;
-        }
-    });
+         _initialized = true;
+      }
+   });
 }

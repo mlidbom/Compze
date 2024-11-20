@@ -9,23 +9,23 @@ namespace AccountManagement.API;
 
 public partial class AccountResource
 {
-    public static partial class Command
-    {
-        public partial class LogIn : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<LogIn.LoginAttemptResult>
-        {
-            public LogIn() : base(DeduplicationIdHandling.Reuse) {}
+   public static partial class Command
+   {
+      public partial class LogIn : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<LogIn.LoginAttemptResult>
+      {
+         public LogIn() : base(DeduplicationIdHandling.Reuse) {}
 
-            public static LogIn Create() => new() {MessageId = Guid.NewGuid()};
+         public static LogIn Create() => new() {MessageId = Guid.NewGuid()};
 
-            [Required] [Email] public string Email { get; set; } = string.Empty;
-            [Required] public string Password { get; set; } = string.Empty;
+         [Required] [Email] public string Email { get; set; } = string.Empty;
+         [Required] public string Password { get; set; } = string.Empty;
 
-            public LogIn WithValues(string email, string password) => new()
-                                                                      {
-                                                                          MessageId = MessageId,
-                                                                          Email = email,
-                                                                          Password = password
-                                                                      };
-        }
-    }
+         public LogIn WithValues(string email, string password) => new()
+                                                                   {
+                                                                      MessageId = MessageId,
+                                                                      Email = email,
+                                                                      Password = password
+                                                                   };
+      }
+   }
 }

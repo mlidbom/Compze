@@ -10,54 +10,54 @@ namespace Composable.Persistence.InMemory.EventStore;
 
 partial class InMemoryEventStorePersistenceLayer
 {
-    class TransactionLockManager
-    {
-        readonly Dictionary<Guid, TransactionWideLock> _aggregateGuards = new();
+   class TransactionLockManager
+   {
+      readonly Dictionary<Guid, TransactionWideLock> _aggregateGuards = new();
 
-        public TResult WithTransactionWideLock<TResult>(Guid aggregateId, Func<TResult> func) => WithTransactionWideLock(aggregateId, true, func);
-        public TResult WithTransactionWideLock<TResult>(Guid aggregateId, bool takeWriteLock, Func<TResult> func)
-        {
-            if(Transaction.Current != null)
+      public TResult WithTransactionWideLock<TResult>(Guid aggregateId, Func<TResult> func) => WithTransactionWideLock(aggregateId, true, func);
+      public TResult WithTransactionWideLock<TResult>(Guid aggregateId, bool takeWriteLock, Func<TResult> func)
+      {
+         if(Transaction.Current != null)
+         {
+            var @lock = _aggregateGuards.GetOrAdd(aggregateId, () => new TransactionWideLock());
+            @lock.AwaitAccess(takeWriteLock);
+         }
+
+         return func();
+      }
+
+      public void WithTransactionWideLock(Guid aggregateId, Action action) => WithTransactionWideLock(aggregateId, true, () =>
+      {
+         action();
+         return 1;
+      });
+
+      class TransactionWideLock
+      {
+         public TransactionWideLock() => Guard = MonitorCE.WithTimeout(1.Minutes());
+
+         public void AwaitAccess(bool takeWriteLock)
+         {
+            if(OwningTransactionLocalId.Length > 0 && !takeWriteLock)
             {
-                var @lock = _aggregateGuards.GetOrAdd(aggregateId, () => new TransactionWideLock());
-                @lock.AwaitAccess(takeWriteLock);
+               return;
             }
 
-            return func();
-        }
-
-        public void WithTransactionWideLock(Guid aggregateId, Action action) => WithTransactionWideLock(aggregateId, true, () =>
-        {
-            action();
-            return 1;
-        });
-
-        class TransactionWideLock
-        {
-            public TransactionWideLock() => Guard = MonitorCE.WithTimeout(1.Minutes());
-
-            public void AwaitAccess(bool takeWriteLock)
+            var currentTransactionId = Transaction.Current!.TransactionInformation.LocalIdentifier;
+            if(currentTransactionId != OwningTransactionLocalId)
             {
-                if(OwningTransactionLocalId.Length > 0 && !takeWriteLock)
-                {
-                    return;
-                }
-
-                var currentTransactionId = Transaction.Current!.TransactionInformation.LocalIdentifier;
-                if(currentTransactionId != OwningTransactionLocalId)
-                {
-                    var @lock = Guard.EnterUpdateLock();
-                    Transaction.Current.OnCompleted(() =>
-                    {
-                        OwningTransactionLocalId = string.Empty;
-                        @lock.Dispose();
-                    });
-                    OwningTransactionLocalId = currentTransactionId;
-                }
+               var @lock = Guard.EnterUpdateLock();
+               Transaction.Current.OnCompleted(() =>
+               {
+                  OwningTransactionLocalId = string.Empty;
+                  @lock.Dispose();
+               });
+               OwningTransactionLocalId = currentTransactionId;
             }
+         }
 
-            string OwningTransactionLocalId { get; set; } = string.Empty;
-            MonitorCE Guard { get; }
-        }
-    }
+         string OwningTransactionLocalId { get; set; } = string.Empty;
+         MonitorCE Guard { get; }
+      }
+   }
 }

@@ -10,32 +10,32 @@ namespace Composable.SystemCE.ReflectionCE;
 
 class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {
-    static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
-    internal static int ServiceCount { get; private set; }
-    static IReadOnlyDictionary<Type, int> _map = new Dictionary<Type, int>();
+   static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
+   internal static int ServiceCount { get; private set; }
+   static IReadOnlyDictionary<Type, int> _map = new Dictionary<Type, int>();
 
-    static Type[] _backMap = [];
+   static Type[] _backMap = [];
 
-    internal static int For(Type type)
-    {
-        if(_map.TryGetValue(type, out var value))
-            return value;
+   internal static int For(Type type)
+   {
+      if(_map.TryGetValue(type, out var value))
+         return value;
 
-        using(Monitor.EnterUpdateLock())
-        {
-            if(_map.TryGetValue(type, out var value2))
-                return value2;
+      using(Monitor.EnterUpdateLock())
+      {
+         if(_map.TryGetValue(type, out var value2))
+            return value2;
 
-            ThreadSafe.AddToCopyAndReplace(ref _backMap, type);
-            ThreadSafe.AddToCopyAndReplace(ref _map, type, ServiceCount++);
-            return ServiceCount - 1;
-        }
-    }
+         ThreadSafe.AddToCopyAndReplace(ref _backMap, type);
+         ThreadSafe.AddToCopyAndReplace(ref _map, type, ServiceCount++);
+         return ServiceCount - 1;
+      }
+   }
 
-    internal static class ForService<TType>
-    {
-        internal static readonly int Index = ComposableDependencyInjectionContainer.ServiceTypeIndex.For(typeof(TType));
-    }
+   internal static class ForService<TType>
+   {
+      internal static readonly int Index = ComposableDependencyInjectionContainer.ServiceTypeIndex.For(typeof(TType));
+   }
 
-    public static Type GetServiceForIndex(int serviceTypeIndex) => _backMap[serviceTypeIndex];
+   public static Type GetServiceForIndex(int serviceTypeIndex) => _backMap[serviceTypeIndex];
 }

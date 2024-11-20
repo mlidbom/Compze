@@ -9,12 +9,12 @@ namespace Composable.Persistence.MySql.Messaging.Buses.Implementation;
 
 partial class MySqlOutboxPersistenceLayer
 {
-    const string MySqlGuidType = "CHAR(36)";
-    static class SchemaManager
-    {
-        public static async Task EnsureTablesExistAsync(IMySqlConnectionPool connectionFactory)
-        {
-            await connectionFactory.ExecuteNonQueryAsync($@"
+   const string MySqlGuidType = "CHAR(36)";
+   static class SchemaManager
+   {
+      public static async Task EnsureTablesExistAsync(IMySqlConnectionPool connectionFactory)
+      {
+         await connectionFactory.ExecuteNonQueryAsync($@"
     CREATE TABLE IF NOT EXISTS {M.TableName}
     (
         {M.GeneratedId}       bigint          NOT NULL  AUTO_INCREMENT,
@@ -45,6 +45,6 @@ partial class MySqlOutboxPersistenceLayer
     DEFAULT CHARACTER SET = utf8mb4;
 
 ").NoMarshalling();
-        }
-    }
+      }
+   }
 }

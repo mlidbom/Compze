@@ -8,19 +8,19 @@ namespace Composable.Serialization;
 
 class IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
 {
-    public new static readonly IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql Instance = new();
-    IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql() {
-    }
+   public new static readonly IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql Instance = new();
+   IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql() {
+   }
 
-    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-    {
-        var property = base.CreateProperty(member, memberSerialization);
+   protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+   {
+      var property = base.CreateProperty(member, memberSerialization);
 
-        if(property.DeclaringType == typeof(AggregateEvent))
-        {
-            property.Ignored = true;
-        }
+      if(property.DeclaringType == typeof(AggregateEvent))
+      {
+         property.Ignored = true;
+      }
 
-        return property;
-    }
+      return property;
+   }
 }

@@ -2,7 +2,7 @@
 
 enum AggregateEventRefactoringType
 {
-    Replace = 1,
-    InsertBefore = 2,
-    InsertAfter = 3
+   Replace = 1,
+   InsertBefore = 2,
+   InsertAfter = 3
 }

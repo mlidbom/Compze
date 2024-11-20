@@ -12,35 +12,35 @@ namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_end
 
 public class Exacly_once_guarantee_tests : Fixture
 {
-    [Test] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
-    {
-        AssertThrows.Exception<TransactionAbortedException>(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
-        {
-            Transaction.Current.FailOnPrepare();
-            session.Send(new MyExactlyOnceCommand());
-        }));
+   [Test] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
+   {
+      AssertThrows.Exception<TransactionAbortedException>(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
+      {
+         Transaction.Current.FailOnPrepare();
+         session.Send(new MyExactlyOnceCommand());
+      }));
 
-        CommandHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
-                                .Should()
-                                .Be(false, "command should not reach handler");
-    }
+      CommandHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
+                              .Should()
+                              .Be(false, "command should not reach handler");
+   }
 
-    [Test] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceEvent_event_never_reaches_remote_handler_but_does_reach_local_handler()
-    {
-        var exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
-        MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
+   [Test] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceEvent_event_never_reaches_remote_handler_but_does_reach_local_handler()
+   {
+      var exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
+      MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
 
-        var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));
+      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));
 
-        backendException.InnerException.Message.Should().Contain(exceptionMessage);
-        frontEndException.Message.Should().Contain(exceptionMessage);
+      backendException.InnerException.Message.Should().Contain(exceptionMessage);
+      frontEndException.Message.Should().Contain(exceptionMessage);
 
-        MyLocalAggregateEventHandlerThreadGate.Passed.Should().BeGreaterOrEqualTo(1);
+      MyLocalAggregateEventHandlerThreadGate.Passed.Should().BeGreaterOrEqualTo(1);
 
-        MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
-                                               .Should()
-                                               .Be(false, "event should not reach handler");
-    }
+      MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
+                                             .Should()
+                                             .Be(false, "event should not reach handler");
+   }
 
-    public Exacly_once_guarantee_tests(string _) : base(_) {}
+   public Exacly_once_guarantee_tests(string _) : base(_) {}
 }

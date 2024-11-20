@@ -9,27 +9,27 @@ namespace Composable.Persistence.MsSql.SystemExtensions;
 
 interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>
 {
-    public static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-    public static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
+   public static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
+   public static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
-    class MsSqlConnectionPool : IMsSqlConnectionPool
-    {
-        readonly OptimizedLazy<IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>> _pool;
-        IDbConnectionPool<IComposableMsSqlConnection, SqlCommand> Pool => _pool.Value;
+   class MsSqlConnectionPool : IMsSqlConnectionPool
+   {
+      readonly OptimizedLazy<IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>> _pool;
+      IDbConnectionPool<IComposableMsSqlConnection, SqlCommand> Pool => _pool.Value;
 
-        public MsSqlConnectionPool(Func<string> getConnectionString)
-        {
-            _pool = new OptimizedLazy<IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>>(
-                () =>
-                {
-                    var connectionString = getConnectionString();
-                    return DbConnectionManager<IComposableMsSqlConnection, SqlCommand>.ForConnectionString(
-                        connectionString,
-                        PoolableConnectionFlags.Defaults,
-                        IComposableMsSqlConnection.Create);
-                });
-        }
+      public MsSqlConnectionPool(Func<string> getConnectionString)
+      {
+         _pool = new OptimizedLazy<IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>>(
+            () =>
+            {
+               var connectionString = getConnectionString();
+               return DbConnectionManager<IComposableMsSqlConnection, SqlCommand>.ForConnectionString(
+                  connectionString,
+                  PoolableConnectionFlags.Defaults,
+                  IComposableMsSqlConnection.Create);
+            });
+      }
 
-        public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMsSqlConnection, Task<TResult>> func) => Pool.UseConnectionAsyncFlex(syncOrAsync, func);
-    }
+      public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMsSqlConnection, Task<TResult>> func) => Pool.UseConnectionAsyncFlex(syncOrAsync, func);
+   }
 }

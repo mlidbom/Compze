@@ -13,32 +13,32 @@ namespace Composable.Persistence.Common.DependencyInjection;
 
 public static class TestingPersistenceLayerRegistrar
 {
-    public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IEndpointBuilder @this) => RegisterCurrentTestsConfiguredPersistenceLayer(@this.Container, @this.Configuration.ConnectionStringName);
+   public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IEndpointBuilder @this) => RegisterCurrentTestsConfiguredPersistenceLayer(@this.Container, @this.Configuration.ConnectionStringName);
 
-    public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
-    {
-        switch(TestEnv.PersistenceLayer.Current)
-        {
-            case PersistenceLayer.MsSql:
-                container.RegisterMsSqlPersistenceLayer(connectionStringName);
-                break;
-            case PersistenceLayer.Memory:
-                container.RegisterInMemoryPersistenceLayer(connectionStringName);
-                break;
-            case PersistenceLayer.MySql:
-                container.RegisterMySqlPersistenceLayer(connectionStringName);
-                break;
-            case PersistenceLayer.PgSql:
-                container.RegisterPgSqlPersistenceLayer(connectionStringName);
-                break;
-            case PersistenceLayer.Orcl:
-                container.RegisterOraclePersistenceLayer(connectionStringName);
-                break;
-            case PersistenceLayer.DB2:
-                container.RegisterDB2PersistenceLayer(connectionStringName);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+   public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
+   {
+      switch(TestEnv.PersistenceLayer.Current)
+      {
+         case PersistenceLayer.MsSql:
+            container.RegisterMsSqlPersistenceLayer(connectionStringName);
+            break;
+         case PersistenceLayer.Memory:
+            container.RegisterInMemoryPersistenceLayer(connectionStringName);
+            break;
+         case PersistenceLayer.MySql:
+            container.RegisterMySqlPersistenceLayer(connectionStringName);
+            break;
+         case PersistenceLayer.PgSql:
+            container.RegisterPgSqlPersistenceLayer(connectionStringName);
+            break;
+         case PersistenceLayer.Orcl:
+            container.RegisterOraclePersistenceLayer(connectionStringName);
+            break;
+         case PersistenceLayer.DB2:
+            container.RegisterDB2PersistenceLayer(connectionStringName);
+            break;
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+   }
 }

@@ -4,14 +4,14 @@ namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModel
 
 partial class Component
 {
-    public class NestedComponent : Component.NestedComponent<NestedComponent, RootEvent.Component.NestedComponent.IRoot>
-    {
-        public NestedComponent(Component parent) : base(parent)
-        {
-            RegisterEventAppliers()
-               .For<RootEvent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
-        }
+   public class NestedComponent : Component.NestedComponent<NestedComponent, RootEvent.Component.NestedComponent.IRoot>
+   {
+      public NestedComponent(Component parent) : base(parent)
+      {
+         RegisterEventAppliers()
+           .For<RootEvent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
+      }
 
-        public string Name { get; private set; } = string.Empty;
-    }
+      public string Name { get; private set; } = string.Empty;
+   }
 }

@@ -6,7 +6,7 @@ namespace AccountManagement.API;
 
 interface IAccountResourceData
 {
-    Guid Id { get; }
-    Email Email { get; }
-    Password Password { get; }
+   Guid Id { get; }
+   Email Email { get; }
+   Password Password { get; }
 }

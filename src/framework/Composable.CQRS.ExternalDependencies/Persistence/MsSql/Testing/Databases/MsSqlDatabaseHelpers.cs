@@ -4,7 +4,7 @@ namespace Composable.Persistence.MsSql.Testing.Databases;
 
 static class MsSqlDatabaseHelpers
 {
-    const string DropAllObjectsStatement = @"
+   const string DropAllObjectsStatement = @"
 
 DECLARE @statements nvarchar(max)
 
@@ -33,26 +33,26 @@ FROM (SELECT CASE
 execute sp_executesql @statements
 ";
 
-    internal const string SetReadCommittedSnapshotOnStatement = @"
+   internal const string SetReadCommittedSnapshotOnStatement = @"
 declare @databaseName varchar(1000)
 select @databaseName = DB_NAME()
 declare @sql nvarchar(500)
 set @sql = 'ALTER DATABASE [' + @databaseName +  '] SET READ_COMMITTED_SNAPSHOT ON'
 exec sp_executesql @sql";
 
-    internal static void DropAllObjects(this IDbConnection connection)
-    {
-        using var cmd = connection.CreateCommand();
-        cmd.CommandText = DropAllObjectsStatement;
-        cmd.ExecuteNonQuery();
-    }
+   internal static void DropAllObjects(this IDbConnection connection)
+   {
+      using var cmd = connection.CreateCommand();
+      cmd.CommandText = DropAllObjectsStatement;
+      cmd.ExecuteNonQuery();
+   }
 
-    internal static void DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel(this IComposableMsSqlConnection connection)
-    {
-        using var cmd = connection.CreateCommand();
-        cmd.CommandText = DropAllObjectsStatement + SetReadCommittedSnapshotOnStatement;
-        cmd.ExecuteNonQuery();
-    }
+   internal static void DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel(this IComposableMsSqlConnection connection)
+   {
+      using var cmd = connection.CreateCommand();
+      cmd.CommandText = DropAllObjectsStatement + SetReadCommittedSnapshotOnStatement;
+      cmd.ExecuteNonQuery();
+   }
 
 
 }

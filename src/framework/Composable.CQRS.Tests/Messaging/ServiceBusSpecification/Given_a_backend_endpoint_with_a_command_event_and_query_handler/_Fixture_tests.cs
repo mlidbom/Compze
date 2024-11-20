@@ -14,44 +14,44 @@ namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_end
 
 public class Fixture_tests : Fixture
 {
-    [Test] public void If_command_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception()
-    {
-        CommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-        RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
-        AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
-    }
+   [Test] public void If_command_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception()
+   {
+      CommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
+      AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
+   }
 
-    [Test] public async Task If_command_handler_with_result_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
-    {
-        CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-        await AssertThrows.Async<MessageDispatchingFailedException>(async () => await ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())));
+   [Test] public async Task If_command_handler_with_result_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
+   {
+      CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
+      await AssertThrows.Async<MessageDispatchingFailedException>(async () => await ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())));
 
-        AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
-    }
+      AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
+   }
 
-    [Test] public void If_event_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception()
-    {
-        MyRemoteAggregateEventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-        ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
-        AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
-    }
+   [Test] public void If_event_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception()
+   {
+      MyRemoteAggregateEventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
+      AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
+   }
 
-    [Test] public async Task If_query_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
-    {
-        QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-        await AssertThrows.Async<MessageDispatchingFailedException>(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery())));
+   [Test] public async Task If_query_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
+   {
+      QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      await AssertThrows.Async<MessageDispatchingFailedException>(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery())));
 
-        AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
-    }
+      AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
+   }
 
-    void AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException()
-    {
-        AssertThrows.Exception<AggregateException>(Host.Dispose)
-                    .InnerExceptions.Single().Should().Be(_thrownException);
-    }
+   void AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException()
+   {
+      AssertThrows.Exception<AggregateException>(Host.Dispose)
+                  .InnerExceptions.Single().Should().Be(_thrownException);
+   }
 
-    readonly IntentionalException _thrownException = new();
-    class IntentionalException : Exception {}
+   readonly IntentionalException _thrownException = new();
+   class IntentionalException : Exception {}
 
-    public Fixture_tests(string _) : base(_) {}
+   public Fixture_tests(string _) : base(_) {}
 }

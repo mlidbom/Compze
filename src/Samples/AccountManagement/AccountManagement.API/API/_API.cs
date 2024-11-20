@@ -17,7 +17,7 @@ namespace AccountManagement.API;
 /// </summary>
 public static class AccountWebClientApi
 {
-    public static MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource> Start => new();
+   public static MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource> Start => new();
 }
 
 
@@ -26,36 +26,36 @@ public static class AccountWebClientApi
 /// </summary>
 public class AccountApi : IStaticInstancePropertySingleton
 {
-    public static AccountApi Instance => new();
+   public static AccountApi Instance => new();
 
-    NavigationSpecification<StartResource> Start => NavigationSpecification.Get(AccountWebClientApi.Start);
+   NavigationSpecification<StartResource> Start => NavigationSpecification.Get(AccountWebClientApi.Start);
 
-    public QuerySection Query => new();
-    public CommandsSection Command => new();
+   public QuerySection Query => new();
+   public CommandsSection Command => new();
 
-    public class QuerySection
-    {
-        static readonly NavigationSpecification<StartResource.Query> Queries = Instance.Start.Select(start => start.Queries);
+   public class QuerySection
+   {
+      static readonly NavigationSpecification<StartResource.Query> Queries = Instance.Start.Select(start => start.Queries);
 
-        public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Queries.Get(queries => queries.AccountById.WithId(accountId));
-    }
+      public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Queries.Get(queries => queries.AccountById.WithId(accountId));
+   }
 
-    public class CommandsSection
-    {
-        static NavigationSpecification<StartResource.Command> Commands => Instance.Start.Select(start => start.Commands);
+   public class CommandsSection
+   {
+      static NavigationSpecification<StartResource.Command> Commands => Instance.Start.Select(start => start.Commands);
 
-        public NavigationSpecification<AccountResource.Command.Register> Register() => Commands.Select(commands => commands.Register);
-        public NavigationSpecification<AccountResource.Command.Register.RegistrationAttemptResult> Register(Guid accountId, string email, string password) => Commands.Post(commands => commands.Register.WithValues(accountId, email, password));
+      public NavigationSpecification<AccountResource.Command.Register> Register() => Commands.Select(commands => commands.Register);
+      public NavigationSpecification<AccountResource.Command.Register.RegistrationAttemptResult> Register(Guid accountId, string email, string password) => Commands.Post(commands => commands.Register.WithValues(accountId, email, password));
 
-        public NavigationSpecification<AccountResource.Command.LogIn> Login() => Commands.Select(commands => commands.Login);
-        public NavigationSpecification<AccountResource.Command.LogIn.LoginAttemptResult> Login(string email, string password) => Commands.Post(commands => commands.Login.WithValues(email, password));
-    }
+      public NavigationSpecification<AccountResource.Command.LogIn> Login() => Commands.Select(commands => commands.Login);
+      public NavigationSpecification<AccountResource.Command.LogIn.LoginAttemptResult> Login(string email, string password) => Commands.Post(commands => commands.Login.WithValues(email, password));
+   }
 
-    ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Eventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
-    public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
-    {
-        builder.RegisterInMemoryPersistenceLayer();
+   ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Eventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
+   public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
+   {
+      builder.RegisterInMemoryPersistenceLayer();
 
-        AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
-    }
+      AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
+   }
 }

@@ -7,19 +7,19 @@ namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_end
 
 public class Query_policies : Fixture
 {
-    [Test] public void The_same_query_can_be_reused_in_parallel_without_issues()
-    {
-        var test = new MyQuery();
+   [Test] public void The_same_query_can_be_reused_in_parallel_without_issues()
+   {
+      var test = new MyQuery();
 
-        QueryHandlerThreadGate.Close();
+      QueryHandlerThreadGate.Close();
 
-        var(result1, result2) = ClientEndpoint.ExecuteClientRequest(navigator => (navigator.GetAsync(test), navigator.GetAsync(test)));
+      var(result1, result2) = ClientEndpoint.ExecuteClientRequest(navigator => (navigator.GetAsync(test), navigator.GetAsync(test)));
 
-        QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 2);
-        QueryHandlerThreadGate.Open();
+      QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 2);
+      QueryHandlerThreadGate.Open();
 
-        Task.WaitAll(result1, result2);
-    }
+      Task.WaitAll(result1, result2);
+   }
 
-    public Query_policies(string _) : base(_) {}
+   public Query_policies(string _) : base(_) {}
 }

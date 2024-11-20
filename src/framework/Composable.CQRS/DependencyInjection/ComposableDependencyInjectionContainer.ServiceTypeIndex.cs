@@ -4,7 +4,7 @@ namespace Composable.DependencyInjection;
 
 partial class ComposableDependencyInjectionContainer
 {
-    internal class ServiceTypeIndex : TypeIndex<ServiceTypeIndex>
-    {
-    }
+   internal class ServiceTypeIndex : TypeIndex<ServiceTypeIndex>
+   {
+   }
 }
