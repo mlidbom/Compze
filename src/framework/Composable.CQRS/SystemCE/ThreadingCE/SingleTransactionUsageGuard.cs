@@ -4,8 +4,7 @@ namespace Composable.SystemCE.ThreadingCE;
 
 class SingleTransactionUsageGuard : ISingleContextUseGuard
 {
-   Transaction? _transaction;
-   public SingleTransactionUsageGuard() => _transaction = Transaction.Current;
+   Transaction? _transaction = Transaction.Current;
 
    public void AssertNoContextChangeOccurred(object guarded)
    {

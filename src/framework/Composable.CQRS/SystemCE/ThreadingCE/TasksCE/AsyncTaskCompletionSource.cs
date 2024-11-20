@@ -6,9 +6,7 @@ namespace Composable.SystemCE.ThreadingCE.TasksCE;
 
 class AsyncTaskCompletionSource<TResult>
 {
-   readonly TaskCompletionSource<TResult> _completionSource;
-
-   public AsyncTaskCompletionSource() => _completionSource = new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+   readonly TaskCompletionSource<TResult> _completionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
    public Task<TResult> Task => _completionSource.Task;
 
@@ -18,11 +16,9 @@ class AsyncTaskCompletionSource<TResult>
 
 class AsyncTaskCompletionSource
 {
-   readonly AsyncTaskCompletionSource<VoidCE> _completionSource;
+   readonly AsyncTaskCompletionSource<VoidCE> _completionSource = new();
    public Task Task => _completionSource.Task;
 
    public void ScheduleContinuation() => _completionSource.ScheduleContinuation(VoidCE.Instance);
    public void ScheduleException(Exception exception) => _completionSource.ScheduleException(exception);
-
-   public AsyncTaskCompletionSource() => _completionSource = new AsyncTaskCompletionSource<VoidCE>();
 }

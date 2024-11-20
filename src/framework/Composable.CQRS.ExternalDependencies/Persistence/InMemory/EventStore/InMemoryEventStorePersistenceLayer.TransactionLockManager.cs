@@ -34,8 +34,6 @@ partial class InMemoryEventStorePersistenceLayer
 
       class TransactionWideLock
       {
-         public TransactionWideLock() => Guard = MonitorCE.WithTimeout(1.Minutes());
-
          public void AwaitAccess(bool takeWriteLock)
          {
             if(OwningTransactionLocalId.Length > 0 && !takeWriteLock)
@@ -57,7 +55,7 @@ partial class InMemoryEventStorePersistenceLayer
          }
 
          string OwningTransactionLocalId { get; set; } = string.Empty;
-         MonitorCE Guard { get; }
+         MonitorCE Guard { get; } = MonitorCE.WithTimeout(1.Minutes());
       }
    }
 }

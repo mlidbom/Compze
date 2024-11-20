@@ -9,10 +9,9 @@ public class ValueObjectsWithCollectionsTests
 {
    class ExternalJobsDashboardViewModel : ValueObject<ExternalJobsDashboardViewModel>
    {
-      public ExternalJobsDashboardViewModel() => JobAdvertisements = new List<JobAdvertisement>();
-
       // ReSharper disable once UnusedAutoPropertyAccessor.Local
-      public IEnumerable<JobAdvertisement> JobAdvertisements { get; set; }
+      public IEnumerable<JobAdvertisement> JobAdvertisements { get; set; } = new List<JobAdvertisement>();
+
       // ReSharper disable once UnusedAutoPropertyAccessor.Local
       public string CompanyState { get; set; }
 
