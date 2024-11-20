@@ -22,6 +22,7 @@ using Composable.Testing.Threading;
 using Composable.Testing.Transactions;
 using FluentAssertions;
 using JetBrains.Annotations;
+using NCrunch.Framework;
 using NUnit.Framework;
 // ReSharper disable AccessToDisposedClosure
 
@@ -424,7 +425,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
    }
 
 
-   [Test]
+   [Test, EnableRdi(false)]
    public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel()
    {
       var user = new User();
