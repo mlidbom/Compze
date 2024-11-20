@@ -105,6 +105,7 @@ static partial class TimeSpanCE
          var parts = defaultFormattedWith7SecondDecimalPoints.Split('.');
          var (integer, decimalPart) = (parts[0], parts[1]);
 
+         // ReSharper disable once ReplaceSubstringWithRangeIndexer
          var d1 = decimalPart.Substring(0, 3);
          var d2 = decimalPart.Substring(3, 3);
          var d3 = decimalPart.Substring(6, 1);
