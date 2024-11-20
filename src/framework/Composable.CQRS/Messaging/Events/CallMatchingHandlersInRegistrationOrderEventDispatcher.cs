@@ -159,6 +159,7 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
       var result = new List<Action<IEvent>>();
       var hasFoundHandler = false;
 
+      // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
       foreach(var registeredHandler in _handlers)
       {
          var handler = registeredHandler.TryCreateHandlerFor(type);

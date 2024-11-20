@@ -92,13 +92,8 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
 
       TransactionScopeCe.Execute(() => EventStore.DeleteAggregate(toRemove));
 
-      foreach(var kvp in aggregatesWithEvents)
-      {
-         var stream = EventStore.GetAggregateHistory(kvp.Value[0]
-                                                        .AggregateId);
-         stream.Should()
-               .HaveCount(10);
-      }
+      aggregatesWithEvents.Select(kvp => EventStore.GetAggregateHistory(kvp.Value[0].AggregateId))
+                          .ForEach(stream => stream.Should().HaveCount(10));
 
       EventStore.GetAggregateHistory(toRemove)
                 .Should()
