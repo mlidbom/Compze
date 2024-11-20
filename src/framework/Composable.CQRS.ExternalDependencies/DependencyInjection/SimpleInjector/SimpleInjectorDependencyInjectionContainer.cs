@@ -20,7 +20,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
 
       _container.ResolveUnregisteredType += (_, unregisteredTypeEventArgs) =>
       {
-         if (!unregisteredTypeEventArgs.Handled && !unregisteredTypeEventArgs.UnregisteredServiceType.IsAbstract)
+         if (unregisteredTypeEventArgs is { Handled: false, UnregisteredServiceType.IsAbstract: false })
          {
             throw new InvalidOperationException(unregisteredTypeEventArgs.UnregisteredServiceType.ToFriendlyName() + " has not been registered.");
          }

@@ -38,7 +38,7 @@ static class TypeCE
 
       if(me == implemented) { return true;}
 
-      if(me.IsInterface && me.IsGenericType && me.GetGenericTypeDefinition() == implemented)
+      if(me is { IsInterface: true, IsGenericType: true } && me.GetGenericTypeDefinition() == implemented)
       {
          return true;
       }

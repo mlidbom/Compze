@@ -33,7 +33,7 @@ public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
       {
          var value = fields[i](this);
 
-         if (value is IEnumerable enumerableValue && value is not string)
+         if (value is IEnumerable enumerableValue and not string)
          {
             var value1Array = enumerableValue.Cast<object?>().Where(me => me is not null).ToArray();
             foreach(var something in value1Array)
@@ -72,7 +72,7 @@ public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
             if(value2 is not null)
                return false;
          }
-         else if (value1 is IEnumerable valueAsEnumerable && value1 is not string)
+         else if (value1 is IEnumerable valueAsEnumerable and not string)
          {
             if (value2 is null)
             {
