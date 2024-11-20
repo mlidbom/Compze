@@ -12,7 +12,7 @@ namespace Composable.SystemCE.ThreadingCE.ResourceAccess
 
         readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-        internal EnterLockTimeoutException(ulong lockId) : base("Timed out awaiting lock. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
+        internal EnterLockTimeoutException(ulong lockId, TimeSpan timeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
             LockId = lockId;
 
         internal ulong LockId { get; }

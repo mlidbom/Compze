@@ -99,7 +99,7 @@ namespace Composable.SystemCE.ThreadingCE.ResourceAccess
         {
             lock(_timeoutLock)
             {
-                var exception = new EnterLockTimeoutException(lockId: currentLock);
+                var exception = new EnterLockTimeoutException(lockId: currentLock, _timeout);
                 ThreadSafe.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
                 throw exception;
             }

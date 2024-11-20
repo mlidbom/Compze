@@ -53,50 +53,44 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess
 
         }
 
-        [TestFixture] public class Given_a_timeout_of_10_milliseconds_an_exception_is_thrown_By_Get_within_15_milliseconds_if_lock_is_not_acquired
+        [TestFixture] public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout
         {
-            [Test] public void Exception_is_ObjectLockTimedOutException()
-                => RunWithChangedStackTraceTimeout(
-                    fetchStackTraceTimeout: 60.Milliseconds(),
-                    () => RunScenario(ownerThreadBlockTime:15.Milliseconds(), monitorTimeout:5.Milliseconds()).Should().BeOfType<EnterLockTimeoutException>());
+            [Test] public void Exception_is_ObjectLockTimedOutException() =>
+               RunScenario(ownerThreadBlockTime:20.Milliseconds(), monitorTimeout: 10.Milliseconds()).Should().BeOfType<EnterLockTimeoutException>();
 
-            [Test] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace()
-                => RunWithChangedStackTraceTimeout(
-                    fetchStackTraceTimeout: 60.Milliseconds(),
-                    () => RunScenario(ownerThreadBlockTime: 30.Milliseconds(), monitorTimeout: 10.Milliseconds()).Message.Should().Contain(nameof(DisposeOwningThreadLock)));
+            [Test] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
+               RunScenario(ownerThreadBlockTime: 20.Milliseconds(), 5.Milliseconds()).Message.Should().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
-            [Test] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace()
-            {
-                RunWithChangedStackTraceTimeout(
-                    fetchStackTraceTimeout: 20.Milliseconds(),
-                    () => RunScenario(ownerThreadBlockTime:40.Milliseconds(), monitorTimeout: 10.Milliseconds()).Message.Should().NotContain(nameof(DisposeOwningThreadLock)));
-            }
+            [Test] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() => 
+               RunWithChangedFetchStackTraceTimeout(
+                  fetchStackTraceTimeout:1.Milliseconds(),
+                  () => RunScenario(ownerThreadBlockTime: 20.Milliseconds(), monitorTimeout:5.Milliseconds()).Message.Should().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack)));
 
-            internal static void DisposeOwningThreadLock(IDisposable disposable) => disposable.Dispose();
+            internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();
 
             static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout)
             {
-                var resourceGuard = MonitorCE.WithTimeout(monitorTimeout);
+                var monitor = MonitorCE.WithTimeout(monitorTimeout);
 
-                var hasTakenLock = new ManualResetEvent(false);
-                var isAwaitingLock = new ManualResetEvent(false);
+                var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
+                var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);
 
                 TaskCE.Run(() =>
                 {
-                    var @lock = resourceGuard.EnterUpdateLock();
-                    hasTakenLock.Set();
-                    isAwaitingLock.WaitOne();
+                    var @lock = monitor.EnterUpdateLock();
+                    threadOneHasTakenUpdateLock.Set();
+                    threadTwoIsAboutToTryToEnterUpdateLock.WaitOne();
                     Thread.Sleep(ownerThreadBlockTime);
-                    DisposeOwningThreadLock(@lock);
+                    DisposeInMethodSoItWillBeInTheCapturedCallStack(@lock);
                 });
 
-                hasTakenLock.WaitOne();
+                threadOneHasTakenUpdateLock.WaitOne();
 
                 var thrownException = Assert.Throws<AggregateException>(
                                                  () => TaskCE.Run(() =>
                                                               {
-                                                                  isAwaitingLock.Set();
-                                                                  resourceGuard.EnterUpdateLock();
+                                                                  threadTwoIsAboutToTryToEnterUpdateLock.Set();
+                                                                  monitor.EnterUpdateLock();
                                                               })
                                                              .Wait())
                                             .InnerExceptions.Single();
@@ -104,7 +98,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess
                 return thrownException;
             }
 
-            static void RunWithChangedStackTraceTimeout(TimeSpan fetchStackTraceTimeout, Action action)
+            static void RunWithChangedFetchStackTraceTimeout(TimeSpan fetchStackTraceTimeout, Action action)
             {
                 var timeoutProperty = typeof(EnterLockTimeoutException).GetField("_timeToWaitForOwningThreadStacktrace", BindingFlags.Static | BindingFlags.NonPublic)!;
                 var original = timeoutProperty.GetValue(null);
