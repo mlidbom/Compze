@@ -22,7 +22,7 @@ public partial class AccountResource
 
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) => Domain.Passwords.Password.Policy.Validate(NewPassword, this, () => NewPassword);
 
-            public ChangePassword WithValues(string oldPassword, string newPassword) => new ChangePassword(AccountId)
+            public ChangePassword WithValues(string oldPassword, string newPassword) => new(AccountId)
                                                                                         {
                                                                                             OldPassword = oldPassword,
                                                                                             NewPassword = newPassword

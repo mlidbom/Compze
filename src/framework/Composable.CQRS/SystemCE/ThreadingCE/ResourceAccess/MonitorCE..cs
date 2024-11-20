@@ -20,7 +20,7 @@ public partial class MonitorCE
 {
     ulong _lockId;
     long _contendedLocks;
-    readonly object _timeoutLock = new object();
+    readonly object _timeoutLock = new();
     int _allowReentrancyIfGreaterThanZero;
     IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
 

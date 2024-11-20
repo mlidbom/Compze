@@ -33,7 +33,7 @@ SELECT {topClause}
 FROM {Event.TableName} {lockHint} ";
     }
 
-    static EventDataRow ReadDataRow(SqlDataReader eventReader) => new EventDataRow(
+    static EventDataRow ReadDataRow(SqlDataReader eventReader) => new(
         eventType: eventReader.GetGuid(0),
         eventJson: eventReader.GetString(1),
         eventId: eventReader.GetGuid(4),

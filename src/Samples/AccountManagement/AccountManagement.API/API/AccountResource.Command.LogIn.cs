@@ -15,12 +15,12 @@ public partial class AccountResource
         {
             public LogIn() : base(DeduplicationIdHandling.Reuse) {}
 
-            public static LogIn Create() => new LogIn {MessageId = Guid.NewGuid()};
+            public static LogIn Create() => new() {MessageId = Guid.NewGuid()};
 
             [Required] [Email] public string Email { get; set; } = string.Empty;
             [Required] public string Password { get; set; } = string.Empty;
 
-            public LogIn WithValues(string email, string password) => new LogIn
+            public LogIn WithValues(string email, string password) => new()
                                                                       {
                                                                           MessageId = MessageId,
                                                                           Email = email,

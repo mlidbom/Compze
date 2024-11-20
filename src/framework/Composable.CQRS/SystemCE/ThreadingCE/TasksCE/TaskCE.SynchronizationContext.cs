@@ -30,8 +30,7 @@ static partial class TaskCE
     internal static GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter ResetSynchronizationContextAndScheduler() =>
         Task.CompletedTask.ResetSynchronizationContextAndScheduler();
 
-    internal static GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter ResetSynchronizationContextAndScheduler(this Task task) =>
-        new GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter(task);
+    internal static GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter ResetSynchronizationContextAndScheduler(this Task task) => new(task);
 
     internal readonly struct GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter : ICriticalNotifyCompletion
     {

@@ -12,9 +12,9 @@ class After<TEvent> : EventMigration<IRootEvent>
 {
     readonly IEnumerable<Type> _insert;
 
-    public static After<TEvent> Insert<T1>() => new After<TEvent>(EnumerableCE.OfTypes<T1>());
+    public static After<TEvent> Insert<T1>() => new(EnumerableCE.OfTypes<T1>());
     // ReSharper disable once UnusedMember.Global todo:Write test that uses this. We should have a test replacing with a collection.
-    public static After<TEvent> Insert<T1, T2>() => new After<TEvent>(EnumerableCE.OfTypes<T1, T2>());
+    public static After<TEvent> Insert<T1, T2>() => new(EnumerableCE.OfTypes<T1, T2>());
 
     After(IEnumerable<Type> insert) : base(Guid.Parse("544C6694-7B29-4CC0-8DAA-6C50A5F28B70"), "After", "Long description of After") => _insert = insert;
 

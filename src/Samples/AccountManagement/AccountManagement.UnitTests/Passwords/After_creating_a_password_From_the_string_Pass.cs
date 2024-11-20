@@ -8,7 +8,7 @@ namespace AccountManagement.UnitTests.Passwords;
 
 static class After_creating_a_password_From_the_string_Pass
 {
-    static readonly Password _password = new Password("Pass");
+    static readonly Password _password = new("Pass");
 
     [Test] public static void HashedPassword_is_not_null() => _password.Hash.Should().NotBeNull();
     [Test] public static void HashedPassword_is_not_an_empty_array() => _password.Hash.Should().NotBeEmpty();

@@ -29,7 +29,7 @@ class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersiste
 
     class Implementation : IServiceBusPersistenceLayer.IInboxPersistenceLayer
     {
-        readonly List<Row> _rows = new List<Row>();
+        readonly List<Row> _rows = new();
 
         public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage) => _rows.Add(new Row(messageId, typeId, serializedMessage));
 

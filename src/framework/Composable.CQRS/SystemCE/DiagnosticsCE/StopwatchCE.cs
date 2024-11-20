@@ -14,8 +14,7 @@ namespace Composable.SystemCE.DiagnosticsCE;
 ///<summary>Extensions to the Stopwatch class and related functionality.</summary>
 public static class StopwatchCE
 {
-    internal static TimingsStatisticsCollector CreateCollector(string name, params TimeSpan[] rangesToCollect) =>
-        new TimingsStatisticsCollector(name, rangesToCollect);
+    internal static TimingsStatisticsCollector CreateCollector(string name, params TimeSpan[] rangesToCollect) => new(name, rangesToCollect);
 
     ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
     internal static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);

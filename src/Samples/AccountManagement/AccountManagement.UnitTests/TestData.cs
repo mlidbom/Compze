@@ -46,15 +46,15 @@ static class TestData
         internal static IReadOnlyList<StringTestData> InvalidEmailsTestData =>
             new List<StringTestData>
             {
-                new StringTestData(null, "Is null"),
-                new StringTestData(string.Empty, "Is empty"),
-                new StringTestData("test.com", "Missing @ character"),
-                new StringTestData("test@test.com ", "Missing domain"),
-                new StringTestData("te st@test.com", "Contains space"),
-                new StringTestData("test@test", "Missing domain"),
-                new StringTestData("test@test..com", "Contains \"..\""),
-                new StringTestData("test@.test.com", "Contains \"@.\""),
-                new StringTestData("test.@test.com", "Contains \".@\"")
+                new(null, "Is null"),
+                new(string.Empty, "Is empty"),
+                new("test.com", "Missing @ character"),
+                new("test@test.com ", "Missing domain"),
+                new("te st@test.com", "Contains space"),
+                new("test@test", "Missing domain"),
+                new("test@test..com", "Contains \"..\""),
+                new("test@.test.com", "Contains \"@.\""),
+                new("test.@test.com", "Contains \".@\"")
             };
 
 

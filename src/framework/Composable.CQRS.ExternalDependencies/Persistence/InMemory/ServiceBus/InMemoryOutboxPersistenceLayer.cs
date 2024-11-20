@@ -23,8 +23,8 @@ class InMemoryOutboxPersistenceLayer : IServiceBusPersistenceLayer.IOutboxPersis
 
     class Implementation : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
     {
-        readonly List<Message> _messages = new List<Message>();
-        readonly Dictionary<Guid, Dictionary<Guid, bool>> _dispatchingStatus = new Dictionary<Guid, Dictionary<Guid, bool>>();
+        readonly List<Message> _messages = new();
+        readonly Dictionary<Guid, Dictionary<Guid, bool>> _dispatchingStatus = new();
 
         public void SaveMessage(Message messageWithReceivers)
         {

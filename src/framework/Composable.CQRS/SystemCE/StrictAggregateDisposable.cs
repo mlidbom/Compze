@@ -8,7 +8,7 @@ public class StrictAggregateDisposable : StrictlyManagedResourceBase<StrictAggre
 {
     readonly IList<IDisposable> _managedResources = new List<IDisposable>();
 
-    public static StrictAggregateDisposable Create(params IDisposable[] disposables) => new StrictAggregateDisposable(disposables);
+    public static StrictAggregateDisposable Create(params IDisposable[] disposables) => new(disposables);
 
     StrictAggregateDisposable(params IDisposable[] disposables)
     {

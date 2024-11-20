@@ -61,7 +61,7 @@ public static partial class TestEnv
                                                     .Single(ass => ass.GetName().FullName.ContainsInvariant("nunit.framework"))
                                                     .GetType("NUnit.Framework.TestContext")!;
 
-    static readonly Regex FindDimensions = new Regex(@"\(""(.*)\:(.*)""\)", RegexOptions.Compiled);
+    static readonly Regex FindDimensions = new(@"\(""(.*)\:(.*)""\)", RegexOptions.Compiled);
     public static class DIContainer
     {
         public static DependencyInjection.DIContainer Current

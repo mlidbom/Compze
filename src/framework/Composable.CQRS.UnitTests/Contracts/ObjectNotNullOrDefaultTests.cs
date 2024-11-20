@@ -41,7 +41,7 @@ public class ObjectNotNullOrDefaultTests
         InspectionTestHelper.BatchTestInspection<ObjectIsDefaultContractViolationException, object>(
             inspected => inspected.NotNullOrDefault(),
             badValues: new List<object> {zero, defaultMyStructure},
-            goodValues: new List<object> {new object(), "", Guid.NewGuid()});
+            goodValues: new List<object> {new(), "", Guid.NewGuid()});
     }
 
     struct MyStructure

@@ -13,7 +13,7 @@ public class UserStoryTest : DuplicateByPluggableComponentTest
 {
     protected ITestingEndpointHost Host { get; set; }
     IEndpoint _clientEndpoint;
-    internal AccountScenarioApi Scenario => new AccountScenarioApi(_clientEndpoint);
+    internal AccountScenarioApi Scenario => new(_clientEndpoint);
 
     [SetUp] public async Task SetupContainerAndBeginScope()
     {

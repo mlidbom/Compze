@@ -10,8 +10,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TAggregateE
         where TComponentEvent : class, TAggregateEvent
         where TComponent : Component<TComponent, TComponentEvent>
     {
-        readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher =
-            new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
+        readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new();
 
         void ApplyEvent(TComponentEvent @event)
         {

@@ -18,7 +18,7 @@ class MachineWideSharedObjectFiles<TObject> : MachineWideSharedObjectFiles, IDis
    bool _disposed;
    readonly bool _usePersistentFile;
 
-   internal static MachineWideSharedObjectFiles<TObject> For(string name, bool usePersistentFile = false) => new MachineWideSharedObjectFiles<TObject>(name, usePersistentFile);
+   internal static MachineWideSharedObjectFiles<TObject> For(string name, bool usePersistentFile = false) => new(name, usePersistentFile);
 
    MachineWideSharedObjectFiles(string name, bool usePersistentFile)
    {

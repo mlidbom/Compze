@@ -24,7 +24,7 @@ partial class Inbox : IInbox, IDisposable
         readonly NetMQPoller _poller;
         readonly Thread _messageReceiverThread;
         readonly CancellationTokenSource _cancellationTokenSource;
-        readonly BlockingCollection<IReadOnlyList<TransportMessage.InComing>> _receivedMessageBatches = new BlockingCollection<IReadOnlyList<TransportMessage.InComing>>();
+        readonly BlockingCollection<IReadOnlyList<TransportMessage.InComing>> _receivedMessageBatches = new();
         readonly HandlerExecutionEngine _handlerExecutionEngine;
         readonly IMessageStorage _storage;
         readonly ITypeMapper _typeMapper;

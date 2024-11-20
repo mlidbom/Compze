@@ -68,15 +68,15 @@ public class HierarchyTests
                      {
                          Children = new List<Person>
                                     {
-                                        new Person
+                                        new()
                                         {
                                             Children = new List<Person>
                                                        {
-                                                           new Person(),
-                                                           new Person()
+                                                           new(),
+                                                           new()
                                                        }
                                         },
-                                        new Person()
+                                        new()
                                     }
                      };
         var familyRegister = family.Flatten();

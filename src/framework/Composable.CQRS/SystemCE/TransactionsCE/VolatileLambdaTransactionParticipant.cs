@@ -10,9 +10,9 @@ class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
 {
     readonly Action? _onEnlist;
     readonly Action<TransactionStatus>? _onTransactionCompleted;
-    readonly List<Action> _rollbackTasks = new List<Action>();
-    readonly List<Action> _commitTasks = new List<Action>();
-    readonly List<Action> _prepareTasks = new List<Action>();
+    readonly List<Action> _rollbackTasks = new();
+    readonly List<Action> _commitTasks = new();
+    readonly List<Action> _prepareTasks = new();
 
     internal VolatileLambdaTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None,
                                                   Action? onPrepare = null,

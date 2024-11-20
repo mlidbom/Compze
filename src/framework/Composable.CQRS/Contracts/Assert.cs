@@ -24,10 +24,10 @@ public static class Assert
 
     public readonly struct BaseAssertion
     {
-        internal static BaseAssertion InvariantInstance = new BaseAssertion(InspectionType.Invariant);
-        internal static BaseAssertion ArgumentsInstance = new BaseAssertion(InspectionType.Argument);
-        internal static BaseAssertion StateInstance = new BaseAssertion(InspectionType.State);
-        internal static BaseAssertion ResultInstance = new BaseAssertion(InspectionType.Result);
+        internal static BaseAssertion InvariantInstance = new(InspectionType.Invariant);
+        internal static BaseAssertion ArgumentsInstance = new(InspectionType.Argument);
+        internal static BaseAssertion StateInstance = new(InspectionType.State);
+        internal static BaseAssertion ResultInstance = new(InspectionType.Result);
 
         readonly InspectionType _inspectionType;
         BaseAssertion(InspectionType inspectionType) => _inspectionType = inspectionType;

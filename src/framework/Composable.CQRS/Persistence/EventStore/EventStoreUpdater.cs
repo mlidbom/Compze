@@ -19,7 +19,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
     readonly IAggregateTypeValidator _aggregateTypeValidator;
     readonly IDictionary<Guid, IEventStored> _idMap = new Dictionary<Guid, IEventStored>();
     readonly ISingleContextUseGuard _usageGuard;
-    readonly List<IDisposable> _disposableResources = new List<IDisposable>();
+    readonly List<IDisposable> _disposableResources = new();
     IUtcTimeTimeSource TimeSource { get; set; }
 
     public EventStoreUpdater(IEventStoreEventPublisher eventStoreEventPublisher, IEventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)

@@ -33,10 +33,10 @@ public static class TransactionScopeCe
     }
 
     static TransactionScope CreateScope(TransactionScopeOption options, IsolationLevel isolationLevel) =>
-        new TransactionScope(options,
-                             new TransactionOptions
-                             {
-                                 IsolationLevel = isolationLevel
-                             },
-                             TransactionScopeAsyncFlowOption.Enabled);
+        new(options,
+            new TransactionOptions
+            {
+                IsolationLevel = isolationLevel
+            },
+            TransactionScopeAsyncFlowOption.Enabled);
 }

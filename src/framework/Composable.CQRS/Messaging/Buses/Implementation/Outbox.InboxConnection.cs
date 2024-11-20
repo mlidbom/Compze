@@ -23,7 +23,7 @@ partial class Outbox
         readonly ITypeMapper _typeMapper;
         readonly IRemotableMessageSerializer _serializer;
         readonly IGlobalBusStateTracker _globalBusStateTracker;
-        readonly NetMQQueue<TransportMessage.OutGoing> _sendQueue = new NetMQQueue<TransportMessage.OutGoing>();
+        readonly NetMQQueue<TransportMessage.OutGoing> _sendQueue = new();
         // ReSharper disable once InconsistentNaming we use this naming variation to try and make it extra clear that this must only ever be accessed from the poller thread.
         readonly IDisposable _socketDisposable;
 
@@ -133,8 +133,8 @@ partial class Outbox
 
         class InboxConnectionState
         {
-            internal readonly Dictionary<Guid, AsyncTaskCompletionSource<Func<object>>> ExpectedResponseTasks = new Dictionary<Guid, AsyncTaskCompletionSource<Func<object>>>();
-            internal readonly Dictionary<Guid, AsyncTaskCompletionSource> ExpectedCompletionTasks = new Dictionary<Guid, AsyncTaskCompletionSource>();
+            internal readonly Dictionary<Guid, AsyncTaskCompletionSource<Func<object>>> ExpectedResponseTasks = new();
+            internal readonly Dictionary<Guid, AsyncTaskCompletionSource> ExpectedCompletionTasks = new();
         }
 
         //Runs on poller thread so NO BLOCKING HERE!

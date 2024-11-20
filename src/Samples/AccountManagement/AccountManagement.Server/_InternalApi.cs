@@ -13,14 +13,14 @@ namespace AccountManagement;
 
 static class InternalApi
 {
-    static ComposableApi ComposableApi => new ComposableApi();
-    internal static Query Queries => new Query();
-    internal static Command Commands => new Command();
-    internal static AccountQueryModel.Api AccountQueryModel => new AccountQueryModel.Api();
+    static ComposableApi ComposableApi => new();
+    internal static Query Queries => new();
+    internal static Command Commands => new();
+    internal static AccountQueryModel.Api AccountQueryModel => new();
 
     internal class Query
     {
-        internal TryGetByEmailQuery TryGetByEmail(Email email) => new TryGetByEmailQuery(email);
+        internal TryGetByEmailQuery TryGetByEmail(Email email) => new(email);
 
         internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => ComposableApi.EventStore.Queries.GetForUpdate<Account>(id);
 

@@ -28,9 +28,9 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
 
     class NonThreadSafeImplementation
     {
-        internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = new Dictionary<Guid, InFlightMessage>();
+        internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = new();
 
-        readonly List<Exception> _busExceptions = new List<Exception>();
+        readonly List<Exception> _busExceptions = new();
 
         public IReadOnlyList<Exception> GetExceptions() => _busExceptions.ToList();
 

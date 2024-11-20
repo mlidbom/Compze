@@ -35,6 +35,6 @@ public sealed class Some<T> : Option<T>
 public sealed class None<T> : Option<T>, IStaticInstancePropertySingleton
 {
     None(){}
-    internal static readonly None<T> Instance = new None<T>();
+    internal static readonly None<T> Instance = new();
     public override bool HasValue => false;
 }

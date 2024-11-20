@@ -59,7 +59,7 @@ static class AccountStatistics
     {
         readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
         bool _isInitialized;
-        readonly DocumentDbApi _documentDbApi = new DocumentDbApi();
+        readonly DocumentDbApi _documentDbApi = new();
         public void EnsureInitialized(ILocalHypermediaNavigator navigator) => _monitor.Update(() =>
         {
             if(!_isInitialized)

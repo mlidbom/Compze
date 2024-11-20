@@ -46,14 +46,14 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
         _eventHandlersDispatcher.Register().IgnoreUnhandled<TAggregateEvent>();
     }
 
-    readonly List<IAggregateEvent> _unCommittedEvents = new List<IAggregateEvent>();
-    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventAppliersDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent>();
-    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventHandlersDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent>();
+    readonly List<IAggregateEvent> _unCommittedEvents = new();
+    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventAppliersDispatcher = new();
+    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventHandlersDispatcher = new();
 
     int _reentrancyLevel;
     bool _applyingEvents;
 
-    readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = new List<TAggregateEventImplementation>();
+    readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = new();
     protected TEvent Publish<TEvent>(TEvent theEvent) where TEvent : TAggregateEventImplementation
     {
         Contract.Assert.That(!_applyingEvents, "You cannot raise events from within event appliers");
@@ -112,7 +112,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
     protected virtual void AssertInvariantsAreMet() {}
 
-    readonly SimpleObservable<TAggregateEventImplementation> _eventStream = new SimpleObservable<TAggregateEventImplementation>();
+    readonly SimpleObservable<TAggregateEventImplementation> _eventStream = new();
     IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
 
     public void Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents)

@@ -64,7 +64,7 @@ partial class Inbox
                 public IReadOnlyList<TransportMessage.InComing> ExactlyOnceEvents => _executingExactlyOnceEvents;
                 public IReadOnlyList<TransportMessage.InComing> ExecutingNonTransactionalQueries => _executingNonTransactionalQueries;
 
-                readonly List<HandlerExecutionTask> _messagesWaitingToExecute = new List<HandlerExecutionTask>();
+                readonly List<HandlerExecutionTask> _messagesWaitingToExecute = new();
                 public NonThreadsafeImplementation(IGlobalBusStateTracker globalStateTracker) => _globalStateTracker = globalStateTracker;
 
                 internal bool TryGetDispatchableMessage(IReadOnlyList<IMessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
@@ -152,10 +152,10 @@ partial class Inbox
                 }
 
                 int _executingMessages;
-                readonly List<TransportMessage.InComing> _executingExactlyOnceCommands = new List<TransportMessage.InComing>();
-                readonly List<TransportMessage.InComing> _executingAtMostOnceCommands = new List<TransportMessage.InComing>();
-                readonly List<TransportMessage.InComing> _executingExactlyOnceEvents = new List<TransportMessage.InComing>();
-                readonly List<TransportMessage.InComing> _executingNonTransactionalQueries = new List<TransportMessage.InComing>();
+                readonly List<TransportMessage.InComing> _executingExactlyOnceCommands = new();
+                readonly List<TransportMessage.InComing> _executingAtMostOnceCommands = new();
+                readonly List<TransportMessage.InComing> _executingExactlyOnceEvents = new();
+                readonly List<TransportMessage.InComing> _executingNonTransactionalQueries = new();
             }
         }
     }

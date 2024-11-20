@@ -16,7 +16,7 @@ namespace Composable.Persistence.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
-    readonly MemoryObjectStore _idMap = new MemoryObjectStore();
+    readonly MemoryObjectStore _idMap = new();
 
     readonly IDocumentDb _backingStore;
     readonly ISingleContextUseGuard _usageGuard;
@@ -194,7 +194,7 @@ partial class DocumentDbSession : IDocumentDbSession
     public override string ToString() => $"{_id}: {GetType().FullName}";
 
     readonly Guid _id = Guid.NewGuid();
-    readonly Dictionary<Type, Dictionary<string, string>> _persistentValues = new Dictionary<Type, Dictionary<string, string>>();
+    readonly Dictionary<Type, Dictionary<string, string>> _persistentValues = new();
 
     readonly VolatileLambdaTransactionParticipant _transactionParticipant;
     void FlushChanges() => _handledDocuments.ForEach(p => p.Value.CommitChangesToBackingStore());

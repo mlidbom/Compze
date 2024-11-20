@@ -13,7 +13,7 @@ abstract class CompleteEventStoreStreamMutator
 
     class OnlySerializeVersionsMutator : ICompleteEventStreamMutator
     {
-        readonly Dictionary<Guid, int> _aggregateVersions = new Dictionary<Guid, int>();
+        readonly Dictionary<Guid, int> _aggregateVersions = new();
 
         public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
         {
@@ -30,8 +30,7 @@ abstract class CompleteEventStoreStreamMutator
     class RealMutator : ICompleteEventStreamMutator
     {
         readonly IReadOnlyList<IEventMigration> _eventMigrationFactories;
-        readonly Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator> _aggregateMutatorsCache =
-            new Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator>();
+        readonly Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator> _aggregateMutatorsCache = new();
 
         public RealMutator(IReadOnlyList<IEventMigration> eventMigrationFactories) => _eventMigrationFactories = eventMigrationFactories;
 

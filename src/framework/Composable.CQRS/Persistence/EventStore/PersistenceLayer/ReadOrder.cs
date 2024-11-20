@@ -15,9 +15,9 @@ readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
     public override string ToString() => $"{_order}.{_offSet:D19}";
 
-    public static readonly ReadOrder Zero = new ReadOrder(0, 0);
+    public static readonly ReadOrder Zero = new(0, 0);
 
-    internal static ReadOrder FromLong(long readOrder) => new ReadOrder(readOrder, 0);
+    internal static ReadOrder FromLong(long readOrder) => new(readOrder, 0);
 
     static readonly BigInteger MaxOffset = BigInteger.Parse("1".PadRight(20, '0'), CultureInfo.InvariantCulture);
 
@@ -32,7 +32,7 @@ readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
     public SqlDecimal ToSqlDecimal() => ToCorrectPrecisionAndScale(SqlDecimal.Parse(ToString()));
 
-    public ReadOrder NextIntegerOrder => new ReadOrder(_order + 1, 0);
+    public ReadOrder NextIntegerOrder => new(_order + 1, 0);
 
     public static ReadOrder Parse(string value, bool bypassScaleTest = false)
     {

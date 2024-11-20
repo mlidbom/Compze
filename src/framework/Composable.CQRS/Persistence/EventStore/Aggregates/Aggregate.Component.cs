@@ -20,10 +20,8 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
     {
         static Component() => AggregateTypeValidator<TComponent, TComponentEventImplementation, TComponentEvent>.AssertStaticStructureIsValid();
 
-        readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher =
-            new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
-        readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventHandlersEventDispatcher =
-            new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
+        readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new();
+        readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventHandlersEventDispatcher = new();
         readonly Action<TComponentEventImplementation> _raiseEventThroughParent;
 
         IUtcTimeTimeSource TimeSource { get; set; }

@@ -5,7 +5,7 @@ namespace Composable.Serialization;
 static class JsonSettings
 {
     internal static readonly JsonSerializerSettings JsonSerializerSettings =
-        new JsonSerializerSettings
+        new()
         {
             TypeNameHandling = TypeNameHandling.Auto,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
@@ -13,7 +13,7 @@ static class JsonSettings
         };
 
     public static readonly JsonSerializerSettings SqlEventStoreSerializerSettings =
-        new JsonSerializerSettings
+        new()
         {
             TypeNameHandling = TypeNameHandling.Auto,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,

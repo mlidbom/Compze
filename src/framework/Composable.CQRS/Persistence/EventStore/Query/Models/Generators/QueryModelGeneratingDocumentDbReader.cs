@@ -15,7 +15,7 @@ class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
 {
     readonly ISingleContextUseGuard _usageGuard;
     readonly IEnumerable<IQueryModelGenerator> _documentGenerators;
-    readonly MemoryObjectStore _idMap = new MemoryObjectStore();
+    readonly MemoryObjectStore _idMap = new();
     public QueryModelGeneratingDocumentDbReader(IEnumerable<IQueryModelGenerator> documentGenerators )
     {
         _usageGuard = new SingleThreadUseGuard();

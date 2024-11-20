@@ -123,7 +123,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
 
             RegisterUserCommand() : base(DeduplicationIdHandling.Reuse) {}
 
-            internal static RegisterUserCommand Create() => new RegisterUserCommand { MessageId =  Guid.NewGuid()};
+            internal static RegisterUserCommand Create() => new() { MessageId =  Guid.NewGuid()};
         }
     }
 

@@ -11,16 +11,16 @@ class TestingTimeSource : IUtcTimeTimeSource
 
 
     ///<summary>Returns a timesource that will continually return the time that it was created at as the current time.</summary>
-    internal static TestingTimeSource FollowingSystemClock => new TestingTimeSource();
+    internal static TestingTimeSource FollowingSystemClock => new();
 
     ///<summary>Returns a timesource that will continually return the time that it was created at as the current time.</summary>
-    internal static TestingTimeSource FrozenUtcNow() => new TestingTimeSource
+    internal static TestingTimeSource FrozenUtcNow() => new()
                                                         {
                                                             _freezeAt = DateTime.UtcNow
                                                         };
 
     ///<summary>Returns a timesource that will forever return <param name="utcTime"> as the current time.</param></summary>
-    internal static TestingTimeSource FrozenAtUtcTime(DateTime utcTime) => new TestingTimeSource
+    internal static TestingTimeSource FrozenAtUtcTime(DateTime utcTime) => new()
                                                                            {
                                                                                _freezeAt = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc)
                                                                            };

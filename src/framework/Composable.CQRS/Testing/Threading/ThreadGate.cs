@@ -121,7 +121,7 @@ Current state of gate:
     Action<ThreadSnapshot> _prePassThroughAction = _ => {};
     Action<ThreadSnapshot> _postPassThroughAction = _ => {};
     bool _isOpen;
-    readonly List<ThreadSnapshot> _requestsThreads = new List<ThreadSnapshot>();
-    readonly LinkedList<ThreadSnapshot> _queuedThreads = new LinkedList<ThreadSnapshot>();
-    readonly List<ThreadSnapshot> _passedThreads = new List<ThreadSnapshot>();
+    readonly List<ThreadSnapshot> _requestsThreads = new();
+    readonly LinkedList<ThreadSnapshot> _queuedThreads = new();
+    readonly List<ThreadSnapshot> _passedThreads = new();
 }

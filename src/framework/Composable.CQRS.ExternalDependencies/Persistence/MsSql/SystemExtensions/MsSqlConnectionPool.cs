@@ -10,7 +10,7 @@ namespace Composable.Persistence.MsSql.SystemExtensions;
 interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>
 {
     public static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-    public static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new MsSqlConnectionPool(getConnectionString);
+    public static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
     class MsSqlConnectionPool : IMsSqlConnectionPool
     {

@@ -32,7 +32,7 @@ interface ITaskRunner
                    _cancellationTokenSource.Token);
     }
 
-    readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    readonly CancellationTokenSource _cancellationTokenSource = new();
 
     public void Dispose() => _cancellationTokenSource.Dispose();
 }

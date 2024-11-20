@@ -17,7 +17,7 @@ class User : Person
     public string Email { get; set; } = "some.email@nodomain.not";
     public string Password { get; set; } = "default";
 
-    public Address Address { get; set; } = new Address();
+    public Address Address { get; set; } = new();
 
     public HashSet<User> People { get; set; }
 }

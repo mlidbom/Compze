@@ -41,7 +41,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
                .For<TEntityCreatedEvent>(e => _id = IdGetter.GetId(e));
         }
 
-        public static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new CollectionManager(parent, parent.RegisterEventAppliers());
+        public static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent, parent.RegisterEventAppliers());
 
         public class CollectionManager : QueryModelEntityCollectionManager<
             TQueryModel,

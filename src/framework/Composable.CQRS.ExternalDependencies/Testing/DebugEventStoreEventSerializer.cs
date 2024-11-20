@@ -22,7 +22,7 @@ static class DebugEventStoreEventSerializer
     }
 
     static readonly JsonSerializerSettings JsonSettings =
-        new JsonSerializerSettings
+        new()
         {
             TypeNameHandling = TypeNameHandling.Auto,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,

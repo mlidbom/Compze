@@ -16,7 +16,7 @@ public partial class AccountResource
         {
             public Register():base(DeduplicationIdHandling.Reuse) {}
 
-            public static Register Create() => new Register
+            public static Register Create() => new()
                                                {
                                                    AccountId = Guid.NewGuid(),
                                                    MessageId = Guid.NewGuid()
@@ -36,7 +36,7 @@ public partial class AccountResource
 
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) => Domain.Passwords.Password.Validate(Password, this, () => Password);
 
-            internal Register WithValues(Guid accountId, string email, string password) => new Register
+            internal Register WithValues(Guid accountId, string email, string password) => new()
                                                                                            {
                                                                                                MessageId = Guid.NewGuid(),
                                                                                                AccountId = accountId,

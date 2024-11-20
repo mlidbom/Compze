@@ -34,7 +34,7 @@ public class Failure_tests : Fixture
         base.TearDown();
     }
 
-    readonly IntentionalException _thrownException = new IntentionalException();
+    readonly IntentionalException _thrownException = new();
     class IntentionalException : Exception {}
 
     public Failure_tests(string _) : base(_) {}

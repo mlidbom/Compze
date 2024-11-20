@@ -11,8 +11,8 @@ static partial class Constructor
 {
     internal static class Compile
     {
-        internal static CompilerBuilder<TTypeToConstruct> ForReturnType<TTypeToConstruct>() => new CompilerBuilder<TTypeToConstruct>();
-        internal static CompilerBuilder<object> ForReturnType(Type typeToConstruct) => new CompilerBuilder<object>(typeToConstruct);
+        internal static CompilerBuilder<TTypeToConstruct> ForReturnType<TTypeToConstruct>() => new();
+        internal static CompilerBuilder<object> ForReturnType(Type typeToConstruct) => new(typeToConstruct);
 
 
         internal class CompilerBuilder<TInstance>

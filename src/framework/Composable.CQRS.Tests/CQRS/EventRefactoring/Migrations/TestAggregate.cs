@@ -90,7 +90,7 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations
             return new TestAggregate(timeSource, rootEvents);
         }
 
-        readonly List<IRootEvent> _history = new List<IRootEvent>();
+        readonly List<IRootEvent> _history = new();
         public IReadOnlyList<IAggregateEvent> History => _history;
     }
 

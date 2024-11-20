@@ -45,7 +45,7 @@ public class ValueObjectsWithCollectionsTests
                   {
                       JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
                                           {
-                                              new ExternalJobsDashboardViewModel.JobAdvertisement()
+                                              new()
                                           }
                   };
         var rhs = new ExternalJobsDashboardViewModel
@@ -63,14 +63,14 @@ public class ValueObjectsWithCollectionsTests
                   {
                       JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
                                           {
-                                              new ExternalJobsDashboardViewModel.JobAdvertisement()
+                                              new()
                                           }
                   };
         var rhs = new ExternalJobsDashboardViewModel
                   {
                       JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
                                           {
-                                              new ExternalJobsDashboardViewModel.JobAdvertisement()
+                                              new()
                                           }
                   };
 
@@ -84,7 +84,7 @@ public class ValueObjectsWithCollectionsTests
                   {
                       JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
                                           {
-                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              new()
                                               {
                                                   Name = "AValue"
                                               }
@@ -94,7 +94,7 @@ public class ValueObjectsWithCollectionsTests
                   {
                       JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
                                           {
-                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              new()
                                               {
                                                   Name = "ANotherValue"
                                               }
@@ -111,7 +111,7 @@ public class ValueObjectsWithCollectionsTests
                   {
                       JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
                                           {
-                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              new()
                                               {
                                                   Name = "AValue"
                                               }
@@ -121,7 +121,7 @@ public class ValueObjectsWithCollectionsTests
                   {
                       JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
                                           {
-                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              new()
                                               {
                                                   Name = "AValue"
                                               }

@@ -46,7 +46,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
 
             public  static CollectionManager CreateSelfManagingCollection(TComponent parent)//todo:tests
                 =>
-                    new CollectionManager(
+                    new(
                         parent: parent,
                         appliersRegistrar: parent.RegisterEventAppliers());
 

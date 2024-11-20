@@ -6,7 +6,7 @@ namespace Composable.SystemCE;
 ///<summary>Enables harmonizing on only using methods with return values without loosing the semantic information that their return value is meaningless. Return <see cref="VoidCE.Instance"/> from methods with "no" return value. </summary>
 sealed class VoidCE : IEquatable<VoidCE>, IStaticInstancePropertySingleton
 {
-    public static VoidCE Instance { get; } = new VoidCE();
+    public static VoidCE Instance { get; } = new();
     public static Task<VoidCE> InstanceTask { get; } = Task.FromResult(Instance);
 
     VoidCE(){}

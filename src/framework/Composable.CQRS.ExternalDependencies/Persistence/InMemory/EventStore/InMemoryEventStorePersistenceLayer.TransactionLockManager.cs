@@ -12,7 +12,7 @@ partial class InMemoryEventStorePersistenceLayer
 {
     class TransactionLockManager
     {
-        readonly Dictionary<Guid, TransactionWideLock> _aggregateGuards = new Dictionary<Guid, TransactionWideLock>();
+        readonly Dictionary<Guid, TransactionWideLock> _aggregateGuards = new();
 
         public TResult WithTransactionWideLock<TResult>(Guid aggregateId, Func<TResult> func) => WithTransactionWideLock(aggregateId, true, func);
         public TResult WithTransactionWideLock<TResult>(Guid aggregateId, bool takeWriteLock, Func<TResult> func)

@@ -11,8 +11,8 @@ namespace Composable.Persistence.InMemory.DocumentDB;
 //Performance: Write tests to expose lack of Transactional locks and transactional overlay and then implement it.
 class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {
-    readonly Dictionary<string, List<DocumentRow>> _db = new Dictionary<string, List<DocumentRow>>(StringComparer.InvariantCultureIgnoreCase);
-    readonly object _lockObject = new object();
+    readonly Dictionary<string, List<DocumentRow>> _db = new(StringComparer.InvariantCultureIgnoreCase);
+    readonly object _lockObject = new();
 
     public void Add(IDocumentDbPersistenceLayer.WriteRow row)
     {

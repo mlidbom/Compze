@@ -169,7 +169,7 @@ public class Fixture : DuplicateByPluggableComponentTest
     {
         MyCreateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
 
-        internal static MyCreateAggregateCommand Create() => new MyCreateAggregateCommand
+        internal static MyCreateAggregateCommand Create() => new()
                                                              {
                                                                  MessageId = Guid.NewGuid(),
                                                                  AggregateId = Guid.NewGuid()
@@ -194,13 +194,13 @@ public class Fixture : DuplicateByPluggableComponentTest
     protected class MyAtMostOnceCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
     {
         protected MyAtMostOnceCommand() : base(DeduplicationIdHandling.Reuse) {}
-        internal static MyAtMostOnceCommand Create() => new MyAtMostOnceCommand {MessageId = Guid.NewGuid()};
+        internal static MyAtMostOnceCommand Create() => new() {MessageId = Guid.NewGuid()};
     }
 
     protected class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
     {
         MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-        internal static MyAtMostOnceCommandWithResult Create() => new MyAtMostOnceCommandWithResult {MessageId = Guid.NewGuid()};
+        internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.NewGuid()};
     }
     protected class MyCommandResult {}
 

@@ -102,8 +102,8 @@ You should map them in your endpoint configuration by using {typeof(IEndpointBui
 
     class State
     {
-        public readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new Dictionary<Type, TypeId>();
-        public readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new Dictionary<TypeId, Type>();
+        public readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
+        public readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
 
         internal void Map(Type type, TypeId typeId)
         {

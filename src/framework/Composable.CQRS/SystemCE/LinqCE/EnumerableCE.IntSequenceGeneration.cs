@@ -33,7 +33,7 @@ public static partial class EnumerableCE
     /// generates a sequence of integers beginning with <paramref name="me"/> where each element is
     /// <paramref name="stepSize"/> larger than the previous
     /// </summary>
-    public static IterationSpecification By(this int me, int stepSize) => new IterationSpecification(me, stepSize);
+    public static IterationSpecification By(this int me, int stepSize) => new(me, stepSize);
 
     /// <summary>
     /// generates a sequence of integers beginning with <paramref name="me"/> where each element is

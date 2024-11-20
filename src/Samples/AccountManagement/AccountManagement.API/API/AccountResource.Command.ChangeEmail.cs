@@ -23,7 +23,7 @@ public partial class AccountResource
             [Required] [EntityId] public Guid AccountId { get; set; }
             [Required] [Email] public string Email { get; set; } = string.Empty;
 
-            public ChangeEmail WithEmail(string email) => new ChangeEmail(AccountId)
+            public ChangeEmail WithEmail(string email) => new(AccountId)
                                                           {
                                                               Email = email
                                                           };

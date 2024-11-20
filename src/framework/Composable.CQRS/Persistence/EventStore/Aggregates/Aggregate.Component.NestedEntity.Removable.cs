@@ -62,7 +62,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
             internal new static CollectionManager CreateSelfManagingCollection(TComponent parent)
                 =>
-                    new CollectionManager(
+                    new(
                         parent: parent,
                         raiseEventThroughParent: parent.Publish,
                         appliersRegistrar: parent.RegisterEventAppliers());

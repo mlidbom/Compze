@@ -17,7 +17,7 @@ partial class DatabasePool
         const int CleanDatabaseNumberTarget = 10;
         protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[] {GetterSetter.ForBinarySerializableList(@this => @this._databases, (@this, value) => @this._databases = value.NotNull())};
 
-        List<Database> _databases = new List<Database>();
+        List<Database> _databases = new();
 
         IEnumerable<Database> UnReserved => _databases.Where(db => !db.IsReserved)
                                                        //Reusing recently used databases helps performance in a pretty big way, disk cache, connection pool etc.

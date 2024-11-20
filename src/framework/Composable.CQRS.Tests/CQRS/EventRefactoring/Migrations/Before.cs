@@ -12,8 +12,8 @@ class Before<TEvent> : EventMigration<IRootEvent>
 {
     readonly IEnumerable<Type> _insert;
 
-    public static Before<TEvent> Insert<T1>() => new Before<TEvent>(EnumerableCE.OfTypes<T1>());
-    public static Before<TEvent> Insert<T1, T2>() => new Before<TEvent>(EnumerableCE.OfTypes<T1, T2>());
+    public static Before<TEvent> Insert<T1>() => new(EnumerableCE.OfTypes<T1>());
+    public static Before<TEvent> Insert<T1, T2>() => new(EnumerableCE.OfTypes<T1, T2>());
 
     Before(IEnumerable<Type> insert) : base(Guid.Parse("0533D2E4-DE78-4751-8CAE-3343726D635B"), "Before", "Long description of Before") => _insert = insert;
 

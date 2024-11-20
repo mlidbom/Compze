@@ -71,7 +71,7 @@ class MachineWideSingleThreaded
         }
     }
 
-    internal static MachineWideSingleThreaded For(string name) => new MachineWideSingleThreaded(name);
+    internal static MachineWideSingleThreaded For(string name) => new(name);
     internal static MachineWideSingleThreaded For<TSynchronized>() => For(typeof(TSynchronized));
-    static MachineWideSingleThreaded For(Type synchronized) => new MachineWideSingleThreaded($"{nameof(MachineWideSingleThreaded)}_{synchronized.AssemblyQualifiedName}");
+    static MachineWideSingleThreaded For(Type synchronized) => new($"{nameof(MachineWideSingleThreaded)}_{synchronized.AssemblyQualifiedName}");
 }

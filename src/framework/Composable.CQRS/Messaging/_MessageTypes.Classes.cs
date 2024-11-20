@@ -103,7 +103,7 @@ public static partial class MessageTypes
                 {
                     public EntityLink() {}
                     public EntityLink(Guid entityId) => EntityId = entityId;
-                    public EntityLink<TResult> WithId(Guid id) => new EntityLink<TResult>(id);
+                    public EntityLink<TResult> WithId(Guid id) => new(id);
                     public Guid EntityId { get; private set; }
                 }
 

@@ -6,6 +6,6 @@ namespace Composable;
 
 public class ComposableApi
 {
-    public EventStoreApi EventStore => new EventStoreApi();
-    public DocumentDbApi DocumentDb => new DocumentDbApi();
+    public EventStoreApi EventStore => new();
+    public DocumentDbApi DocumentDb => new();
 }

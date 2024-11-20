@@ -13,7 +13,7 @@ partial class ComposableDependencyInjectionContainer
 {
     class ServiceLocator : IServiceLocator, IServiceLocatorKernel
     {
-        readonly AsyncLocal<ScopeCache?> _scopeCache = new AsyncLocal<ScopeCache?>();
+        readonly AsyncLocal<ScopeCache?> _scopeCache = new();
         readonly RootCache _rootCache;
 
         bool _disposed;
@@ -47,7 +47,7 @@ partial class ComposableDependencyInjectionContainer
             _scopeCache.Value = null;
         }
 
-        readonly ThreadLocal<ComponentRegistration?> _parentComponentStorage = new ThreadLocal<ComponentRegistration?>();
+        readonly ThreadLocal<ComponentRegistration?> _parentComponentStorage = new();
 
         ComponentRegistration? ParentComponent
         {

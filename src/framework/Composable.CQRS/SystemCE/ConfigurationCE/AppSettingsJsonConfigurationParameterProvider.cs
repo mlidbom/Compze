@@ -9,12 +9,12 @@ class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterPro
 {
     public static readonly IConfigurationParameterProvider Instance = new AppSettingsJsonConfigurationParameterProvider();
 
-    static readonly OptimizedLazy<IConfigurationSection> AppSettingsSectionInitializer = new OptimizedLazy<IConfigurationSection>(() => new ConfigurationBuilder()
-                                                                                                                                       .SetBasePath(Directory.GetCurrentDirectory())
-                                                                                                                                       .AddJsonFile("appsettings.json", false, true)
-                                                                                                                                       .AddJsonFile("appsettings-testing.json", true, true)
-                                                                                                                                       .Build()
-                                                                                                                                       .GetSection("appSettings"));
+    static readonly OptimizedLazy<IConfigurationSection> AppSettingsSectionInitializer = new(() => new ConfigurationBuilder()
+                                                                                                  .SetBasePath(Directory.GetCurrentDirectory())
+                                                                                                  .AddJsonFile("appsettings.json", false, true)
+                                                                                                  .AddJsonFile("appsettings-testing.json", true, true)
+                                                                                                  .Build()
+                                                                                                  .GetSection("appSettings"));
 
     static IConfigurationSection AppSettingsSection => AppSettingsSectionInitializer.Value;
 

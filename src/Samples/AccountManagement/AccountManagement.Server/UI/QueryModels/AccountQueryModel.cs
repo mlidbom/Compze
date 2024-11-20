@@ -33,10 +33,10 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountEve
     // ReSharper disable MemberCanBeMadeStatic.Global fluent composable APIs and statics do not mix
     internal class Api
     {
-        internal Query Queries => new Query();
+        internal Query Queries => new();
         internal class Query
         {
-            public MessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> Get(Guid id) => new MessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel>(id);
+            public MessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
         }
 
         public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);

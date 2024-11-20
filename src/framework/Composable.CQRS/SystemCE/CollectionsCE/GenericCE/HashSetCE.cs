@@ -30,5 +30,5 @@ static class HashSetCE
         toAdd.ForEach(me.Add);
     }
 
-    public static HashSetCEx<TItem> ToSetCE<TItem>(this IEnumerable<TItem> @this) => new HashSetCEx<TItem>(@this);
+    public static HashSetCEx<TItem> ToSetCE<TItem>(this IEnumerable<TItem> @this) => new(@this);
 }

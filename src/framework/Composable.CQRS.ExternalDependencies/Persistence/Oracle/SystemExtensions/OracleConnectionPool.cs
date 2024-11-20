@@ -10,7 +10,7 @@ namespace Composable.Persistence.Oracle.SystemExtensions;
 interface IOracleConnectionPool : IDbConnectionPool<IComposableOracleConnection, OracleCommand>
 {
     public static IOracleConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-    public static OracleConnectionPool CreateInstance(Func<string> getConnectionString) => new OracleConnectionPool(getConnectionString);
+    public static OracleConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
     class OracleConnectionPool : IOracleConnectionPool
     {

@@ -34,7 +34,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
     {
         public IEnumerable<IExactlyOnceEvent> DispatchedMessages => _events.ToList();
         public void Receive(IExactlyOnceEvent @event) { _events.Add(@event); }
-        readonly List<IExactlyOnceEvent> _events = new List<IExactlyOnceEvent>();
+        readonly List<IExactlyOnceEvent> _events = new();
     }
 
     EventSpy _eventSpy;

@@ -6,7 +6,7 @@ namespace Composable.SystemCE.CollectionsCE.ConcurrentCE;
 
 public static class ConcurrentCircularReader
 {
-    public static ConcurrentCircularReader<T> ToConcurrentCircularReader<T>(this IEnumerable<T> source) => new ConcurrentCircularReader<T>(source);
+    public static ConcurrentCircularReader<T> ToConcurrentCircularReader<T>(this IEnumerable<T> source) => new(source);
 }
 
 public class ConcurrentCircularReader<T>

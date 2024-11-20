@@ -17,7 +17,7 @@ public class EndpointHost : IEndpointHost
     readonly IRunMode _mode;
     readonly Func<IRunMode, IDependencyInjectionContainer> _containerFactory;
     bool _disposed;
-    protected List<IEndpoint> Endpoints { get; } = new List<IEndpoint>();
+    protected List<IEndpoint> Endpoints { get; } = new();
     internal IGlobalBusStateTracker GlobalBusStateTracker;
 
     readonly ILogger _log = Logger.For<EndpointHost>();
@@ -47,10 +47,10 @@ public class EndpointHost : IEndpointHost
         return endpoint;
     }
 
-    static readonly EndpointConfiguration ClientEndpointConfiguration = new EndpointConfiguration(name: $"{nameof(EndpointHost)}_Default_Client_Endpoint",
-                                                                                                  id: new EndpointId(Guid.Parse("D4C869D2-68EF-469C-A5D6-37FCF2EC152A")),
-                                                                                                  mode: RunMode.Production,
-                                                                                                  isPureClientEndpoint: true);
+    static readonly EndpointConfiguration ClientEndpointConfiguration = new(name: $"{nameof(EndpointHost)}_Default_Client_Endpoint",
+                                                                            id: new EndpointId(Guid.Parse("D4C869D2-68EF-469C-A5D6-37FCF2EC152A")),
+                                                                            mode: RunMode.Production,
+                                                                            isPureClientEndpoint: true);
 
     public IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
 

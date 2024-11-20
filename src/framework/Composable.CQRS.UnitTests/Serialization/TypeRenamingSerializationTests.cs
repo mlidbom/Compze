@@ -18,7 +18,7 @@ namespace Composable.Tests.Serialization
 
         class TypeA : BaseTypeA
         {
-            internal static TypeA Create() => new TypeA {TypeAName = typeof(TypeA).FullName};
+            internal static TypeA Create() => new() {TypeAName = typeof(TypeA).FullName};
 
             public string TypeAName { get; set; }
 
@@ -31,19 +31,19 @@ namespace Composable.Tests.Serialization
 
         class TypeB : BaseTypeA
         {
-            internal static TypeB Create() => new TypeB {TypeBName = typeof(TypeB).FullName};
+            internal static TypeB Create() => new() {TypeBName = typeof(TypeB).FullName};
             public string TypeBName { get; set; }
 
             public class TypeBB : TypeB
             {
-                public new static TypeBB Create() => new TypeBB {TypeBBName = typeof(TypeBB).FullName};
+                public new static TypeBB Create() => new() {TypeBBName = typeof(TypeBB).FullName};
                 public string TypeBBName { get; set; }
             }
         }
 
         class Root
         {
-            internal static Root Create() => new Root
+            internal static Root Create() => new()
                                              {
                                                  TypeA = OriginalTypes.TypeA.Create(),
                                                  TypeB = OriginalTypes.TypeB.Create(),

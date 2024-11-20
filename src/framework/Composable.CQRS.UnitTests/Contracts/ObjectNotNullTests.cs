@@ -18,7 +18,7 @@ public class ObjectNotNullTests
         InspectionTestHelper.BatchTestInspection<ObjectIsNullContractViolationException, object>(
             inspected => inspected.NotNull(),
             badValues: new List<object> {null, null},
-            goodValues: new List<object> {new object(), "", Guid.NewGuid()});
+            goodValues: new List<object> {new(), "", Guid.NewGuid()});
 
 
         var nullString = (string)null;

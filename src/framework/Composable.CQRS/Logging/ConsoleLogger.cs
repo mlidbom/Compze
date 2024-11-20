@@ -110,7 +110,7 @@ EXCEPTION: {exception}
     public void DebugFormat(string message, params object[] arguments) => StringCE.FormatInvariant(message, arguments);
 
     static readonly JsonSerializerSettings ExceptionSerializationSettings =
-        new JsonSerializerSettings
+        new()
         {
             TypeNameHandling = TypeNameHandling.All,
             ContractResolver = IgnoreStackTraces.Instance
@@ -118,7 +118,7 @@ EXCEPTION: {exception}
 
     class IgnoreStackTraces : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
     {
-        public new static readonly IgnoreStackTraces Instance = new IgnoreStackTraces();
+        public new static readonly IgnoreStackTraces Instance = new();
         IgnoreStackTraces()
         {
             IgnoreSerializableInterface = true;

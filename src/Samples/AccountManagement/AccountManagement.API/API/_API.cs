@@ -17,7 +17,7 @@ namespace AccountManagement.API;
 /// </summary>
 public static class AccountWebClientApi
 {
-    public static MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource> Start => new MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource>();
+    public static MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource> Start => new();
 }
 
 
@@ -26,12 +26,12 @@ public static class AccountWebClientApi
 /// </summary>
 public class AccountApi : IStaticInstancePropertySingleton
 {
-    public static AccountApi Instance => new AccountApi();
+    public static AccountApi Instance => new();
 
     NavigationSpecification<StartResource> Start => NavigationSpecification.Get(AccountWebClientApi.Start);
 
-    public QuerySection Query => new QuerySection();
-    public CommandsSection Command => new CommandsSection();
+    public QuerySection Query => new();
+    public CommandsSection Command => new();
 
     public class QuerySection
     {

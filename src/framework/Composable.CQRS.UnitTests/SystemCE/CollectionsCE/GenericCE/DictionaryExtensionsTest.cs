@@ -11,7 +11,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
     const int InsertedValue = 2;
     static readonly Func<int> Constructor = () => InsertedValue;
     const string Key = "key";
-    const int ResultOfDefaultConstructor = new int();
+    const int ResultOfDefaultConstructor = new();
 
     [TestFixture]
     public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present

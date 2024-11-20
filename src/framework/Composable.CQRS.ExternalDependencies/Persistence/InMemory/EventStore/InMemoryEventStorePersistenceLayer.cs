@@ -14,7 +14,7 @@ namespace Composable.Persistence.InMemory.EventStore;
 partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
 {
     readonly IThreadShared<State> _state = ThreadShared.WithDefaultTimeout(new State());
-    readonly TransactionLockManager _transactionLockManager = new TransactionLockManager();
+    readonly TransactionLockManager _transactionLockManager = new();
 
     public InMemoryEventStorePersistenceLayer() { _state.Update(state => state.Init(_state)); }
 
@@ -127,7 +127,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
 
     class State
     {
-        List<EventDataRow> _events = new List<EventDataRow>();
+        List<EventDataRow> _events = new();
         IThreadShared<State> _state = null!;
 
         public IReadOnlyList<EventDataRow> Events
@@ -144,7 +144,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
             }
         }
 
-        readonly Dictionary<string, List<EventDataRow>> _overlays = new Dictionary<string, List<EventDataRow>>();
+        readonly Dictionary<string, List<EventDataRow>> _overlays = new();
 
         List<EventDataRow>? TransactionalOverlay
         {

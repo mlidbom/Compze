@@ -29,7 +29,7 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
    // ReSharper disable once StaticMemberInGenericType
    static readonly IThreadShared<Dictionary<string, MemoryMappedFile>> Cache = ThreadShared.WithDefaultTimeout(new Dictionary<string, MemoryMappedFile>());
 
-   internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false, long capacity = 1000_000) => new MachineWideSharedObject<TObject>(name, usePersistentFile, capacity);
+   internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false, long capacity = 1000_000) => new(name, usePersistentFile, capacity);
 
    MachineWideSharedObject(string name, bool usePersistentFile, long capacity)
    {

@@ -18,7 +18,7 @@ partial class Inbox
             // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
             internal class HandlerExecutionTask
             {
-                readonly AsyncTaskCompletionSource<object?> _taskCompletionSource = new AsyncTaskCompletionSource<object?>();
+                readonly AsyncTaskCompletionSource<object?> _taskCompletionSource = new();
                 internal readonly TransportMessage.InComing TransportMessage;
                 readonly Coordinator _coordinator;
                 readonly Func<object, object?> _messageTask;

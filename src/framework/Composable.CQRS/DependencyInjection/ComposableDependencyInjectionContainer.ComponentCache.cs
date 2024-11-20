@@ -47,7 +47,7 @@ partial class ComposableDependencyInjectionContainer
             }
         }
 
-        internal ScopeCache CreateScopeCache() => new ScopeCache(_serviceTypeIndexToComponentIndex);
+        internal ScopeCache CreateScopeCache() => new(_serviceTypeIndexToComponentIndex);
 
         public void Set(object instance, ComponentRegistration registration) => _cache[registration.ComponentIndex].Instance = instance;
 
@@ -69,7 +69,7 @@ partial class ComposableDependencyInjectionContainer
         bool _isDisposed;
         readonly int[] _serviceTypeIndexToComponentIndex;
         readonly object[] _instances;
-        readonly LinkedList<IDisposable> _disposables = new LinkedList<IDisposable>();
+        readonly LinkedList<IDisposable> _disposables = new();
 
         public void Set(object instance, ComponentRegistration registration)
         {

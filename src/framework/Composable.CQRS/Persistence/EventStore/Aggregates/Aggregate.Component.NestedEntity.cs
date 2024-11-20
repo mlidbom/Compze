@@ -84,7 +84,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             // ReSharper disable once UnusedMember.Global todo: coverage
             public  static CollectionManager CreateSelfManagingCollection(TComponent parent)
                 =>
-                    new CollectionManager(
+                    new(
                         parent: parent,
                         raiseEventThroughParent: parent.Publish,
                         appliersRegistrar: parent.RegisterEventAppliers());

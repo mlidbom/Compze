@@ -11,9 +11,7 @@ static class EventDispatcherAsserter
         readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher;
         public DispatcherAssertion(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher) => _dispatcher = dispatcher;
 
-        public RouteAssertion<TDispatcherRootEvent> Event<TPublishedEvent>(TPublishedEvent @event)
-            where TPublishedEvent : TDispatcherRootEvent =>
-            new RouteAssertion<TDispatcherRootEvent>(_dispatcher, @event);
+        public RouteAssertion<TDispatcherRootEvent> Event<TPublishedEvent>(TPublishedEvent @event) where TPublishedEvent : TDispatcherRootEvent => new(_dispatcher, @event);
     }
 
     internal class RouteAssertion<TDispatcherRootEvent> where TDispatcherRootEvent : class, IEvent
@@ -57,5 +55,5 @@ static class EventDispatcherAsserter
         }
     }
 
-    internal static DispatcherAssertion<TEvent> Assert<TEvent>(this IMutableEventDispatcher<TEvent> @this) where TEvent : class, IEvent => new DispatcherAssertion<TEvent>(@this);
+    internal static DispatcherAssertion<TEvent> Assert<TEvent>(this IMutableEventDispatcher<TEvent> @this) where TEvent : class, IEvent => new(@this);
 }

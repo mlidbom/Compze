@@ -62,7 +62,7 @@ class EventCache : IDisposable
 
     internal class Entry
     {
-        public static readonly Entry Empty = new Entry();
+        public static readonly Entry Empty = new();
         Entry()
         {
             Events = Array.Empty<AggregateEvent>();
@@ -135,7 +135,7 @@ class EventCache : IDisposable
 
     MemoryCache _internalCache;
 
-    static readonly MemoryCacheEntryOptions Policy = new MemoryCacheEntryOptions
+    static readonly MemoryCacheEntryOptions Policy = new()
                                                      {
                                                          SlidingExpiration = 20.Minutes()
                                                      };

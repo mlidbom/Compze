@@ -87,7 +87,7 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
 
     class UserApiStartPage
     {
-        public static UserApiStartPageQuery Self => new UserApiStartPageQuery();
+        public static UserApiStartPageQuery Self => new();
         public RegisterUserCommand RegisterUser(string userName) => RegisterUserCommand.Create(userName);
     }
 
@@ -107,7 +107,7 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
     {
         RegisterUserCommand() : base(DeduplicationIdHandling.Reuse) {}
 
-        public static RegisterUserCommand Create(string name) => new RegisterUserCommand
+        public static RegisterUserCommand Create(string name) => new()
                                                                  {
                                                                      Name = name,
                                                                      MessageId = Guid.NewGuid()
@@ -119,7 +119,7 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
     protected class UserRegisteredConfirmationResource
     {
         public UserRegisteredConfirmationResource(string name) => Name = name;
-        public GetUserQuery User => new GetUserQuery(Name);
+        public GetUserQuery User => new(Name);
         public string Name { get; }
     }
 

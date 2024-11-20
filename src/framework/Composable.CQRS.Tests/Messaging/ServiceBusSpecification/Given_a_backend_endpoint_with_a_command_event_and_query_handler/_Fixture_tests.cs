@@ -50,7 +50,7 @@ public class Fixture_tests : Fixture
                     .InnerExceptions.Single().Should().Be(_thrownException);
     }
 
-    readonly IntentionalException _thrownException = new IntentionalException();
+    readonly IntentionalException _thrownException = new();
     class IntentionalException : Exception {}
 
     public Fixture_tests(string _) : base(_) {}
