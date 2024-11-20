@@ -36,6 +36,7 @@ public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
          if (value is IEnumerable enumerableValue and not string)
          {
             var value1Array = enumerableValue.Cast<object?>().Where(me => me is not null).ToArray();
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach(var something in value1Array)
             {
                hashCode = hashCode * multiplier + something!.GetHashCode();
@@ -84,6 +85,7 @@ public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
             {
                return false;
             }
+            // ReSharper disable once LoopCanBeConvertedToQuery
             for (var j = 0; j < value1Array.Length ; ++j)
             {
                if (!Equals(value1Array[j], value2Array[j]))

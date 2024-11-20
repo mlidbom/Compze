@@ -7,6 +7,7 @@ using Composable.Contracts;
 using Composable.Persistence;
 using Composable.Serialization;
 using Composable.SystemCE.CollectionsCE.GenericCE;
+using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Composable.SystemCE.ThreadingCE;
@@ -45,8 +46,8 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
             cache => cache.GetOrAdd(name,
                                     () => _synchronizer.Execute(() =>
                                     {
-                                       foreach (var invalidChar in Path.GetInvalidFileNameChars())
-                                          fileName = fileName.Replace(invalidChar, '_');
+                                       // ReSharper disable once AccessToModifiedClosure
+                                       Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
 
                                        fileName = Path.Combine(DataFolder, fileName);
 

@@ -3,6 +3,7 @@ using System.IO;
 using Composable.Contracts;
 using Composable.Persistence;
 using Composable.Serialization;
+using Composable.SystemCE.LinqCE;
 
 namespace Composable.SystemCE.ThreadingCE;
 
@@ -23,8 +24,8 @@ class MachineWideSharedObjectFiles<TObject> : MachineWideSharedObjectFiles, IDis
    MachineWideSharedObjectFiles(string name, bool usePersistentFile)
    {
       var fileName = $"Composable_{name}";
-      foreach(var invalidChar in Path.GetInvalidFileNameChars())
-         fileName = fileName.Replace(invalidChar, '_');
+      // ReSharper disable once AccessToModifiedClosure
+      Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
 
       _usePersistentFile = usePersistentFile;
       _filePath = Path.Combine(DataFolder, fileName);
