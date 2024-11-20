@@ -11,7 +11,7 @@ static class ReadonlyCollectionsCE
     public static Dictionary<TKey, TValue> AddRangeToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, IEnumerable<KeyValuePair<TKey, TValue>> range) where TKey : notnull =>
         new Dictionary<TKey, TValue>(@this).Mutate(me => me.AddRange(range));
 
-    public static List<T> AddToCopy<T>(this IReadOnlyList<T> @this, T item) => new(@this) {item};
+    public static List<T> AddToCopy<T>(this IReadOnlyList<T> @this, T item) => [..@this, item];
 
     public static HashSetCEx<T> AddToCopy<T>(this IReadonlySetCEx<T> @this, T item) => new(@this) {item};
 

@@ -18,7 +18,7 @@ namespace Composable.Tests.ExternalDependencies.Messaging.NetMQ;
         dealer.Connect(address);
         Console.WriteLine(address);
 
-        dealer.SendMoreFrame(Array.Empty<byte>());
+        dealer.SendMoreFrame([]);
         dealer.SendFrame("Hello!");
 
         Console.WriteLine($"#1# {router.ReceiveFrameString()}");

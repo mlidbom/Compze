@@ -35,7 +35,7 @@ public static partial class MessageTypes
             {
                 Id = configuration.Id;
                 Name = configuration.Name;
-                HandledMessageTypes = new HashSet<TypeId>(handledRemoteMessageTypeIds);
+                HandledMessageTypes = [..handledRemoteMessageTypeIds];
             }
 
             public string Name { get; private set; }

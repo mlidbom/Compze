@@ -11,15 +11,15 @@ partial class DatabasePool
 {
     internal class Database : BinarySerialized<Database>
     {
-        protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[]
-                                                                                    {
-                                                                                        GetterSetter.ForInt32(@this => @this.Id, (@this, value) => @this.Id = value),
+        protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() =>
+        [
+            GetterSetter.ForInt32(@this => @this.Id, (@this, value) => @this.Id = value),
                                                                                         GetterSetter.ForBoolean(@this => @this.IsReserved, (@this, value) => @this.IsReserved = value),
                                                                                         GetterSetter.ForDateTime(@this => @this.ReservationExpirationTime, (@this, value) => @this.ReservationExpirationTime = value),
                                                                                         GetterSetter.ForString(@this => @this.ReservationName, (@this, value) => @this.ReservationName = value.NotNull()),
                                                                                         GetterSetter.ForGuid(@this => @this.ReservedByPoolId, (@this, value) => @this.ReservedByPoolId = value),
                                                                                         GetterSetter.ForBoolean(@this => @this.IsClean, (@this, value) => @this.IsClean = value)
-                                                                                    };
+        ];
 
         internal int Id { get; private set; }
         internal bool IsReserved { get; private set; }

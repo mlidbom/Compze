@@ -21,7 +21,7 @@ public partial class Password
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
             if(password == null)
             {
-                return new []{Failures.Null}; //Everything else will fail with null reference exception if we don't return here...
+                return [Failures.Null]; //Everything else will fail with null reference exception if we don't return here...
             }
 
             var failures = new List<Failures>();

@@ -34,7 +34,7 @@ class PluggableComponentsTestFixtureSource : IEnumerable<string>
         }
         catch(Exception e)
         {
-            return new[] {e.ToString()};
+            return [e.ToString()];
         }
     }
 }

@@ -16,9 +16,9 @@ static class AssemblyCE
         return false;
     }
 
-    static readonly string[] StartPatternsForKnownThirdPartyLibraryAssemblies = {"System.", "Castle.", "Microsoft.", "nunit.", "nCrunch.", "xunit."};
+    static readonly string[] StartPatternsForKnownThirdPartyLibraryAssemblies = ["System.", "Castle.", "Microsoft.", "nunit.", "nCrunch.", "xunit."];
     static readonly string[] ExactNamesForKnownThirdPartyLibraryAssemblies =
-    {
+    [
         "System",
         "mscorlib",
         "netstandard",
@@ -28,5 +28,5 @@ static class AssemblyCE
         "NetMQ",
         "AsyncIO",
         "Newtonsoft.Json"
-    };
+    ];
 }

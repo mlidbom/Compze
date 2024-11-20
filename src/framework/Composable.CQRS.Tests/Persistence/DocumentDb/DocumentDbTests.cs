@@ -385,7 +385,7 @@ class DocumentDbTests : DocumentDbTestsBase
         var user = new User
                    {
                        Id = Guid.NewGuid(),
-                       People = new HashSet<User> { userInSet }
+                       People = [userInSet]
                    };
 
         UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
@@ -628,7 +628,7 @@ class DocumentDbTests : DocumentDbTestsBase
             updater.Save(user1);
             updater.Save(user2);
 
-            var people = reader.GetAll<User>(new[] {user1.Id});
+            var people = reader.GetAll<User>([user1.Id]);
 
             Assert.That(people.ToList(), Has.Count.EqualTo(1));
             Assert.That(people, Contains.Item(user1));

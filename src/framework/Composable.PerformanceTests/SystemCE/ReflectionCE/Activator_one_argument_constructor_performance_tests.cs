@@ -74,7 +74,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
             type: typeof(Simple),
             bindingAttr: BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public,
             binder: null,
-            args: new object[]{_argument},
+            args: [_argument],
             culture: null);
     }
 }

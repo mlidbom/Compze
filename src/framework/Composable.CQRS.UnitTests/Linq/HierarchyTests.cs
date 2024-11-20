@@ -12,7 +12,7 @@ public class HierarchyTests
 {
     class Hierarchical
     {
-        public Hierarchical[] Children = Array.Empty<Hierarchical>();
+        public Hierarchical[] Children = [];
     }
 
     [Test]
@@ -20,33 +20,33 @@ public class HierarchyTests
     {
         var root1 = new Hierarchical
                     {
-                        Children = new[]
-                                   {
-                                       new Hierarchical
+                        Children =
+                        [
+                            new Hierarchical
                                        {
-                                           Children = new[]
-                                                      {
-                                                          new Hierarchical(),
+                                           Children =
+                                           [
+                                               new Hierarchical(),
                                                           new Hierarchical()
-                                                      }
+                                           ]
                                        },
                                        new Hierarchical()
-                                   }
+                        ]
                     };
         var root2 = new Hierarchical
                     {
-                        Children = new[]
-                                   {
-                                       new Hierarchical
+                        Children =
+                        [
+                            new Hierarchical
                                        {
-                                           Children = new[]
-                                                      {
-                                                          new Hierarchical(),
+                                           Children =
+                                           [
+                                               new Hierarchical(),
                                                           new Hierarchical()
-                                                      }
+                                           ]
                                        },
                                        new Hierarchical()
-                                   }
+                        ]
                     };
 
         var flattened = EnumerableCE.Create(root1, root2).FlattenHierarchy(root => root.Children);

@@ -22,7 +22,7 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistar
             return typeId;
         }
 
-        throw BuildExceptionDescribingHowToAddMissingMappings(new List<Type> {type});
+        throw BuildExceptionDescribingHowToAddMissingMappings([type]);
     });
 
     public Type GetType(TypeId typeId) => _state.Update(state =>

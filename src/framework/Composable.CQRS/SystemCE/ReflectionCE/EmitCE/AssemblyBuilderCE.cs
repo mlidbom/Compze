@@ -42,7 +42,7 @@ public static class TypeBuilderCE
 
     public static void ImplementConstructor(this TypeBuilder typeBuilder, FieldInfo field)
     {
-        Type[] constructorArgs = {field.FieldType};
+        Type[] constructorArgs = [field.FieldType];
         var constructorBuilder = typeBuilder.DefineConstructor(MethodAttributes.Public,
                                                                CallingConventions.Standard,
                                                                constructorArgs);
@@ -59,7 +59,7 @@ public static class TypeBuilderCE
         var setMethodBuilder = typeBuilder.DefineMethod(name: $"set_{propertyBuilder.Name}",
                                                         attributes: PropertyAccessorAttributes,
                                                         returnType: null,
-                                                        parameterTypes: new[] {propertyBuilder.PropertyType});
+                                                        parameterTypes: [propertyBuilder.PropertyType]);
 
         var ilGenerator = setMethodBuilder.GetILGenerator();
         ilGenerator.Emit(OpCodes.Ldarg_0);

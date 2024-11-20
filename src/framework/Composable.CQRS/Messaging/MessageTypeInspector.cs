@@ -13,7 +13,7 @@ namespace Composable.Messaging;
 partial class MessageTypeInspector
 {
     static readonly MessageTypeDesignRule[] MessageTypeDesignRules =
-    {
+    [
         new MustBeIMessage(),
         new CannotBeBothCommandAndEvent(),
         new CannotBeBothCommandAndQuery(),
@@ -22,7 +22,7 @@ partial class MessageTypeInspector
         new CannotForbidAndRequireTransactionalSender(),
         new AtMostOnceCommandDefaultConstructorMustNotSetADeduplicationId(),
         new WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
-    };
+    ];
 
     static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
 

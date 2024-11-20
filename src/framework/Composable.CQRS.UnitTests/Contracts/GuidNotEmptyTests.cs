@@ -31,7 +31,7 @@ public class GuidNotEmptyTests
     {
         InspectionTestHelper.BatchTestInspection<GuidIsEmptyContractViolationException, Guid>(
             assert: inspected => inspected.NotEmpty(),
-            badValues: new[] {Guid.Empty, new Guid()},
-            goodValues: new[] {Guid.NewGuid(), Guid.NewGuid()});
+            badValues: [Guid.Empty, new Guid()],
+            goodValues: [Guid.NewGuid(), Guid.NewGuid()]);
     }
 }

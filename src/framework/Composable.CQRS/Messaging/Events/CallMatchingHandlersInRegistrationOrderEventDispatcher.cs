@@ -55,11 +55,11 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
                 : null;
     }
 
-    readonly List<RegisteredHandler> _handlers = new();
+    readonly List<RegisteredHandler> _handlers = [];
 
-    readonly List<Action<object>> _runBeforeHandlers = new();
-    readonly List<Action<object>> _runAfterHandlers = new();
-    readonly HashSet<Type> _ignoredEvents = new();
+    readonly List<Action<object>> _runBeforeHandlers = [];
+    readonly List<Action<object>> _runAfterHandlers = [];
+    readonly HashSet<Type> _ignoredEvents = [];
     int _totalHandlers;
 
     ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>
@@ -141,7 +141,7 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
     Dictionary<Type, Action<IEvent>[]> _typeToHandlerCache = new();
     int _cachedTotalHandlers;
     // ReSharper disable once StaticMemberInGenericType
-    static readonly Action<IEvent>[] NullHandlerList = Array.Empty<Action<IEvent>>();
+    static readonly Action<IEvent>[] NullHandlerList = [];
 
     Action<IEvent>[] GetHandlers(Type type, bool validateHandlerExists = true)
     {

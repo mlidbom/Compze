@@ -66,7 +66,7 @@ public class Example
                     name: $"{wrapperEventType}_ilgen_impl",
                     attr: TypeAttributes.Public,
                     parent: null,
-                    interfaces: new[] {wrapperEventType});
+                    interfaces: [wrapperEventType]);
 
                 GenericTypeParameterBuilder wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
 

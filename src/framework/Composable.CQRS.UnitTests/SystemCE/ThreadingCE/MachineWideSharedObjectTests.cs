@@ -18,7 +18,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
 [UsedImplicitly] class SharedObject : BinarySerialized<SharedObject>
 {
     public string Name { get; set; } = "Default";
-    protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[] {GetterSetter.ForString(@this => @this.Name, (@this, value) => @this.Name = value)};
+    protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForString(@this => @this.Name, (@this, value) => @this.Name = value)];
 }
 
 [TestFixture] public class MachineWideSharedObjectTests

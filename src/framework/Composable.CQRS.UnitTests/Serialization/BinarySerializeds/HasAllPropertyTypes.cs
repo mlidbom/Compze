@@ -8,9 +8,9 @@ class HasAllPropertyTypes : BinarySerialized<HasAllPropertyTypes>
 {
     public static HasAllPropertyTypes CreateInstanceWithSaneValues() => new(true, 2, 'a', new decimal(3.2), 4.1, 5, 6, 7, 8, 9, 10, 11.1f, 12, "13", Guid.Parse("00000000-0000-0000-0000-000000000014"), DateTime.FromBinary(15));
 
-    protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[]
-                                                                                {
-                                                                                    GetterSetter.ForBoolean(@this => @this.Boolean, (@this, value) => @this.Boolean = value),
+    protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() =>
+    [
+        GetterSetter.ForBoolean(@this => @this.Boolean, (@this, value) => @this.Boolean = value),
                                                                                     GetterSetter.ForByte(@this => @this.Byte, (@this, value) => @this.Byte = value),
                                                                                     GetterSetter.ForChar(@this => @this.Char, (@this, value) => @this.Char = value),
                                                                                     GetterSetter.ForDecimal(@this => @this.Decimal, (@this, value) => @this.Decimal = value),
@@ -30,7 +30,7 @@ class HasAllPropertyTypes : BinarySerialized<HasAllPropertyTypes>
                                                                                     GetterSetter.ForBinarySerializable(@this => @this.RecursiveProperty, (@this, value) => @this.RecursiveProperty = value),
                                                                                     GetterSetter.ForBinarySerializableList(@this => @this.RecursiveListProperty, (@this, value) => @this.RecursiveListProperty = value),
                                                                                     GetterSetter.ForBinarySerializableArray(@this => @this.RecursiveArrayProperty, (@this, value) => @this.RecursiveArrayProperty = value)
-                                                                                };
+    ];
 
     public HasAllPropertyTypes() {}
 

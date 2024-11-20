@@ -11,7 +11,7 @@ static class HashSetCE
     public static HashSet<T> ToSet<T>(this IEnumerable<T> me)
     {
         Contract.ArgumentNotNull(me, nameof(me));
-        return new HashSet<T>(me);
+        return [..me];
     }
 
     ///<summary>

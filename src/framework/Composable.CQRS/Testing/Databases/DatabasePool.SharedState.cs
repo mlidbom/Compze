@@ -15,9 +15,9 @@ partial class DatabasePool
     [UsedImplicitly] protected class SharedState : BinarySerialized<SharedState>
     {
         const int CleanDatabaseNumberTarget = 10;
-        protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => new[] {GetterSetter.ForBinarySerializableList(@this => @this._databases, (@this, value) => @this._databases = value.NotNull())};
+        protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForBinarySerializableList(@this => @this._databases, (@this, value) => @this._databases = value.NotNull())];
 
-        List<Database> _databases = new();
+        List<Database> _databases = [];
 
         IEnumerable<Database> UnReserved => _databases.Where(db => !db.IsReserved)
                                                        //Reusing recently used databases helps performance in a pretty big way, disk cache, connection pool etc.

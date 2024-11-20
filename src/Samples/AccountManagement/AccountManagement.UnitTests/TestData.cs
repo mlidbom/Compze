@@ -22,7 +22,7 @@ static class TestData
             public static readonly string MissingLowercaseCharacter = ValidPassword.ToUpperInvariant();
 
             public static readonly string[] All =
-            {
+            [
                 Null,
                 EmptyString,
                 ShorterThanFourCharacters,
@@ -30,7 +30,7 @@ static class TestData
                 BorderedByWhiteSpaceAtEnd,
                 MissingUpperCaseCharacter,
                 MissingLowercaseCharacter
-            };
+            ];
         }
 
         static int _passwordCount = 1;

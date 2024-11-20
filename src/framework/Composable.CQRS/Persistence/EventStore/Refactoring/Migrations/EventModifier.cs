@@ -47,7 +47,7 @@ class EventModifier : IEventModifier
         {
             if (_currentNode == null)
             {
-                Events = new LinkedList<AggregateEvent>();
+                Events = [];
                 _currentNode = Events.AddFirst(_inspectedEvent!);
             }
             return _currentNode;
@@ -160,5 +160,5 @@ class EventModifier : IEventModifier
         _eventsAddedCallback.Invoke(_insertedEvents);
     }
 
-    internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? new[] { Assert.Result.NotNull(_inspectedEvent) };
+    internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? [Assert.Result.NotNull(_inspectedEvent)];
 }

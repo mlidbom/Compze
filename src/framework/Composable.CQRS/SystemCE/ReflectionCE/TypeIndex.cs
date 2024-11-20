@@ -14,7 +14,7 @@ class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
     internal static int ServiceCount { get; private set; }
     static IReadOnlyDictionary<Type, int> _map = new Dictionary<Type, int>();
 
-    static Type[] _backMap = Array.Empty<Type>();
+    static Type[] _backMap = [];
 
     internal static int For(Type type)
     {

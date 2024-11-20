@@ -19,7 +19,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
     readonly IAggregateTypeValidator _aggregateTypeValidator;
     readonly IDictionary<Guid, IEventStored> _idMap = new Dictionary<Guid, IEventStored>();
     readonly ISingleContextUseGuard _usageGuard;
-    readonly List<IDisposable> _disposableResources = new();
+    readonly List<IDisposable> _disposableResources = [];
     IUtcTimeTimeSource TimeSource { get; set; }
 
     public EventStoreUpdater(IEventStoreEventPublisher eventStoreEventPublisher, IEventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)
@@ -112,7 +112,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
         {
             throw new Exception($"Got event from aggregate that is not tracked! Id: {@event.AggregateId}");
         }
-        _store.SaveSingleAggregateEvents(new[] { @event });
+        _store.SaveSingleAggregateEvents([@event]);
         _eventStoreEventPublisher.Publish(@event);
     }
 

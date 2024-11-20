@@ -47,7 +47,7 @@ namespace Composable.Tests.Serialization
                                              {
                                                  TypeA = OriginalTypes.TypeA.Create(),
                                                  TypeB = OriginalTypes.TypeB.Create(),
-                                                 ListOfTypeA = new List<BaseTypeA> {OriginalTypes.TypeA.Create(), OriginalTypes.TypeB.Create(), OriginalTypes.TypeA.TypeAA.Create(), OriginalTypes.TypeB.TypeBB.Create()}
+                                                 ListOfTypeA = [OriginalTypes.TypeA.Create(), OriginalTypes.TypeB.Create(), OriginalTypes.TypeA.TypeAA.Create(), OriginalTypes.TypeB.TypeBB.Create()]
                                              };
 
             public BaseTypeA TypeA { get; set; }
