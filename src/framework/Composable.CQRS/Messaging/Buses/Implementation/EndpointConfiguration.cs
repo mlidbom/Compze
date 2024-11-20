@@ -37,13 +37,7 @@ class RealEndpointConfiguration
          Address = "tcp://localhost:0";
       } else
       {
-         if(IsPureClientEndpoint)
-         {
-            Address = "invalid";
-         } else
-         {
-            Address = $"tcp://localhost:{EndpointConfigurationValue("Port")}";
-         }
+         Address = IsPureClientEndpoint ? "invalid" : $"tcp://localhost:{EndpointConfigurationValue("Port")}";
       }
    }
 

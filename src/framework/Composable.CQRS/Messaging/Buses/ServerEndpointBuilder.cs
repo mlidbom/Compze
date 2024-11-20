@@ -76,6 +76,7 @@ class ServerEndpointBuilder : IEndpointBuilder
          Container.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
       }
 
+      // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
       if(Container.RunMode == RunMode.Production)
       {
          Container.Register(Singleton.For<IUtcTimeTimeSource>().CreatedBy(() => new DateTimeNowTimeSource()).DelegateToParentServiceLocatorWhenCloning());
