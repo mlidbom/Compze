@@ -1,9 +1,8 @@
-namespace AccountManagement.UI.MVC.Models
-{
-    public class ErrorViewModel
-    {
-        public string RequestId { get; set; } = string.Empty;
+namespace AccountManagement.UI.MVC.Models;
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-    }
+public class ErrorViewModel
+{
+    public string RequestId { get; set; } = string.Empty;
+
+    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 }

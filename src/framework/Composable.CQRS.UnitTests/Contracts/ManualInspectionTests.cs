@@ -3,26 +3,25 @@ using FluentAssertions;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
-namespace Composable.Tests.Contracts
+namespace Composable.Tests.Contracts;
+
+[TestFixture]
+public class ManualInspectionTests
 {
-    [TestFixture]
-    public class ManualInspectionTests
+    [Test]
+    public void ThrownContractExceptionIfTestDoesNotPass()
     {
-        [Test]
-        public void ThrownContractExceptionIfTestDoesNotPass()
-        {
-            var nameArgument = "bad";
+        var nameArgument = "bad";
 
-            Assert.Throws<ContractViolationException>(() => Contract.Argument(nameArgument, nameof(nameArgument)).Inspect(value => value != nameArgument));
-        }
+        Assert.Throws<ContractViolationException>(() => Contract.Argument(nameArgument, nameof(nameArgument)).Inspect(value => value != nameArgument));
+    }
 
-        [Test]
-        public void ThrowsExceptionMatchingParameterNameIfTestDoesNotPass()
-        {
-            var nameargument = "bad";
+    [Test]
+    public void ThrowsExceptionMatchingParameterNameIfTestDoesNotPass()
+    {
+        var nameargument = "bad";
 
-            Assert.Throws<ContractViolationException>(() => Contract.Argument(nameargument, nameof(nameargument)).Inspect(value => value != nameargument))
-                .Message.Should().Contain("nameargument");
-        }
+        Assert.Throws<ContractViolationException>(() => Contract.Argument(nameargument, nameof(nameargument)).Inspect(value => value != nameargument))
+              .Message.Should().Contain("nameargument");
     }
 }

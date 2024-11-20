@@ -6,17 +6,17 @@ using Composable.SystemCE.ThreadingCE.TasksCE;
 using Message = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using Dispatch = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Composable.Persistence.Oracle.Messaging.Buses.Implementation
+namespace Composable.Persistence.Oracle.Messaging.Buses.Implementation;
+
+partial class OracleOutboxPersistenceLayer
 {
-    partial class OracleOutboxPersistenceLayer
+    const string OracleGuidType = "CHAR(36)";
+    static class SchemaManager
     {
-        const string OracleGuidType = "CHAR(36)";
-        static class SchemaManager
+        public static async Task EnsureTablesExistAsync(IOracleConnectionPool connectionFactory)
         {
-            public static async Task EnsureTablesExistAsync(IOracleConnectionPool connectionFactory)
-            {
-                await connectionFactory.UseCommandAsync(
-                                            command => command.SetCommandText($@"
+            await connectionFactory.UseCommandAsync(
+                command => command.SetCommandText($@"
 declare existing_table_count integer;
 begin
     select count(*) into existing_table_count from user_tables where table_name='{Message.TableName}';
@@ -53,8 +53,7 @@ begin
         end if;
     end;
 ")
-                                                              .ExecuteNonQueryAsync()).NoMarshalling();
-            }
+                                  .ExecuteNonQueryAsync()).NoMarshalling();
         }
     }
 }

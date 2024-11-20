@@ -1,12 +1,11 @@
-﻿namespace Composable.Persistence.EventStore.PersistenceLayer
+﻿namespace Composable.Persistence.EventStore.PersistenceLayer;
+
+class AggregateEventStorageInformation
 {
-    class AggregateEventStorageInformation
-    {
-        internal int InsertedVersion { get; set; }
-        internal int EffectiveVersion { get; set; }
+    internal int InsertedVersion { get; set; }
+    internal int EffectiveVersion { get; set; }
 
-        internal ReadOrder? ReadOrder { get; set; }
+    internal ReadOrder? ReadOrder { get; set; }
 
-        internal AggregateEventRefactoringInformation? RefactoringInformation { get; set; }
-    }
+    internal AggregateEventRefactoringInformation? RefactoringInformation { get; set; }
 }

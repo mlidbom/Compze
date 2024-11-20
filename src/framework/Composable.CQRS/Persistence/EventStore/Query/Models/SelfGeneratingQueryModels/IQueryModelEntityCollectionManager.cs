@@ -1,7 +1,6 @@
-namespace Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels
+namespace Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+
+interface IQueryModelEntityCollectionManager<TEntity, in TEntityId>
 {
-    interface IQueryModelEntityCollectionManager<TEntity, in TEntityId>
-    {
-        IReadonlyQueryModelEntityCollection<TEntity, TEntityId> Entities { get; }
-    }
+    IReadonlyQueryModelEntityCollection<TEntity, TEntityId> Entities { get; }
 }

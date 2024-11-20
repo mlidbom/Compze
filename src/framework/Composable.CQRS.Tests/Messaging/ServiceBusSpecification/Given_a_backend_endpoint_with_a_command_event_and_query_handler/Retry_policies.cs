@@ -6,29 +6,28 @@ using Composable.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler
+namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+
+public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : Fixture
 {
-    public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : Fixture
+    [SetUp] public void SendCommandThatFails()
     {
-        [SetUp] public void SendCommandThatFails()
-        {
-            var exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
-            MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
+        var exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
+        MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
 
-            Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(action: () => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));
-        }
-
-        [Test] public void ExactlyOnce_Event_raised_in_handler_does_not_reach_remote_handler()
-        {
-            MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(count: 1, 1.Seconds())
-                                                   .Should()
-                                                   .Be(expected: false, because: "event should not reach handler");
-        }
-
-        [Test] public void Command_handler_is_tried_5_times() => MyCreateAggregateCommandHandlerThreadGate.Passed.Should().Be(expected: 5);
-
-        [Test] public void ExactlyOnce_Event_raised_in_handler_reaches_local_handler_5_times() => MyLocalAggregateEventHandlerThreadGate.Passed.Should().Be(expected: 5);
-
-        public Retry_policies_AtMostOnceCommand_when_command_handler_fails(string _) : base(_) {}
+        Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(action: () => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));
     }
+
+    [Test] public void ExactlyOnce_Event_raised_in_handler_does_not_reach_remote_handler()
+    {
+        MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(count: 1, 1.Seconds())
+                                               .Should()
+                                               .Be(expected: false, because: "event should not reach handler");
+    }
+
+    [Test] public void Command_handler_is_tried_5_times() => MyCreateAggregateCommandHandlerThreadGate.Passed.Should().Be(expected: 5);
+
+    [Test] public void ExactlyOnce_Event_raised_in_handler_reaches_local_handler_5_times() => MyLocalAggregateEventHandlerThreadGate.Passed.Should().Be(expected: 5);
+
+    public Retry_policies_AtMostOnceCommand_when_command_handler_fails(string _) : base(_) {}
 }

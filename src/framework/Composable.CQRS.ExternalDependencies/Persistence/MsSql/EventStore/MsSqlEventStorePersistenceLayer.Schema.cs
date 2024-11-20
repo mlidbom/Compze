@@ -4,18 +4,18 @@ using Composable.SystemCE.TransactionsCE;
 using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Composable.Persistence.MsSql.EventStore
-{
-    partial class MsSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
-    {
-        bool _initialized;
+namespace Composable.Persistence.MsSql.EventStore;
 
-        public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+partial class MsSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+{
+    bool _initialized;
+
+    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+    {
+        if(!_initialized)
         {
-            if(!_initialized)
-            {
-                _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                              command => command.ExecuteNonQuery($@"
+            _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                          command => command.ExecuteNonQuery($@"
 IF NOT EXISTS(SELECT NAME FROM sys.tables WHERE name = '{Event.TableName}')
 BEGIN
     CREATE TABLE dbo.{Event.TableName}
@@ -53,8 +53,7 @@ BEGIN
 END 
 "));
 
-                _initialized = true;
-            }
-        });
-    }
+            _initialized = true;
+        }
+    });
 }

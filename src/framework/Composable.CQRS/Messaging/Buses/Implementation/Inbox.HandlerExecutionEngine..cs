@@ -4,55 +4,54 @@ using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.SystemCE.ThreadingCE;
 
-namespace Composable.Messaging.Buses.Implementation
+namespace Composable.Messaging.Buses.Implementation;
+
+partial class Inbox
 {
-    partial class Inbox
+    partial class HandlerExecutionEngine
     {
-        partial class HandlerExecutionEngine
+        Thread? _awaitDispatchableMessageThread;
+
+        readonly IReadOnlyList<IMessageDispatchingRule> _dispatchingRules = new List<IMessageDispatchingRule>
+                                                                            {
+                                                                                new QueriesExecuteAfterAllCommandsAndEventsAreDone(),
+                                                                                new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
+                                                                            };
+        readonly Coordinator _coordinator;
+
+        public HandlerExecutionEngine(IGlobalBusStateTracker globalStateTracker,
+                                      IMessageHandlerRegistry handlerRegistry,
+                                      IServiceLocator serviceLocator,
+                                      IMessageStorage storage,
+                                      ITaskRunner taskRunner) =>
+            _coordinator = new Coordinator(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry);
+
+        internal Task<object?> Enqueue(TransportMessage.InComing transportMessage) => _coordinator.EnqueueMessageTask(transportMessage);
+
+        void AwaitDispatchableMessageThread()
         {
-            Thread? _awaitDispatchableMessageThread;
-
-            readonly IReadOnlyList<IMessageDispatchingRule> _dispatchingRules = new List<IMessageDispatchingRule>
-                                                                                {
-                                                                                    new QueriesExecuteAfterAllCommandsAndEventsAreDone(),
-                                                                                    new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
-                                                                                };
-            readonly Coordinator _coordinator;
-
-            public HandlerExecutionEngine(IGlobalBusStateTracker globalStateTracker,
-                                          IMessageHandlerRegistry handlerRegistry,
-                                          IServiceLocator serviceLocator,
-                                          IMessageStorage storage,
-                                          ITaskRunner taskRunner) =>
-                _coordinator = new Coordinator(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry);
-
-            internal Task<object?> Enqueue(TransportMessage.InComing transportMessage) => _coordinator.EnqueueMessageTask(transportMessage);
-
-            void AwaitDispatchableMessageThread()
+            while(true)
             {
-                while(true)
-                {
-                    var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules);
-                    task.Execute();
-                }
-                // ReSharper disable once FunctionNeverReturns
+                var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules);
+                task.Execute();
             }
+            // ReSharper disable once FunctionNeverReturns
+        }
 
-            public void Start()
-            {
-                _awaitDispatchableMessageThread = new Thread(ThreadExceptionHandler.WrapThreadStart(AwaitDispatchableMessageThread))
-                                                  {
-                                                      Name = nameof(AwaitDispatchableMessageThread),
-                                                      Priority = ThreadPriority.AboveNormal
-                                                  };
-                _awaitDispatchableMessageThread.Start();
-            }
+        public void Start()
+        {
+            _awaitDispatchableMessageThread = new Thread(ThreadExceptionHandler.WrapThreadStart(AwaitDispatchableMessageThread))
+                                              {
+                                                  Name = nameof(AwaitDispatchableMessageThread),
+                                                  Priority = ThreadPriority.AboveNormal
+                                              };
+            _awaitDispatchableMessageThread.Start();
+        }
 
-            public void Stop()
-            {
-                _awaitDispatchableMessageThread?.InterruptAndJoin();
-                _awaitDispatchableMessageThread = null;
-            }
+        public void Stop()
+        {
+            _awaitDispatchableMessageThread?.InterruptAndJoin();
+            _awaitDispatchableMessageThread = null;
         }
     }
 }

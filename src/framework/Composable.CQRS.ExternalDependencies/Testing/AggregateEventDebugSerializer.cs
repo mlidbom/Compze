@@ -1,9 +1,8 @@
 using Newtonsoft.Json;
 
-namespace Composable.Testing
+namespace Composable.Testing;
+
+static class AggregateEventDebugSerializer
 {
-    static class AggregateEventDebugSerializer
-    {
-        public static string ToNewtonSoftDebugString(this object @this, Formatting formatting = Formatting.Indented) => $"{@this.GetType()}:{DebugEventStoreEventSerializer.Serialize(@this, formatting)}";
-    }
+    public static string ToNewtonSoftDebugString(this object @this, Formatting formatting = Formatting.Indented) => $"{@this.GetType()}:{DebugEventStoreEventSerializer.Serialize(@this, formatting)}";
 }

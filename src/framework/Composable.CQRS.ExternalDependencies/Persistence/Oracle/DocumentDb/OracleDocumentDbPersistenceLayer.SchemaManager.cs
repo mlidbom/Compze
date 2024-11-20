@@ -3,26 +3,26 @@ using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.TransactionsCE;
 using Document = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.Oracle.DocumentDb
+namespace Composable.Persistence.Oracle.DocumentDb;
+
+partial class OracleDocumentDbPersistenceLayer
 {
-    partial class OracleDocumentDbPersistenceLayer
+    const string OracleGuidType = "CHAR(36)";
+
+    class SchemaManager
     {
-        const string OracleGuidType = "CHAR(36)";
+        readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+        bool _initialized = false;
+        readonly IOracleConnectionPool _connectionPool;
+        public SchemaManager(IOracleConnectionPool connectionPool) => _connectionPool = connectionPool;
 
-        class SchemaManager
+        internal void EnsureInitialized() => _monitor.Update(() =>
         {
-            readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-            bool _initialized = false;
-            readonly IOracleConnectionPool _connectionPool;
-            public SchemaManager(IOracleConnectionPool connectionPool) => _connectionPool = connectionPool;
-
-            internal void EnsureInitialized() => _monitor.Update(() =>
+            if(!_initialized)
             {
-                if(!_initialized)
+                TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
                 {
-                    TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
-                    {
-                        _connectionPool.ExecuteNonQuery($@"
+                    _connectionPool.ExecuteNonQuery($@"
 declare existing_table_count integer;
 begin
     select count(*) into existing_table_count from user_tables where table_name='{Document.TableName.ToUpperInvariant()}';
@@ -44,11 +44,10 @@ begin
     end if;
 end;
 ");
-                    });
-                }
+                });
+            }
 
-                _initialized = true;
-            });
-        }
+            _initialized = true;
+        });
     }
 }

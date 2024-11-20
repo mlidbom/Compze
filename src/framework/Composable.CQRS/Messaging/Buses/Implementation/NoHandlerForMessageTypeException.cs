@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Composable.Messaging.Buses.Implementation
+namespace Composable.Messaging.Buses.Implementation;
+
+public class NoHandlerForMessageTypeException : Exception
 {
-    public class NoHandlerForMessageTypeException : Exception
-    {
-        public NoHandlerForMessageTypeException(Type commandType) : base(commandType.FullName) {}
-    }
+    public NoHandlerForMessageTypeException(Type commandType) : base(commandType.FullName) {}
 }

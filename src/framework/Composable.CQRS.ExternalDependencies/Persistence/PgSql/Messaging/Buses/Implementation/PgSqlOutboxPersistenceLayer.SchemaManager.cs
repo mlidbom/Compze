@@ -5,18 +5,18 @@ using Composable.SystemCE.ThreadingCE.TasksCE;
 using Message = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using Dispatch = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Composable.Persistence.PgSql.Messaging.Buses.Implementation
+namespace Composable.Persistence.PgSql.Messaging.Buses.Implementation;
+
+partial class PgSqlOutboxPersistenceLayer
 {
-    partial class PgSqlOutboxPersistenceLayer
+    const string PgSqlGuidType = "CHAR(36)";
+    static class SchemaManager
     {
-        const string PgSqlGuidType = "CHAR(36)";
-        static class SchemaManager
+        public static async Task EnsureTablesExistAsync(IPgSqlConnectionPool connectionFactory)
         {
-            public static async Task EnsureTablesExistAsync(IPgSqlConnectionPool connectionFactory)
-            {
 
 
-                await connectionFactory.PrepareAndExecuteNonQueryAsync($@"
+            await connectionFactory.PrepareAndExecuteNonQueryAsync($@"
    
 
     CREATE TABLE IF NOT EXISTS {Message.TableName}
@@ -46,7 +46,6 @@ namespace Composable.Persistence.PgSql.Messaging.Buses.Implementation
     );
 
 ").NoMarshalling();
-            }
         }
     }
 }

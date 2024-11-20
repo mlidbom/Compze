@@ -2,173 +2,172 @@ using System.Collections.Generic;
 using Composable.DDD;
 using NUnit.Framework;
 
-namespace Composable.Tests.DDD
+namespace Composable.Tests.DDD;
+
+[TestFixture]
+public class ValueObjectsWithCollectionsTests
 {
-    [TestFixture]
-    public class ValueObjectsWithCollectionsTests
+    class ExternalJobsDashboardViewModel : ValueObject<ExternalJobsDashboardViewModel>
     {
-        class ExternalJobsDashboardViewModel : ValueObject<ExternalJobsDashboardViewModel>
-        {
-            public ExternalJobsDashboardViewModel() => JobAdvertisements = new List<JobAdvertisement>();
+        public ExternalJobsDashboardViewModel() => JobAdvertisements = new List<JobAdvertisement>();
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        public IEnumerable<JobAdvertisement> JobAdvertisements { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        public string CompanyState { get; set; }
+
+        public class JobAdvertisement : ValueObject<JobAdvertisement>
+        {
             // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public IEnumerable<JobAdvertisement> JobAdvertisements { get; set; }
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public string CompanyState { get; set; }
-
-            public class JobAdvertisement : ValueObject<JobAdvertisement>
-            {
-                // ReSharper disable once UnusedAutoPropertyAccessor.Local
-                public string Name { get; set; }
-            }
+            public string Name { get; set; }
         }
+    }
 
-        [Test]
-        public void DifferingPropertiesShouldReturnFalse()
-        {
-            var lhs = new ExternalJobsDashboardViewModel
-                      {
-                          CompanyState = "SomeState"
-                      };
-            var rhs = new ExternalJobsDashboardViewModel
-                      {
-                          CompanyState = "SomeOtherState"
-                      };
-
-            Assert.That(lhs, Is.Not.EqualTo(rhs));
-        }
-
-        [Test]
-        public void DifferingCollectionsShouldNotBeEqual()
-        {
-            var lhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
-                                    {
-                                        new ExternalJobsDashboardViewModel.JobAdvertisement()
-                                    }
-            };
-            var rhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>()
-            };
-
-            Assert.That(lhs, Is.Not.EqualTo(rhs));
-        }
-
-        [Test]
-        public void IdenticalCollectionsShouldBeEqual()
-        {
-            var lhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
-                                    {
-                                        new ExternalJobsDashboardViewModel.JobAdvertisement()
-                                    }
-            };
-            var rhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
-                                    {
-                                        new ExternalJobsDashboardViewModel.JobAdvertisement()
-                                    }
-            };
-
-            Assert.That(lhs, Is.EqualTo(rhs));
-        }
-
-        [Test]
-        public void PropertiesDifferingInCollectionShouldNotBeEqual()
-        {
-            var lhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
-                                    {
-                                        new ExternalJobsDashboardViewModel.JobAdvertisement
-                                        {
-                                            Name = "AValue"
-                                        }
-                                    }
-            };
-            var rhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
-                                    {
-                                        new ExternalJobsDashboardViewModel.JobAdvertisement
-                                        {
-                                            Name = "ANotherValue"
-                                        }
-                                    }
-            };
-
-            Assert.That(lhs, Is.Not.EqualTo(rhs));
-        }
-
-        [Test]
-        public void IdenticalInCollectionShouldBeEqual()
-        {
-            var lhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
-                                    {
-                                        new ExternalJobsDashboardViewModel.JobAdvertisement
-                                        {
-                                            Name = "AValue"
-                                        }
-                                    }
-            };
-            var rhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
-                                    {
-                                        new ExternalJobsDashboardViewModel.JobAdvertisement
-                                        {
-                                            Name = "AValue"
-                                        }
-                                    }
-            };
-
-            Assert.That(lhs, Is.EqualTo(rhs));
-        }
-
-        [Test]
-        public void IfOneCollectionIsNullObjectsAreNotEqual()
-        {
-            var lhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = null
-            };
-            var rhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement> {}
-            };
-
-            Assert.That(lhs, Is.Not.EqualTo(rhs));
-
-            lhs = new ExternalJobsDashboardViewModel
+    [Test]
+    public void DifferingPropertiesShouldReturnFalse()
+    {
+        var lhs = new ExternalJobsDashboardViewModel
                   {
-                JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement> { }
-            };
-            rhs = new ExternalJobsDashboardViewModel
+                      CompanyState = "SomeState"
+                  };
+        var rhs = new ExternalJobsDashboardViewModel
                   {
-                JobAdvertisements = null
-            };
-            Assert.That(lhs, Is.Not.EqualTo(rhs));
-        }
+                      CompanyState = "SomeOtherState"
+                  };
 
-        [Test]
-        public void IfBothCollectionsAreNullObjectsAreEqual()
-        {
-            var lhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = null
-            };
-            var rhs = new ExternalJobsDashboardViewModel
-                      {
-                JobAdvertisements = null
-            };
+        Assert.That(lhs, Is.Not.EqualTo(rhs));
+    }
 
-            Assert.That(lhs, Is.EqualTo(rhs));
-        }
+    [Test]
+    public void DifferingCollectionsShouldNotBeEqual()
+    {
+        var lhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
+                                          {
+                                              new ExternalJobsDashboardViewModel.JobAdvertisement()
+                                          }
+                  };
+        var rhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>()
+                  };
+
+        Assert.That(lhs, Is.Not.EqualTo(rhs));
+    }
+
+    [Test]
+    public void IdenticalCollectionsShouldBeEqual()
+    {
+        var lhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
+                                          {
+                                              new ExternalJobsDashboardViewModel.JobAdvertisement()
+                                          }
+                  };
+        var rhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
+                                          {
+                                              new ExternalJobsDashboardViewModel.JobAdvertisement()
+                                          }
+                  };
+
+        Assert.That(lhs, Is.EqualTo(rhs));
+    }
+
+    [Test]
+    public void PropertiesDifferingInCollectionShouldNotBeEqual()
+    {
+        var lhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
+                                          {
+                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              {
+                                                  Name = "AValue"
+                                              }
+                                          }
+                  };
+        var rhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
+                                          {
+                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              {
+                                                  Name = "ANotherValue"
+                                              }
+                                          }
+                  };
+
+        Assert.That(lhs, Is.Not.EqualTo(rhs));
+    }
+
+    [Test]
+    public void IdenticalInCollectionShouldBeEqual()
+    {
+        var lhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
+                                          {
+                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              {
+                                                  Name = "AValue"
+                                              }
+                                          }
+                  };
+        var rhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>
+                                          {
+                                              new ExternalJobsDashboardViewModel.JobAdvertisement
+                                              {
+                                                  Name = "AValue"
+                                              }
+                                          }
+                  };
+
+        Assert.That(lhs, Is.EqualTo(rhs));
+    }
+
+    [Test]
+    public void IfOneCollectionIsNullObjectsAreNotEqual()
+    {
+        var lhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = null
+                  };
+        var rhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement> {}
+                  };
+
+        Assert.That(lhs, Is.Not.EqualTo(rhs));
+
+        lhs = new ExternalJobsDashboardViewModel
+              {
+                  JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement> { }
+              };
+        rhs = new ExternalJobsDashboardViewModel
+              {
+                  JobAdvertisements = null
+              };
+        Assert.That(lhs, Is.Not.EqualTo(rhs));
+    }
+
+    [Test]
+    public void IfBothCollectionsAreNullObjectsAreEqual()
+    {
+        var lhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = null
+                  };
+        var rhs = new ExternalJobsDashboardViewModel
+                  {
+                      JobAdvertisements = null
+                  };
+
+        Assert.That(lhs, Is.EqualTo(rhs));
     }
 }

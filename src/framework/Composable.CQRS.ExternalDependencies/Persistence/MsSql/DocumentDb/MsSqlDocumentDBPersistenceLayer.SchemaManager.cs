@@ -3,24 +3,24 @@ using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.TransactionsCE;
 using Document = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.MsSql.DocumentDb
-{
-    partial class MsSqlDocumentDbPersistenceLayer
-    {
-        class SchemaManager
-        {
-            readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-            bool _initialized = false;
-            readonly IMsSqlConnectionPool _connectionPool;
-            public SchemaManager(IMsSqlConnectionPool connectionPool) => _connectionPool = connectionPool;
+namespace Composable.Persistence.MsSql.DocumentDb;
 
-            internal void EnsureInitialized() => _monitor.Update(() =>
+partial class MsSqlDocumentDbPersistenceLayer
+{
+    class SchemaManager
+    {
+        readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+        bool _initialized = false;
+        readonly IMsSqlConnectionPool _connectionPool;
+        public SchemaManager(IMsSqlConnectionPool connectionPool) => _connectionPool = connectionPool;
+
+        internal void EnsureInitialized() => _monitor.Update(() =>
+        {
+            if(!_initialized)
             {
-                if(!_initialized)
+                TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
                 {
-                    TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
-                    {
-                        _connectionPool.ExecuteNonQuery($@"
+                    _connectionPool.ExecuteNonQuery($@"
 IF NOT EXISTS(select name from sys.tables where name = '{Document.TableName}')
 BEGIN 
     CREATE TABLE dbo.{Document.TableName}
@@ -38,11 +38,10 @@ BEGIN
 
 END
 ");
-                    });
-                }
+                });
+            }
 
-                _initialized = true;
-            });
-        }
+            _initialized = true;
+        });
     }
 }

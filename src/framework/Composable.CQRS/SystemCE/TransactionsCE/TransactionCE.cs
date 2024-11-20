@@ -2,47 +2,46 @@
 using System.Transactions;
 using Composable.Contracts;
 
-namespace Composable.SystemCE.TransactionsCE
+namespace Composable.SystemCE.TransactionsCE;
+
+static class TransactionCE
 {
-    static class TransactionCE
+    internal static void OnCommittedSuccessfully(this Transaction @this, Action action)
     {
-        internal static void OnCommittedSuccessfully(this Transaction @this, Action action)
+        @this.TransactionCompleted += (sender, args) =>
         {
-            @this.TransactionCompleted += (sender, args) =>
+            Assert.Argument.NotNull(args.Transaction);
+            if(args.Transaction.TransactionInformation.Status == TransactionStatus.Committed)
             {
-                Assert.Argument.NotNull(args.Transaction);
-                if(args.Transaction.TransactionInformation.Status == TransactionStatus.Committed)
-                {
-                    action();
-                }
-            };
-        }
+                action();
+            }
+        };
+    }
 
-        internal static void OnCompleted(this Transaction @this, Action action) => @this.TransactionCompleted += (sender, args) => action();
+    internal static void OnCompleted(this Transaction @this, Action action) => @this.TransactionCompleted += (sender, args) => action();
 
-        internal static void OnAbort(this Transaction @this, Action action)
+    internal static void OnAbort(this Transaction @this, Action action)
+    {
+        @this.TransactionCompleted += (sender, args) =>
         {
-            @this.TransactionCompleted += (sender, args) =>
+            Assert.Argument.NotNull(args.Transaction);
+            if(args.Transaction.TransactionInformation.Status == TransactionStatus.Aborted)
             {
-                Assert.Argument.NotNull(args.Transaction);
-                if(args.Transaction.TransactionInformation.Status == TransactionStatus.Aborted)
-                {
-                    action();
-                }
-            };
-        }
+                action();
+            }
+        };
+    }
 
-        internal static IDisposable NoTransactionEscalationScope(string scopeDescription)
+    internal static IDisposable NoTransactionEscalationScope(string scopeDescription)
+    {
+        var transactionInformationDistributedIdentifierBefore = Transaction.Current?.TransactionInformation.DistributedIdentifier ?? Guid.Empty;
+
+        return DisposableCE.Create(() =>
         {
-            var transactionInformationDistributedIdentifierBefore = Transaction.Current?.TransactionInformation.DistributedIdentifier ?? Guid.Empty;
-
-            return DisposableCE.Create(() =>
+            if(Transaction.Current != null && transactionInformationDistributedIdentifierBefore == Guid.Empty && Transaction.Current!.TransactionInformation.DistributedIdentifier != Guid.Empty)
             {
-                if(Transaction.Current != null && transactionInformationDistributedIdentifierBefore == Guid.Empty && Transaction.Current!.TransactionInformation.DistributedIdentifier != Guid.Empty)
-                {
-                    throw new Exception($"{scopeDescription} escalated transaction to distributed. For now this is disallowed");
-                }
-            });
-        }
+                throw new Exception($"{scopeDescription} escalated transaction to distributed. For now this is disallowed");
+            }
+        });
     }
 }

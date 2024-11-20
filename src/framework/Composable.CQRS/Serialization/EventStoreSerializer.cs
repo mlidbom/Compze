@@ -6,88 +6,86 @@ using Composable.Refactoring.Naming;
 using Composable.SystemCE;
 using Newtonsoft.Json;
 
-namespace Composable.Serialization
+namespace Composable.Serialization;
+
+class RenamingSupportingJsonSerializer : IJsonSerializer
 {
-
-    class RenamingSupportingJsonSerializer : IJsonSerializer
+    readonly JsonSerializerSettings _jsonSettings;
+    readonly RenamingDecorator _renamingDecorator;
+    protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, ITypeMapper typeMapper)
     {
-        readonly JsonSerializerSettings _jsonSettings;
-        readonly RenamingDecorator _renamingDecorator;
-        protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, ITypeMapper typeMapper)
-        {
-            _jsonSettings = jsonSettings;
-            _renamingDecorator = new RenamingDecorator(typeMapper);
-        }
-
-        public string Serialize(object instance)
-        {
-            var json = JsonConvert.SerializeObject(instance, Formatting.Indented, _jsonSettings);
-            json = _renamingDecorator.ReplaceTypeNames(json);
-            return json;
-        }
-
-        public object Deserialize(Type type, string json)
-        {
-            json = _renamingDecorator.RestoreTypeNames(json);
-            return JsonConvert.DeserializeObject(json, type, _jsonSettings)!;
-        }
+        _jsonSettings = jsonSettings;
+        _renamingDecorator = new RenamingDecorator(typeMapper);
     }
 
-    class RenamingDecorator
+    public string Serialize(object instance)
     {
-        readonly ITypeMapper _typeMapper;
-
-        static readonly OptimizedLazy<Regex> FindTypeNames = new OptimizedLazy<Regex>(() => new Regex(@"""\$type""\: ""([^""]*)""", RegexOptions.Compiled));
-
-        public RenamingDecorator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
-
-        public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
-
-        string ReplaceTypeNamesWithTypeIds(Match match)
-        {
-            var type = Type.GetType(match.Groups[1].Value);
-            var typeId = _typeMapper.GetId(type!);
-            return $@"""$type"": ""{typeId.GuidValue}""";
-        }
-
-        public string RestoreTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeIdsWithTypeNames);
-
-        string ReplaceTypeIdsWithTypeNames(Match match)
-        {
-            var typeId = new TypeId(Guid.Parse(match.Groups[1].Value));
-            var type = _typeMapper.GetType(typeId);
-            return $@"""$type"": ""{type.AssemblyQualifiedName}""";
-        }
+        var json = JsonConvert.SerializeObject(instance, Formatting.Indented, _jsonSettings);
+        json = _renamingDecorator.ReplaceTypeNames(json);
+        return json;
     }
 
-
-    class EventStoreSerializer : IEventStoreSerializer
+    public object Deserialize(Type type, string json)
     {
-        internal static readonly JsonSerializerSettings JsonSettings = Serialization.JsonSettings.SqlEventStoreSerializerSettings;
+        json = _renamingDecorator.RestoreTypeNames(json);
+        return JsonConvert.DeserializeObject(json, type, _jsonSettings)!;
+    }
+}
 
-        readonly RenamingSupportingJsonSerializer _serializer;
+class RenamingDecorator
+{
+    readonly ITypeMapper _typeMapper;
 
-        public EventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
+    static readonly OptimizedLazy<Regex> FindTypeNames = new OptimizedLazy<Regex>(() => new Regex(@"""\$type""\: ""([^""]*)""", RegexOptions.Compiled));
 
-        public string Serialize(AggregateEvent @event) => _serializer.Serialize(@event);
-        public IAggregateEvent Deserialize(Type eventType, string json) => (IAggregateEvent)_serializer.Deserialize(eventType, json);
+    public RenamingDecorator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
+
+    public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
+
+    string ReplaceTypeNamesWithTypeIds(Match match)
+    {
+        var type = Type.GetType(match.Groups[1].Value);
+        var typeId = _typeMapper.GetId(type!);
+        return $@"""$type"": ""{typeId.GuidValue}""";
     }
 
-    class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
+    public string RestoreTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeIdsWithTypeNames);
+
+    string ReplaceTypeIdsWithTypeNames(Match match)
     {
-        public DocumentDbSerializer(ITypeMapper typeMapper) : base(JsonSettings.SqlEventStoreSerializerSettings, typeMapper) {}
+        var typeId = new TypeId(Guid.Parse(match.Groups[1].Value));
+        var type = _typeMapper.GetType(typeId);
+        return $@"""$type"": ""{type.AssemblyQualifiedName}""";
     }
+}
 
-    class RemotableMessageSerializer : IRemotableMessageSerializer
-    {
-        readonly RenamingSupportingJsonSerializer _serializer;
 
-        public RemotableMessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
+class EventStoreSerializer : IEventStoreSerializer
+{
+    internal static readonly JsonSerializerSettings JsonSettings = Serialization.JsonSettings.SqlEventStoreSerializerSettings;
 
-        public string SerializeResponse(object response) => _serializer.Serialize(response);
-        public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);
+    readonly RenamingSupportingJsonSerializer _serializer;
 
-        public string SerializeMessage(IRemotableMessage message) => _serializer.Serialize(message);
-        public IRemotableMessage DeserializeMessage(Type messageType, string json) => (IRemotableMessage)_serializer.Deserialize(messageType, json);
-    }
+    public EventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
+
+    public string Serialize(AggregateEvent @event) => _serializer.Serialize(@event);
+    public IAggregateEvent Deserialize(Type eventType, string json) => (IAggregateEvent)_serializer.Deserialize(eventType, json);
+}
+
+class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
+{
+    public DocumentDbSerializer(ITypeMapper typeMapper) : base(JsonSettings.SqlEventStoreSerializerSettings, typeMapper) {}
+}
+
+class RemotableMessageSerializer : IRemotableMessageSerializer
+{
+    readonly RenamingSupportingJsonSerializer _serializer;
+
+    public RemotableMessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
+
+    public string SerializeResponse(object response) => _serializer.Serialize(response);
+    public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);
+
+    public string SerializeMessage(IRemotableMessage message) => _serializer.Serialize(message);
+    public IRemotableMessage DeserializeMessage(Type messageType, string json) => (IRemotableMessage)_serializer.Deserialize(messageType, json);
 }

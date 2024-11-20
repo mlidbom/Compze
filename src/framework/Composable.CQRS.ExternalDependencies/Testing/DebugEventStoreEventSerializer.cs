@@ -5,31 +5,30 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Composable.Testing
+namespace Composable.Testing;
+
+static class DebugEventStoreEventSerializer
 {
-    static class DebugEventStoreEventSerializer
+    class DebugPrintingContractsResolver : DefaultContractResolver
     {
-        class DebugPrintingContractsResolver : DefaultContractResolver
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
-            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-            {
-                var props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                                .Select(p => CreateProperty(p, memberSerialization))
-                                .ToList();
-                props.ForEach(p => { p.Writable = true; p.Readable = true; });
-                return props;
-            }
+            var props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .Select(p => CreateProperty(p, memberSerialization))
+                            .ToList();
+            props.ForEach(p => { p.Writable = true; p.Readable = true; });
+            return props;
         }
-
-        static readonly JsonSerializerSettings JsonSettings =
-            new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                ContractResolver = new DebugPrintingContractsResolver(),
-                Error = (serializer, err) => err.ErrorContext.Handled = true
-            };
-
-        public static string Serialize(object @event, Formatting formatting) => JsonConvert.SerializeObject(@event, formatting, JsonSettings);
     }
+
+    static readonly JsonSerializerSettings JsonSettings =
+        new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            ContractResolver = new DebugPrintingContractsResolver(),
+            Error = (serializer, err) => err.ErrorContext.Handled = true
+        };
+
+    public static string Serialize(object @event, Formatting formatting) => JsonConvert.SerializeObject(@event, formatting, JsonSettings);
 }

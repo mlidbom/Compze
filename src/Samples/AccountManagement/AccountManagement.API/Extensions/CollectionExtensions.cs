@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 
-namespace AccountManagement.Extensions
+namespace AccountManagement.Extensions;
+
+static class CollectionExtensions
 {
-    static class CollectionExtensions
+    /// <summary>
+    /// Adds the second parameter to the collection if the first parameter is true.
+    /// </summary>
+    public static void AddIf<TValue>(this ICollection<TValue> me, bool condition, TValue toAdd)
     {
-        /// <summary>
-        /// Adds the second parameter to the collection if the first parameter is true.
-        /// </summary>
-        public static void AddIf<TValue>(this ICollection<TValue> me, bool condition, TValue toAdd)
+        if(condition)
         {
-            if(condition)
-            {
-                me.Add(toAdd);
-            }
+            me.Add(toAdd);
         }
     }
 }

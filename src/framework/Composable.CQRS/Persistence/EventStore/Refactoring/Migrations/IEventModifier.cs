@@ -1,8 +1,7 @@
-﻿namespace Composable.Persistence.EventStore.Refactoring.Migrations
+﻿namespace Composable.Persistence.EventStore.Refactoring.Migrations;
+
+public interface IEventModifier
 {
-    public interface IEventModifier
-    {
-        void Replace(params AggregateEvent[] events);
-        void InsertBefore(params AggregateEvent[] insert);
-    }
+    void Replace(params AggregateEvent[] events);
+    void InsertBefore(params AggregateEvent[] insert);
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 using NetMQ;
 
-namespace Composable.Messaging.Buses.Implementation
+namespace Composable.Messaging.Buses.Implementation;
+
+static class NetMqMessageExtensions
 {
-    static class NetMqMessageExtensions
-    {
-        internal static void Append(this NetMQMessage @this, Guid guid) => @this.Append(guid.ToByteArray());
-    }
+    internal static void Append(this NetMQMessage @this, Guid guid) => @this.Append(guid.ToByteArray());
 }

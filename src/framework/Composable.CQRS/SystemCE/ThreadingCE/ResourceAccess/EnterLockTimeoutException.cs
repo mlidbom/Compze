@@ -1,41 +1,40 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Composable.SystemCE.ThreadingCE.ResourceAccess
+namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
+
+public class EnterLockTimeoutException : Exception
 {
-    public class EnterLockTimeoutException : Exception
-    {
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local (Actually our tests that temporarily changes this through reflection stops working if it is readonly....)
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local (Actually our tests that temporarily changes this through reflection stops working if it is readonly....)
 #pragma warning disable IDE0044 // Add readonly modifier. This is modified via reflection in a test.
-        static TimeSpan _timeToWaitForOwningThreadStacktrace = 30.Seconds();
+    static TimeSpan _timeToWaitForOwningThreadStacktrace = 30.Seconds();
 #pragma warning restore IDE0044 // Add readonly modifier
 
-        readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-        internal EnterLockTimeoutException(ulong lockId, TimeSpan timeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
-            LockId = lockId;
+    internal EnterLockTimeoutException(ulong lockId, TimeSpan timeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
+        LockId = lockId;
 
-        internal ulong LockId { get; }
+    internal ulong LockId { get; }
 
-        string? _blockingThreadStacktrace;
+    string? _blockingThreadStacktrace;
 
-        public override string Message
+    public override string Message
+    {
+        get
         {
-            get
+            if(!_monitor.TryAwait(_timeToWaitForOwningThreadStacktrace, () => _blockingThreadStacktrace != null))
             {
-                if(!_monitor.TryAwait(_timeToWaitForOwningThreadStacktrace, () => _blockingThreadStacktrace != null))
-                {
-                    _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
-                }
+                _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
+            }
 
-                return $@"{base.Message}
+            return $@"{base.Message}
 ----- Blocking thread lock disposal stack trace-----
 {_blockingThreadStacktrace}
 ";
-            }
         }
-
-        internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
-            _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
     }
+
+    internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
+        _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
 }

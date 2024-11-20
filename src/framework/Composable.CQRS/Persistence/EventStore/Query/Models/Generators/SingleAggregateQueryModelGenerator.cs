@@ -6,47 +6,46 @@ using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Composable.Persistence.EventStore.Query.Models.Generators
+namespace Composable.Persistence.EventStore.Query.Models.Generators;
+
+[UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
+public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewModel, TEvent, TSession>
+    : IQueryModelGenerator<TViewModel>,
+      IVersioningQueryModelGenerator<TViewModel>
+    where TImplementer : SingleAggregateQueryModelGenerator<TImplementer, TViewModel, TEvent, TSession>
+    where TSession : IEventStoreReader
+    where TEvent : class, IAggregateEvent
+    where TViewModel : class, ISingleAggregateQueryModel
 {
-    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-    public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewModel, TEvent, TSession>
-        : IQueryModelGenerator<TViewModel>,
-        IVersioningQueryModelGenerator<TViewModel>
-        where TImplementer : SingleAggregateQueryModelGenerator<TImplementer, TViewModel, TEvent, TSession>
-        where TSession : IEventStoreReader
-        where TEvent : class, IAggregateEvent
-        where TViewModel : class, ISingleAggregateQueryModel
+    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> _eventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent>();
+    readonly TSession _session;
+    protected TViewModel? Model { get; private set; }
+
+    protected SingleAggregateQueryModelGenerator(TSession session)
     {
-        readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> _eventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent>();
-        readonly TSession _session;
-        protected TViewModel? Model { get; private set; }
+        _session = session;
+        _eventDispatcher.RegisterHandlers()
+                        .ForGenericEvent<IAggregateCreatedEvent>(e => Model!.SetId(e.AggregateId))
+                        .ForGenericEvent<IAggregateDeletedEvent>(e => Model = null);
+    }
 
-        protected SingleAggregateQueryModelGenerator(TSession session)
+    ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>
+    protected IEventHandlerRegistrar<TEvent> RegisterHandlers() => _eventDispatcher.RegisterHandlers();
+
+    public Option<TViewModel> TryGenerate(Guid id) => TryGenerate(id, int.MaxValue);
+
+    public Option<TViewModel> TryGenerate(Guid id, int version)
+    {
+        var history = _session.GetHistory(id).Take(version).Cast<TEvent>().ToList();
+        if (history.None())
         {
-            _session = session;
-            _eventDispatcher.RegisterHandlers()
-                .ForGenericEvent<IAggregateCreatedEvent>(e => Model!.SetId(e.AggregateId))
-                .ForGenericEvent<IAggregateDeletedEvent>(e => Model = null);
+            return Option.None<TViewModel>();
         }
-
-        ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>
-        protected IEventHandlerRegistrar<TEvent> RegisterHandlers() => _eventDispatcher.RegisterHandlers();
-
-        public Option<TViewModel> TryGenerate(Guid id) => TryGenerate(id, int.MaxValue);
-
-        public Option<TViewModel> TryGenerate(Guid id, int version)
-        {
-            var history = _session.GetHistory(id).Take(version).Cast<TEvent>().ToList();
-            if (history.None())
-            {
-                return Option.None<TViewModel>();
-            }
-            var queryModel = Constructor.For<TViewModel>.DefaultConstructor.Instance();
-            Model = queryModel;
-            history.ForEach(_eventDispatcher.Dispatch);
-            var result = Model;//Yes it does make sense. Look at the registered handler for IAggregateDeletedEvent
-            Model = null;
-            return Option.Some(result);
-        }
+        var queryModel = Constructor.For<TViewModel>.DefaultConstructor.Instance();
+        Model = queryModel;
+        history.ForEach(_eventDispatcher.Dispatch);
+        var result = Model;//Yes it does make sense. Look at the registered handler for IAggregateDeletedEvent
+        Model = null;
+        return Option.Some(result);
     }
 }

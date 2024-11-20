@@ -5,32 +5,31 @@ using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE;
 using Oracle.ManagedDataAccess.Client;
 
-namespace Composable.Persistence.Oracle.SystemExtensions
+namespace Composable.Persistence.Oracle.SystemExtensions;
+
+interface IOracleConnectionPool : IDbConnectionPool<IComposableOracleConnection, OracleCommand>
 {
-    interface IOracleConnectionPool : IDbConnectionPool<IComposableOracleConnection, OracleCommand>
+    public static IOracleConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
+    public static OracleConnectionPool CreateInstance(Func<string> getConnectionString) => new OracleConnectionPool(getConnectionString);
+
+    class OracleConnectionPool : IOracleConnectionPool
     {
-        public static IOracleConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-        public static OracleConnectionPool CreateInstance(Func<string> getConnectionString) => new OracleConnectionPool(getConnectionString);
+        readonly OptimizedLazy<IDbConnectionPool<IComposableOracleConnection, OracleCommand>> _pool;
 
-        class OracleConnectionPool : IOracleConnectionPool
+        internal OracleConnectionPool(Func<string> getConnectionString)
         {
-            readonly OptimizedLazy<IDbConnectionPool<IComposableOracleConnection, OracleCommand>> _pool;
-
-            internal OracleConnectionPool(Func<string> getConnectionString)
-            {
-                _pool = new OptimizedLazy<IDbConnectionPool<IComposableOracleConnection, OracleCommand>>(
-                    () =>
-                    {
-                        var connectionString = getConnectionString();
-                        return DbConnectionManager<IComposableOracleConnection, OracleCommand>.ForConnectionString(
-                            connectionString,
-                            PoolableConnectionFlags.Defaults,
-                            IComposableOracleConnection.Create);
-                    });
-            }
-
-            public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableOracleConnection, Task<TResult>> func) =>
-                _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
+            _pool = new OptimizedLazy<IDbConnectionPool<IComposableOracleConnection, OracleCommand>>(
+                () =>
+                {
+                    var connectionString = getConnectionString();
+                    return DbConnectionManager<IComposableOracleConnection, OracleCommand>.ForConnectionString(
+                        connectionString,
+                        PoolableConnectionFlags.Defaults,
+                        IComposableOracleConnection.Create);
+                });
         }
+
+        public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableOracleConnection, Task<TResult>> func) =>
+            _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
     }
 }

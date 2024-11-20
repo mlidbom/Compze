@@ -1,6 +1,5 @@
 ﻿using System;
 
-namespace Composable.Persistence.DocumentDb
-{
-    public class TooManyItemsDeletedException : Exception {}
-}
+namespace Composable.Persistence.DocumentDb;
+
+public class TooManyItemsDeletedException : Exception {}

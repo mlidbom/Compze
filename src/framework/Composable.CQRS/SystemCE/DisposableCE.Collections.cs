@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using Composable.SystemCE.LinqCE;
 
-namespace Composable.SystemCE
+namespace Composable.SystemCE;
+
+static class DisposableCECollections
 {
-    static class DisposableCECollections
-    {
-        internal static void DisposeAll(this IEnumerable<IDisposable> disposables) => disposables.ForEach(disposable => disposable.Dispose());
-    }
+    internal static void DisposeAll(this IEnumerable<IDisposable> disposables) => disposables.ForEach(disposable => disposable.Dispose());
 }

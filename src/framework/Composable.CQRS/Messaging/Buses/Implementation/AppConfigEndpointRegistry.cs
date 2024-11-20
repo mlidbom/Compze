@@ -2,24 +2,23 @@
 using System.Linq;
 using Composable.SystemCE.ConfigurationCE;
 
-namespace Composable.Messaging.Buses.Implementation
-{
-    class AppConfigEndpointRegistry : IEndpointRegistry
-    {
-        readonly IConfigurationParameterProvider _settingsProvider;
-        public AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) => _settingsProvider = settingsProvider;
+namespace Composable.Messaging.Buses.Implementation;
 
-        public IEnumerable<EndPointAddress> ServerEndpoints
+class AppConfigEndpointRegistry : IEndpointRegistry
+{
+    readonly IConfigurationParameterProvider _settingsProvider;
+    public AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) => _settingsProvider = settingsProvider;
+
+    public IEnumerable<EndPointAddress> ServerEndpoints
+    {
+        get
         {
-            get
-            {
-                var configurationValue = _settingsProvider.GetString("ServerEndpoints");
-                var addresses = configurationValue.Split(';')
-                                                  .Select(stringValue => stringValue.Trim())
-                                                  .Where(stringValue => !string.IsNullOrEmpty(stringValue))
-                                                  .Select(stringValue => new EndPointAddress(stringValue)).ToList();
-                return addresses;
-            }
+            var configurationValue = _settingsProvider.GetString("ServerEndpoints");
+            var addresses = configurationValue.Split(';')
+                                              .Select(stringValue => stringValue.Trim())
+                                              .Where(stringValue => !string.IsNullOrEmpty(stringValue))
+                                              .Select(stringValue => new EndPointAddress(stringValue)).ToList();
+            return addresses;
         }
     }
 }

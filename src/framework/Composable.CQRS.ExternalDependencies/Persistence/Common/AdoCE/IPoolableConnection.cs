@@ -2,10 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Composable.SystemCE.ThreadingCE;
 
-namespace Composable.Persistence.Common.AdoCE
+namespace Composable.Persistence.Common.AdoCE;
+
+interface IPoolableConnection : IDisposable, IAsyncDisposable
 {
-    interface IPoolableConnection : IDisposable, IAsyncDisposable
-    {
-        Task OpenAsyncFlex(SyncOrAsync syncOrAsync);
-    }
+    Task OpenAsyncFlex(SyncOrAsync syncOrAsync);
 }

@@ -4,16 +4,16 @@ using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using T =  Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Composable.Persistence.MySql.Messaging.Buses.Implementation
+namespace Composable.Persistence.MySql.Messaging.Buses.Implementation;
+
+partial class MySqlInboxPersistenceLayer
 {
-    partial class MySqlInboxPersistenceLayer
+    const string MySqlGuidType = "CHAR(36)";
+    static class SchemaManager
     {
-        const string MySqlGuidType = "CHAR(36)";
-        static class SchemaManager
+        public static async Task EnsureTablesExistAsync(IMySqlConnectionPool connectionFactory)
         {
-            public static async Task EnsureTablesExistAsync(IMySqlConnectionPool connectionFactory)
-            {
-                await  connectionFactory.ExecuteNonQueryAsync($@"
+            await  connectionFactory.ExecuteNonQueryAsync($@"
 
 
     CREATE TABLE IF NOT EXISTS {T.TableName}
@@ -37,7 +37,6 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 ").NoMarshalling();
-            }
         }
     }
 }

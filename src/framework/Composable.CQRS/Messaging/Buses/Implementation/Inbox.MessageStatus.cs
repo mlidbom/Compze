@@ -1,12 +1,11 @@
-﻿namespace Composable.Messaging.Buses.Implementation
+﻿namespace Composable.Messaging.Buses.Implementation;
+
+partial class Inbox
 {
-    partial class Inbox
+    public enum MessageStatus
     {
-        public enum MessageStatus
-        {
-            UnHandled = 0,
-            Succeeded = 1,
-            Failed = 2
-        }
+        UnHandled = 0,
+        Succeeded = 1,
+        Failed = 2
     }
 }

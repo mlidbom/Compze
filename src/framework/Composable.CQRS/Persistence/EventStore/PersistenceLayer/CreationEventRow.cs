@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace Composable.Persistence.EventStore.PersistenceLayer
+namespace Composable.Persistence.EventStore.PersistenceLayer;
+
+class CreationEventRow
 {
-    class CreationEventRow
+    public CreationEventRow(Guid aggregateId, Guid typeId)
     {
-        public CreationEventRow(Guid aggregateId, Guid typeId)
-        {
-            AggregateId = aggregateId;
-            TypeId = typeId;
-        }
-        public Guid AggregateId { get; }
-        public Guid TypeId { get; }
+        AggregateId = aggregateId;
+        TypeId = typeId;
     }
+    public Guid AggregateId { get; }
+    public Guid TypeId { get; }
 }

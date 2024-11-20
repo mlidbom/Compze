@@ -5,32 +5,31 @@ using Composable.Messaging.Hypermedia;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace AccountManagement.UI.MVC.Views.Register
+namespace AccountManagement.UI.MVC.Views.Register;
+
+public class RegisterController : ControllerBase
 {
-    public class RegisterController : ControllerBase
+    readonly IRemoteHypermediaNavigator _bus;
+    public RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) => _bus = remoteApiNavigator;
+
+    public IActionResult Register(AccountResource.Command.Register registrationCommand)
     {
-        readonly IRemoteHypermediaNavigator _bus;
-        public RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) => _bus = remoteApiNavigator;
+        if(!ModelState.IsValid) return View("RegistrationForm");
 
-        public IActionResult Register(AccountResource.Command.Register registrationCommand)
+        var result = registrationCommand.PostOn(_bus);
+        switch(result.Status)
         {
-            if(!ModelState.IsValid) return View("RegistrationForm");
-
-            var result = registrationCommand.PostOn(_bus);
-            switch(result.Status)
-            {
-                case RegistrationAttemptStatus.Successful:
-                    return View("ValidateYourEmail", result.RegisteredAccount);
-                case RegistrationAttemptStatus.EmailAlreadyRegistered:
-                    ModelState.AddModelError((AccountResource.Command.Register model) => model.Email, "Email is already registered");
-                    ModelState.Remove((AccountResource.Command.Register model) => model.MessageId);
-                    registrationCommand.ReplaceDeduplicationId();
-                    return View("RegistrationForm", registrationCommand);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            case RegistrationAttemptStatus.Successful:
+                return View("ValidateYourEmail", result.RegisteredAccount);
+            case RegistrationAttemptStatus.EmailAlreadyRegistered:
+                ModelState.AddModelError((AccountResource.Command.Register model) => model.Email, "Email is already registered");
+                ModelState.Remove((AccountResource.Command.Register model) => model.MessageId);
+                registrationCommand.ReplaceDeduplicationId();
+                return View("RegistrationForm", registrationCommand);
+            default:
+                throw new ArgumentOutOfRangeException();
         }
-
-        public IActionResult RegistrationForm() => View("RegistrationForm", Api.Accounts.Command.Register().NavigateOn(_bus));
     }
+
+    public IActionResult RegistrationForm() => View("RegistrationForm", Api.Accounts.Command.Register().NavigateOn(_bus));
 }

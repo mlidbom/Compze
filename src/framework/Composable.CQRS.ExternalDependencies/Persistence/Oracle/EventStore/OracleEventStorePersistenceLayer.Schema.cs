@@ -4,19 +4,19 @@ using Composable.SystemCE.TransactionsCE;
 using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Composable.Persistence.Oracle.EventStore
-{
-    partial class OracleEventStorePersistenceLayer : IEventStorePersistenceLayer
-    {
-        const string OracleGuidType = "CHAR(36)";
-        bool _initialized;
+namespace Composable.Persistence.Oracle.EventStore;
 
-        public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+partial class OracleEventStorePersistenceLayer : IEventStorePersistenceLayer
+{
+    const string OracleGuidType = "CHAR(36)";
+    bool _initialized;
+
+    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+    {
+        if(!_initialized)
         {
-            if(!_initialized)
-            {
-                _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                              command => command.SetCommandText($@"
+            _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                          command => command.SetCommandText($@"
 declare existing_table_count integer;
 begin
     select count(*) into existing_table_count from user_tables where table_name='{Event.TableName.ToUpperInvariant()}';
@@ -65,10 +65,9 @@ begin
     end if;
 end;
 ")
-                                                                .ExecuteNonQuery());
+                                                            .ExecuteNonQuery());
 
-                _initialized = true;
-            }
-        });
-    }
+            _initialized = true;
+        }
+    });
 }

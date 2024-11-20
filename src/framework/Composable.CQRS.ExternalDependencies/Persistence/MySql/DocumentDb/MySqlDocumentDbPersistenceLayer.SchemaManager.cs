@@ -3,24 +3,24 @@ using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.TransactionsCE;
 using Document = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.DocumentDb
-{
-    partial class MySqlDocumentDbPersistenceLayer
-    {
-        class SchemaManager
-        {
-            readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-            bool _initialized = false;
-            readonly IMySqlConnectionPool _connectionPool;
-            public SchemaManager(IMySqlConnectionPool connectionPool) => _connectionPool = connectionPool;
+namespace Composable.Persistence.MySql.DocumentDb;
 
-            internal void EnsureInitialized() => _monitor.Update(() =>
+partial class MySqlDocumentDbPersistenceLayer
+{
+    class SchemaManager
+    {
+        readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+        bool _initialized = false;
+        readonly IMySqlConnectionPool _connectionPool;
+        public SchemaManager(IMySqlConnectionPool connectionPool) => _connectionPool = connectionPool;
+
+        internal void EnsureInitialized() => _monitor.Update(() =>
+        {
+            if(!_initialized)
             {
-                if(!_initialized)
+                TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
                 {
-                    TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
-                    {
-                        _connectionPool.ExecuteNonQuery($@"
+                    _connectionPool.ExecuteNonQuery($@"
 CREATE TABLE IF NOT EXISTS {Document.TableName} 
 (
   {Document.Id}          VARCHAR(500) NOT NULL,
@@ -35,11 +35,10 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 ");
-                    });
-                }
+                });
+            }
 
-                _initialized = true;
-            });
-        }
+            _initialized = true;
+        });
     }
 }

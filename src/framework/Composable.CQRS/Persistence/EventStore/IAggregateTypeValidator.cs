@@ -1,7 +1,6 @@
-﻿namespace Composable.Persistence.EventStore
+﻿namespace Composable.Persistence.EventStore;
+
+interface IAggregateTypeValidator
 {
-    interface IAggregateTypeValidator
-    {
-        void AssertIsValid<TAggregate>();
-    }
+    void AssertIsValid<TAggregate>();
 }

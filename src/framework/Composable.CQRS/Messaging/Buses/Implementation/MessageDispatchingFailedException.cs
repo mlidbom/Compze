@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace Composable.Messaging.Buses.Implementation
+namespace Composable.Messaging.Buses.Implementation;
+
+public class MessageDispatchingFailedException : Exception
 {
-    public class MessageDispatchingFailedException : Exception
-    {
-        public MessageDispatchingFailedException(string remoteExceptionAsString) : base($@"Dispatching message failed. Remote exception message: 
+    public MessageDispatchingFailedException(string remoteExceptionAsString) : base($@"Dispatching message failed. Remote exception message: 
 ##################################################
 {remoteExceptionAsString} 
 #################################################") {}
-    }
 }

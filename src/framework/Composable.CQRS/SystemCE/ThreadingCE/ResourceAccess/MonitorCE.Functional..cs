@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Threading;
 
-namespace Composable.SystemCE.ThreadingCE.ResourceAccess
+namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
+
+public partial class MonitorCE
 {
-    public partial class MonitorCE
+    public delegate T OutParamDelegate<T>(out T outParam);
+
+    public TReturn Read<TReturn>(Func<TReturn> func)
     {
-        public delegate T OutParamDelegate<T>(out T outParam);
+        using(EnterLock()) return func();
+    }
 
-        public TReturn Read<TReturn>(Func<TReturn> func)
-        {
-            using(EnterLock()) return func();
-        }
+    public void Update(Action action)
+    {
+        using(EnterUpdateLock()) action();
+    }
 
-        public void Update(Action action)
-        {
-            using(EnterUpdateLock()) action();
-        }
+    public T Update<T>(Func<T> func)
+    {
+        using(EnterUpdateLock()) return func();
+    }
 
-        public T Update<T>(Func<T> func)
-        {
-            using(EnterUpdateLock()) return func();
-        }
-
-        public T Update<T>(OutParamDelegate<T> func, out T outParam)
-        {
-            using(EnterUpdateLock()) return func(out outParam);
-        }
+    public T Update<T>(OutParamDelegate<T> func, out T outParam)
+    {
+        using(EnterUpdateLock()) return func(out outParam);
     }
 }

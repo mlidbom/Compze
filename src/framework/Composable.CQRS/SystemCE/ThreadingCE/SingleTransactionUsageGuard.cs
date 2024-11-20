@@ -1,19 +1,18 @@
 ﻿using System.Transactions;
 
-namespace Composable.SystemCE.ThreadingCE
-{
-    class SingleTransactionUsageGuard : ISingleContextUseGuard
-    {
-        Transaction? _transaction;
-        public SingleTransactionUsageGuard() => _transaction = Transaction.Current;
+namespace Composable.SystemCE.ThreadingCE;
 
-        public void AssertNoContextChangeOccurred(object guarded)
+class SingleTransactionUsageGuard : ISingleContextUseGuard
+{
+    Transaction? _transaction;
+    public SingleTransactionUsageGuard() => _transaction = Transaction.Current;
+
+    public void AssertNoContextChangeOccurred(object guarded)
+    {
+        _transaction ??= Transaction.Current;
+        if(Transaction.Current != null && Transaction.Current != _transaction)
         {
-            _transaction ??= Transaction.Current;
-            if(Transaction.Current != null && Transaction.Current != _transaction)
-            {
-                throw new ComponentUsedByMultipleTransactionsException(guarded.GetType());
-            }
+            throw new ComponentUsedByMultipleTransactionsException(guarded.GetType());
         }
     }
 }

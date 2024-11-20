@@ -4,19 +4,19 @@ using Composable.SystemCE.TransactionsCE;
 using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Composable.Persistence.PgSql.EventStore
-{
-    partial class PgSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
-    {
-        const string PgSqlGuidType = "CHAR(36)";
-        bool _initialized;
+namespace Composable.Persistence.PgSql.EventStore;
 
-        public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+partial class PgSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+{
+    const string PgSqlGuidType = "CHAR(36)";
+    bool _initialized;
+
+    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+    {
+        if(!_initialized)
         {
-            if(!_initialized)
-            {
-                _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                              command => command.PrepareAndExecuteNonQuery($@"
+            _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                          command => command.PrepareAndExecuteNonQuery($@"
 
 
     CREATE TABLE IF NOT EXISTS {Event.TableName}
@@ -61,8 +61,7 @@ namespace Composable.Persistence.PgSql.EventStore
 
 "));
 
-                _initialized = true;
-            }
-        });
-    }
+            _initialized = true;
+        }
+    });
 }

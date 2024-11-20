@@ -4,66 +4,65 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Composable.Contracts;
 
-namespace Composable.SystemCE
+namespace Composable.SystemCE;
+
+///<summary>Extensions for working with extensions</summary>
+static class ExceptionCE
 {
-    ///<summary>Extensions for working with extensions</summary>
-    static class ExceptionCE
+    ///<summary>Flattens the exception.InnerException hierarchy into a sequence.</summary>
+    public static IEnumerable<Exception> GetAllExceptionsInStack(this Exception exception)
     {
-        ///<summary>Flattens the exception.InnerException hierarchy into a sequence.</summary>
-         public static IEnumerable<Exception> GetAllExceptionsInStack(this Exception exception)
+        Contract.ArgumentNotNull(exception, nameof(exception));
+        Exception? current = exception;
+        while (current != null)
         {
-            Contract.ArgumentNotNull(exception, nameof(exception));
-            Exception? current = exception;
-             while (current != null)
-             {
-                 yield return current;
-                 current = current.InnerException;
-             }
+            yield return current;
+            current = current.InnerException;
+        }
+    }
+
+    ///<summary>Returns the deepest nested inner exception that was the root cause of the current exception.</summary>
+    public static Exception GetRootCauseException(this Exception e) => e.GetAllExceptionsInStack().Last();
+
+
+    internal static Exception? TryCatch(Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch(Exception e)
+        {
+            return e;
+        }
+        return null;
+    }
+
+    internal static bool TryCatch(Action action, [NotNullWhen(true)]out Exception? exception)
+    {
+        try
+        {
+            action();
+        }
+        catch(Exception caught)
+        {
+            exception = caught;
+            return true;
         }
 
-        ///<summary>Returns the deepest nested inner exception that was the root cause of the current exception.</summary>
-        public static Exception GetRootCauseException(this Exception e) => e.GetAllExceptionsInStack().Last();
+        exception = null;
+        return false;
+    }
 
-
-        internal static Exception? TryCatch(Action action)
+    internal static void TryCatch(Action action, Action<Exception> onException)
+    {
+        try
         {
-            try
-            {
-                action();
-            }
-            catch(Exception e)
-            {
-                return e;
-            }
-            return null;
+            action();
         }
-
-        internal static bool TryCatch(Action action, [NotNullWhen(true)]out Exception? exception)
+        catch(Exception caught)
         {
-            try
-            {
-                action();
-            }
-            catch(Exception caught)
-            {
-                exception = caught;
-                return true;
-            }
-
-            exception = null;
-            return false;
-        }
-
-        internal static void TryCatch(Action action, Action<Exception> onException)
-        {
-            try
-            {
-                action();
-            }
-            catch(Exception caught)
-            {
-                onException(caught);
-            }
+            onException(caught);
         }
     }
 }

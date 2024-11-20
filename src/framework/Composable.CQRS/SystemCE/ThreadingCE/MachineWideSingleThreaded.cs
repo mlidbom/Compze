@@ -8,71 +8,70 @@ using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using JetBrains.Annotations;
 
-namespace Composable.SystemCE.ThreadingCE
+namespace Composable.SystemCE.ThreadingCE;
+
+class MachineWideSingleThreaded
 {
-    class MachineWideSingleThreaded
+    static readonly IThreadShared<Dictionary<string, Mutex>> Cache = ThreadShared.WithDefaultTimeout(new Dictionary<string, Mutex>());
+
+    readonly Mutex _mutex;
+    MachineWideSingleThreaded(string lockId)
     {
-        static readonly IThreadShared<Dictionary<string, Mutex>> Cache = ThreadShared.WithDefaultTimeout(new Dictionary<string, Mutex>());
+        var lockId1 = $@"Global\{lockId}";
 
-        readonly Mutex _mutex;
-        MachineWideSingleThreaded(string lockId)
-        {
-            var lockId1 = $@"Global\{lockId}";
-
-            _mutex = Cache.Update(cache => cache.GetOrAdd(lockId1,
-                                                          () =>
+        _mutex = Cache.Update(cache => cache.GetOrAdd(lockId1,
+                                                      () =>
+                                                      {
+                                                          try
                                                           {
-                                                              try
+                                                              var existing = Mutex.OpenExisting(lockId1);
+                                                              return existing;
+                                                          }
+                                                          catch
+                                                          {
+                                                              var mutex = new Mutex(initiallyOwned: false, name: lockId1);
+
+                                                              if(OperatingSystem.IsWindows())
                                                               {
-                                                                  var existing = Mutex.OpenExisting(lockId1);
-                                                                  return existing;
+                                                                  MutexSecurity mutexSecurity = new MutexSecurity();
+                                                                  mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                                                                                                                  MutexRights.FullControl,
+                                                                                                                  AccessControlType.Allow));
+                                                                  mutex.SetAccessControl(mutexSecurity);
                                                               }
-                                                              catch
-                                                              {
-                                                                  var mutex = new Mutex(initiallyOwned: false, name: lockId1);
 
-                                                                  if(OperatingSystem.IsWindows())
-                                                                  {
-                                                                     MutexSecurity mutexSecurity = new MutexSecurity();
-                                                                     mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
-                                                                                                                     MutexRights.FullControl,
-                                                                                                                     AccessControlType.Allow));
-                                                                     mutex.SetAccessControl(mutexSecurity);
-                                                                  }
-
-                                                                  return mutex;
-                                                              }
-                                                          }));
-        }
-
-        internal void Execute([InstantHandle] Action action)
-        {
-            try
-            {
-                _mutex.WaitOne();
-                action();
-            }
-            finally
-            {
-                _mutex.ReleaseMutex();
-            }
-        }
-
-        internal TResult Execute<TResult>([InstantHandle] Func<TResult> func)
-        {
-            try
-            {
-                _mutex.WaitOne();
-                return func();
-            }
-            finally
-            {
-                _mutex.ReleaseMutex();
-            }
-        }
-
-        internal static MachineWideSingleThreaded For(string name) => new MachineWideSingleThreaded(name);
-        internal static MachineWideSingleThreaded For<TSynchronized>() => For(typeof(TSynchronized));
-        static MachineWideSingleThreaded For(Type synchronized) => new MachineWideSingleThreaded($"{nameof(MachineWideSingleThreaded)}_{synchronized.AssemblyQualifiedName}");
+                                                              return mutex;
+                                                          }
+                                                      }));
     }
+
+    internal void Execute([InstantHandle] Action action)
+    {
+        try
+        {
+            _mutex.WaitOne();
+            action();
+        }
+        finally
+        {
+            _mutex.ReleaseMutex();
+        }
+    }
+
+    internal TResult Execute<TResult>([InstantHandle] Func<TResult> func)
+    {
+        try
+        {
+            _mutex.WaitOne();
+            return func();
+        }
+        finally
+        {
+            _mutex.ReleaseMutex();
+        }
+    }
+
+    internal static MachineWideSingleThreaded For(string name) => new MachineWideSingleThreaded(name);
+    internal static MachineWideSingleThreaded For<TSynchronized>() => For(typeof(TSynchronized));
+    static MachineWideSingleThreaded For(Type synchronized) => new MachineWideSingleThreaded($"{nameof(MachineWideSingleThreaded)}_{synchronized.AssemblyQualifiedName}");
 }

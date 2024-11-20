@@ -4,19 +4,19 @@ using Composable.SystemCE.TransactionsCE;
 using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.EventStore
-{
-    partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
-    {
-        const string MySqlGuidType = "CHAR(36)";
-        bool _initialized;
+namespace Composable.Persistence.MySql.EventStore;
 
-        public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+{
+    const string MySqlGuidType = "CHAR(36)";
+    bool _initialized;
+
+    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+    {
+        if(!_initialized)
         {
-            if(!_initialized)
-            {
-                _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                              command => command.ExecuteNonQuery($@"
+            _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                          command => command.ExecuteNonQuery($@"
 
 
     CREATE TABLE IF NOT EXISTS {Event.TableName}
@@ -57,8 +57,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 "));
 
-                _initialized = true;
-            }
-        });
-    }
+            _initialized = true;
+        }
+    });
 }

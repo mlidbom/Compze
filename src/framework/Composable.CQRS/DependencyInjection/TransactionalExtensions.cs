@@ -5,56 +5,55 @@ using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.SystemCE.TransactionsCE;
 using JetBrains.Annotations;
 
-namespace Composable.DependencyInjection
+namespace Composable.DependencyInjection;
+
+static class ServiceLocatorTransactionRunner
 {
-    static class ServiceLocatorTransactionRunner
+    internal static TResult ExecuteTransactionInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<TResult> function)
     {
-        internal static TResult ExecuteTransactionInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<TResult> function)
+        using (me.BeginScope())
         {
-            using (me.BeginScope())
-            {
-                return TransactionScopeCe.Execute(function);
-            }
+            return TransactionScopeCe.Execute(function);
         }
+    }
 
-        internal static void ExecuteTransactionInIsolatedScope(this IServiceLocator me, [InstantHandle]Action action)
+    internal static void ExecuteTransactionInIsolatedScope(this IServiceLocator me, [InstantHandle]Action action)
+    {
+        using (me.BeginScope())
         {
-            using (me.BeginScope())
-            {
-                TransactionScopeCe.Execute(action);
-            }
+            TransactionScopeCe.Execute(action);
         }
+    }
 
-        public static TResult ExecuteInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<TResult> function)
+    public static TResult ExecuteInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<TResult> function)
+    {
+        using (me.BeginScope())
         {
-            using (me.BeginScope())
-            {
-                return function();
-            }
+            return function();
         }
+    }
 
-        public static void ExecuteInIsolatedScope(this IServiceLocator me, [InstantHandle]Action action)
+    public static void ExecuteInIsolatedScope(this IServiceLocator me, [InstantHandle]Action action)
+    {
+        using (me.BeginScope())
         {
-            using (me.BeginScope())
-            {
-                action();
-            }
+            action();
         }
+    }
 
-        public static async Task<TResult> ExecuteInIsolatedScopeAsync<TResult>(this IServiceLocator me, [InstantHandle]Func<Task<TResult>> function)
+    public static async Task<TResult> ExecuteInIsolatedScopeAsync<TResult>(this IServiceLocator me, [InstantHandle]Func<Task<TResult>> function)
+    {
+        using (me.BeginScope())
         {
-            using (me.BeginScope())
-            {
-                return await function().NoMarshalling();
-            }
+            return await function().NoMarshalling();
         }
+    }
 
-        internal static async Task ExecuteInIsolatedScopeAsync(this IServiceLocator me, [InstantHandle]Func<Task> action)
+    internal static async Task ExecuteInIsolatedScopeAsync(this IServiceLocator me, [InstantHandle]Func<Task> action)
+    {
+        using (me.BeginScope())
         {
-            using (me.BeginScope())
-            {
-                await action().NoMarshalling();
-            }
+            await action().NoMarshalling();
         }
     }
 }

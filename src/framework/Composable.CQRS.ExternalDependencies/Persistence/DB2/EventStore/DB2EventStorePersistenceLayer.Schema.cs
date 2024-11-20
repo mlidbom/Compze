@@ -4,19 +4,19 @@ using Composable.SystemCE.TransactionsCE;
 using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Composable.Persistence.DB2.EventStore
-{
-    partial class DB2EventStorePersistenceLayer : IEventStorePersistenceLayer
-    {
-        const string DB2GuidType = "CHAR(36)";
-        bool _initialized;
+namespace Composable.Persistence.DB2.EventStore;
 
-        public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+partial class DB2EventStorePersistenceLayer : IEventStorePersistenceLayer
+{
+    const string DB2GuidType = "CHAR(36)";
+    bool _initialized;
+
+    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
+    {
+        if(!_initialized)
         {
-            if(!_initialized)
-            {
-                _connectionManager.UseCommand(suppressTransactionWarning: true,
-                    command => command.SetCommandText($@"
+            _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                          command => command.SetCommandText($@"
 begin
   declare continue handler for sqlstate '42710' begin end; --Ignore error if table exists
         EXECUTE IMMEDIATE '
@@ -63,10 +63,9 @@ begin
 
 end
 ")
-                                                                .ExecuteNonQuery());
+                                                            .ExecuteNonQuery());
 
-                _initialized = true;
-            }
-        });
-    }
+            _initialized = true;
+        }
+    });
 }

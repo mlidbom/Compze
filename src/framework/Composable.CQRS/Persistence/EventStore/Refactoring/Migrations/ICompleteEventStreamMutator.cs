@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
-namespace Composable.Persistence.EventStore.Refactoring.Migrations
+namespace Composable.Persistence.EventStore.Refactoring.Migrations;
+
+interface ICompleteEventStreamMutator
 {
-    interface ICompleteEventStreamMutator
-    {
-        IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream);
-    }
+    IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream);
 }

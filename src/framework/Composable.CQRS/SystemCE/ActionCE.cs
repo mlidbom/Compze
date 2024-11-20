@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using Composable.SystemCE.LinqCE;
 
-namespace Composable.SystemCE
+namespace Composable.SystemCE;
+
+static class ActionCE
 {
-    static class ActionCE
-    {
-        internal static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
-    }
+    internal static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
 }

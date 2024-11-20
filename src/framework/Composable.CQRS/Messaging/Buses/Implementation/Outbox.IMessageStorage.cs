@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Composable.Messaging.Buses.Implementation
+namespace Composable.Messaging.Buses.Implementation;
+
+partial class Outbox
 {
-    partial class Outbox
+    public interface IMessageStorage
     {
-        public interface IMessageStorage
-        {
-            void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds);
-            void MarkAsReceived(Guid messageId, EndpointId receiverId);
-            Task StartAsync();
-        }
+        void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds);
+        void MarkAsReceived(Guid messageId, EndpointId receiverId);
+        Task StartAsync();
     }
 }

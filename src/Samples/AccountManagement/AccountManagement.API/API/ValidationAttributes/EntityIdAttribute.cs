@@ -1,10 +1,9 @@
 ﻿using System;
 using AccountManagement.API.ValidationAttributes.Helpers;
 
-namespace AccountManagement.API.ValidationAttributes
+namespace AccountManagement.API.ValidationAttributes;
+
+public class EntityIdAttribute : GuidValidationAttribute
 {
-    public class EntityIdAttribute : GuidValidationAttribute
-    {
-        protected override bool IsValid(Guid value) => value != Guid.Empty;
-    }
+    protected override bool IsValid(Guid value) => value != Guid.Empty;
 }

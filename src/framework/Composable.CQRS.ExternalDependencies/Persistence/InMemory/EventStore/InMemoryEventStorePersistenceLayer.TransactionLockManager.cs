@@ -6,59 +6,58 @@ using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.TransactionsCE;
 
-namespace Composable.Persistence.InMemory.EventStore
+namespace Composable.Persistence.InMemory.EventStore;
+
+partial class InMemoryEventStorePersistenceLayer
 {
-    partial class InMemoryEventStorePersistenceLayer
+    class TransactionLockManager
     {
-        class TransactionLockManager
+        readonly Dictionary<Guid, TransactionWideLock> _aggregateGuards = new Dictionary<Guid, TransactionWideLock>();
+
+        public TResult WithTransactionWideLock<TResult>(Guid aggregateId, Func<TResult> func) => WithTransactionWideLock(aggregateId, true, func);
+        public TResult WithTransactionWideLock<TResult>(Guid aggregateId, bool takeWriteLock, Func<TResult> func)
         {
-            readonly Dictionary<Guid, TransactionWideLock> _aggregateGuards = new Dictionary<Guid, TransactionWideLock>();
-
-            public TResult WithTransactionWideLock<TResult>(Guid aggregateId, Func<TResult> func) => WithTransactionWideLock(aggregateId, true, func);
-            public TResult WithTransactionWideLock<TResult>(Guid aggregateId, bool takeWriteLock, Func<TResult> func)
+            if(Transaction.Current != null)
             {
-                if(Transaction.Current != null)
-                {
-                    var @lock = _aggregateGuards.GetOrAdd(aggregateId, () => new TransactionWideLock());
-                    @lock.AwaitAccess(takeWriteLock);
-                }
-
-                return func();
+                var @lock = _aggregateGuards.GetOrAdd(aggregateId, () => new TransactionWideLock());
+                @lock.AwaitAccess(takeWriteLock);
             }
 
-            public void WithTransactionWideLock(Guid aggregateId, Action action) => WithTransactionWideLock(aggregateId, true, () =>
-            {
-                action();
-                return 1;
-            });
+            return func();
+        }
 
-            class TransactionWideLock
-            {
-                public TransactionWideLock() => Guard = MonitorCE.WithTimeout(1.Minutes());
+        public void WithTransactionWideLock(Guid aggregateId, Action action) => WithTransactionWideLock(aggregateId, true, () =>
+        {
+            action();
+            return 1;
+        });
 
-                public void AwaitAccess(bool takeWriteLock)
+        class TransactionWideLock
+        {
+            public TransactionWideLock() => Guard = MonitorCE.WithTimeout(1.Minutes());
+
+            public void AwaitAccess(bool takeWriteLock)
+            {
+                if(OwningTransactionLocalId.Length > 0 && !takeWriteLock)
                 {
-                    if(OwningTransactionLocalId.Length > 0 && !takeWriteLock)
-                    {
-                        return;
-                    }
-
-                    var currentTransactionId = Transaction.Current!.TransactionInformation.LocalIdentifier;
-                    if(currentTransactionId != OwningTransactionLocalId)
-                    {
-                        var @lock = Guard.EnterUpdateLock();
-                        Transaction.Current.OnCompleted(() =>
-                        {
-                            OwningTransactionLocalId = string.Empty;
-                            @lock.Dispose();
-                        });
-                        OwningTransactionLocalId = currentTransactionId;
-                    }
+                    return;
                 }
 
-                string OwningTransactionLocalId { get; set; } = string.Empty;
-                MonitorCE Guard { get; }
+                var currentTransactionId = Transaction.Current!.TransactionInformation.LocalIdentifier;
+                if(currentTransactionId != OwningTransactionLocalId)
+                {
+                    var @lock = Guard.EnterUpdateLock();
+                    Transaction.Current.OnCompleted(() =>
+                    {
+                        OwningTransactionLocalId = string.Empty;
+                        @lock.Dispose();
+                    });
+                    OwningTransactionLocalId = currentTransactionId;
+                }
             }
+
+            string OwningTransactionLocalId { get; set; } = string.Empty;
+            MonitorCE Guard { get; }
         }
     }
 }

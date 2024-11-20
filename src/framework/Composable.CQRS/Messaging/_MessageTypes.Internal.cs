@@ -10,42 +10,41 @@ using Composable.Refactoring.Naming;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Composable.Messaging
+namespace Composable.Messaging;
+
+public static partial class MessageTypes
 {
-    public static partial class MessageTypes
+    internal static class Internal
     {
-        internal static class Internal
+        internal interface IMessage {}
+
+        internal class EndpointInformationQuery : Internal.IMessage, IRemotableQuery<EndpointInformation> {}
+
+        internal class EndpointInformation
         {
-            internal interface IMessage {}
-
-            internal class EndpointInformationQuery : Internal.IMessage, IRemotableQuery<EndpointInformation> {}
-
-            internal class EndpointInformation
-            {
 #pragma warning disable IDE0051 // Remove unused private members
-                [JsonConstructor]EndpointInformation(string name, EndpointId id, HashSet<TypeId> handledMessageTypes)
+            [JsonConstructor]EndpointInformation(string name, EndpointId id, HashSet<TypeId> handledMessageTypes)
 #pragma warning restore IDE0051 // Remove unused private members
-                {
-                    Name = name;
-                    Id = id;
-                    HandledMessageTypes = handledMessageTypes;
-                }
-
-                public EndpointInformation(IEnumerable<TypeId> handledRemoteMessageTypeIds, EndpointConfiguration configuration)
-                {
-                    Id = configuration.Id;
-                    Name = configuration.Name;
-                    HandledMessageTypes = new HashSet<TypeId>(handledRemoteMessageTypeIds);
-                }
-
-                public string Name { get; private set; }
-                public EndpointId Id { get; private set; }
-                public HashSet<TypeId> HandledMessageTypes { get; private set; }
+            {
+                Name = name;
+                Id = id;
+                HandledMessageTypes = handledMessageTypes;
             }
 
-            public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-                (EndpointInformationQuery query, TypeMapper typemapper, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
-                    new EndpointInformation(registry.HandledRemoteMessageTypeIds(), configuration));
+            public EndpointInformation(IEnumerable<TypeId> handledRemoteMessageTypeIds, EndpointConfiguration configuration)
+            {
+                Id = configuration.Id;
+                Name = configuration.Name;
+                HandledMessageTypes = new HashSet<TypeId>(handledRemoteMessageTypeIds);
+            }
+
+            public string Name { get; private set; }
+            public EndpointId Id { get; private set; }
+            public HashSet<TypeId> HandledMessageTypes { get; private set; }
         }
+
+        public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
+            (EndpointInformationQuery query, TypeMapper typemapper, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
+                new EndpointInformation(registry.HandledRemoteMessageTypeIds(), configuration));
     }
 }

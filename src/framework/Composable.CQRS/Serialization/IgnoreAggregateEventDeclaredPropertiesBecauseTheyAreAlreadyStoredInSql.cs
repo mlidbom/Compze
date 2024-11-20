@@ -4,24 +4,23 @@ using Composable.SystemCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Composable.Serialization
+namespace Composable.Serialization;
+
+class IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
 {
-    class IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
+    public new static readonly IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql Instance = new IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql();
+    IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql() {
+    }
+
+    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
     {
-        public new static readonly IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql Instance = new IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql();
-        IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql() {
-        }
+        var property = base.CreateProperty(member, memberSerialization);
 
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        if(property.DeclaringType == typeof(AggregateEvent))
         {
-            var property = base.CreateProperty(member, memberSerialization);
-
-            if(property.DeclaringType == typeof(AggregateEvent))
-            {
-                property.Ignored = true;
-            }
-
-            return property;
+            property.Ignored = true;
         }
+
+        return property;
     }
 }

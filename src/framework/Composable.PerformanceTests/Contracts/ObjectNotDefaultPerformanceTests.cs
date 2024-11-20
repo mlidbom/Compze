@@ -4,32 +4,31 @@ using Composable.Testing.Performance;
 using NUnit.Framework;
 using Composable.Testing;
 
-namespace Composable.Tests.Contracts
+namespace Composable.Tests.Contracts;
+
+[TestFixture] public class ObjectNotDefaultPerformanceTests
 {
-    [TestFixture] public class ObjectNotDefaultPerformanceTests
+    [Test] public void ShouldRun300TestsIn1Milliseconds()
     {
-        [Test] public void ShouldRun300TestsIn1Milliseconds()
-        {
-            var one = 1;
+        var one = 1;
 
-            TimeAsserter.Execute(
-                action: () => Contract.Argument(() => one).NotDefault(),
-                iterations: 300,
-                maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 2));
-        }
+        TimeAsserter.Execute(
+            action: () => Contract.Argument(() => one).NotDefault(),
+            iterations: 300,
+            maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 2));
+    }
 
-        [Test] public void ShouldRun300TestsIn1Millisecond()
-        {
-            var one = 1;
+    [Test] public void ShouldRun300TestsIn1Millisecond()
+    {
+        var one = 1;
 
-            TimeAsserter.Execute(
-                action: () =>
-                {
-                    var inspected = Contract.Argument(() => one);
-                    inspected.NotNullOrDefault();
-                },
-                iterations: 300,
-                maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 3));
-        }
+        TimeAsserter.Execute(
+            action: () =>
+            {
+                var inspected = Contract.Argument(() => one);
+                inspected.NotNullOrDefault();
+            },
+            iterations: 300,
+            maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 3));
     }
 }

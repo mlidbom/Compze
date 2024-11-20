@@ -1,13 +1,12 @@
 ﻿using System.Threading;
 
-namespace Composable.SystemCE.ThreadingCE
+namespace Composable.SystemCE.ThreadingCE;
+
+static class ThreadCE
 {
-    static class ThreadCE
+    public static void InterruptAndJoin(this Thread @this)
     {
-        public static void InterruptAndJoin(this Thread @this)
-        {
-            @this.Interrupt();
-            @this.Join();
-        }
+        @this.Interrupt();
+        @this.Join();
     }
 }

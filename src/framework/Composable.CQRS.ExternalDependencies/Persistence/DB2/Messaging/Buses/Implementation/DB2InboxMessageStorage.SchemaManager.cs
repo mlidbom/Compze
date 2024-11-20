@@ -5,17 +5,17 @@ using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Message =  Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Composable.Persistence.DB2.Messaging.Buses.Implementation
+namespace Composable.Persistence.DB2.Messaging.Buses.Implementation;
+
+partial class DB2InboxPersistenceLayer
 {
-    partial class DB2InboxPersistenceLayer
+    const string DB2GuidType = "CHAR(36)";
+    static class SchemaManager
     {
-        const string DB2GuidType = "CHAR(36)";
-        static class SchemaManager
+        public static async Task EnsureTablesExistAsync(IDB2ConnectionPool connectionFactory)
         {
-            public static async Task EnsureTablesExistAsync(IDB2ConnectionPool connectionFactory)
-            {
-                await  connectionFactory.UseCommandAsync(
-                    command => command.SetCommandText($@"
+            await  connectionFactory.UseCommandAsync(
+                command => command.SetCommandText($@"
 
 begin
     declare continue handler for sqlstate '42710' begin end; --Ignore error if table exists
@@ -43,8 +43,7 @@ begin
 
 end;
 ")
-                                      .ExecuteNonQueryAsync()).NoMarshalling();
-            }
+                                  .ExecuteNonQueryAsync()).NoMarshalling();
         }
     }
 }

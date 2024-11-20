@@ -1,51 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Composable.DependencyInjection
+namespace Composable.DependencyInjection;
+
+public interface IDependencyInjectionContainer : IDisposable
 {
-    public interface IDependencyInjectionContainer : IDisposable
-    {
-        IRunMode RunMode { get; }
-        void Register(params ComponentRegistration[] registrations);
-        IEnumerable<ComponentRegistration> RegisteredComponents();
-        IServiceLocator CreateServiceLocator();
-    }
+    IRunMode RunMode { get; }
+    void Register(params ComponentRegistration[] registrations);
+    IEnumerable<ComponentRegistration> RegisteredComponents();
+    IServiceLocator CreateServiceLocator();
+}
 
-    public interface IServiceLocator : IDisposable
-    {
-        TComponent Resolve<TComponent>() where TComponent : class;
-        TComponent[] ResolveAll<TComponent>() where TComponent : class;
-        IDisposable BeginScope();
-    }
+public interface IServiceLocator : IDisposable
+{
+    TComponent Resolve<TComponent>() where TComponent : class;
+    TComponent[] ResolveAll<TComponent>() where TComponent : class;
+    IDisposable BeginScope();
+}
 
-    interface IServiceLocatorKernel
-    {
-        TComponent Resolve<TComponent>() where TComponent : class;
-    }
+interface IServiceLocatorKernel
+{
+    TComponent Resolve<TComponent>() where TComponent : class;
+}
 
-    public interface IRunMode
-    {
-        bool IsTesting { get; }
-    }
+public interface IRunMode
+{
+    bool IsTesting { get; }
+}
 
-    public enum PersistenceLayer
-    {
-        MsSql,
-        Memory,
-        MySql,
-        PgSql,
-        Orcl,
-        DB2
-    }
+public enum PersistenceLayer
+{
+    MsSql,
+    Memory,
+    MySql,
+    PgSql,
+    Orcl,
+    DB2
+}
 
-    public enum DIContainer
-    {
-        Com, Sim, Win, Microsoft
-    }
+public enum DIContainer
+{
+    Com, Sim, Win, Microsoft
+}
 
-    enum Lifestyle
-    {
-        Singleton,
-        Scoped
-    }
+enum Lifestyle
+{
+    Singleton,
+    Scoped
 }

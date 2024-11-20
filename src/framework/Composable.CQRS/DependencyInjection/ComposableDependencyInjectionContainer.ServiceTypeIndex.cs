@@ -1,11 +1,10 @@
 ﻿using Composable.SystemCE.ReflectionCE;
 
-namespace Composable.DependencyInjection
+namespace Composable.DependencyInjection;
+
+partial class ComposableDependencyInjectionContainer
 {
-    partial class ComposableDependencyInjectionContainer
+    internal class ServiceTypeIndex : TypeIndex<ServiceTypeIndex>
     {
-        internal class ServiceTypeIndex : TypeIndex<ServiceTypeIndex>
-        {
-        }
     }
 }

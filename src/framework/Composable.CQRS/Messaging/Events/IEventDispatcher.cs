@@ -1,7 +1,6 @@
-namespace Composable.Messaging.Events
+namespace Composable.Messaging.Events;
+
+interface IEventDispatcher<in TEvent>
 {
-    interface IEventDispatcher<in TEvent>
-    {
-        void Dispatch(TEvent evt);
-    }
+    void Dispatch(TEvent evt);
 }

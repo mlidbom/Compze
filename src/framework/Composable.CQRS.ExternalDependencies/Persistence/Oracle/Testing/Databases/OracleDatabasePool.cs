@@ -6,57 +6,57 @@ using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
 
-namespace Composable.Persistence.Oracle.Testing.Databases
+namespace Composable.Persistence.Oracle.Testing.Databases;
+
+sealed class OracleDatabasePool : DatabasePool
 {
-    sealed class OracleDatabasePool : DatabasePool
+    readonly IOracleConnectionPool _masterConnectionPool;
+
+    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_ORACLE_DATABASE_POOL_MASTER_CONNECTIONSTRING";
+
+    readonly IThreadShared<OracleConnectionStringBuilder> _connectionStringBuilder;
+
+    public OracleDatabasePool()
     {
-        readonly IOracleConnectionPool _masterConnectionPool;
+        var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
+                                  ?? "Data Source=127.0.0.1:1521/orclpdb; DBA Privilege=SYSDBA; User Id=sys; Password=Development!1;";
 
-        const string ConnectionStringConfigurationParameterName = "COMPOSABLE_ORACLE_DATABASE_POOL_MASTER_CONNECTIONSTRING";
+        _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new OracleConnectionStringBuilder(masterConnectionString));
+        _masterConnectionPool = IOracleConnectionPool.CreateInstance(masterConnectionString);
+    }
 
-        readonly IThreadShared<OracleConnectionStringBuilder> _connectionStringBuilder;
-
-        public OracleDatabasePool()
+    protected override string ConnectionStringFor(Database db)
+        => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
         {
-            var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                      ?? "Data Source=127.0.0.1:1521/orclpdb; DBA Privilege=SYSDBA; User Id=sys; Password=Development!1;";
+            me.UserID = db.Name.ToUpperInvariant();
+            me.MinPoolSize = 1;
+            me.MaxPoolSize = 5;
+            me.ConnectionLifeTime = 10;
+            me.Password = db.Name.ToUpperInvariant();
+            me.DBAPrivilege = "";
+        }).ConnectionString);
 
-            _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new OracleConnectionStringBuilder(masterConnectionString));
-            _masterConnectionPool = IOracleConnectionPool.CreateInstance(masterConnectionString);
-        }
-
-        protected override string ConnectionStringFor(Database db)
-            => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
-            {
-                me.UserID = db.Name.ToUpperInvariant();
-                me.MinPoolSize = 1;
-                me.MaxPoolSize = 5;
-                me.ConnectionLifeTime = 10;
-                me.Password = db.Name.ToUpperInvariant();
-                me.DBAPrivilege = "";
-            }).ConnectionString);
-
-        const int OracleInvalidUserNamePasswordCombinationErrorNumber = 1017;
-        protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
+    const int OracleInvalidUserNamePasswordCombinationErrorNumber = 1017;
+    protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
+    {
+        try
         {
-            try
-            {
-                ResetDatabase(db);
-            }
-            catch(OracleException exception) when(exception.Number == OracleInvalidUserNamePasswordCombinationErrorNumber)
-            {
-                _masterConnectionPool.ExecuteScalar(DropUserIfExistsAndRecreate(db.Name.ToUpperInvariant()));
-                IOracleConnectionPool.CreateInstance(ConnectionStringFor(db)).UseConnection(_ => {}); //We just call this to ensure that we can actually connect.
-            }
+            ResetDatabase(db);
         }
-
-        protected override void ResetDatabase(Database db)
+        catch(OracleException exception) when(exception.Number == OracleInvalidUserNamePasswordCombinationErrorNumber)
         {
-            IOracleConnectionPool.CreateInstance(ConnectionStringFor(db))
-                                     .UseCommand(command => command.SetCommandText(CleanSchema()).ExecuteNonQuery());
+            _masterConnectionPool.ExecuteScalar(DropUserIfExistsAndRecreate(db.Name.ToUpperInvariant()));
+            IOracleConnectionPool.CreateInstance(ConnectionStringFor(db)).UseConnection(_ => {}); //We just call this to ensure that we can actually connect.
         }
+    }
 
-        static string DropUserIfExistsAndRecreate(string userName) => $@"
+    protected override void ResetDatabase(Database db)
+    {
+        IOracleConnectionPool.CreateInstance(ConnectionStringFor(db))
+                             .UseCommand(command => command.SetCommandText(CleanSchema()).ExecuteNonQuery());
+    }
+
+    static string DropUserIfExistsAndRecreate(string userName) => $@"
 declare user_to_drop_exists integer;
 begin
     select count(*) into user_to_drop_exists from dba_users where username='{userName}';
@@ -72,7 +72,7 @@ begin
 end;
 ";
 
-        static string CleanSchema() => @"
+    static string CleanSchema() => @"
 BEGIN
     FOR cur_rec IN (SELECT object_name, object_type FROM user_objects 
                         WHERE object_type not in ('INDEX','PACKAGE BODY','TRIGGER','LOB', 'SEQUENCE')) LOOP
@@ -88,5 +88,4 @@ BEGIN
     END LOOP;
 END;
 ";
-    }
 }

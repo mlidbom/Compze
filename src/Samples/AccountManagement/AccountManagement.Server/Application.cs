@@ -3,17 +3,16 @@ using Composable.DependencyInjection;
 using Composable.Messaging.Buses;
 // ReSharper disable LocalizableElement
 
-namespace AccountManagement
+namespace AccountManagement;
+
+public class Application
 {
-    public class Application
+    public static void Main()
     {
-        public static void Main()
-        {
-            using var host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
-            new AccountManagementServerDomainBootstrapper().RegisterWith(host);
-            host.Start();
-            Console.WriteLine("Press enter to exit");
-            Console.ReadLine();
-        }
+        using var host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
+        new AccountManagementServerDomainBootstrapper().RegisterWith(host);
+        host.Start();
+        Console.WriteLine("Press enter to exit");
+        Console.ReadLine();
     }
 }

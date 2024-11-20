@@ -3,59 +3,58 @@ using System.Collections.Generic;
 using System.Linq;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 
-namespace Composable.Persistence.EventStore.Refactoring.Migrations
+namespace Composable.Persistence.EventStore.Refactoring.Migrations;
+
+abstract class CompleteEventStoreStreamMutator
 {
-    abstract class CompleteEventStoreStreamMutator
+    public static ICompleteEventStreamMutator Create(IReadOnlyList<IEventMigration> eventMigrationFactories) => eventMigrationFactories.Any()
+                                                                                                                    ? new RealMutator(eventMigrationFactories)
+                                                                                                                    : (ICompleteEventStreamMutator)new OnlySerializeVersionsMutator();
+
+    class OnlySerializeVersionsMutator : ICompleteEventStreamMutator
     {
-        public static ICompleteEventStreamMutator Create(IReadOnlyList<IEventMigration> eventMigrationFactories) => eventMigrationFactories.Any()
-                                                                                                                        ? new RealMutator(eventMigrationFactories)
-                                                                                                                        : (ICompleteEventStreamMutator)new OnlySerializeVersionsMutator();
+        readonly Dictionary<Guid, int> _aggregateVersions = new Dictionary<Guid, int>();
 
-        class OnlySerializeVersionsMutator : ICompleteEventStreamMutator
+        public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
         {
-            readonly Dictionary<Guid, int> _aggregateVersions = new Dictionary<Guid, int>();
-
-            public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
+            foreach(var @event in eventStream)
             {
-                foreach(var @event in eventStream)
-                {
-                    var version = _aggregateVersions.GetOrAddDefault(@event.AggregateId) + 1;
-                    _aggregateVersions[@event.AggregateId] = version;
-                    @event.AggregateVersion = version;
-                    yield return @event;
-                }
+                var version = _aggregateVersions.GetOrAddDefault(@event.AggregateId) + 1;
+                _aggregateVersions[@event.AggregateId] = version;
+                @event.AggregateVersion = version;
+                yield return @event;
             }
         }
+    }
 
-        class RealMutator : ICompleteEventStreamMutator
+    class RealMutator : ICompleteEventStreamMutator
+    {
+        readonly IReadOnlyList<IEventMigration> _eventMigrationFactories;
+        readonly Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator> _aggregateMutatorsCache =
+            new Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator>();
+
+        public RealMutator(IReadOnlyList<IEventMigration> eventMigrationFactories) => _eventMigrationFactories = eventMigrationFactories;
+
+        public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
         {
-            readonly IReadOnlyList<IEventMigration> _eventMigrationFactories;
-            readonly Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator> _aggregateMutatorsCache =
-                new Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator>();
-
-            public RealMutator(IReadOnlyList<IEventMigration> eventMigrationFactories) => _eventMigrationFactories = eventMigrationFactories;
-
-            public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
+            foreach(var @event in eventStream)
             {
-                foreach(var @event in eventStream)
-                {
-                    var mutatedEvents = _aggregateMutatorsCache.GetOrAdd(
-                        @event.AggregateId,
-                        () => SingleAggregateInstanceEventStreamMutator.Create(@event, _eventMigrationFactories)
-                        ).Mutate(@event);
+                var mutatedEvents = _aggregateMutatorsCache.GetOrAdd(
+                    @event.AggregateId,
+                    () => SingleAggregateInstanceEventStreamMutator.Create(@event, _eventMigrationFactories)
+                ).Mutate(@event);
 
-                    foreach(var mutatedEvent in mutatedEvents)
-                    {
-                        yield return mutatedEvent;
-                    }
+                foreach(var mutatedEvent in mutatedEvents)
+                {
+                    yield return mutatedEvent;
                 }
+            }
 
-                foreach (var mutator in _aggregateMutatorsCache)
+            foreach (var mutator in _aggregateMutatorsCache)
+            {
+                foreach (var finalEvent in mutator.Value.EndOfAggregate())
                 {
-                    foreach (var finalEvent in mutator.Value.EndOfAggregate())
-                    {
-                        yield return finalEvent;
-                    }
+                    yield return finalEvent;
                 }
             }
         }

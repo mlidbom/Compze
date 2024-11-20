@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Composable.Messaging
-{
-    static partial class MessageInspector
-    {
-        public class TransactionPolicyViolationException : Exception
-        {
-            public TransactionPolicyViolationException(string message) : base(message + TransactionPolicyRationale) {}
+namespace Composable.Messaging;
 
-            static readonly string TransactionPolicyRationale = $@"
+static partial class MessageInspector
+{
+    public class TransactionPolicyViolationException : Exception
+    {
+        public TransactionPolicyViolationException(string message) : base(message + TransactionPolicyRationale) {}
+
+        static readonly string TransactionPolicyRationale = $@"
 
 Rationale: 
 When accessing services on a bus it is very important to understand whether or not the service you are accessing will behave transactionally or not. 
@@ -27,6 +27,5 @@ These messages will not respect the transaction so if you want to send them duri
 The whole point of these message types is to guarantee you exactly once delivery. Without a transaction while sending this guarantee is lost.
 
 ";
-        }
     }
 }

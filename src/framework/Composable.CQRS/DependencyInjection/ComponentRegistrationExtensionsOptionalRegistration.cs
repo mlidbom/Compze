@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 
-namespace Composable.DependencyInjection
+namespace Composable.DependencyInjection;
+
+static class ComponentRegistrationExtensionsOptionalRegistration
 {
-    static class ComponentRegistrationExtensionsOptionalRegistration
-    {
-        public static bool HasComponent<TComponent>(this IDependencyInjectionContainer @this) =>
-            @this.RegisteredComponents().Any(component => component.ServiceTypes.Contains(typeof(TComponent)));
-    }
+    public static bool HasComponent<TComponent>(this IDependencyInjectionContainer @this) =>
+        @this.RegisteredComponents().Any(component => component.ServiceTypes.Contains(typeof(TComponent)));
 }

@@ -1,9 +1,8 @@
-﻿namespace Composable.Contracts
+﻿namespace Composable.Contracts;
+
+///<summary>Exception thrown when object is null when that is not allowed.</summary>
+class ObjectIsDefaultContractViolationException : ContractViolationException
 {
-    ///<summary>Exception thrown when object is null when that is not allowed.</summary>
-    class ObjectIsDefaultContractViolationException : ContractViolationException
-    {
-        ///<summary>Standard constructor</summary>
-        internal ObjectIsDefaultContractViolationException(IInspectedValue badValue) : base(badValue) {}
-    }
+    ///<summary>Standard constructor</summary>
+    internal ObjectIsDefaultContractViolationException(IInspectedValue badValue) : base(badValue) {}
 }

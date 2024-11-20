@@ -2,12 +2,11 @@
 using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
 
-namespace AccountManagement.API
+namespace AccountManagement.API;
+
+interface IAccountResourceData
 {
-    interface IAccountResourceData
-    {
-        Guid Id { get; }
-        Email Email { get; }
-        Password Password { get; }
-    }
+    Guid Id { get; }
+    Email Email { get; }
+    Password Password { get; }
 }

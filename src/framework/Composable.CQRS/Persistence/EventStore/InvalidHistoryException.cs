@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Composable.Persistence.EventStore
+namespace Composable.Persistence.EventStore;
+
+public class InvalidHistoryException : Exception
 {
-    public class InvalidHistoryException : Exception
+    public InvalidHistoryException(Guid aggregateId):base($"AggregateId: {aggregateId}")
     {
-        public InvalidHistoryException(Guid aggregateId):base($"AggregateId: {aggregateId}")
-        {
-        }
     }
 }
