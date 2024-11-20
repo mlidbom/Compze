@@ -28,10 +28,7 @@ static class SqlCommandParameterExtensions
    {
       @this.IsNullable = true;
       @this.Direction = ParameterDirection.Input;
-      if(@this.Value == null)
-      {
-         @this.Value = DBNull.Value;
-      }
+      @this.Value ??= DBNull.Value;
       return @this;
    }
 }

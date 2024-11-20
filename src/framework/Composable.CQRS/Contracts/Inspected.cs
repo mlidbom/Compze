@@ -26,10 +26,7 @@ class Inspected<TValue> : IInspected<TValue>
    /// <exception cref="Exception">The exception created by the buildException argument will be thrown if an <see cref="InspectedValue{TValue}"/> fails inspection.</exception>
    public IInspected<TValue> Inspect(Func<TValue, bool> isValueValid, Func<IInspectedValue<TValue>, Exception>? buildException = null)
    {
-      if(buildException == null)
-      {
-         buildException = badValue => new ContractViolationException(badValue);
-      }
+      buildException ??= badValue => new ContractViolationException(badValue);
 
       //Yes the loop is not as pretty as a linq expression but this is performance critical code that might run in tight loops. If it was not I would be using linq.
       foreach(var inspected in _inspectedValues)
