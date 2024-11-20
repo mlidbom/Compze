@@ -12,7 +12,8 @@ class ThreadGate : IThreadGate
    public static IThreadGate CreateClosedWithTimeout(TimeSpan timeout) => new ThreadGate(timeout);
    public static IThreadGate CreateOpenWithTimeout(TimeSpan timeout) => new ThreadGate(timeout).Open();
 
-   public TimeSpan DefaultTimeout => _defaultTimeout;
+   public TimeSpan DefaultTimeout { get; }
+
    public bool IsOpen => _isOpen;
    public long Queued => _monitor.Read(() => _queuedThreads.Count);
    public long Passed => _monitor.Read(() => _passedThreads.Count);
@@ -105,7 +106,7 @@ Current state of gate:
    ThreadGate(TimeSpan defaultTimeout)
    {
       _monitor = MonitorCE.WithTimeout(defaultTimeout);
-      _defaultTimeout = defaultTimeout;
+      DefaultTimeout = defaultTimeout;
    }
 
    public override string ToString() => $@"{nameof(IsOpen)} : {IsOpen},
@@ -114,7 +115,6 @@ Current state of gate:
 {nameof(Requested)}: {Requested},
 ";
 
-   readonly TimeSpan _defaultTimeout;
    readonly MonitorCE _monitor;
    bool _lockOnNextPass;
    Action<ThreadSnapshot> _passThroughAction = _ => {};
