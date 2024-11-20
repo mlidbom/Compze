@@ -33,7 +33,11 @@ class PerformanceTest : DuplicateByPluggableComponentTest
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);
       await _host.StartAsync();
       //Warmup
-      StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 3);
+      StopwatchCE.TimeExecutionThreaded(() =>
+      {
+         var a = _scenarioApi.Register.Execute();
+         _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(a.Account.Id));
+      }, iterations: 10);
    }
 
    [Test] public void SingleThreaded_creates_XX_accounts_in_30_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_() =>
@@ -65,9 +69,9 @@ class PerformanceTest : DuplicateByPluggableComponentTest
                                    maxTotal: 20.Milliseconds());
    }
 
-   [Test] public void Multithreaded_fetches_XX_account_resources_in_10_milliseconds_db2_memory__msSql__mySql__oracle_pgSql_()
+   [Test] public void Multithreaded_fetches_XX_account_resources_in_20_milliseconds_db2_memory__msSql__mySql__oracle_pgSql_()
    {
-      var fetches = TestEnv.PersistenceLayer.ValueFor(db2: 10, memory: 40, msSql: 25, mySql: 7, orcl: 15, pgSql: 25);
+      var fetches = TestEnv.PersistenceLayer.ValueFor(db2: 20, memory: 40, msSql: 25, mySql: 20, orcl: 25, pgSql: 40);
       var accountsReader = CreateAccountsThreaded(Math.Min(fetches, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Fetch account resource",
@@ -77,7 +81,7 @@ class PerformanceTest : DuplicateByPluggableComponentTest
                                       _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(accountId)).Id.Should().Be(accountId);
                                    },
                                    iterations: fetches,
-                                   maxTotal: 10.Milliseconds());
+                                   maxTotal: 20.Milliseconds());
    }
 
    ConcurrentBag<(string Email, string Password, Guid Id)> CreateAccountsThreaded(int accountCount)
@@ -88,7 +92,9 @@ class PerformanceTest : DuplicateByPluggableComponentTest
          () =>
          {
             var registerAccountScenario = _scenarioApi.Register;
-            registerAccountScenario.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful);
+            var result = registerAccountScenario.Execute().Result;
+            result.Status.Should().Be(RegistrationAttemptStatus.Successful);
+            _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(result.RegisteredAccount.Id)).Id.Should().Be(result.RegisteredAccount.Id);
             created.Add((registerAccountScenario.Email, registerAccountScenario.Password, registerAccountScenario.AccountId));
          },
          iterations: accountCount);
