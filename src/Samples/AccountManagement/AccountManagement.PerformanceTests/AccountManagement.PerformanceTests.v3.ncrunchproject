@@ -1,8 +1,6 @@
 ﻿<ProjectConfiguration>
   <Settings>
+    <EnableRDI>False</EnableRDI>
     <HiddenComponentWarnings />
-    <IgnoredTests>
-      <AllTestsSelector />
-    </IgnoredTests>
   </Settings>
 </ProjectConfiguration>

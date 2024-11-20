@@ -98,6 +98,7 @@
       <Value>SystemCE\DiagnosticsCE\StopwatchCE.cs:framework\Composable.CQRS\Composable.CQRS.csproj-20</Value>
     </HotSpotsLineExclusionList>
     <InstrumentationMode>Optimised</InstrumentationMode>
+    <RdiConfigured>True</RdiConfigured>
     <SlidingBuildDelayInMilliseconds>1000</SlidingBuildDelayInMilliseconds>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
