@@ -425,7 +425,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
    }
 
 
-   [Test, EnableRdi(false)]
+   [Test]
    public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel()
    {
       var user = new User();
