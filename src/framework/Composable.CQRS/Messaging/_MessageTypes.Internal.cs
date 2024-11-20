@@ -44,7 +44,7 @@ public static partial class MessageTypes
         }
 
         public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (EndpointInformationQuery query, TypeMapper typemapper, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
+            (EndpointInformationQuery _, TypeMapper _, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
                 new EndpointInformation(registry.HandledRemoteMessageTypeIds(), configuration));
     }
 }

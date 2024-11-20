@@ -31,7 +31,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : DuplicateByPlug
             {
                 builder.RegisterCurrentTestsConfiguredPersistenceLayer();
                 builder.RegisterHandlers.ForCommand<ScheduledCommand>(
-                    cmd => _receivedCommandGate.AwaitPassThrough());
+                    _ => _receivedCommandGate.AwaitPassThrough());
 
                 builder.TypeMapper.Map<ScheduledCommand>("6bc9abe2-8861-4108-98dd-8aa1b50c0c42");
             });

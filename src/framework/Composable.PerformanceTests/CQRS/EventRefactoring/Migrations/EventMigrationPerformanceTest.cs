@@ -29,7 +29,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
                                        .Concat(
                                             1.Through(10)
                                              .SelectMany(
-                                                  index => 1.Through(96)
+                                                  _ => 1.Through(96)
                                                             .Select(_ => typeof(E1))
                                                             .Concat(EnumerableCE.OfTypes<E2, E4, E6, E8>()))).ToList();
 

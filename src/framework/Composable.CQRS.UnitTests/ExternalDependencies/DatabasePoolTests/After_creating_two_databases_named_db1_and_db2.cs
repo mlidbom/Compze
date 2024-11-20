@@ -76,7 +76,7 @@ public class After_creating_two_databases_named_db1_and_db2 : DatabasePoolTest
         _manager.Dispose();
 
         // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-        _manager.Invoking(action: man => _manager.ConnectionStringFor(Db1))
+        _manager.Invoking(action: _ => _manager.ConnectionStringFor(Db1))
                 .Should().Throw<Exception>()
                 .Where(exceptionExpression: exception => exception.Message.ToLowerInvariant()
                                                                   .Contains("disposed"));

@@ -20,9 +20,9 @@ class User : Aggregate<User, UserEvent, IUserEvent>
                 Password = e.Password;
             })
            .For<IUserChangedEmail>(e => Email = e.Email)
-           .For<IMigratedBeforeUserRegisteredEvent>(e => {})
-           .For<IMigratedAfterUserChangedEmailEvent>(e => {})
-           .For<IMigratedReplaceUserChangedPasswordEvent>(e => {})
+           .For<IMigratedBeforeUserRegisteredEvent>(_ => {})
+           .For<IMigratedAfterUserChangedEmailEvent>(_ => {})
+           .For<IMigratedReplaceUserChangedPasswordEvent>(_ => {})
            .For<IUserChangedPassword>(e => Password = e.Password);
     }
 

@@ -66,7 +66,7 @@ UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
 
     public void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions)
     {
-        var commandText = versions.Select((spec, index) =>
+        var commandText = versions.Select((spec, _) =>
                                               $@"UPDATE {Event.TableName} SET {Event.EffectiveVersion} = {spec.EffectiveVersion} WHERE {Event.EventId} = '{spec.EventId}';").Join(Environment.NewLine);
 
         //We do not prepare here since this query will only ever be executed once.

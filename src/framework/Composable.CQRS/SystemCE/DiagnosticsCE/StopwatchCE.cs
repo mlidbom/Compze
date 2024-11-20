@@ -93,7 +93,7 @@ public static class StopwatchCE
         var total = TimeExecution(
             () => Parallel.For(fromInclusive: 0,
                                toExclusive: iterations,
-                               body: index => action(),
+                               body: _ => action(),
                                parallelOptions: new ParallelOptions {MaxDegreeOfParallelism = maxDegreeOfParallelism}));
 
         return new TimedExecutionSummary(iterations,  total);
@@ -116,7 +116,7 @@ public static class StopwatchCE
         var total = TimeExecution(
             () => Parallel.For(fromInclusive: 0,
                                toExclusive: iterations,
-                               body: index =>
+                               body: _ =>
                                {
                                    var timing = TimedAction();
                                    individual.Push(timing);

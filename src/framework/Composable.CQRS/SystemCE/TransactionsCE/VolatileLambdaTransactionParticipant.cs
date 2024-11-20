@@ -45,7 +45,7 @@ class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
     {
         base.OnEnlist();
         _onEnlist?.Invoke();
-        Transaction.Current!.TransactionCompleted += (transaction, parameters) =>
+        Transaction.Current!.TransactionCompleted += (_, parameters) =>
         {
             Assert.Argument.NotNull(parameters.Transaction);
             _onTransactionCompleted?.Invoke(parameters.Transaction.TransactionInformation.Status);

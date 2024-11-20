@@ -21,10 +21,10 @@ static class AccountStatistics
         public SingletonStatisticsQueryModel()
         {
             RegisterEventAppliers()
-               .For<AccountEvent.Created>(created => NumberOfAccounts++)
-               .For<AccountEvent.LoginAttempted>(loginAttempted => NumberOfLoginsAttempts++)
-               .For<AccountEvent.LoggedIn>(loggedIn => NumberOfSuccessfulLogins++)
-               .For<AccountEvent.LoginFailed>(loginFailed => NumberOfFailedLogins++);
+               .For<AccountEvent.Created>(_ => NumberOfAccounts++)
+               .For<AccountEvent.LoginAttempted>(_ => NumberOfLoginsAttempts++)
+               .For<AccountEvent.LoggedIn>(_ => NumberOfSuccessfulLogins++)
+               .For<AccountEvent.LoginFailed>(_ => NumberOfFailedLogins++);
         }
 
         public int NumberOfAccounts { get; private set; }

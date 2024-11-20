@@ -35,8 +35,8 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
                 builder.RegisterCurrentTestsConfiguredPersistenceLayer();
                 builder.RegisterHandlers
                        .ForQuery((GetUserQuery query) => queryResults.Single(result => result.Name == query.Name))
-                       .ForQuery((UserApiStartPageQuery query) => new UserApiStartPage())
-                       .ForCommandWithResult((RegisterUserCommand command, IServiceBusSession bus) =>
+                       .ForQuery((UserApiStartPageQuery _) => new UserApiStartPage())
+                       .ForCommandWithResult((RegisterUserCommand command, IServiceBusSession _) =>
                         {
                             queryResults.Add(new UserResource(command.Name));
                             return new UserRegisteredConfirmationResource(command.Name);

@@ -154,7 +154,7 @@ class EventModifier : IEventModifier
                 });
         }
 
-        CurrentNode.ValuesFrom().ForEach((@event, index) => @event.AggregateVersion += _insertedEvents.Length);
+        CurrentNode.ValuesFrom().ForEach((@event, _) => @event.AggregateVersion += _insertedEvents.Length);
 
         CurrentNode.AddBefore(insert);
         _eventsAddedCallback.Invoke(_insertedEvents);

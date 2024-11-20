@@ -31,14 +31,14 @@ public abstract class CallMatchingHandlersInRegistrationOrderEventDispatcherTest
             {
                 _dispatcher.Register()
                            .IgnoreUnhandled<IIgnoredUserEvent>()
-                           .BeforeHandlers(e => BeforeHandlers1CallOrder = ++CallsMade)
-                           .BeforeHandlers(e => BeforeHandlers2CallOrder = ++CallsMade)
-                           .AfterHandlers(e => AfterHandlers1CallOrder = ++CallsMade)
-                           .AfterHandlers(e => AfterHandlers2CallOrder = ++CallsMade)
-                           .For<IUserCreatedEvent>(e => UserCreatedCallOrder = ++CallsMade)
-                           .For<IUserRegistered>(e => ++CallsMade)
-                           .For<IUserSkillsRemoved>(e => ++CallsMade)
-                           .For<IUserSkillsAdded>(e => ++CallsMade);
+                           .BeforeHandlers(_ => BeforeHandlers1CallOrder = ++CallsMade)
+                           .BeforeHandlers(_ => BeforeHandlers2CallOrder = ++CallsMade)
+                           .AfterHandlers(_ => AfterHandlers1CallOrder = ++CallsMade)
+                           .AfterHandlers(_ => AfterHandlers2CallOrder = ++CallsMade)
+                           .For<IUserCreatedEvent>(_ => UserCreatedCallOrder = ++CallsMade)
+                           .For<IUserRegistered>(_ => ++CallsMade)
+                           .For<IUserSkillsRemoved>(_ => ++CallsMade)
+                           .For<IUserSkillsAdded>(_ => ++CallsMade);
             }
 
             [Fact] void when_dispatching_an_ignored_event_no_calls_are_made_to_any_handlers()
@@ -72,8 +72,8 @@ public abstract class CallMatchingHandlersInRegistrationOrderEventDispatcherTest
                 var handler2CallOrder = 0;
 
                 _dispatcher.RegisterHandlers()
-                           .For<IUserRegistered>(e => handler1CallOrder = ++calls)
-                           .For<IUserRegistered>(e => handler2CallOrder = ++calls);
+                           .For<IUserRegistered>(_ => handler1CallOrder = ++calls)
+                           .For<IUserRegistered>(_ => handler2CallOrder = ++calls);
 
                 _dispatcher.Dispatch(new UserRegistered());
 

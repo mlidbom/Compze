@@ -44,7 +44,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
                 builder.Container.RegisterEventStore(builder.Configuration.ConnectionStringName);
 
                 builder.RegisterHandlers
-                       .ForEvent((UserEvent.IUserRegistered myEvent) => {})
+                       .ForEvent((UserEvent.IUserRegistered _) => {})
                        .ForQuery((GetUserQuery query, IEventStoreReader eventReader) => new UserResource(eventReader.GetHistory(query.UserId)))
                        .ForCommandWithResult((UserRegistrarCommand.RegisterUserCommand command, IEventStoreUpdater store) =>
                         {

@@ -64,7 +64,7 @@ END IF;
 
     public void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions)
     {
-        var commandText = versions.Select((spec, index) =>
+        var commandText = versions.Select((spec, _) =>
                                               $@"UPDATE {Event.TableName} SET {Event.EffectiveVersion} = {spec.EffectiveVersion} WHERE {Event.EventId} = '{spec.EventId}';").Join(Environment.NewLine);
 
         _connectionManager.UseConnection(connection => connection.ExecuteNonQuery(commandText));

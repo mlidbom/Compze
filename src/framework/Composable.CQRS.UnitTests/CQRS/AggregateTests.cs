@@ -79,11 +79,11 @@ public class AggregateTests
         public CascadingEventsAggregate():base(TestingTimeSource.FrozenUtcNow())
         {
             RegisterEventHandlers()
-               .For<ITriggeringEvent>(@event => Publish(new TriggeredEvent()));
+               .For<ITriggeringEvent>(_ => Publish(new TriggeredEvent()));
 
             RegisterEventAppliers()
-               .For<ITriggeringEvent>(@event => TriggeringEventApplied = true)
-               .For<ITriggeredEvent>(@event => TriggeredEventApplied = true);
+               .For<ITriggeringEvent>(_ => TriggeringEventApplied = true)
+               .For<ITriggeredEvent>(_ => TriggeredEventApplied = true);
         }
         public bool TriggeredEventApplied { get; private set; }
         public bool TriggeringEventApplied { get; private set; }

@@ -25,7 +25,7 @@ public static class MsSqlPersistenceLayerRegistrar
         if(container.RunMode.IsTesting)
         {
             container.Register(Singleton.For<MsSqlDatabasePool>()
-                                        .CreatedBy(((IConfigurationParameterProvider configurationParameterProvider) => new MsSqlDatabasePool()))
+                                        .CreatedBy(((IConfigurationParameterProvider _) => new MsSqlDatabasePool()))
                                         .DelegateToParentServiceLocatorWhenCloning());
 
             container.Register(
@@ -58,6 +58,6 @@ public static class MsSqlPersistenceLayerRegistrar
             Singleton.For<MsSqlEventStoreConnectionManager>()
                      .CreatedBy((IMsSqlConnectionPool sqlConnectionProvider) => new MsSqlEventStoreConnectionManager(sqlConnectionProvider)),
             Singleton.For<IEventStorePersistenceLayer>()
-                     .CreatedBy((MsSqlEventStoreConnectionManager connectionManager, ITypeMapper typeMapper) => new MsSqlEventStorePersistenceLayer(connectionManager)));
+                     .CreatedBy((MsSqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new MsSqlEventStorePersistenceLayer(connectionManager)));
     }
 }

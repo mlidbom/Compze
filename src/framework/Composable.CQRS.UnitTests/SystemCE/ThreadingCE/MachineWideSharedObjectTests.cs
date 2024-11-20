@@ -130,10 +130,10 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
         using var shared2 = MachineWideSharedObject<SharedObject>.For(name);
         using var taskRunner = new TestingTaskRunner(timeout);
         // ReSharper disable AccessToDisposedClosure
-        taskRunner.Start(() => shared1.Update(@this => { updateGate.AwaitPassThrough(); }));
-        taskRunner.Start(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(me => {})));
+        taskRunner.Start(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); }));
+        taskRunner.Start(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {})));
         taskRunner.Start(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.GetCopy()));
-        taskRunner.Start(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(me => {})));
+        taskRunner.Start(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {})));
         taskRunner.Start(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.GetCopy()));
 
         updateGate.AwaitQueueLengthEqualTo(1);

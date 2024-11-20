@@ -8,7 +8,7 @@ static class TransactionCE
 {
     internal static void OnCommittedSuccessfully(this Transaction @this, Action action)
     {
-        @this.TransactionCompleted += (sender, args) =>
+        @this.TransactionCompleted += (_, args) =>
         {
             Assert.Argument.NotNull(args.Transaction);
             if(args.Transaction.TransactionInformation.Status == TransactionStatus.Committed)
@@ -18,11 +18,11 @@ static class TransactionCE
         };
     }
 
-    internal static void OnCompleted(this Transaction @this, Action action) => @this.TransactionCompleted += (sender, args) => action();
+    internal static void OnCompleted(this Transaction @this, Action action) => @this.TransactionCompleted += (_, _) => action();
 
     internal static void OnAbort(this Transaction @this, Action action)
     {
-        @this.TransactionCompleted += (sender, args) =>
+        @this.TransactionCompleted += (_, args) =>
         {
             Assert.Argument.NotNull(args.Transaction);
             if(args.Transaction.TransactionInformation.Status == TransactionStatus.Aborted)

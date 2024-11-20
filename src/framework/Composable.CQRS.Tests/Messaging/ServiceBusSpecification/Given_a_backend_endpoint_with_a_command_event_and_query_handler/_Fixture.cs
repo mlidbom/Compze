@@ -76,13 +76,13 @@ public class Fixture : DuplicateByPluggableComponentTest
                        .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
 
                 builder.RegisterHandlers
-                       .ForCommand((MyExactlyOnceCommand command) => CommandHandlerThreadGate.AwaitPassThrough())
+                       .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
                        .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassthroughAndExecute(() => MyAggregate.Create(command.AggregateId, navigator)))
                        .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassthroughAndExecute(() => navigator.Execute(new ComposableApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
-                       .ForEvent((IMyExactlyOnceEvent myEvent) => EventHandlerThreadGate.AwaitPassThrough())
-                       .ForEvent((MyAggregateEvent.IRoot myAggregateEvent) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
-                       .ForQuery((MyQuery query) => QueryHandlerThreadGate.AwaitPassthroughAndReturn(new MyQueryResult()))
-                       .ForCommandWithResult((MyAtMostOnceCommandWithResult command) => CommandHandlerWithResultThreadGate.AwaitPassthroughAndReturn(new MyCommandResult()));
+                       .ForEvent((IMyExactlyOnceEvent _) => EventHandlerThreadGate.AwaitPassThrough())
+                       .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
+                       .ForQuery((MyQuery _) => QueryHandlerThreadGate.AwaitPassthroughAndReturn(new MyQueryResult()))
+                       .ForCommandWithResult((MyAtMostOnceCommandWithResult _) => CommandHandlerWithResultThreadGate.AwaitPassthroughAndReturn(new MyCommandResult()));
 
                 MapBackendEndpointTypes(builder);
             });
@@ -92,7 +92,7 @@ public class Fixture : DuplicateByPluggableComponentTest
                                                builder =>
                                                {
                                                    builder.RegisterCurrentTestsConfiguredPersistenceLayer();
-                                                   builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot myAggregateEvent) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
+                                                   builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
                                                    MapBackendEndpointTypes(builder);
                                                });
 

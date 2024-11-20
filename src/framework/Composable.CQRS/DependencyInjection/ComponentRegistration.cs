@@ -130,7 +130,7 @@ class InstantiationSpec
     {
         Assert.Argument.NotNull(singletonInstance);
         SingletonInstance = singletonInstance;
-        FactoryMethod = kern => singletonInstance;
+        FactoryMethod = _ => singletonInstance;
         FactoryMethodReturnType = singletonInstance.GetType();
     }
 }

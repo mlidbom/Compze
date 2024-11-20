@@ -158,7 +158,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
                                           {
                                               new VolatileLambdaTransactionParticipant(
                                                       onCommit: () => _state.Update(state => state._events.AddRange(state._overlays[transactionId])),
-                                                      onTransactionCompleted: __ => _state.Update(state => state._overlays.Remove(transactionId)))
+                                                      onTransactionCompleted: _ => _state.Update(state => state._overlays.Remove(transactionId)))
                                                  .EnsureEnlistedInAnyAmbientTransaction();
 
                                               return new List<EventDataRow>();

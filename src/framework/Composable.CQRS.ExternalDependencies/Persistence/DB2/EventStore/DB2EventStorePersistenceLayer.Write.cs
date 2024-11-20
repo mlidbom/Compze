@@ -73,7 +73,7 @@ END;
         var commandText = $@"
 BEGIN
 
-{versions.Select((spec, index) =>
+{versions.Select((spec, _) =>
                      $@"UPDATE {Event.TableName} SET {Event.EffectiveVersion} = {spec.EffectiveVersion} WHERE {Event.EventId} = '{spec.EventId}';").Join(Environment.NewLine)}
 
 END;";

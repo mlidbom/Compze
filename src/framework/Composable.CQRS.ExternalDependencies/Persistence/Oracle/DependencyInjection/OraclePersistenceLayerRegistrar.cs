@@ -24,7 +24,7 @@ public static class OraclePersistenceLayerRegistrar
         if(container.RunMode.IsTesting)
         {
             container.Register(Singleton.For<OracleDatabasePool>()
-                                        .CreatedBy(((IConfigurationParameterProvider configurationParameterProvider) => new OracleDatabasePool()))
+                                        .CreatedBy(((IConfigurationParameterProvider _) => new OracleDatabasePool()))
                                         .DelegateToParentServiceLocatorWhenCloning());
 
             container.Register(
@@ -57,6 +57,6 @@ public static class OraclePersistenceLayerRegistrar
             Singleton.For<OracleEventStoreConnectionManager>()
                      .CreatedBy((IOracleConnectionPool sqlConnectionProvider) => new OracleEventStoreConnectionManager(sqlConnectionProvider)),
             Singleton.For<IEventStorePersistenceLayer>()
-                     .CreatedBy((OracleEventStoreConnectionManager connectionManager, ITypeMapper typeMapper) => new OracleEventStorePersistenceLayer(connectionManager)));
+                     .CreatedBy((OracleEventStoreConnectionManager connectionManager, ITypeMapper _) => new OracleEventStorePersistenceLayer(connectionManager)));
     }
 }

@@ -31,8 +31,8 @@ public class PerformanceTestBase : DuplicateByPluggableComponentTest
             {
                 builder.RegisterCurrentTestsConfiguredPersistenceLayer();
                 builder.RegisterHandlers
-                       .ForQuery((MyRemoteQuery query) => new MyQueryResult())
-                       .ForQuery((MyLocalStrictlyLocalQuery query) => new MyQueryResult());
+                       .ForQuery((MyRemoteQuery _) => new MyQueryResult())
+                       .ForQuery((MyLocalStrictlyLocalQuery _) => new MyQueryResult());
 
                 builder.TypeMapper
                        .Map<MyRemoteQuery>("b9d62f22-514b-4e3c-9ac1-66940a7a8144")

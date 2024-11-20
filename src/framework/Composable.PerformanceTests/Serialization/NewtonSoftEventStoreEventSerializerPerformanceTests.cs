@@ -47,7 +47,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests
         const int iterations = 1000;
         const double allowedSlowdown = 1.5;
 
-        var events = 1.Through(iterations).Select( index =>  new NewtonSoftEventStoreEventSerializerTests.TestEvent(
+        var events = 1.Through(iterations).Select( _ =>  new NewtonSoftEventStoreEventSerializerTests.TestEvent(
                                                        test1: "Test1",
                                                        test2: "Test2",
                                                        aggregateId: Guid.NewGuid(),

@@ -31,7 +31,7 @@ public class SimpleIndexingTests
         List<int> indexesEqualValues = null;
 
         // ReSharper disable once ExpressionIsAlwaysNull
-        (new object()).Invoking( me => indexesEqualValues.Second()).Should().Throw<Exception>()
+        (new object()).Invoking( _ => indexesEqualValues.Second()).Should().Throw<Exception>()
                       .WithMessage("*Parameter 'me'*");
     }
 }

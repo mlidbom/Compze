@@ -18,7 +18,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
         _container = new Container();
         _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
-        _container.ResolveUnregisteredType += (sender, unregisteredTypeEventArgs) =>
+        _container.ResolveUnregisteredType += (_, unregisteredTypeEventArgs) =>
         {
             if (!unregisteredTypeEventArgs.Handled && !unregisteredTypeEventArgs.UnregisteredServiceType.IsAbstract)
             {

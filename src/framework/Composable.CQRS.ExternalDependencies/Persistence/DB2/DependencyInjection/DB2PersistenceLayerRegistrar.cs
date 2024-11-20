@@ -24,7 +24,7 @@ public static class DB2PersistenceLayerRegistrar
         if(container.RunMode.IsTesting)
         {
             container.Register(Singleton.For<DB2DatabasePool>()
-                                        .CreatedBy(((IConfigurationParameterProvider configurationParameterProvider) => new DB2DatabasePool()))
+                                        .CreatedBy(((IConfigurationParameterProvider _) => new DB2DatabasePool()))
                                         .DelegateToParentServiceLocatorWhenCloning());
 
             container.Register(
@@ -57,6 +57,6 @@ public static class DB2PersistenceLayerRegistrar
             Singleton.For<DB2EventStoreConnectionManager>()
                      .CreatedBy((IDB2ConnectionPool sqlConnectionProvider) => new DB2EventStoreConnectionManager(sqlConnectionProvider)),
             Singleton.For<IEventStorePersistenceLayer>()
-                     .CreatedBy((DB2EventStoreConnectionManager connectionManager, ITypeMapper typeMapper) => new DB2EventStorePersistenceLayer(connectionManager)));
+                     .CreatedBy((DB2EventStoreConnectionManager connectionManager, ITypeMapper _) => new DB2EventStorePersistenceLayer(connectionManager)));
     }
 }

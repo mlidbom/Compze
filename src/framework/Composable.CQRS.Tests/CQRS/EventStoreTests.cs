@@ -77,7 +77,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
     {
         var aggregatesWithEvents = 1.Through(10)
                                     .ToDictionary(i => i,
-                                                  i =>
+                                                  _ =>
                                                   {
                                                       var aggregateId = Guid.NewGuid();
                                                       return 1.Through(10)
@@ -109,7 +109,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
     {
         var aggregatesWithEvents = 1.Through(10)
                                     .ToDictionary(i => i,
-                                                  i =>
+                                                  _ =>
                                                   {
                                                       var aggregateId = Guid.NewGuid();
                                                       return 1.Through(10)
@@ -129,7 +129,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
     {
         var aggregatesWithEvents = 1.Through(10)
                                     .ToDictionary(i => i,
-                                                  i =>
+                                                  _ =>
                                                   {
                                                       var aggregateId = Guid.NewGuid();
                                                       return 1.Through(10)

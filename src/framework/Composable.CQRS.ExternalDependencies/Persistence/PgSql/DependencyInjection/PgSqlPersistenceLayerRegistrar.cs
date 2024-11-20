@@ -24,7 +24,7 @@ public static class PgSqlPersistenceLayerRegistrar
         if(container.RunMode.IsTesting)
         {
             container.Register(Singleton.For<PgSqlDatabasePool>()
-                                        .CreatedBy(((IConfigurationParameterProvider configurationParameterProvider) => new PgSqlDatabasePool()))
+                                        .CreatedBy(((IConfigurationParameterProvider _) => new PgSqlDatabasePool()))
                                         .DelegateToParentServiceLocatorWhenCloning());
 
             container.Register(
@@ -57,6 +57,6 @@ public static class PgSqlPersistenceLayerRegistrar
             Singleton.For<PgSqlEventStoreConnectionManager>()
                      .CreatedBy((IPgSqlConnectionPool sqlConnectionProvider) => new PgSqlEventStoreConnectionManager(sqlConnectionProvider)),
             Singleton.For<IEventStorePersistenceLayer>()
-                     .CreatedBy((PgSqlEventStoreConnectionManager connectionManager, ITypeMapper typeMapper) => new PgSqlEventStorePersistenceLayer(connectionManager)));
+                     .CreatedBy((PgSqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new PgSqlEventStorePersistenceLayer(connectionManager)));
     }
 }

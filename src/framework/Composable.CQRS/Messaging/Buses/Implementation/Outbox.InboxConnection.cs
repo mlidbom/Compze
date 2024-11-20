@@ -119,7 +119,7 @@ partial class Outbox
 
         void SendMessagesReceivedOnQueueThroughSocket_PollerThread(DealerSocket socket)
         {
-            _sendQueue.ReceiveReady += (sender, netMQQueueEventArgs) =>
+            _sendQueue.ReceiveReady += (_, netMQQueueEventArgs) =>
             {
                 while(netMQQueueEventArgs.Queue.TryDequeue(out var message, TimeSpan.Zero)) socket.Send(message.NotNull());
             };

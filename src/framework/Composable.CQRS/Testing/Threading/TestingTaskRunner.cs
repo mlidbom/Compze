@@ -24,7 +24,7 @@ public sealed class TestingTaskRunner : IDisposable
     public void Monitor(IEnumerable<Task> tasks) => Monitor(tasks.ToArray());
     public void Monitor(params Task[] task) => _monitoredTasks.AddRange(task);
 
-    public void StartTimes(int times, Func<Task> task) => Monitor(1.Through(times).Select(selector: index => task()));
+    public void StartTimes(int times, Func<Task> task) => Monitor(1.Through(times).Select(selector: _ => task()));
     public void StartTimes(int times, Func<int, Task> task) => Monitor(1.Through(times).Select(task));
 
     public TestingTaskRunner Start(IEnumerable<Action> tasks) => Start(tasks.ToArray());
@@ -34,7 +34,7 @@ public sealed class TestingTaskRunner : IDisposable
         return this;
     }
 
-    public void StartTimes(int times, Action task) => Start(1.Through(times).Select(selector: index => task));
+    public void StartTimes(int times, Action task) => Start(1.Through(times).Select(selector: _ => task));
     public void StartTimes(int times, Action<int> task) => Start(1.Through(times).Select<int, Action>(selector: index => () => task(index)));
 
     public void Dispose()

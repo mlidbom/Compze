@@ -88,7 +88,7 @@ public class RemoteQueryPerformanceTests : PerformanceTestBase
         {
             await ClientEndpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(
                 async () => await Task.WhenAll(1.Through(queriesPerRequest)
-                                                .Select(index => RemoteNavigator.NavigateAsync(navigationSpecification))
+                                                .Select(_ => RemoteNavigator.NavigateAsync(navigationSpecification))
                                                 .ToArray()));
         }
 

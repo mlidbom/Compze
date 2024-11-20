@@ -26,7 +26,7 @@ public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewMode
         _session = session;
         _eventDispatcher.RegisterHandlers()
                         .ForGenericEvent<IAggregateCreatedEvent>(e => Model!.SetId(e.AggregateId))
-                        .ForGenericEvent<IAggregateDeletedEvent>(e => Model = null);
+                        .ForGenericEvent<IAggregateDeletedEvent>(_ => Model = null);
     }
 
     ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>

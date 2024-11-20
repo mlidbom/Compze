@@ -35,7 +35,7 @@ class DocumentDbTests : DocumentDbTestsBase
                                  }
                    };
 
-        UseInTransactionalScope((reader,updater) => updater.Save(user.Id, user));
+        UseInTransactionalScope((_,updater) => updater.Save(user.Id, user));
 
         UseInScope(reader =>
         {
@@ -56,7 +56,7 @@ class DocumentDbTests : DocumentDbTestsBase
 
         var users = ids.Select(id => new User { Id = id }).ToArray();
 
-        UseInTransactionalScope((reader, updater) => users.ForEach(user => updater.Save(user)));
+        UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
         UseInScope(reader => reader.GetAll<User>(ids.Take(5))
                                    .Select(fetched => fetched.Id)
@@ -73,7 +73,7 @@ class DocumentDbTests : DocumentDbTestsBase
         var users = ids.Select(id => new User {Id = id})
                        .ToArray();
 
-        UseInTransactionalScope((reader,updater) => users.ForEach(user => updater.Save(user)));
+        UseInTransactionalScope((_,updater) => users.ForEach(user => updater.Save(user)));
 
         UseInScope(reader => Assert.Throws<NoSuchDocumentException>(
                        () => reader.GetAll<User>(ids.Take(5)
@@ -91,7 +91,7 @@ class DocumentDbTests : DocumentDbTestsBase
 
         var users = ids.Select(id => new User { Id = id }).ToArray();
 
-        UseInTransactionalScope((reader,updater) => users.ForEach(user => updater.Save(user)));
+        UseInTransactionalScope((_,updater) => users.ForEach(user => updater.Save(user)));
 
         UseInScope(reader =>
         {
@@ -122,9 +122,9 @@ class DocumentDbTests : DocumentDbTestsBase
                                  }
                    };
 
-        UseInTransactionalScope((reader,updater) => updater.Save(user.Id, user));
+        UseInTransactionalScope((_,updater) => updater.Save(user.Id, user));
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             var loadedUser = updater.GetForUpdate<User>(user.Id);
 
@@ -170,7 +170,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader,updater) =>
+        UseInTransactionalScope((_,updater) =>
         {
             updater.Save(user.Id, user);
             updater.Delete(user);
@@ -187,7 +187,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader,updater) =>
+        UseInTransactionalScope((_,updater) =>
         {
             updater.Save(user.Id, user);
             updater.Delete(user);
@@ -277,7 +277,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save(user.Id, user);
             updater.Delete(user);
@@ -297,7 +297,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user.Id, user));
+        UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
         UseInTransactionalScope((reader, updater) =>
         {
@@ -332,7 +332,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user.Id, user));
+        UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
         UseInScope(reader =>
         {
@@ -364,7 +364,7 @@ class DocumentDbTests : DocumentDbTestsBase
         var user = new User { Id = Guid.NewGuid() };
         var userSet = new HashSet<User> { user };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user.Id, userSet));
+        UseInTransactionalScope((_, updater) => updater.Save(user.Id, userSet));
 
         UseInScope(reader =>
         {
@@ -388,7 +388,7 @@ class DocumentDbTests : DocumentDbTestsBase
                        People = new HashSet<User> { userInSet }
                    };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user.Id, user));
+        UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
         UseInScope(reader =>
         {
@@ -403,14 +403,14 @@ class DocumentDbTests : DocumentDbTestsBase
     [Test]
     public void ThrowsExceptionWhenAttemptingToDeleteNonExistingValue()
     {
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             var lassie = new Dog {Id = Guid.NewGuid()};
             updater.Save(lassie);
         });
 
         var buster = new Dog { Id = Guid.NewGuid() };
-        UseInTransactionalScope((reader, updater) => Assert.Throws<NoSuchDocumentException>(() => updater.Delete(buster)));
+        UseInTransactionalScope((_, updater) => Assert.Throws<NoSuchDocumentException>(() => updater.Delete(buster)));
     }
 
     [Test]
@@ -418,7 +418,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user));
+        UseInTransactionalScope((_, updater) => updater.Save(user));
 
         UseInTransactionalScope((reader, updater) =>
         {
@@ -438,9 +438,9 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user));
+        UseInTransactionalScope((_, updater) => updater.Save(user));
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Delete(user);
             Assert.Throws<NoSuchDocumentException>(() => updater.GetForUpdate<User>(user.Id));
@@ -454,7 +454,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save(user);
             updater.Delete(user);
@@ -469,9 +469,9 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user.Id, user));
+        UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             var loadedUser = updater.GetForUpdate<User>(user.Id);
             loadedUser.Password = "NewPassword";
@@ -489,9 +489,9 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user = new User { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) => updater.Save(user.Id, user));
+        UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
-        Assert.Throws<AttemptToSaveAlreadyPersistedValueException>(() => UseInTransactionalScope((reader, updater) => updater.Save(user.Id, user)));
+        Assert.Throws<AttemptToSaveAlreadyPersistedValueException>(() => UseInTransactionalScope((_, updater) => updater.Save(user.Id, user)));
     }
 
     [Test]
@@ -505,7 +505,7 @@ class DocumentDbTests : DocumentDbTestsBase
 
         var dog = new Dog { Id = user.Id };
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save<IPersistentEntity<Guid>>(user);
             updater.Save<IPersistentEntity<Guid>>(dog);
@@ -527,7 +527,7 @@ class DocumentDbTests : DocumentDbTestsBase
     [Test]
     public void FetchesAllinstancesPerType()
     {
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save(new User {Id = Guid.NewGuid()});
             updater.Save(new User {Id = Guid.NewGuid()});
@@ -547,7 +547,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         IDocumentDbSession session = null;
         using var wait = new ManualResetEventSlim();
-        ThreadPool.QueueUserWorkItem(state =>
+        ThreadPool.QueueUserWorkItem(_ =>
         {
             ServiceLocator.ExecuteInIsolatedScope(() => session = ServiceLocator.DocumentDbSession());
             wait.Set();
@@ -573,7 +573,7 @@ class DocumentDbTests : DocumentDbTestsBase
         var user1 = new User { Id = Guid.NewGuid() };
         var person1 = new Person { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save(user1);
             updater.Save(person1);
@@ -592,7 +592,7 @@ class DocumentDbTests : DocumentDbTestsBase
         var user1 = new User { Id = Guid.NewGuid() };
         var person1 = new Person { Id = Guid.NewGuid() };
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save(user1);
             updater.Save(person1);
@@ -613,7 +613,7 @@ class DocumentDbTests : DocumentDbTestsBase
     {
         var user1 = new User { Id = Guid.Empty };
 
-        UseInTransactionalScope((reader, updater) => updater.Invoking(@this => @this.Save(user1))
+        UseInTransactionalScope((_, updater) => updater.Invoking(@this => @this.Save(user1))
                                                             .Should().Throw<Exception>());
     }
 
@@ -646,7 +646,7 @@ class DocumentDbTests : DocumentDbTestsBase
         var user2 = new User { Id = userid2 };
         var dog = new Dog {Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save(user1);
             updater.Save(user2);
@@ -678,7 +678,7 @@ class DocumentDbTests : DocumentDbTestsBase
         var user2 = new User { Id = userid2 };
         var dog = new Dog { Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
 
-        UseInTransactionalScope((reader, updater) =>
+        UseInTransactionalScope((_, updater) =>
         {
             updater.Save(user1);
             updater.Save(user2);
@@ -707,13 +707,13 @@ class DocumentDbTests : DocumentDbTestsBase
 
             var dictionary = new Dictionary<Type, Dictionary<string, string>>();
 
-            1.Through(4).ForEach(num =>
+            1.Through(4).ForEach(_ =>
             {
                 var user = new User {Id = Guid.NewGuid()};
                 store.Add(user.Id, user, dictionary);
             });
 
-            1.Through(4).ForEach(num =>
+            1.Through(4).ForEach(_ =>
             {
                 var person = new Person {Id = Guid.NewGuid()};
                 store.Add(person.Id, person, dictionary);

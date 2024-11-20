@@ -29,7 +29,7 @@ static class EventDispatcherAsserter
         {
             var callCount = 0;
             _dispatcher.Register().IgnoreAllUnhandled();
-            _dispatcher.Register().For((THandlerEvent @event) => callCount++);
+            _dispatcher.Register().For((THandlerEvent _) => callCount++);
             _dispatcher.Dispatch(_event);
             callCount.Should().Be(1, "Message was not dispatched to handler.");
         }
@@ -39,7 +39,7 @@ static class EventDispatcherAsserter
         {
             var callCount = 0;
             _dispatcher.Register().IgnoreAllUnhandled();
-            _dispatcher.Register().ForWrapped((THandlerEvent @event) => callCount++);
+            _dispatcher.Register().ForWrapped((THandlerEvent _) => callCount++);
             _dispatcher.Dispatch(_event);
             callCount.Should().Be(1, "Message was not dispatched to handler.");
         }
@@ -49,7 +49,7 @@ static class EventDispatcherAsserter
         {
             var callCount = 0;
             _dispatcher.Register().IgnoreAllUnhandled();
-            _dispatcher.Register().ForWrapped((THandlerEvent @event) => callCount++);
+            _dispatcher.Register().ForWrapped((THandlerEvent _) => callCount++);
             _dispatcher.Dispatch(_event);
             callCount.Should().Be(0, "Message was dispatched to handler.");
         }

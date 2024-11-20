@@ -24,7 +24,7 @@ public static class MySqlPersistenceLayerRegistrar
         if(container.RunMode.IsTesting)
         {
             container.Register(Singleton.For<MySqlDatabasePool>()
-                                        .CreatedBy(((IConfigurationParameterProvider configurationParameterProvider) => new MySqlDatabasePool()))
+                                        .CreatedBy(((IConfigurationParameterProvider _) => new MySqlDatabasePool()))
                                         .DelegateToParentServiceLocatorWhenCloning());
 
             container.Register(
@@ -57,6 +57,6 @@ public static class MySqlPersistenceLayerRegistrar
             Singleton.For<MySqlEventStoreConnectionManager>()
                      .CreatedBy((IMySqlConnectionPool sqlConnectionProvider) => new MySqlEventStoreConnectionManager(sqlConnectionProvider)),
             Singleton.For<IEventStorePersistenceLayer>()
-                     .CreatedBy((MySqlEventStoreConnectionManager connectionManager, ITypeMapper typeMapper) => new MySqlEventStorePersistenceLayer(connectionManager)));
+                     .CreatedBy((MySqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new MySqlEventStorePersistenceLayer(connectionManager)));
     }
 }

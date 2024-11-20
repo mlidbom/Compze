@@ -245,7 +245,7 @@ public class EventMigrationTest : EventMigrationTestBase
     public void Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
     {
         this.Invoking(
-                 me =>
+                 _ =>
                      RunMigrationTest(
                          new MigrationScenario(
                              EnumerableCE.OfTypes<Ec1, E1>(),

@@ -144,7 +144,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
         UseInTransactionalScope(session => session.Save(user));
 
-        UseInScope(session =>
+        UseInScope(_ =>
         {
             var reader = _serviceLocator.Resolve<IEventStoreReader>();
             var loadedUser = reader.GetReadonlyCopyOfVersion<User>(user.Id, 1);
@@ -226,7 +226,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
         UseInTransactionalScope(session => session.Save(user));
 
-        UseInTransactionalScope(session =>
+        UseInTransactionalScope(_ =>
         {
             var loadedUser = _serviceLocator.Resolve<IEventStoreReader>().GetReadonlyCopyOfVersion<User>(user.Id, 1);
             loadedUser.ChangeEmail("NewEmail");
@@ -482,7 +482,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
             Assert.That(_eventSpy.DispatchedMessages.Count, Is.EqualTo(18));
         });
 
-        UseInTransactionalScope(session =>
+        UseInTransactionalScope(_ =>
         {
             Assert.That(_eventSpy.DispatchedMessages.Count, Is.EqualTo(18));
 
@@ -522,7 +522,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
         ChangeAnotherUsersEmailInOtherInstance();
         UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
 
-        UseInTransactionalScope(session => user.ChangeEmail("some@email.new"));
+        UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));
     }
 
 
@@ -585,7 +585,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
         }
 
         var threads = 2;
-        var tasks = 1.Through(threads).Select(resetEvent => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
+        var tasks = 1.Through(threads).Select(_ => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
 
         getHistorySection.LetOneThreadPass();
         changeEmailSection.LetOneThreadEnterAndReachExit();
@@ -633,7 +633,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
         var threads = 2;
 
-        var tasks = 1.Through(threads).Select(resetEvent => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
+        var tasks = 1.Through(threads).Select(_ => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
 
         changeEmailSection.EntranceGate.Open();
         changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualTo(2);
