@@ -56,14 +56,9 @@ class WindsorDependencyInjectionContainer : IDependencyInjectionContainer, IServ
         {
             registration.Instance(componentRegistration.InstantiationSpec.SingletonInstance);
         }
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
-        else if (componentRegistration.InstantiationSpec.FactoryMethod != null)
-        {
-            registration.UsingFactoryMethod(kernel => componentRegistration.InstantiationSpec.FactoryMethod(new WindsorServiceLocatorKernel(kernel)));
-        }
         else
         {
-            throw new Exception($"Invalid {nameof(InstantiationSpec)}");
+            registration.UsingFactoryMethod(kernel => componentRegistration.InstantiationSpec.FactoryMethod(new WindsorServiceLocatorKernel(kernel)));
         }
 
         return componentRegistration.Lifestyle switch
