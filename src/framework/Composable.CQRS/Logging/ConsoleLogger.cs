@@ -128,12 +128,7 @@ EXCEPTION: {exception}
       {
          var property = base.CreateProperty(member, memberSerialization);
 
-         if(property.PropertyName == nameof(Exception.StackTrace))
-         {
-            property.Ignored = true;
-         }
-
-         if(property.PropertyName == "StackTraceString")
+         if(property.PropertyName is nameof(Exception.StackTrace) or "StackTraceString")
          {
             property.Ignored = true;
          }

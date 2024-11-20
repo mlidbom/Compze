@@ -18,10 +18,17 @@ static partial class MessageInspector
    {
       CommonAssertions(message);
 
-      if(message is IStrictlyLocalMessage strictlyLocalMessage) throw new AttemptToSendStrictlyLocalMessageRemotelyException(strictlyLocalMessage);
-      if(message is IMustBeSentTransactionally && Transaction.Current == null) throw new TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.");
-      if(message is ICannotBeSentRemotelyFromWithinTransaction && Transaction.Current != null) throw new TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.");
-      if(message is IAtMostOnceMessage atMostOnce && atMostOnce.MessageId == Guid.Empty) throw new Exception($"{nameof(IAtMostOnceMessage.MessageId)} was Guid.Empty for message of type: {message.GetType().FullName}");
+      switch(message)
+      {
+         case IStrictlyLocalMessage strictlyLocalMessage:
+            throw new AttemptToSendStrictlyLocalMessageRemotelyException(strictlyLocalMessage);
+         case IMustBeSentTransactionally when Transaction.Current == null:
+            throw new TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.");
+         case ICannotBeSentRemotelyFromWithinTransaction when Transaction.Current != null:
+            throw new TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.");
+         case IAtMostOnceMessage atMostOnce when atMostOnce.MessageId == Guid.Empty:
+            throw new Exception($"{nameof(IAtMostOnceMessage.MessageId)} was Guid.Empty for message of type: {message.GetType().FullName}");
+      }
    }
 
    internal static void AssertValidToExecuteLocally(IMessage message)

@@ -63,14 +63,12 @@ class DocumentDb : IDocumentDb
    {
       var rowsAffected = _persistenceLayer.Remove(GetIdString(id), AcceptableTypeIds(documentType));
 
-      if(rowsAffected < 1)
+      switch(rowsAffected)
       {
-         throw new NoSuchDocumentException(id, documentType);
-      }
-
-      if(rowsAffected > 1)
-      {
-         throw new TooManyItemsDeletedException();
+         case < 1:
+            throw new NoSuchDocumentException(id, documentType);
+         case > 1:
+            throw new TooManyItemsDeletedException();
       }
    }
 
