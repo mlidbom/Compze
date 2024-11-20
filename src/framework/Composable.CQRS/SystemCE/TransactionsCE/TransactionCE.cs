@@ -38,7 +38,7 @@ static class TransactionCE
 
       return DisposableCE.Create(() =>
       {
-         if(Transaction.Current != null && transactionInformationDistributedIdentifierBefore == Guid.Empty && Transaction.Current!.TransactionInformation.DistributedIdentifier != Guid.Empty)
+         if(Transaction.Current != null && transactionInformationDistributedIdentifierBefore == Guid.Empty && Transaction.Current.TransactionInformation.DistributedIdentifier != Guid.Empty)
          {
             throw new Exception($"{scopeDescription} escalated transaction to distributed. For now this is disallowed");
          }

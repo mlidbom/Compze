@@ -205,52 +205,51 @@ class EventStore : IEventStore
                {
                   //performance: bug: Look at ways to avoid taking a lock for a long time as we do now. This might be a problem in production.
                   using var transaction = new TransactionScope(TransactionScopeOption.Required, scopeTimeout: 10.Minutes());
-                  {
-                     var original = GetAggregateEventsFromPersistenceLayer(aggregateId: aggregateId, takeWriteLock: true);
 
-                     var highestSeenVersion = original.Max(@event => @event.StorageInformation.InsertedVersion) + 1;
+                  var original = GetAggregateEventsFromPersistenceLayer(aggregateId: aggregateId, takeWriteLock: true);
 
-                     var updatedAggregatesBeforeMigrationOfThisAggregate = updatedAggregates;
+                  var highestSeenVersion = original.Max(@event => @event.StorageInformation.InsertedVersion) + 1;
 
-                     var refactorings = new List<List<EventDataRow>>();
+                  var updatedAggregatesBeforeMigrationOfThisAggregate = updatedAggregates;
 
-                     var inMemoryMigratedHistory = SingleAggregateInstanceEventStreamMutator.MutateCompleteAggregateHistory(
-                        _migrationFactories,
-                        original.Select(@this => @this.Event).ToArray(),
-                        newEvents =>
+                  var refactorings = new List<List<EventDataRow>>();
+
+                  var inMemoryMigratedHistory = SingleAggregateInstanceEventStreamMutator.MutateCompleteAggregateHistory(
+                     _migrationFactories,
+                     original.Select(@this => @this.Event).ToArray(),
+                     newEvents =>
+                     {
+                        //Make sure we don't try to insert into an occupied InsertedVersion
+                        newEvents.ForEach(refactoredEvent =>
                         {
-                           //Make sure we don't try to insert into an occupied InsertedVersion
-                           newEvents.ForEach(refactoredEvent =>
-                           {
-                              refactoredEvent.StorageInformation.InsertedVersion = highestSeenVersion++;
-                           });
-
-                           refactorings.Add(newEvents
-                                           .Select(@this => new EventDataRow(@event: @this.NewEvent,
-                                                                             @this.StorageInformation,
-                                                                             _typeMapper.GetId(@this.NewEvent.GetType()).GuidValue,
-                                                                             eventAsJson: _serializer.Serialize(@this.NewEvent)))
-                                           .ToList());
-
-                           updatedAggregates = updatedAggregatesBeforeMigrationOfThisAggregate + 1;
-                           newEventCount += newEvents.Count;
+                           refactoredEvent.StorageInformation.InsertedVersion = highestSeenVersion++;
                         });
 
-                     if(refactorings.Count > 0)
-                     {
-                        refactorings.ForEach(InsertEventsForSingleRefactoring);
+                        refactorings.Add(newEvents
+                                        .Select(@this => new EventDataRow(@event: @this.NewEvent,
+                                                                          @this.StorageInformation,
+                                                                          _typeMapper.GetId(@this.NewEvent.GetType()).GuidValue,
+                                                                          eventAsJson: _serializer.Serialize(@this.NewEvent)))
+                                        .ToList());
 
-                        FixManualVersions(original, inMemoryMigratedHistory, refactorings);
+                        updatedAggregates = updatedAggregatesBeforeMigrationOfThisAggregate + 1;
+                        newEventCount += newEvents.Count;
+                     });
 
-                        var loadedAggregateHistory = GetAggregateHistoryInternal(aggregateId, takeWriteLock:false);
-                        AggregateHistoryValidator.ValidateHistory(aggregateId, loadedAggregateHistory);
-                        AssertHistoriesAreIdentical(inMemoryMigratedHistory, loadedAggregateHistory);
-                     }
+                  if(refactorings.Count > 0)
+                  {
+                     refactorings.ForEach(InsertEventsForSingleRefactoring);
 
-                     migratedAggregates++;
-                     succeeded = true;
-                     transaction.Complete();
+                     FixManualVersions(original, inMemoryMigratedHistory, refactorings);
+
+                     var loadedAggregateHistory = GetAggregateHistoryInternal(aggregateId, takeWriteLock:false);
+                     AggregateHistoryValidator.ValidateHistory(aggregateId, loadedAggregateHistory);
+                     AssertHistoriesAreIdentical(inMemoryMigratedHistory, loadedAggregateHistory);
                   }
+
+                  migratedAggregates++;
+                  succeeded = true;
+                  transaction.Complete();
                }
                catch(Exception e) when(IsRecoverableSqlException(e) && ++retries <= recoverableErrorRetriesToMake)
                {

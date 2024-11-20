@@ -20,7 +20,7 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
 {
    [Obsolete("Only for infrastructure", true)]
    protected Aggregate() : this(DateTimeNowTimeSource.Instance) {}
-   protected Aggregate([NotNull] IUtcTimeTimeSource timeSource) : base(timeSource) {}
+   protected Aggregate(IUtcTimeTimeSource timeSource) : base(timeSource) {}
 }
 
 public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface> : VersionedEntity<TAggregate>, IEventStored<TAggregateEvent>

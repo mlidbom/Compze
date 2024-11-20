@@ -9,7 +9,7 @@ abstract class CompleteEventStoreStreamMutator
 {
    public static ICompleteEventStreamMutator Create(IReadOnlyList<IEventMigration> eventMigrationFactories) => eventMigrationFactories.Any()
                                                                                                                   ? new RealMutator(eventMigrationFactories)
-                                                                                                                  : (ICompleteEventStreamMutator)new OnlySerializeVersionsMutator();
+                                                                                                                  : new OnlySerializeVersionsMutator();
 
    class OnlySerializeVersionsMutator : ICompleteEventStreamMutator
    {

@@ -16,7 +16,7 @@ public static class ObjectInspector
       where TValue : class
    {
       return me.Inspect(
-         // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
+         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
          inspected => inspected is not null,
          badValue => new ObjectIsNullContractViolationException(badValue));
    }

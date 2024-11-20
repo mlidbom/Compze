@@ -88,7 +88,7 @@ class InstantiationSpec
    static readonly bool LogSlowConstructions = false;
 #pragma warning restore CA1802 // Use literals where appropriate
    internal object? SingletonInstance { get; }
-   internal object RunFactoryMethod(IServiceLocatorKernel kern) => FactoryMethod!(kern);
+   internal object RunFactoryMethod(IServiceLocatorKernel kern) => FactoryMethod(kern);
    internal Func<IServiceLocatorKernel, object> FactoryMethod { get; }
    internal Type FactoryMethodReturnType { get; }
 

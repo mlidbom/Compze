@@ -61,7 +61,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
       [Test] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), 5.Milliseconds()).Message.Should().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
-      [Test] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() => 
+      [Test] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
          RunWithChangedFetchStackTraceTimeout(
             fetchStackTraceTimeout:1.Milliseconds(),
             () => RunScenario(ownerThreadBlockTime: 20.Milliseconds(), monitorTimeout:5.Milliseconds()).Message.Should().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack)));

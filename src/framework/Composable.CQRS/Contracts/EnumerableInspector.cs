@@ -17,7 +17,8 @@ static class EnumerableInspector
    {
       me.Inspect(
          // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
-         inspected => !(inspected is null),
+         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+         inspected => inspected is not null,
          badValue => new ObjectIsNullContractViolationException(badValue));
 
       return me.Inspect(

@@ -16,7 +16,7 @@ public class Exacly_once_guarantee_tests : Fixture
    {
       AssertThrows.Exception<TransactionAbortedException>(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
       {
-         Transaction.Current.FailOnPrepare();
+         Transaction.Current!.FailOnPrepare();
          session.Send(new MyExactlyOnceCommand());
       }));
 

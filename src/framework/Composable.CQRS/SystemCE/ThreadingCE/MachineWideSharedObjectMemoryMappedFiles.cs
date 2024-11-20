@@ -129,7 +129,7 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
       _synchronizer.Execute(
          () =>
          {
-            using var viewAccessor = _file!.CreateViewAccessor();
+            using var viewAccessor = _file.CreateViewAccessor();
             action(viewAccessor);
          });
    }

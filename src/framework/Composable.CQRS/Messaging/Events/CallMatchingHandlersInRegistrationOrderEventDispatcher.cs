@@ -51,7 +51,7 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
       public RegisteredWrappedHandler(Action<THandledWrapperEvent> handler) => _handler = handler;
       internal override Action<IEvent>? TryCreateHandlerFor(Type eventType) =>
          typeof(THandledWrapperEvent).IsAssignableFrom(eventType)
-            ? (Action<IEvent>?)(@event => _handler((THandledWrapperEvent)@event))
+            ? @event => _handler((THandledWrapperEvent)@event)
             : null;
    }
 

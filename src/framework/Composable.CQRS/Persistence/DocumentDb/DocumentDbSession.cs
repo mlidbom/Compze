@@ -50,7 +50,7 @@ partial class DocumentDbSession : IDocumentDbSession
       var documentItem = GetDocumentItem(key, documentType);
       if(!documentItem.IsDeleted && _backingStore.TryGet(key, out value, _persistentValues, useUpdateLock) && documentType.IsInstanceOfType(value))
       {
-         OnInitialLoad(key, value!);
+         OnInitialLoad(key, value);
          return true;
       }
 

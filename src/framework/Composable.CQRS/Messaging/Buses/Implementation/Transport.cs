@@ -42,7 +42,7 @@ partial class Transport : ITransport, IDisposable
    public async Task ConnectAsync(EndPointAddress remoteEndpoint)
    {
       _runningAndNotDisposed.Assert();
-      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpoint, _poller!, _typeMapper, _serializer);
+      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpoint, _poller, _typeMapper, _serializer);
 
       await clientConnection.Init().NoMarshalling();
 

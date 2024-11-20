@@ -44,7 +44,7 @@ LOG ON  ( NAME = {databaseName}_log, FILENAME = '{DatabaseRootFolderOverride}\{d
 ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
 ALTER DATABASE[{databaseName}] SET READ_COMMITTED_SNAPSHOT ON";
 
-         _masterConnectionPool!.ExecuteNonQuery(createDatabaseCommand);
+         _masterConnectionPool.ExecuteNonQuery(createDatabaseCommand);
       }
    }
 

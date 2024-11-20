@@ -205,13 +205,13 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Serialize(TInheritor inheritor, BinaryWriter writer)
          {
             var list = Getter(inheritor);
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if(list != null)
             {
                writer.Write(true);
                writer.Write(list.Count);
                foreach(var serializable in list)
                {
+                  // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                   if(serializable is not null)
                   {
                      writer.Write(true);
@@ -267,13 +267,13 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Serialize(TInheritor inheritor, BinaryWriter writer)
          {
             var list = Getter(inheritor);
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if(list != null)
             {
                writer.Write(true);
                writer.Write(list.Length);
                foreach(var serializable in list)
                {
+                  // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                   if(serializable is not null)
                   {
                      writer.Write(true);

@@ -47,6 +47,6 @@ public class Email : ValueObject<Email>
 
 public class InvalidEmailException : ArgumentException
 {
-   // ReSharper disable once ConstantNullCoalescingCondition Resharper is WRONG about nullable reference types.
+   // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
    internal InvalidEmailException(string message) : base($"Supplied string: '{message ?? "[null]"}'") {}
 }

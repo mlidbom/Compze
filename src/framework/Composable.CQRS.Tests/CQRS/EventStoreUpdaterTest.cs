@@ -539,7 +539,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
          {
             if(failOnPrepare)
             {
-               Transaction.Current.FailOnPrepare();
+               Transaction.Current!.FailOnPrepare();
             }
             var loadedUser = session.Get<User>(user.Id);
             loadedUser.ChangeEmail("new@email.com");
