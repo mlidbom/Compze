@@ -7,6 +7,7 @@ using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
+using NCrunch.Framework;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
@@ -58,7 +59,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
       [Test] public void Exception_is_ObjectLockTimedOutException() =>
          RunScenario(ownerThreadBlockTime:20.Milliseconds(), monitorTimeout: 10.Milliseconds()).Should().BeOfType<EnterLockTimeoutException>();
 
-      [Test] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
+      [Test,EnableRdi(false)] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), 5.Milliseconds()).Message.Should().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       [Test] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
