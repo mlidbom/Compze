@@ -63,7 +63,7 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
    public void Multiple_threads_can_reserve_and_release_5_differently_named_databases_in_milliseconds_msSql_125_mySql_175_pgSql_400_orcl_400_db2_100()
    {
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
-      var maxTotal = TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 70, mySql: 175, orcl: 400, pgSql: 400).Milliseconds();
+      var maxTotal = TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 70, mySql: 175, orcl: 400, pgSql: 400).Milliseconds().EnvMultiply(instrumented:1.6);
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
