@@ -1,13 +1,19 @@
 ﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
+    <CustomBuildProperties>
+      <Value>Optimize = true</Value>
+      <Value>DebugType = portable</Value>
+    </CustomBuildProperties>
     <EnableRDI>True</EnableRDI>
     <HotSpotsLineExclusionList />
     <InstrumentationMode>Optimised</InstrumentationMode>
+    <InstrumentOutputAssembly>False</InstrumentOutputAssembly>
     <RdiConfigured>True</RdiConfigured>
     <RestrictToString>False</RestrictToString>
     <SlidingBuildDelayInMilliseconds>1000</SlidingBuildDelayInMilliseconds>
     <SolutionConfigured>True</SolutionConfigured>
+    <UseBuildConfiguration>Release</UseBuildConfiguration>
   </Settings>
   <EngineModes>
     <EngineMode>
