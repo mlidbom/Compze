@@ -29,9 +29,9 @@ public static class DependencyInjectionContainer
    {
       IDependencyInjectionContainer container = TestEnv.DIContainer.Current switch
       {
-         DIContainer.Com => new ComposableDependencyInjectionContainer(runMode),
-         DIContainer.Sim => new SimpleInjectorDependencyInjectionContainer(runMode),
-         DIContainer.Win => new WindsorDependencyInjectionContainer(runMode),
+         DIContainer.Composable => new ComposableDependencyInjectionContainer(runMode),
+         DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(runMode),
+         DIContainer.WindsorCastle => new WindsorDependencyInjectionContainer(runMode),
          DIContainer.Microsoft => new MicrosoftDependencyInjectionContainer(runMode),
          _ => throw new ArgumentOutOfRangeException()
       };

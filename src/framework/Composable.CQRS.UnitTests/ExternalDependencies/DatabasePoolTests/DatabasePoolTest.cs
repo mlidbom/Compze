@@ -22,11 +22,11 @@ public class DatabasePoolTest : DuplicateByPluggableComponentTest
    internal static DatabasePool CreatePool() =>
       TestEnv.PersistenceLayer.Current switch
       {
-         PersistenceLayer.MsSql => new MsSqlDatabasePool(),
+         PersistenceLayer.MicrosoftSQLServer => new MsSqlDatabasePool(),
          PersistenceLayer.MySql => new MySqlDatabasePool(),
-         PersistenceLayer.PgSql => new PgSqlDatabasePool(),
-         PersistenceLayer.Orcl => new OracleDatabasePool(),
-         PersistenceLayer.DB2 => new DB2DatabasePool(),
+         PersistenceLayer.PostgreSql => new PgSqlDatabasePool(),
+         PersistenceLayer.Oracle => new OracleDatabasePool(),
+         PersistenceLayer.IBMDB2 => new DB2DatabasePool(),
          PersistenceLayer.Memory => throw new ArgumentOutOfRangeException(),
          _ => throw new ArgumentOutOfRangeException()
       };
@@ -35,19 +35,19 @@ public class DatabasePoolTest : DuplicateByPluggableComponentTest
    {
       switch(TestEnv.PersistenceLayer.Current)
       {
-         case PersistenceLayer.MsSql:
+         case PersistenceLayer.MicrosoftSQLServer:
             UseMsSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
-         case PersistenceLayer.PgSql:
+         case PersistenceLayer.PostgreSql:
             UsePgSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
          case PersistenceLayer.MySql:
             UseMySqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
-         case PersistenceLayer.Orcl:
+         case PersistenceLayer.Oracle:
             UseOracleConnection(pool.ConnectionStringFor(connectionString), func);
             break;
-         case PersistenceLayer.DB2:
+         case PersistenceLayer.IBMDB2:
             UseComposableDB2Connection(pool.ConnectionStringFor(connectionString), func);
             break;
          default:

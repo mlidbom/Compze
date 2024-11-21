@@ -19,7 +19,7 @@ public static class TestingPersistenceLayerRegistrar
    {
       switch(TestEnv.PersistenceLayer.Current)
       {
-         case PersistenceLayer.MsSql:
+         case PersistenceLayer.MicrosoftSQLServer:
             container.RegisterMsSqlPersistenceLayer(connectionStringName);
             break;
          case PersistenceLayer.Memory:
@@ -28,13 +28,13 @@ public static class TestingPersistenceLayerRegistrar
          case PersistenceLayer.MySql:
             container.RegisterMySqlPersistenceLayer(connectionStringName);
             break;
-         case PersistenceLayer.PgSql:
+         case PersistenceLayer.PostgreSql:
             container.RegisterPgSqlPersistenceLayer(connectionStringName);
             break;
-         case PersistenceLayer.Orcl:
+         case PersistenceLayer.Oracle:
             container.RegisterOraclePersistenceLayer(connectionStringName);
             break;
-         case PersistenceLayer.DB2:
+         case PersistenceLayer.IBMDB2:
             container.RegisterDB2PersistenceLayer(connectionStringName);
             break;
          default:

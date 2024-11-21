@@ -33,9 +33,9 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
          action:
          () =>
          {
-            using var manager = CreatePool();
-            manager.SetLogLevel(LogLevel.Warning);
-            manager.ConnectionStringFor(dbName);
+            using var dbPool = CreatePool();
+            dbPool.SetLogLevel(LogLevel.Warning);
+            dbPool.ConnectionStringFor(dbName);
          },
          iterations: 5,
          maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 150, msSql: 150, mySql: 150, orcl: 300, pgSql: 150).Milliseconds());
@@ -52,9 +52,9 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
          action:
          () =>
          {
-            using var manager = CreatePool();
-            manager.SetLogLevel(LogLevel.Warning);
-            manager.ConnectionStringFor(dbName);
+            using var dbPool = CreatePool();
+            dbPool.SetLogLevel(LogLevel.Warning);
+            dbPool.ConnectionStringFor(dbName);
          },
          iterations: 5,
          maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 50, mySql: 75, orcl: 100, pgSql: 25).Milliseconds());
@@ -68,9 +68,9 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
-            using var manager = CreatePool();
-            manager.SetLogLevel(LogLevel.Warning);
-            manager.ConnectionStringFor(Guid.NewGuid().ToString());
+            using var dbPool = CreatePool();
+            dbPool.SetLogLevel(LogLevel.Warning);
+            dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
          iterations: 5,
          maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 125, mySql: 175, orcl: 400, pgSql: 400).Milliseconds());
@@ -84,9 +84,9 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
       TimeAsserter.Execute(
          action: () =>
          {
-            using var manager = CreatePool();
-            manager.SetLogLevel(LogLevel.Warning);
-            manager.ConnectionStringFor(Guid.NewGuid().ToString());
+            using var dbPool = CreatePool();
+            dbPool.SetLogLevel(LogLevel.Warning);
+            dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
          iterations: 5,
          maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 100, mySql: 100, orcl: 300, pgSql: 500).Milliseconds());
@@ -109,7 +109,7 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
    }
 
    [Test]
-   public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_2_MsSql_22_MySql_2_Oracle_7_PgSql_40()
+   public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_50_MsSql_180_MySql_30_Oracle_140_PgSql_300()
    {
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
 
@@ -123,7 +123,7 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
 
       switch(TestEnv.PersistenceLayer.Current)
       {
-         case PersistenceLayer.MsSql:
+         case PersistenceLayer.MicrosoftSQLServer:
             var msSqlConnectionProvider = IMsSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => msSqlConnectionProvider.UseConnection(_ => {});
             break;
@@ -133,15 +133,15 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
             var mySqlConnectionProvider = IMySqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => mySqlConnectionProvider.UseConnection(_ => {});
             break;
-         case PersistenceLayer.PgSql:
+         case PersistenceLayer.PostgreSql:
             var pgSqlConnectionProvider = IPgSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => pgSqlConnectionProvider.UseConnection(_ => {});
             break;
-         case PersistenceLayer.Orcl:
+         case PersistenceLayer.Oracle:
             var oracleConnectionProvider = IOracleConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => oracleConnectionProvider .UseConnection(_ => {});
             break;
-         case PersistenceLayer.DB2:
+         case PersistenceLayer.IBMDB2:
             var composableDB2ConnectionProvider = IDB2ConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => composableDB2ConnectionProvider.UseConnection(_ => {});
             break;

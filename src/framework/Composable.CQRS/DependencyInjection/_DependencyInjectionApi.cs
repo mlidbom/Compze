@@ -30,17 +30,17 @@ public interface IRunMode
 
 public enum PersistenceLayer
 {
-   MsSql,
+   MicrosoftSQLServer,
    Memory,
    MySql,
-   PgSql,
-   Orcl,
-   DB2
+   PostgreSql,
+   Oracle,
+   IBMDB2
 }
 
 public enum DIContainer
 {
-   Com, Sim, Win, Microsoft
+   Composable, SimpleInjector, WindsorCastle, Microsoft
 }
 
 enum Lifestyle

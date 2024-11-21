@@ -30,12 +30,12 @@ public static partial class TestEnv
          =>
             Current switch
             {
-               DependencyInjection.PersistenceLayer.DB2 => SelectValue(db2, nameof(db2)),
-               DependencyInjection.PersistenceLayer.MsSql => SelectValue(msSql, nameof(msSql)),
+               DependencyInjection.PersistenceLayer.IBMDB2 => SelectValue(db2, nameof(db2)),
+               DependencyInjection.PersistenceLayer.MicrosoftSQLServer => SelectValue(msSql, nameof(msSql)),
                DependencyInjection.PersistenceLayer.Memory => SelectValue(memory, nameof(memory)),
                DependencyInjection.PersistenceLayer.MySql => SelectValue(mySql, nameof(mySql)),
-               DependencyInjection.PersistenceLayer.PgSql => SelectValue(pgSql, nameof(pgSql)),
-               DependencyInjection.PersistenceLayer.Orcl => SelectValue(orcl, nameof(orcl)),
+               DependencyInjection.PersistenceLayer.PostgreSql => SelectValue(pgSql, nameof(pgSql)),
+               DependencyInjection.PersistenceLayer.Oracle => SelectValue(orcl, nameof(orcl)),
                _ => throw new ArgumentOutOfRangeException()
             };
 
