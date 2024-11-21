@@ -1,25 +1,25 @@
-#When running tests, all tests that uses dependency injection and persistence will be executed once for every configured value in this file.
-#Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. Empty/Whitespace lines are ignored
-#For PersistenceLayer: MsSql is Microsoft Sql Server, PgSql is PostgreSql, MySql is hopefully obvious , Orcl is Oracle Database, DB2 is IBM DB2
-#For DIContainer: Com is Composable, Sim is SimpleInjector, Win is Windsor
+#When running tests, all tests that uses dependency injection and persistence will 
+#be executed once for every configured combination of components in this file.
+#Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
+#Empty/Whitespace lines are ignored
 
-MsSql:Com
-Memory:Com
-MySql:Com
-PgSql:Com
-Orcl:Com
-DB2:Com
+#MicrosoftSQLServer:Composable
+#Memory:Composable
+#MySql:Composable
+#PostgreSql:Composable
+#Oracle:Composable
+#IBMDB2:Composable
 
-MsSql:Sim
-Memory:Sim
-MySql:Sim
-PgSql:Sim
-Orcl:Sim
-DB2:Sim
+MicrosoftSQLServer:SimpleInjector
+Memory:SimpleInjector
+MySql:SimpleInjector
+PostgreSql:SimpleInjector
+#Oracle:SimpleInjector
+#IBMDB2:SimpleInjector
 
-MsSql:Win
-Memory:Win
-MySql:Win
-PgSql:Win
-Orcl:Win
-DB2:Win
+#MicrosoftSQLServer:WindsorCastle
+#Memory:WindsorCastle
+#MySql:WindsorCastle
+#PostgreSql:WindsorCastle
+#Oracle:WindsorCastle
+#IBMDB2:WindsorCastle
