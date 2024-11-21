@@ -4,6 +4,7 @@
     <EnableRDI>True</EnableRDI>
     <HotSpotsLineExclusionList />
     <InstrumentationMode>Optimised</InstrumentationMode>
+    <RdiCacheSize>100000</RdiCacheSize>
     <RdiConfigured>True</RdiConfigured>
     <RestrictToString>False</RestrictToString>
     <SlidingBuildDelayInMilliseconds>1000</SlidingBuildDelayInMilliseconds>
