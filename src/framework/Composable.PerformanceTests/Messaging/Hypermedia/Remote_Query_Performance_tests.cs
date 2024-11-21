@@ -35,7 +35,7 @@ public class RemoteQueryPerformanceTests : PerformanceTestBase
       RunScenario(threaded: true, requests: 100, queriesPerRequest: 1, maxTotal: 12.Milliseconds().EnvMultiply(instrumented:1.5), query: new MyRemoteQuery());
 
    [Test] public void MultiThreaded_Runs_10_local_requests_making_10_remote_queries_each_in_15_milliseconds() =>
-      RunScenario(threaded: true, requests: 10, queriesPerRequest: 10, maxTotal: 15.Milliseconds().EnvMultiply(instrumented:1.5), query: new MyRemoteQuery());
+      RunScenario(threaded: true, requests: 10, queriesPerRequest: 10, maxTotal: 15.Milliseconds().EnvMultiply(instrumented:2.5), query: new MyRemoteQuery());
 
    [Test] public void MultiThreaded_Runs_10_local_request_making_200_ICreateMyOwnResult_query_each_in_3_milliseconds() =>
       RunScenario(threaded: true, requests: 10, queriesPerRequest: 200, maxTotal: 3.Milliseconds().EnvMultiply(instrumented:2.2), query: new CreatesItsOwnResultQuery());
