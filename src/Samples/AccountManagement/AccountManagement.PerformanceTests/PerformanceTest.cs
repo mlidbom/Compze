@@ -50,9 +50,9 @@ class PerformanceTest : DuplicateByPluggableComponentTest
          iterations: TestEnv.PersistenceLayer.ValueFor(db2: 2, memory: 10, msSql: 4, mySql: 1, orcl: 2, pgSql: 3),
          maxTotal: 20.Milliseconds());
 
-   [Test] public void Multithreaded_logs_in_XX_in_20_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()
+   [Test] public void Multithreaded_logs_in_XX_times_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()
    {
-      var logins = TestEnv.PersistenceLayer.ValueFor(db2: 2, memory: 2, msSql: 2, mySql: 2, orcl: 2, pgSql: 2);
+      var logins = TestEnv.PersistenceLayer.ValueFor(db2: 8, memory: 8, msSql: 8, mySql: 7, orcl: 8, pgSql: 8);
       var accountsReader = CreateAccountsThreaded(Math.Min(logins, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Log in to account",
@@ -62,7 +62,7 @@ class PerformanceTest : DuplicateByPluggableComponentTest
                                       _scenarioApi.Login(email, password).Execute().Succeeded.Should().BeTrue();
                                    },
                                    iterations: logins,
-                                   maxTotal: 20.Milliseconds());
+                                   maxTotal: 100.Milliseconds());
    }
 
    [Test] public void Multithreaded_fetches_XX_account_resources_in_20_milliseconds_db2_memory__msSql__mySql__oracle_pgSql_()

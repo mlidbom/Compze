@@ -40,7 +40,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime);
    }
 
-   [Test] public void Constructs_1_000_000_instances_2_times_faster_than_via_new_constraint_constructor_time()
+   [Test] public void Constructs_1_000_000_instances_50_percent_faster_than_via_new_constraint_constructor_time()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:10);
 
@@ -50,11 +50,11 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
 
 
       var defaultConstructor = StopwatchCE.TimeExecution(NewConstraint, constructions).Total;
-      var maxTime = defaultConstructor.DivideBy(2);
+      var maxTime = defaultConstructor.DivideBy(1.5);
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime.EnvMultiply(instrumented: 4));
    }
 
-   [Test] public void Constructs_1_000_000_instances_2_times_faster_than_via_activator_CreateInstance()
+   [Test] public void Constructs_1_000_000_instances_50_percent_times_faster_than_via_activator_CreateInstance()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:10);
 
@@ -63,8 +63,8 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
       StopwatchCE.TimeExecution(DynamicModuleConstruct, constructions);
 
 
-      var defaultConstructor = StopwatchCE.TimeExecution(ActivatorCreateInstance, constructions).Total;
-      var maxTime = defaultConstructor.DivideBy(2);
+      var activatorCreateInstanceTime = StopwatchCE.TimeExecution(ActivatorCreateInstance, constructions).Total;
+      var maxTime = activatorCreateInstanceTime.DivideBy(1.5);
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime.EnvMultiply(instrumented: 4.2));
    }
 

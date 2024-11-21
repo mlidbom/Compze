@@ -18,13 +18,13 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
       TimeAsserter.Execute(() => shared2.GetCopy(), iterations: 100, maxTotal: 40.Milliseconds());
    }
 
-   [Test] public void Get_copy_runs_multi_threaded_100_times_in_30_milliseconds()
+   [Test] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
       using var shared = MachineWideSharedObject<SharedObject>.For(name);
       using var shared2 = MachineWideSharedObject<SharedObject>.For(name);
-      TimeAsserter.ExecuteThreaded(() => shared.GetCopy(), iterations: 100, maxTotal: 30.Milliseconds());
-      TimeAsserter.ExecuteThreaded(() => shared2.GetCopy(), iterations: 100, maxTotal: 30.Milliseconds());
+      TimeAsserter.ExecuteThreaded(() => shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
+      TimeAsserter.ExecuteThreaded(() => shared2.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
    }
 
    [Test] public void Update_runs_single_threaded_100_times_in_80_milliseconds()

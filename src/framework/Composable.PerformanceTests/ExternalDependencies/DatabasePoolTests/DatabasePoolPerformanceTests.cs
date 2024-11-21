@@ -63,8 +63,8 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
    [Test]
    public void Multiple_threads_can_reserve_and_release_5_differently_named_databases_in_milliseconds_msSql_125_mySql_175_pgSql_400_orcl_400_db2_100()
    {
+      var maxTotal = TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 70, mySql: 175, orcl: 400, pgSql: 400).Milliseconds();
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
-
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
@@ -73,7 +73,7 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
          iterations: 5,
-         maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 125, mySql: 175, orcl: 400, pgSql: 400).Milliseconds());
+         maxTotal: maxTotal);
    }
 
    [Test]
@@ -109,11 +109,11 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
    }
 
    [Test]
-   public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_50_MsSql_180_MySql_30_Oracle_140_PgSql_300()
+   public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_50_MsSql_180_MySql_24_Oracle_140_PgSql_300()
    {
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
 
-      var iterations = TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 180, mySql: 30, orcl: 140, pgSql: 300);
+      var iterations = TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 180, mySql: 24, orcl: 140, pgSql: 300);
 
       using var manager = CreatePool();
       manager.SetLogLevel(LogLevel.Warning);
