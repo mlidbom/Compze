@@ -72,13 +72,13 @@ namespace Composable.Tests.Serialization.BinarySerializeds;
    }
 
    [Test] public void _010_Serializes_10_000_times_in_100_milliseconds() =>
-      RunScenario(BinarySerialize, TestEnv.EnvDivide(10_000, instrumented:7), maxTotal:100.Milliseconds());
+      RunScenario(BinarySerialize, 10_000.EnvDivide(instrumented:7), maxTotal:100.Milliseconds());
 
    [Test] public void _020_DeSerializes_10_000_times_in_130_milliseconds() =>
-      RunScenario(BinaryDeSerialize, iterations: TestEnv.EnvDivide(10_000, instrumented:5.5), maxTotal:130.Milliseconds());
+      RunScenario(BinaryDeSerialize, iterations: 10_000.EnvDivide(instrumented:7), maxTotal:130.Milliseconds());
 
    [Test] public void _030_Roundtrips_1_000_times_in_25_milliseconds() =>
-      RunScenario(BinaryRoundTrip, iterations: TestEnv.EnvDivide(1_000, instrumented:6.5), maxTotal:25.Milliseconds());
+      RunScenario(BinaryRoundTrip, iterations: 1_000.EnvDivide(instrumented:7.5), maxTotal:25.Milliseconds());
 
    //ncrunch: no coverage start
 

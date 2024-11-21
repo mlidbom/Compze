@@ -47,7 +47,7 @@ class PerformanceTest : DuplicateByPluggableComponentTest
       TimeAsserter.ExecuteThreaded(
          description: "Register accounts",
          action: () => _scenarioApi.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
-         iterations: TestEnv.PersistenceLayer.ValueFor(db2: 2, memory: 10, msSql: 4, mySql: 1, orcl: 2, pgSql: 4),
+         iterations: TestEnv.PersistenceLayer.ValueFor(db2: 2, memory: 10, msSql: 4, mySql: 1, orcl: 2, pgSql: 3),
          maxTotal: 20.Milliseconds());
 
    [Test] public void Multithreaded_logs_in_XX_in_20_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()

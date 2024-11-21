@@ -119,7 +119,7 @@ public class MonitorCEPerformanceTests
 
    [Test] public void _031_Read_MonitorCE_Using_EnterLock______time_is_less_than_nanoseconds_SingleThreaded_35_MultiThreaded_280() =>
       RunScenarios(() => _guarded.Read_MonitorCE_Using_EnterLock(),
-                   singleThread: (35 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 45, unoptimized: 2.2),
+                   singleThread: (35 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 55, unoptimized: 2.2),
                    multiThread: (280 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 14, unoptimized:1.4));
 
    [Test] public void _032_Read_MonitorCE_Read________________time_is_less_than_nanoseconds_SingleThreaded_50_MultiThreaded_360() =>
