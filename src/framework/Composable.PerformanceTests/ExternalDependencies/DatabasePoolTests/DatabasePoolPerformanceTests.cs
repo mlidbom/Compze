@@ -109,11 +109,11 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
    }
 
    [Test]
-   public void Once_DB_Fetched_Can_use_XX_connections_in_1_millisecond_db2_2_MsSql_22_MySql_2_Oracle_7_PgSql_40()
+   public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_2_MsSql_22_MySql_2_Oracle_7_PgSql_40()
    {
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
 
-      var iterations = TestEnv.PersistenceLayer.ValueFor(db2: 2, msSql: 22, mySql: 2, orcl: 7, pgSql: 40);
+      var iterations = TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 180, mySql: 30, orcl: 140, pgSql: 300);
 
       using var manager = CreatePool();
       manager.SetLogLevel(LogLevel.Warning);
@@ -153,7 +153,7 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
 
       TimeAsserter.Execute(
          action: useConnection!,
-         maxTotal: 1.Milliseconds(),
+         maxTotal: 10.Milliseconds(),
          iterations : iterations
       );
    }
