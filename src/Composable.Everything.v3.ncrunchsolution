@@ -1,10 +1,9 @@
 ﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
-    <EnableRDI>True</EnableRDI>
     <HotSpotsLineExclusionList />
     <InstrumentationMode>Optimised</InstrumentationMode>
-    <RdiCacheSize>100000</RdiCacheSize>
+    <MaxNumberOfProcessingThreads>10</MaxNumberOfProcessingThreads>
     <RdiConfigured>True</RdiConfigured>
     <RestrictToString>False</RestrictToString>
     <SlidingBuildDelayInMilliseconds>1000</SlidingBuildDelayInMilliseconds>
