@@ -44,9 +44,8 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
    [Test]
    public void Multiple_threads_can_reserve_and_release_5_identically_named_databases_in_milliseconds_db2_50_msSql_50_mySql_75_orcl_100_pgSql_25()
    {
-      var maxTime = TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 50, mySql: 75, orcl: 100, pgSql: 25).Milliseconds().EnvMultiply(instrumented:1.2);
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
-
+      var maxTime = TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 50, mySql: 75, orcl: 100, pgSql: 25).Milliseconds().EnvMultiply(instrumented:1.2);
       var dbName = Guid.NewGuid().ToString();
       TimeAsserter.ExecuteThreaded(
          action:
@@ -63,8 +62,8 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
    [Test]
    public void Multiple_threads_can_reserve_and_release_5_differently_named_databases_in_milliseconds_msSql_125_mySql_175_pgSql_400_orcl_400_db2_100()
    {
-      var maxTotal = TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 70, mySql: 175, orcl: 400, pgSql: 400).Milliseconds();
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
+      var maxTotal = TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 70, mySql: 175, orcl: 400, pgSql: 400).Milliseconds();
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
