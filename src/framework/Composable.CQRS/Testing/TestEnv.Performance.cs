@@ -31,7 +31,8 @@ public static partial class TestEnv
 
    static double EnvFactor(double instrumented = 1.0, double unoptimized = 1.0)
    {
-      if(Performance.IsInstrumented)
+      // ReSharper disable once CompareOfFloatsByEqualityOperator
+      if(Performance.IsInstrumented && instrumented != 1.0)
       {
          ConsoleCE.WriteLine($"Adjusting by {instrumented} for Instrumented Code");
          return instrumented;

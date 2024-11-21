@@ -82,7 +82,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
       ).ToArray();
 
       AssertUncachedAndCachedAggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 15, msSql: 25, mySql: 55, orcl: 125, pgSql: 25).Milliseconds().EnvMultiply(instrumented: 2),
+         maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 15, msSql: 25, mySql: 55, orcl: 125, pgSql: 25).Milliseconds().EnvMultiply(instrumented: 2.5),
          maxCachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 5, memory: 5, msSql: 5, mySql: 5, orcl: 5, pgSql: 5).Milliseconds().EnvMultiply(instrumented: 2.5),
          eventMigrations);
    }
@@ -106,7 +106,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
    {
       var eventMigrations = EnumerableCE.Create<IEventMigration>().ToArray();
       AssertUncachedAndCachedAggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 10, msSql: 20, mySql: 45, orcl: 125, pgSql: 20).Milliseconds().EnvMultiply(instrumented: 2),
+         maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 10, msSql: 20, mySql: 45, orcl: 125, pgSql: 20).Milliseconds().EnvMultiply(instrumented: 3),
          maxCachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 5, memory: 5, msSql: 5, mySql: 5, orcl: 5, pgSql: 5).Milliseconds().EnvMultiply(instrumented: 2.5),
          eventMigrations);
    }
