@@ -30,5 +30,7 @@ interface IDB2ConnectionPool : IDbConnectionPool<IComposableDB2Connection, DB2Co
       }
       public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableDB2Connection, Task<TResult>> func) =>
          _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
+
+      public override string ToString() => $"MsSql::{_pool.ValueIfInitialized()?.ToString() ?? "Not initialized"}";
    }
 }

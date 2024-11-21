@@ -19,5 +19,8 @@ class OptimizedLazy<TValue> where TValue : class
       }
    }
 
+   public bool IsInitialized => _monitor.Read(() => _value != null);
+   public TValue? ValueIfInitialized() => _value;
+
    public OptimizedLazy(Func<TValue> factory) => _factory = factory;
 }

@@ -31,5 +31,7 @@ interface IOracleConnectionPool : IDbConnectionPool<IComposableOracleConnection,
 
       public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableOracleConnection, Task<TResult>> func) =>
          _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
+
+      public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
    }
 }

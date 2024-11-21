@@ -31,5 +31,7 @@ interface IMySqlConnectionPool : IDbConnectionPool<IComposableMySqlConnection, M
 
       public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMySqlConnection, Task<TResult>> func)
          => _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
+
+      public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
    }
 }

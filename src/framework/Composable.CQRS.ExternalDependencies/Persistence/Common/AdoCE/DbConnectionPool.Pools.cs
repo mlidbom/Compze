@@ -69,6 +69,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
          await using var connection = await OpenConnectionAsyncFlex(syncOrAsync).NoMarshalling();
          return await func(connection).NoMarshalling();
       }
+      public override string ToString() => _connectionString;
    }
 
    class TransactionAffinityDbConnectionManager : DefaultDbConnectionManager

@@ -34,5 +34,7 @@ interface IPgSqlConnectionPool : IDbConnectionPool<IComposableNpgsqlConnection, 
 
       public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableNpgsqlConnection, Task<TResult>> func) =>
          Pool.UseConnectionAsyncFlex(syncOrAsync, func);
+
+      public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
    }
 }
