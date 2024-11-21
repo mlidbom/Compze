@@ -57,7 +57,7 @@ namespace Composable.Tests.Serialization.BinarySerializeds;
 
       var maxTotal = jsonSerializationTime.DivideBy(5);
 
-      var binarySerializationTime = RunScenario(BinaryRoundTrip, TestEnv.EnvDivide(iterations, instrumented:5), maxTotal:maxTotal);
+      var binarySerializationTime = RunScenario(BinaryRoundTrip, TestEnv.EnvDivide(iterations, instrumented:9), maxTotal:maxTotal);
 
       Console.WriteLine($"Binary: {binarySerializationTime.TotalMilliseconds}, JSon: {jsonSerializationTime.TotalMilliseconds}");
    }

@@ -1,12 +1,9 @@
-﻿using System.Reflection;
-using NCrunch.Framework;
-using NUnit.Framework;
-
-[assembly: AssemblyVersion("1.0.0.0")]
+﻿[assembly: System.Reflection.AssemblyVersion("1.0.0.0")]
 
 #if !NCRUNCH
-[assembly: Parallelizable(ParallelScope.None)]
+[assembly: NUnit.Framework.Parallelizable(NUnit.Framework.ParallelScope.None)]
 #endif
 
 //Nothing in this project should run in parallel
-[assembly:Serial, NUnit.Framework.Category("Performance")]
+[assembly: NCrunch.Framework.EnableRdi(false)]
+[assembly:NCrunch.Framework.Serial, NUnit.Framework.Category("Performance")]
