@@ -101,7 +101,7 @@ public class MonitorCEPerformanceTests
       TimeAsserter.Execute(HammerScenario, description: "Singlethreaded", maxTotal: singleThreadMaxTime);
    }
 
-   public static void RunMultiThreadedScenario(Action action, TimeSpan multiThreadAllowedTime)
+   static void RunMultiThreadedScenario(Action action, TimeSpan multiThreadAllowedTime)
    {
       //ncrunch: no coverage start
       void HammerScenario()
