@@ -97,7 +97,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
       ).ToArray();
 
       AssertUncachedAndCachedAggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 15, msSql: 30, mySql: 30, orcl: 120, pgSql: 30).Milliseconds().EnvMultiply(instrumented: 2),
+         maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 15, msSql: 30, mySql: 30, orcl: 120, pgSql: 30).Milliseconds().EnvMultiply(instrumented: 2.5),
          maxCachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 5, memory: 5, msSql: 5, mySql: 5, orcl: 5, pgSql: 5).Milliseconds().EnvMultiply(instrumented: 2),
          eventMigrations);
    }

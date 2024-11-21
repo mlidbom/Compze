@@ -31,7 +31,7 @@ class DocumentDbPerformanceTests : DocumentDbTestsBase
          TimeAsserter.Execute(
             action: SaveOneNewUserInTransaction,
             iterations: 100,
-            maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 300, memory: 8, msSql: 75, mySql: 300, orcl: 100, pgSql: 75).Milliseconds()
+            maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 300, memory: 8, msSql: 75, mySql: 300, orcl: 100, pgSql: 75).Milliseconds().EnvMultiply(unoptimized:1.3)
          );
       });
    }

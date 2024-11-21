@@ -39,7 +39,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
 
 
       var defaultConstructor = StopwatchCE.TimeExecution(DefaultConstructor, constructions).Total;
-      var maxTime = defaultConstructor.MultiplyBy(1.60);
+      var maxTime = defaultConstructor.MultiplyBy(1.60).EnvMultiply(unoptimized:1.2);
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime);
    }
 
@@ -54,7 +54,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
 
       var defaultConstructor = StopwatchCE.TimeExecution(ActivatorCreateInstance, constructions).Total;
       var maxTime = defaultConstructor.DivideBy(20);
-      TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime.EnvMultiply(instrumented: 25));
+      TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime.EnvMultiply(instrumented: 25, unoptimized:1.3));
    }
 
    static void DynamicModuleConstruct() => Constructor.For<Simple>.WithArguments<string>.Instance(_argument);

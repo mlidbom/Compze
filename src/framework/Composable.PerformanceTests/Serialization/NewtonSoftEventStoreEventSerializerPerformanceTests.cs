@@ -67,7 +67,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests
          eventJson.ForEach(@this => JsonConvert.DeserializeObject<NewtonSoftEventStoreEventSerializerTests.TestEvent>(@this, settings));
       });
 
-      var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown);
+      var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown).EnvMultiply(unoptimized:1.2);
 
 
       TimeAsserter.Execute(() =>

@@ -14,6 +14,9 @@ public static partial class TestEnv
    public static TimeSpan EnvMultiply(this TimeSpan original, double instrumented = 1.0, double unoptimized = 1.0) =>
       original * EnvFactor(instrumented: instrumented, unoptimized: unoptimized);
 
+   public static TimeSpan EnvDivide(this TimeSpan original, double instrumented = 1.0, double unoptimized = 1.0) =>
+      original / EnvFactor(instrumented: instrumented, unoptimized: unoptimized);
+
    public static int EnvMultiply(this int original, double instrumented = 1.0, double unoptimized = 1.0) =>
       checked((int)(original * EnvFactor(instrumented: instrumented, unoptimized: unoptimized)));
 
