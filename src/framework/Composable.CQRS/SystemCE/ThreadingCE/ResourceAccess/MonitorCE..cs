@@ -35,6 +35,8 @@ public partial class MonitorCE
       }
    }
 
+   internal void SetTimeToWaitForStackTrac(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+
    void Exit()
    {
       UpdateAnyRegisteredTimeoutExceptions();
@@ -99,7 +101,7 @@ public partial class MonitorCE
    {
       lock(_timeoutLock)
       {
-         var exception = new EnterLockTimeoutException(lockId: currentLock, _timeout);
+         var exception = new EnterLockTimeoutException(lockId: currentLock, _timeout, _stackTraceFetchTimeout);
          ThreadSafe.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
          throw exception;
       }

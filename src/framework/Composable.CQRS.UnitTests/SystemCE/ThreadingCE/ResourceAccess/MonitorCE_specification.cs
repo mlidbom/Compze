@@ -56,6 +56,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
    [TestFixture] public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout
    {
+      [NCrunch.Framework.RestrictToString(false)]
       [Test] public void Exception_is_ObjectLockTimedOutException() =>
          RunScenario(ownerThreadBlockTime:20.Milliseconds(), monitorTimeout: 10.Milliseconds()).Should().BeOfType<EnterLockTimeoutException>();
 
@@ -63,15 +64,17 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), 5.Milliseconds()).Message.Should().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       [Test] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
-         RunWithChangedFetchStackTraceTimeout(
-            fetchStackTraceTimeout:1.Milliseconds(),
-            () => RunScenario(ownerThreadBlockTime: 60.Milliseconds(), monitorTimeout:5.Milliseconds()).Message.Should().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack)));
+          RunScenario(ownerThreadBlockTime: 60.Milliseconds(), timeToWaitForStackTrace: 1.Milliseconds(), monitorTimeout:5.Milliseconds()).Message.Should().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();
 
-      static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout)
+      static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout, TimeSpan? timeToWaitForStackTrace = null)
       {
          var monitor = MonitorCE.WithTimeout(monitorTimeout);
+         if (timeToWaitForStackTrace.HasValue)
+         {
+            monitor.SetTimeToWaitForStackTrac(timeToWaitForStackTrace.Value);
+         }
 
          var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
          var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);

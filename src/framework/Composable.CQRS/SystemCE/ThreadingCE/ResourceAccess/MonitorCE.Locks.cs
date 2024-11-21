@@ -27,9 +27,7 @@ public partial class MonitorCE
    public sealed class NotifyAllLock : IDisposable
    {
       readonly MonitorCE _monitor;
-      [Obsolete("Only for internal use")]
       internal NotifyAllLock(MonitorCE monitor) => _monitor = monitor;
-
       public void Dispose() => _monitor.NotifyAllExit();
    }
 
@@ -37,19 +35,15 @@ public partial class MonitorCE
    internal sealed class NotifyOneLock : IDisposable
    {
       readonly MonitorCE _monitor;
-      [Obsolete("Only for internal use")]
       internal NotifyOneLock(MonitorCE monitor) => _monitor = monitor;
 
       public void Dispose() => _monitor.NotifyOneExit();
    }
 
-   ///<summary>Ensure you only call <see cref="Dispose"/> once on an instance.</summary>
    internal sealed class Lock : IDisposable
    {
       readonly MonitorCE _monitor;
-      [Obsolete("Only for internal use")]
       internal Lock(MonitorCE monitor) => _monitor = monitor;
-
       public void Dispose() => _monitor.Exit();
    }
 }

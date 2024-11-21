@@ -5,19 +5,16 @@ namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 public class EnterLockTimeoutException : Exception
 {
-   // ReSharper disable once FieldCanBeMadeReadOnly.Local (Actually our tests that temporarily changes this through reflection stops working if it is readonly....)
-#pragma warning disable IDE0044 // Add readonly modifier. This is modified via reflection in a test.
-   static TimeSpan _timeToWaitForOwningThreadStacktrace = 30.Seconds();
-#pragma warning restore IDE0044 // Add readonly modifier
-
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-
-   internal EnterLockTimeoutException(ulong lockId, TimeSpan timeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
-      LockId = lockId;
-
+   readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
    internal ulong LockId { get; }
-
    string? _blockingThreadStacktrace;
+
+   internal EnterLockTimeoutException(ulong lockId, TimeSpan timeout, TimeSpan? stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.")
+   {
+      _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout ?? 1.Seconds();
+      LockId = lockId;
+   }
 
    public override string Message
    {
@@ -27,7 +24,6 @@ public class EnterLockTimeoutException : Exception
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }
-
          return $@"{base.Message}
 ----- Blocking thread lock disposal stack trace-----
 {_blockingThreadStacktrace}

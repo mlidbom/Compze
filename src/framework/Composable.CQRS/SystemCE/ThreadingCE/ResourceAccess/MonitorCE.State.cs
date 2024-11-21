@@ -24,14 +24,14 @@ public partial class MonitorCE
 #endif
 
    readonly TimeSpan _timeout;
+   TimeSpan? _stackTraceFetchTimeout;
 
    MonitorCE(TimeSpan timeout)
    {
-#pragma warning disable CS0618 // Type or member is obsolete
       _lock = new Lock(this);
+      _stackTraceFetchTimeout = null;
       _notifyOneLock = new NotifyOneLock(this);
       _notifyAllLock = new NotifyAllLock(this);
-#pragma warning restore CS0618 // Type or member is obsolete
       _timeout = timeout;
    }
 }
