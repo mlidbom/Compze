@@ -10,7 +10,7 @@
 #Oracle:Composable
 #IBMDB2:Composable
 
-#MicrosoftSQLServer:SimpleInjector
+MicrosoftSQLServer:SimpleInjector
 #Memory:SimpleInjector
 #MySql:SimpleInjector
 #PostgreSql:SimpleInjector

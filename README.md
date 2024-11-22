@@ -14,7 +14,7 @@ In the root of the project:
 
 ## Tests
 * You need administrator access to a Sql database server. By default, Microsoft Sql Server 
-  * To change it, edit `TestUsingPluggableComponentCombinations` in the project root
+  * To change which database servers the tests run against, edit `TestUsingPluggableComponentCombinations` in the project root
 * If this connection string is valid you're good to go, otherwise set the environment variable below:
   `Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;`
 
