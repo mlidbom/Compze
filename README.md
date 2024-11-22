@@ -13,26 +13,23 @@ In the root of the project:
 * Open Composable.Everything.sln in Visual Studio 2022 or Rider.
 
 ## Tests
-* You need administrator access to a Sql database server. By default, Microsoft Sql Server 
+* You need administrator access to a SQL database server. By default, Microsoft SQL Server 
   * To change which database servers the tests run against, edit `TestUsingPluggableComponentCombinations` in the project root
 * If this connection string is valid you're good to go, otherwise set the environment variable below:
   `Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;`
 
-Note: Running the tests will create a bunch of pool databases on the server. Don't be shocked when you see 10 or 20 databases on your sql :)
+Note: Running the tests will create several databases on your SQL server prefixed: `Composable_DatabasePool_`.
 
 ### Environment variables you should know about when running the tests
 
 #### Connection strings:
-Lets you override the connection string to use for the database pools.
+Sets the connection string to use for the database pools that the tests use.
 
 **COMPOSABLE_SQL_SERVER_DATABASE_POOL_MASTER_CONNECTIONSTRING**
 **COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING**  
 **COMPOSABLE_MYSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING**  
 **COMPOSABLE_DB2_DATABASE_POOL_MASTER_CONNECTIONSTRING**  
 **COMPOSABLE_ORACLE_DATABASE_POOL_MASTER_CONNECTIONSTRING**
-
-###
-
 
 ### Performance
 **COMPOSABLE_MACHINE_SLOWNESS**: 
