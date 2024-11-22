@@ -15,7 +15,7 @@ partial class DatabasePool
    [UsedImplicitly] protected class SharedState : BinarySerialized<SharedState>
    {
       const int CleanDatabaseNumberTarget = 10;
-      protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForBinarySerializableList(@this => @this._databases, (@this, value) => @this._databases = value.NotNull())];
+      protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForBinarySerializableList(it => it._databases, (it, value) => it._databases = value.NotNull())];
 
       List<Database> _databases = [];
 
@@ -49,7 +49,7 @@ partial class DatabasePool
 
          return DirtyUnReserved
                .Take(databasesToClean)
-               .Select(@this => @this.Mutate(db => db.Reserve(reservationName: Guid.NewGuid().ToString(),
+               .Select(it => it.Mutate(db => db.Reserve(reservationName: Guid.NewGuid().ToString(),
                                                               poolId: poolId,
                                                               reservationLength: 10.Minutes())))
                .ToList();
@@ -57,7 +57,7 @@ partial class DatabasePool
 
       internal void ReleaseClean(string reservationName)
       {
-         var existing = _databases.Single(@this => @this.ReservationName == reservationName);
+         var existing = _databases.Single(it => it.ReservationName == reservationName);
          Assert.Argument.Assert(existing.IsReserved);
          existing.Release();
          existing.Clean();

@@ -12,5 +12,5 @@ public abstract class ScenarioBase<TResult>
    public abstract TResult Execute();
 
 
-   public ExceptionAssertions<TException> ExecutingShouldThrow<TException>() where TException : Exception => this.Invoking(@this => @this.Execute()).Should().Throw<TException>();
+   public ExceptionAssertions<TException> ExecutingShouldThrow<TException>() where TException : Exception => this.Invoking(it => it.Execute()).Should().Throw<TException>();
 }

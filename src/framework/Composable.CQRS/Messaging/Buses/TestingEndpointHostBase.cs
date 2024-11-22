@@ -16,8 +16,8 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    readonly List<Exception> _expectedExceptions = [];
    public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => GlobalBusStateTracker = new GlobalBusStateTracker();
 
-   public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(@this => @this.Address is not null)
-                                                                   .Select(@this => @this.Address!)
+   public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
+                                                                   .Select(it => it.Address!)
                                                                    .ToList();
 
    void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) { Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride)); }

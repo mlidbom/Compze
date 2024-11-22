@@ -43,7 +43,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
             shared.GetCopy().Name.Should().Be("100");
             shared.Dispose();
          },
-         action: () => shared.Update(@this => @this.Name = (++counter).ToString()),
+         action: () => shared.Update(it => it.Name = (++counter).ToString()),
          iterations: 100,
          maxTotal: 70.Milliseconds());
    }
@@ -64,7 +64,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
             shared.GetCopy().Name.Should().Be("100");
             shared.Dispose();
          },
-         action: () => shared.Update(@this => @this.Name = (++counter).ToString()),
+         action: () => shared.Update(it => it.Name = (++counter).ToString()),
          iterations: 100,
          maxTotal: 80.Milliseconds());
    }

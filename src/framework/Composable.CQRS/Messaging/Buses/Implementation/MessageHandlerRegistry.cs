@@ -85,7 +85,7 @@ class MessageHandlerRegistry : IMessageHandlerRegistrar, IMessageHandlerRegistry
    public IReadOnlyList<Action<IEvent>> GetEventHandlers(Type eventType)
    {
       //performance: Use static caching trick.
-      return _eventHandlers.Where(@this => @this.Key.IsAssignableFrom(eventType)).SelectMany(@this => @this.Value).ToList();
+      return _eventHandlers.Where(it => it.Key.IsAssignableFrom(eventType)).SelectMany(it => it.Value).ToList();
    }
 
    public Func<IStrictlyLocalQuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>

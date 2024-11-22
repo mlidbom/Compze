@@ -24,8 +24,8 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
       TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
    [Test] public void Update_runs_single_threaded_100_times_in_80_milliseconds() =>
-      TimeAsserter.Execute(() => _shared.Update(@this => @this.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
+      TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 
    [Test] public void Update_runs_multi_threaded_100_times_in_80_milliseconds() =>
-      TimeAsserter.ExecuteThreaded(() => _shared.Update(@this => @this.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
+      TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 }

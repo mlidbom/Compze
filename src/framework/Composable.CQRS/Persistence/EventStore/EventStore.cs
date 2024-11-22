@@ -71,7 +71,7 @@ class EventStore : IEventStore
          return GetAggregateHistoryInternal(aggregateId, takeWriteLock);
       }
 
-      var newEventsFromPersistenceLayer = newHistoryFromPersistenceLayer.Select(@this => @this.Event).ToArray();
+      var newEventsFromPersistenceLayer = newHistoryFromPersistenceLayer.Select(it => it.Event).ToArray();
       if(cachedAggregateHistory.Events.Count == 0)
       {
          AggregateHistoryValidator.ValidateHistory(aggregateId, newEventsFromPersistenceLayer);
@@ -109,7 +109,7 @@ class EventStore : IEventStore
       => _persistenceLayer.GetAggregateHistory(aggregateId: aggregateId,
                                                startAfterInsertedVersion: startAfterInsertedVersion,
                                                takeWriteLock: takeWriteLock)
-                          .Select(@this => new AggregateEventWithRefactoringInformation(HydrateEvent(@this), @this.StorageInformation) )
+                          .Select(it => new AggregateEventWithRefactoringInformation(HydrateEvent(it), it.StorageInformation) )
                           .ToArray();
 
    static bool IsRefactoringEvent(AggregateEventWithRefactoringInformation @event) => @event.StorageInformation.RefactoringInformation != null;
@@ -141,7 +141,7 @@ class EventStore : IEventStore
 
       var aggregateId = aggregateEvents[0].AggregateId;
 
-      if(aggregateEvents.Any(@this => @this.AggregateId != aggregateId))
+      if(aggregateEvents.Any(it => it.AggregateId != aggregateId))
       {
          throw new ArgumentException("Got events from multiple Aggregates. This is not supported.");
       }
@@ -153,7 +153,7 @@ class EventStore : IEventStore
                      .Select(@event => new EventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewEvent(@event), _typeMapper.GetId(@event.GetType()).GuidValue, eventAsJson: _serializer.Serialize((AggregateEvent)@event)))
                      .ToList();
 
-      eventRows.ForEach(@this => @this.StorageInformation.EffectiveVersion = @this.AggregateVersion);
+      eventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.AggregateVersion);
       _persistenceLayer.InsertSingleAggregateEvents(eventRows);
 
       var completeAggregateHistory = cacheEntry
@@ -216,7 +216,7 @@ class EventStore : IEventStore
 
                   var inMemoryMigratedHistory = SingleAggregateInstanceEventStreamMutator.MutateCompleteAggregateHistory(
                      _migrationFactories,
-                     original.Select(@this => @this.Event).ToArray(),
+                     original.Select(it => it.Event).ToArray(),
                      newEvents =>
                      {
                         //Make sure we don't try to insert into an occupied InsertedVersion
@@ -226,10 +226,10 @@ class EventStore : IEventStore
                         });
 
                         refactorings.Add(newEvents
-                                        .Select(@this => new EventDataRow(@event: @this.NewEvent,
-                                                                          @this.StorageInformation,
-                                                                          _typeMapper.GetId(@this.NewEvent.GetType()).GuidValue,
-                                                                          eventAsJson: _serializer.Serialize(@this.NewEvent)))
+                                        .Select(it => new EventDataRow(@event: it.NewEvent,
+                                                                          it.StorageInformation,
+                                                                          _typeMapper.GetId(it.NewEvent.GetType()).GuidValue,
+                                                                          eventAsJson: _serializer.Serialize(it.NewEvent)))
                                         .ToList());
 
                         updatedAggregates = updatedAggregatesBeforeMigrationOfThisAggregate + 1;
@@ -281,7 +281,7 @@ class EventStore : IEventStore
 Failed to persist {exceptions.Count} migrations. 
 
 AggregateIds: 
-{exceptions.Select(@this => @this.AggregateId.ToString()).Join($",{Environment.NewLine}")}", exceptions.Select(@this => @this.Exception));
+{exceptions.Select(it => it.AggregateId.ToString()).Join($",{Environment.NewLine}")}", exceptions.Select(it => it.Exception));
       }
 
    }
@@ -289,14 +289,14 @@ AggregateIds:
    void FixManualVersions(AggregateEventWithRefactoringInformation[] originalHistory, AggregateEvent[] newHistory, IReadOnlyList<List<EventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
-      var replacedOrRemoved = originalHistory.Where(@this => newHistory.None(@event => @event.MessageId == @this.Event.MessageId)).ToList();
-      versionUpdates.AddRange(replacedOrRemoved.Select(@this => new VersionSpecification(@this.Event.MessageId, -@this.StorageInformation.EffectiveVersion)));
+      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@event => @event.MessageId == it.Event.MessageId)).ToList();
+      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Event.MessageId, -it.StorageInformation.EffectiveVersion)));
 
-      var replacedOrRemoved2 = refactorings.SelectMany(@this =>@this).Where(@this => newHistory.None(@event => @event.MessageId == @this.EventId));
-      versionUpdates.AddRange(replacedOrRemoved2.Select(@this => new VersionSpecification(@this.EventId, -@this.StorageInformation.EffectiveVersion)));
+      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@event => @event.MessageId == it.EventId));
+      versionUpdates.AddRange(replacedOrRemoved2.Select(it => new VersionSpecification(it.EventId, -it.StorageInformation.EffectiveVersion)));
 
       //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every event in every refactored aggregate if only a few, or none, have actually changed.
-      versionUpdates.AddRange(newHistory.Select((@this , index) => new VersionSpecification(@this.MessageId, index + 1)));
+      versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.MessageId, index + 1)));
 
       _persistenceLayer.UpdateEffectiveVersions(versionUpdates);
    }
@@ -398,8 +398,8 @@ AggregateIds:
 
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();
       return _persistenceLayer.ListAggregateIdsInCreationOrder()
-                              .Where(@this => eventBaseType == null || eventBaseType.IsAssignableFrom(_typeMapper.GetType(new TypeId(@this.TypeId))))
-                              .Select(@this => @this.AggregateId);
+                              .Where(it => eventBaseType == null || eventBaseType.IsAssignableFrom(_typeMapper.GetType(new TypeId(it.TypeId))))
+                              .Select(it => it.AggregateId);
    }
 
    public void Dispose()

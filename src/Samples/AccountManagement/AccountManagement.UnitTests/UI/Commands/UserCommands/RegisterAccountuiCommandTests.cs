@@ -15,10 +15,10 @@ public class RegisterAccountUICommandTests
    [SetUp]
    public void CreateValidCommand()
    {
-      _registerAccountUiCommand = AccountResource.Command.Register.Create().Mutate(@this =>
+      _registerAccountUiCommand = AccountResource.Command.Register.Create().Mutate(it =>
       {
-         @this.Email = "valid.email@google.com";
-         @this.Password = "AComplex!1Password";
+         it.Email = "valid.email@google.com";
+         it.Password = "AComplex!1Password";
       });
 
       CommandValidator.ValidationFailures(_registerAccountUiCommand).Should().BeEmpty();

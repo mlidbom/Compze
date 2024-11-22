@@ -28,17 +28,17 @@ class EventCache : IDisposable
             var transactionId = Transaction.Current.TransactionInformation.LocalIdentifier;
             Dictionary<Guid, Entry>? overlay = null;
 
-            if(_overlays.Update(@this => @this.TryGetValue(transactionId, out overlay)))
+            if(_overlays.Update(it => it.TryGetValue(transactionId, out overlay)))
             {
                return Assert.Result.NotNull(overlay);
             }
 
             overlay = new Dictionary<Guid, Entry>();
 
-            _overlays.Update(@this => @this.Add(transactionId, overlay));
+            _overlays.Update(it => it.Add(transactionId, overlay));
 
             Transaction.Current.OnCommittedSuccessfully(() => _parent.AcceptTransactionResult(overlay));
-            Transaction.Current.OnCompleted(() => _overlays.Update(@this => @this.Remove(transactionId)));
+            Transaction.Current.OnCompleted(() => _overlays.Update(it => it.Remove(transactionId)));
 
             return overlay;
          }

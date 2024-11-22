@@ -13,12 +13,12 @@ partial class DatabasePool
    {
       protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() =>
       [
-         GetterSetter.ForInt32(@this => @this.Id, (@this, value) => @this.Id = value),
-         GetterSetter.ForBoolean(@this => @this.IsReserved, (@this, value) => @this.IsReserved = value),
-         GetterSetter.ForDateTime(@this => @this.ReservationExpirationTime, (@this, value) => @this.ReservationExpirationTime = value),
-         GetterSetter.ForString(@this => @this.ReservationName, (@this, value) => @this.ReservationName = value.NotNull()),
-         GetterSetter.ForGuid(@this => @this.ReservedByPoolId, (@this, value) => @this.ReservedByPoolId = value),
-         GetterSetter.ForBoolean(@this => @this.IsClean, (@this, value) => @this.IsClean = value)
+         GetterSetter.ForInt32(it => it.Id, (it, value) => it.Id = value),
+         GetterSetter.ForBoolean(it => it.IsReserved, (it, value) => it.IsReserved = value),
+         GetterSetter.ForDateTime(it => it.ReservationExpirationTime, (it, value) => it.ReservationExpirationTime = value),
+         GetterSetter.ForString(it => it.ReservationName, (it, value) => it.ReservationName = value.NotNull()),
+         GetterSetter.ForGuid(it => it.ReservedByPoolId, (it, value) => it.ReservedByPoolId = value),
+         GetterSetter.ForBoolean(it => it.IsClean, (it, value) => it.IsClean = value)
       ];
 
       internal int Id { get; private set; }

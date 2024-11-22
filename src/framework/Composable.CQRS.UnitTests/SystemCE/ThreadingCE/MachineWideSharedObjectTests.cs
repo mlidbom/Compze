@@ -18,7 +18,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
 [UsedImplicitly] class SharedObject : BinarySerialized<SharedObject>
 {
    public string Name { get; set; } = "Default";
-   protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForString(@this => @this.Name, (@this, value) => @this.Name = value)];
+   protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForString(it => it.Name, (it, value) => it.Name = value)];
 }
 
 [TestFixture] public class MachineWideSharedObjectTests
@@ -40,7 +40,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
 
       test.Name.Should().Be("Default");
 
-      test = shared.Update(@this => @this.Name = "Updated");
+      test = shared.Update(it => it.Name = "Updated");
 
       test.Name.Should().Be("Updated");
 
@@ -60,7 +60,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
       test1.Name.Should().Be("Default");
       test2.Name.Should().Be("Default");
 
-      test1 = shared1.Update(@this => @this.Name = "Updated");
+      test1 = shared1.Update(it => it.Name = "Updated");
       test2 = shared2.GetCopy();
 
       test1.Name.Should().Be("Updated");
@@ -76,7 +76,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
       MachineWideSharedObject<SharedObject> shared2;
       using(var shared = MachineWideSharedObject<SharedObject>.For(name))
       {
-         shared.Update(@this => @this.Name = "New").Name.Should().Be("New");
+         shared.Update(it => it.Name = "New").Name.Should().Be("New");
          shared2 = MachineWideSharedObject<SharedObject>.For(name);
          shared.GetCopy().Name.Should().Be("New");
       }
@@ -97,7 +97,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
       MachineWideSharedObject<SharedObject> shared2;
       using(var shared = MachineWideSharedObject<SharedObject>.For(name, usePersistentFile:true))
       {
-         shared.Update(@this => @this.Name = newName).Name.Should().Be(newName);
+         shared.Update(it => it.Name = newName).Name.Should().Be(newName);
          shared2 = MachineWideSharedObject<SharedObject>.For(name, usePersistentFile:true);
          shared.GetCopy().Name.Should().Be(newName);
       }

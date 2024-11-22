@@ -77,7 +77,7 @@ ORDER BY {Event.ReadOrder} ASC;
                                                                 .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                                 .PrepareStatement()
                                                                 .ExecuteReaderAndSelect(ReadDataRow)
-                                                                .SkipWhile(@this => @this.StorageInformation.InsertedVersion <= startAfterInsertedVersion)
+                                                                .SkipWhile(it => it.StorageInformation.InsertedVersion <= startAfterInsertedVersion)
                                                                 .ToList());
       }
 

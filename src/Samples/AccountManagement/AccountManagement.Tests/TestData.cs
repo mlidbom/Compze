@@ -43,7 +43,7 @@ static class TestData
 
       internal static string CreateUnusedEmail() => $"test.test@test{Interlocked.Increment(ref _registeredAccounts)}.se";
 
-      internal static IEnumerable<string> InvalidEmails => InvalidEmailsTestData.Select(@this => @this.Data);
+      internal static IEnumerable<string> InvalidEmails => InvalidEmailsTestData.Select(it => it.Data);
 
       internal static IReadOnlyList<StringTestData> InvalidEmailsTestData =>
          new List<StringTestData>

@@ -27,7 +27,7 @@ interface IComposableOracleConnection : IPoolableConnection, IComposableDbConnec
       DbCommand IComposableDbConnection.CreateCommand() => CreateCommand();
 
       public OracleCommand CreateCommand() =>
-         Connection.CreateCommand().Mutate(@this => @this.BindByName = true);
+         Connection.CreateCommand().Mutate(it => it.BindByName = true);
 
       public void Dispose() => Connection.Dispose();
 

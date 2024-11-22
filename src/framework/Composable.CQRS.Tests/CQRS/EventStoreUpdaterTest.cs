@@ -649,7 +649,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
       var taskException = ExceptionCE.TryCatch(() => Task.WaitAll(tasks)) as AggregateException;//Sql duplicate key (AggregateId, Version) Exception would be thrown here if history was not serialized. Or a deadlock will be thrown if the locking is not done correctly.
 
-      if(bothTasksCompletedException != null || taskException != null || bothTasksReadUserException != null)throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException.InnerExceptions).Where(@this => @this != null));
+      if(bothTasksCompletedException != null || taskException != null || bothTasksReadUserException != null)throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException.InnerExceptions).Where(it => it != null));
 
       UseInScope(
          session =>

@@ -6,12 +6,12 @@
 
 <form method="post" asp-action="Login">
 
-	@Html.HiddenFor(@this => @this.MessageId)
-	@Html.LabelFor(@this => @this.Email)
-	@Html.TextBoxFor(@this => @this.Email)
+	@Html.HiddenFor(it => it.MessageId)
+	@Html.LabelFor(it => it.Email)
+	@Html.TextBoxFor(it => it.Email)
 
-	@Html.LabelFor(@this => @this.Password)
-	@Html.PasswordFor(@this => @this.Password)
+	@Html.LabelFor(it => it.Password)
+	@Html.PasswordFor(it => it.Password)
 
 	<button type="submit">Login</button>
 

@@ -36,7 +36,7 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
          }
 
 
-         var found = matchesId.Where(@this => acceptableTypeIds.Contains(@this.TypeId) ).ToList();
+         var found = matchesId.Where(it => acceptableTypeIds.Contains(it.TypeId) ).ToList();
          if(found.Any())
          {
             var documentRow = found.Single();
@@ -68,7 +68,7 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
    {
       lock (_lockObject)
       {
-         var removed = _db.GetOrAddDefault(idstring).RemoveWhere(@this => acceptableTypes.Contains(@this.TypeId));
+         var removed = _db.GetOrAddDefault(idstring).RemoveWhere(it => acceptableTypes.Contains(it.TypeId));
          if (removed.None()) throw new NoSuchDocumentException(idstring, acceptableTypes.First());
          if (removed.Count > 1) throw new Exception("It really should be impossible to hit multiple documents with one Id, but apparently you just did it!");
 
@@ -82,16 +82,16 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       lock (_lockObject)
       {
          return _db
-               .SelectMany(@this => @this.Value)
-               .Where(@this => typeIds.Contains(@this.TypeId))
-               .Select(@this =>
+               .SelectMany(it => it.Value)
+               .Where(it => typeIds.Contains(it.TypeId))
+               .Select(it =>
                 {
 #pragma warning disable CA1806 // Do not ignore method results
-                   Guid.TryParse(@this.Id, out var id);
+                   Guid.TryParse(it.Id, out var id);
 #pragma warning restore CA1806 // Do not ignore method results
                    return id;
                 })
-               .Where(@this => @this != Guid.Empty)
+               .Where(it => it != Guid.Empty)
                .ToList();
       }
    }
@@ -101,9 +101,9 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       lock (_lockObject)
       {
          return _db
-               .SelectMany(@this => @this.Value)
-               .Where(@this =>  acceptableTypes.Contains(@this.TypeId) && Guid.TryParse(@this.Id, out var myId) && ids.Contains(myId))
-               .Select(@this => new IDocumentDbPersistenceLayer.ReadRow(@this.TypeId, @this.SerializedDocument))
+               .SelectMany(it => it.Value)
+               .Where(it =>  acceptableTypes.Contains(it.TypeId) && Guid.TryParse(it.Id, out var myId) && ids.Contains(myId))
+               .Select(it => new IDocumentDbPersistenceLayer.ReadRow(it.TypeId, it.SerializedDocument))
                .ToList();
       }
    }
@@ -114,9 +114,9 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       lock (_lockObject)
       {
          return _db
-               .SelectMany(@this => @this.Value)
-               .Where(@this => typeIds.Contains(@this.TypeId))
-               .Select(@this => new IDocumentDbPersistenceLayer.ReadRow(@this.TypeId, @this.SerializedDocument))
+               .SelectMany(it => it.Value)
+               .Where(it => typeIds.Contains(it.TypeId))
+               .Select(it => new IDocumentDbPersistenceLayer.ReadRow(it.TypeId, it.SerializedDocument))
                .ToList();
       }
    }

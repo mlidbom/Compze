@@ -47,8 +47,8 @@ public sealed class TestingTaskRunner : IDisposable
    {
       if(!Task.WaitAll(_monitoredTasks.ToArray(), _timeout))
       {
-         var exceptions = _monitoredTasks.Where(predicate: @this => @this.IsFaulted)
-                                         .Select(selector: @this => Contract.ReturnNotNull(@this.Exception))
+         var exceptions = _monitoredTasks.Where(predicate: it => it.IsFaulted)
+                                         .Select(selector: it => Contract.ReturnNotNull(it.Exception))
                                          .ToList();
 
          if(exceptions.Any()) throw new AggregateException($"Tasks failed to complete within timeout {_timeout} and there were exceptions in tasks", exceptions);

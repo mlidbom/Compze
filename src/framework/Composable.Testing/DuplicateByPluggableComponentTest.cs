@@ -27,7 +27,7 @@ class PluggableComponentsTestFixtureSource : IEnumerable<string>
       try
       {
          return File.ReadAllLines(TestUsingPluggableComponentCombinations)
-                    .Select(@this => @this.Trim())
+                    .Select(it => it.Trim())
                     .Where(line => !string.IsNullOrEmpty(line))
                     .Where(line => !line.StartsWith("#", StringComparison.InvariantCulture))
                     .ToArray();

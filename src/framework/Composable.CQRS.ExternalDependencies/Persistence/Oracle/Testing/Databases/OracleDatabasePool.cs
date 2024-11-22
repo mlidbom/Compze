@@ -26,7 +26,7 @@ sealed class OracleDatabasePool : DatabasePool
    }
 
    protected override string ConnectionStringFor(Database db)
-      => _connectionStringBuilder.Update(@this => @this.Mutate(me =>
+      => _connectionStringBuilder.Update(it => it.Mutate(me =>
       {
          me.UserID = db.Name.ToUpperInvariant();
          me.MinPoolSize = 1;

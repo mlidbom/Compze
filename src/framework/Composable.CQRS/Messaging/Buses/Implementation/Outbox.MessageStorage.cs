@@ -29,7 +29,7 @@ partial class Outbox
          var outboxMessageWithReceivers = new IServiceBusPersistenceLayer.OutboxMessageWithReceivers(_serializer.SerializeMessage(message),
                                                                                                      _typeMapper.GetId(message.GetType()).GuidValue,
                                                                                                      message.MessageId,
-                                                                                                     receiverEndpointIds.Select(@this => @this.GuidValue));
+                                                                                                     receiverEndpointIds.Select(it => it.GuidValue));
 
          _persistenceLayer.SaveMessage(outboxMessageWithReceivers);
       }

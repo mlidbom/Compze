@@ -62,9 +62,9 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests
 
       var defaultSerializerPerformanceNumbers = StopwatchCE.TimeExecution(() =>
       {
-         var eventJson = events.Select(@this => JsonConvert.SerializeObject(@this, settings))
+         var eventJson = events.Select(it => JsonConvert.SerializeObject(it, settings))
                                .ToList();
-         eventJson.ForEach(@this => JsonConvert.DeserializeObject<NewtonSoftEventStoreEventSerializerTests.TestEvent>(@this, settings));
+         eventJson.ForEach(it => JsonConvert.DeserializeObject<NewtonSoftEventStoreEventSerializerTests.TestEvent>(it, settings));
       });
 
       var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown).EnvMultiply(unoptimized:1.2);
@@ -74,7 +74,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests
                            {
                               var eventJson = events.Select(_eventSerializer.Serialize)
                                                     .ToList();
-                              eventJson.ForEach(@this => _eventSerializer.Deserialize(typeof(NewtonSoftEventStoreEventSerializerTests.TestEvent), @this));
+                              eventJson.ForEach(it => _eventSerializer.Deserialize(typeof(NewtonSoftEventStoreEventSerializerTests.TestEvent), it));
                            },
                            maxTotal: allowedTime);
    }

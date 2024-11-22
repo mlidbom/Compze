@@ -85,7 +85,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
                                                            .ToList();
                                                 });
 
-      TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(@this => EventStore.SaveSingleAggregateEvents(@this.Value)));
+      TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(it => EventStore.SaveSingleAggregateEvents(it.Value)));
       var toRemove = aggregatesWithEvents[2][0]
         .AggregateId;
       aggregatesWithEvents.Remove(2);
@@ -112,7 +112,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
                                                            .ToList();
                                                 });
 
-      TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(@this => EventStore.SaveSingleAggregateEvents(@this.Value)));
+      TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(it => EventStore.SaveSingleAggregateEvents(it.Value)));
 
       var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder()
                                       .ToList();
@@ -132,7 +132,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
                                                            .ToList();
                                                 });
 
-      TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(@this => EventStore.SaveSingleAggregateEvents(@this.Value)));
+      TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(it => EventStore.SaveSingleAggregateEvents(it.Value)));
       var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder<ISomeEvent>()
                                       .ToList();
       Assert.That(aggregatesWithEvents.Count, Is.EqualTo(allAggregateIds.Count));

@@ -11,8 +11,8 @@ class LoginScenario : ScenarioBase<AccountResource.Command.LogIn.LoginAttemptRes
    public string Email { get; set; }
 
 
-   public LoginScenario WithEmail(string email) => this.Mutate(@this => @this.Email = email);
-   public LoginScenario WithPassword(string password) => this.Mutate(@this => @this.Password = password);
+   public LoginScenario WithEmail(string email) => this.Mutate(it => it.Email = email);
+   public LoginScenario WithPassword(string password) => this.Mutate(it => it.Password = password);
 
    public static LoginScenario Create(IEndpoint clientEndpoint)
    {

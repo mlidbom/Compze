@@ -10,26 +10,26 @@ class HasAllPropertyTypes : BinarySerialized<HasAllPropertyTypes>
 
    protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() =>
    [
-      GetterSetter.ForBoolean(@this => @this.Boolean, (@this, value) => @this.Boolean = value),
-      GetterSetter.ForByte(@this => @this.Byte, (@this, value) => @this.Byte = value),
-      GetterSetter.ForChar(@this => @this.Char, (@this, value) => @this.Char = value),
-      GetterSetter.ForDecimal(@this => @this.Decimal, (@this, value) => @this.Decimal = value),
-      GetterSetter.ForChar(@this => @this.Char, (@this, value) => @this.Char = value),
-      GetterSetter.ForDouble(@this => @this.Double, (@this, value) => @this.Double = value),
-      GetterSetter.ForInt16(@this => @this.Int16, (@this, value) => @this.Int16 = value),
-      GetterSetter.ForInt32(@this => @this.Int32, (@this, value) => @this.Int32 = value),
-      GetterSetter.ForInt64(@this => @this.Int64, (@this, value) => @this.Int64 = value),
-      GetterSetter.ForSByte(@this => @this.SByte, (@this, value) => @this.SByte = value),
-      GetterSetter.ForSingle(@this => @this.Single, (@this, value) => @this.Single = value),
-      GetterSetter.ForString(@this => @this.String, (@this, value) => @this.String = value),
-      GetterSetter.ForUInt16(@this => @this.UInt16, (@this, value) => @this.UInt16 = value),
-      GetterSetter.ForUInt32(@this => @this.UInt32, (@this, value) => @this.UInt32 = value),
-      GetterSetter.ForUInt64(@this => @this.UInt64, (@this, value) => @this.UInt64 = value),
-      GetterSetter.ForDateTime(@this => @this.DateTime, (@this, value) => @this.DateTime = value),
-      GetterSetter.ForGuid(@this => @this.Guid, (@this, value) => @this.Guid = value),
-      GetterSetter.ForBinarySerializable(@this => @this.RecursiveProperty, (@this, value) => @this.RecursiveProperty = value),
-      GetterSetter.ForBinarySerializableList(@this => @this.RecursiveListProperty, (@this, value) => @this.RecursiveListProperty = value),
-      GetterSetter.ForBinarySerializableArray(@this => @this.RecursiveArrayProperty, (@this, value) => @this.RecursiveArrayProperty = value)
+      GetterSetter.ForBoolean(it => it.Boolean, (it, value) => it.Boolean = value),
+      GetterSetter.ForByte(it => it.Byte, (it, value) => it.Byte = value),
+      GetterSetter.ForChar(it => it.Char, (it, value) => it.Char = value),
+      GetterSetter.ForDecimal(it => it.Decimal, (it, value) => it.Decimal = value),
+      GetterSetter.ForChar(it => it.Char, (it, value) => it.Char = value),
+      GetterSetter.ForDouble(it => it.Double, (it, value) => it.Double = value),
+      GetterSetter.ForInt16(it => it.Int16, (it, value) => it.Int16 = value),
+      GetterSetter.ForInt32(it => it.Int32, (it, value) => it.Int32 = value),
+      GetterSetter.ForInt64(it => it.Int64, (it, value) => it.Int64 = value),
+      GetterSetter.ForSByte(it => it.SByte, (it, value) => it.SByte = value),
+      GetterSetter.ForSingle(it => it.Single, (it, value) => it.Single = value),
+      GetterSetter.ForString(it => it.String, (it, value) => it.String = value),
+      GetterSetter.ForUInt16(it => it.UInt16, (it, value) => it.UInt16 = value),
+      GetterSetter.ForUInt32(it => it.UInt32, (it, value) => it.UInt32 = value),
+      GetterSetter.ForUInt64(it => it.UInt64, (it, value) => it.UInt64 = value),
+      GetterSetter.ForDateTime(it => it.DateTime, (it, value) => it.DateTime = value),
+      GetterSetter.ForGuid(it => it.Guid, (it, value) => it.Guid = value),
+      GetterSetter.ForBinarySerializable(it => it.RecursiveProperty, (it, value) => it.RecursiveProperty = value),
+      GetterSetter.ForBinarySerializableList(it => it.RecursiveListProperty, (it, value) => it.RecursiveListProperty = value),
+      GetterSetter.ForBinarySerializableArray(it => it.RecursiveArrayProperty, (it, value) => it.RecursiveArrayProperty = value)
    ];
 
    public HasAllPropertyTypes() {}

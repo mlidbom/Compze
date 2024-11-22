@@ -7,14 +7,14 @@
 
 <form method="post" asp-action="Register">
 
-	@Html.HiddenFor(@this => @this.AccountId)
-	@Html.HiddenFor(@this => @this.MessageId)
+	@Html.HiddenFor(it => it.AccountId)
+	@Html.HiddenFor(it => it.MessageId)
 
-	@Html.LabelFor(@this => @this.Email)
-	@Html.TextBoxFor(@this => @this.Email)
+	@Html.LabelFor(it => it.Email)
+	@Html.TextBoxFor(it => it.Email)
 
-	@Html.LabelFor(@this => @this.Password)
-	@Html.PasswordFor(@this => @this.Password)
+	@Html.LabelFor(it => it.Password)
+	@Html.PasswordFor(it => it.Password)
 
 	<button type="submit">Register</button>
 

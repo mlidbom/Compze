@@ -135,7 +135,7 @@ public class NestedEntitiesTests
 
       var entity1Id = Guid.NewGuid();
       var agComponentEntity1 = agComponent.AddEntity("entity1", entity1Id);
-      agComponent.Invoking(@this => @this.AddEntity("entity2", entity1Id)).Should().Throw<Exception>();
+      agComponent.Invoking(it => it.AddEntity("entity2", entity1Id)).Should().Throw<Exception>();
 
       var qmComponentEntity1 = qmComponent.Entities.InCreationOrder[0];
 
@@ -153,7 +153,7 @@ public class NestedEntitiesTests
 
       var entity2Id = Guid.NewGuid();
       var agEntity2 = agComponent.AddEntity("entity2", entity2Id);
-      agComponent.Invoking(@this => @this.AddEntity("entity3", entity2Id)).Should().Throw<Exception>();
+      agComponent.Invoking(it => it.AddEntity("entity3", entity2Id)).Should().Throw<Exception>();
 
       var qmEntity2 = qmComponent.Entities.InCreationOrder[1];
       agEntity2.Name.Should().Be("entity2");
@@ -185,20 +185,20 @@ public class NestedEntitiesTests
       qmComponent.Entities.Exists(agEntity2.Id).Should().Be(false);
       agComponent.Entities.InCreationOrder.Count.Should().Be(1);
       qmComponent.Entities.InCreationOrder.Count.Should().Be(1);
-      agComponent.Invoking(@this => @this.Entities.Get(agEntity2.Id)).Should().Throw<Exception>();
-      qmComponent.Invoking(@this => @this.Entities.Get(agEntity2.Id)).Should().Throw<Exception>();
-      agComponent.Invoking(@this => { _ = @this.Entities[agEntity2.Id]; }).Should().Throw<Exception>();
-      qmComponent.Invoking(@this => { _ = @this.Entities[agEntity2.Id]; }).Should().Throw<Exception>();
+      agComponent.Invoking(it => it.Entities.Get(agEntity2.Id)).Should().Throw<Exception>();
+      qmComponent.Invoking(it => it.Entities.Get(agEntity2.Id)).Should().Throw<Exception>();
+      agComponent.Invoking(it => { _ = it.Entities[agEntity2.Id]; }).Should().Throw<Exception>();
+      qmComponent.Invoking(it => { _ = it.Entities[agEntity2.Id]; }).Should().Throw<Exception>();
 
       agComponentEntity1.Remove();
       agComponent.Entities.Exists(agComponentEntity1.Id).Should().Be(false);
       qmComponent.Entities.Exists(agComponentEntity1.Id).Should().Be(false);
       agComponent.Entities.InCreationOrder.Count.Should().Be(0);
       qmComponent.Entities.InCreationOrder.Count.Should().Be(0);
-      agComponent.Invoking(@this => @this.Entities.Get(agComponentEntity1.Id)).Should().Throw<Exception>();
-      qmComponent.Invoking(@this => @this.Entities.Get(agComponentEntity1.Id)).Should().Throw<Exception>();
-      agComponent.Invoking(@this => { _ = @this.Entities[agComponentEntity1.Id]; }).Should().Throw<Exception>();
-      qmComponent.Invoking(@this => { _ = @this.Entities[agComponentEntity1.Id]; }).Should().Throw<Exception>();
+      agComponent.Invoking(it => it.Entities.Get(agComponentEntity1.Id)).Should().Throw<Exception>();
+      qmComponent.Invoking(it => it.Entities.Get(agComponentEntity1.Id)).Should().Throw<Exception>();
+      agComponent.Invoking(it => { _ = it.Entities[agComponentEntity1.Id]; }).Should().Throw<Exception>();
+      qmComponent.Invoking(it => { _ = it.Entities[agComponentEntity1.Id]; }).Should().Throw<Exception>();
    }
 
 
@@ -212,7 +212,7 @@ public class NestedEntitiesTests
       var agNestedEntity1 = agRootEntity.AddEntity("entity1", entity1Id);
       var qmNestedEntity1 = qmRootEntity.Entities.InCreationOrder[0];
 
-      agRootEntity.Invoking(@this => @this.AddEntity("entity2", entity1Id)).Should().Throw<Exception>();
+      agRootEntity.Invoking(it => it.AddEntity("entity2", entity1Id)).Should().Throw<Exception>();
 
       agNestedEntity1.Id.Should().Be(entity1Id);
       qmNestedEntity1.Id.Should().Be(entity1Id);
@@ -230,7 +230,7 @@ public class NestedEntitiesTests
       var entity2Id = Guid.NewGuid();
       var agNestedEntity2 = agRootEntity.AddEntity("entity2", entity2Id);
       var qmNestedEntity2 = qmRootEntity.Entities.InCreationOrder[1];
-      agRootEntity.Invoking(@this => @this.AddEntity("entity3", entity2Id)).Should().Throw<Exception>();
+      agRootEntity.Invoking(it => it.AddEntity("entity3", entity2Id)).Should().Throw<Exception>();
 
       agNestedEntity2.Id.Should().Be(entity2Id);
       qmNestedEntity2.Id.Should().Be(entity2Id);

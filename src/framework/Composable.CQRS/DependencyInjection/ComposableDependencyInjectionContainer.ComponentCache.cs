@@ -56,10 +56,10 @@ partial class ComposableDependencyInjectionContainer
       public void Dispose()
       {
          // ReSharper disable ConditionIsAlwaysTrueOrFalse
-         DisposeComponents(_cache.Where(@this => @this is { Registrations: not null, Instance: not null })
+         DisposeComponents(_cache.Where(it => it is { Registrations: not null, Instance: not null })
                                   // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                                 .Where(@this => @this.Registrations[0].InstantiationSpec.SingletonInstance == null) //We don't dispose instance registrations.
-                                 .Select(@this => @this.Instance)
+                                 .Where(it => it.Registrations[0].InstantiationSpec.SingletonInstance == null) //We don't dispose instance registrations.
+                                 .Select(it => it.Instance)
                                  .OfType<IDisposable>());
       }
    }

@@ -15,17 +15,17 @@ class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersiste
 {
    readonly IThreadShared<Implementation> _implementation = ThreadShared.WithDefaultTimeout(new Implementation());
 
-   public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage) => _implementation.Update(@this => @this.SaveMessage(messageId, typeId, serializedMessage));
+   public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage) => _implementation.Update(it => it.SaveMessage(messageId, typeId, serializedMessage));
 
    public void MarkAsSucceeded(Guid messageId)
-      => Transaction.Current!.AddCommitTasks(() => _implementation.Update(@this => @this.MarkAsSucceeded(messageId)));
+      => Transaction.Current!.AddCommitTasks(() => _implementation.Update(it => it.MarkAsSucceeded(messageId)));
 
    public int RecordException(Guid messageId, string exceptionStackTrace, string exceptionMessage, string exceptionType)
-      => _implementation.Update(@this => @this.RecordException(messageId, exceptionStackTrace, exceptionMessage, exceptionType));
+      => _implementation.Update(it => it.RecordException(messageId, exceptionStackTrace, exceptionMessage, exceptionType));
 
-   public int MarkAsFailed(Guid messageId) => _implementation.Update(@this => @this.MarkAsFailed(messageId));
+   public int MarkAsFailed(Guid messageId) => _implementation.Update(it => it.MarkAsFailed(messageId));
 
-   public Task InitAsync() => _implementation.Update(@this => @this.InitAsync());
+   public Task InitAsync() => _implementation.Update(it => it.InitAsync());
 
    class Implementation : IServiceBusPersistenceLayer.IInboxPersistenceLayer
    {
@@ -33,11 +33,11 @@ class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersiste
 
       public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage) => _rows.Add(new Row(messageId, typeId, serializedMessage));
 
-      public void MarkAsSucceeded(Guid messageId) => _rows.Single(@this => @this.MessageId == messageId).Status = Inbox.MessageStatus.Succeeded;
+      public void MarkAsSucceeded(Guid messageId) => _rows.Single(it => it.MessageId == messageId).Status = Inbox.MessageStatus.Succeeded;
 
       public int RecordException(Guid messageId, string exceptionStackTrace, string exceptionMessage, string exceptionType)
       {
-         var message = _rows.Single(@this => @this.MessageId == messageId);
+         var message = _rows.Single(it => it.MessageId == messageId);
          message.Status = Inbox.MessageStatus.Succeeded;
          message.ExceptionMessage = exceptionMessage;
          message.ExceptionStackTrace = exceptionStackTrace;
@@ -47,7 +47,7 @@ class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersiste
 
       public int MarkAsFailed(Guid messageId)
       {
-         _rows.Single(@this => @this.MessageId == messageId).Status = Inbox.MessageStatus.Failed;
+         _rows.Single(it => it.MessageId == messageId).Status = Inbox.MessageStatus.Failed;
          return 1;
       }
 

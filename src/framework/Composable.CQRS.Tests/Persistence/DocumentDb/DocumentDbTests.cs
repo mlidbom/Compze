@@ -613,7 +613,7 @@ class DocumentDbTests : DocumentDbTestsBase
    {
       var user1 = new User { Id = Guid.Empty };
 
-      UseInTransactionalScope((_, updater) => updater.Invoking(@this => @this.Save(user1))
+      UseInTransactionalScope((_, updater) => updater.Invoking(it => it.Save(user1))
                                                      .Should().Throw<Exception>());
    }
 

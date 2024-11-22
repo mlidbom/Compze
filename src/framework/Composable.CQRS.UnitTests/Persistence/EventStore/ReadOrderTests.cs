@@ -59,11 +59,11 @@ namespace Composable.Tests.Persistence.EventStore;
    [Test] public void InsertionIntervals()
    {
       ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 0), Create(2, 0))
-               .ForEach(@this => Console.WriteLine(@this));
+               .ForEach(it => Console.WriteLine(it));
 
 
       ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 10), Create(1, 3000))
-               .ForEach(@this => Console.WriteLine(@this));
+               .ForEach(it => Console.WriteLine(it));
    }
 
    [Test] public void CreateOrdersForEventsBetween_Fills_Small_Gap_Around_Integer_Limit()

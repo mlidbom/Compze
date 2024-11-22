@@ -34,10 +34,10 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
          () => _state.Update(
             state => state
                     .Events
-                    .OrderBy(@this => @this.StorageInformation.ReadOrder)
-                    .Where(@this => @this.AggregateId == aggregateId
-                                 && @this.StorageInformation.InsertedVersion > startAfterInsertedVersion
-                                 && @this.StorageInformation.EffectiveVersion > 0)
+                    .OrderBy(it => it.StorageInformation.ReadOrder)
+                    .Where(it => it.AggregateId == aggregateId
+                                 && it.StorageInformation.InsertedVersion > startAfterInsertedVersion
+                                 && it.StorageInformation.EffectiveVersion > 0)
                     .ToArray()));
 
    public void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions)
@@ -50,7 +50,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
                {
                   var (@event, index) = state.Events
                                              .Select((eventRow, innerIndex) => (eventRow, innerIndex))
-                                             .Single(@this => @this.eventRow.EventId == specification.EventId);
+                                             .Single(it => it.eventRow.EventId == specification.EventId);
 
                   state.ReplaceEvent(index,
                                      new EventDataRow(@event.EventType,
@@ -75,17 +75,17 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
          _state.Update(state => state.Events.Single(@event => @event.EventId == eventId)).AggregateId,
          () => _state.Update(state =>
          {
-            var found = state.Events.Single(@this => @this.EventId == eventId);
+            var found = state.Events.Single(it => it.EventId == eventId);
 
             var effectiveOrder = found.StorageInformation.ReadOrder!.Value;
             var previousEvent = state.Events
-                                     .Where(@this => @this.StorageInformation.ReadOrder!.Value < effectiveOrder)
-                                     .OrderByDescending(@this => @this.StorageInformation.ReadOrder)
+                                     .Where(it => it.StorageInformation.ReadOrder!.Value < effectiveOrder)
+                                     .OrderByDescending(it => it.StorageInformation.ReadOrder)
                                      .FirstOrDefault();
 
             var nextEvent = state.Events
-                                 .Where(@this => @this.StorageInformation.ReadOrder!.Value > effectiveOrder)
-                                 .OrderBy(@this => @this.StorageInformation.ReadOrder)
+                                 .Where(it => it.StorageInformation.ReadOrder!.Value > effectiveOrder)
+                                 .OrderBy(it => it.StorageInformation.ReadOrder)
                                  .FirstOrDefault();
 
             return new EventNeighborhood(effectiveReadOrder: effectiveOrder,

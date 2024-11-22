@@ -17,9 +17,9 @@ class InMemoryOutboxPersistenceLayer : IServiceBusPersistenceLayer.IOutboxPersis
    readonly IThreadShared<Implementation> _implementation = ThreadShared.WithDefaultTimeout(new Implementation());
 
    public void SaveMessage(Message messageWithReceivers)
-      => Transaction.Current!.AddCommitTasks(() => _implementation.Update(@this => @this.SaveMessage(messageWithReceivers)));
-   public int MarkAsReceived(Guid messageId, Guid endpointId) => _implementation.Update(@this => @this.MarkAsReceived(messageId, endpointId));
-   public Task InitAsync() => _implementation.Update(@this => @this.InitAsync());
+      => Transaction.Current!.AddCommitTasks(() => _implementation.Update(it => it.SaveMessage(messageWithReceivers)));
+   public int MarkAsReceived(Guid messageId, Guid endpointId) => _implementation.Update(it => it.MarkAsReceived(messageId, endpointId));
+   public Task InitAsync() => _implementation.Update(it => it.InitAsync());
 
    class Implementation : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
    {
@@ -30,7 +30,7 @@ class InMemoryOutboxPersistenceLayer : IServiceBusPersistenceLayer.IOutboxPersis
       {
          _messages.Add(messageWithReceivers);
          var dispatchingInfo =_dispatchingStatus.GetOrAdd(messageWithReceivers.MessageId, () => new Dictionary<Guid, bool>());
-         messageWithReceivers.ReceiverEndpointIds.ForEach(@this => dispatchingInfo[@this] = false);
+         messageWithReceivers.ReceiverEndpointIds.ForEach(it => dispatchingInfo[it] = false);
       }
 
       public int MarkAsReceived(Guid messageId, Guid endpointId)

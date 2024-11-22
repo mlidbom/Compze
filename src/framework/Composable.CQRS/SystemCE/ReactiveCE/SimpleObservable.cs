@@ -16,13 +16,13 @@ class SimpleObservable<TEvent> : IObservable<TEvent>
    {
       Contract.ArgumentNotNull(@event, nameof(@event));
 
-      _observerCollection.Update(@this => @this.ForEach(observer => observer.OnNext(@event)));
+      _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(@event)));
    }
 
    /// <inheritdoc />
    public IDisposable Subscribe(IObserver<TEvent> observer)
    {
-      _observerCollection.Update(@this =>  @this.Add(observer));
-      return DisposableCE.Create(() => _observerCollection.Update(@this => @this.Remove(observer)));
+      _observerCollection.Update(it =>  it.Add(observer));
+      return DisposableCE.Create(() => _observerCollection.Update(it => it.Remove(observer)));
    }
 }
