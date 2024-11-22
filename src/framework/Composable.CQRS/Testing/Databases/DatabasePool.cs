@@ -86,7 +86,7 @@ abstract partial class DatabasePool : StrictlyManagedResourceBase<DatabasePool>
       catch(Exception exception)
       {
          Log.Error(exception);
-         EnsureDatabaseExistsAndIsEmpty(reservedDatabase);
+         TransactionScopeCe.SuppressAmbient(() => EnsureDatabaseExistsAndIsEmpty(reservedDatabase));
       }
 
       return ConnectionStringFor(reservedDatabase);
