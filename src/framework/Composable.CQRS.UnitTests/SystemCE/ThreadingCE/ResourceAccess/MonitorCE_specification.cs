@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Composable.SystemCE;
@@ -99,17 +98,6 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
                                      .InnerExceptions.Single();
 
          return thrownException;
-      }
-
-      static void RunWithChangedFetchStackTraceTimeout(TimeSpan fetchStackTraceTimeout, Action action)
-      {
-         var timeoutProperty = typeof(EnterLockTimeoutException).GetField("_timeToWaitForOwningThreadStacktrace", BindingFlags.Static | BindingFlags.NonPublic)!;
-         var original = timeoutProperty.GetValue(null);
-         using(DisposableCE.Create(() => timeoutProperty.SetValue(null, original)))
-         {
-            timeoutProperty.SetValue(null, fetchStackTraceTimeout);
-            action();
-         }
       }
    }
 }
