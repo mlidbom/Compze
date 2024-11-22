@@ -20,6 +20,7 @@ public class EnterLockTimeoutException : Exception
    {
       get
       {
+         //BUG: Blocking loggers and similar in production is not OK: We need to find a different way of getting this into the logs that do not do that
          if(!_monitor.TryAwait(_timeToWaitForOwningThreadStacktrace, () => _blockingThreadStacktrace != null))
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
