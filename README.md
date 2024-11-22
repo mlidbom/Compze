@@ -38,12 +38,3 @@ Sets the connection string to use for the database pools that the tests use.
 **COMPOSABLE_MACHINE_SLOWNESS**: 
 Lets you adjust the expectations for the performance tests.  
 For example: If you set it to 2.0 performance tests are allowed to take 2.0 times as long to complete without failing.
-
-**COMPOSABLE_TEMP_DRIVE**:
-Lets you move where temp data is stored out of the default system temp folder. 
-Among other things the databases in the database pool are stored here.
-
-### Running the sample project
-* The connection string AccountManagement in AccountManagement.Server/App.config must be valid.
-* The configured user must have full permissions to create tables etc in the database in the connection string.
-* Given that just "Start debugging" or "Start without debugging" in visual studio.
