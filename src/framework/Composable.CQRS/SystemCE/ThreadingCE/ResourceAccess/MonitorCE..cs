@@ -20,7 +20,7 @@ public partial class MonitorCE
 {
    ulong _lockId;
    long _contendedLocks;
-   readonly object _timeoutLock = new();
+   readonly System.Threading.Lock _timeoutLock = new();
    int _allowReentrancyIfGreaterThanZero;
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
 
@@ -93,7 +93,7 @@ public partial class MonitorCE
 
    void NotifyAllWaitingThreads()
    {
-      if(_waitingThreadCount > 1) Monitor.PulseAll(_lockObject);   //All threads blocked on Monitor.Wait for our _lockObject, if there are such threads, will now try and reacquire the lock.
+      if(_waitingThreadCount > 1) Monitor.PulseAll(_lockObject);   //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock.
       else if(_waitingThreadCount > 0) Monitor.Pulse(_lockObject); //One thread blocked on Monitor.Wait for our _lockObject, will now try and reacquire the lock.
    }
 
