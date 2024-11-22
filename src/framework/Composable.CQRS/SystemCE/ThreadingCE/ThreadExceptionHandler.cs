@@ -19,7 +19,7 @@ class ThreadExceptionHandler
          }
          catch(Exception exception) when(exception is OperationCanceledException or ThreadInterruptedException or ThreadAbortException)
          {
-            Logger.For<ThreadExceptionHandler>().Info($"Thread: {Thread.CurrentThread.Name} is terminating because it received a: {exception.GetType().Name}.");
+            Logger.For<ThreadExceptionHandler>().Error(exception, $"Thread: {Thread.CurrentThread.Name} is terminating because it received a: {exception.GetType().Name}.");
          }
          catch(Exception exception)
          {
