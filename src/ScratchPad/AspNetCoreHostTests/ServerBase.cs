@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
+namespace ScratchPad.AspNetCoreHostTests;
+
 public class TestObjectsController : Controller
 {
    [HttpPost("/test/objects")] public IActionResult GetTest([FromBody] MyQuery query) =>
