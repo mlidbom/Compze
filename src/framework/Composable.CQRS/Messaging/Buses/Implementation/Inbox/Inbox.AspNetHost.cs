@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
@@ -14,17 +15,24 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   public class AspNetHost
+   class AspNetHost
    {
       WebApplication? _webApplication;
 
-      AspNetHost(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+
+      [SuppressMessage("ReSharper", "UnusedParameter.Local")] internal AspNetHost(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
       }
 
       public async Task StartAsync()
       {
          _webApplication = await StartServerAsync().NoMarshalling();
+      }
+
+      public async Task StopAsync()
+      {
+         await _webApplication!.StopAsync().NoMarshalling();
+         _webApplication = null;
       }
 
       static async Task<WebApplication> StartServerAsync()

@@ -19,6 +19,7 @@ partial class Inbox : IInbox, IDisposable
    readonly IRemotableMessageSerializer _serializer;
    readonly IMessageStorage _storage;
    readonly HandlerExecutionEngine _handlerExecutionEngine;
+   readonly AspNetHost _aspNetHost;
 
    public Inbox(IServiceLocator serviceLocator, IGlobalBusStateTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, RealEndpointConfiguration configuration, IMessageStorage messageStorage, ITypeMapper typeMapper, ITaskRunner taskRunner, IRemotableMessageSerializer serializer)
    {
@@ -28,6 +29,7 @@ partial class Inbox : IInbox, IDisposable
       _address = configuration.Address;
       _storage = messageStorage;
       _handlerExecutionEngine = new HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, _storage, taskRunner);
+      _aspNetHost = new AspNetHost(_handlerExecutionEngine, _storage, _address, _configuration, _typeMapper, _serializer);
    }
 
    public EndPointAddress Address => _runner?.Address ?? new EndPointAddress(_address);
@@ -36,14 +38,17 @@ partial class Inbox : IInbox, IDisposable
    {
       Assert.State.Assert(_runner is null);
       var storageStartTask = _storage.StartAsync();
+
       _runner = new Runner(_handlerExecutionEngine, _storage, _address, _configuration, _typeMapper, _serializer);
-      await storageStartTask.NoMarshalling();
+      await Task.WhenAll(_runner.StartAsync(), storageStartTask, _aspNetHost.StartAsync()).NoMarshalling();
    }
 
+   //todo: Should be async
    public void Stop()
    {
       Assert.State.Assert(_runner is not null);
       _runner.Dispose();
+      //_aspNetHost.StopAsync().SyncResult();
       _runner = null;
    }
 

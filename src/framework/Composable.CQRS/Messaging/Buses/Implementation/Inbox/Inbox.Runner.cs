@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
@@ -20,11 +21,12 @@ partial class Inbox : IInbox, IDisposable
       readonly NetMQQueue<NetMQMessage> _responseQueue;
       readonly RouterSocket _serverSocket;
       readonly NetMQPoller _poller;
-      readonly Thread _messageReceiverThread;
+      Thread _messageReceiverThread;
       readonly CancellationTokenSource _cancellationTokenSource;
       readonly BlockingCollection<IReadOnlyList<TransportMessage.InComing>> _receivedMessageBatches = new();
       readonly HandlerExecutionEngine _handlerExecutionEngine;
       readonly IMessageStorage _storage;
+      readonly RealEndpointConfiguration _configuration;
       readonly ITypeMapper _typeMapper;
       readonly IRemotableMessageSerializer _serializer;
       internal readonly EndPointAddress Address;
@@ -33,6 +35,7 @@ partial class Inbox : IInbox, IDisposable
       {
          _handlerExecutionEngine = handlerExecutionEngine;
          _storage = storage;
+         _configuration = configuration;
 
          _serverSocket = new RouterSocket();
          //Should we screw up with the pipelining we prefer performance problems (memory usage) to lost messages or blocking
@@ -51,15 +54,19 @@ partial class Inbox : IInbox, IDisposable
 
          _cancellationTokenSource = new CancellationTokenSource();
          _poller = new NetMQPoller {_serverSocket, _responseQueue};
-         _poller.RunAsync($"{nameof(Inbox)}_PollerThread_{configuration.Name}");
-
-         _messageReceiverThread = new Thread(ThreadExceptionHandler.WrapThreadStart(MessageReceiverThread)) {Name = $"{nameof(Inbox)}_{nameof(MessageReceiverThread)}_{configuration.Name}"};
-         _messageReceiverThread.Start();
-
-         _handlerExecutionEngine.Start();
 
          _typeMapper = typeMapper;
          _serializer = serializer;
+         _messageReceiverThread = new Thread(ThreadExceptionHandler.WrapThreadStart(MessageReceiverThread)) {Name = $"{nameof(Inbox)}_{nameof(MessageReceiverThread)}_{_configuration.Name}"};
+      }
+
+      public async Task StartAsync()
+      {
+         _messageReceiverThread.Start();
+         _handlerExecutionEngine.Start();
+         await Task.CompletedTask.NoMarshalling();
+         _poller.RunAsync($"{nameof(Inbox)}_PollerThread_{_configuration.Name}");
+
       }
 
       void MessageReceiverThread()
