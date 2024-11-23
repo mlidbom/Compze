@@ -45,7 +45,7 @@ partial class MsSqlOutboxPersistenceLayer
                                             END
 
                                             """);
-         await Task.CompletedTask;
+         await Task.CompletedTask.NoMarshalling();
       }
    }
 }

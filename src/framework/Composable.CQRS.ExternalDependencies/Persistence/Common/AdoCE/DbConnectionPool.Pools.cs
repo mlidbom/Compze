@@ -66,7 +66,8 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
       public virtual async Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<TConnection, Task<TResult>> func)
       {
-         await using var connection = await OpenConnectionAsyncFlex(syncOrAsync).NoMarshalling();
+         var connection = await OpenConnectionAsyncFlex(syncOrAsync).NoMarshalling();
+         await using var connection1 = connection.NoMarshalling();
          return await func(connection).NoMarshalling();
       }
       public override string ToString() => _connectionString;

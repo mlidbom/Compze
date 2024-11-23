@@ -30,7 +30,8 @@ interface IComposableDbConnection<out TCommand> : IComposableDbConnection
 
    async Task UseCommandAsync(Func<TCommand, Task> action)
    {
-      await using var command = CreateCommand();
+      var command = CreateCommand();
+      await using var command1 = command.NoMarshalling();
       await action(command).NoMarshalling();
    }
 

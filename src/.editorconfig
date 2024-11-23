@@ -1,4 +1,6 @@
-﻿[*.cs]
+﻿root = true
+
+[*.cs]
 
 # CA1032: Implement standard exception constructors
 dotnet_diagnostic.CA1032.severity = silent

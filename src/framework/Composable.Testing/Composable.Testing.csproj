@@ -23,10 +23,6 @@
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="NUnit" Version="4.2.2" />

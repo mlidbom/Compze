@@ -38,7 +38,7 @@ partial class MsSqlInboxPersistenceLayer
                                             END
 
                                             """);
-         await Task.CompletedTask;
+         await Task.CompletedTask.NoMarshalling();
       }
    }
 }

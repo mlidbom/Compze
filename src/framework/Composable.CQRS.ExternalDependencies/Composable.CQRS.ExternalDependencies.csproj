@@ -32,10 +32,6 @@
     <PackageReference Include="Npgsql" Version="9.0.1" />
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
   </ItemGroup>
-   
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Composable.CQRS\Composable.CQRS.csproj" />
