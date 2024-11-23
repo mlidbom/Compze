@@ -1,15 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Composable.SystemCE.LinqCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace ScratchPad.AspNetCoreHostTests;
-
+public class TestController : Controller
+{
+   [HttpGet("/test")]
+   public IActionResult GetTest()
+   {
+       return Ok("test");
+   }
+}
 public class TestAspNetCoreHost
 {
    [Test] public async Task RunServer()
@@ -33,20 +40,28 @@ public class TestAspNetCoreHost
       await Task.WhenAll(servers.Select(server => server.StopAsync()));
    }
 
+   static void AddMvcServices(IServiceCollection services)
+   {
+       services.AddControllers();
+   }
+
    static async Task<WebApplication> SetupWebApplication(int portOffset)
    {
-      var WebAppBuilder = WebApplication.CreateBuilder();
+      var builder = WebApplication.CreateBuilder();
+      builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestController).Assembly)); // Necessary to add controllers from other projects
 
-      WebAppBuilder.WebHost.UseUrls($"http://localhost:{5500 + portOffset}");
 
-      WebAppBuilder.Services.AddHttpClient();
-      var serviceProvider = WebAppBuilder.Services.BuildServiceProvider();
+      builder.WebHost.UseUrls($"http://localhost:{5500 + portOffset}");
 
-      var webApp = WebAppBuilder.Build();
+      builder.Services.AddHttpClient();
+      builder.Services.AddControllers();
+      AddMvcServices(builder.Services);
+      var app = builder.Build();
 
-      webApp.MapGet("/test", () => "test");
+      app.UseRouting();
+      app.MapControllers();
 
-      await webApp.StartAsync();
-      return webApp;
+      await app.StartAsync();
+      return app;
    }
 }
