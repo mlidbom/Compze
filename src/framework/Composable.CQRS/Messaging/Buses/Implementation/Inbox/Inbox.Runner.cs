@@ -29,7 +29,7 @@ partial class Inbox
       readonly RealEndpointConfiguration _configuration;
       readonly ITypeMapper _typeMapper;
       readonly IRemotableMessageSerializer _serializer;
-      internal readonly EndPointAddress Address;
+      internal readonly string Address;
 
       public Runner(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
@@ -45,7 +45,7 @@ partial class Inbox
          //We guarantee delivery upon restart in other ways. When we shut down, just do it.
          _serverSocket.Options.Linger = 0.Milliseconds();
 
-         Address = new EndPointAddress(_serverSocket.BindAndReturnActualAddress(address));
+         Address = _serverSocket.BindAndReturnActualAddress(address);
          _serverSocket.ReceiveReady += HandleIncomingMessage_PollerThread;
 
          _responseQueue = new NetMQQueue<NetMQMessage>();

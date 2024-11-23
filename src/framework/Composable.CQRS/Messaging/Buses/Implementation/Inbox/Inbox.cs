@@ -32,7 +32,7 @@ partial class Inbox : IInbox, IAsyncDisposable
       _aspNetHost = new AspNetHost(_handlerExecutionEngine, _storage, _address, _configuration, _typeMapper, _serializer);
    }
 
-   public EndPointAddress Address => _runner?.Address ?? new EndPointAddress(_address);
+   public EndPointAddress Address => new EndPointAddress(netMqAddress: _runner!.Address, aspNetAddress: _aspNetHost.Address); //?? new EndPointAddress(_address);
 
    public async Task StartAsync()
    {

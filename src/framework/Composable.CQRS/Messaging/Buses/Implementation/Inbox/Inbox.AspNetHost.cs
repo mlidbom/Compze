@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
+using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +26,7 @@ partial class Inbox
       [SuppressMessage("ReSharper", "UnusedParameter.Local")] internal AspNetHost(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
       }
+      public string Address => _webApplication!.Urls.First();
 
       public async Task StartAsync()
       {

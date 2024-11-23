@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Composable.Messaging.NetMQCE;
 using Composable.Refactoring.Naming;
@@ -23,6 +24,7 @@ partial class Outbox
       readonly ITypeMapper _typeMapper;
       readonly IRemotableMessageSerializer _serializer;
       readonly IGlobalBusStateTracker _globalBusStateTracker;
+      readonly HttpClient _httpClient;
       readonly NetMQQueue<TransportMessage.OutGoing> _sendQueue = new();
       // ReSharper disable once InconsistentNaming we use this naming variation to try and make it extra clear that this must only ever be accessed from the poller thread.
       readonly IDisposable _socketDisposable;
@@ -89,6 +91,7 @@ partial class Outbox
       internal InboxConnection(IGlobalBusStateTracker globalBusStateTracker,
 #pragma warning restore 8618
                                EndPointAddress serverEndpoint,
+                               HttpClient httpClient,
                                NetMQPoller poller,
                                ITypeMapper typeMapper,
                                IRemotableMessageSerializer serializer)
@@ -96,6 +99,7 @@ partial class Outbox
          _serializer = serializer;
          _typeMapper = typeMapper;
          _globalBusStateTracker = globalBusStateTracker;
+         _httpClient = httpClient;
          var socket = new DealerSocket();
          _socketDisposable = socket;//Getting rid of the type means we don't need to worry about usage from the wrong threads.
          _state = ThreadShared.WithDefaultTimeout(new InboxConnectionState());

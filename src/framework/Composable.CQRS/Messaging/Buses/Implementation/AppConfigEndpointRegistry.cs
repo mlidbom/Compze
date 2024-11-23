@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Composable.SystemCE.ConfigurationCE;
 
@@ -13,12 +14,13 @@ class AppConfigEndpointRegistry : IEndpointRegistry
    {
       get
       {
-         var configurationValue = _settingsProvider.GetString("ServerEndpoints");
-         var addresses = configurationValue.Split(';')
-                                           .Select(stringValue => stringValue.Trim())
-                                           .Where(stringValue => !string.IsNullOrEmpty(stringValue))
-                                           .Select(stringValue => new EndPointAddress(stringValue)).ToList();
-         return addresses;
+         throw new NotImplementedException();
+         // var configurationValue = _settingsProvider.GetString("ServerEndpoints");
+         // var addresses = configurationValue.Split(';')
+         //                                   .Select(stringValue => stringValue.Trim())
+         //                                   .Where(stringValue => !string.IsNullOrEmpty(stringValue))
+         //                                   .Select(stringValue => new EndPointAddress(stringValue)).ToList();
+         // return addresses;
       }
    }
 }

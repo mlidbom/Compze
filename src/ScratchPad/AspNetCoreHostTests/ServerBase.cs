@@ -55,7 +55,7 @@ public class TestAspNetCoreHost
       {
          try
          {
-            using var client = server.Services.GetRequiredService<HttpClient>();
+            using var client = new HttpClient();
 
             async Task RunQuery()
             {
@@ -83,7 +83,7 @@ public class TestAspNetCoreHost
       {
          try
          {
-            using var client = server.Services.GetRequiredService<HttpClient>();
+            using var client = new HttpClient();
 
             async Task RunQuery()
             {

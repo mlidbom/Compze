@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.Refactoring.Naming;
@@ -19,18 +20,20 @@ partial class Transport : ITransport, IDisposable
    readonly NetMQPoller _poller;
 #pragma warning restore CA2213 // Disposable fields should be disposed
    readonly IRemotableMessageSerializer _serializer;
+   readonly HttpClient _httpClient;
 
    bool _running;
    readonly Router _router;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
    readonly AssertAndRun _runningAndNotDisposed;
 
-   public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+   public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, HttpClient httpClient)
    {
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
       _runningAndNotDisposed = new AssertAndRun(() => Assert.State.Assert(_running, _poller != null, _poller.IsRunning));
       _router = new Router(typeMapper);
       _serializer = serializer;
+      _httpClient = httpClient;
       _globalBusStateTracker = globalBusStateTracker;
       _typeMapper = typeMapper;
 
@@ -39,10 +42,10 @@ partial class Transport : ITransport, IDisposable
       _running = true;
    }
 
-   public async Task ConnectAsync(EndPointAddress remoteEndpoint)
+   public async Task ConnectAsync(EndPointAddress remoteEndpointAdress)
    {
       _runningAndNotDisposed.Assert();
-      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpoint, _poller, _typeMapper, _serializer);
+      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _httpClient, _poller, _typeMapper, _serializer);
 
       await clientConnection.Init().NoMarshalling();
 
