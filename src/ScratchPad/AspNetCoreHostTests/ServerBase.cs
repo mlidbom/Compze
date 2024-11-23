@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,12 +13,23 @@ using NUnit.Framework;
 
 public class TestController : Controller
 {
-   [HttpGet("/test")]
-   public IActionResult GetTest()
+   [HttpPost("/test")] public IActionResult GetTest([FromBody] MyQuery query)
    {
-       return Ok("test");
+      var response = new MyResponse { Result = query.Input + " response" };
+      return Ok(response);
    }
 }
+
+public class MyQuery
+{
+   public string Input { get; set; } = "";
+}
+
+public class MyResponse
+{
+   public string Result { get; set; } = "";
+}
+
 public class TestAspNetCoreHost
 {
    [Test] public async Task RunServer()
@@ -29,7 +42,9 @@ public class TestAspNetCoreHost
          {
             using var client = server.Services.GetRequiredService<HttpClient>();
             var requestUri = $"{server.Urls.First()}/test";
-            Assert.That(await client.GetStringAsync(requestUri), Is.EqualTo("test"));
+            var response = await client.PostAsJsonAsync(requestUri, new MyQuery { Input = "test" });
+            var result = await response.Content.ReadFromJsonAsync<MyResponse>();
+            Assert.That(result.NotNull().Result, Is.EqualTo("test response"));
          }
          finally
          {
@@ -40,16 +55,12 @@ public class TestAspNetCoreHost
       await Task.WhenAll(servers.Select(server => server.StopAsync()));
    }
 
-   static void AddMvcServices(IServiceCollection services)
-   {
-       services.AddControllers();
-   }
+   static void AddMvcServices(IServiceCollection services) { services.AddControllers(); }
 
    static async Task<WebApplication> SetupWebApplication(int portOffset)
    {
       var builder = WebApplication.CreateBuilder();
       builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestController).Assembly)); // Necessary to add controllers from other projects
-
 
       builder.WebHost.UseUrls($"http://localhost:{5500 + portOffset}");
 
