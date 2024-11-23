@@ -3,23 +3,30 @@
 #Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
 #Empty/Whitespace lines are ignored
 
-#MicrosoftSQLServer:Composable
-#Memory:Composable
-#MySql:Composable
-#PostgreSql:Composable
-#Oracle:Composable
-#IBMDB2:Composable
+###MicrosoftSQLServer:Composable
+###Memory:Composable
+###MySql:Composable
+###PostgreSql:Composable
+###Oracle:Composable
+###IBMDB2:Composable
 
-MicrosoftSQLServer:SimpleInjector
-#Memory:SimpleInjector
-#MySql:SimpleInjector
-#PostgreSql:SimpleInjector
-#Oracle:SimpleInjector
-#IBMDB2:SimpleInjector
+MicrosoftSQLServer:Microsoft
+###Memory:Microsoft
+###MySql:Microsoft
+###PostgreSql:Microsoft
+###Oracle:Microsoft
+###IBMDB2:Microsoft
 
-#MicrosoftSQLServer:WindsorCastle
-#Memory:WindsorCastle
-#MySql:WindsorCastle
-#PostgreSql:WindsorCastle
-#Oracle:WindsorCastle
-#IBMDB2:WindsorCastle
+###MicrosoftSQLServer:SimpleInjector
+###Memory:SimpleInjector
+###MySql:SimpleInjector
+###PostgreSql:SimpleInjector
+###Oracle:SimpleInjector
+###IBMDB2:SimpleInjector
+
+###MicrosoftSQLServer:WindsorCastle
+###Memory:WindsorCastle
+###MySql:WindsorCastle
+###PostgreSql:WindsorCastle
+###Oracle:WindsorCastle
+###IBMDB2:WindsorCastle
