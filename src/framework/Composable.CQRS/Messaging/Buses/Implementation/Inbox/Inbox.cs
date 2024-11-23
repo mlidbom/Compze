@@ -45,7 +45,7 @@ partial class Inbox : IInbox, IAsyncDisposable
 
    public async Task StopAsync()
    {
-      Assert.State.Assert(_runner is not null);
+      if(_runner is null) return;
       _runner.Dispose();
       await _aspNetHost.StopAsync().NoMarshalling();
       _runner = null;
@@ -54,9 +54,7 @@ partial class Inbox : IInbox, IAsyncDisposable
 
    public async ValueTask DisposeAsync()
    {
-      if(_runner is not null)
-      {
-         await StopAsync().NoMarshalling();
-      }
+      await StopAsync().NoMarshalling();
+      await _aspNetHost.DisposeAsync().NoMarshalling();
    }
 }

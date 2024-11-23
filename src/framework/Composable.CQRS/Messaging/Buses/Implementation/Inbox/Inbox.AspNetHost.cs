@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Composable.Refactoring.Naming;
@@ -15,7 +16,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   class AspNetHost
+   class AspNetHost : IAsyncDisposable
    {
       WebApplication? _webApplication;
 
@@ -31,9 +32,12 @@ partial class Inbox
 
       public async Task StopAsync()
       {
+         if (_webApplication is null) return;
          await _webApplication!.StopAsync().NoMarshalling();
          _webApplication = null;
       }
+
+      public async ValueTask DisposeAsync() => await StopAsync().NoMarshalling();
 
       static async Task<WebApplication> StartServerAsync()
       {
