@@ -44,7 +44,7 @@ public class TestAspNetCoreHost
 {
    [Test] public async Task TestObjects()
    {
-      var servers = await Task.WhenAll(1.Through(10).Select(SetupWebApplication));
+      var servers = await Task.WhenAll(1.Through(10).Select(_ => SetupWebApplication()));
 
       await Task.WhenAll(servers.Select(async server =>
       {
@@ -72,7 +72,7 @@ public class TestAspNetCoreHost
 
    [Test] public async Task TestStrings()
    {
-      var servers = await Task.WhenAll(101.Through(110).Select(SetupWebApplication));
+      var servers = await Task.WhenAll(101.Through(110).Select(_ => SetupWebApplication()));
 
       await Task.WhenAll(servers.Select(async server =>
       {
@@ -101,7 +101,7 @@ public class TestAspNetCoreHost
 
    static void AddMvcServices(IServiceCollection services) { services.AddControllers(); }
 
-   static async Task<WebApplication> SetupWebApplication(int portOffset)
+   static async Task<WebApplication> SetupWebApplication()
    {
       var builder = WebApplication.CreateBuilder();
       builder.Logging.SetMinimumLevel(LogLevel.Warning);
@@ -109,7 +109,7 @@ public class TestAspNetCoreHost
       builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestObjectsController).Assembly));
       builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestStringsController).Assembly));
 
-      builder.WebHost.UseUrls($"http://localhost:{5500 + portOffset}");
+      builder.WebHost.UseUrls($"http://127.0.0.1:0");
 
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
