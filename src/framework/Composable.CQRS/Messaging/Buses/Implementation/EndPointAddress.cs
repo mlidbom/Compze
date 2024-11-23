@@ -5,10 +5,10 @@ namespace Composable.Messaging.Buses.Implementation;
 
 public class EndPointAddress : ValueObject<EndPointAddress>
 {
-   internal string StringValue { get; private set; }
-   internal EndPointAddress(string stringValue)
+   internal string NetMqAddress { get; private set; }
+   internal EndPointAddress(string netMqAddress)
    {
-      Contract.ArgumentNotNullEmptyOrWhitespace(stringValue, nameof(stringValue));
-      StringValue = stringValue;
+      Contract.ArgumentNotNullEmptyOrWhitespace(netMqAddress, nameof(netMqAddress));
+      NetMqAddress = netMqAddress;
    }
 }

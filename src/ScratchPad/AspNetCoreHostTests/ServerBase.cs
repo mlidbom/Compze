@@ -104,21 +104,18 @@ public class TestAspNetCoreHost
       await Task.WhenAll(servers.Select(server => server.StopAsync()));
    }
 
-   static void AddMvcServices(IServiceCollection services) { services.AddControllers(); }
-
    static async Task<WebApplication> SetupWebApplication()
    {
       var builder = WebApplication.CreateBuilder();
       builder.Logging.SetMinimumLevel(LogLevel.Warning);
 
       builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestObjectsController).Assembly));
-      builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestStringsController).Assembly));
 
       builder.WebHost.UseUrls("http://127.0.0.1:0");
 
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
-      AddMvcServices(builder.Services);
+      builder.Services.AddControllers();
       var app = builder.Build();
 
       app.UseRouting();
