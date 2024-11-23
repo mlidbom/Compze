@@ -584,7 +584,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await using var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
       IEventStore PersistingEventStore() => serviceLocator.Resolve<IEventStore>();
 
-      using var otherProcessServiceLocator = serviceLocator.Clone();
+      await using var otherProcessServiceLocator = serviceLocator.Clone();
 
       // ReSharper disable once AccessToDisposedClosure
       IEventStoreUpdater OtherEventStoreSession() => otherProcessServiceLocator.Resolve<IEventStoreUpdater>();

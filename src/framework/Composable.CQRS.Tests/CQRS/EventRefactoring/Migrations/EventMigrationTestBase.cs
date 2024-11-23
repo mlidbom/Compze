@@ -39,11 +39,11 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
       {
          timeSource.FreezeAtUtcTime(timeSource.UtcNow + 1.Hours()); //No time collision between scenarios please.
          migrations = migrationScenario.Migrations.ToList();
-         RunScenarioWithEventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++);
+         await RunScenarioWithEventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++);
       }
    }
 
-   static void RunScenarioWithEventStoreType(MigrationScenario scenario, IServiceLocator serviceLocator, IList<IEventMigration> migrations, int indexOfScenarioInBatch)
+   static async Task RunScenarioWithEventStoreType(MigrationScenario scenario, IServiceLocator serviceLocator, IList<IEventMigration> migrations, int indexOfScenarioInBatch)
    {
       var startingMigrations = migrations.ToList();
       migrations.Clear();
@@ -102,7 +102,7 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
 
 
       //Make sure that other processes that might be using the same aggregate also keep working as we persist the migrations.
-      using(var clonedServiceLocator = serviceLocator.Clone())
+      await using(var clonedServiceLocator = serviceLocator.Clone())
       {
          migratedHistory = clonedServiceLocator.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator.Resolve<IEventStoreUpdater>()
                                                                                                             .Get<TestAggregate>(initialAggregate.Id))
@@ -123,7 +123,6 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
 
          migratedHistory = clonedServiceLocator.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator.Resolve<IEventStoreUpdater>()
                                                                                                             .Get<TestAggregate>(initialAggregate.Id))
-
                                                .History;
       }
       AssertStreamsAreIdentical(expected, migratedHistory, "Loaded aggregate");
@@ -150,7 +149,7 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
 
 
       ConsoleCE.WriteLine("Cloning service locator / starting new instance of application");
-      using var clonedServiceLocator2 = serviceLocator.Clone();
+      await using var clonedServiceLocator2 = serviceLocator.Clone();
       migratedHistory = clonedServiceLocator2.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator2.Resolve<IEventStoreUpdater>()
                                                                                                            .Get<TestAggregate>(initialAggregate.Id))
                                              .History;

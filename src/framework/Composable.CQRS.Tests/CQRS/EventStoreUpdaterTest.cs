@@ -498,13 +498,13 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
    }
 
    [Test]
-   public void InsertNewEventType_should_not_throw_exception_if_the_event_type_has_been_inserted_by_something_else()
+   public async Task InsertNewEventType_should_not_throw_exception_if_the_event_type_has_been_inserted_by_something_else()
    {
       User otherUser = null;
       User user = null;
-      void ChangeAnotherUsersEmailInOtherInstance()
+      async Task ChangeAnotherUsersEmailInOtherInstance()
       {
-         using var clonedServiceLocator = _serviceLocator.Clone();
+         await using var clonedServiceLocator = _serviceLocator.Clone();
          clonedServiceLocator.ExecuteTransactionInIsolatedScope(() =>
          {
             // ReSharper disable once AccessToDisposedClosure
@@ -519,7 +519,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
       UseInTransactionalScope(session => user = User.Register(session, "email@email.se", "password", Guid.NewGuid()));
 
-      ChangeAnotherUsersEmailInOtherInstance();
+      await ChangeAnotherUsersEmailInOtherInstance();
       UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
 
       UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));

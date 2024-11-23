@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using Composable.DependencyInjection;
 using Composable.Persistence.EventStore;
@@ -38,7 +39,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
                      .Map<UserRegistered>("e965b5d4-6f1a-45fa-9660-2fec0abc4a0a");
    }
 
-   [TearDown] public void TearDownTask() { _serviceLocator.Dispose(); }
+   [TearDown] public async Task TearDownTask() { await _serviceLocator.DisposeAsync(); }
 
    [Test] public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {

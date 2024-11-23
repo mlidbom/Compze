@@ -55,8 +55,9 @@ public static class TimeAsserter
                                                                             string description = "",
                                                                             uint maxTries = MaxTriesDefault,
                                                                             [InstantHandle] Action? setup = null,
-                                                                            [InstantHandle] Action? tearDown = null) =>
-      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries).NoMarshalling();
+                                                                            [InstantHandle] Action? tearDown = null,
+                                                                            [InstantHandle] Func<Task>? tearDownAsync = null) =>
+      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync).NoMarshalling();
 
    static TReturnValue InternalExecute<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                      int iterations,
@@ -75,7 +76,8 @@ public static class TimeAsserter
                                                                       string description,
                                                                       [InstantHandle] Action? setup,
                                                                       [InstantHandle] Action? tearDown,
-                                                                      uint maxTries = MaxTriesDefault) where TReturnValue : StopwatchCE.TimedExecutionSummary
+                                                                      uint maxTries = MaxTriesDefault,
+                                                                      [InstantHandle] Func<Task>? tearDownAsync = null) where TReturnValue : StopwatchCE.TimedExecutionSummary
    {
       Assert.Argument.Assert(maxTries > 0);
       maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
@@ -89,23 +91,36 @@ public static class TimeAsserter
       for(var tries = 1; tries <= maxTries; tries++)
       {
          setup?.Invoke();
-         using var _ = DisposableCE.Create(() => tearDown?.Invoke());
-         var executionSummary = await runScenario().NoMarshalling();
 
-         var failureMessage = GetFailureMessage(executionSummary, maxAverage, maxTotal);
-         if(failureMessage.Length > 0)
+         try
          {
-            if(tries >= maxTries) throw new TimeOutException(failureMessage);
-            var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds();//Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
-            ConsoleCE.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
-            Thread.Sleep(waitTime);
-            continue;
-         }
+            var executionSummary = await runScenario().NoMarshalling();
 
-         PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
-         ConsoleCE.WriteImportantLine("DONE");
-         ConsoleCE.WriteLine();
-         return executionSummary;
+            var failureMessage = GetFailureMessage(executionSummary, maxAverage, maxTotal);
+            if(failureMessage.Length > 0)
+            {
+               if(tries >= maxTries) throw new TimeOutException(failureMessage);
+               var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
+               ConsoleCE.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               Thread.Sleep(waitTime);
+               continue;
+            }
+
+            PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
+            ConsoleCE.WriteImportantLine("DONE");
+            ConsoleCE.WriteLine();
+            return executionSummary;
+         }
+         finally
+         {
+            if(tearDownAsync != null)
+            {
+               await tearDownAsync().NoMarshalling();
+            }else if(tearDown != null)
+            {
+               tearDown();
+            }
+         }
       }
 
       throw new Exception("Unreachable");
