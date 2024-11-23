@@ -34,11 +34,14 @@ public class TestStringsController : Controller
 
 public class MyQuery
 {
+   // ReSharper disable once MemberCanBeInternal
    public string Input { get; set; } = "";
 }
 
+// ReSharper disable once MemberCanBeInternal
 public class MyResponse
 {
+   // ReSharper disable once MemberCanBeInternal
    public string Result { get; set; } = "";
 }
 
@@ -111,7 +114,7 @@ public class TestAspNetCoreHost
       builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestObjectsController).Assembly));
       builder.Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TestStringsController).Assembly));
 
-      builder.WebHost.UseUrls($"http://127.0.0.1:0");
+      builder.WebHost.UseUrls("http://127.0.0.1:0");
 
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
