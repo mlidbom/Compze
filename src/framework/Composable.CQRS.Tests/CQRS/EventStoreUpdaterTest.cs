@@ -68,9 +68,9 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
                      .Map<Composable.Tests.CQRS.IUserRegistered>("6a9b3276-cedc-4dae-a15c-4d386c935a48");
    }
 
-   [TearDown] public void TearDownTask()
+   [TearDown] public async Task TearDownTask()
    {
-      _serviceLocator.Dispose();
+      await _serviceLocator.DisposeAsync();
    }
 
 

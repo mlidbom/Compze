@@ -55,7 +55,7 @@ partial class Inbox
          return app;
       }
 
-      public class QueryController : Controller
+      protected class QueryController : Controller
       {
          [HttpPost("/internal/rpc/query")] public async Task<IActionResult> Query()
          {

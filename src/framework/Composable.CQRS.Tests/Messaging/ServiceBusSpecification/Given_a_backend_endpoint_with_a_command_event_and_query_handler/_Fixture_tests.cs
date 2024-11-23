@@ -46,7 +46,7 @@ public class Fixture_tests : Fixture
 
    void AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException()
    {
-      AssertThrows.Exception<AggregateException>(Host.Dispose)
+      Assert.ThrowsAsync<AggregateException>(async Task () => await Host.DisposeAsync())
                   .InnerExceptions.Single().Should().Be(_thrownException);
    }
 

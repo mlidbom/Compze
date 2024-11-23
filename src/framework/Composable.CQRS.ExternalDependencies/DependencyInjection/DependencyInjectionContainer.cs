@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Composable.DependencyInjection.Microsoft;
 using Composable.DependencyInjection.SimpleInjector;
 using Composable.DependencyInjection.Windsor;
@@ -40,10 +41,10 @@ public static class DependencyInjectionContainer
       return container;
    }
 
-   class TestingEndpointHostDisposer : IDisposable
+   class TestingEndpointHostDisposer : IAsyncDisposable
    {
       readonly ITestingEndpointHost _host;
       public TestingEndpointHostDisposer(ITestingEndpointHost host) => _host = host;
-      public void Dispose() => _host.Dispose();
+      public async ValueTask DisposeAsync() => await _host.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
    }
 }

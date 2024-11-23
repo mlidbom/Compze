@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Composable.DependencyInjection;
 
-public interface IDependencyInjectionContainer : IDisposable
+public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
    IRunMode RunMode { get; }
    void Register(params ComponentRegistration[] registrations);
@@ -11,7 +11,7 @@ public interface IDependencyInjectionContainer : IDisposable
    IServiceLocator CreateServiceLocator();
 }
 
-public interface IServiceLocator : IDisposable
+public interface IServiceLocator : IDisposable, IAsyncDisposable
 {
    TComponent Resolve<TComponent>() where TComponent : class;
    TComponent[] ResolveAll<TComponent>() where TComponent : class;

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.Persistence.DocumentDb;
 using Composable.Testing;
@@ -26,9 +27,9 @@ class DocumentDbTestsBase : DuplicateByPluggableComponentTest
       ServiceLocator = CreateServiceLocator();
    }
    [TearDown]
-   public void TearDownTask()
+   public async Task TearDownTask()
    {
-      ServiceLocator?.Dispose();
+      if (ServiceLocator != null) await ServiceLocator.DisposeAsync();
    }
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession)
    {

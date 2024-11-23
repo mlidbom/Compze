@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.SystemCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Composable.DependencyInjection.Microsoft;
@@ -115,5 +117,20 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
       _isDisposed = true;
       (_serviceProvider as IDisposable)?.Dispose();
       _serviceProvider = null;
+   }
+
+   public async ValueTask DisposeAsync()
+   {
+      Contract.Assert.That(_scopeCache.Value == null, "Scopes must be disposed before the container");
+      if(!_isDisposed)
+      {
+         _isDisposed = true;
+         if(_serviceProvider != null)
+         {
+            await ((IAsyncDisposable)_serviceProvider).DisposeAsync().NoMarshalling();
+         }
+         _serviceProvider = null;
+      }
+      await Task.CompletedTask.NoMarshalling();
    }
 }

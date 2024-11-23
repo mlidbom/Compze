@@ -23,7 +23,7 @@ public class UserStoryTest : DuplicateByPluggableComponentTest
       await Host.StartAsync();
    }
 
-   [TearDown] public void Teardown() => Host.Dispose();
+   [TearDown] public async Task Teardown() => await Host.DisposeAsync();
 
    public UserStoryTest([NotNull] string _) : base(_) {}
 }

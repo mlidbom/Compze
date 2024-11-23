@@ -28,10 +28,10 @@ public class Failure_tests : Fixture
       Assert.ThrowsAny<Exception>(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())));
    }
 
-   public override void TearDown()
+   public override async Task TearDownAsync()
    {
-      Assert.ThrowsAny<Exception>(() => Host.Dispose());
-      base.TearDown();
+      await Assert.ThrowsAnyAsync<Exception>(async Task() => await Host.DisposeAsync());
+      await base.TearDownAsync();
    }
 
    readonly IntentionalException _thrownException = new();

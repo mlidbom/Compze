@@ -9,7 +9,7 @@ using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-partial class Inbox : IInbox, IDisposable
+partial class Inbox : IInbox, IAsyncDisposable
 {
    Runner? _runner;
    readonly RealEndpointConfiguration _configuration;
@@ -43,23 +43,20 @@ partial class Inbox : IInbox, IDisposable
       await Task.WhenAll(_runner.StartAsync(), storageStartTask, _aspNetHost.StartAsync()).NoMarshalling();
    }
 
-   //todo: Should be async
-   public void Stop()
+   public async Task StopAsync()
    {
       Assert.State.Assert(_runner is not null);
       _runner.Dispose();
-      //_aspNetHost.StopAsync().SyncResult();
+      await _aspNetHost.StopAsync().NoMarshalling();
       _runner = null;
    }
 
 
-   public void Dispose()
+   public async ValueTask DisposeAsync()
    {
       if(_runner is not null)
       {
-         Stop();
+         await StopAsync().NoMarshalling();
       }
    }
-
-
 }

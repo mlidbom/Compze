@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Composable.Contracts;
 
 namespace Composable.DependencyInjection;
@@ -58,6 +59,11 @@ partial class ComposableDependencyInjectionContainer : IDependencyInjectionConta
          _disposed = true;
          _createdServiceLocator?.Dispose();
       }
+   }
+
+   public ValueTask DisposeAsync()
+   {
+      throw new NotImplementedException();
    }
 
    TComponent IServiceLocator.Resolve<TComponent>() where TComponent : class => _createdServiceLocator!.Resolve<TComponent>();

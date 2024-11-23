@@ -44,7 +44,7 @@ public class PerformanceTestBase : DuplicateByPluggableComponentTest
       await Host.StartAsync();
    }
 
-   [TearDown] public void TearDown() { Host.Dispose(); }
+   [TearDown] public async Task TearDown() { await Host.DisposeAsync(); }
 
    protected class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult> {}
    protected class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult> {}

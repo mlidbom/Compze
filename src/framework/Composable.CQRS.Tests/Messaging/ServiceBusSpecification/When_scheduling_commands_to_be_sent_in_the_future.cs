@@ -63,9 +63,9 @@ public class When_scheduling_commands_to_be_sent_in_the_future : DuplicateByPlug
                           .Should().Be(false);
    }
 
-   [TearDown]public void TearDown()
+   [TearDown]public async Task TearDown()
    {
-      _host.Dispose();
+      await _host.DisposeAsync();
    }
 
    class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command {}

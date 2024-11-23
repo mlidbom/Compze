@@ -20,8 +20,6 @@ public class EndpointHost : IEndpointHost
    protected List<IEndpoint> Endpoints { get; } = [];
    internal IGlobalBusStateTracker GlobalBusStateTracker;
 
-   readonly ILogger _log = Logger.For<EndpointHost>();
-
    protected EndpointHost(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory)
    {
       _mode = mode;
@@ -56,37 +54,39 @@ public class EndpointHost : IEndpointHost
 
    bool _isStarted;
 
-   public async Task StartAsync() => await _log.ExceptionsAndRethrowAsync(async () =>
+   public async Task StartAsync()
    {
       Assert.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
       _isStarted = true;
 
       await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).NoMarshalling();
       await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).NoMarshalling();
-   }).NoMarshalling();
+   }
 
    public void Start() => StartAsync().WaitUnwrappingException();
 
-   protected virtual void Dispose(bool disposing) => _log.ExceptionsAndRethrow(() =>
+   protected virtual async Task DisposeAsync(bool disposing)
    {
       if(!_disposed)
       {
          _disposed = true;
          if(_isStarted)
          {
-
             Assert.State.Assert(_isStarted);
             _isStarted = false;
-            Endpoints.Where(endpoint => endpoint.IsRunning).ForEach(endpoint => endpoint.Stop());
+            await Task.WhenAll(Endpoints.Where(endpoint => endpoint.IsRunning).Select(endpoint => endpoint.StopAsync())).NoMarshalling();
          }
 
-         Endpoints.ForEach(endpoint => endpoint.Dispose());
+         //Review:Watch out. Apparently it is important not to await a ValueTask more than once.
+         await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).NoMarshalling();
       }
-   });
 
-   public void Dispose()
+      await Task.CompletedTask.NoMarshalling();
+   }
+
+   public async ValueTask DisposeAsync()
    {
-      Dispose(true);
+      await DisposeAsync(true).NoMarshalling();
       GC.SuppressFinalize(this);
    }
 }

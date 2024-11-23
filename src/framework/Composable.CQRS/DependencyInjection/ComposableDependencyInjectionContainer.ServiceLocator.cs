@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.SystemCE;
 using Composable.SystemCE.ReflectionCE;
@@ -141,7 +142,6 @@ partial class ComposableDependencyInjectionContainer
             }
          });
 
-      //Todo: Performance: Implement IAsyncDisposable.
       public void Dispose()
       {
          if(!_disposed)
@@ -151,5 +151,7 @@ partial class ComposableDependencyInjectionContainer
             _rootCache.Dispose();
          }
       }
+
+      public ValueTask DisposeAsync() => throw new NotImplementedException();
    }
 }

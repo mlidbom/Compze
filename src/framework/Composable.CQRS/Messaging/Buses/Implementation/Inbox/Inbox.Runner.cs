@@ -14,7 +14,7 @@ using NetMQ.Sockets;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-partial class Inbox : IInbox, IDisposable
+partial class Inbox
 {
    class Runner : IDisposable
    {

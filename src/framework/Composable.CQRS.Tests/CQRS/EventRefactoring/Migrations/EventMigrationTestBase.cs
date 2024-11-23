@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.DependencyInjection.Testing;
 using Composable.GenericAbstractions.Time;
@@ -25,12 +26,12 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
 //refactor: this test. It is too monolithic and hard to read and extend.
 public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
 {
-   internal void RunMigrationTest(params MigrationScenario[] scenarios)
+   internal async Task RunMigrationTest(params MigrationScenario[] scenarios)
    {
       ConsoleCE.WriteLine($"###############$$$$$$$Running {scenarios.Length} scenario(s)");
 
       IList<IEventMigration> migrations = new List<IEventMigration>();
-      using var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations.ToArray());
+      await using var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations.ToArray());
       var timeSource = serviceLocator.Resolve<TestingTimeSource>();
       timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
       var scenarioIndex = 1;

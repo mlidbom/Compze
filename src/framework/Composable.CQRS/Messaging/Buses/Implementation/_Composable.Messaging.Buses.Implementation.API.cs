@@ -15,7 +15,7 @@ interface IInbox
 {
    EndPointAddress Address { get; }
    Task StartAsync();
-   void Stop();
+   Task StopAsync();
 }
 
 interface IOutbox

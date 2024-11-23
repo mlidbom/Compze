@@ -56,9 +56,9 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
       await _host.StartAsync();
    }
 
-   [TearDown] public void TearDown()
+   [TearDown] public async Task TearDown()
    {
-      _host.Dispose();
+      await _host.DisposeAsync();
    }
 
    [Test] public void Can_get_command_result()

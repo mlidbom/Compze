@@ -26,10 +26,10 @@ class Endpoint : IEndpoint
       }
 
       public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).NoMarshalling();
-      public void Stop()
+      public async Task StopAsync()
       {
          _commandScheduler.Stop();
-         Inbox.Stop();
+         await Inbox.StopAsync().NoMarshalling();
       }
 
       public void Dispose()
@@ -101,20 +101,21 @@ class Endpoint : IEndpoint
    {
    }
 
-   public void Stop()
+   public async Task StopAsync()
    {
       Assert.State.Assert(IsRunning);
       IsRunning = false;
       _transport.Stop();
-      _serverComponents?.Stop();
+      if(_serverComponents != null )
+         await _serverComponents.StopAsync().NoMarshalling();
    }
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoMessagesInFlight(timeoutOverride);
 
-   public void Dispose()
+   public async ValueTask DisposeAsync()
    {
-      if(IsRunning) Stop();
-      ServiceLocator.Dispose();
+      if(IsRunning) await StopAsync().NoMarshalling();
+      await ServiceLocator.DisposeAsync().NoMarshalling();
       _serverComponents?.Dispose();
    }
 }

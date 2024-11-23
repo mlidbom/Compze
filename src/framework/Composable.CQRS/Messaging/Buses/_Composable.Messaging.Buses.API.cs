@@ -28,7 +28,7 @@ public interface IMessageHandlerRegistrar
    IMessageHandlerRegistrar ForQuery<TQuery, TResult>(Func<TQuery, TResult> handler) where TQuery : IQuery<TResult>;
 }
 
-public interface IEndpoint : IDisposable
+public interface IEndpoint : IAsyncDisposable
 {
    EndpointId Id { get; }
    IServiceLocator ServiceLocator { get; }
@@ -36,7 +36,7 @@ public interface IEndpoint : IDisposable
    bool IsRunning { get; }
    Task InitAsync();
    Task ConnectAsync();
-   void Stop();
+   Task StopAsync();
    void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride);
 }
 
@@ -58,7 +58,7 @@ public interface IEndpointBuilder : IDisposable
    MessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 }
 
-public interface IEndpointHost : IDisposable
+public interface IEndpointHost : IAsyncDisposable
 {
    IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup);
    ///<summary>Registers a default client endpoint with a host. Can be called only once per host instance.</summary>

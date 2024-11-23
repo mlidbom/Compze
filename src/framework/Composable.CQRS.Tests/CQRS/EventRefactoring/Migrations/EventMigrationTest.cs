@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.DependencyInjection.Testing;
 using Composable.GenericAbstractions.Time;
@@ -8,6 +9,7 @@ using Composable.Persistence.EventStore;
 using Composable.Persistence.EventStore.Refactoring.Migrations;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.SystemCE.TransactionsCE;
 using Composable.Tests.CQRS.EventRefactoring.Migrations.Events;
 using FluentAssertions;
@@ -24,244 +26,244 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
 public class EventMigrationTest : EventMigrationTestBase
 {
    [Test]
-   public void Base_class_method_should_detect_incorrect_type_order()
+   public async Task Base_class_method_should_detect_incorrect_type_order()
    {
-      this.Invoking(
+      await this.Invoking(
               _ => RunMigrationTest(
                  new MigrationScenario(
                     EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                     EnumerableCE.OfTypes<Ec1, Ef, E2, Ef>())))
-          .Should().Throw<Exception>();
+          .Should().ThrowAsync<Exception>();
    }
 
    [Test]
-   public void Replacing_E1_with_E2()
+   public async Task Replacing_E1_with_E2()
    {
-      RunMigrationTest(new MigrationScenario(
+      await RunMigrationTest(new MigrationScenario(
                           EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                           EnumerableCE.OfTypes<Ec1, E2, Ef, Ef>(),
                           Replace<E1>.With<E2>()));
    }
 
    [Test]
-   public void Replacing_E1_with_E2_at_end_of_stream()
+   public async Task Replacing_E1_with_E2_at_end_of_stream()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1>(),
-                          EnumerableCE.OfTypes<Ec1, E2>(),
-                          Replace<E1>.With<E2>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1>(),
+                                EnumerableCE.OfTypes<Ec1, E2>(),
+                                Replace<E1>.With<E2>()));
    }
 
    [Test]
-   public void Replacing_E1_with_E2_E3_at_end_of_stream()
+   public async Task Replacing_E1_with_E2_E3_at_end_of_stream()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1>(),
-                          EnumerableCE.OfTypes<Ec1, E2, E3>(),
-                          Replace<E1>.With<E2, E3>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1>(),
+                                EnumerableCE.OfTypes<Ec1, E2, E3>(),
+                                Replace<E1>.With<E2, E3>()));
    }
 
    [Test]
-   public void Replacing_E1_with_E2_E3()
+   public async Task Replacing_E1_with_E2_E3()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E2, E3, Ef>(),
-                          Replace<E1>.With<E2, E3>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E2, E3, Ef>(),
+                                Replace<E1>.With<E2, E3>()));
    }
 
    [Test]
-   public void Replacing_E1_with_E2_E3_2()
+   public async Task Replacing_E1_with_E2_E3_2()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef, Ef, Ef, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E2, E3, Ef, Ef, Ef, Ef>(),
-                          Replace<E1>.With<E2, E3>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef, Ef, Ef, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E2, E3, Ef, Ef, Ef, Ef>(),
+                                Replace<E1>.With<E2, E3>()));
    }
 
    [Test]
-   public void Replacing_E1_with_E2_then_irrelevant_migration()
+   public async Task Replacing_E1_with_E2_then_irrelevant_migration()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E2, Ef>(),
-                          Replace<E1>.With<E2>(),
-                          Replace<E1>.With<E5>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E2, Ef>(),
+                                Replace<E1>.With<E2>(),
+                                Replace<E1>.With<E5>()));
    }
 
    [Test]
-   public void Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2()
+   public async Task Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E2, E3, Ef>(),
-                          Replace<E1>.With<E2, E3>(),
-                          Replace<E1>.With<E5>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E2, E3, Ef>(),
+                                Replace<E1>.With<E2, E3>(),
+                                Replace<E1>.With<E5>()));
    }
 
    [Test]
-   public void Replacing_E1_with_E2_E3_then_E2_with_E4()
+   public async Task Replacing_E1_with_E2_E3_then_E2_with_E4()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E4, E3, Ef>(),
-                          Replace<E1>.With<E2, E3>(), //Ec1, E2, E3, Ef
-                          Replace<E2>.With<E4>()));   //Ec1, E4, E3, Ef
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E4, E3, Ef>(),
+                                Replace<E1>.With<E2, E3>(), //Ec1, E2, E3, Ef
+                                Replace<E2>.With<E4>()));   //Ec1, E4, E3, Ef
    }
 
    [Test]
-   public void Inserting_E3_before_E1()
+   public async Task Inserting_E3_before_E1()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E3, E1, Ef>(),
-                          Before<E1>.Insert<E3>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E3, E1, Ef>(),
+                                Before<E1>.Insert<E3>()));
    }
 
    [Test]
-   public void Inserting_E3_E4_before_E1()
+   public async Task Inserting_E3_E4_before_E1()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E3, E4, E1, Ef>(),
-                          Before<E1>.Insert<E3, E4>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E3, E4, E1, Ef>(),
+                                Before<E1>.Insert<E3, E4>()));
    }
 
    [Test]
-   public void Inserting_E2_before_E1_then_E3_before_E2()
+   public async Task Inserting_E2_before_E1_then_E3_before_E2()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E3, E2, E1, Ef>(),
-                          Before<E1>.Insert<E2>(),
-                          Before<E2>.Insert<E3>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E3, E2, E1, Ef>(),
+                                Before<E1>.Insert<E2>(),
+                                Before<E2>.Insert<E3>()));
    }
 
    [Test]
-   public void Inserting_E3_E4_before_E1_then_E5_before_E3()
+   public async Task Inserting_E3_E4_before_E1_then_E5_before_E3()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1>(),
-                          EnumerableCE.OfTypes<Ec1, E5, E3, E4, E1>(),
-                          Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1
-                          Before<E3>.Insert<E5>()));   //Ec1, E5, E3, E4, E1;
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1>(),
+                                EnumerableCE.OfTypes<Ec1, E5, E3, E4, E1>(),
+                                Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1
+                                Before<E3>.Insert<E5>()));   //Ec1, E5, E3, E4, E1;
    }
 
    [Test]
-   public void Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4()
+   public async Task Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E3, E5, E4, E1, Ef>(),
-                          Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef
-                          Before<E4>.Insert<E5>()));   //Ec1, E3, E5, E4, E1, Ef
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E3, E5, E4, E1, Ef>(),
+                                Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef
+                                Before<E4>.Insert<E5>()));   //Ec1, E3, E5, E4, E1, Ef
    }
 
    [Test]
-   public void Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2()
+   public async Task Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1>(),
-                          EnumerableCE.OfTypes<Ec1, E3, E2, E1>(),
-                          Before<E1>.Insert<E2>(),   //Ec1, E2, E1
-                          Before<E2>.Insert<E3>())); //Ec1, E3, E2, E1
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1>(),
+                                EnumerableCE.OfTypes<Ec1, E3, E2, E1>(),
+                                Before<E1>.Insert<E2>(),   //Ec1, E2, E1
+                                Before<E2>.Insert<E3>())); //Ec1, E3, E2, E1
    }
 
    [Test]
-   public void Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4()
+   public async Task Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1>(),
-                          EnumerableCE.OfTypes<Ec1, E5, E4, E3, E2, E1>(),
-                          Before<E1>.Insert<E3, E2>(), //Ec1, E3, E2, E1
-                          Before<E3>.Insert<E4>(),     //Ec1, E4, E3, E2, E1
-                          Before<E4>.Insert<E5>()));   //Ec1, E5, E4, E3, E2, E1
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1>(),
+                                EnumerableCE.OfTypes<Ec1, E5, E4, E3, E2, E1>(),
+                                Before<E1>.Insert<E3, E2>(), //Ec1, E3, E2, E1
+                                Before<E3>.Insert<E4>(),     //Ec1, E4, E3, E2, E1
+                                Before<E4>.Insert<E5>()));   //Ec1, E5, E4, E3, E2, E1
    }
 
    [Test]
-   public void Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6()
+   public async Task Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E6, E5, E4, E1, Ef>(),
-                          Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef
-                          Before<E4>.Insert<E5>(),     //Ec1, E3, E5, E4, E1, Ef
-                          Replace<E3>.With<E6>()));    //Ec1, E6, E5, E4, E1, Ef
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E6, E5, E4, E1, Ef>(),
+                                Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef
+                                Before<E4>.Insert<E5>(),     //Ec1, E3, E5, E4, E1, Ef
+                                Replace<E3>.With<E6>()));    //Ec1, E6, E5, E4, E1, Ef
    }
 
    [Test]
-   public void Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7()
+   public async Task Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7()
    {
-      RunMigrationTest(new MigrationScenario
-                       (EnumerableCE.OfTypes<Ec1, E1, Ef>(),
-                        EnumerableCE.OfTypes<Ec1, E6, E5, E4, E1, E7, E8>(),
-                        Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef
-                        Before<E4>.Insert<E5>(),     //Ec1, E3, E5, E4, E1, Ef
-                        Replace<E3>.With<E6>(),      //Ec1, E6, E5, E4, E1, Ef
-                        Replace<Ef>.With<E7>(),      //Ec1, E6, E5, E4, E1, E7
-                        After<E7>.Insert<E8>()));    //Ec1, E6, E5, E4, E1, E7, E8
+      await RunMigrationTest(new MigrationScenario
+                             (EnumerableCE.OfTypes<Ec1, E1, Ef>(),
+                              EnumerableCE.OfTypes<Ec1, E6, E5, E4, E1, E7, E8>(),
+                              Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef
+                              Before<E4>.Insert<E5>(),     //Ec1, E3, E5, E4, E1, Ef
+                              Replace<E3>.With<E6>(),      //Ec1, E6, E5, E4, E1, Ef
+                              Replace<Ef>.With<E7>(),      //Ec1, E6, E5, E4, E1, E7
+                              After<E7>.Insert<E8>()));    //Ec1, E6, E5, E4, E1, E7, E8
    }
 
    [Test]
-   public void Inserting_E3_E4_before_E1_then_E5_before_E3_2()
+   public async Task Inserting_E3_E4_before_E1_then_E5_before_E3_2()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E5, E3, E4, E1, Ef, Ef>(),
-                          Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef, Ef
-                          Before<E3>.Insert<E5>()));   //Ec1, E5, E3, E4, E1, Ef, Ef
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E5, E3, E4, E1, Ef, Ef>(),
+                                Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4, E1, Ef, Ef
+                                Before<E3>.Insert<E5>()));   //Ec1, E5, E3, E4, E1, Ef, Ef
    }
 
    [Test]
-   public void Inserting_E3_E4_before_E1_then_E5_before_E4_2()
+   public async Task Inserting_E3_E4_before_E1_then_E5_before_E4_2()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E3, E5, E4, E1, Ef, Ef>(),
-                          Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4 E1, Ef, Ef
-                          Before<E4>.Insert<E5>()));   //Ec1, E3, E5, E4, E1, Ef, Ef
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E3, E5, E4, E1, Ef, Ef>(),
+                                Before<E1>.Insert<E3, E4>(), //Ec1, E3, E4 E1, Ef, Ef
+                                Before<E4>.Insert<E5>()));   //Ec1, E3, E5, E4, E1, Ef, Ef
    }
 
    [Test]
-   public void Inserting_E2_after_E1()
+   public async Task Inserting_E2_after_E1()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
-                          EnumerableCE.OfTypes<Ec1, E1, E2, Ef, Ef>(),
-                          After<E1>.Insert<E2>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
+                                EnumerableCE.OfTypes<Ec1, E1, E2, Ef, Ef>(),
+                                After<E1>.Insert<E2>()));
 
    }
 
    [Test]
-   public void Inserting_E2_after_E1_at_end_of_stream()
+   public async Task Inserting_E2_after_E1_at_end_of_stream()
    {
-      RunMigrationTest(new MigrationScenario(
-                          EnumerableCE.OfTypes<Ec1, E1>(),
-                          EnumerableCE.OfTypes<Ec1, E1, E2>(),
-                          After<E1>.Insert<E2>()));
+      await RunMigrationTest(new MigrationScenario(
+                                EnumerableCE.OfTypes<Ec1, E1>(),
+                                EnumerableCE.OfTypes<Ec1, E1, E2>(),
+                                After<E1>.Insert<E2>()));
    }
 
    [Test]
-   public void Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
+   public async Task Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
    {
-      this.Invoking(
-              _ =>
-                 RunMigrationTest(
-                    new MigrationScenario(
-                       EnumerableCE.OfTypes<Ec1, E1>(),
-                       EnumerableCE.OfTypes<Ec1, E2, E3, E1>(),
-                       Before<E1>.Insert<E2>(),
-                       After<E2>.Insert<E3>())))
-          .Should().Throw<NonIdempotentMigrationDetectedException>();
+      await this.Invoking(
+                    _ =>
+                       RunMigrationTest(
+                          new MigrationScenario(
+                             EnumerableCE.OfTypes<Ec1, E1>(),
+                             EnumerableCE.OfTypes<Ec1, E2, E3, E1>(),
+                             Before<E1>.Insert<E2>(),
+                             After<E2>.Insert<E3>())))
+                .Should().ThrowAsync<NonIdempotentMigrationDetectedException>();
    }
 
    [Test]
-   public void PersistingMigrationsOfTheSameAggregateMultipleTimes()
+   public async Task PersistingMigrationsOfTheSameAggregateMultipleTimes()
    {
       var emptyMigrationsArray = Array.Empty<IEventMigration>();
       IReadOnlyList<IEventMigration> migrations = emptyMigrationsArray;
 
-      var toDispose = StrictAggregateDisposable.Create();
+      List<IAsyncDisposable> toDispose = [];
       try
       {
          var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
@@ -327,19 +329,19 @@ public class EventMigrationTest : EventMigrationTestBase
          AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
       }finally
       {
-         toDispose.Dispose();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
       }
 
    }
 
 
    [Test]
-   public void PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter()
+   public async Task PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter()
    {
       var emptyMigrationsArray = Array.Empty<IEventMigration>();
       IReadOnlyList<IEventMigration> migrations = emptyMigrationsArray;
 
-      var toDispose = StrictAggregateDisposable.Create();
+      List<IAsyncDisposable> toDispose = [];
       try
       {
          var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
@@ -414,17 +416,17 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         toDispose.Dispose();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
       }
 
    }
 
    [Test]
-   public void UpdatingAnAggregateAfterPersistingMigrations()
+   public async Task UpdatingAnAggregateAfterPersistingMigrations()
    {
       IReadOnlyList<IEventMigration> migrations = Array.Empty<IEventMigration>();
 
-      var toDispose = StrictAggregateDisposable.Create();
+      List<IAsyncDisposable> toDispose = [];
       try
       {
          var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
@@ -464,18 +466,18 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         toDispose.Dispose();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
       }
    }
 
    [Test]
-   public void Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1()
+   public async Task Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1()
    {
       var firstMigration = EnumerableCE.Create(Before<E1>.Insert<E2>()).ToArray();
       var secondMigration = EnumerableCE.Create(Before<E1>.Insert<E3>()).ToArray();
       IReadOnlyList<IEventMigration> migrations = new List<IEventMigration>();
 
-      var toDispose = StrictAggregateDisposable.Create();
+      List<IAsyncDisposable> toDispose = [];
       try
       {
          var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
@@ -511,18 +513,18 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         toDispose.Dispose();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
       }
    }
 
    [Test]
-   public void Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1()
+   public async Task Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1()
    {
       var firstMigration = EnumerableCE.Create(After<E1>.Insert<E2>()).ToArray();
       var secondMigration = EnumerableCE.Create(After<E1>.Insert<E3>()).ToArray();
       IReadOnlyList<IEventMigration> migrations = new List<IEventMigration>();
 
-      var toDispose = StrictAggregateDisposable.Create();
+      List<IAsyncDisposable> toDispose = [];
       try
       {
          var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
@@ -558,14 +560,14 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         toDispose.Dispose();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
       }
    }
 
    [Test]
-   public void Inserting_E2_Before_E1()
+   public async Task Inserting_E2_Before_E1()
    {
-      RunMigrationTest(
+      await RunMigrationTest(
          new MigrationScenario(
             EnumerableCE.OfTypes<Ec1, E1>(),
             EnumerableCE.OfTypes<Ec1, E2, E1>(),
@@ -573,13 +575,13 @@ public class EventMigrationTest : EventMigrationTestBase
    }
 
    [Test]
-   public void Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories()
+   public async Task Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories()
    {
       var actualMigrations = EnumerableCE.Create(Replace<E1>.With<E2>()).ToArray();
       IReadOnlyList<IEventMigration> migrations = new List<IEventMigration>();
 
       // ReSharper disable once AccessToModifiedClosure this is exactly what we wish to achieve here...
-      using var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
+      await using var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
       IEventStore PersistingEventStore() => serviceLocator.Resolve<IEventStore>();
 
       using var otherProcessServiceLocator = serviceLocator.Clone();

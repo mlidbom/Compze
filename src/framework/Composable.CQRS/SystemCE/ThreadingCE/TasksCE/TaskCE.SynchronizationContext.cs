@@ -38,6 +38,10 @@ static partial class TaskCE
    internal static GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter ResetSynchronizationContextAndScheduler() =>
       Task.CompletedTask.ResetSynchronizationContextAndScheduler();
 
+   internal static ConfiguredValueTaskAwaitable<TResult> NoMarshalling<TResult>(this ValueTask<TResult> @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
+
+   internal static ConfiguredValueTaskAwaitable NoMarshalling(this ValueTask @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
+
    internal static GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter ResetSynchronizationContextAndScheduler(this Task task) => new(task);
 
    internal readonly struct GuaranteeContinuationRunsAsyncOnDefaultSchedulerWithoutSynchronizationContextAwaiter : ICriticalNotifyCompletion

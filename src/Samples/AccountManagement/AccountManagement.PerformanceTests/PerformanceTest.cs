@@ -97,5 +97,5 @@ class PerformanceTest : DuplicateByPluggableComponentTest
       return created;
    }
 
-   [TearDown] public void Teardown() => _host.Dispose();
+   [TearDown] public async Task Teardown() => await _host.DisposeAsync();
 }

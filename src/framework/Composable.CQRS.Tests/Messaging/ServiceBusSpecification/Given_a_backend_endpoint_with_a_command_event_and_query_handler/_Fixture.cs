@@ -112,11 +112,11 @@ public class Fixture : DuplicateByPluggableComponentTest
                  };
    }
 
-   [TearDown]public virtual void TearDown()
+   [TearDown]public virtual async Task TearDownAsync()
    {
       OpenGates();
       TaskRunner.Dispose();
-      Host.Dispose();
+      await Host.DisposeAsync();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

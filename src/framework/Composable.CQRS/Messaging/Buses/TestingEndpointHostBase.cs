@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.Logging;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Refactoring.Naming;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses;
 
 public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-   readonly ILogger _log = Logger.For<TestingEndpointHostBase>();
-
    readonly List<Exception> _expectedExceptions = [];
    public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => GlobalBusStateTracker = new GlobalBusStateTracker();
 
@@ -53,7 +53,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    }
 
    bool _disposed;
-   protected override void Dispose(bool disposing) => _log.ExceptionsAndRethrow(() =>
+   protected override async Task DisposeAsync(bool disposing)
    {
       if(!_disposed)
       {
@@ -62,14 +62,14 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
-         base.Dispose(disposing);
+         await base.DisposeAsync(disposing).NoMarshalling();
 
          if(unHandledExceptions.Any())
          {
             throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions.ToArray());
          }
       }
-   });
+   }
 
    List<Exception> GetThrownExceptions() => GlobalBusStateTracker.GetExceptions().ToList();
 }
