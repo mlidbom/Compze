@@ -32,7 +32,7 @@ class MachineWideSingleThreaded
 
                                                           if(OperatingSystem.IsWindows())
                                                           {
-                                                             MutexSecurity mutexSecurity = new MutexSecurity();
+                                                             var mutexSecurity = new MutexSecurity();
                                                              mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
                                                                                                              MutexRights.FullControl,
                                                                                                              AccessControlType.Allow));

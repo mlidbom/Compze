@@ -59,14 +59,14 @@ public class NewtonSoftEventStoreEventSerializerTests
          aggregateVersion:  2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
-      TestEvent eventWithOnlySubclassValues = new TestEvent("Test1", "Test2")
-                                              {
-                                                 UtcTimeStamp = DateTime.MinValue
-                                              };
+      var eventWithOnlySubclassValues = new TestEvent("Test1", "Test2")
+                                        {
+                                           UtcTimeStamp = DateTime.MinValue
+                                        };
 
       var eventWithAllValuesJson = _eventSerializer.Serialize(eventWithAllValuesSet);
       var eventWithOnlySubclassValuesJson = _eventSerializer.Serialize(eventWithOnlySubclassValues);
-      TestEvent roundTripped = (TestEvent)_eventSerializer.Deserialize(typeof(TestEvent), eventWithAllValuesJson);
+      var roundTripped = (TestEvent)_eventSerializer.Deserialize(typeof(TestEvent), eventWithAllValuesJson);
 
       ConsoleCE.WriteLine(eventWithAllValuesJson);
 

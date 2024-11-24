@@ -182,9 +182,9 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
          });
       }
 
-      IAggregateEvent firstRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
+      var firstRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
-      IAggregateEvent secondRead = _serviceLocator.ExecuteInIsolatedScope(() =>  _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
+      var secondRead = _serviceLocator.ExecuteInIsolatedScope(() =>  _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
       Assert.That(firstRead, Is.SameAs(secondRead));
    }

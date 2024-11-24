@@ -128,7 +128,7 @@ public static class TimeAsserter
 
    static string GetFailureMessage(StopwatchCE.TimedExecutionSummary executionSummary, TimeSpan? maxAverage, TimeSpan? maxTotal)
    {
-      string failureMessage = "";
+      var failureMessage = "";
       if(maxTotal.HasValue && executionSummary.Total > maxTotal.Value)
       {
          failureMessage = $"Total:{executionSummary.Total.FormatReadable()} {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
@@ -142,13 +142,13 @@ public static class TimeAsserter
 
    static void PrintSummary(StopwatchCE.TimedExecutionSummary executionSummary, int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal)
    {
-      string maxAverageReport = maxAverage == null
-                                   ? ""
-                                   : $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
+      var maxAverageReport = maxAverage == null
+                                ? ""
+                                : $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
 
-      string maxTotalReport = maxTotal == null
-                                 ? ""
-                                 : $" {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
+      var maxTotalReport = maxTotal == null
+                              ? ""
+                              : $" {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
 
       if(iterations > 1)
       {

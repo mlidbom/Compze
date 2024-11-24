@@ -95,7 +95,7 @@ class TimingsStatisticsCollector
       Interlocked.Increment(ref _totalCalls);
       using(_monitor.EnterUpdateLock()) TotalTime += time;
       // ReSharper disable once ForCanBeConvertedToForeach
-      for(int i = 0; i < _callStats.Length; ++i)
+      for(var i = 0; i < _callStats.Length; ++i)
       {
          _callStats[i].IncrementIfMatching(time);
       }

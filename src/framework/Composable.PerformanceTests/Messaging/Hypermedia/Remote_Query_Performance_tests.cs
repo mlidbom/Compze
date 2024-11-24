@@ -59,7 +59,7 @@ public class RemoteQueryPerformanceTests : PerformanceTestBase
       {
          ClientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
          {
-            for(int i = 0; i < queriesPerRequest; i++)
+            for(var i = 0; i < queriesPerRequest; i++)
             {
                RemoteNavigator.Navigate(navigationSpecification);
             }

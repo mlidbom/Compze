@@ -24,9 +24,9 @@ public static class TypeBuilderCE
 
    public static (FieldInfo, PropertyInfo) ImplementProperty(this TypeBuilder typeBuilder, string propertyName, Type propertyType)
    {
-      FieldBuilder fieldBuilder = typeBuilder.DefineField($"_{propertyName}",
-                                                          propertyType,
-                                                          FieldAttributes.Private);
+      var fieldBuilder = typeBuilder.DefineField($"_{propertyName}",
+                                                 propertyType,
+                                                 FieldAttributes.Private);
 
       var propertyBuilder = typeBuilder.DefineProperty(name: propertyName,
                                                        attributes: PropertyAttributes.HasDefault,

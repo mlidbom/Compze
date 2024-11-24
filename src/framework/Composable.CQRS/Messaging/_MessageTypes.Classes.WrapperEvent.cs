@@ -108,13 +108,13 @@ public static partial class MessageTypes
 
          var genericWrapperEventType = AssemblyBuilderCE.Module.Update(module =>
          {
-            TypeBuilder wrapperEventBuilder = module.DefineType(
+            var wrapperEventBuilder = module.DefineType(
                name: $"{wrapperEventType}_ilgen_impl",
                attr: TypeAttributes.Public,
                parent: null,
                interfaces: [wrapperEventType]);
 
-            GenericTypeParameterBuilder wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
+            var wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
 
             wrappedEventTypeParameter.SetInterfaceConstraints(requiredEventInterface);
 

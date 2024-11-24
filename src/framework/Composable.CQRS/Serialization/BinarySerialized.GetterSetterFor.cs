@@ -235,7 +235,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
             {
                var count = reader.ReadInt32();
                var list = new List<TBinarySerializable>(count);
-               for(int index = 0; index < count; index++)
+               for(var index = 0; index < count; index++)
                {
                   if(reader.ReadBoolean())
                   {
@@ -297,7 +297,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
             {
                var count = reader.ReadInt32();
                var array = new TBinarySerializable[count];
-               for(int index = 0; index < count; index++)
+               for(var index = 0; index < count; index++)
                {
                   if(reader.ReadBoolean())
                   {

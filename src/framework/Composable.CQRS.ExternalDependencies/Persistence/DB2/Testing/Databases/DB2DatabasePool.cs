@@ -64,7 +64,7 @@ sealed class DB2DatabasePool : DatabasePool
       {
          dropStatements += ";";
 
-         for(int retries = 0; retries < 3; retries++)
+         for(var retries = 0; retries < 3; retries++)
          {
             try
             {

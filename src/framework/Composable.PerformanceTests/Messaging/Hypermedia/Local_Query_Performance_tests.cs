@@ -29,7 +29,7 @@ public class Local_Query_performance_tests : PerformanceTestBase
       {
          ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
          {
-            for(int i = 0; i < queriesPerRequest; i++)
+            for(var i = 0; i < queriesPerRequest; i++)
             {
                LocalNavigator.Execute(new MyLocalStrictlyLocalQuery());
             }

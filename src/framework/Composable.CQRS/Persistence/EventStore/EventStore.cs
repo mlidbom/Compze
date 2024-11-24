@@ -304,7 +304,7 @@ AggregateIds:
    void AssertHistoriesAreIdentical(AggregateEvent[] inMemoryMigratedHistory, IReadOnlyList<IAggregateEvent> loadedAggregateHistory)
    {
       Assert.Result.Assert(inMemoryMigratedHistory.Length == loadedAggregateHistory.Count);
-      for(int index = 0; index < inMemoryMigratedHistory.Length; ++index)
+      for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];
          var loaded = loadedAggregateHistory[index];
@@ -378,7 +378,7 @@ AggregateIds:
    static void SetManualReadOrders(EventDataRow[] newEvents, ReadOrder rangeStart, ReadOrder rangeEnd)
    {
       var readOrders = ReadOrder.CreateOrdersForEventsBetween(newEvents.Length, rangeStart, rangeEnd);
-      for (int index = 0; index < newEvents.Length; index++)
+      for (var index = 0; index < newEvents.Length; index++)
       {
          newEvents[index].StorageInformation.ReadOrder = readOrders[index];
       }

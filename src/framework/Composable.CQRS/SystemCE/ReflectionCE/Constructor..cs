@@ -20,9 +20,9 @@ static partial class Constructor
 
          static Func<TInstance> CompileStaticInstancePropertyDelegate()
          {
-            PropertyInfo instanceProperty = typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                                                             .SingleOrDefault(prop => prop.Name == "Instance" && prop.PropertyType == typeof(TInstance))
-                                         ?? throw new Exception($"{nameof(IStaticInstancePropertySingleton)} implementation: {typeof(TInstance).GetFullNameCompilable()} does not have a public property named Instance of of the same type.");
+            var instanceProperty = typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                                                    .SingleOrDefault(prop => prop.Name == "Instance" && prop.PropertyType == typeof(TInstance))
+                                ?? throw new Exception($"{nameof(IStaticInstancePropertySingleton)} implementation: {typeof(TInstance).GetFullNameCompilable()} does not have a public property named Instance of of the same type.");
 
             return Expression.Lambda<Func<TInstance>>(Expression.Property(null, instanceProperty)).Compile();
          }

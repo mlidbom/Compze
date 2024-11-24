@@ -105,7 +105,7 @@ static class TypeCE
 
    public static IEnumerable<Type> ClassInheritanceChain(this Type me)
    {
-      Type? current = me;
+      var current = me;
       while(current != null)
       {
          yield return current;
