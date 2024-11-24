@@ -21,6 +21,7 @@ public class Parallelism_policies : Fixture
                                                                                           session.GetAsync(new MyQuery()))));
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      OpenGates();
       await tasks;
    }
 

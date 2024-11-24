@@ -2,13 +2,5 @@
   <Settings>
     <EnableRDI>False</EnableRDI>
     <HiddenComponentWarnings />
-    <IgnoredTests>
-      <NamedTestSelector>
-        <TestName>Composable.Tests.Messaging.Hypermedia.RemoteQueryPerformanceTests("Memory:SimpleInjector").Async_Runs_100_local_requests_making_one_async_remote_query_each_in_10_milliseconds</TestName>
-      </NamedTestSelector>
-      <NamedTestSelector>
-        <TestName>Composable.Tests.Messaging.Hypermedia.RemoteQueryPerformanceTests("Memory:SimpleInjector").Async_Runs_10_local_requests_making_10_async_remote_queries_each_in_7_milliseconds</TestName>
-      </NamedTestSelector>
-    </IgnoredTests>
   </Settings>
 </ProjectConfiguration>

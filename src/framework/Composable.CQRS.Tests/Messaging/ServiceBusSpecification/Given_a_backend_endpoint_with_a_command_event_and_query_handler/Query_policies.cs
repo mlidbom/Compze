@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Composable.Messaging.Buses;
+using Composable.SystemCE.LinqCE;
 using Composable.Testing.Threading;
 using NUnit.Framework;
 
@@ -14,13 +16,13 @@ public class Query_policies : Fixture
 
       QueryHandlerThreadGate.Close();
 
-      var something = ClientEndpoint.ExecuteClientRequestAsync(async navigator => (await navigator.GetAsync(myQuery), await navigator.GetAsync(myQuery)));
+      var queriesResults = Task.WhenAll(1.Through(5)
+                                         .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(navigator => navigator.GetAsync(myQuery))));
 
-      Console.WriteLine("aoeusnth");
-      QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 2);
+      QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 5);
       QueryHandlerThreadGate.Open();
 
-      var (result1, result2) = await something;
+      await queriesResults;
    }
 
    public Query_policies(string _) : base(_) {}
