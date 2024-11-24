@@ -27,8 +27,12 @@ public partial class Password
          //Create a simple extension to keep the code short an expressive and DRY. If AddIf is unclear just hover your pointer over the method and the documentation comment should clear everything up.
          failures.AddIf(password.Length < 4, Failures.ShorterThanFourCharacters);
          failures.AddIf(password.Trim() != password, Failures.BorderedByWhitespace);
+#pragma warning disable CA1862 //This is not a case-insensitive comparison.
+#pragma warning disable CA1308 //This is not a case-insensitive comparison.
          failures.AddIf(password.ToLowerInvariant() == password, Failures.MissingUppercaseCharacter);
          failures.AddIf(password.ToUpperInvariant() == password, Failures.MissingLowerCaseCharacter);
+#pragma warning disable CA1308 //This is not a case-insensitive comparison.
+#pragma warning restore CA1862
          return failures;
       }
 

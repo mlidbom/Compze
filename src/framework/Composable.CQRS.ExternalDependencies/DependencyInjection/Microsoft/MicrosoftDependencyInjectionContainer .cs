@@ -91,7 +91,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>()
    {
-      if(_isDisposed) throw new ObjectDisposedException(nameof(MicrosoftDependencyInjectionContainer));
+      ObjectDisposedException.ThrowIf(_isDisposed, typeof(MicrosoftDependencyInjectionContainer));
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 

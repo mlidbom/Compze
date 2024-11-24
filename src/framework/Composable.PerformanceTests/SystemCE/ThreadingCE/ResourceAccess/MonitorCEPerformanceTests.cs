@@ -85,7 +85,7 @@ public class MonitorCEPerformanceTests
       _guarded.Increment_MonitorCE_Update();
    }
 
-   [TearDown] public void TearDownTask() { ConsoleCE.WriteImportantLine(StringCE.Invariant($"{_guarded.Value:N0}")); }
+   [TearDown] public void TearDownTask() => ConsoleCE.WriteImportantLine(StringCE.Invariant($"{_guarded.Value:N0}"));
 
    static void RunSingleThreadedScenario(Action action, TimeSpan singleThreadMaxTime)
    {

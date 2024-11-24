@@ -1,0 +1,4 @@
+[*.cs]
+
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA2007.severity = none # We don't need configure await for every await in a test project

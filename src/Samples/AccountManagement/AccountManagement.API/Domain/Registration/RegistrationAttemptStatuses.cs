@@ -2,6 +2,6 @@
 
 public enum RegistrationAttemptStatus
 {
-   Successful = 1,
-   EmailAlreadyRegistered = 2
+   Successful = 0,
+   EmailAlreadyRegistered = 1
 }
