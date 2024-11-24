@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Composable.Messaging;
@@ -87,13 +88,14 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistar
       typesWithMissingMappings = typesWithMissingMappings.Distinct().OrderBy(type => type.GetFullNameCompilable()).ToList();
 
       var fixMessage = new StringBuilder();
-      fixMessage.AppendLine($@"
+
+      fixMessage.AppendLine(CultureInfo.InvariantCulture, $@"
 In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
 Some such required type mappings are missing. 
 You should map them in your endpoint configuration by using {typeof(IEndpointBuilder)}.{nameof(IEndpointBuilder.TypeMapper)}")
                 .Append(StartOfMappingList);
 
-      typesWithMissingMappings.ForEach(type => fixMessage.Append($"{Environment.NewLine}   .{MapMethodCallforType(type)}"));
+      typesWithMissingMappings.ForEach(type => fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}   .{MapMethodCallforType(type)}"));
 
       fixMessage.Append(';').AppendLine().AppendLine();
 

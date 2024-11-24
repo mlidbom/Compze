@@ -1,9 +1,12 @@
 ﻿root = true
 
 [*.cs]
+#options: 
+csharp_style_namespace_declarations = file_scoped
+csharp_style_var_elsewhere = true
+csharp_style_var_when_type_is_apparent = true
+csharp_style_var_for_built_in_types = true
 
-
-dotnet_diagnostic.IDE0007.severity = silent #Use explicit type instead of var || Var has major benefits, not the least that when refactoring the exact types returned by something a ton of code does not necessary stop compiling and working
 dotnet_diagnostic.CA1859.severity = silent #CA1859: Use concrete types when possible for improved performance || I want the proper types, not whatever makes the code most efficient at the cost of exposing something I SHOULD NOT
 dotnet_diagnostic.CA1860.severity = silent #Prefer comparing Count to 0 over using Any() || Well I think Any() is more readable and shorter and unless a profiler tells me I have an issue with this ridiculous nano optimization I don't care.
 dotnet_diagnostic.CA1805.severity = silent #I do initialize members to their default values. It makes it clear that I have not forgotten, that this is the indended value.
