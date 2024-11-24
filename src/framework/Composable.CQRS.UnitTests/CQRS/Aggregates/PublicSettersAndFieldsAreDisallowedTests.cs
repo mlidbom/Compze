@@ -44,7 +44,7 @@ public class PublicSettersAndFieldsAreDisallowedTests
             [UsedImplicitly] public class GetterSetter : IGetSetAggregateEntityEventEntityId<Guid, Root, IRoot>
             {
                public Guid GetId(IRoot @event) => throw new Exception();
-               public void SetEntityId(Root @event, Guid id) { throw new Exception(); }
+               public void SetEntityId(Root @event, Guid id) => throw new Exception();
             }
          }
 

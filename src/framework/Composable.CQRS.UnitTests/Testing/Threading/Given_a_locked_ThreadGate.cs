@@ -31,9 +31,9 @@ namespace Composable.Tests.Testing.Threading;
       {
          ThreadGateTestFixture _fixture;
 
-         [SetUp] public void Setup() { _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough(); }
+         [SetUp] public void Setup() => _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
-         [TearDown] public void TearDownTask() { _fixture.Dispose(); }
+         [TearDown] public void TearDownTask() => _fixture.Dispose();
 
          [Test] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(0);
 

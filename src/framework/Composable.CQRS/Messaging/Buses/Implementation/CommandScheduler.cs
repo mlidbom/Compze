@@ -54,7 +54,7 @@ class CommandScheduler : IDisposable
 
    public void Dispose() => Stop();
 
-   public void Stop() { _scheduledMessagesTimer?.Dispose(); }
+   public void Stop() => _scheduledMessagesTimer?.Dispose();
 
    class ScheduledCommand
    {

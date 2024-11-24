@@ -12,10 +12,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TAggregateE
    {
       readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new();
 
-      void ApplyEvent(TComponentEvent @event)
-      {
-         _eventAppliersEventDispatcher.Dispatch(@event);
-      }
+      void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
       protected Component(TQueryModel queryModel)
          : this(

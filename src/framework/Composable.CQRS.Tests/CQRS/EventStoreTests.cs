@@ -39,7 +39,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
                      .Map<UserRegistered>("e965b5d4-6f1a-45fa-9660-2fec0abc4a0a");
    }
 
-   [TearDown] public async Task TearDownTask() { await _serviceLocator.DisposeAsync(); }
+   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync();
 
    [Test] public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {

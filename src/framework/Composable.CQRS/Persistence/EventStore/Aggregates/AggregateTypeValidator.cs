@@ -70,7 +70,7 @@ List of problem members:{Environment.NewLine}{brokenMembers}{Environment.NewLine
    readonly ITypeMapper _typeMapper;
    public AggregateTypeValidator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
 
-   public void AssertIsValid<TAggregate>() { ValidatorFor<TAggregate>.AssertValid(_typeMapper); }
+   public void AssertIsValid<TAggregate>() => ValidatorFor<TAggregate>.AssertValid(_typeMapper);
 
    static class ValidatorFor<TAggregate>
    {

@@ -18,6 +18,7 @@ static partial class MessageInspector
    {
       CommonAssertions(message);
 
+#pragma warning disable IDE0010
       switch(message)
       {
          case IStrictlyLocalMessage strictlyLocalMessage:
@@ -29,6 +30,7 @@ static partial class MessageInspector
          case IAtMostOnceMessage atMostOnce when atMostOnce.MessageId == Guid.Empty:
             throw new Exception($"{nameof(IAtMostOnceMessage.MessageId)} was Guid.Empty for message of type: {message.GetType().FullName}");
       }
+#pragma warning restore IDE0010
    }
 
    internal static void AssertValidToExecuteLocally(IMessage message)

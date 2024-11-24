@@ -120,7 +120,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       _unCommittedEvents.Clear();
    }
 
-   void IEventStored.SetTimeSource(IUtcTimeTimeSource timeSource) { TimeSource = timeSource; }
+   void IEventStored.SetTimeSource(IUtcTimeTimeSource timeSource) => TimeSource = timeSource;
 
    void IEventStored.LoadFromHistory(IEnumerable<IAggregateEvent> history)
    {

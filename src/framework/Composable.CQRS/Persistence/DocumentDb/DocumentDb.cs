@@ -62,7 +62,7 @@ class DocumentDb : IDocumentDb
    public void Remove(object id, Type documentType)
    {
       var rowsAffected = _persistenceLayer.Remove(GetIdString(id), AcceptableTypeIds(documentType));
-
+#pragma warning disable IDE0010
       switch(rowsAffected)
       {
          case < 1:
@@ -70,6 +70,7 @@ class DocumentDb : IDocumentDb
          case > 1:
             throw new TooManyItemsDeletedException();
       }
+#pragma warning restore IDE0010
    }
 
    public void Update(IEnumerable<KeyValuePair<string, object>> values, Dictionary<Type, Dictionary<string, string>> persistentValues)

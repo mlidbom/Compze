@@ -8,7 +8,7 @@ public interface IEventHandlerRegistrar<in TEvent>
    ///<summary>Registers a handler for any event that implements THandledEvent. All matching handlers will be called in the order they were registered.</summary>
    IEventHandlerRegistrar<TEvent> For<THandledEvent>(Action<THandledEvent> handler) where THandledEvent : TEvent;
 
-   public IEventHandlerRegistrar<TEvent> ForWrapped<TWrapperEvent>(Action<TWrapperEvent> handler)
+   IEventHandlerRegistrar<TEvent> ForWrapped<TWrapperEvent>(Action<TWrapperEvent> handler)
       where TWrapperEvent : IWrapperEvent<TEvent>;
 
    ///<summary>Lets you register handlers for event interfaces that may be defined outside of the event hierarchy you specify with TEvent.

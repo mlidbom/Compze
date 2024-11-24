@@ -125,9 +125,9 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
 
       IEventHandlerRegistrar<TEvent> IEventHandlerRegistrar<TEvent>.ForGenericEvent<THandledEvent>(Action<THandledEvent> handler) => ForGenericEvent(handler);
 
-      IEventHandlerRegistrar<TEvent> IEventHandlerRegistrar<TEvent>.BeforeHandlers<THandledEvent>(Action<THandledEvent> runBeforeHandlers) { return BeforeHandlers(e => runBeforeHandlers((THandledEvent)e)); }
+      IEventHandlerRegistrar<TEvent> IEventHandlerRegistrar<TEvent>.BeforeHandlers<THandledEvent>(Action<THandledEvent> runBeforeHandlers) => BeforeHandlers(e => runBeforeHandlers((THandledEvent)e));
 
-      IEventHandlerRegistrar<TEvent> IEventHandlerRegistrar<TEvent>.AfterHandlers<THandledEvent>(Action<THandledEvent> runAfterHandlers) { return AfterHandlers(e => runAfterHandlers((THandledEvent)e)); }
+      IEventHandlerRegistrar<TEvent> IEventHandlerRegistrar<TEvent>.AfterHandlers<THandledEvent>(Action<THandledEvent> runAfterHandlers) => AfterHandlers(e => runAfterHandlers((THandledEvent)e));
 
       IEventHandlerRegistrar<TEvent> IEventHandlerRegistrar<TEvent>.IgnoreUnhandled<THandledEvent>() => IgnoreUnhandled<THandledEvent>();
 

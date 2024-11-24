@@ -267,7 +267,7 @@ class EventStore : IEventStore
          {
             lastLogTime = DateTime.Now;
             // ReSharper disable once AccessToModifiedClosure
-            int PercentDone() => (int)(((double)migratedAggregates / aggregateIdsInCreationOrder.Count) * 100);
+            int PercentDone() => (int)(double)migratedAggregates / aggregateIdsInCreationOrder.Count * 100;
 
             Log.Info($"{PercentDone()}% done. Inspected: {migratedAggregates} / {aggregateIdsInCreationOrder.Count}, Updated: {updatedAggregates}, New Events: {newEventCount}");
          }

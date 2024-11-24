@@ -60,7 +60,7 @@ readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
       BigInteger rangeSize;
       if(rangeEnd._order > rangeStart._order)
       {
-         rangeSize = (MaxOffset + rangeEnd._offSet) - rangeStart._offSet; //We are allowed to overflow onto the next Order value
+         rangeSize = MaxOffset + rangeEnd._offSet - rangeStart._offSet; //We are allowed to overflow onto the next Order value
       } else
       {
          rangeSize = rangeEnd._offSet - rangeStart._offSet;

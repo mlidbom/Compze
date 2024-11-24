@@ -41,7 +41,7 @@ partial class Inbox
       }
       public string Address => _webApplication!.Urls.First();
 
-      public async Task StartAsync() { _webApplication = await StartServerAsync().NoMarshalling(); }
+      public async Task StartAsync() => _webApplication = await StartServerAsync().NoMarshalling();
 
       public async Task StopAsync()
       {

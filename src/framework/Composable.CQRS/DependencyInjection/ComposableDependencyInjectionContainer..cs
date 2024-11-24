@@ -61,10 +61,7 @@ partial class ComposableDependencyInjectionContainer : IDependencyInjectionConta
       }
    }
 
-   public ValueTask DisposeAsync()
-   {
-      throw new NotImplementedException();
-   }
+   public ValueTask DisposeAsync() => throw new NotImplementedException();
 
    TComponent IServiceLocator.Resolve<TComponent>() where TComponent : class => _createdServiceLocator!.Resolve<TComponent>();
    TComponent[] IServiceLocator.ResolveAll<TComponent>() where TComponent : class => _createdServiceLocator!.ResolveAll<TComponent>();

@@ -37,6 +37,7 @@ static class ContractsExpression
    static object? GetExpressionValue(Expression expression)
    {
       // ReSharper disable once SwitchStatementMissingSomeCases
+#pragma warning disable IDE0010
       switch (expression.NodeType)
       {
          case ExpressionType.Constant:
@@ -44,7 +45,7 @@ static class ContractsExpression
          case ExpressionType.MemberAccess:
          {
             var me = (MemberExpression)expression;
-            var obj = (me.Expression != null ? GetExpressionValue(me.Expression) : null);
+            var obj = me.Expression != null ? GetExpressionValue(me.Expression) : null;
             var fieldInfo = me.Member as FieldInfo;
             if (fieldInfo != null)
                return fieldInfo.GetValue(obj);
@@ -66,5 +67,6 @@ static class ContractsExpression
          default:
             throw new InvalidAccessorLambdaException();
       }
+#pragma warning restore IDE0010
    }
 }

@@ -5,7 +5,9 @@ using Composable.SystemCE.ThreadingCE;
 
 namespace Composable.Persistence;
 
+#pragma warning disable IDE0065
 using SPath = Path;
+#pragma warning restore IDE0065
 
 ///<summary>Manages the Temp folder in a machine wide thread safe manner.</summary>
 static class ComposableTempFolder

@@ -100,30 +100,25 @@ class InstantiationSpec
    {
       FactoryMethodReturnType = factoryMethodReturnType;
 
-      if(!LogSlowConstructions)
-      {
-         FactoryMethod = factoryMethod;
-      } else
-      {
-         FactoryMethod = kern =>
-         {
+      FactoryMethod = !LogSlowConstructions
+                         ? factoryMethod
+                         : kern =>
+                         {
+                            object instance = null!;
 
-            object instance = null!;
+                            IEnumerable<string> ignoredTypePatterns = EnumerableCE.Create(nameof(EventCache),           //Constructing the system provided cache is slow.
+                                                                                          nameof(EventStoreSerializer), //Caused by NewtonsoftJson initialization that is static and happens only once.
+                                                                                          "DatabasePool"                //This is slow the first time because it sets up the MachineWideSharedObject
+                            );
 
-            IEnumerable<string> ignoredTypePatterns = EnumerableCE.Create(nameof(EventCache),           //Constructing the system provided cache is slow.
-                                                                          nameof(EventStoreSerializer), //Caused by NewtonsoftJson initialization that is static and happens only once.
-                                                                          "DatabasePool"                //This is slow the first time because it sets up the MachineWideSharedObject
-            );
+                            var constructionTime = StopwatchCE.TimeExecution(() => instance = factoryMethod(kern));
+                            if(constructionTime > 5.Milliseconds() && ignoredTypePatterns.None(ignored => factoryMethodReturnType.Name.ContainsInvariant(ignored)))
+                            {
+                               this.Log().Warning($"###########################################################: Component: {factoryMethodReturnType.GetFullNameCompilable()} took: {constructionTime:ss\\.fff} to construct");
+                            }
 
-            var constructionTime = StopwatchCE.TimeExecution(() => instance = factoryMethod(kern));
-            if(constructionTime > 5.Milliseconds() && ignoredTypePatterns.None(ignored => factoryMethodReturnType.Name.ContainsInvariant(ignored)))
-            {
-               this.Log().Warning($"###########################################################: Component: {factoryMethodReturnType.GetFullNameCompilable()} took: {constructionTime:ss\\.fff} to construct");
-            }
-
-            return instance;
-         };
-      }
+                            return instance;
+                         };
    }
 
    InstantiationSpec(object singletonInstance)

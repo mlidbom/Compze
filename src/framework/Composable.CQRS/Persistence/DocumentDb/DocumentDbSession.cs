@@ -183,12 +183,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _backingStore.GetAllIds<T>();
 
-   public virtual void Dispose()
-   {
-      _usageGuard.AssertNoContextChangeOccurred(this);
-      //Can be called before the transaction commits....
-      //_idMap.Clear();
-   }
+   public virtual void Dispose() => _usageGuard.AssertNoContextChangeOccurred(this);
 
    public override string ToString() => $"{_id}: {GetType().FullName}";
 

@@ -32,10 +32,7 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>
    [Obsolete("Should probably never be used except by infrastructure code.")]
-   protected void SetIdBeVerySureYouKnowWhatYouAreDoing(TKey id)
-   {
-      Id = id;
-   }
+   protected void SetIdBeVerySureYouKnowWhatYouAreDoing(TKey id) => Id = id;
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
    [Obsolete("Should probably never be used except by infrastructure code.")]

@@ -55,8 +55,7 @@ public class RemoteQueryPerformanceTests : PerformanceTestBase
       var navigationSpecification = NavigationSpecification.Get(query);
 
       //ncrunch: no coverage start
-      void RunRequest()
-      {
+      void RunRequest() =>
          ClientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
          {
             for(var i = 0; i < queriesPerRequest; i++)
@@ -64,7 +63,6 @@ public class RemoteQueryPerformanceTests : PerformanceTestBase
                RemoteNavigator.Navigate(navigationSpecification);
             }
          });
-      }
 
       //ncrunch: no coverage end
 
@@ -84,13 +82,11 @@ public class RemoteQueryPerformanceTests : PerformanceTestBase
       var navigationSpecification = NavigationSpecification.Get(query);
 
       //ncrunch: no coverage start
-      async Task RunRequestAsync()
-      {
+      async Task RunRequestAsync() =>
          await ClientEndpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(
             async () => await Task.WhenAll(1.Through(queriesPerRequest)
                                             .Select(_ => RemoteNavigator.NavigateAsync(navigationSpecification))
                                             .ToArray()));
-      }
 
       async Task RunScenarioAsync() => await Task.WhenAll(1.Through(requests).Select(_ => RunRequestAsync()).ToArray());
       //ncrunch: no coverage end

@@ -25,8 +25,7 @@ public class Local_Query_performance_tests : PerformanceTestBase
    void RunScenario(bool threaded, int requests, int queriesPerRequest, TimeSpan maxTotal)
    {
       //ncrunch: no coverage start
-      void RunRequest()
-      {
+      void RunRequest() =>
          ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
          {
             for(var i = 0; i < queriesPerRequest; i++)
@@ -34,7 +33,6 @@ public class Local_Query_performance_tests : PerformanceTestBase
                LocalNavigator.Execute(new MyLocalStrictlyLocalQuery());
             }
          });
-      }
       //ncrunch: no coverage end
 
       if(threaded)

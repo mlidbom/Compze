@@ -20,7 +20,7 @@ static class LinkedListCE
    }
 
    ///<summary>Enumerates this and all following node values.</summary>
-   public static IEnumerable<T> ValuesFrom<T>(this LinkedListNode<T> @this) { return @this.NodesFrom().Select(node => node.Value); }
+   public static IEnumerable<T> ValuesFrom<T>(this LinkedListNode<T> @this) => @this.NodesFrom().Select(node => node.Value);
 
    ///<summary>Inserts <paramref name="items"/> after the <paramref name="this"/></summary>
    public static void AddBefore<T>(this LinkedListNode<T> @this, IEnumerable<T> items)

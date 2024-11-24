@@ -31,10 +31,7 @@ class Endpoint : IEndpoint
          await Inbox.StopAsync().NoMarshalling();
       }
 
-      public void Dispose()
-      {
-         _commandScheduler.Dispose();
-      }
+      public void Dispose() => _commandScheduler.Dispose();
    }
 
    readonly EndpointConfiguration _configuration;
@@ -90,10 +87,7 @@ class Endpoint : IEndpoint
       await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).NoMarshalling();
    }
 
-   static void RunSanityChecks()
-   {
-      AssertAllTypesNeedingMappingsAreMapped();
-   }
+   static void RunSanityChecks() => AssertAllTypesNeedingMappingsAreMapped();
 
    //todo: figure out how to do this sanely
    static void AssertAllTypesNeedingMappingsAreMapped()

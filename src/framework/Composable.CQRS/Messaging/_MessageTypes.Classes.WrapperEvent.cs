@@ -86,7 +86,7 @@ public static partial class MessageTypes
          return (Func<IEvent, IWrapperEvent<IEvent>>)constructorCallMethod.CreateDelegate(typeof(Func<IEvent, IWrapperEvent<IEvent>>));
       }
 
-      static string DescribeParameterList(IEnumerable<Type> parameterTypes) { return parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", "); }
+      static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
 
       static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
       static Type CreateGenericWrapperEventType(Type wrapperEventType)

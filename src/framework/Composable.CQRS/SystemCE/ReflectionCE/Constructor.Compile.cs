@@ -68,10 +68,7 @@ static partial class Constructor
             return constructorCallMethod.CreateDelegate(delegateType);
          }
 
-         static string DescribeParameterList(IEnumerable<Type> parameterTypes)
-         {
-            return parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
-         }
+         static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
       }
    }
 }

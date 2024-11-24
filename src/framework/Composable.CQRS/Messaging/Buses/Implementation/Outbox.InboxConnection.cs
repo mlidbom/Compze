@@ -82,7 +82,7 @@ partial class Outbox
          _sendQueue.Enqueue(outGoingMessage);
       }
 
-      internal async Task Init() { EndpointInformation = await GetAsync(new MessageTypes.Internal.EndpointInformationQuery()).NoMarshalling(); }
+      internal async Task Init() => EndpointInformation = await GetAsync(new MessageTypes.Internal.EndpointInformationQuery()).NoMarshalling();
 
 #pragma warning disable 8618 //Refactor: This really should not be suppressed. We do have a bad design that might cause null reference exceptions here if Init has not been called.
       internal InboxConnection(IGlobalBusStateTracker globalBusStateTracker,

@@ -151,8 +151,5 @@ class EventCache : IDisposable
       originalCache.Dispose();
    }
 
-   public void Dispose()
-   {
-      _internalCache.Dispose();
-   }
+   public void Dispose() => _internalCache.Dispose();
 }

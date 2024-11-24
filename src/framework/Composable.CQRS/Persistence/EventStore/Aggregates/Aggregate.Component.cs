@@ -24,10 +24,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
       IUtcTimeTimeSource TimeSource { get; set; }
 
-      void ApplyEvent(TComponentEvent @event)
-      {
-         _eventAppliersEventDispatcher.Dispatch(@event);
-      }
+      void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
       protected Component(TAggregate aggregate)
          : this(
