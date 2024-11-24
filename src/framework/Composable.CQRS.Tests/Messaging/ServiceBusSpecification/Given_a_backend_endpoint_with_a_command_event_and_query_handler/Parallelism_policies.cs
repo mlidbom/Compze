@@ -16,7 +16,7 @@ public class Parallelism_policies : Fixture
       QueryHandlerThreadGate.Close();
 
       var tasks = Task.WhenAll(1.Through(5)
-                                .Select(it => ClientEndpoint.ExecuteClientRequestAsync(session =>
+                                .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(session =>
                                                                                           session.GetAsync(new MyQuery()))));
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);

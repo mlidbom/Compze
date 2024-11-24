@@ -111,6 +111,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    protected virtual void AssertInvariantsAreMet() {}
 
    readonly SimpleObservable<TAggregateEventImplementation> _eventStream = new();
+#pragma warning disable CA1033 //These method should NOT clutter the public interface of Aggregates.
    IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
 
    public void Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents)
@@ -127,4 +128,5 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       history.ForEach(theEvent => ApplyEvent((TAggregateEvent)theEvent));
       AssertInvariantsAreMet();
    }
+#pragma warning restore CA1033
 }

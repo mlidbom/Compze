@@ -134,8 +134,6 @@ Current state of gate:
       return DisposableCE.Create(() => _logMonitor.Update(() => LogThreadUnsafeCallerMustLock($"Exiting  {method}")));
    });
 
-   void LogMethodEntry(string @event) => _logMonitor.Update(() => LogThreadUnsafeCallerMustLock(@event));
-
    void LogThreadUnsafeCallerMustLock(string @event)
    {
       var message = $"{@event} {this}";

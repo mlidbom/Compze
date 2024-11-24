@@ -70,5 +70,7 @@ public interface IExactlyOnceCommand : IRemotableCommand, IExactlyOnceMessage {}
 public interface IExactlyOnceWrapperEvent<out TEventInterface> : IWrapperEvent<TEventInterface>, IExactlyOnceEvent
    where TEventInterface : IExactlyOnceEvent
 {
+#pragma warning disable CA1033
    Guid IAtMostOnceMessage.MessageId => Event.MessageId;
+#pragma warning restore CA1033
 }

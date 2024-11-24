@@ -15,7 +15,7 @@ public class EndpointHost : IEndpointHost
    readonly IRunMode _mode;
    readonly Func<IRunMode, IDependencyInjectionContainer> _containerFactory;
    bool _disposed;
-   protected List<IEndpoint> Endpoints { get; } = [];
+   protected IList<IEndpoint> Endpoints { get; } = [];
    internal IGlobalBusStateTracker GlobalBusStateTracker;
 
    protected EndpointHost(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory)

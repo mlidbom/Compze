@@ -11,7 +11,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   internal partial class HandlerExecutionEngine
+   partial class HandlerExecutionEngine
    {
       partial class Coordinator
       {

@@ -17,7 +17,7 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <RootNamespace>Composable</RootNamespace>
         <NuGetAuditMode>direct</NuGetAuditMode>
-        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <AnalysisLevel>latest-all</AnalysisLevel>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -39,6 +39,7 @@
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+        <!-- ReSharper disable once VulnerablePackage -->
         <PackageReference Include="NetMQ" Version="4.0.1.13" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />

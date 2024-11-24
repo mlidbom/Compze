@@ -38,7 +38,7 @@ public static class ObjectCE
 
    ///<summary>Sometimes you want to continue a method chain but don't care about the previous value. This drops it</summary>
    public static TResult Then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
-   
+
    ///<summary>Sometimes you want to continue a method chain but don't care about the previous value. This drops it</summary>
    public static TResult Then<TValue, TResult>(this TValue _, TResult value) => value;
 

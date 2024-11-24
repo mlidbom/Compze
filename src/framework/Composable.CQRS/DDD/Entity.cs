@@ -39,7 +39,9 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
    [Obsolete("Should probably never be used except by infrastructure code.")]
+#pragma warning disable CA1024 //No matter what the analyzer might think, this is not a good property.
    protected TKey GetIdBypassContractValidation() => _id;
+#pragma warning restore CA1024
 
    /// <summary>
    /// Implements equals using persistent reference semantics.
@@ -115,6 +117,7 @@ public class Entity<TEntity> : Entity<TEntity, Guid>, IPersistentEntity<Guid>, I
    public static bool operator !=(Entity<TEntity> lhs, Entity<TEntity> rhs) => !(lhs == rhs);
 
    public new bool Equals(TEntity? other) => base.Equals(other);
+   // ReSharper disable once RedundantOverriddenMember If I remove this I get another worse warning...
    public override bool Equals(object? obj) => base.Equals(obj);
    public override int GetHashCode() => base.GetHashCode();
 }

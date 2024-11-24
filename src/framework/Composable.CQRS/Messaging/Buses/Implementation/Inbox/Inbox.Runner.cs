@@ -103,7 +103,7 @@ partial class Inbox
                         _responseQueue.Enqueue(failureResponse);
                      } else
                      {
-                        Assert.Result.Assert(dispatchResult.IsCompleted);  
+                        Assert.Result.Assert(dispatchResult.IsCompleted);
                         try
                         {
                            if(message is IHasReturnValue<object>)

@@ -65,7 +65,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
 
          if(unHandledExceptions.Any())
          {
-            throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions.ToArray());
+            throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions);
          }
       }
    }

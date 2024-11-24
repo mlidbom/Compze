@@ -65,7 +65,7 @@ class EventCache : IDisposable
       public static readonly Entry Empty = new();
       Entry()
       {
-         Events = Array.Empty<AggregateEvent>();
+         Events = [];
          MaxSeenInsertedVersion = 0;
       }
 

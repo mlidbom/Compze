@@ -11,6 +11,8 @@ using Newtonsoft.Json.Serialization;
 
 namespace Composable.Logging;
 
+#pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
+
 enum LogLevel
 {
    None = 0,
@@ -117,12 +119,16 @@ EXCEPTION: {exception}
    [StringFormatMethod(formatParameterName: "message")]
    public VoidCE DebugFormat(string message, params object[] arguments) => VoidCE.From(() => StringCE.FormatInvariant(message, arguments));
 
+#pragma warning disable CA2326
+#pragma warning disable CA2327 //Todo: see if we can mitigate the security impact without breaking our serialization.
    static readonly JsonSerializerSettings ExceptionSerializationSettings =
       new()
       {
          TypeNameHandling = TypeNameHandling.All,
          ContractResolver = IgnoreStackTraces.Instance
       };
+#pragma warning restore CA2326
+#pragma warning restore CA2327
 
    class IgnoreStackTraces : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
    {

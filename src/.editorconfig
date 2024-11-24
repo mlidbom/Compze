@@ -6,6 +6,16 @@ csharp_style_namespace_declarations = file_scoped
 csharp_style_var_elsewhere = true
 csharp_style_var_when_type_is_apparent = true
 csharp_style_var_for_built_in_types = true
+csharp_style_expression_bodied_constructors = when_on_single_line
+dotnet_style_require_accessibility_modifiers = omit_if_default
+
+
+dotnet_diagnostic.IDE0055.severity = none # I don't want visual studio to give thousands of warnings about formatting
+dotnet_diagnostic.IDE0058.severity = none # In countless cases it is perfectly valid not to use the return value of an expression
+
+dotnet_diagnostic.IDE0290.severity = none # I'm not sure about primary constructors, I am sure I don't want a thousand warnings in visual studio about it.
+#dotnet_diagnostic.IDE0007.severity = none
+#dotnet_diagnostic.IDE0008.severity = none
 
 dotnet_diagnostic.CA1859.severity = silent #CA1859: Use concrete types when possible for improved performance || I want the proper types, not whatever makes the code most efficient at the cost of exposing something I SHOULD NOT
 dotnet_diagnostic.CA1860.severity = silent #Prefer comparing Count to 0 over using Any() || Well I think Any() is more readable and shorter and unless a profiler tells me I have an issue with this ridiculous nano optimization I don't care.

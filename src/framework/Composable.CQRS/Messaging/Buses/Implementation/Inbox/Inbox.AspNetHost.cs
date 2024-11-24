@@ -82,7 +82,7 @@ partial class Inbox
       }
    }
 }
-internal class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
+class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
 {
    [HttpPost("/internal/rpc/query")] public async Task<IActionResult> Query()
    {
@@ -98,7 +98,6 @@ internal class QueryController(IRemotableMessageSerializer serializer, ITypeMapp
       try
       {
          var queryResultObject = (await handlerExecutionEngine.Enqueue(transportMessage).NoMarshalling()).NotNull();
-         var queryResultTypeGuid = typeMapper.GetId(queryResultObject.GetType()).GuidValue;
          var responseJson = serializer.SerializeResponse(queryResultObject);
          return Ok(responseJson);
       }
