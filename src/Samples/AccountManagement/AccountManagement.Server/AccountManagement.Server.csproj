@@ -10,6 +10,7 @@
     <StartupObject />
     <ApplicationIcon />
     <NuGetAuditMode>direct</NuGetAuditMode>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

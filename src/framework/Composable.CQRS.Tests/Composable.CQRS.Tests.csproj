@@ -11,6 +11,7 @@
     <DelaySign>False</DelaySign>
     <RootNamespace>Composable.Tests</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
