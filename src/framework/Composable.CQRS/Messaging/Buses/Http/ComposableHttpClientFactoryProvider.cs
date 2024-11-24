@@ -18,7 +18,7 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(query.Body);
          content.Headers.Add("MessageId", query.Id.ToString());
          content.Headers.Add("PayloadTypeId", query.Type.GuidValue.ToString());
-         var response = it.PostAsync($"{address.AspNetAddress}/internal/rpc/query", content).Result;
+         var response = await it.PostAsync($"{address.AspNetAddress}/internal/rpc/query", content).NoMarshalling();
          if(!response.IsSuccessStatusCode)
          {
             throw new MessageDispatchingFailedException($"Query failed with status code {response.StatusCode}");
