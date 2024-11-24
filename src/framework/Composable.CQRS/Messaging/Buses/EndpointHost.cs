@@ -72,12 +72,10 @@ public class EndpointHost : IEndpointHost
          _disposed = true;
          if(_isStarted)
          {
-            Assert.State.Assert(_isStarted);
             _isStarted = false;
             await Task.WhenAll(Endpoints.Where(endpoint => endpoint.IsRunning).Select(endpoint => endpoint.StopAsync())).NoMarshalling();
          }
 
-         //Review:Watch out. Apparently it is important not to await a ValueTask more than once.
          await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).NoMarshalling();
       }
 

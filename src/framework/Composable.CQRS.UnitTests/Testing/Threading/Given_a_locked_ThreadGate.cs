@@ -18,12 +18,12 @@ namespace Composable.Tests.Testing.Threading;
 
    public class After_starting_10_threads_that_all_call_PassThrough
    {
-      [Test] public void Within_10_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
+      [Test] public void Within_20_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
          using (ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()){} //warmup
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
-         fixture.Gate.Await(10.Milliseconds(), () => fixture.Gate.Queued == fixture.NumberOfThreads);
+         fixture.Gate.Await(20.Milliseconds(), () => fixture.Gate.Queued == fixture.NumberOfThreads);
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 

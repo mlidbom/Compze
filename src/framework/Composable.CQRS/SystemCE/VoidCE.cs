@@ -3,17 +3,25 @@ using System.Threading.Tasks;
 
 namespace Composable.SystemCE;
 
-///<summary>Enables harmonizing on only using methods with return values without loosing the semantic information that their return value is meaningless. Return <see cref="VoidCE.Instance"/> from methods with "no" return value. </summary>
-sealed class VoidCE : IEquatable<VoidCE>, IStaticInstancePropertySingleton
+///<summary>Enables harmonizing on only using methods with return values without losing the semantic information that their return value is meaningless. Return <see cref="VoidCE.Instance"/> from methods with "no" return value. </summary>
+struct VoidCE : IEquatable<VoidCE>, IComparable<VoidCE>, IStaticInstancePropertySingleton
 {
-   public static VoidCE Instance { get; } = new();
-   public static Task<VoidCE> InstanceTask { get; } = Task.FromResult(Instance);
+   public static readonly VoidCE Instance = new();
+   public static readonly Task<VoidCE> InstanceTask = Task.FromResult(Instance);
 
-   VoidCE(){}
+   public static VoidCE From(Action action)
+   {
+      action();
+      return Instance;
+   }
 
-   public bool Equals(VoidCE? other) => other != null;
-   public override bool Equals(object? other) => Equals(other as VoidCE);
+   public override string ToString() => "()";
+
+   public bool Equals(VoidCE _) => true;
+   public override bool Equals(object? other) => other is VoidCE;
+   public static bool operator ==(VoidCE _, VoidCE __) => true;
+   public static bool operator !=(VoidCE _, VoidCE __) => false;
+   public int CompareTo(VoidCE _) => 0;
+
    public override int GetHashCode() => 392576489;
-   public static bool operator ==(VoidCE? left, VoidCE? right) => Equals(left, right);
-   public static bool operator !=(VoidCE? left, VoidCE? right) => !Equals(left, right);
 }

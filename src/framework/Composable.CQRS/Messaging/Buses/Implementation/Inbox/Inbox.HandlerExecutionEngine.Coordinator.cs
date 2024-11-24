@@ -12,7 +12,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   partial class HandlerExecutionEngine
+   internal partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all message type specific responsibilities into the message class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
       partial class Coordinator

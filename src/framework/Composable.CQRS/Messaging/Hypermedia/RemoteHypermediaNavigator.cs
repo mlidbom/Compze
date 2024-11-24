@@ -28,13 +28,13 @@ namespace Composable.Messaging.Hypermedia;
       return await _transport.PostAsync(command).NoMarshalling();
    }
 
-   public Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
+   public async Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
    {
       MessageInspector.AssertValidToSendRemote(query);
       if(query is ICreateMyOwnResultQuery<TResult> selfCreating)
-         return Task.FromResult(selfCreating.CreateResult());
+         return await Task.FromResult(selfCreating.CreateResult()).NoMarshalling();
 
-      return GetAsyncAfterFastPathOptimization(query);
+      return await GetAsyncAfterFastPathOptimization(query).NoMarshalling();
    }
    async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transport.GetAsync(query).NoMarshalling();
 

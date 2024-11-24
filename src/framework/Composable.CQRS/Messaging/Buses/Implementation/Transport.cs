@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Composable.Contracts;
+using Composable.Messaging.Buses.Http;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
 using Composable.SystemCE;
@@ -20,14 +21,14 @@ partial class Transport : ITransport, IDisposable
    readonly NetMQPoller _poller;
 #pragma warning restore CA2213 // Disposable fields should be disposed
    readonly IRemotableMessageSerializer _serializer;
-   readonly HttpClient _httpClient;
+   readonly IComposableHttpClientFactoryProvider _httpClient;
 
    bool _running;
    readonly Router _router;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
    readonly AssertAndRun _runningAndNotDisposed;
 
-   public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, HttpClient httpClient)
+   public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IComposableHttpClientFactoryProvider httpClient)
    {
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
       _runningAndNotDisposed = new AssertAndRun(() => Assert.State.Assert(_running, _poller != null, _poller.IsRunning));

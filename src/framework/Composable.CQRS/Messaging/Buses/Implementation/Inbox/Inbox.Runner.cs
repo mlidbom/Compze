@@ -71,15 +71,14 @@ partial class Inbox
 
       void MessageReceiverThread()
       {
-         while(true)
+         while(!_cancellationTokenSource.IsCancellationRequested)
          {
             var transportMessageBatch = _receivedMessageBatches.Take(_cancellationTokenSource.Token);
             foreach(var transportMessage in transportMessageBatch)
             {
-               //performance: With the current design having this code here causes all queries to wait for persisting of all transactional messages that arrived before them.
                if(transportMessage.Is<IAtMostOnceMessage>())
                {
-                  //todo: handle the exception that will be thrown if this is a duplicate message
+                  //bug: handle the exception that will be thrown if this is a duplicate message
                   _storage.SaveIncomingMessage(transportMessage);
 
                   if(transportMessage.Is<IExactlyOnceMessage>())
@@ -104,7 +103,7 @@ partial class Inbox
                         _responseQueue.Enqueue(failureResponse);
                      } else
                      {
-                        Assert.Result.Assert(dispatchResult.IsCompleted);
+                        Assert.Result.Assert(dispatchResult.IsCompleted);  
                         try
                         {
                            if(message is IHasReturnValue<object>)
@@ -150,7 +149,7 @@ partial class Inbox
          _cancellationTokenSource.Cancel();
          _cancellationTokenSource.Dispose();
          _messageReceiverThread.InterruptAndJoin();
-         _poller.StopAsync();
+         _poller.Stop();
          _poller.Dispose();
          _serverSocket.Close();
          _serverSocket.Dispose();

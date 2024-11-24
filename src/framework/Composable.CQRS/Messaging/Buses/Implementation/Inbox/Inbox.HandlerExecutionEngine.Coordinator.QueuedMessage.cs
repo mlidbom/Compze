@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.GenericAbstractions;
+using Composable.Logging;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
@@ -11,7 +12,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   partial class HandlerExecutionEngine
+   internal partial class HandlerExecutionEngine
    {
       partial class Coordinator
       {
@@ -73,8 +74,17 @@ partial class Inbox
                               _messageStorage.MarkAsFailed(TransportMessage);
                            }
 
-                           _taskCompletionSource.ScheduleException(exception);
-                           _coordinator.Failed(this, exception);
+                           try { _taskCompletionSource.ScheduleException(exception); }
+                           catch(Exception e)
+                           {
+                              this.Log().Error(e);
+                           }
+
+                           try { _coordinator.Failed(this, exception); }
+                           catch(Exception e)
+                           {
+                              this.Log().Error(e);
+                           }
                            return;
                         }
                      }

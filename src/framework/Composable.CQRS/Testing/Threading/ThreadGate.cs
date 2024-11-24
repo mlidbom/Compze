@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Composable.Contracts;
+using Composable.Logging;
+using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -9,8 +12,8 @@ namespace Composable.Testing.Threading;
 
 class ThreadGate : IThreadGate
 {
-   public static IThreadGate CreateClosedWithTimeout(TimeSpan timeout) => new ThreadGate(timeout);
-   public static IThreadGate CreateOpenWithTimeout(TimeSpan timeout) => new ThreadGate(timeout).Open();
+   public static IThreadGate CreateClosedWithTimeout(TimeSpan timeout, string? name = null) => new ThreadGate(timeout, name);
+   public static IThreadGate CreateOpenWithTimeout(TimeSpan timeout, string? name = null) => new ThreadGate(timeout, name).Open();
 
    public TimeSpan DefaultTimeout { get; }
 
@@ -27,6 +30,7 @@ class ThreadGate : IThreadGate
 
    public IThreadGate Open()
    {
+      using var _ = LogMethodEntryExit(nameof(Open));
       _monitor.Update(() =>
       {
          IsOpen = true;
@@ -37,6 +41,7 @@ class ThreadGate : IThreadGate
 
    public IThreadGate AwaitLetOneThreadPassThrough()
    {
+      using var _ = LogMethodEntryExit(nameof(AwaitLetOneThreadPassThrough));
       _monitor.Update(() =>
       {
          Contract.Assert.That(!IsOpen, "Gate must be closed to call this method.");
@@ -74,12 +79,15 @@ Current state of gate:
 
    public IThreadGate Close()
    {
+      using var _ = LogMethodEntryExit(nameof(Close));
       _monitor.Update(() => IsOpen = false);
       return this;
    }
 
-   public void AwaitPassThrough()
+   public VoidCE AwaitPassThrough()
    {
+      using var _ = LogMethodEntryExit(nameof(AwaitPassThrough));
+
       var currentThread = new ThreadSnapshot();
 
       _monitor.Update(() =>
@@ -102,21 +110,45 @@ Current state of gate:
          _passThroughAction.Invoke(currentThread);
          _postPassThroughAction.Invoke(currentThread);
       }
+
+      return VoidCE.Instance;
    }
 
-   ThreadGate(TimeSpan defaultTimeout)
+   ThreadGate(TimeSpan defaultTimeout, string? name = null)
    {
+      Name = name ?? Guid.NewGuid().ToString();
       _monitor = MonitorCE.WithTimeout(defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 
-   public override string ToString() => $@"{nameof(IsOpen)} : {IsOpen},
-{nameof(Queued)}: {Queued},
-{nameof(Passed)}: {Passed},
-{nameof(Requested)}: {Requested},
-";
+   public override string ToString() => $"{nameof(ThreadGate)} {{ {nameof(Name)}: {Name} {nameof(IsOpen)} : {IsOpen}, {nameof(Queued)}: {Queued}, {nameof(Passed)}: {Passed}, {nameof(Requested)}: {Requested} }}";
 
+   static readonly List<string> GlobalLog = [];
+   readonly List<string> _log = [];
+
+   public IReadOnlyList<string> GetGlobalLog() => new List<string>(GlobalLog);
+   public IReadOnlyList<string> GetLog() => new List<string>(_log);
+
+   IDisposable LogMethodEntryExit(string method) => _logMonitor.Update(() =>
+   {
+      LogThreadUnsafeCallerMustLock($"Entering {method}");
+      return DisposableCE.Create(() => _logMonitor.Update(() => LogThreadUnsafeCallerMustLock($"Exiting  {method}")));
+   });
+
+   void LogMethodEntry(string @event) => _logMonitor.Update(() => LogThreadUnsafeCallerMustLock(@event));
+
+   void LogThreadUnsafeCallerMustLock(string @event)
+   {
+      var message = $"{@event} {this}";
+      this.Log().Info(message);
+      _log.Add(message);
+      GlobalLogMonitor.Update(() => GlobalLog.Add(message));
+   }
+
+   string Name { get; }
    readonly MonitorCE _monitor;
+   readonly MonitorCE _logMonitor = MonitorCE.WithTimeout(1.Seconds());
+   static readonly MonitorCE GlobalLogMonitor = MonitorCE.WithTimeout(1.Seconds());
    bool _lockOnNextPass;
    Action<ThreadSnapshot> _passThroughAction = _ => {};
    Action<ThreadSnapshot> _prePassThroughAction = _ => {};

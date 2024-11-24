@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Composable.Logging;
+using Composable.Messaging.Buses.Http;
 using Composable.Messaging.NetMQCE;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
@@ -24,7 +26,8 @@ partial class Outbox
       readonly ITypeMapper _typeMapper;
       readonly IRemotableMessageSerializer _serializer;
       readonly IGlobalBusStateTracker _globalBusStateTracker;
-      readonly HttpClient _httpClient;
+      readonly EndPointAddress _remoteAddress;
+      readonly IComposableHttpClientFactoryProvider _httpClient;
       readonly NetMQQueue<TransportMessage.OutGoing> _sendQueue = new();
       // ReSharper disable once InconsistentNaming we use this naming variation to try and make it extra clear that this must only ever be accessed from the poller thread.
       readonly IDisposable _socketDisposable;
@@ -34,7 +37,7 @@ partial class Outbox
          var taskCompletionSource = new AsyncTaskCompletionSource();
          var outGoingMessage = TransportMessage.OutGoing.Create(@event, _typeMapper, _serializer);
 
-         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.MessageId, taskCompletionSource));
+         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
          await taskCompletionSource.Task.NoMarshalling();
       }
@@ -44,7 +47,7 @@ partial class Outbox
          var taskCompletionSource = new AsyncTaskCompletionSource();
          var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
 
-         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.MessageId, taskCompletionSource));
+         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
          await taskCompletionSource.Task.NoMarshalling();
       }
@@ -54,7 +57,7 @@ partial class Outbox
          var taskCompletionSource = new AsyncTaskCompletionSource<Func<object>>();
          var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
 
-         _state.Update(state => state.ExpectedResponseTasks.Add(outGoingMessage.MessageId, taskCompletionSource));
+         _state.Update(state => state.ExpectedResponseTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
          return (TCommandResult)(await taskCompletionSource.Task.NoMarshalling()).Invoke();
       }
@@ -64,19 +67,16 @@ partial class Outbox
          var taskCompletionSource = new AsyncTaskCompletionSource();
          var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
 
-         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.MessageId, taskCompletionSource));
+         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
          await taskCompletionSource.Task.NoMarshalling();
       }
 
       public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
       {
-         var taskCompletionSource = new AsyncTaskCompletionSource<Func<object>>();
          var outGoingMessage = TransportMessage.OutGoing.Create(query, _typeMapper, _serializer);
-
-         _state.Update(state => state.ExpectedResponseTasks.Add(outGoingMessage.MessageId, taskCompletionSource));
-         SendMessage(outGoingMessage);
-         return (TQueryResult)(await taskCompletionSource.Task.NoMarshalling()).Invoke();
+         _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
+         return await _httpClient.Query<TQueryResult>(_remoteAddress, outGoingMessage, _serializer).NoMarshalling();
       }
 
       void SendMessage(TransportMessage.OutGoing outGoingMessage)
@@ -90,8 +90,8 @@ partial class Outbox
 #pragma warning disable 8618 //Refactor: This really should not be suppressed. We do have a bad design that might cause null reference exceptions here if Init has not been called.
       internal InboxConnection(IGlobalBusStateTracker globalBusStateTracker,
 #pragma warning restore 8618
-                               EndPointAddress serverEndpoint,
-                               HttpClient httpClient,
+                               EndPointAddress remoteAddress,
+                               IComposableHttpClientFactoryProvider httpClient,
                                NetMQPoller poller,
                                ITypeMapper typeMapper,
                                IRemotableMessageSerializer serializer)
@@ -99,6 +99,7 @@ partial class Outbox
          _serializer = serializer;
          _typeMapper = typeMapper;
          _globalBusStateTracker = globalBusStateTracker;
+         _remoteAddress = remoteAddress;
          _httpClient = httpClient;
          var socket = new DealerSocket();
          _socketDisposable = socket;//Getting rid of the type means we don't need to worry about usage from the wrong threads.
@@ -117,7 +118,7 @@ partial class Outbox
 
          socket.ReceiveReady += ReceiveResponse_PollerThread;
 
-         socket.Connect(serverEndpoint);
+         socket.Connect(remoteAddress);
          poller.Add(socket);
       }
 

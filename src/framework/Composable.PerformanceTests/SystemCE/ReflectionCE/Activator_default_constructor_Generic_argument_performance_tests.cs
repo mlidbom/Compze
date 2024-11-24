@@ -17,13 +17,6 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
    [UsedImplicitly] class Simple
    {}
 
-   [Test] public void Constructs_InstancePropertySingletons_through_the_Instance_Property()
-   {
-      var unit = Constructor.For<VoidCE>.DefaultConstructor.Instance.Invoke();
-
-      ReferenceEquals(unit, VoidCE.Instance).Should().Be(true);
-   }
-
    [Test] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Should().NotBe(null);
 
    [Test] public void Constructs_1_000_000_instances_within_50_percent_of_default_constructor_time()

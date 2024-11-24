@@ -58,6 +58,8 @@ public partial class MonitorCE
 
    bool TryEnter(TimeSpan timeout)
    {
+      //todo: Why is MonitorCE not reentrant? Can we fix it? It's a major limitation that is quite painful.
+      // ThreadGate now uses a separate monitor for logging. Is that truly reliable I doubt it...
       if(_allowReentrancyIfGreaterThanZero == 0 && IsEntered()) throw new InvalidOperationException($"{nameof(MonitorCE)} is not reentrant.");
       if(!Monitor.TryEnter(_lockObject)) //This will never block and calling it first improves performance quite a bit.
       {

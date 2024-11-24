@@ -7,6 +7,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 class AppConfigEndpointRegistry : IEndpointRegistry
 {
+   // ReSharper disable once NotAccessedField.Local
    readonly IConfigurationParameterProvider _settingsProvider;
    public AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) => _settingsProvider = settingsProvider;
 

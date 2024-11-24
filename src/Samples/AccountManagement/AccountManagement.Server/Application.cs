@@ -13,7 +13,7 @@ public class Application
       var host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
       await using var host2 = host;
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
-      host.Start();
+      await host.StartAsync();
       Console.WriteLine("Press enter to exit");
       Console.ReadLine();
    }

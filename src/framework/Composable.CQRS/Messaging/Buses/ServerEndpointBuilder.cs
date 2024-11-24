@@ -1,7 +1,7 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Composable.DependencyInjection;
 using Composable.GenericAbstractions.Time;
+using Composable.Messaging.Buses.Http;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Messaging.Hypermedia;
 using Composable.Persistence.EventStore;
@@ -68,16 +68,6 @@ class ServerEndpointBuilder : IEndpointBuilder
    }
 
    //todo: find a better place for this. I just can't be bothered right now during a huge refactoring of other stuff.
-   class ComposableHttpClientFactory
-   {
-      private static readonly SocketsHttpHandler Handler = new()
-                                                           {
-                                                              PooledConnectionLifetime = TimeSpan.FromMinutes(2)
-                                                           };
-
-      // ReSharper disable once MemberCanBeMadeStatic.Global
-      public HttpClient CreateClient() => new(Handler, disposeHandler: false);
-   }
 
    void SetupContainer()
    {
@@ -110,12 +100,11 @@ class ServerEndpointBuilder : IEndpointBuilder
 
          Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
 
-         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, HttpClient httpClient)
+         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IComposableHttpClientFactoryProvider httpClient)
                                                   => new Transport(globalBusStateTracker, typeMapper, serializer, httpClient)),
 
          Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
-         Singleton.For<ComposableHttpClientFactory>().CreatedBy(() => new ComposableHttpClientFactory()),
-         Scoped.For<HttpClient>().CreatedBy((ComposableHttpClientFactory factory) => factory.CreateClient())
+         Singleton.For<Http.IComposableHttpClientFactoryProvider>().CreatedBy(() => new Http.ComposableHttpClientFactoryProvider())
       );
 
       if(!Configuration.IsPureClientEndpoint)

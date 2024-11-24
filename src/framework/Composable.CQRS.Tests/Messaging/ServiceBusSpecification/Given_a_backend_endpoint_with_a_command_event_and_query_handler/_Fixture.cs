@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.GenericAbstractions.Time;
+using Composable.Logging;
 using Composable.Messaging;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
@@ -77,12 +78,12 @@ public class Fixture : DuplicateByPluggableComponentTest
 
             builder.RegisterHandlers
                    .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
-                   .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassthroughAndExecute(() => MyAggregate.Create(command.AggregateId, navigator)))
-                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassthroughAndExecute(() => navigator.Execute(new ComposableApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
+                   .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough().Then(() => MyAggregate.Create(command.AggregateId, navigator)))
+                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough().Then(() => navigator.Execute(new ComposableApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
                    .ForEvent((IMyExactlyOnceEvent _) => EventHandlerThreadGate.AwaitPassThrough())
                    .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
-                   .ForQuery((MyQuery _) => QueryHandlerThreadGate.AwaitPassthroughAndReturn(new MyQueryResult()))
-                   .ForCommandWithResult((MyAtMostOnceCommandWithResult _) => CommandHandlerWithResultThreadGate.AwaitPassthroughAndReturn(new MyCommandResult()));
+                   .ForQuery((MyQuery _) => QueryHandlerThreadGate.AwaitPassThrough().MapTo(_ =>new MyQueryResult()))
+                   .ForCommandWithResult((MyAtMostOnceCommandWithResult _) => CommandHandlerWithResultThreadGate.AwaitPassThrough().Then(() => new MyCommandResult()));
 
             MapBackendEndpointTypes(builder);
          });
@@ -101,14 +102,14 @@ public class Fixture : DuplicateByPluggableComponentTest
       await Host.StartAsync();
       AllGates = new List<IThreadGate>
                  {
-                    (CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout))
+                    (CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate))),
+                    (CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate))),
+                    (MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate))),
+                    (MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate))),
+                    (MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate))),
+                    (MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate))),
+                    (EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate))),
+                    (QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(QueryHandlerThreadGate)))
                  };
    }
 
@@ -121,7 +122,7 @@ public class Fixture : DuplicateByPluggableComponentTest
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
 
-   protected void OpenGates() => AllGates?.ForEach(gate => gate.Open());
+   protected void OpenGates() => AllGates.ForEach(gate => gate.Open());
 
    protected static class MyAggregateEvent
    {

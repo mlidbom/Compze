@@ -36,7 +36,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
 
       public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage)
       {
-         var inFlightMessage = InflightMessages.GetOrAdd(transportMessage.MessageId, () => new InFlightMessage());
+         var inFlightMessage = InflightMessages.GetOrAdd(transportMessage.Id, () => new InFlightMessage());
          inFlightMessage.RemainingReceivers++;
       }
 

@@ -45,7 +45,7 @@ static class TransportMessage
          return _message;
       }
 
-      InComing(string body, TypeId messageTypeId, byte[] client, Guid messageId, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+      internal InComing(string body, TypeId messageTypeId, byte[] client, Guid messageId, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
          _serializer = serializer;
          _typeMapper = typeMapper;
@@ -102,17 +102,17 @@ static class TransportMessage
    internal class OutGoing
    {
       public bool IsExactlyOnceDeliveryMessage { get; }
-      public readonly Guid MessageId;
+      public readonly Guid Id;
 
-      readonly TypeId _messageType;
-      readonly string _messageBody;
+      internal readonly TypeId Type;
+      internal readonly string Body;
 
       public void Send(IOutgoingSocket socket)
       {
          var message = new NetMQMessage(4);
-         message.Append(MessageId);
-         message.Append(_messageType.GuidValue);
-         message.Append(_messageBody);
+         message.Append(Id);
+         message.Append(Type.GuidValue);
+         message.Append(Body);
 
          socket.SendMultipartMessage(message);
       }
@@ -125,12 +125,12 @@ static class TransportMessage
          return new OutGoing(typeMapper.GetId(message.GetType()), messageId, body, message is IExactlyOnceMessage);
       }
 
-      OutGoing(TypeId messageType, Guid messageId, string messageBody, bool isExactlyOnceDeliveryMessage)
+      OutGoing(TypeId type, Guid id, string body, bool isExactlyOnceDeliveryMessage)
       {
          IsExactlyOnceDeliveryMessage = isExactlyOnceDeliveryMessage;
-         _messageType = messageType;
-         MessageId = messageId;
-         _messageBody = messageBody;
+         Type = type;
+         Id = id;
+         Body = body;
       }
    }
 

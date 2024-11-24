@@ -1,4 +1,5 @@
 ﻿using System;
+using Composable.SystemCE;
 using JetBrains.Annotations;
 
 // ReSharper disable UnusedMember.Global
@@ -8,13 +9,13 @@ namespace Composable.Logging;
 interface ILogger
 {
    ILogger WithLogLevel(LogLevel level);
-   void Error(Exception exception, string? message = null);
-   void Warning(string message);
-   void Warning(Exception exception, string message);
-   void Info(string message);
-   void Debug(string message);
+   VoidCE Error(Exception exception, string? message = null);
+   VoidCE Warning(string message);
+   VoidCE Warning(Exception exception, string message);
+   VoidCE Info(string message);
+   VoidCE Debug(string message);
    [StringFormatMethod(formatParameterName: "queuedMessageInformation")]
-   void DebugFormat(string message, params object[] arguments);
+   VoidCE DebugFormat(string message, params object[] arguments);
 }
 
 static class Logger

@@ -8,7 +8,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   partial class HandlerExecutionEngine
+   internal partial class HandlerExecutionEngine
    {
       Thread? _awaitDispatchableMessageThread;
 
