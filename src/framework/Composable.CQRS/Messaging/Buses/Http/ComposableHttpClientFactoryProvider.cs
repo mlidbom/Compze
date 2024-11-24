@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Composable.Logging;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Serialization;
 using Composable.SystemCE.ThreadingCE.TasksCE;

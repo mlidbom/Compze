@@ -51,7 +51,7 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    /// Implements equals using persistent reference semantics.
    /// If two instances have the same Id, Equals will return true.
    /// </summary>
-   public override bool Equals(object? other) => (other is TEntity actualOther) && Equals(actualOther);
+   public override bool Equals(object? obj) => (obj is TEntity actualOther) && Equals(actualOther);
 
    /// <inheritdoc />
    public override int GetHashCode() => Id.GetHashCode();

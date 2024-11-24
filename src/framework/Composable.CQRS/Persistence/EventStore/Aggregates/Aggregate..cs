@@ -7,8 +7,6 @@ using Composable.Messaging.Events;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ReactiveCE;
-using JetBrains.Annotations;
-
 
 namespace Composable.Persistence.EventStore.Aggregates;
 

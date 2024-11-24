@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Composable.Contracts;
 using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing.Transactions;
 

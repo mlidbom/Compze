@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using AccountManagement.Domain;
+﻿using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
 using Composable.DDD;
 using Newtonsoft.Json;

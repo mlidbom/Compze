@@ -3,11 +3,9 @@
 // ReSharper disable MemberHidesStaticFromOuterClass
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Refactoring.Naming;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Composable.Messaging;

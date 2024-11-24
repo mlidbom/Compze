@@ -8,7 +8,6 @@ using Composable.Persistence.PgSql.SystemExtensions;
 using Npgsql;
 using NpgsqlTypes;
 using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Composable.Persistence.PgSql.EventStore;
 

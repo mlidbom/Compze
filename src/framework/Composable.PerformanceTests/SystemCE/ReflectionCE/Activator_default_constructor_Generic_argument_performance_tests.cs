@@ -1,5 +1,4 @@
 ﻿using System;
-using Composable.GenericAbstractions;
 using Composable.SystemCE;
 using Composable.SystemCE.DiagnosticsCE;
 using Composable.SystemCE.ReflectionCE;

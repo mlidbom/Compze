@@ -10,7 +10,6 @@ using Composable.SystemCE;
 using MySql.Data.MySqlClient;
 using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
 using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Composable.Persistence.MySql.EventStore;
 

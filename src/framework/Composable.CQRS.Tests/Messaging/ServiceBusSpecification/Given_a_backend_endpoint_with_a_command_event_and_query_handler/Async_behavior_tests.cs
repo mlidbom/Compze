@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Composable.Logging;
 using Composable.Messaging;
-using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using NUnit.Framework;

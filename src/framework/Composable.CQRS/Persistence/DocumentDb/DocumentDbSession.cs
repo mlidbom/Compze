@@ -5,7 +5,6 @@ using System.Linq;
 using System.Transactions;
 using Composable.Contracts;
 using Composable.DDD;
-using Composable.Logging;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;

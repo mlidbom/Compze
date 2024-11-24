@@ -1,7 +1,5 @@
 ﻿using System;
-using Composable.DDD;
 using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
 using Composable.Messaging.Events;
 
 namespace Composable.Persistence.EventStore.Aggregates;

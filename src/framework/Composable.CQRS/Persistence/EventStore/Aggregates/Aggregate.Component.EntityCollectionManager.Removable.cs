@@ -1,6 +1,4 @@
 ﻿using System;
-using Composable.DDD;
-using Composable.Messaging;
 using Composable.Messaging.Events;
 
 namespace Composable.Persistence.EventStore.Aggregates;

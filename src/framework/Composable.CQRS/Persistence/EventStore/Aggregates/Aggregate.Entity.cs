@@ -1,7 +1,6 @@
 ﻿using System;
 using Composable.Contracts;
 using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
 using Composable.Messaging.Events;
 using Composable.SystemCE.ReflectionCE;
 using JetBrains.Annotations;

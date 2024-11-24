@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Linq;
 using Composable.Logging;
 using Composable.Persistence.EventStore;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
 using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.LinqCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
 using FluentAssertions;
 using JetBrains.Annotations;
-using NCrunch.Framework;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Composable.Tests.Serialization;

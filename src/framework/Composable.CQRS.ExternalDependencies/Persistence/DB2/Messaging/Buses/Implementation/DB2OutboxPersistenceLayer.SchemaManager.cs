@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.Persistence.DB2.SystemExtensions;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Message = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using Dispatch = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;

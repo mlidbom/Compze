@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using Composable.DependencyInjection;
+﻿using Composable.DependencyInjection;
 using Composable.GenericAbstractions.Time;
 using Composable.Messaging.Buses.Http;
 using Composable.Messaging.Buses.Implementation;

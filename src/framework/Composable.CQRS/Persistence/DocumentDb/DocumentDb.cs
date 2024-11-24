@@ -33,7 +33,7 @@ class DocumentDb : IDocumentDb
       value = default;
       var idString = GetIdString(id);
 
-      if(!_persistenceLayer.TryGet(idString, AcceptableTypeIds(typeof(TDocument)), useUpdateLock, out var readRow)) return false;
+      if(!_persistenceLayer.TryGet(idString, AcceptableTypeIds<TDocument>(), useUpdateLock, out var readRow)) return false;
 
       var found = Deserialize<TDocument>(readRow);
 
@@ -103,12 +103,12 @@ class DocumentDb : IDocumentDb
 
    public IEnumerable<TDocument> GetAll<TDocument>(IEnumerable<Guid> ids) where TDocument : IHasPersistentIdentity<Guid>
    {
-      var storedList = _persistenceLayer.GetAll(ids, AcceptableTypeIds(typeof(TDocument)));
+      var storedList = _persistenceLayer.GetAll(ids, AcceptableTypeIds<TDocument>());
 
       return storedList.Select(Deserialize<TDocument>);
    }
 
-   public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _persistenceLayer.GetAllIds(AcceptableTypeIds(typeof(T)));
+   public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _persistenceLayer.GetAllIds(AcceptableTypeIds<T>());
 
 
    [return:NotNull]TDocument Deserialize<TDocument>(IDocumentDbPersistenceLayer.ReadRow stored) =>

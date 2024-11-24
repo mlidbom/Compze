@@ -6,7 +6,6 @@ using Composable.Contracts;
 using Composable.Logging;
 using Composable.Persistence;
 using Composable.SystemCE;
-using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ReflectionCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;

@@ -1,7 +1,6 @@
 using System;
 using Composable.Logging;
 using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing;
 using Composable.Testing.Performance;
