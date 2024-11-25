@@ -134,7 +134,7 @@ class ServerEndpointBuilder : IEndpointBuilder
                                                                        => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
             Singleton.For<Inbox.Runner>().CreatedBy((Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
                                                        => new Inbox.Runner(handlerExecutionEngine, storage, configuration, typeMapper, serializer)),
-            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.Runner runner, Inbox.HandlerExecutionEngine engine, RealEndpointConfiguration endpointConfiguration, ITaskRunner taskRunner, IRemotableMessageSerializer serializer, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container)
+            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.Runner runner, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container)
                                                  => new Inbox(serviceLocator, runner, messageStorage, container)),
             Singleton.For<CommandScheduler>().CreatedBy((IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) => new CommandScheduler(transport, timeSource, taskRunner)),
             Scoped.For<IServiceBusSession>().CreatedBy((IOutbox outbox, CommandScheduler commandScheduler) => new ServiceBusSession(outbox, commandScheduler)),

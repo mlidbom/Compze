@@ -20,7 +20,7 @@ partial class Inbox : IInbox, IAsyncDisposable
       _aspNetHost = new AspNetHost(serviceLocator, container);
    }
 
-   public EndPointAddress Address => new(netMqAddress: _runner!.Address, aspNetAddress: _aspNetHost.Address);
+   public EndPointAddress Address => new(netMqAddress: _runner.Address, aspNetAddress: _aspNetHost.Address);
 
    public async Task StartAsync()
    {
