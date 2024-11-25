@@ -29,12 +29,12 @@ static class TestingExtensions
 #pragma warning restore CA2000 // Dispose objects before losing scope
       };
 
-      cloneContainer.Register(Singleton.For<IServiceLocator>().CreatedBy(() => cloneContainer.CreateServiceLocator()));
+      cloneContainer.Register(Singleton.For<IServiceLocator>().CreatedBy(() => cloneContainer.ServiceLocator));
 
       sourceContainer.RegisteredComponents()
                      .Where(component => TypesThatAreFacadesForTheContainer.None(facadeForTheContainer => component.ServiceTypes.Contains(facadeForTheContainer)))
                      .ForEach(action: componentRegistration => cloneContainer.Register(componentRegistration.CreateCloneRegistration(@this)));
 
-      return cloneContainer.CreateServiceLocator();
+      return cloneContainer.ServiceLocator;
    }
 }

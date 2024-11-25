@@ -34,7 +34,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       SetupContainer();
       SetupInternalTypeMap();
       MessageTypes.Internal.RegisterHandlers(RegisterHandlers);
-      var serviceLocator = Container.CreateServiceLocator();
+      var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<IGlobalBusStateTracker>(),
                                   serviceLocator.Resolve<ITransport>(),
@@ -62,7 +62,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       _typeMapper = new TypeMapper();
 
       _registry = new MessageHandlerRegistry(_typeMapper);
-      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.CreateServiceLocator()));
+      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.ServiceLocator));
 
    }
 
@@ -134,8 +134,11 @@ class ServerEndpointBuilder : IEndpointBuilder
                                                                        => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
             Singleton.For<Inbox.Runner>().CreatedBy((Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
                                                        => new Inbox.Runner(handlerExecutionEngine, storage, configuration, typeMapper, serializer)),
-            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.Runner runner, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container)
-                                                 => new Inbox(serviceLocator, runner, messageStorage, container)),
+            Scoped.For<QueryController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine)
+                                                       => new QueryController(serializer, typeMapper, handlerExecutionEngine)),
+            Singleton.For<Inbox.AspNetHost>().CreatedBy((IServiceLocator serviceLocator, IDependencyInjectionContainer container) => new Inbox.AspNetHost(serviceLocator, container)),
+            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.Runner runner, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, Inbox.AspNetHost aspNetHost)
+                                                 => new Inbox(serviceLocator, runner, messageStorage, container, aspNetHost)),
             Singleton.For<CommandScheduler>().CreatedBy((IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) => new CommandScheduler(transport, timeSource, taskRunner)),
             Scoped.For<IServiceBusSession>().CreatedBy((IOutbox outbox, CommandScheduler commandScheduler) => new ServiceBusSession(outbox, commandScheduler)),
             Scoped.For<ILocalHypermediaNavigator>().CreatedBy((IMessageHandlerRegistry messageHandlerRegistry) => new LocalHypermediaNavigator(messageHandlerRegistry))

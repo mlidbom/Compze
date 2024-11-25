@@ -38,7 +38,7 @@ public static class DependencyInjectionContainer
          _ => throw new ArgumentOutOfRangeException()
       };
 
-      container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.CreateServiceLocator()));
+      container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
       return container;
    }
 

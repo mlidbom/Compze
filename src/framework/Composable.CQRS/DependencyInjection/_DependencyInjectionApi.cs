@@ -9,34 +9,21 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    IRunMode RunMode { get; }
    void Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
-   IServiceLocator CreateServiceLocator();
+   IServiceLocator ServiceLocator { get; }
 
-   void RegisterServicesInIServiceCollection(IServiceCollection services)
+   void RegisterToHandleServiceResolutionFor(IServiceCollection services)
    {
+      var serviceLocator = ServiceLocator;
       foreach(var component in RegisteredComponents())
       {
-         var serviceLocator = CreateServiceLocator();
-         switch(component.Lifestyle)
+         foreach(var serviceType in component.ServiceTypes)
          {
-            case Lifestyle.Singleton:
-               foreach(var serviceType in component.ServiceTypes)
-               {
-                  services.AddSingleton(serviceType, _ => component.Resolve(serviceLocator));
-               }
-
-               break;
-            case Lifestyle.Scoped:
-               foreach(var serviceType in component.ServiceTypes)
-               {
-                  services.AddScoped(serviceType, _ => component.Resolve(serviceLocator));
-               }
-
-               break;
+            //We handle lifetimes ourselves so registering everything as transient in the other container will avoid duplicate Dispose calls.
+            services.AddTransient(serviceType, _ => component.Resolve(serviceLocator));
          }
       }
    }
 }
-
 
 public interface IServiceLocator : IDisposable, IAsyncDisposable
 {
@@ -44,17 +31,14 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
    TComponent[] ResolveAll<TComponent>() where TComponent : class;
    IDisposable BeginScope();
 }
-
 interface IServiceLocatorKernel
 {
    TComponent Resolve<TComponent>() where TComponent : class;
 }
-
 public interface IRunMode
 {
    bool IsTesting { get; }
 }
-
 public enum PersistenceLayer
 {
    MicrosoftSQLServer,
@@ -64,12 +48,13 @@ public enum PersistenceLayer
    Oracle,
    IBMDB2
 }
-
 public enum DIContainer
 {
-   Composable, SimpleInjector, WindsorCastle, Microsoft
+   Composable,
+   SimpleInjector,
+   WindsorCastle,
+   Microsoft
 }
-
 enum Lifestyle
 {
    Singleton,

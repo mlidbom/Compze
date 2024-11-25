@@ -20,7 +20,7 @@ public class InternalControllerFeatureProvider : ControllerFeatureProvider
 }
 partial class Inbox
 {
-   class AspNetHost : IAsyncDisposable
+   internal class AspNetHost : IAsyncDisposable
    {
       readonly IServiceLocator _serviceLocator;
       readonly IDependencyInjectionContainer _container;
@@ -60,16 +60,19 @@ partial class Inbox
          builder.Services.AddHttpClient();
          builder.Services.AddControllers();
 
-         _container.RegisterServicesInIServiceCollection(builder.Services);
+         _container.RegisterToHandleServiceResolutionFor(builder.Services);
 
          var app = builder.Build();
 
          app.UseRouting();
          app.MapControllers();
 
+         app.Services.AssertAllControllersCanBeInstantiated(_serviceLocator);
+
          app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
 
          await app.StartAsync().CaF();
+
          return app;
       }
    }

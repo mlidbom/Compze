@@ -84,14 +84,18 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
 
    bool _verified;
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      if(!_verified)
+      get
       {
-         _verified = true;
-         _container.Verify();
+         if(!_verified)
+         {
+            _verified = true;
+            _container.Verify();
+         }
+
+         return this;
       }
-      return this;
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class => _container.GetInstance<TComponent>();

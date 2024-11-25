@@ -64,12 +64,14 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      _serviceProvider ??= _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-      return this;
+      get
+      {
+         _serviceProvider ??= _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+         return this;
+      }
    }
-
 
    IServiceProvider CurrentProvider()
    {

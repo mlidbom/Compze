@@ -14,11 +14,11 @@ namespace Composable.Messaging.Buses.Implementation;
    readonly IMessageStorage _storage;
    readonly AspNetHost _aspNetHost;
 
-   public Inbox(IServiceLocator serviceLocator, Runner runner, IMessageStorage messageStorage, IDependencyInjectionContainer container)
+   public Inbox(IServiceLocator serviceLocator, Runner runner, IMessageStorage messageStorage, IDependencyInjectionContainer container, AspNetHost aspNetHost)
    {
       _runner = runner;
       _storage = messageStorage;
-      _aspNetHost = new AspNetHost(serviceLocator, container);
+      _aspNetHost = aspNetHost;
    }
 
    public EndPointAddress Address => new(netMqAddress: _runner.Address, aspNetAddress: _aspNetHost.Address);
@@ -29,12 +29,7 @@ namespace Composable.Messaging.Buses.Implementation;
       await Task.WhenAll(_runner.StartAsync(), storageStartTask, _aspNetHost.StartAsync()).CaF();
    }
 
-   public async Task StopAsync()
-   {
-      _runner.Dispose();
-      await _aspNetHost.StopAsync().CaF();
-   }
-
+   public async Task StopAsync() => await _aspNetHost.StopAsync().CaF();
 
    public async ValueTask DisposeAsync()
    {

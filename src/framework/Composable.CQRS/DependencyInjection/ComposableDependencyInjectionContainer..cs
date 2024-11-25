@@ -28,17 +28,20 @@ partial class ComposableDependencyInjectionContainer : IDependencyInjectionConta
       }
    }
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      Assert.State.Assert(!_disposed);
-      if(_createdServiceLocator == null)
+      get
       {
-         _createdServiceLocator = new ServiceLocator(_registeredComponents.Values.ToList());
-         //This shows as a hotspot for the tests when profiling. But does not negatively effect total test suite execution time according to my tests.
-         Verify();
-      }
+         Assert.State.Assert(!_disposed);
+         if(_createdServiceLocator == null)
+         {
+            _createdServiceLocator = new ServiceLocatorImplementation(_registeredComponents.Values.ToList());
+            //This shows as a hotspot for the tests when profiling. But does not negatively effect total test suite execution time according to my tests.
+            Verify();
+         }
 
-      return this;
+         return this;
+      }
    }
 
    void Verify()

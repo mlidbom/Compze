@@ -38,10 +38,13 @@ class WindsorDependencyInjectionContainer : IDependencyInjectionContainer, IServ
    }
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      _locked = true;
-      return this;
+      get
+      {
+         _locked = true;
+         return this;
+      }
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class => _windsorContainer.Resolve<TComponent>();

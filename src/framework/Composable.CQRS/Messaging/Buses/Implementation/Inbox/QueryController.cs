@@ -12,6 +12,10 @@ namespace Composable.Messaging.Buses.Implementation;
 
 class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
 {
+   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly IRemotableMessageSerializer _serializer = serializer;
+   readonly Inbox.HandlerExecutionEngine _handlerExecutionEngine = handlerExecutionEngine;
+
    [HttpPost("/internal/rpc/query")] public async Task<IActionResult> Query()
    {
       var messageId = Guid.Parse(HttpContext.Request.Headers["MessageId"][0].NotNull());
@@ -21,17 +25,17 @@ class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMa
       using var reader = new StreamReader(Request.Body);
       var queryJson = await reader.ReadToEndAsync().CaF();
 
-      var transportMessage = new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
+      var transportMessage = new TransportMessage.InComing(queryJson, typeId, [], messageId, _typeMapper, _serializer);
 
       try
       {
-         var queryResultObject = (await handlerExecutionEngine.Enqueue(transportMessage).CaF()).NotNull();
-         var responseJson = serializer.SerializeResponse(queryResultObject);
+         var queryResultObject = (await _handlerExecutionEngine.Enqueue(transportMessage).CaF()).NotNull();
+         var responseJson = _serializer.SerializeResponse(queryResultObject);
          return Ok(responseJson);
       }
       catch(Exception exception)
       {
-         return Problem(statusCode: StatusCodes.Status500InternalServerError, type:exception.GetType().FullName, detail: exception.ToString());
+         return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
 }
