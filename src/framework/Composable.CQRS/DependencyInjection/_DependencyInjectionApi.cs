@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Composable.DependencyInjection;
 
@@ -9,7 +10,33 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    void Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    IServiceLocator CreateServiceLocator();
+
+   void RegisterServicesInIServiceCollection(IServiceCollection services)
+   {
+      foreach(var component in RegisteredComponents())
+      {
+         var serviceLocator = CreateServiceLocator();
+         switch(component.Lifestyle)
+         {
+            case Lifestyle.Singleton:
+               foreach(var serviceType in component.ServiceTypes)
+               {
+                  services.AddSingleton(serviceType, _ => component.Resolve(serviceLocator));
+               }
+
+               break;
+            case Lifestyle.Scoped:
+               foreach(var serviceType in component.ServiceTypes)
+               {
+                  services.AddScoped(serviceType, _ => component.Resolve(serviceLocator));
+               }
+
+               break;
+         }
+      }
+   }
 }
+
 
 public interface IServiceLocator : IDisposable, IAsyncDisposable
 {

@@ -21,15 +21,15 @@ partial class Inbox : IInbox, IAsyncDisposable
    readonly HandlerExecutionEngine _handlerExecutionEngine;
    readonly AspNetHost _aspNetHost;
 
-   public Inbox(IServiceLocator serviceLocator, IGlobalBusStateTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, RealEndpointConfiguration configuration, IMessageStorage messageStorage, ITypeMapper typeMapper, ITaskRunner taskRunner, IRemotableMessageSerializer serializer)
+   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, IGlobalBusStateTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, RealEndpointConfiguration configuration, IMessageStorage messageStorage, ITypeMapper typeMapper, ITaskRunner taskRunner, IRemotableMessageSerializer serializer, IDependencyInjectionContainer container)
    {
       _configuration = configuration;
       _typeMapper = typeMapper;
       _serializer = serializer;
       _address = configuration.Address;
       _storage = messageStorage;
-      _handlerExecutionEngine = new HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, _storage, taskRunner);
-      _aspNetHost = new AspNetHost(_handlerExecutionEngine, _storage, _address, _configuration, _typeMapper, _serializer);
+      _handlerExecutionEngine = handlerExecutionEngine;
+      _aspNetHost = new AspNetHost(_handlerExecutionEngine, _storage, _address, _configuration, _typeMapper, _serializer, serviceLocator, container);
    }
 
    public EndPointAddress Address => new EndPointAddress(netMqAddress: _runner!.Address, aspNetAddress: _aspNetHost.Address); //?? new EndPointAddress(_address);

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Composable.DependencyInjection;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
-using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,14 +27,18 @@ partial class Inbox
       readonly HandlerExecutionEngine _handlerExecutionEngine;
       readonly ITypeMapper _typeMapper;
       readonly IRemotableMessageSerializer _serializer;
+      readonly IServiceLocator _serviceLocator;
+      readonly IDependencyInjectionContainer _container;
       WebApplication? _webApplication;
 
       [SuppressMessage("ReSharper", "UnusedParameter.Local")]
-      internal AspNetHost(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+      internal AspNetHost(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IServiceLocator serviceLocator, IDependencyInjectionContainer container)
       {
          _handlerExecutionEngine = handlerExecutionEngine;
          _typeMapper = typeMapper;
          _serializer = serializer;
+         _serviceLocator = serviceLocator;
+         _container = container;
       }
       public string Address => _webApplication!.Urls.First();
 
@@ -68,42 +69,17 @@ partial class Inbox
          builder.Services.AddHttpClient();
          builder.Services.AddControllers();
 
-         builder.Services.AddSingleton(_ => _serializer);
-         builder.Services.AddSingleton(_ => _typeMapper);
-         builder.Services.AddSingleton(_ => _handlerExecutionEngine);
+         _container.RegisterServicesInIServiceCollection(builder.Services);
 
          var app = builder.Build();
 
          app.UseRouting();
          app.MapControllers();
 
+         app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
+
          await app.StartAsync().NoMarshalling();
          return app;
-      }
-   }
-}
-class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
-{
-   [HttpPost("/internal/rpc/query")] public async Task<IActionResult> Query()
-   {
-      var messageId = Guid.Parse(HttpContext.Request.Headers["MessageId"][0].NotNull());
-      var typeIdStr = HttpContext.Request.Headers["PayloadTypeId"][0].NotNull();
-      var typeId = new TypeId(Guid.Parse(typeIdStr));
-
-      using var reader = new StreamReader(Request.Body);
-      var queryJson = await reader.ReadToEndAsync().NoMarshalling();
-
-      var transportMessage = new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
-
-      try
-      {
-         var queryResultObject = (await handlerExecutionEngine.Enqueue(transportMessage).NoMarshalling()).NotNull();
-         var responseJson = serializer.SerializeResponse(queryResultObject);
-         return Ok(responseJson);
-      }
-      catch(Exception exception)
-      {
-         return Problem(statusCode: StatusCodes.Status500InternalServerError, type:exception.GetType().FullName, detail: exception.ToString());
       }
    }
 }
