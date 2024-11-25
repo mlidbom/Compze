@@ -2,6 +2,7 @@
 using Composable.DependencyInjection;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -56,7 +57,7 @@ public class Startup
 
       app.UseRouting();
 
-      app.Use(async (_, next) => await _clientEndpoint.ExecuteClientRequestAsync(async () => await next.Invoke()));
+      app.Use(async (_, next) => await _clientEndpoint.ExecuteClientRequestAsync(async () => await next.Invoke().NoMarshalling()).NoMarshalling());
 
       app.UseEndpoints(endpoints =>
       {

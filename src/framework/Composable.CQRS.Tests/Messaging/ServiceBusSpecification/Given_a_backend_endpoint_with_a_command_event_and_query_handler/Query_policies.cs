@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Composable.Messaging.Buses;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing.Threading;
 using NUnit.Framework;
 
@@ -21,7 +22,7 @@ public class Query_policies : Fixture
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 5);
       QueryHandlerThreadGate.Open();
 
-      await queriesResults;
+      await queriesResults.NoMarshalling();
    }
 
    public Query_policies(string _) : base(_) {}

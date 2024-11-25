@@ -46,15 +46,9 @@ public class LambdaBasedArgumentSpecsTests
       Assert.Throws<InvalidAccessorLambdaException>(() => Contract.Argument(() => 0));
    }
 
-   static void TestStringsForNullOrEmpty(string singleString)
-   {
-      Contract.Argument(() => singleString).NotNullOrEmpty();
-   }
+   static void TestStringsForNullOrEmpty(string singleString) => Contract.Argument(() => singleString).NotNullOrEmpty();
 
-   static void TestStringsForNullOrEmpty(string firstString, string secondString, string thirdString)
-   {
-      Contract.Argument(() => firstString, () => secondString, () => thirdString).NotNullOrEmpty();
-   }
+   static void TestStringsForNullOrEmpty(string firstString, string secondString, string thirdString) => Contract.Argument(() => firstString, () => secondString, () => thirdString).NotNullOrEmpty();
 }
 
 // ReSharper restore ConvertToConstant.Local

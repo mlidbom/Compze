@@ -9,8 +9,8 @@ namespace Composable.Persistence.DB2.SystemExtensions;
 
 interface IDB2ConnectionPool : IDbConnectionPool<IComposableDB2Connection, DB2Command>
 {
-   public static IDB2ConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-   public static IDB2ConnectionPool CreateInstance(Func<string> getConnectionString) => new DB2ConnectionPool(getConnectionString);
+   static IDB2ConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
+   static IDB2ConnectionPool CreateInstance(Func<string> getConnectionString) => new DB2ConnectionPool(getConnectionString);
 
    class DB2ConnectionPool : IDB2ConnectionPool
    {

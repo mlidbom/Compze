@@ -15,6 +15,8 @@ csharp_style_expression_bodied_local_functions = when_on_single_line
 
 dotnet_diagnostic.CA1707.severity = none # We use underscores in test names.
 dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for this.
+dotnet_diagnostic.CA1852.severity = none # making every single class that could theoretically be sealed sealed as a nano optimization. NO thanks. sealed has an actual semantic meaning and I only seal classes where it applies.
+dotnet_diagnostic.CA1515.severity = none # There are many good reasons for classes to be public. Such as frameworks not working if they are not!
 
 dotnet_diagnostic.IDE0055.severity = none # I don't want visual studio to give thousands of warnings about formatting
 dotnet_diagnostic.IDE0058.severity = none # In countless cases it is perfectly valid not to use the return value of an expression

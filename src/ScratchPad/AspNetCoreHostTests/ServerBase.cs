@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +29,7 @@ public class TestStringsController : Controller
    [HttpPost("/test/strings")] public async Task<IActionResult> GetTest()
    {
       using var reader = new StreamReader(Request.Body);
-      var query = await reader.ReadToEndAsync();
+      var query = await reader.ReadToEndAsync().NoMarshalling();
       return Ok($"{query} response");
    }
 }
@@ -49,7 +51,7 @@ public class TestAspNetCoreHost
 {
    [Test] public async Task TestObjects()
    {
-      var servers = await Task.WhenAll(1.Through(10).Select(_ => SetupWebApplication()));
+      var servers = await Task.WhenAll(1.Through(10).Select(_ => SetupWebApplication())).NoMarshalling();
 
       await Task.WhenAll(servers.Select(async server =>
       {
@@ -60,24 +62,24 @@ public class TestAspNetCoreHost
             async Task RunQuery()
             {
                var requestUri = $"{server.Urls.First()}/test/objects";
-               var response = await client.PostAsJsonAsync(requestUri, new MyQuery { Input = "test" });
-               var result = await response.Content.ReadFromJsonAsync<MyResponse>();
+               var response = await client.PostAsJsonAsync(requestUri, new MyQuery { Input = "test" }).NoMarshalling();
+               var result = await response.Content.ReadFromJsonAsync<MyResponse>().NoMarshalling();
                Assert.That(result.NotNull().Result, Is.EqualTo("test response"));
             }
-            await Task.WhenAll(1.Through(100).Select(_ => RunQuery()));
+            await Task.WhenAll(1.Through(100).Select(_ => RunQuery())).NoMarshalling();
          }
          finally
          {
-            await server.StopAsync();
+            await server.StopAsync().NoMarshalling();
          }
-      }));
+      })).NoMarshalling();
 
-      await Task.WhenAll(servers.Select(server => server.StopAsync()));
+      await Task.WhenAll(servers.Select(server => server.StopAsync())).NoMarshalling();
    }
 
    [Test] public async Task TestStrings()
    {
-      var servers = await Task.WhenAll(101.Through(110).Select(_ => SetupWebApplication()));
+      var servers = await Task.WhenAll(101.Through(110).Select(_ => SetupWebApplication())).NoMarshalling();
 
       await Task.WhenAll(servers.Select(async server =>
       {
@@ -87,21 +89,21 @@ public class TestAspNetCoreHost
 
             async Task RunQuery()
             {
-               var requestUriStrings = $"{server.Urls.First()}/test/strings";
-               var responseString = await client.PostAsync(requestUriStrings, new StringContent("test", Encoding.UTF8, "text/plain"));
-               var resultString = await responseString.Content.ReadAsStringAsync();
+               var requestUriStrings = new Uri($"{server.Urls.First()}/test/strings");
+               var responseString = await client.PostAsync(requestUriStrings, new StringContent("test", Encoding.UTF8, "text/plain")).NoMarshalling();
+               var resultString = await responseString.Content.ReadAsStringAsync().NoMarshalling();
                Assert.That(resultString.NotNull(), Is.EqualTo("test response"));
             }
 
-            await Task.WhenAll(1.Through(100).Select(_ => RunQuery()));
+            await Task.WhenAll(1.Through(100).Select(_ => RunQuery())).NoMarshalling();
          }
          finally
          {
-            await server.StopAsync();
+            await server.StopAsync().NoMarshalling();
          }
-      }));
+      })).NoMarshalling();
 
-      await Task.WhenAll(servers.Select(server => server.StopAsync()));
+      await Task.WhenAll(servers.Select(server => server.StopAsync())).NoMarshalling();
    }
 
    static async Task<WebApplication> SetupWebApplication()
@@ -121,7 +123,7 @@ public class TestAspNetCoreHost
       app.UseRouting();
       app.MapControllers();
 
-      await app.StartAsync();
+      await app.StartAsync().NoMarshalling();
       return app;
    }
 }

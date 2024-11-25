@@ -48,8 +48,8 @@ public class HierarchyTests
                      ]
                   };
 
-      var flattened = EnumerableCE.Create(root1, root2).FlattenHierarchy(root => root.Children);
-      Assert.That(flattened.Count(), Is.EqualTo(10));            //Ensures no duplicates
+      var flattened = EnumerableCE.Create(root1, root2).FlattenHierarchy(root => root.Children).ToList();
+      Assert.That(flattened.Count, Is.EqualTo(10));            //Ensures no duplicates
       Assert.That(flattened.Distinct().Count(), Is.EqualTo(10)); //Ensures all objects are there.
    }
 
@@ -78,8 +78,8 @@ public class HierarchyTests
                                     new()
                                  }
                    };
-      var familyRegister = family.Flatten();
-      Assert.That(familyRegister.Count(), Is.EqualTo(5), "Should have 5 persons in the list");
-      Assert.That(familyRegister.Count(), Is.EqualTo(5), "Should have 5 unique persons in the list");
+      var familyRegister = family.Flatten().ToList();
+      Assert.That(familyRegister.Count, Is.EqualTo(5), "Should have 5 persons in the list");
+      Assert.That(familyRegister.Count, Is.EqualTo(5), "Should have 5 unique persons in the list");
    }
 }

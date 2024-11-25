@@ -11,8 +11,8 @@ namespace Composable.Tests;
 
 static class TestWiringHelper
 {
-   static readonly string DocumentDbConnectionStringName = "Fake_connectionstring_for_database_testing";
-   internal static string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
+   const string DocumentDbConnectionStringName = "Fake_connectionstring_for_database_testing";
+   internal const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
    internal static IEventStore EventStore(this IServiceLocator @this) =>
       @this.Resolve<IEventStore>();
@@ -38,9 +38,9 @@ static class TestWiringHelper
    internal static IDocumentDbSession DocumentDbSession(this IServiceLocator @this)
       => @this.Resolve<IDocumentDbSession>();
 
-   static void RegisterTestingDocumentDb(this IDependencyInjectionContainer @this) { @this.RegisterDocumentDb(DocumentDbConnectionStringName); }
+   static void RegisterTestingDocumentDb(this IDependencyInjectionContainer @this) => @this.RegisterDocumentDb(DocumentDbConnectionStringName);
 
-   static void RegisterTestingEventStore(this IDependencyInjectionContainer @this) { @this.RegisterEventStore(EventStoreConnectionStringName); }
+   static void RegisterTestingEventStore(this IDependencyInjectionContainer @this) => @this.RegisterEventStore(EventStoreConnectionStringName);
 
    internal static IServiceLocator SetupTestingServiceLocator([InstantHandle] Action<IEndpointBuilder> configureContainer = null) =>
       Logger.For(typeof(TestWiringHelper)).ExceptionsAndRethrow(() =>

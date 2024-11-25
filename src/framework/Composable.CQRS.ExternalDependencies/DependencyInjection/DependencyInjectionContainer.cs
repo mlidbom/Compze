@@ -5,6 +5,7 @@ using Composable.DependencyInjection.SimpleInjector;
 using Composable.DependencyInjection.Windsor;
 using Composable.Messaging.Buses;
 using Composable.Persistence.Common.DependencyInjection;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using JetBrains.Annotations;
 
@@ -45,6 +46,6 @@ public static class DependencyInjectionContainer
    {
       readonly ITestingEndpointHost _host;
       public TestingEndpointHostDisposer(ITestingEndpointHost host) => _host = host;
-      public async ValueTask DisposeAsync() => await _host.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
+      public async ValueTask DisposeAsync() => await _host.DisposeAsync().NoMarshalling();
    }
 }

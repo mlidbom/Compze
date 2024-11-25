@@ -20,10 +20,7 @@ public class NotNullOrEmptyOrWhitespaceTests
    }
 
    [Test]
-   public void ThrowsStringIsEmptyArgumentExceptionForEmptyStrings()
-   {
-      Assert.Throws<StringIsEmptyContractViolationException>(() => Contract.Argument(string.Empty, nameof(string.Empty)).NotNullEmptyOrWhiteSpace());
-   }
+   public void ThrowsStringIsEmptyArgumentExceptionForEmptyStrings() => Assert.Throws<StringIsEmptyContractViolationException>(() => Contract.Argument(string.Empty, nameof(string.Empty)).NotNullEmptyOrWhiteSpace());
 
    [Test]
    public void ThrowsStringIsWhiteSpaceExceptionForStringConsistingOfTabsSpacesOrLineBreaks()

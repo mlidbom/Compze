@@ -20,7 +20,7 @@ partial class Component
            .For<RootEvent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
       }
 
-      public void Rename(string name) { Publish(new RootEvent.Component.Entity.Implementation.Renamed(name)); }
+      public void Rename(string name) => Publish(new RootEvent.Component.Entity.Implementation.Renamed(name));
       public void Remove() => Publish(new RootEvent.Component.Entity.Implementation.Removed());
    }
 }

@@ -70,8 +70,8 @@ public class AggregateTests
       }
 
       receivedEvents.Count.Should().Be(2);
-      receivedEvents[0].GetType().Should().Be(typeof(TriggeringEvent));
-      receivedEvents[1].GetType().Should().Be(typeof(TriggeredEvent));
+      receivedEvents[0].GetType().Should().Be<TriggeringEvent>();
+      receivedEvents[1].GetType().Should().Be<TriggeredEvent>();
    }
 
    class CascadingEventsAggregate : Aggregate<CascadingEventsAggregate, AggregateEvent, IAggregateEvent>
@@ -87,10 +87,7 @@ public class AggregateTests
       }
       public bool TriggeredEventApplied { get; private set; }
       public bool TriggeringEventApplied { get; private set; }
-      public void RaiseTriggeringEvent()
-      {
-         Publish(new TriggeringEvent());
-      }
+      public void RaiseTriggeringEvent() => Publish(new TriggeringEvent());
    }
 
    interface ITriggeringEvent : IAggregateCreatedEvent {}

@@ -16,7 +16,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
    readonly IThreadShared<State> _state = ThreadShared.WithDefaultTimeout(new State());
    readonly TransactionLockManager _transactionLockManager = new();
 
-   public InMemoryEventStorePersistenceLayer() { _state.Update(state => state.Init(_state)); }
+   public InMemoryEventStorePersistenceLayer() => _state.Update(state => state.Init(_state));
 
    public void InsertSingleAggregateEvents(IReadOnlyList<EventDataRow> events) =>
       _transactionLockManager.WithTransactionWideLock(

@@ -105,13 +105,7 @@ static class InspectionTestHelper
       exception.BadValue.Name.Should().Be(badValueName);
    }
 
-   static void Return<TReturnValue>(TReturnValue returnValue, Action<IInspected<TReturnValue>> assert)
-   {
-      Contract.Return(returnValue, assert);
-   }
+   static void Return<TReturnValue>(TReturnValue returnValue, Action<IInspected<TReturnValue>> assert) => Contract.Return(returnValue, assert);
 
-   static void ReturnOptimized<TReturnValue>(TReturnValue returnValue, Action<IInspected<TReturnValue>> assert)
-   {
-      Contract.Return(returnValue, assert);
-   }
+   static void ReturnOptimized<TReturnValue>(TReturnValue returnValue, Action<IInspected<TReturnValue>> assert) => Contract.Return(returnValue, assert);
 }

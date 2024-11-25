@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.Persistence.DocumentDb;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -22,22 +23,13 @@ class DocumentDbTestsBase : DuplicateByPluggableComponentTest
                    .Map<Composable.Tests.Persistence.DocumentDb.Person>("64133a9b-1279-4029-9469-2d63d4f9ceaa")
                    .Map<global::System.Collections.Generic.HashSet<User>>("df57e323-d4b0-44c1-a69c-5ea100af9ebf"));
    [SetUp]
-   public void Setup()
-   {
-      ServiceLocator = CreateServiceLocator();
-   }
+   public void Setup() => ServiceLocator = CreateServiceLocator();
    [TearDown]
    public async Task TearDownTask()
    {
-      if (ServiceLocator != null) await ServiceLocator.DisposeAsync();
+      if (ServiceLocator != null) await ServiceLocator.DisposeAsync().NoMarshalling();
    }
-   protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession)
-   {
-      ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));
-   }
-   internal void UseInScope([InstantHandle]Action<IDocumentDbReader> useSession)
-   {
-      ServiceLocator.ExecuteInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader()));
-   }
+   protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) => ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));
+   internal void UseInScope([InstantHandle]Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader()));
    public DocumentDbTestsBase([NotNull] string _) : base(_) {}
 }

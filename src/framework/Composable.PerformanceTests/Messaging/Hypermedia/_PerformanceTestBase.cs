@@ -5,6 +5,7 @@ using Composable.Messaging;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
 using Composable.Persistence.Common.DependencyInjection;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using NUnit.Framework;
 
@@ -41,10 +42,10 @@ public class PerformanceTestBase : DuplicateByPluggableComponentTest
          });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
-      await Host.StartAsync();
+      await Host.StartAsync().NoMarshalling();
    }
 
-   [TearDown] public async Task TearDown() { await Host.DisposeAsync(); }
+   [TearDown] public async Task TearDown() => await Host.DisposeAsync().NoMarshalling();
 
    protected class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult> {}
    protected class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult> {}

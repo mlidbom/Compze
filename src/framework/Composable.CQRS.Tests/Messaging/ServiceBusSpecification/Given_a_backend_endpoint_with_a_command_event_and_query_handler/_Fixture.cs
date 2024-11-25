@@ -11,6 +11,7 @@ using Composable.Persistence.EventStore;
 using Composable.Persistence.EventStore.Aggregates;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing.Threading;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -21,6 +22,7 @@ using Composable.Testing;
 
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
 #pragma warning disable CA1724  // Type names should not match namespaces
+#pragma warning disable CA1715  // Interfaces should start with I
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
@@ -98,7 +100,7 @@ public class Fixture : DuplicateByPluggableComponentTest
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await Host.StartAsync();
+      await Host.StartAsync().NoMarshalling();
       AllGates = new List<IThreadGate>
                  {
                     (CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate))),
@@ -116,7 +118,7 @@ public class Fixture : DuplicateByPluggableComponentTest
    {
       OpenGates();
       TaskRunner.Dispose();
-      await Host.DisposeAsync();
+      await Host.DisposeAsync().NoMarshalling();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

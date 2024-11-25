@@ -41,7 +41,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public IReadOnlyEntityCollection<Entity, int> Entities => _entities.Entities;
    readonly Entity.CollectionManager _entities;
 
-   public void Rename(string name) { Publish(new RootEvent.Component.Implementation.Renamed(name)); }
+   public void Rename(string name) => Publish(new RootEvent.Component.Implementation.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootEvent.Component.Entity.Implementation.Created(++_instances, name));
 
    public class Entity : RemovableNestedEntity<Entity,
@@ -59,7 +59,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
            .For<RootEvent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
       }
 
-      public void Rename(string name) { Publish(new RootEvent.Component.Entity.Implementation.Renamed(name)); }
+      public void Rename(string name) => Publish(new RootEvent.Component.Entity.Implementation.Renamed(name));
       public void Remove() => Publish(new RootEvent.Component.Entity.Implementation.Removed());
    }
 }
@@ -84,7 +84,7 @@ class RemovableEntity : Root.RemovableEntity<RemovableEntity,
    public IReadOnlyEntityCollection<RemovableNestedEntity, int> Entities => _entities.Entities;
    readonly RemovableNestedEntity.CollectionManager _entities;
 
-   public void Rename(string name) { Publish(new RootEvent.Entity.Implementation.Renamed(name)); }
+   public void Rename(string name) => Publish(new RootEvent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootEvent.Entity.Implementation.Removed());
 
    public class RemovableNestedEntity : RemovableNestedEntity<RemovableNestedEntity,

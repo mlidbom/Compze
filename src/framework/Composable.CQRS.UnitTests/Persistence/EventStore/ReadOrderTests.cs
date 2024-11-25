@@ -1,5 +1,6 @@
 ﻿using System;
 using Composable.Persistence.Oracle.SystemExtensions;
+using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using FluentAssertions;
 using NUnit.Framework;
@@ -132,5 +133,5 @@ namespace Composable.Tests.Persistence.EventStore;
 
    static ReadOrder Create(long order, long offset) => ReadOrder.Parse($"{order}.{offset:D19}");
    static string CreateString(int order, int value) => $"{order}.{DecimalPlaces(value)}";
-   static string DecimalPlaces(int number) => new(number.ToString()[0], 19);
+   static string DecimalPlaces(int number) => new(number.ToStringInvariant()[0], 19);
 }

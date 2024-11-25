@@ -13,6 +13,7 @@ using Composable.Refactoring.Naming;
 using Composable.SystemCE;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -31,7 +32,8 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
       ConsoleCE.WriteLine($"###############$$$$$$$Running {scenarios.Length} scenario(s)");
 
       IList<IEventMigration> migrations = new List<IEventMigration>();
-      await using var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations.ToArray());
+      var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations.ToArray());
+      await using var locator = serviceLocator.NoMarshalling();
       var timeSource = serviceLocator.Resolve<TestingTimeSource>();
       timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
       var scenarioIndex = 1;
@@ -39,7 +41,7 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
       {
          timeSource.FreezeAtUtcTime(timeSource.UtcNow + 1.Hours()); //No time collision between scenarios please.
          migrations = migrationScenario.Migrations.ToList();
-         await RunScenarioWithEventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++);
+         await RunScenarioWithEventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++).NoMarshalling();
       }
    }
 
@@ -102,7 +104,8 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
 
 
       //Make sure that other processes that might be using the same aggregate also keep working as we persist the migrations.
-      await using(var clonedServiceLocator = serviceLocator.Clone())
+      var clonedServiceLocator = serviceLocator.Clone();
+      await using(clonedServiceLocator.NoMarshalling())
       {
          migratedHistory = clonedServiceLocator.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator.Resolve<IEventStoreUpdater>()
                                                                                                             .Get<TestAggregate>(initialAggregate.Id))
@@ -149,7 +152,8 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
 
 
       ConsoleCE.WriteLine("Cloning service locator / starting new instance of application");
-      await using var clonedServiceLocator2 = serviceLocator.Clone();
+      var clonedServiceLocator2 = serviceLocator.Clone();
+      await using var serviceLocator2 = clonedServiceLocator2.NoMarshalling();
       migratedHistory = clonedServiceLocator2.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator2.Resolve<IEventStoreUpdater>()
                                                                                                            .Get<TestAggregate>(initialAggregate.Id))
                                              .History;

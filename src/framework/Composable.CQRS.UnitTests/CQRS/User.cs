@@ -27,10 +27,7 @@ class User : Aggregate<User,UserEvent, IUserEvent>
         .For<IUserChangedPassword>(e => Password = e.Password);
    }
 
-   public void Register(string email, string password, Guid id)
-   {
-      Publish(new UserRegistered(id, email, password));
-   }
+   public void Register(string email, string password, Guid id) => Publish(new UserRegistered(id, email, password));
 
    public static User Register(IEventStoreUpdater aggregates, string email, string password, Guid id)
    {
@@ -40,15 +37,9 @@ class User : Aggregate<User,UserEvent, IUserEvent>
       return user;
    }
 
-   public void ChangePassword(string password)
-   {
-      Publish(new UserChangedPassword(password));
-   }
+   public void ChangePassword(string password) => Publish(new UserChangedPassword(password));
 
-   public void ChangeEmail(string email)
-   {
-      Publish(new UserChangedEmail(email));
-   }
+   public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
 }
 
 interface IUserEvent : IAggregateEvent {}

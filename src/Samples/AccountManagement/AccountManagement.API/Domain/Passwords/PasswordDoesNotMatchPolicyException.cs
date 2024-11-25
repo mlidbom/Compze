@@ -10,8 +10,5 @@ public class PasswordDoesNotMatchPolicyException : ArgumentException
 
    public IEnumerable<Password.Policy.Failures> Failures { get; private set; }
 
-   static string BuildMessage(IEnumerable<Password.Policy.Failures> passwordPolicyFailures)
-   {
-      return string.Join(",", passwordPolicyFailures.Select(failure => failure.ToString()));
-   }
+   static string BuildMessage(IEnumerable<Password.Policy.Failures> passwordPolicyFailures) => string.Join(",", passwordPolicyFailures.Select(failure => failure.ToString()));
 }

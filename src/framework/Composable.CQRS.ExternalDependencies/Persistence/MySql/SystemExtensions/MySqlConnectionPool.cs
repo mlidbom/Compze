@@ -9,8 +9,8 @@ namespace Composable.Persistence.MySql.SystemExtensions;
 
 interface IMySqlConnectionPool : IDbConnectionPool<IComposableMySqlConnection, MySqlCommand>
 {
-   public static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-   public static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
+   static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
+   static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
    class MySqlConnectionPool : IMySqlConnectionPool
    {

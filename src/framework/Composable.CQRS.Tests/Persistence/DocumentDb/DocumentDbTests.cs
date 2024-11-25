@@ -10,6 +10,7 @@ using Composable.Persistence.DocumentDb;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -738,7 +739,8 @@ class DocumentDbTests : DocumentDbTestsBase
 
    async Task InsertUsersInOtherDocumentDb(Guid userId)
    {
-      await using var cloneServiceLocator = ServiceLocator.Clone();
+      var cloneServiceLocator = ServiceLocator.Clone();
+      await using var serviceLocator = cloneServiceLocator.NoMarshalling();
       cloneServiceLocator.ExecuteTransactionInIsolatedScope(() => cloneServiceLocator.DocumentDbUpdater()
                                                                                      .Save(new User {Id = userId}));
    }
@@ -748,7 +750,7 @@ class DocumentDbTests : DocumentDbTestsBase
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      await InsertUsersInOtherDocumentDb(userId);
+      await InsertUsersInOtherDocumentDb(userId).NoMarshalling();
 
       using(ServiceLocator.BeginScope())
       {
@@ -761,7 +763,7 @@ class DocumentDbTests : DocumentDbTestsBase
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      await InsertUsersInOtherDocumentDb(userId);
+      await InsertUsersInOtherDocumentDb(userId).NoMarshalling();
 
       using (ServiceLocator.BeginScope())
       {
@@ -774,7 +776,7 @@ class DocumentDbTests : DocumentDbTestsBase
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      await InsertUsersInOtherDocumentDb(userId);
+      await InsertUsersInOtherDocumentDb(userId).NoMarshalling();
 
       UseInScope(reader => reader.GetAll<User>(EnumerableCE.Create(userId))
                                  .Count()

@@ -60,15 +60,9 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations
 
 
         [Obsolete("For serialization only", error: true), UsedImplicitly]
-        public TestAggregate()
-        {
-            SetupAppliers();
-        }
+        public TestAggregate() => SetupAppliers();
 
-        TestAggregate(IUtcTimeTimeSource timeSource):base(timeSource)
-        {
-            SetupAppliers();
-        }
+        TestAggregate(IUtcTimeTimeSource timeSource):base(timeSource) => SetupAppliers();
 
         void SetupAppliers()
         {

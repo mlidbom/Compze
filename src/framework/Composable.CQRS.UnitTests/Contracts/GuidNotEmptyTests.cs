@@ -27,7 +27,7 @@ public class GuidNotEmptyTests
    }
 
    [Test]
-   public void NotEmptyThrowsArgumentExceptionForEmptyGuidNew()
+   public void NotEmptyThrowsArgumentExceptionForEmptyGuidAlternative()
    {
       InspectionTestHelper.BatchTestInspection<GuidIsEmptyContractViolationException, Guid>(
          assert: inspected => inspected.NotEmpty(),

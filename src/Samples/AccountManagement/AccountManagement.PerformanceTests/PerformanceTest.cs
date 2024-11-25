@@ -8,6 +8,7 @@ using Composable.DependencyInjection;
 using Composable.Messaging.Buses;
 using Composable.SystemCE.CollectionsCE.ConcurrentCE;
 using Composable.SystemCE.DiagnosticsCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using Composable.Testing.Performance;
 using FluentAssertions;
@@ -31,7 +32,7 @@ class PerformanceTest : DuplicateByPluggableComponentTest
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       _clientEndpoint = _host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);
-      await _host.StartAsync();
+      await _host.StartAsync().NoMarshalling();
       //Warmup
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
@@ -97,5 +98,5 @@ class PerformanceTest : DuplicateByPluggableComponentTest
       return created;
    }
 
-   [TearDown] public async Task Teardown() => await _host.DisposeAsync();
+   [TearDown] public async Task Teardown() => await _host.DisposeAsync().NoMarshalling();
 }

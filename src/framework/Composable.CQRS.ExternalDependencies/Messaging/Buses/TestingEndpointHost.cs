@@ -16,8 +16,5 @@ public class TestingEndpointHost : TestingEndpointHostBase
    {
    }
 
-   internal override void ExtraEndpointConfiguration(IEndpointBuilder builder)
-   {
-      builder.RegisterCurrentTestsConfiguredPersistenceLayer();
-   }
+   internal override void ExtraEndpointConfiguration(IEndpointBuilder builder) => builder.RegisterCurrentTestsConfiguredPersistenceLayer();
 }

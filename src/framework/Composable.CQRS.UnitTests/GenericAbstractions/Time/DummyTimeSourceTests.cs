@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Composable.GenericAbstractions.Time;
 using FluentAssertions;
 using NUnit.Framework;
@@ -26,7 +27,7 @@ public class DummyTimeSourceTests
    [Test]
    public void Passing_a_parsed_date_to_FromUtcTime_results_in_UtcNow_being_that_date()
    {
-      var dateTime = DateTime.Parse("2001-01-01 00:00");
+      var dateTime = DateTime.Parse("2001-01-01 00:00", CultureInfo.InvariantCulture);
       var source = TestingTimeSource.FrozenAtUtcTime(dateTime);
       source.UtcNow.Should().Be(dateTime);
    }

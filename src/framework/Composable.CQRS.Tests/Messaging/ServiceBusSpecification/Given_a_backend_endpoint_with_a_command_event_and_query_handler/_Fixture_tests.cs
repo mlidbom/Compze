@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Buses.Implementation;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using Composable.Testing.Threading;
 using FluentAssertions;
@@ -24,7 +25,7 @@ public class Fixture_tests : Fixture
    [Test] public async Task If_command_handler_with_result_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
    {
       CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<MessageDispatchingFailedException>(async () => await ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())));
+      await AssertThrows.Async<MessageDispatchingFailedException>(async () => await ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())).NoMarshalling()).NoMarshalling();
 
       AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
    }
@@ -39,14 +40,14 @@ public class Fixture_tests : Fixture
    [Test] public async Task If_query_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<MessageDispatchingFailedException>(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery())));
+      await AssertThrows.Async<MessageDispatchingFailedException>(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery()))).NoMarshalling();
 
       AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
    }
 
    void AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException()
    {
-      Assert.ThrowsAsync<AggregateException>(async Task () => await Host.DisposeAsync())
+      Assert.ThrowsAsync<AggregateException>(async Task () => await Host.DisposeAsync().NoMarshalling())
                   .InnerExceptions.Single().Should().Be(_thrownException);
    }
 

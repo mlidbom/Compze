@@ -2,18 +2,20 @@
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.Messaging.Buses;
+using Composable.SystemCE.ThreadingCE.TasksCE;
+
 // ReSharper disable LocalizableElement
 
 namespace AccountManagement;
 
-public class Application
+static class Application
 {
    public static async Task Main()
    {
       var host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
-      await using var host2 = host;
+      await using var host2 = host.NoMarshalling();
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
-      await host.StartAsync();
+      await host.StartAsync().NoMarshalling();
       Console.WriteLine("Press enter to exit");
       Console.ReadLine();
    }

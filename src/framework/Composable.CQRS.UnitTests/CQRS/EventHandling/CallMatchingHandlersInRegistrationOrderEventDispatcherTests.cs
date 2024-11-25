@@ -52,7 +52,7 @@ public abstract class CallMatchingHandlersInRegistrationOrderEventDispatcherTest
 
          public class when_dispatching_an_IUserCreatedEvent : with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_event_type
          {
-            public when_dispatching_an_IUserCreatedEvent() { _dispatcher.Dispatch(new UserCreatedEvent()); }
+            public when_dispatching_an_IUserCreatedEvent() => _dispatcher.Dispatch(new UserCreatedEvent());
 
             [Fact] void BeforeHandler1_is_called_first() => BeforeHandlers1CallOrder.Should().Be(1);
             [Fact] void BeforeHandler2_is_called_second() => BeforeHandlers2CallOrder.Should().Be(2);

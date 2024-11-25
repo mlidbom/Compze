@@ -6,6 +6,7 @@ using Composable.DependencyInjection;
 using Composable.Persistence.EventStore;
 using Composable.Refactoring.Naming;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.SystemCE.TransactionsCE;
 using Composable.Testing;
 using FluentAssertions;
@@ -39,7 +40,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
                      .Map<UserRegistered>("e965b5d4-6f1a-45fa-9660-2fec0abc4a0a");
    }
 
-   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync();
+   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync().NoMarshalling();
 
    [Test] public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {

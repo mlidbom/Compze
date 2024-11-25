@@ -11,6 +11,7 @@ using Composable.Persistence.Common.DependencyInjection;
 using Composable.Persistence.EventStore;
 using Composable.Persistence.EventStore.Aggregates;
 using Composable.SystemCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using Composable.Testing.Threading;
 using FluentAssertions;
@@ -70,7 +71,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await _host.StartAsync();
+      await _host.StartAsync().NoMarshalling();
 
       _userDomainServiceLocator = userManagementDomainEndpoint.ServiceLocator;
 
@@ -91,7 +92,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
    [TearDown]public async Task TeardownAsync()
    {
       _taskRunner.Dispose();
-      await _host.DisposeAsync();
+      await _host.DisposeAsync().NoMarshalling();
    }
 
    public static class UserEvent

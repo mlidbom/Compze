@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Composable.Messaging.Buses;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
@@ -21,7 +22,7 @@ public class Parallelism_policies : Fixture
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       OpenGates();
-      await tasks;
+      await tasks.NoMarshalling();
    }
 
    [Test] public void Five_query_handlers_can_execute_in_parallel_when_using_Query()

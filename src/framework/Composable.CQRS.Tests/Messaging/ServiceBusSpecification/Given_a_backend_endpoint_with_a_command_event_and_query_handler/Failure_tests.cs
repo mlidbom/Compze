@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Composable.Messaging.Buses;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using Composable.Testing.Threading;
 using NUnit.Framework;
@@ -13,13 +14,13 @@ public class Failure_tests : Fixture
    [Test] public async Task If_command_handler_with_result_throws_awaiting_SendAsync_throws()
    {
       CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<Exception>(async () => await ClientEndpoint.ExecuteClientRequestAsync(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())));
+      await AssertThrows.Async<Exception>(async () => await ClientEndpoint.ExecuteClientRequestAsync(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())).NoMarshalling()).NoMarshalling();
    }
 
    [Test] public async Task If_query_handler_throws_awaiting_QueryAsync_throws()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<Exception>(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyQuery())));
+      await AssertThrows.Async<Exception>(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyQuery()))).NoMarshalling();
    }
 
    [Test] public void If_query_handler_throws_Query_throws()
@@ -30,8 +31,8 @@ public class Failure_tests : Fixture
 
    public override async Task TearDownAsync()
    {
-      await Assert.ThrowsAnyAsync<Exception>(async Task() => await Host.DisposeAsync());
-      await base.TearDownAsync();
+      await Assert.ThrowsAnyAsync<Exception>(async Task() => await Host.DisposeAsync().NoMarshalling()).NoMarshalling();
+      await base.TearDownAsync().NoMarshalling();
    }
 
    readonly IntentionalException _thrownException = new();
