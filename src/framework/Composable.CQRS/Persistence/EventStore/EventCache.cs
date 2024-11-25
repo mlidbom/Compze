@@ -33,7 +33,7 @@ class EventCache : IDisposable
                return Assert.Result.NotNull(overlay);
             }
 
-            overlay = new Dictionary<Guid, Entry>();
+            overlay = [];
 
             _overlays.Update(it => it.Add(transactionId, overlay));
 

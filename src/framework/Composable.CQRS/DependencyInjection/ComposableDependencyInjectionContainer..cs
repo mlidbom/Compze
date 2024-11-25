@@ -9,7 +9,7 @@ namespace Composable.DependencyInjection;
 partial class ComposableDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator
 {
    IServiceLocator? _createdServiceLocator;
-   readonly Dictionary<Guid, ComponentRegistration> _registeredComponents = new();
+   readonly Dictionary<Guid, ComponentRegistration> _registeredComponents = [];
    bool _disposed;
 
    public IRunMode RunMode { get; }

@@ -14,29 +14,29 @@ namespace Composable.Messaging.Hypermedia;
 
    public void Post(IAtMostOnceHypermediaCommand command) => PostAsync(command).WaitUnwrappingException();
 
-   public async Task PostAsync(IAtMostOnceHypermediaCommand command)
+   public Task PostAsync(IAtMostOnceHypermediaCommand command)
    {
       MessageInspector.AssertValidToSendRemote(command);
-      await _transport.PostAsync(command).NoMarshalling();
+      return _transport.PostAsync(command);
    }
 
    public TResult Post<TResult>(IAtMostOnceCommand<TResult> command) => PostAsync(command).ResultUnwrappingException();
 
-   public async Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command)
+   public Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command)
    {
       MessageInspector.AssertValidToSendRemote(command);
-      return await _transport.PostAsync(command).NoMarshalling();
+      return _transport.PostAsync(command);
    }
 
-   public async Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
+   public Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
    {
       MessageInspector.AssertValidToSendRemote(query);
       if(query is ICreateMyOwnResultQuery<TResult> selfCreating)
-         return await Task.FromResult(selfCreating.CreateResult()).NoMarshalling();
+         return Task.FromResult(selfCreating.CreateResult());
 
-      return await GetAsyncAfterFastPathOptimization(query).NoMarshalling();
+      return GetAsyncAfterFastPathOptimization(query);
    }
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transport.GetAsync(query).NoMarshalling();
+   Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => _transport.GetAsync(query);
 
    TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableQuery<TResult> query) => GetAsync(query).ResultUnwrappingException();
 }

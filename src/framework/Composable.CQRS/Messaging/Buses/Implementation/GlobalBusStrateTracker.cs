@@ -28,7 +28,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
 
    class NonThreadSafeImplementation
    {
-      internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = new();
+      internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = [];
 
       readonly List<Exception> _busExceptions = [];
 
@@ -59,7 +59,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
 
 class NullOpGlobalBusStateTracker : IGlobalBusStateTracker
 {
-   public IReadOnlyList<Exception> GetExceptions() => new List<Exception>();
+   public IReadOnlyList<Exception> GetExceptions() => [];
    public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) { }
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) { }
    public void DoneWith(Guid message, Exception? exception) { }

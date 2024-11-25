@@ -13,6 +13,8 @@ csharp_style_expression_bodied_methods = when_on_single_line
 csharp_style_expression_bodied_operators = when_on_single_line
 csharp_style_expression_bodied_local_functions = when_on_single_line
 
+csharp_style_prefer_primary_constructors = false # I hardly know what to say after digging into primary constructors. Absurdity perhaps. Monstrosity. Collossal mistake?
+
 dotnet_diagnostic.CA1707.severity = none # We use underscores in test names.
 dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for this.
 dotnet_diagnostic.CA1852.severity = none # making every single class that could theoretically be sealed sealed as a nano optimization. NO thanks. sealed has an actual semantic meaning and I only seal classes where it applies.
@@ -22,13 +24,12 @@ dotnet_diagnostic.IDE0055.severity = none # I don't want visual studio to give t
 dotnet_diagnostic.IDE0058.severity = none # In countless cases it is perfectly valid not to use the return value of an expression
 dotnet_diagnostic.IDE0046.severity = none # Not using the ternary operator in every case it is theoretically possible is not a warning level offense
 
-dotnet_diagnostic.IDE0290.severity = none # I'm not sure about primary constructors, I am sure I don't want a thousand warnings in visual studio about it.
-dotnet_diagnostic.IDE0007.severity = none #I like war, but not using it is bloody valid in many cases. It's not a warning level offence.
+dotnet_diagnostic.IDE0007.severity = none #I like war, but not using it is valid in many cases. It's not a warning level offence.
 dotnet_diagnostic.IDE0011.severity = none # Sometimes braces are not needed for simple if statements. This is not a warning level thing to me.
 
 dotnet_diagnostic.CA1859.severity = silent #CA1859: Use concrete types when possible for improved performance || I want the proper types, not whatever makes the code most efficient at the cost of exposing something I SHOULD NOT
 dotnet_diagnostic.CA1860.severity = silent #Prefer comparing Count to 0 over using Any() || Well I think Any() is more readable and shorter and unless a profiler tells me I have an issue with this ridiculous nano optimization I don't care.
-dotnet_diagnostic.CA1805.severity = silent #I do initialize members to their default values. It makes it clear that I have not forgotten, that this is the indended value.
+dotnet_diagnostic.CA1805.severity = silent #I do initialize members to their default values || It makes it clear that I have not forgotten, that this is the indended value.
 
 #Todo: These should probably be fixed rather than ignored
 dotnet_diagnostic.CA2201.severity = silent # Yes, In principle I should create a new specific Exception type for every place where I throw one. In practice it is just too much effort for very little gain. 

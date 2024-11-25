@@ -15,13 +15,13 @@ struct VoidCE : IEquatable<VoidCE>, IComparable<VoidCE>, IStaticInstanceProperty
       return Instance;
    }
 
-   public override string ToString() => "()";
+   public readonly override string ToString() => "()";
 
-   public bool Equals(VoidCE _) => true;
-   public override bool Equals(object? other) => other is VoidCE;
+   public readonly bool Equals(VoidCE _) => true;
+   public readonly override bool Equals(object? other) => other is VoidCE;
    public static bool operator ==(VoidCE _, VoidCE __) => true;
    public static bool operator !=(VoidCE _, VoidCE __) => false;
-   public int CompareTo(VoidCE _) => 0;
+   public readonly int CompareTo(VoidCE _) => 0;
 
-   public override int GetHashCode() => 392576489;
+   public readonly override int GetHashCode() => 392576489;
 }
