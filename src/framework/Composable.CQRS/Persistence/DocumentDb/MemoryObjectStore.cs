@@ -13,7 +13,7 @@ namespace Composable.Persistence.DocumentDb;
 
 class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
 {
-   readonly Dictionary<string, List<Object>> _db = new(StringComparer.InvariantCultureIgnoreCase);
+   readonly Dictionary<string, List<object>> _db = new(StringComparer.InvariantCultureIgnoreCase);
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
    internal bool Contains(Type type, object id) => _monitor.Read(() => ContainsInternal(type, id));

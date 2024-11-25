@@ -12,7 +12,7 @@ static class NullOrDefaultTester<TType>
 
       if(type.IsInterface || type == typeof(object))
       {
-         return obj => (obj is null) || (obj.GetType().IsValueType && Equals(obj, Activator.CreateInstance(obj.GetType())));
+         return obj => obj is null || (obj.GetType().IsValueType && Equals(obj, Activator.CreateInstance(obj.GetType())));
       }
 
       if(type.IsClass)

@@ -15,7 +15,7 @@ namespace AccountManagement.UnitTests.Emails;
 
          if(!string.IsNullOrEmpty(invalidEmail))
          {
-            invalidEmailException.Message.Should().Contain((invalidEmail));
+            invalidEmailException.Message.Should().Contain(invalidEmail);
          }
       }
    }

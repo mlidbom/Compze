@@ -24,7 +24,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    {
       var endpointId = id ?? new EndpointId(Guid.NewGuid());
       name ??= $"TestingEndpoint-{endpointId.GuidValue}";
-      setup ??= (_ => {});
+      setup ??= _ => {};
       return RegisterEndpoint(name, endpointId, setup);
    }
 

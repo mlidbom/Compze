@@ -257,7 +257,6 @@ static class TransportMessage
                   return new Incoming(type: type, respondingToMessageId: messageId, body: null, responseTypeId: null, typeMapper: typeMapper, serializer);
                }
                case ResponseType.FailureExpectedReturnValue:
-                  return new Incoming(type: type, respondingToMessageId: messageId, body: message[2].ConvertToString(), responseTypeId: null, typeMapper: typeMapper, serializer);
                case ResponseType.Failure:
                   return new Incoming(type: type, respondingToMessageId: messageId, body: message[2].ConvertToString(), responseTypeId: null, typeMapper: typeMapper, serializer);
                case ResponseType.Received:

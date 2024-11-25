@@ -25,7 +25,7 @@ public static class MsSqlPersistenceLayerRegistrar
       if(container.RunMode.IsTesting)
       {
          container.Register(Singleton.For<MsSqlDatabasePool>()
-                                     .CreatedBy(((IConfigurationParameterProvider _) => new MsSqlDatabasePool()))
+                                     .CreatedBy((IConfigurationParameterProvider _) => new MsSqlDatabasePool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(

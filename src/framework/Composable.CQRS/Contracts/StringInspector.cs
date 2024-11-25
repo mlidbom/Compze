@@ -22,7 +22,7 @@ public static class StringInspector
    /// <para>Throws <see cref="StringIsEmptyContractViolationException"/> if any inspected value is an empty string.</para>
    /// <para>Throws <see cref="StringIsWhitespaceContractViolationException"/> if any inspected value is a string containing only whitespace.</para>
    /// </summary>
-   public static IInspected<String> NotNullEmptyOrWhiteSpace(this IInspected<String> me)
+   public static IInspected<string> NotNullEmptyOrWhiteSpace(this IInspected<string> me)
    {
       me.NotNullOrEmpty(); //We want the proper exceptions
       return me.Inspect(

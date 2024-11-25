@@ -13,7 +13,7 @@ public class NotNullOrEmptyOrWhitespaceTests
    [Test]
    public void ThrowsArgumentNullForNullArguments()
    {
-      String aNullString = null;
+      string aNullString = null;
       // ReSharper disable ExpressionIsAlwaysNull
       Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(aNullString, nameof(aNullString)).NotNullEmptyOrWhiteSpace());
       // ReSharper restore ExpressionIsAlwaysNull

@@ -11,7 +11,7 @@ namespace Composable.Tests.ExternalDependencies.Messaging.NetMQ;
    {
       using var router = new RouterSocket();
       using var dealer = new DealerSocket();
-      var dealerId = new Byte[] { 5 };
+      var dealerId = new byte[] { 5 };
       dealer.Options.Identity = dealerId;
 
       var address = router.BindLocalhostPort();

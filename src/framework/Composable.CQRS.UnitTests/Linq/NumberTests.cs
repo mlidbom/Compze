@@ -12,7 +12,7 @@ public class NumberTests
    {
       Assert.That(1.Until(12).Last(), Is.EqualTo(12 - 1));
       Assert.That(1.By(1).Until(12).Last(), Is.EqualTo(12 - 1));
-      Assert.That((-1).By(-1).Until(-12).Last(), Is.EqualTo(-12 - (-1)));
+      Assert.That((-1).By(-1).Until(-12).Last(), Is.EqualTo(-12 - -1));
    }
 
    [Test]

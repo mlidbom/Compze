@@ -11,7 +11,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
 {
    protected static class GetterSetter
    {
-      internal static MemberGetterSetter ForBoolean(MemberGetterSetter<Boolean>.GetterFunction getter, MemberGetterSetter<Boolean>.SetterFunction setter) => new BooleanGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForBoolean(MemberGetterSetter<bool>.GetterFunction getter, MemberGetterSetter<bool>.SetterFunction setter) => new BooleanGetterSetter(getter, setter);
       class BooleanGetterSetter : MemberGetterSetter<bool>
       {
          public BooleanGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -20,7 +20,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadBoolean());
       }
 
-      internal static MemberGetterSetter ForByte(MemberGetterSetter<Byte>.GetterFunction getter, MemberGetterSetter<Byte>.SetterFunction setter) => new ByteGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForByte(MemberGetterSetter<byte>.GetterFunction getter, MemberGetterSetter<byte>.SetterFunction setter) => new ByteGetterSetter(getter, setter);
       class ByteGetterSetter : MemberGetterSetter<byte>
       {
          public ByteGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -29,7 +29,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadByte());
       }
 
-      internal static MemberGetterSetter ForChar(MemberGetterSetter<Char>.GetterFunction getter, MemberGetterSetter<Char>.SetterFunction setter) => new CharGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForChar(MemberGetterSetter<char>.GetterFunction getter, MemberGetterSetter<char>.SetterFunction setter) => new CharGetterSetter(getter, setter);
       class CharGetterSetter : MemberGetterSetter<char>
       {
          public CharGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -38,7 +38,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadChar());
       }
 
-      internal static MemberGetterSetter ForDecimal(MemberGetterSetter<Decimal>.GetterFunction getter, MemberGetterSetter<Decimal>.SetterFunction setter) => new DecimalGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForDecimal(MemberGetterSetter<decimal>.GetterFunction getter, MemberGetterSetter<decimal>.SetterFunction setter) => new DecimalGetterSetter(getter, setter);
       class DecimalGetterSetter : MemberGetterSetter<decimal>
       {
          public DecimalGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -47,7 +47,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadDecimal());
       }
 
-      internal static MemberGetterSetter ForDouble(MemberGetterSetter<Double>.GetterFunction getter, MemberGetterSetter<Double>.SetterFunction setter) => new DoubleGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForDouble(MemberGetterSetter<double>.GetterFunction getter, MemberGetterSetter<double>.SetterFunction setter) => new DoubleGetterSetter(getter, setter);
       class DoubleGetterSetter : MemberGetterSetter<double>
       {
          public DoubleGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -56,7 +56,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadDouble());
       }
 
-      internal static MemberGetterSetter ForInt16(MemberGetterSetter<Int16>.GetterFunction getter, MemberGetterSetter<Int16>.SetterFunction setter) => new Int16GetterSetter(getter, setter);
+      internal static MemberGetterSetter ForInt16(MemberGetterSetter<short>.GetterFunction getter, MemberGetterSetter<short>.SetterFunction setter) => new Int16GetterSetter(getter, setter);
       class Int16GetterSetter : MemberGetterSetter<short>
       {
          public Int16GetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -65,7 +65,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadInt16());
       }
 
-      internal static MemberGetterSetter ForInt32(MemberGetterSetter<Int32>.GetterFunction getter, MemberGetterSetter<Int32>.SetterFunction setter) => new Int32GetterSetter(getter, setter);
+      internal static MemberGetterSetter ForInt32(MemberGetterSetter<int>.GetterFunction getter, MemberGetterSetter<int>.SetterFunction setter) => new Int32GetterSetter(getter, setter);
       class Int32GetterSetter : MemberGetterSetter<int>
       {
          public Int32GetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -74,7 +74,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadInt32());
       }
 
-      internal static MemberGetterSetter ForInt64(MemberGetterSetter<Int64>.GetterFunction getter, MemberGetterSetter<Int64>.SetterFunction setter) => new Int64GetterSetter(getter, setter);
+      internal static MemberGetterSetter ForInt64(MemberGetterSetter<long>.GetterFunction getter, MemberGetterSetter<long>.SetterFunction setter) => new Int64GetterSetter(getter, setter);
       class Int64GetterSetter : MemberGetterSetter<long>
       {
          public Int64GetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -83,7 +83,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadInt64());
       }
 
-      internal static MemberGetterSetter ForSByte(MemberGetterSetter<SByte>.GetterFunction getter, MemberGetterSetter<SByte>.SetterFunction setter) => new SByteGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForSByte(MemberGetterSetter<sbyte>.GetterFunction getter, MemberGetterSetter<sbyte>.SetterFunction setter) => new SByteGetterSetter(getter, setter);
       class SByteGetterSetter : MemberGetterSetter<sbyte>
       {
          public SByteGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -92,7 +92,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadSByte());
       }
 
-      internal static MemberGetterSetter ForSingle(MemberGetterSetter<Single>.GetterFunction getter, MemberGetterSetter<Single>.SetterFunction setter) => new SingleGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForSingle(MemberGetterSetter<float>.GetterFunction getter, MemberGetterSetter<float>.SetterFunction setter) => new SingleGetterSetter(getter, setter);
       class SingleGetterSetter : MemberGetterSetter<float>
       {
          public SingleGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -101,7 +101,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadSingle());
       }
 
-      internal static MemberGetterSetter ForString(MemberGetterSetter<String>.GetterFunction getter, MemberGetterSetter<String>.SetterFunction setter) => new StringGetterSetter(getter, setter);
+      internal static MemberGetterSetter ForString(MemberGetterSetter<string>.GetterFunction getter, MemberGetterSetter<string>.SetterFunction setter) => new StringGetterSetter(getter, setter);
       class StringGetterSetter : MemberGetterSetter<string>
       {
          public StringGetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -110,7 +110,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadString());
       }
 
-      internal static MemberGetterSetter ForUInt16(MemberGetterSetter<UInt16>.GetterFunction getter, MemberGetterSetter<UInt16>.SetterFunction setter) => new UInt16GetterSetter(getter, setter);
+      internal static MemberGetterSetter ForUInt16(MemberGetterSetter<ushort>.GetterFunction getter, MemberGetterSetter<ushort>.SetterFunction setter) => new UInt16GetterSetter(getter, setter);
       class UInt16GetterSetter : MemberGetterSetter<ushort>
       {
          public UInt16GetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -119,7 +119,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadUInt16());
       }
 
-      internal static MemberGetterSetter ForUInt32(MemberGetterSetter<UInt32>.GetterFunction getter, MemberGetterSetter<UInt32>.SetterFunction setter) => new UInt32GetterSetter(getter, setter);
+      internal static MemberGetterSetter ForUInt32(MemberGetterSetter<uint>.GetterFunction getter, MemberGetterSetter<uint>.SetterFunction setter) => new UInt32GetterSetter(getter, setter);
       class UInt32GetterSetter : MemberGetterSetter<uint>
       {
          public UInt32GetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}
@@ -128,7 +128,7 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
          internal override void Deserialize(TInheritor inheritor, BinaryReader reader) => Setter(inheritor, reader.ReadUInt32());
       }
 
-      internal static MemberGetterSetter ForUInt64(MemberGetterSetter<UInt64>.GetterFunction getter, MemberGetterSetter<UInt64>.SetterFunction setter) => new UInt64GetterSetter(getter, setter);
+      internal static MemberGetterSetter ForUInt64(MemberGetterSetter<ulong>.GetterFunction getter, MemberGetterSetter<ulong>.SetterFunction setter) => new UInt64GetterSetter(getter, setter);
       class UInt64GetterSetter : MemberGetterSetter<ulong>
       {
          public UInt64GetterSetter(GetterFunction getter, SetterFunction setter) : base(getter, setter) {}

@@ -24,7 +24,7 @@ public static class MySqlPersistenceLayerRegistrar
       if(container.RunMode.IsTesting)
       {
          container.Register(Singleton.For<MySqlDatabasePool>()
-                                     .CreatedBy(((IConfigurationParameterProvider _) => new MySqlDatabasePool()))
+                                     .CreatedBy((IConfigurationParameterProvider _) => new MySqlDatabasePool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(

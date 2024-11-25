@@ -51,7 +51,7 @@ END;
                                     .AddParameter(Event.EventId, data.EventId)
                                     .AddParameter(Event.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddNClobParameter(Event.Event, data.EventJson)
-                                    .AddParameter(Event.ReadOrder, OracleDbType.Decimal, (data.StorageInformation.ReadOrder?.ToOracleDecimal() ?? new OracleDecimal(0)))
+                                    .AddParameter(Event.ReadOrder, OracleDbType.Decimal, data.StorageInformation.ReadOrder?.ToOracleDecimal() ?? new OracleDecimal(0))
                                     .AddParameter(Event.EffectiveVersion, OracleDbType.Int32, data.StorageInformation.EffectiveVersion)
                                     .AddNullableParameter(Event.TargetEvent, OracleDbType.Varchar2, data.StorageInformation.RefactoringInformation?.TargetEvent)
                                     .AddNullableParameter(Event.RefactoringType, OracleDbType.Byte, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)

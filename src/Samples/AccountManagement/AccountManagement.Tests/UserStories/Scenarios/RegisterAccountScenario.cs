@@ -11,7 +11,7 @@ class RegisterAccountScenario : ScenarioBase<(AccountResource.Command.Register.R
    readonly IEndpoint _clientEndpoint;
 
    public Guid AccountId;
-   public String Email;
+   public string Email;
    public string Password;
 
 

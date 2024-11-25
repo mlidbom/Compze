@@ -24,7 +24,7 @@ public static class PgSqlPersistenceLayerRegistrar
       if(container.RunMode.IsTesting)
       {
          container.Register(Singleton.For<PgSqlDatabasePool>()
-                                     .CreatedBy(((IConfigurationParameterProvider _) => new PgSqlDatabasePool()))
+                                     .CreatedBy((IConfigurationParameterProvider _) => new PgSqlDatabasePool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(

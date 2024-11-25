@@ -104,8 +104,6 @@ partial class Inbox
                      _executingExactlyOnceEvents.Add(dispatchable.TransportMessage);
                      break;
                   case TransportMessage.TransportMessageType.AtMostOnceCommandWithReturnValue:
-                     _executingAtMostOnceCommands.Add(dispatchable.TransportMessage);
-                     break;
                   case TransportMessage.TransportMessageType.AtMostOnceCommand:
                      _executingAtMostOnceCommands.Add(dispatchable.TransportMessage);
                      break;
@@ -133,8 +131,6 @@ partial class Inbox
                      _executingExactlyOnceEvents.Remove(doneExecuting.TransportMessage);
                      break;
                   case TransportMessage.TransportMessageType.AtMostOnceCommandWithReturnValue:
-                     _executingAtMostOnceCommands.Remove(doneExecuting.TransportMessage);
-                     break;
                   case TransportMessage.TransportMessageType.AtMostOnceCommand:
                      _executingAtMostOnceCommands.Remove(doneExecuting.TransportMessage);
                      break;
