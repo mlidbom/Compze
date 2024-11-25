@@ -4,8 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,19 +22,12 @@ partial class Inbox
 {
    class AspNetHost : IAsyncDisposable
    {
-      readonly HandlerExecutionEngine _handlerExecutionEngine;
-      readonly ITypeMapper _typeMapper;
-      readonly IRemotableMessageSerializer _serializer;
       readonly IServiceLocator _serviceLocator;
       readonly IDependencyInjectionContainer _container;
       WebApplication? _webApplication;
 
-      [SuppressMessage("ReSharper", "UnusedParameter.Local")]
-      internal AspNetHost(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IServiceLocator serviceLocator, IDependencyInjectionContainer container)
+      internal AspNetHost(IServiceLocator serviceLocator, IDependencyInjectionContainer container)
       {
-         _handlerExecutionEngine = handlerExecutionEngine;
-         _typeMapper = typeMapper;
-         _serializer = serializer;
          _serviceLocator = serviceLocator;
          _container = container;
       }

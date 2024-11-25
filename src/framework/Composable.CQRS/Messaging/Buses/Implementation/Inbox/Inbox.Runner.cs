@@ -16,7 +16,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   class Runner : IDisposable
+   internal class Runner : IDisposable
    {
       readonly NetMQQueue<NetMQMessage> _responseQueue;
       readonly RouterSocket _serverSocket;
@@ -31,7 +31,7 @@ partial class Inbox
       readonly IRemotableMessageSerializer _serializer;
       internal readonly string Address;
 
-      public Runner(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, string address, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+      public Runner(HandlerExecutionEngine handlerExecutionEngine, IMessageStorage storage, RealEndpointConfiguration configuration, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
          _handlerExecutionEngine = handlerExecutionEngine;
          _storage = storage;
@@ -45,7 +45,7 @@ partial class Inbox
          //We guarantee delivery upon restart in other ways. When we shut down, just do it.
          _serverSocket.Options.Linger = 0.Milliseconds();
 
-         Address = _serverSocket.BindAndReturnActualAddress(address);
+         Address = _serverSocket.BindAndReturnActualAddress(configuration.Address);
          _serverSocket.ReceiveReady += HandleIncomingMessage_PollerThread;
 
          _responseQueue = new NetMQQueue<NetMQMessage>();
@@ -66,7 +66,6 @@ partial class Inbox
          _handlerExecutionEngine.Start();
          await Task.CompletedTask.NoMarshalling();
          _poller.RunAsync($"{nameof(Inbox)}_PollerThread_{_configuration.Name}");
-
       }
 
       void MessageReceiverThread()
@@ -144,8 +143,11 @@ partial class Inbox
          _receivedMessageBatches.Add(batch);
       }
 
+      bool _disposed = false;
       public void Dispose()
       {
+         if(_disposed) return;
+         _disposed = true;
          _cancellationTokenSource.Cancel();
          _cancellationTokenSource.Dispose();
          _messageReceiverThread.InterruptAndJoin();
