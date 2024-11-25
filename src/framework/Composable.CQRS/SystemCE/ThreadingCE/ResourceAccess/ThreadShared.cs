@@ -9,6 +9,7 @@ interface IThreadShared<out TResource>
    TResult Update<TResult>(Func<TResource, TResult> update);
    void Update(Action<TResource> update);
    void Await(Func<TResource, bool> condition);
+   void Await(TimeSpan timeout, Func<TResource, bool> condition);
 }
 
 static class ThreadShared
@@ -53,7 +54,7 @@ static class ThreadShared
       public void Update(Action<TShared> update) =>
          _guard.Update(() => update(_shared));
 
-      public void Await(Func<TShared, bool> condition) =>
-         _guard.Await(() => condition(_shared));
+      public void Await(Func<TShared, bool> condition) => _guard.Await(() => condition(_shared));
+      public void Await(TimeSpan timeout, Func<TShared, bool> condition) => _guard.Await(timeout, () => condition(_shared));
    }
 }

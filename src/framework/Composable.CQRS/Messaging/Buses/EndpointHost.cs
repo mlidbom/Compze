@@ -64,15 +64,15 @@ public class EndpointHost : IEndpointHost
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).CaF();
       }catch(Exception e)
       {
-         this.Log().Error(e, "Failed to start endpoint host. Attempting to dispose.");
-         await DisposeAsync(true).CaF();
+         this.Log().Error(e, "Failed to start host");
+         await DisposeAsync().CaF();
          throw;
       }
    }
 
    public void Start() => StartAsync().WaitUnwrappingException();
 
-   protected virtual async Task DisposeAsync(bool disposing) => await this.Log().ExceptionsAndRethrowAsync(async () =>
+   protected virtual async ValueTask DisposeAsync(bool disposing)
    {
       if(!_disposed)
       {
@@ -85,9 +85,7 @@ public class EndpointHost : IEndpointHost
 
          await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).CaF();
       }
-
-      await Task.CompletedTask.CaF();
-   }).CaF();
+   }
 
    public async ValueTask DisposeAsync()
    {

@@ -22,12 +22,12 @@ class DebugLogger(ILogger logger) : LevelLogger(logger)
 
 class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override Unit Log(string message) => Logger.Debug(message);
+   public override Unit Log(string message) => Logger.Info(message);
 }
 
 class WarningLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override Unit Log(string message) => Logger.Debug(message);
+   public override Unit Log(string message) => Logger.Warning(message);
 }
 
 static class LevelLoggerILoggerExtensions

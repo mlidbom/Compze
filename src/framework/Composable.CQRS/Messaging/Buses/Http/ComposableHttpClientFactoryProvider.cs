@@ -10,17 +10,22 @@ namespace Composable.Messaging.Buses.Http;
 interface IComposableHttpClientFactoryProvider
 {
    Task<TResult> UseAsync<TResult>(Func<HttpClient, Task<TResult>> action);
-   async Task<TResult> Query<TResult>(EndPointAddress address, TransportMessage.OutGoing query, IRemotableMessageSerializer serializer)
+   async Task<TResult> QueryAsync<TResult>(EndPointAddress address, TransportMessage.OutGoing message, IRemotableQuery<TResult> query, IRemotableMessageSerializer serializer)
    {
       return await UseAsync(async it =>
       {
-         var content = new StringContent(query.Body);
-         content.Headers.Add("MessageId", query.Id.ToString());
-         content.Headers.Add("PayloadTypeId", query.Type.GuidValue.ToString());
+         var content = new StringContent(message.Body);
+         content.Headers.Add("MessageId", message.Id.ToString());
+         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
          var response = await it.PostAsync(new Uri($"{address.AspNetAddress}/internal/rpc/query"), content).CaF();
          if(!response.IsSuccessStatusCode)
          {
-            throw new MessageDispatchingFailedException($"Query failed with status code {response.StatusCode}");
+            throw new MessageDispatchingFailedException($"""
+                                                         Query failed with status code {response.StatusCode}
+                                                         Query type: {query.GetType().FullName}
+                                                         Query body:
+                                                         {message.Body}
+                                                         """);
          }
 
          var resultJson = await response.Content.ReadAsStringAsync().CaF();

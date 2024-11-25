@@ -73,7 +73,7 @@ partial class Outbox
       {
          var outGoingMessage = TransportMessage.OutGoing.Create(query, _typeMapper, _serializer);
          _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
-         return await _httpClient.Query<TQueryResult>(_remoteAddress, outGoingMessage, _serializer).CaF();
+         return await _httpClient.QueryAsync(_remoteAddress, outGoingMessage, query, _serializer).CaF();
       }
 
       void SendMessage(TransportMessage.OutGoing outGoingMessage)

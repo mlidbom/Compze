@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Composable.Functional;
+using Composable.SystemCE;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -16,7 +18,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
    public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) => _implementation.Update(implementation => implementation.SendingMessageOnTransport(transportMessage));
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) =>
-      _implementation.Await(implementation => implementation.InflightMessages.Count == 0);
+      _implementation.Await(timeoutOverride ?? 5.Seconds(), implementation => implementation.InflightMessages.Count == 0);
 
    public void DoneWith(Guid messageId, Exception? exception) =>
       _implementation.Update(implementation => implementation.DoneWith(messageId, exception));

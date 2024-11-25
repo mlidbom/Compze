@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
+using Composable.Logging;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Refactoring.Naming;
+using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
@@ -52,12 +54,12 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    }
 
    bool _disposed;
-   protected override async Task DisposeAsync(bool disposing)
+   protected override async ValueTask DisposeAsync(bool disposing)
    {
       if(!_disposed)
       {
          _disposed = true;
-         WaitForEndpointsToBeAtRest();
+         this.Log().LogAndSuppressExceptions(() => WaitForEndpointsToBeAtRest(timeoutOverride:1.Seconds()));
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
