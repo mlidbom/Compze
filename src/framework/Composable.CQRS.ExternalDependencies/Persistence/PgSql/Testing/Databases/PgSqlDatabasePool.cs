@@ -1,4 +1,5 @@
 using System;
+using Composable.Functional;
 using Npgsql;
 using Composable.Persistence.Common.AdoCE;
 using Composable.Persistence.PgSql.SystemExtensions;

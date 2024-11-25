@@ -1,5 +1,6 @@
 ﻿using AccountManagement.API;
 using AccountManagement.Domain;
+using Composable.Functional;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
 using Composable.SystemCE.LinqCE;

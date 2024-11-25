@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Composable.Functional;
+using Composable.SystemCE.LinqCE;
 
 namespace Composable.SystemCE.ThreadingCE.TasksCE;
 
@@ -15,9 +17,9 @@ class AsyncTaskCompletionSource<TResult>
 
 class AsyncTaskCompletionSource
 {
-   readonly AsyncTaskCompletionSource<VoidCE> _completionSource = new();
+   readonly AsyncTaskCompletionSource<Unit> _completionSource = new();
    public Task Task => _completionSource.Task;
 
-   public void ScheduleContinuation() => _completionSource.ScheduleContinuation(VoidCE.Instance);
+   public void ScheduleContinuation() => _completionSource.ScheduleContinuation(Unit.Instance);
    public void ScheduleException(Exception exception) => _completionSource.ScheduleException(exception);
 }

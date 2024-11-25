@@ -2,8 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using Composable.Functional;
 using Composable.Serialization;
 using Composable.SystemCE;
+using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -31,7 +33,7 @@ class ConsoleLogger : ILogger
 
    public static ILogger Create(Type type) => new ConsoleLogger(type);
    public ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type) { _logLevel = level };
-   public VoidCE Error(Exception exception, string? message)
+   public Unit Error(Exception exception, string? message)
    {
       if(_logLevel >= LogLevel.Error)
       {
@@ -52,7 +54,7 @@ EXCEPTION: {exception}
 ");
       }
 
-      return VoidCE.Instance;
+      return Unit.Instance;
    }
 
    static string SerializeExceptions(ReadOnlyCollection<Exception> exceptions) =>
@@ -76,48 +78,48 @@ EXCEPTION: {exception}
       }
    }
 
-   public VoidCE Warning(string message)
+   public Unit Warning(string message)
    {
       if(_logLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
 
-      return VoidCE.Instance;
+      return Unit.Instance;
    }
 
-   public VoidCE Warning(Exception exception, string message)
+   public Unit Warning(Exception exception, string message)
    {
       if(_logLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}, \n: Exception: {exception}");
       }
 
-      return VoidCE.Instance;
+      return Unit.Instance;
    }
 
-   public VoidCE Info(string message)
+   public Unit Info(string message)
    {
       if(_logLevel >= LogLevel.Info)
       {
          ConsoleCE.WriteLine($"INFO:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
 
-      return VoidCE.Instance;
+      return Unit.Instance;
    }
 
-   public VoidCE Debug(string message)
+   public Unit Debug(string message)
    {
       if(_logLevel >= LogLevel.Debug)
       {
          ConsoleCE.WriteLine($"DEBUG:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
 
-      return VoidCE.Instance;
+      return Unit.Instance;
    }
 
    [StringFormatMethod(formatParameterName: "message")]
-   public VoidCE DebugFormat(string message, params object[] arguments) => VoidCE.From(() => StringCE.FormatInvariant(message, arguments));
+   public Unit DebugFormat(string message, params object[] arguments) => Unit.From(() => StringCE.FormatInvariant(message, arguments));
 
 #pragma warning disable CA2326
 #pragma warning disable CA2327 //Todo: see if we can mitigate the security impact without breaking our serialization.

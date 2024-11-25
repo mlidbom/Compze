@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using System.Transactions;
 using Composable.Contracts;
+using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Composable.Contracts;
+using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
@@ -83,7 +84,7 @@ Current state of gate:
       return this;
    }
 
-   public VoidCE AwaitPassThrough()
+   public Unit AwaitPassThrough()
    {
       using var _ = LogMethodEntryExit(nameof(AwaitPassThrough));
 
@@ -110,7 +111,7 @@ Current state of gate:
          _postPassThroughAction.Invoke(currentThread);
       }
 
-      return VoidCE.Instance;
+      return Unit.Instance;
    }
 
    ThreadGate(TimeSpan defaultTimeout, string? name = null)

@@ -1,25 +1,33 @@
-﻿using Composable.SystemCE;
+﻿using Composable.Functional;
+using Composable.SystemCE;
+using Composable.SystemCE.LinqCE;
 
 namespace Composable.Logging;
 
 interface ILevelLogger
 {
-   VoidCE Log(string message);
+   Unit Log(string message);
 }
 
-class DebugLogger(ILogger logger) : ILevelLogger
+abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
-   public VoidCE Log(string message) => logger.Debug(message);
+   protected readonly ILogger Logger = logger;
+   public abstract Unit Log(string message);
 }
 
-class InfoLogger(ILogger logger) : ILevelLogger
+class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
-   public VoidCE Log(string message) => logger.Info(message);
+   public override Unit Log(string message) => Logger.Debug(message);
 }
 
-class WarningLogger(ILogger logger) : ILevelLogger
+class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
-   public VoidCE Log(string message) => logger.Warning(message);
+   public override Unit Log(string message) => Logger.Debug(message);
+}
+
+class WarningLogger(ILogger logger) : LevelLogger(logger)
+{
+   public override Unit Log(string message) => Logger.Debug(message);
 }
 
 static class LevelLoggerILoggerExtensions

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Transactions;
 using Composable.Contracts;
+using Composable.Functional;
 using Composable.SystemCE.LinqCE;
 
 namespace Composable.SystemCE.TransactionsCE;

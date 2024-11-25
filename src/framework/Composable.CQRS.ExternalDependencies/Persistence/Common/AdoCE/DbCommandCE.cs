@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Composable.Contracts;
+using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;

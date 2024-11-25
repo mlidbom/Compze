@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE.IOCE;
 using Composable.SystemCE.LinqCE;

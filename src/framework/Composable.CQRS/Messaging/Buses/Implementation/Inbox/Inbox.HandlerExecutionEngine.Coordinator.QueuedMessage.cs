@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
+using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
@@ -122,13 +123,13 @@ partial class Inbox
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
                      commandHandler((IAtMostOnceHypermediaCommand)message);
-                     return VoidCE.Instance; //Todo:Properly handle commands with and without return values
+                     return Unit.Instance; //Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.ExactlyOnceCommand => message =>
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
                      commandHandler((IExactlyOnceCommand)message);
-                     return VoidCE.Instance;//Todo:Properly handle commands with and without return values
+                     return Unit.Instance;//Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.NonTransactionalQuery => actualMessage =>
                   {

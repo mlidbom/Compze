@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.SystemCE.LinqCE;
+namespace Composable.Functional;
 
 ///<summary>
 /// Methods useful for any type when used in a Linq context
@@ -33,17 +33,6 @@ public static class ObjectCE
       await mutate(@this).NoMarshalling();
       return @this;
    }
-
-   public static TResult MapTo<TValue, TResult>(this TValue @this, Func<TValue, TResult> transform) => transform(@this);
-
-   ///<summary>Sometimes you want to continue a method chain but don't care about the previous value. This drops it</summary>
-   public static TResult Then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
-
-   ///<summary>Sometimes you want to continue a method chain but don't care about the previous value. This drops it</summary>
-   public static TResult Then<TValue, TResult>(this TValue _, TResult value) => value;
-
-   ///<summary>Enables chaining statements that return void. For when separate lines of code is inconvenient, such as in many lambda expressions.</summary>
-   internal static VoidCE Then<TValue>(this TValue _, Action action) => VoidCE.From(action);
 
    public static string ToStringNotNull(this object @this) => Contract.ReturnNotNull(@this.ToString());
 }
