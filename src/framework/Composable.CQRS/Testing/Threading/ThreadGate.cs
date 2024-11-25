@@ -5,7 +5,6 @@ using Composable.Contracts;
 using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Composable.Testing.Threading;

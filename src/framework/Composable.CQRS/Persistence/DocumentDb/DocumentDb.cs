@@ -9,7 +9,6 @@ using Composable.GenericAbstractions.Time;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
 using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
 
 namespace Composable.Persistence.DocumentDb;
 

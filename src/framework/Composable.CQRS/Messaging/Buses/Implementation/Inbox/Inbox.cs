@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Contracts;
 using Composable.DependencyInjection;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;

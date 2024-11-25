@@ -3,7 +3,6 @@ using Composable.Contracts;
 using Composable.Functional;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
-using Composable.SystemCE.LinqCE;
 
 namespace AccountManagement.UserStories.Scenarios;
 

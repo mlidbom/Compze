@@ -2,7 +2,6 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Oracle.ManagedDataAccess.Client;

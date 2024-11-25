@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Composable.Functional;
 using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.LinqCE;
 
 namespace Composable.Logging;
 

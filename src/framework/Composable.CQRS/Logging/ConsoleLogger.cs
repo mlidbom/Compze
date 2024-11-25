@@ -5,7 +5,6 @@ using System.Reflection;
 using Composable.Functional;
 using Composable.Serialization;
 using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;

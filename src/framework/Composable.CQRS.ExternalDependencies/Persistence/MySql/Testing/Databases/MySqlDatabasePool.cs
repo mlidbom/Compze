@@ -3,7 +3,6 @@ using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
 using MySql.Data.MySqlClient;
 using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
 

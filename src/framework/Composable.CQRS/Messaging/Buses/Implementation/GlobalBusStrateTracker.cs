@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Functional;
 using Composable.SystemCE;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;

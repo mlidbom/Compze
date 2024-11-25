@@ -2,7 +2,6 @@
 using System.Linq;
 using AccountManagement.API;
 using Composable.Functional;
-using Composable.SystemCE.LinqCE;
 using FluentAssertions;
 using NUnit.Framework;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Composable.Functional;
-using Composable.SystemCE.LinqCE;
 
 namespace Composable.SystemCE.CollectionsCE.GenericCE;
 

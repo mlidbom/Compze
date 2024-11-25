@@ -1,6 +1,5 @@
 using System.Linq;
 using Composable.Functional;
-using Composable.SystemCE.LinqCE;
 using NUnit.Framework;
 
 namespace Composable.Tests;

@@ -3,7 +3,6 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using Composable.Functional;
 using Composable.Messaging.Buses;
-using Composable.SystemCE.LinqCE;
 
 namespace AccountManagement.UserStories.Scenarios;
 

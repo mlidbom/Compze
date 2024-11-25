@@ -3,7 +3,6 @@ using Composable.Functional;
 using Npgsql;
 using Composable.Persistence.Common.AdoCE;
 using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
 #pragma warning disable CA1308 // Normalize strings to uppercase

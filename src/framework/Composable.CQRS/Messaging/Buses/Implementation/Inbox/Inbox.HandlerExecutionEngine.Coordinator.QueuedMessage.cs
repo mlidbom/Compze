@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.Functional;
 using Composable.Logging;
-using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;

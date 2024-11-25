@@ -3,7 +3,6 @@ using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
 using Oracle.ManagedDataAccess.Client;
 using Composable.Persistence.Oracle.SystemExtensions;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
 
