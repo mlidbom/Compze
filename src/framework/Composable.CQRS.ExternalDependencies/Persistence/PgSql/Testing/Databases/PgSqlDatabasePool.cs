@@ -27,7 +27,7 @@ sealed class PgSqlDatabasePool : DatabasePool
    }
 
    protected override string ConnectionStringFor(Database db)
-      => _connectionStringBuilder.Update(it => it.Mutate(me =>
+      => _connectionStringBuilder.Update(it => it.mutate(me =>
       {
          me.Database = db.Name.ToLowerInvariant();
          me.MinPoolSize = 1;

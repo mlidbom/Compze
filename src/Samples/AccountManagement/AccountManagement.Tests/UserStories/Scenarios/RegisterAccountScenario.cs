@@ -16,9 +16,9 @@ class RegisterAccountScenario : ScenarioBase<(AccountResource.Command.Register.R
    public string Password;
 
 
-   public RegisterAccountScenario WithAccountId(Guid acountId) => this.Mutate(it => it.AccountId = acountId);
-   public RegisterAccountScenario WithEmail(string email) => this.Mutate(it => it.Email = email);
-   public RegisterAccountScenario WithPassword(string password) => this.Mutate(it => it.Password = password);
+   public RegisterAccountScenario WithAccountId(Guid acountId) => this.mutate(it => it.AccountId = acountId);
+   public RegisterAccountScenario WithEmail(string email) => this.mutate(it => it.Email = email);
+   public RegisterAccountScenario WithPassword(string password) => this.mutate(it => it.Password = password);
 
    public RegisterAccountScenario(IEndpoint clientEndpoint, string email = null, string password = TestData.Passwords.ValidPassword)
    {

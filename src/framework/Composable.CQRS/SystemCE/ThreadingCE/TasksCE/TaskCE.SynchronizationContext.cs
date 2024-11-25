@@ -8,30 +8,37 @@ namespace Composable.SystemCE.ThreadingCE.TasksCE;
 static partial class TaskCE
 {
    ///<summary>
-   /// Abbreviated version of ConfigureAwait(continueOnCapturedContext: false)
-   ///We need to apply this to every single await in library code for performance and to avoid deadlocks in clients with a synchronization context. It is not enough to have it at the edges of the public API: https://tinyurl.com/y8cjr77w, https://tinyurl.com/vwrcd8j, https://tinyurl.com/y7sxqb53, https://tinyurl.com/n6zheop,
-   ///This is important for performance because when called from a UI thread with a Synchronization context capturing it for every await causes performance problems by a thousand paper cuts: https://tinyurl.com/vwrcd8j
-   ///Hacks that null out the SynchronizationContext are not reliable because await uses TaskScheduler.Current so no SetSynchronizationContext hack will work reliably.  https://tinyurl.com/y37d54xg
+   /// Abbreviated version of <see cref="Task.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.
+   /// Ensures that awaits do not capture the synchronization context, improving performance and avoiding deadlocks in environments with a synchronization context (e.g., UI threads).
+   /// Must be applied to all awaits in library code for consistent behavior and performance.
    ///</summary>
    public static ConfiguredTaskAwaitable NoMarshalling(this Task @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
 
    ///<summary>
-   /// Abbreviated version of ConfigureAwait(continueOnCapturedContext: false)
-   ///We need to apply this to every single await in library code for performance and to avoid deadlocks in clients with a synchronization context. It is not enough to have it at the edges of the public API: https://tinyurl.com/y8cjr77w, https://tinyurl.com/vwrcd8j, https://tinyurl.com/y7sxqb53, https://tinyurl.com/n6zheop,
-   ///This is important for performance because when called from a UI thread with a Synchronization context capturing it for every await causes performance problems by a thousand paper cuts: https://tinyurl.com/vwrcd8j
-   ///Hacks that null out the SynchronizationContext are not reliable because await uses TaskScheduler.Current so no SetSynchronizationContext hack will work reliably.  https://tinyurl.com/y37d54xg
+   /// Abbreviated version of <see cref="Task{TResult}.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.
+   /// Ensures that awaits do not capture the synchronization context, improving performance and avoiding deadlocks in environments with a synchronization context (e.g., UI threads).
+   /// Must be applied to all awaits in library code for consistent behavior and performance.
    ///</summary>
    public static ConfiguredTaskAwaitable<TResult> NoMarshalling<TResult>(this Task<TResult> @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
 
    ///<summary>
-   /// Abbreviated version of ConfigureAwait(continueOnCapturedContext: false)
-   ///We need to apply this to every single await in library code for performance and to avoid deadlocks in clients with a synchronization context. It is not enough to have it at the edges of the public API: https://tinyurl.com/y8cjr77w, https://tinyurl.com/vwrcd8j, https://tinyurl.com/y7sxqb53, https://tinyurl.com/n6zheop,
-   ///This is important for performance because when called from a UI thread with a Synchronization context capturing it for every await causes performance problems by a thousand paper cuts: https://tinyurl.com/vwrcd8j
-   ///Hacks that null out the SynchronizationContext are not reliable because await uses TaskScheduler.Current so no SetSynchronizationContext hack will work reliably.  https://tinyurl.com/y37d54xg
+   /// Abbreviated version of <see cref="TaskAsyncEnumerableExtensions.ConfigureAwait(IAsyncDisposable,bool)"/> with <c>continueOnCapturedContext: false</c>.
+   /// Ensures that awaits do not capture the synchronization context, improving performance and avoiding deadlocks in environments with a synchronization context (e.g., UI threads).
+   /// Must be applied to all awaits in library code for consistent behavior and performance.
    ///</summary>
    public static ConfiguredAsyncDisposable NoMarshalling(this IAsyncDisposable @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
 
+   ///<summary>
+   /// Abbreviated version of <see cref="ValueTask{TResult}.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.
+   /// Ensures that awaits do not capture the synchronization context, improving performance and avoiding deadlocks in environments with a synchronization context (e.g., UI threads).
+   /// Must be applied to all awaits in library code for consistent behavior and performance.
+   ///</summary>
    public static ConfiguredValueTaskAwaitable<TResult> NoMarshalling<TResult>(this ValueTask<TResult> @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
 
+   ///<summary>
+   /// Abbreviated version of <see cref="ValueTask.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.
+   /// Ensures that awaits do not capture the synchronization context, improving performance and avoiding deadlocks in environments with a synchronization context (e.g., UI threads).
+   /// Must be applied to all awaits in library code for consistent behavior and performance.
+   ///</summary>
    public static ConfiguredValueTaskAwaitable NoMarshalling(this ValueTask @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
 }

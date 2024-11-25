@@ -22,17 +22,5 @@ public static class ObjectCE
       }
    }
 
-   public static T Mutate<T>(this T @this, Action<T> mutate)
-   {
-      mutate(@this);
-      return @this;
-   }
-
-   public static async Task<T> MutateAsync<T>(this T @this, Func<T, Task> mutate)
-   {
-      await mutate(@this).NoMarshalling();
-      return @this;
-   }
-
    public static string ToStringNotNull(this object @this) => Contract.ReturnNotNull(@this.ToString());
 }

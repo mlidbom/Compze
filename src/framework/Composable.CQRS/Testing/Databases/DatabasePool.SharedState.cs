@@ -50,7 +50,7 @@ partial class DatabasePool
 
          return DirtyUnReserved
                .Take(databasesToClean)
-               .Select(it => it.Mutate(db => db.Reserve(reservationName: Guid.NewGuid().ToString(),
+               .Select(it => it.mutate(db => db.Reserve(reservationName: Guid.NewGuid().ToString(),
                                                               poolId: poolId,
                                                               reservationLength: 10.Minutes())))
                .ToList();

@@ -41,13 +41,13 @@ static class DbCommandCE
       await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().NoMarshalling();
 
    public static TCommand AppendCommandText<TCommand>(this TCommand @this, string append) where TCommand : DbCommand =>
-      @this.Mutate(me => me.CommandText += append);
+      @this.mutate(me => me.CommandText += append);
 
    public static TCommand SetCommandText<TCommand>(this TCommand @this, string commandText) where TCommand : DbCommand =>
-      @this.Mutate(me => me.CommandText = commandText);
+      @this.mutate(me => me.CommandText = commandText);
 
    public static TCommand SetStoredProcedure<TCommand>(this TCommand @this, string storedProcedure) where TCommand : DbCommand =>
-      @this.Mutate(me =>
+      @this.mutate(me =>
       {
          me.CommandType = CommandType.StoredProcedure;
          me.CommandText = storedProcedure;
@@ -56,13 +56,13 @@ static class DbCommandCE
    public static TCommand PrepareStatement<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       Contract.Arguments.Assert(@this.CommandText.Length > 0, "Cannot prepare statement with empty CommandText");
-      return @this.Mutate(me => me.Prepare());
+      return @this.mutate(me => me.Prepare());
    }
 
    public static async Task<TCommand> PrepareStatementAsync<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       Contract.Arguments.Assert(@this.CommandText.Length > 0, "Cannot prepare statement with empty CommandText");
-      return await @this.MutateAsync(async me => await me.PrepareAsync().NoMarshalling()).NoMarshalling();
+      return await @this.mutateAsync(async me => await me.PrepareAsync().NoMarshalling()).NoMarshalling();
    }
 
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)

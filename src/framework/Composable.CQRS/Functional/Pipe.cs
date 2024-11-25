@@ -1,30 +1,46 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable InconsistentNaming
 
 namespace Composable.Functional;
 
 ///<summary>Provides the ability to chain method calls rather than having to use separate lines and temporary variables.</summary>
-static class Pipe
+public static class Pipe
 {
-   ///<summary>Takes the first value, applies the <see cref="transform"/> and return the resulting value.</summary>
+   ///<summary>Takes the first value, applies <see cref="transform"/> and return the resulting value.</summary>
    public static TResult select<TValue, TResult>(this TValue it, Func<TValue, TResult> transform) => transform(it);
 
-   ///<summary>Sometimes you want to continue a method chain but don't care about the previous value. This drops it</summary>
+   ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
    public static TResult then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
 
-   ///<summary>Sometimes you want to continue a method chain but don't care about the previous value. This drops it</summary>
+   ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
    public static TResult then<TValue, TResult>(this TValue _, TResult value) => value;
 
-   ///<summary>Enables chaining statements that return void. For when separate lines of code is inconvenient, such as in many lambda expressions.</summary>
+   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="Unit"/>.  Useful for chaining statements that return void.</summary>
    internal static Unit then<TValue>(this TValue _, Action action) => Unit.From(action);
 
-   ///<summary>Use an <see cref="IDisposable"/> resource and return the result.</summary>
+   ///<summary> Disposes <paramref name="it"/> after applying <paramref name="transform"/> and returning the resulting value.</summary>
    internal static TResult use<TIDisposableValue, TResult>(this TIDisposableValue it, Func<TIDisposableValue, TResult> transform) where TIDisposableValue : IDisposable
    {
       using(it)
       {
          return transform(it);
       }
+   }
+
+   ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
+   public static T mutate<T>(this T it, Action<T> mutate)
+   {
+      mutate(it);
+      return it;
+   }
+
+   ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
+   public static async Task<T> mutateAsync<T>(this T it, Func<T, Task> mutate)
+   {
+      await mutate(it).NoMarshalling();
+      return it;
    }
 }

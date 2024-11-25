@@ -56,7 +56,7 @@ interface IComposableDB2Connection : IPoolableConnection, IComposableDbConnectio
          Assert.State.Assert(Connection.IsOpen);
          _transactionParticipant.Value.EnsureEnlistedInAnyAmbientTransaction();
 
-         return Connection.CreateCommand().Mutate(it => it.Transaction = _db2Transaction);
+         return Connection.CreateCommand().mutate(it => it.Transaction = _db2Transaction);
       }
 
       public void Dispose()
