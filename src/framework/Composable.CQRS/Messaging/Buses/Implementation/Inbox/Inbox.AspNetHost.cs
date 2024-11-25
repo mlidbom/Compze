@@ -38,7 +38,7 @@ partial class Inbox
       public async Task StopAsync()
       {
          if(_webApplication is null) return;
-         await _webApplication!.StopAsync().CaF();
+         await _webApplication.StopAsync().CaF();
          _webApplication = null;
       }
 
