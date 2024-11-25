@@ -68,11 +68,18 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
 
    (TObject instance, int refCount) ReadFile()
    {
-      var buffer = File.ReadAllBytes(_filePath);
-      using var stream = new MemoryStream(buffer);
-      using var reader = new BinaryReader(stream);
-      var refCount = reader.ReadInt32();
-      return (BinarySerialized<TObject>.DeserializeReader(reader), refCount);
+      try
+      {
+         var buffer = File.ReadAllBytes(_filePath);
+         using var stream = new MemoryStream(buffer);
+         using var reader = new BinaryReader(stream);
+         var refCount = reader.ReadInt32();
+         return (BinarySerialized<TObject>.DeserializeReader(reader), refCount);
+      }catch(IOException exception)
+      {
+         File.Delete(_filePath);
+         throw new Exception($"File appears to have been corrupted. Deleted the file.", exception);
+      }
    }
 
    internal TObject GetCopy()
