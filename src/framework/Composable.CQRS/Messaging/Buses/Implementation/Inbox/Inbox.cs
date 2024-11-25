@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.DependencyInjection;
 using Composable.SystemCE.ThreadingCE.TasksCE;
+using JetBrains.Annotations;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-partial class Inbox : IInbox, IAsyncDisposable
+[UsedImplicitly]partial class Inbox : IInbox, IAsyncDisposable
 {
-   Runner _runner;
+   readonly Runner _runner;
 
    readonly IMessageStorage _storage;
    readonly AspNetHost _aspNetHost;

@@ -67,10 +67,7 @@ public static partial class TestEnv
                                               },
                                               iterations: 500);
 
-         if(time.Total > 1.Milliseconds())
-            return true;
-         else
-            return false;
+         return time.Total > 1.Milliseconds();
       }
 
       static readonly double MachineSlowness = DetectEnvironmentPerformanceAdjustment();

@@ -32,11 +32,6 @@ class TransactionSnapshot
    public static TransactionSnapshot? TakeSnapshot()
    {
       var currentTransaction = Transaction.Current;
-      if(currentTransaction == null)
-      {
-         return null;
-      }
-
-      return new TransactionSnapshot(currentTransaction);
+      return currentTransaction == null ? null : new TransactionSnapshot(currentTransaction);
    }
 }

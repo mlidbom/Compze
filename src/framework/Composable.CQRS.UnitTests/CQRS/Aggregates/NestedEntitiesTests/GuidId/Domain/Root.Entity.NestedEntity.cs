@@ -1,9 +1,10 @@
 using System;
 using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using JetBrains.Annotations;
 
 namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 
-partial class RemovableEntity
+[UsedImplicitly]partial class RemovableEntity
 {
    public class RemovableNestedEntity : RemovableNestedEntity<RemovableNestedEntity,
       Guid,

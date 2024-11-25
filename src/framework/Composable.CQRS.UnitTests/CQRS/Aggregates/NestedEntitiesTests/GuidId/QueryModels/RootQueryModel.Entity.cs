@@ -1,10 +1,11 @@
 using System;
 using Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using JetBrains.Annotations;
 
 namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
-partial class Entity : RootQueryModel.Entity<Entity,
+[UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity,
    Guid,
    RootEvent.Entity.IRoot,
    RootEvent.Entity.Created,

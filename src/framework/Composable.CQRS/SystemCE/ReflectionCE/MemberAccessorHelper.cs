@@ -73,10 +73,6 @@ static class MemberAccessorHelper<T>
    {
       Contract.ArgumentNotNull(type, nameof(type));
 
-      if(type == typeof(T))
-      {
-         return Fields;
-      }
-      return MemberAccessorHelper.GetFieldGetters(type);
+      return type == typeof(T) ? Fields : MemberAccessorHelper.GetFieldGetters(type);
    }
 }

@@ -4,8 +4,8 @@ using Composable.Messaging;
 
 namespace Composable.Persistence.EventStore;
 
-public class AggregateEvent<TBaseEventInterface> : MessageTypes.WrapperEvent<TBaseEventInterface>,
-                                                   IAggregateEvent<TBaseEventInterface>
+public abstract class AggregateEvent<TBaseEventInterface> : MessageTypes.WrapperEvent<TBaseEventInterface>,
+                                                            IAggregateEvent<TBaseEventInterface>
 
    where TBaseEventInterface : IAggregateEvent
 {

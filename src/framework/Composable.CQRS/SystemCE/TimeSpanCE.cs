@@ -113,12 +113,6 @@ static partial class TimeSpanCE
          return $"{integer}.{d1}_{d2}_{d3}";
       }
 
-      if(time >= OneMicrosecond)
-      {
-         return $"{time.TotalMicroseconds()} microseconds";
-      } else
-      {
-         return $"{time.TotalNanoseconds()} nanoseconds";
-      }
+      return time >= OneMicrosecond ? $"{time.TotalMicroseconds()} microseconds" : $"{time.TotalNanoseconds()} nanoseconds";
    }
 }

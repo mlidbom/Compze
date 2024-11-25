@@ -102,8 +102,7 @@ readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    public int CompareTo(ReadOrder other)
    {
       var orderComparison = _order.CompareTo(other._order);
-      if(orderComparison != 0) return orderComparison;
-      return _offSet.CompareTo(other._offSet);
+      return orderComparison != 0 ? orderComparison : _offSet.CompareTo(other._offSet);
    }
 
    public static bool operator <(ReadOrder left, ReadOrder right) => left.CompareTo(right) < 0;
