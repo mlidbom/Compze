@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.DependencyInjection;
+using Composable.Logging;
 using Composable.Messaging.Buses.Implementation;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
@@ -54,16 +55,24 @@ public class EndpointHost : IEndpointHost
 
    public async Task StartAsync()
    {
-      Assert.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
-      _isStarted = true;
+      try
+      {
+         Assert.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
+         _isStarted = true;
 
-      await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).CaF();
-      await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).CaF();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).CaF();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).CaF();
+      }catch(Exception e)
+      {
+         this.Log().Error(e, "Failed to start endpoint host. Attempting to dispose.");
+         await DisposeAsync(true).CaF();
+         throw;
+      }
    }
 
    public void Start() => StartAsync().WaitUnwrappingException();
 
-   protected virtual async Task DisposeAsync(bool disposing)
+   protected virtual async Task DisposeAsync(bool disposing) => await this.Log().ExceptionsAndRethrowAsync(async () =>
    {
       if(!_disposed)
       {
@@ -78,7 +87,7 @@ public class EndpointHost : IEndpointHost
       }
 
       await Task.CompletedTask.CaF();
-   }
+   }).CaF();
 
    public async ValueTask DisposeAsync()
    {

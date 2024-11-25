@@ -47,11 +47,11 @@ partial class Inbox
       async Task<WebApplication> StartServerAsync()
       {
          var builder = WebApplication.CreateBuilder();
-         builder.Logging.SetMinimumLevel(LogLevel.Warning);
+         builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
          builder.Services.AddControllers().ConfigureApplicationPartManager(it =>
          {
-            it.ApplicationParts.Add(new AssemblyPart(typeof(QueryController).Assembly));
+            //it.ApplicationParts.Add(new AssemblyPart(GetType().Assembly));
             it.FeatureProviders.Add(new InternalControllerFeatureProvider());
          });
 

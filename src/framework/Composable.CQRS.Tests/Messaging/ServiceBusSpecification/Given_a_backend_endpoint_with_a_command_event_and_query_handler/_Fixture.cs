@@ -40,7 +40,7 @@ public class Fixture : DuplicateByPluggableComponentTest
    internal IThreadGate EventHandlerThreadGate;
    internal IThreadGate QueryHandlerThreadGate;
 
-   internal IReadOnlyList<IThreadGate> AllGates;
+   internal IReadOnlyList<IThreadGate> AllGates = [];
 
    protected TestingTaskRunner TaskRunner { get; } = TestingTaskRunner.WithTimeout(_timeout);
    protected IEndpoint ClientEndpoint { get; set; }
