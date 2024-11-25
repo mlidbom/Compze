@@ -42,10 +42,10 @@ public class PerformanceTestBase : DuplicateByPluggableComponentTest
          });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
-      await Host.StartAsync().NoMarshalling();
+      await Host.StartAsync().CaF();
    }
 
-   [TearDown] public async Task TearDown() => await Host.DisposeAsync().NoMarshalling();
+   [TearDown] public async Task TearDown() => await Host.DisposeAsync().CaF();
 
    protected class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult> {}
    protected class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult> {}

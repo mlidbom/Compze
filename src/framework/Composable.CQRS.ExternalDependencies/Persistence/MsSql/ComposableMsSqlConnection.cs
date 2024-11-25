@@ -20,7 +20,7 @@ interface IComposableMsSqlConnection : IPoolableConnection, IComposableDbConnect
       async Task IPoolableConnection.OpenAsyncFlex(SyncOrAsync syncOrAsync) =>
          await syncOrAsync.Run(
             () => Connection.Open(),
-            () => Connection.OpenAsync()).NoMarshalling();
+            () => Connection.OpenAsync()).CaF();
 
       DbCommand IComposableDbConnection.CreateCommand() => CreateCommand();
       public SqlCommand CreateCommand() => Connection.CreateCommand();

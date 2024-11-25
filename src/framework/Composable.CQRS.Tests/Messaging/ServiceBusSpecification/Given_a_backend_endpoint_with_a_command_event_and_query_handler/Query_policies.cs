@@ -22,7 +22,7 @@ public class Query_policies : Fixture
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 5);
       QueryHandlerThreadGate.Open();
 
-      await queriesResults.NoMarshalling();
+      await queriesResults.CaF();
    }
 
    public Query_policies(string _) : base(_) {}

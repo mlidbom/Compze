@@ -17,16 +17,16 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(query.Body);
          content.Headers.Add("MessageId", query.Id.ToString());
          content.Headers.Add("PayloadTypeId", query.Type.GuidValue.ToString());
-         var response = await it.PostAsync(new Uri($"{address.AspNetAddress}/internal/rpc/query"), content).NoMarshalling();
+         var response = await it.PostAsync(new Uri($"{address.AspNetAddress}/internal/rpc/query"), content).CaF();
          if(!response.IsSuccessStatusCode)
          {
             throw new MessageDispatchingFailedException($"Query failed with status code {response.StatusCode}");
          }
 
-         var resultJson = await response.Content.ReadAsStringAsync().NoMarshalling();
+         var resultJson = await response.Content.ReadAsStringAsync().CaF();
          var result = (TResult)serializer.DeserializeResponse(typeof(TResult), resultJson);
          return result;
-      }).NoMarshalling();
+      }).CaF();
    }
 }
 class ComposableHttpClientFactoryProvider : IComposableHttpClientFactoryProvider
@@ -42,6 +42,6 @@ class ComposableHttpClientFactoryProvider : IComposableHttpClientFactoryProvider
    public async Task<TResult> UseAsync<TResult>(Func<HttpClient, Task<TResult>> action)
    {
       using var client = CreateClient();
-      return await action(client).NoMarshalling();
+      return await action(client).CaF();
    }
 }

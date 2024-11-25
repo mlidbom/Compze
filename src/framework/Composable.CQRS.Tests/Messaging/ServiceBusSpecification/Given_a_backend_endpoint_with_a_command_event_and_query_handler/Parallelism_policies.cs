@@ -22,7 +22,7 @@ public class Parallelism_policies : Fixture
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       OpenGates();
-      await tasks.NoMarshalling();
+      await tasks.CaF();
    }
 
    [Test] public void Five_query_handlers_can_execute_in_parallel_when_using_Query()

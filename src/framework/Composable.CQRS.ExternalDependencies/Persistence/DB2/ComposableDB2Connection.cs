@@ -44,7 +44,7 @@ interface IComposableDB2Connection : IPoolableConnection, IComposableDbConnectio
       {
          await syncOrAsync.Run(
             () => Connection.Open(),
-            () => Connection.OpenAsync()).NoMarshalling();
+            () => Connection.OpenAsync()).CaF();
 
          _transactionParticipant.Value.EnsureEnlistedInAnyAmbientTransaction();
       }

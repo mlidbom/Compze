@@ -68,7 +68,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
                      .Map<Composable.Tests.CQRS.IUserRegistered>("6a9b3276-cedc-4dae-a15c-4d386c935a48");
    }
 
-   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync().NoMarshalling();
+   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync().CaF();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IEventStoreUpdater> useSession)
       => _serviceLocator.ExecuteTransactionInIsolatedScope(
@@ -495,7 +495,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
       async Task ChangeAnotherUsersEmailInOtherInstance()
       {
          var clonedServiceLocator = _serviceLocator.Clone();
-         await using var serviceLocator = clonedServiceLocator.NoMarshalling();
+         await using var serviceLocator = clonedServiceLocator.CaF();
          clonedServiceLocator.ExecuteTransactionInIsolatedScope(() =>
          {
             // ReSharper disable once AccessToDisposedClosure
@@ -510,7 +510,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
       UseInTransactionalScope(session => user = User.Register(session, "email@email.se", "password", Guid.NewGuid()));
 
-      await ChangeAnotherUsersEmailInOtherInstance().NoMarshalling();
+      await ChangeAnotherUsersEmailInOtherInstance().CaF();
       UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
 
       UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));

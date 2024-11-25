@@ -39,7 +39,7 @@ partial class MsSqlInboxPersistenceLayer
 
                                             """);
 #pragma warning restore
-         await Task.CompletedTask.NoMarshalling();
+         await Task.CompletedTask.CaF();
       }
    }
 }

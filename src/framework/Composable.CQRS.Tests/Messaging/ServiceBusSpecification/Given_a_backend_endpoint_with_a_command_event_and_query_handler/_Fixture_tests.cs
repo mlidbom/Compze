@@ -25,7 +25,7 @@ public class Fixture_tests : Fixture
    [Test] public async Task If_command_handler_with_result_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
    {
       CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<MessageDispatchingFailedException>(async () => await ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())).NoMarshalling()).NoMarshalling();
+      await AssertThrows.Async<MessageDispatchingFailedException>(async () => await ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())).CaF()).CaF();
 
       AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
    }
@@ -40,14 +40,14 @@ public class Fixture_tests : Fixture
    [Test] public async Task If_query_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<MessageDispatchingFailedException>(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery()))).NoMarshalling();
+      await AssertThrows.Async<MessageDispatchingFailedException>(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery()))).CaF();
 
       AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException();
    }
 
    void AssertDisposingHostThrowsAggregateExceptionContainingOnlyThrownException()
    {
-      Assert.ThrowsAsync<AggregateException>(async Task () => await Host.DisposeAsync().NoMarshalling())
+      Assert.ThrowsAsync<AggregateException>(async Task () => await Host.DisposeAsync().CaF())
                   .InnerExceptions.Single().Should().Be(_thrownException);
    }
 

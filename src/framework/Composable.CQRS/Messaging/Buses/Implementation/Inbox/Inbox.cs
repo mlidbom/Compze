@@ -26,19 +26,19 @@ namespace Composable.Messaging.Buses.Implementation;
    public async Task StartAsync()
    {
       var storageStartTask = _storage.StartAsync();
-      await Task.WhenAll(_runner.StartAsync(), storageStartTask, _aspNetHost.StartAsync()).NoMarshalling();
+      await Task.WhenAll(_runner.StartAsync(), storageStartTask, _aspNetHost.StartAsync()).CaF();
    }
 
    public async Task StopAsync()
    {
       _runner.Dispose();
-      await _aspNetHost.StopAsync().NoMarshalling();
+      await _aspNetHost.StopAsync().CaF();
    }
 
 
    public async ValueTask DisposeAsync()
    {
-      await StopAsync().NoMarshalling();
-      await _aspNetHost.DisposeAsync().NoMarshalling();
+      await StopAsync().CaF();
+      await _aspNetHost.DisposeAsync().CaF();
    }
 }

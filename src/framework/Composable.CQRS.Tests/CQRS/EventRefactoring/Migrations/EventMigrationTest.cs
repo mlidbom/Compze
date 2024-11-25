@@ -32,7 +32,7 @@ public class EventMigrationTest : EventMigrationTestBase
                        new MigrationScenario(
                           EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                           EnumerableCE.OfTypes<Ec1, Ef, E2, Ef>())))
-                .Should().ThrowAsync<Exception>().NoMarshalling();
+                .Should().ThrowAsync<Exception>().CaF();
    }
 
    [Test]
@@ -41,7 +41,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E2, Ef, Ef>(),
-                                Replace<E1>.With<E2>())).NoMarshalling();
+                                Replace<E1>.With<E2>())).CaF();
    }
 
    [Test]
@@ -50,7 +50,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1>(),
                                 EnumerableCE.OfTypes<Ec1, E2>(),
-                                Replace<E1>.With<E2>())).NoMarshalling();
+                                Replace<E1>.With<E2>())).CaF();
    }
 
    [Test]
@@ -59,7 +59,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1>(),
                                 EnumerableCE.OfTypes<Ec1, E2, E3>(),
-                                Replace<E1>.With<E2, E3>())).NoMarshalling();
+                                Replace<E1>.With<E2, E3>())).CaF();
    }
 
    [Test]
@@ -68,7 +68,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E2, E3, Ef>(),
-                                Replace<E1>.With<E2, E3>())).NoMarshalling();
+                                Replace<E1>.With<E2, E3>())).CaF();
    }
 
    [Test]
@@ -77,7 +77,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1, Ef, Ef, Ef, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E2, E3, Ef, Ef, Ef, Ef>(),
-                                Replace<E1>.With<E2, E3>())).NoMarshalling();
+                                Replace<E1>.With<E2, E3>())).CaF();
    }
 
    [Test]
@@ -87,7 +87,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E2, Ef>(),
                                 Replace<E1>.With<E2>(),
-                                Replace<E1>.With<E5>())).NoMarshalling();
+                                Replace<E1>.With<E5>())).CaF();
    }
 
    [Test]
@@ -97,7 +97,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E2, E3, Ef>(),
                                 Replace<E1>.With<E2, E3>(),
-                                Replace<E1>.With<E5>())).NoMarshalling();
+                                Replace<E1>.With<E5>())).CaF();
    }
 
    [Test]
@@ -107,7 +107,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E4, E3, Ef>(),
                                 Replace<E1>.With<E2, E3>(),                                                //Ec1, E2, E3, Ef
-                                Replace<E2>.With<E4>())).NoMarshalling(); //Ec1, E4, E3, Ef
+                                Replace<E2>.With<E4>())).CaF(); //Ec1, E4, E3, Ef
    }
 
    [Test]
@@ -116,7 +116,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E3, E1, Ef>(),
-                                Before<E1>.Insert<E3>())).NoMarshalling();
+                                Before<E1>.Insert<E3>())).CaF();
    }
 
    [Test]
@@ -125,7 +125,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E3, E4, E1, Ef>(),
-                                Before<E1>.Insert<E3, E4>())).NoMarshalling();
+                                Before<E1>.Insert<E3, E4>())).CaF();
    }
 
    [Test]
@@ -135,7 +135,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E3, E2, E1, Ef>(),
                                 Before<E1>.Insert<E2>(),
-                                Before<E2>.Insert<E3>())).NoMarshalling();
+                                Before<E2>.Insert<E3>())).CaF();
    }
 
    [Test]
@@ -145,7 +145,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1>(),
                                 EnumerableCE.OfTypes<Ec1, E5, E3, E4, E1>(),
                                 Before<E1>.Insert<E3, E4>(),                                                //Ec1, E3, E4, E1
-                                Before<E3>.Insert<E5>())).NoMarshalling(); //Ec1, E5, E3, E4, E1;
+                                Before<E3>.Insert<E5>())).CaF(); //Ec1, E5, E3, E4, E1;
    }
 
    [Test]
@@ -155,7 +155,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E3, E5, E4, E1, Ef>(),
                                 Before<E1>.Insert<E3, E4>(),                                                //Ec1, E3, E4, E1, Ef
-                                Before<E4>.Insert<E5>())).NoMarshalling(); //Ec1, E3, E5, E4, E1, Ef
+                                Before<E4>.Insert<E5>())).CaF(); //Ec1, E3, E5, E4, E1, Ef
    }
 
    [Test]
@@ -165,7 +165,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1>(),
                                 EnumerableCE.OfTypes<Ec1, E3, E2, E1>(),
                                 Before<E1>.Insert<E2>(),                                                    //Ec1, E2, E1
-                                Before<E2>.Insert<E3>())).NoMarshalling(); //Ec1, E3, E2, E1
+                                Before<E2>.Insert<E3>())).CaF(); //Ec1, E3, E2, E1
    }
 
    [Test]
@@ -176,7 +176,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E5, E4, E3, E2, E1>(),
                                 Before<E1>.Insert<E3, E2>(),                                                //Ec1, E3, E2, E1
                                 Before<E3>.Insert<E4>(),                                                    //Ec1, E4, E3, E2, E1
-                                Before<E4>.Insert<E5>())).NoMarshalling(); //Ec1, E5, E4, E3, E2, E1
+                                Before<E4>.Insert<E5>())).CaF(); //Ec1, E5, E4, E3, E2, E1
    }
 
    [Test]
@@ -187,7 +187,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E6, E5, E4, E1, Ef>(),
                                 Before<E1>.Insert<E3, E4>(),                                               //Ec1, E3, E4, E1, Ef
                                 Before<E4>.Insert<E5>(),                                                   //Ec1, E3, E5, E4, E1, Ef
-                                Replace<E3>.With<E6>())).NoMarshalling(); //Ec1, E6, E5, E4, E1, Ef
+                                Replace<E3>.With<E6>())).CaF(); //Ec1, E6, E5, E4, E1, Ef
    }
 
    [Test]
@@ -200,7 +200,7 @@ public class EventMigrationTest : EventMigrationTestBase
                               Before<E4>.Insert<E5>(),                                                   //Ec1, E3, E5, E4, E1, Ef
                               Replace<E3>.With<E6>(),                                                    //Ec1, E6, E5, E4, E1, Ef
                               Replace<Ef>.With<E7>(),                                                    //Ec1, E6, E5, E4, E1, E7
-                              After<E7>.Insert<E8>())).NoMarshalling(); //Ec1, E6, E5, E4, E1, E7, E8
+                              After<E7>.Insert<E8>())).CaF(); //Ec1, E6, E5, E4, E1, E7, E8
    }
 
    [Test]
@@ -210,7 +210,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E5, E3, E4, E1, Ef, Ef>(),
                                 Before<E1>.Insert<E3, E4>(),                                                //Ec1, E3, E4, E1, Ef, Ef
-                                Before<E3>.Insert<E5>())).NoMarshalling(); //Ec1, E5, E3, E4, E1, Ef, Ef
+                                Before<E3>.Insert<E5>())).CaF(); //Ec1, E5, E3, E4, E1, Ef, Ef
    }
 
    [Test]
@@ -220,7 +220,7 @@ public class EventMigrationTest : EventMigrationTestBase
                                 EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E3, E5, E4, E1, Ef, Ef>(),
                                 Before<E1>.Insert<E3, E4>(),                                                //Ec1, E3, E4 E1, Ef, Ef
-                                Before<E4>.Insert<E5>())).NoMarshalling(); //Ec1, E3, E5, E4, E1, Ef, Ef
+                                Before<E4>.Insert<E5>())).CaF(); //Ec1, E3, E5, E4, E1, Ef, Ef
    }
 
    [Test]
@@ -229,7 +229,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, E1, E2, Ef, Ef>(),
-                                After<E1>.Insert<E2>())).NoMarshalling();
+                                After<E1>.Insert<E2>())).CaF();
 
    }
 
@@ -239,7 +239,7 @@ public class EventMigrationTest : EventMigrationTestBase
       await RunMigrationTest(new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1>(),
                                 EnumerableCE.OfTypes<Ec1, E1, E2>(),
-                                After<E1>.Insert<E2>())).NoMarshalling();
+                                After<E1>.Insert<E2>())).CaF();
    }
 
    [Test]
@@ -253,7 +253,7 @@ public class EventMigrationTest : EventMigrationTestBase
                              EnumerableCE.OfTypes<Ec1, E2, E3, E1>(),
                              Before<E1>.Insert<E2>(),
                              After<E2>.Insert<E3>())))
-                .Should().ThrowAsync<NonIdempotentMigrationDetectedException>().NoMarshalling();
+                .Should().ThrowAsync<NonIdempotentMigrationDetectedException>().CaF();
    }
 
    [Test]
@@ -328,7 +328,7 @@ public class EventMigrationTest : EventMigrationTestBase
          AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
       }finally
       {
-         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).CaF();
       }
 
    }
@@ -415,7 +415,7 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).CaF();
       }
 
    }
@@ -465,7 +465,7 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).CaF();
       }
    }
 
@@ -512,7 +512,7 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).CaF();
       }
    }
 
@@ -559,7 +559,7 @@ public class EventMigrationTest : EventMigrationTestBase
       }
       finally
       {
-         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).NoMarshalling();
+         await Task.WhenAll(toDispose.Select(it => it.DisposeAsync().AsTask())).CaF();
       }
    }
 
@@ -570,7 +570,7 @@ public class EventMigrationTest : EventMigrationTestBase
          new MigrationScenario(
             EnumerableCE.OfTypes<Ec1, E1>(),
             EnumerableCE.OfTypes<Ec1, E2, E1>(),
-            Before<E1>.Insert<E2>())).NoMarshalling();
+            Before<E1>.Insert<E2>())).CaF();
    }
 
    [Test]
@@ -581,11 +581,11 @@ public class EventMigrationTest : EventMigrationTestBase
 
       // ReSharper disable once AccessToModifiedClosure this is exactly what we wish to achieve here...
       var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
-      await using var locator = serviceLocator.NoMarshalling();
+      await using var locator = serviceLocator.CaF();
       IEventStore PersistingEventStore() => serviceLocator.Resolve<IEventStore>();
 
       var otherProcessServiceLocator = serviceLocator.Clone();
-      await using var processServiceLocator = otherProcessServiceLocator.NoMarshalling();
+      await using var processServiceLocator = otherProcessServiceLocator.CaF();
 
       // ReSharper disable once AccessToDisposedClosure
       IEventStoreUpdater OtherEventStoreSession() => otherProcessServiceLocator.Resolve<IEventStoreUpdater>();

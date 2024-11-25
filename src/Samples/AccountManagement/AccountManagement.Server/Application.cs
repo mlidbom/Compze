@@ -13,9 +13,9 @@ static class Application
    public static async Task Main()
    {
       var host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
-      await using var host2 = host.NoMarshalling();
+      await using var host2 = host.CaF();
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
-      await host.StartAsync().NoMarshalling();
+      await host.StartAsync().CaF();
       Console.WriteLine("Press enter to exit");
       Console.ReadLine();
    }

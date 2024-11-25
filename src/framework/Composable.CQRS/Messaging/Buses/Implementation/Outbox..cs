@@ -73,6 +73,6 @@ partial class Outbox : IOutbox
    public async Task StartAsync()
    {
       if(!_configuration.IsPureClientEndpoint)
-         await _storage.StartAsync().NoMarshalling();
+         await _storage.StartAsync().CaF();
    }
 }

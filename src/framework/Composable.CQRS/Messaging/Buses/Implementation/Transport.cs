@@ -47,7 +47,7 @@ partial class Transport : ITransport, IDisposable
       _runningAndNotDisposed.Assert();
       var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _httpClient, _poller, _typeMapper, _serializer);
 
-      await clientConnection.Init().NoMarshalling();
+      await clientConnection.Init().CaF();
 
       ThreadSafe.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 
@@ -64,21 +64,21 @@ partial class Transport : ITransport, IDisposable
    {
       _runningAndNotDisposed.Assert();
       var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-      await connection.PostAsync(atMostOnceCommand).NoMarshalling();
+      await connection.PostAsync(atMostOnceCommand).CaF();
    }
 
    public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> atMostOnceCommand)
    {
       _runningAndNotDisposed.Assert();
       var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-      return await connection.PostAsync(atMostOnceCommand).NoMarshalling();
+      return await connection.PostAsync(atMostOnceCommand).CaF();
    }
 
    public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
    {
       _runningAndNotDisposed.Assert();
       var connection = _router.ConnectionToHandlerFor(query);
-      return await connection.GetAsync(query).NoMarshalling();
+      return await connection.GetAsync(query).CaF();
    }
 
    public void Stop() => _runningAndNotDisposed.Do(() =>

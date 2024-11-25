@@ -21,10 +21,10 @@ public class UserStoryTest : DuplicateByPluggableComponentTest
       Host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterTestingEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
-      await Host.StartAsync().NoMarshalling();
+      await Host.StartAsync().CaF();
    }
 
-   [TearDown] public async Task Teardown() => await Host.DisposeAsync().NoMarshalling();
+   [TearDown] public async Task Teardown() => await Host.DisposeAsync().CaF();
 
    public UserStoryTest([NotNull] string _) : base(_) {}
 }

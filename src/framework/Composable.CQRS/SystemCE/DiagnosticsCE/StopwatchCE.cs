@@ -17,7 +17,7 @@ public static class StopwatchCE
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    internal static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
-   internal static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action).NoMarshalling();
+   internal static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action).CaF();
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    static TimeSpan TimeExecution(this Stopwatch @this, [InstantHandle] Action action)
@@ -33,7 +33,7 @@ public static class StopwatchCE
    {
       @this.Reset();
       @this.Start();
-      await action().NoMarshalling();
+      await action().CaF();
       return @this.Elapsed;
    }
 
@@ -45,9 +45,9 @@ public static class StopwatchCE
                      {
                         for(var i = 0; i < iterations; i++)
                         {
-                           await action().NoMarshalling();
+                           await action().CaF();
                         }
-                     }).NoMarshalling();
+                     }).CaF();
 
       return new TimedExecutionSummary(iterations, total);
    }
@@ -56,7 +56,7 @@ public static class StopwatchCE
    {
       if(syncOrAsync == SyncOrAsync.Async)
       {
-         return await TimeExecutionAsync(syncOrAsyncAction.AsAsync()).NoMarshalling();
+         return await TimeExecutionAsync(syncOrAsyncAction.AsAsync()).CaF();
       } else
       {
          return TimeExecution(syncOrAsyncAction.AsSync());

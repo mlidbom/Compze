@@ -33,16 +33,16 @@ partial class Inbox
       }
       public string Address => _webApplication!.Urls.First();
 
-      public async Task StartAsync() => _webApplication = await StartServerAsync().NoMarshalling();
+      public async Task StartAsync() => _webApplication = await StartServerAsync().CaF();
 
       public async Task StopAsync()
       {
          if(_webApplication is null) return;
-         await _webApplication!.StopAsync().NoMarshalling();
+         await _webApplication!.StopAsync().CaF();
          _webApplication = null;
       }
 
-      public async ValueTask DisposeAsync() => await StopAsync().NoMarshalling();
+      public async ValueTask DisposeAsync() => await StopAsync().CaF();
 
       async Task<WebApplication> StartServerAsync()
       {
@@ -69,7 +69,7 @@ partial class Inbox
 
          app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
 
-         await app.StartAsync().NoMarshalling();
+         await app.StartAsync().CaF();
          return app;
       }
    }

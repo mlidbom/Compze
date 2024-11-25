@@ -46,6 +46,6 @@ public static class DependencyInjectionContainer
    {
       readonly ITestingEndpointHost _host;
       public TestingEndpointHostDisposer(ITestingEndpointHost host) => _host = host;
-      public async ValueTask DisposeAsync() => await _host.DisposeAsync().NoMarshalling();
+      public async ValueTask DisposeAsync() => await _host.DisposeAsync().CaF();
    }
 }

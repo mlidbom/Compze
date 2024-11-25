@@ -20,10 +20,10 @@ interface IDbConnectionPool<out TConnection, out TCommand>
       UseConnectionAsyncFlex(SyncOrAsync.Sync, action.AsVoidFunc().AsAsync()).SyncResult();
 
    async Task UseConnectionAsync(Func<TConnection, Task> action) =>
-      await UseConnectionAsyncFlex(SyncOrAsync.Async, action.AsVoidFunc()).NoMarshalling();
+      await UseConnectionAsyncFlex(SyncOrAsync.Async, action.AsVoidFunc()).CaF();
 
    async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func) =>
-      await UseConnectionAsyncFlex(SyncOrAsync.Async, func).NoMarshalling();
+      await UseConnectionAsyncFlex(SyncOrAsync.Async, func).CaF();
 
    int ExecuteNonQuery(string commandText) =>
       UseConnection(connection => connection.ExecuteNonQuery(commandText));
@@ -32,7 +32,7 @@ interface IDbConnectionPool<out TConnection, out TCommand>
       UseConnection(connection => connection.ExecuteScalar(commandText));
 
    async Task<int> ExecuteNonQueryAsync(string commandText) =>
-      await UseConnectionAsync(async connection => await connection.ExecuteNonQueryAsync(commandText).NoMarshalling()).NoMarshalling();
+      await UseConnectionAsync(async connection => await connection.ExecuteNonQueryAsync(commandText).CaF()).CaF();
 
    int PrepareAndExecuteNonQuery(string commandText) =>
       UseConnection(connection => connection.PrepareAndExecuteNonQuery(commandText));
@@ -41,13 +41,13 @@ interface IDbConnectionPool<out TConnection, out TCommand>
       UseConnection(connection => connection.PrepareAndExecuteScalar(commandText));
 
    async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>
-      await UseConnectionAsync(async connection => await connection.PrepareAndExecuteNonQueryAsync(commandText).NoMarshalling()).NoMarshalling();
+      await UseConnectionAsync(async connection => await connection.PrepareAndExecuteNonQueryAsync(commandText).CaF()).CaF();
 
    void UseCommand(Action<TCommand> action) =>
       UseConnection(connection => connection.UseCommand(action));
 
    Task UseCommandAsync(Func<TCommand, Task> action) =>
-      UseConnectionAsync(async connection => await connection.UseCommandAsync(action).NoMarshalling());
+      UseConnectionAsync(async connection => await connection.UseCommandAsync(action).CaF());
 
    TResult UseCommand<TResult>(Func<TCommand, TResult> action) =>
       UseConnection(connection => connection.UseCommand(action));

@@ -36,7 +36,7 @@ partial class Outbox
 
          _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
-         await taskCompletionSource.Task.NoMarshalling();
+         await taskCompletionSource.Task.CaF();
       }
 
       public async Task SendAsync(IExactlyOnceCommand command)
@@ -46,7 +46,7 @@ partial class Outbox
 
          _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
-         await taskCompletionSource.Task.NoMarshalling();
+         await taskCompletionSource.Task.CaF();
       }
 
       public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> command)
@@ -56,7 +56,7 @@ partial class Outbox
 
          _state.Update(state => state.ExpectedResponseTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
-         return (TCommandResult)(await taskCompletionSource.Task.NoMarshalling()).Invoke();
+         return (TCommandResult)(await taskCompletionSource.Task.CaF()).Invoke();
       }
 
       public async Task PostAsync(IAtMostOnceHypermediaCommand command)
@@ -66,14 +66,14 @@ partial class Outbox
 
          _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
-         await taskCompletionSource.Task.NoMarshalling();
+         await taskCompletionSource.Task.CaF();
       }
 
       public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
       {
          var outGoingMessage = TransportMessage.OutGoing.Create(query, _typeMapper, _serializer);
          _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
-         return await _httpClient.Query<TQueryResult>(_remoteAddress, outGoingMessage, _serializer).NoMarshalling();
+         return await _httpClient.Query<TQueryResult>(_remoteAddress, outGoingMessage, _serializer).CaF();
       }
 
       void SendMessage(TransportMessage.OutGoing outGoingMessage)
@@ -82,7 +82,7 @@ partial class Outbox
          _sendQueue.Enqueue(outGoingMessage);
       }
 
-      internal async Task Init() => EndpointInformation = await GetAsync(new MessageTypes.Internal.EndpointInformationQuery()).NoMarshalling();
+      internal async Task Init() => EndpointInformation = await GetAsync(new MessageTypes.Internal.EndpointInformationQuery()).CaF();
 
 #pragma warning disable 8618 //Refactor: This really should not be suppressed. We do have a bad design that might cause null reference exceptions here if Init has not been called.
       internal InboxConnection(IGlobalBusStateTracker globalBusStateTracker,

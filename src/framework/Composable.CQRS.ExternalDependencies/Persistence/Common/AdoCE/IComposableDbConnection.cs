@@ -30,13 +30,13 @@ interface IComposableDbConnection<out TCommand> : IComposableDbConnection
    async Task UseCommandAsync(Func<TCommand, Task> action)
    {
       var command = CreateCommand();
-      await using var command1 = command.NoMarshalling();
-      await action(command).NoMarshalling();
+      await using var command1 = command.CaF();
+      await action(command).CaF();
    }
 
    int ExecuteNonQuery(string commandText) => UseCommand(command => command.ExecuteNonQuery(commandText));
 
-   async Task<int> ExecuteNonQueryAsync(string commandText) => await UseCommand(command => command.ExecuteNonQueryAsync(commandText)).NoMarshalling();
+   async Task<int> ExecuteNonQueryAsync(string commandText) => await UseCommand(command => command.ExecuteNonQueryAsync(commandText)).CaF();
 
    object? ExecuteScalar(string commandText) => UseCommand(command => command.ExecuteScalar(commandText));
 
@@ -45,7 +45,7 @@ interface IComposableDbConnection<out TCommand> : IComposableDbConnection
    int PrepareAndExecuteNonQuery(string commandText) => UseCommand(command => command.PrepareAndExecuteNonQuery(commandText));
 
    async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>
-      await UseCommand(command => command.PrepareAndExecuteNonQueryAsync(commandText)).NoMarshalling();
+      await UseCommand(command => command.PrepareAndExecuteNonQueryAsync(commandText)).CaF();
 
    object? PrepareAndExecuteScalar(string commandText) => UseCommand(command => command.PrepareAndExecuteScalar(commandText));
 }

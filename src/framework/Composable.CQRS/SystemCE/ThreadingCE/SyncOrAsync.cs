@@ -23,7 +23,7 @@ static class SyncOrAsyncCE
       () => Task.FromResult(func());
 
    internal static Func<Task> AsAsync(this Func<SyncOrAsync, Task> func) =>
-      async () => await func(SyncOrAsync.Async).NoMarshalling();
+      async () => await func(SyncOrAsync.Async).CaF();
 
 
 
@@ -31,7 +31,7 @@ static class SyncOrAsyncCE
    {
       if(syncOrAsync == SyncOrAsync.Async)
       {
-         await asynchronous().NoMarshalling();
+         await asynchronous().CaF();
       } else
       {
          synchronous();

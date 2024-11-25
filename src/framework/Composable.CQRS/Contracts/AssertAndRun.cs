@@ -24,13 +24,13 @@ public class AssertAndRun
    internal async Task<TResult> DoAsync<TResult>(Func<Task<TResult>> action)
    {
       _assertion();
-      return await action().NoMarshalling();
+      return await action().CaF();
    }
 
    internal async Task DoAsync(Func<Task> action)
    {
       _assertion();
-      await action().NoMarshalling();
+      await action().CaF();
    }
 
    internal void Assert() => _assertion();

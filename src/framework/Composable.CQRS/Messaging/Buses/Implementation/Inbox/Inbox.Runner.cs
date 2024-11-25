@@ -64,7 +64,7 @@ partial class Inbox
       {
          _messageReceiverThread.Start();
          _handlerExecutionEngine.Start();
-         await Task.CompletedTask.NoMarshalling();
+         await Task.CompletedTask.CaF();
          _poller.RunAsync($"{nameof(Inbox)}_PollerThread_{_configuration.Name}");
       }
 

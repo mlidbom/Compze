@@ -44,7 +44,7 @@ partial class PgSqlOutboxPersistenceLayer
         FOREIGN KEY ({Dispatch.MessageId}) REFERENCES {Message.TableName} ({Message.MessageId})
     );
 
-").NoMarshalling();
+").CaF();
       }
    }
 }

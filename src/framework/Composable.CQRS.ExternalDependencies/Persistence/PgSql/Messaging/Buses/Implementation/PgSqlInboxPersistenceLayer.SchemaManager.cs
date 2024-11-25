@@ -36,7 +36,7 @@ partial class PgSqlInboxPersistenceLayer
 
 
 
-").NoMarshalling();
+").CaF();
 
       }
    }

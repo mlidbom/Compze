@@ -101,7 +101,7 @@ public class Fixture : DuplicateByPluggableComponentTest
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await Host.StartAsync().NoMarshalling();
+      await Host.StartAsync().CaF();
       AllGates = new List<IThreadGate>
                  {
                     (CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate))),
@@ -119,7 +119,7 @@ public class Fixture : DuplicateByPluggableComponentTest
    {
       OpenGates();
       TaskRunner.Dispose();
-      await Host.DisposeAsync().NoMarshalling();
+      await Host.DisposeAsync().CaF();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

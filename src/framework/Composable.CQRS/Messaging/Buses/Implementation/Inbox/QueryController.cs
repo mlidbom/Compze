@@ -19,13 +19,13 @@ class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMa
       var typeId = new TypeId(Guid.Parse(typeIdStr));
 
       using var reader = new StreamReader(Request.Body);
-      var queryJson = await reader.ReadToEndAsync().NoMarshalling();
+      var queryJson = await reader.ReadToEndAsync().CaF();
 
       var transportMessage = new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
 
       try
       {
-         var queryResultObject = (await handlerExecutionEngine.Enqueue(transportMessage).NoMarshalling()).NotNull();
+         var queryResultObject = (await handlerExecutionEngine.Enqueue(transportMessage).CaF()).NotNull();
          var responseJson = serializer.SerializeResponse(queryResultObject);
          return Ok(responseJson);
       }

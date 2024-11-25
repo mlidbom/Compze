@@ -50,7 +50,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
          //first opening of a connection that takes very long and thus trying our own pooling will not help.
          if(Interlocked.Increment(ref _openings) == 1)
          {
-            await connection.OpenAsyncFlex(syncOrAsync).NoMarshalling();//Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
+            await connection.OpenAsyncFlex(syncOrAsync).CaF();//Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
          } else
          {
             //Currently about 900 passing tests. Total of 13 seconds. Average per test of 12ms.
@@ -58,7 +58,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
             //Remember, this includes cleaning databases, creating tables, inserting data, reading the data etc.
             //This is in other words probably less than 1ms per connection usage that will make at least one
             //roundtrip to the db server in any case, likely eclipsing 1ms.
-            await SubsequentOpenings.TimeAsyncFlex(syncOrAsync, connection.OpenAsyncFlex).NoMarshalling();
+            await SubsequentOpenings.TimeAsyncFlex(syncOrAsync, connection.OpenAsyncFlex).CaF();
          }
          return connection;
       }
@@ -66,9 +66,9 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
       public virtual async Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<TConnection, Task<TResult>> func)
       {
-         var connection = await OpenConnectionAsyncFlex(syncOrAsync).NoMarshalling();
-         await using var connection1 = connection.NoMarshalling();
-         return await func(connection).NoMarshalling();
+         var connection = await OpenConnectionAsyncFlex(syncOrAsync).CaF();
+         await using var connection1 = connection.CaF();
+         return await func(connection).CaF();
       }
       public override string ToString() => _connectionString;
    }
@@ -86,7 +86,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
          if(transactionLocalIdentifier == null)
          {
-            return await base.UseConnectionAsyncFlex(syncOrAsync, func).NoMarshalling();
+            return await base.UseConnectionAsyncFlex(syncOrAsync, func).CaF();
          } else
          {
             //TConnection requires that the same connection is used throughout a transaction
@@ -104,8 +104,8 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
                      return createConnectionTask;
                   }));
 
-            var connection = await getConnectionTask.NoMarshalling();
-            return await func(connection).NoMarshalling();
+            var connection = await getConnectionTask.CaF();
+            return await func(connection).CaF();
          }
       }
    }

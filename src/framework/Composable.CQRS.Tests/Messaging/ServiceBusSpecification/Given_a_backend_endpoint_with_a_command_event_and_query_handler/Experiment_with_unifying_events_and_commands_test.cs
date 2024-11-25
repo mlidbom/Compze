@@ -71,7 +71,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await _host.StartAsync().NoMarshalling();
+      await _host.StartAsync().CaF();
 
       _userDomainServiceLocator = userManagementDomainEndpoint.ServiceLocator;
 
@@ -92,7 +92,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
    [TearDown]public async Task TeardownAsync()
    {
       _taskRunner.Dispose();
-      await _host.DisposeAsync().NoMarshalling();
+      await _host.DisposeAsync().CaF();
    }
 
    public static class UserEvent

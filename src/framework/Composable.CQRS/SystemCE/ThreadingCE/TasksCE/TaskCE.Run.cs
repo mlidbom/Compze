@@ -20,7 +20,7 @@ static partial class TaskCE
    internal static Task Run(string name, Action action, CancellationToken cancellationToken) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(_ => action(), name, cancellationToken);
 
    internal static Task Run(string name, Func<Task> action) => Run(name, action, CancellationToken.None);
-   internal static Task Run(string name, Func<Task> action, CancellationToken cancellationToken) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(async _ => await action().NoMarshalling(), name, cancellationToken);
+   internal static Task Run(string name, Func<Task> action, CancellationToken cancellationToken) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(async _ => await action().CaF(), name, cancellationToken);
 
    ///<summary>Here just in order to collect all run methods here so that all task execution comes through this class and we can easily find them all and review them for why they don't pass a name for easier debugging. Any call to  <see cref="Task.Run(System.Action)"/> elsewhere is known to be a mistake to be replaced with a call to this method.</summary>
    internal static Task<TResult> Run<TResult>(Func<TResult> function) => Task.Run(function);

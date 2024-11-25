@@ -43,7 +43,7 @@ partial class MySqlOutboxPersistenceLayer
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4;
 
-").NoMarshalling();
+").CaF();
       }
    }
 }

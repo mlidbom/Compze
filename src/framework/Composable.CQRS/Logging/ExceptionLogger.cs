@@ -36,7 +36,7 @@ static class ExceptionLogger
    {
       try
       {
-         await action().NoMarshalling();
+         await action().CaF();
       }
       catch(Exception e)
       {

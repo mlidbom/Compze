@@ -71,21 +71,21 @@ class TimingsStatisticsCollector
 
    public async Task TimeAsync(Func<Task> func)
    {
-      var time = await StopwatchCE.TimeExecutionAsync(func).NoMarshalling();
+      var time = await StopwatchCE.TimeExecutionAsync(func).CaF();
       RegisterCall(time);
    }
 
    public async Task TimeAsyncFlex(SyncOrAsync syncOrAsync, Func<SyncOrAsync, Task> syncOrAsyncFunc)
    {
 
-      var time = await StopwatchCE.TimeExecutionFlexAsync(syncOrAsync, syncOrAsyncFunc).NoMarshalling();
+      var time = await StopwatchCE.TimeExecutionFlexAsync(syncOrAsync, syncOrAsyncFunc).CaF();
       RegisterCall(time);
    }
 
    public async Task<TResult> TimeAsync<TResult>(Func<Task<TResult>> func)
    {
       TResult? result = default;
-      var time = await StopwatchCE.TimeExecutionAsync(async () => result = await func().NoMarshalling()).NoMarshalling();
+      var time = await StopwatchCE.TimeExecutionAsync(async () => result = await func().CaF()).CaF();
       RegisterCall(time);
       return result!;
    }

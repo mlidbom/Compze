@@ -27,7 +27,7 @@ class DocumentDbTestsBase : DuplicateByPluggableComponentTest
    [TearDown]
    public async Task TearDownTask()
    {
-      if (ServiceLocator != null) await ServiceLocator.DisposeAsync().NoMarshalling();
+      if (ServiceLocator != null) await ServiceLocator.DisposeAsync().CaF();
    }
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) => ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));
    internal void UseInScope([InstantHandle]Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader()));

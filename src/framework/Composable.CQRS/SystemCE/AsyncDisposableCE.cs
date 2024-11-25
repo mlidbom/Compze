@@ -18,7 +18,7 @@ class AsyncDisposableCE : IAsyncDisposable
    }
 
    ///<summary>Invokes the action passed to the constructor.</summary>
-   public async ValueTask DisposeAsync() => await _action().NoMarshalling();
+   public async ValueTask DisposeAsync() => await _action().CaF();
 
    ///<summary>Constructs an object that will call <param name="action"> when disposed.</param></summary>
    public static IAsyncDisposable Create(Func<Task> action) => new AsyncDisposableCE(action);

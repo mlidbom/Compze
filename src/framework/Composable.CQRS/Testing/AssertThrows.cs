@@ -10,7 +10,7 @@ public static class AssertThrows
    {
       try
       {
-         await action().NoMarshalling();
+         await action().CaF();
       }
       catch(TException exception)
       {

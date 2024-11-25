@@ -90,5 +90,5 @@ WHERE {Schema.MessageId} = @{Schema.MessageId}
                    .ExecuteNonQuery());
    }
 
-   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).NoMarshalling();
+   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).CaF();
 }

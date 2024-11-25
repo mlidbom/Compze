@@ -59,14 +59,14 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
          description: "Uncached loading",
          maxTotal: maxUncachedLoadTime,
          setup: () => clonedLocator = _container.Clone(),
-         tearDownAsync: async Task () => await clonedLocator.NotNull().DisposeAsync().NoMarshalling(),
+         tearDownAsync: async Task () => await clonedLocator.NotNull().DisposeAsync().CaF(),
          action: () =>
          {
             LoadWithCloneLocator(clonedLocator!);
             return Task.CompletedTask;
-         }).NoMarshalling();
+         }).CaF();
 
-      await using((clonedLocator = _container.Clone()).NoMarshalling())
+      await using((clonedLocator = _container.Clone()).CaF())
       {
          LoadWithCloneLocator(clonedLocator); //Warm up cache
 
@@ -90,7 +90,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
       await AssertUncachedAndCachedAggregateLoadTimes(
          maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 15, msSql: 25, mySql: 55, orcl: 125, pgSql: 25).Milliseconds().EnvMultiply(instrumented: 2.5),
          maxCachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 5, memory: 5, msSql: 5, mySql: 5, orcl: 5, pgSql: 5).Milliseconds().EnvMultiply(instrumented: 2.5),
-         eventMigrations).NoMarshalling();
+         eventMigrations).CaF();
    }
 
    [Test] public async Task With_four_migrations_that_change_nothing_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_X_milliseconds_mSSql_30_5_pgSql_30_5_mySql_30_5_orcl_120_5_inMem_15_DB2_30_5()
@@ -105,7 +105,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
       await AssertUncachedAndCachedAggregateLoadTimes(
          maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 15, msSql: 30, mySql: 30, orcl: 120, pgSql: 30).Milliseconds().EnvMultiply(instrumented: 2.5),
          maxCachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 5, memory: 5, msSql: 5, mySql: 5, orcl: 5, pgSql: 5).Milliseconds().EnvMultiply(instrumented: 2),
-         eventMigrations).NoMarshalling();
+         eventMigrations).CaF();
    }
 
    [Test] public async Task When_there_are_no_migrations_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds_mSSql_20_5_pgSql_20_5_mySql_20_5_orcl_125_5_inMem_10_DB2_30_5()
@@ -114,7 +114,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
       await AssertUncachedAndCachedAggregateLoadTimes(
          maxUncachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 30, memory: 10, msSql: 20, mySql: 45, orcl: 125, pgSql: 20).Milliseconds().EnvMultiply(instrumented: 3),
          maxCachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 5, memory: 5, msSql: 5, mySql: 5, orcl: 5, pgSql: 5).Milliseconds().EnvMultiply(instrumented: 2.5),
-         eventMigrations).NoMarshalling();
+         eventMigrations).CaF();
    }
 
    public EventMigrationPerformanceTest([NotNull] string _) : base(_) {}
