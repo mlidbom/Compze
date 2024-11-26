@@ -137,6 +137,8 @@ class ServerEndpointBuilder : IEndpointBuilder
                                                        => new Inbox.Runner(handlerExecutionEngine, storage, configuration, typeMapper, serializer)),
             Scoped.For<RpcController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
                                                        => new RpcController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
+            Scoped.For<MessagingController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
+                                                     => new MessagingController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
             Singleton.For<Inbox.AspNetHost>().CreatedBy((IServiceLocator serviceLocator, IDependencyInjectionContainer container) => new Inbox.AspNetHost(serviceLocator, container)),
             Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.Runner runner, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, Inbox.AspNetHost aspNetHost)
                                                  => new Inbox(serviceLocator, runner, messageStorage, container, aspNetHost)),

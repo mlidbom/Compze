@@ -7,6 +7,7 @@ using Composable.Messaging.Buses.Implementation.Http;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 class InternalControllerFeatureProvider : ControllerFeatureProvider
 {
-   protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType() == typeof(RpcController);
+   protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Controller));
 }
 
 partial class Inbox
