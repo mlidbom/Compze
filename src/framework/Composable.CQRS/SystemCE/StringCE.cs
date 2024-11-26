@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Composable.Contracts;
+using Composable.Functional;
 using JetBrains.Annotations;
 
 namespace Composable.SystemCE;
@@ -50,4 +51,6 @@ static class StringCE
    public static string Pluralize(this int count, string theString) => count == 1 ? theString : $"{theString}s";
 
    public static string Invariant(this FormattableString interpolatedString) => FormattableString.Invariant(interpolatedString);
+
+   public static string IndentToDepth(this string it, string indent, int depth) => it.Split(Environment.NewLine).Select(line => indent.Repeat(depth).Join(string.Empty) + line).Join(Environment.NewLine);
 }

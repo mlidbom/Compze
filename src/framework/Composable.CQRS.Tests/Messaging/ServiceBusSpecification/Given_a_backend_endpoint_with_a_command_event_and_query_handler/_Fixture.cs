@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.Functional;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
 using Composable.Persistence.Common.DependencyInjection;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing.Threading;
-using JetBrains.Annotations;
-using NUnit.Framework;
 using Composable.Testing;
+using Composable.Testing.Threading;
+using NUnit.Framework;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
@@ -47,7 +42,7 @@ public partial class Fixture : DuplicateByPluggableComponentTest
    protected IEndpoint RemoteEndpoint { get; set; }
    protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
 
-   [SetUp]public async Task Setup()
+   [SetUp] public async Task Setup()
    {
       static void MapBackendEndpointTypes(IEndpointBuilder builder) =>
          builder.TypeMapper.Map<MyExactlyOnceCommand>("0ddefcaa-4d4d-48b2-9e1a-762c0b835275")
@@ -115,7 +110,7 @@ public partial class Fixture : DuplicateByPluggableComponentTest
                  };
    }
 
-   [TearDown]public virtual async Task TearDownAsync()
+   [TearDown] public virtual async Task TearDownAsync()
    {
       OpenGates();
       TaskRunner.Dispose();

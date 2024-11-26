@@ -17,13 +17,15 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(message.Body);
          content.Headers.Add("MessageId", message.Id.ToString());
          content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var response = await it.PostAsync(new Uri($"{address.AspNetAddress}/internal/rpc/query"), content).CaF();
+         var requestUri = new Uri($"{address.AspNetAddress}/internal/rpc/query");
+         var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
             throw new MessageDispatchingFailedException($"""
-                                                         Query failed with status code {response.StatusCode}
-                                                         Query type: {query.GetType().FullName}
-                                                         Query body:
+                                                         Uri:        {requestUri}
+                                                         StatusCode: {response.StatusCode}
+                                                         Type:       {query.GetType().FullName}
+                                                         Body:
                                                          {message.Body}
                                                          """);
          }
