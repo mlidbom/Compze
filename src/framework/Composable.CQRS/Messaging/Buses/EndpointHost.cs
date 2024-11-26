@@ -60,8 +60,8 @@ public class EndpointHost : IEndpointHost
          Assert.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
          _isStarted = true;
 
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).CaF();
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).CaF();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).WithAggregateExceptions().CaF();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).WithAggregateExceptions().CaF();
       }catch(Exception e)
       {
          this.Log().Error(e, "Failed to start host");
@@ -80,16 +80,16 @@ public class EndpointHost : IEndpointHost
          if(_isStarted)
          {
             _isStarted = false;
-            await Task.WhenAll(Endpoints.Where(endpoint => endpoint.IsRunning).Select(endpoint => endpoint.StopAsync())).CaF();
+            await Task.WhenAll(Endpoints.Where(endpoint => endpoint.IsRunning).Select(endpoint => endpoint.StopAsync())).WithAggregateExceptions().CaF();
          }
 
-         await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).CaF();
+         await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().CaF();
       }
    }
 
    public async ValueTask DisposeAsync()
    {
-      await DisposeAsync(true).CaF();
+      await DisposeAsync(true).WithAggregateExceptions().CaF();
       GC.SuppressFinalize(this);
    }
 }

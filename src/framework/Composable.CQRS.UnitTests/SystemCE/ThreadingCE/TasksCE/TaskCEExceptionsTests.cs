@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.Logging;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using FluentAssertions;

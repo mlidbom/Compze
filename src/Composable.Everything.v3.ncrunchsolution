@@ -1,8 +1,6 @@
 ﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
-    <DefaultTestTimeout>15000</DefaultTestTimeout>
-    <EnableRDI>True</EnableRDI>
     <HotSpotsLineExclusionList />
     <InstrumentationMode>Optimised</InstrumentationMode>
     <MaxNumberOfProcessingThreads>10</MaxNumberOfProcessingThreads>
@@ -13,7 +11,7 @@
   </Settings>
   <EngineModes>
     <EngineMode>
-      <Name>Run all tests automatically except Performance tests.</Name>
+      <Name>All but Performance</Name>
       <Settings>
         <TestsToExecuteAutomatically>DoesNotHaveCategory 'Performance'</TestsToExecuteAutomatically>
       </Settings>

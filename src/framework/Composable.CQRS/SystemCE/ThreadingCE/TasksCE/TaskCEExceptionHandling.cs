@@ -9,11 +9,25 @@ static class TaskCEExceptionHandling
    {
       try
       {
-         await task.CaF();
+         await task.AsUnit().CaF();
       }
       catch(Exception exception)
       {
          throw task.Exception ?? new AggregateException(exception);
       }
    }
+
+   public static async Task<T> WithAggregateExceptions<T>(this Task<T> task)
+   {
+      try
+      {
+         return await task.CaF();
+      }
+      catch(Exception exception)
+      {
+         throw task.Exception ?? new AggregateException(exception);
+      }
+   }
+
+   public static async Task WithAggregateExceptions(this ValueTask valueTask) => await valueTask.AsTask().WithAggregateExceptions().CaF();
 }
