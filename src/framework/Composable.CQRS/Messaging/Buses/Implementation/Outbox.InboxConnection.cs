@@ -51,19 +51,15 @@ partial class Outbox
 
       public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> command)
       {
-         var taskCompletionSource = new AsyncTaskCompletionSource<Func<object>>();
          var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
-
-         _state.Update(state => state.ExpectedResponseTasks.Add(outGoingMessage.Id, taskCompletionSource));
-         SendMessage(outGoingMessage);
-         return (TCommandResult)(await taskCompletionSource.Task.CaF()).Invoke();
+         _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
+         return await _httpClient.PostAsync(_remoteAddress, outGoingMessage, command, _serializer).CaF();
       }
 
       public async Task PostAsync(IAtMostOnceHypermediaCommand command)
       {
          var taskCompletionSource = new AsyncTaskCompletionSource();
          var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
-
          _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
          SendMessage(outGoingMessage);
          await taskCompletionSource.Task.CaF();
