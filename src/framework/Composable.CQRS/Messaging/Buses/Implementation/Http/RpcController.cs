@@ -17,42 +17,25 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
    readonly Inbox.HandlerExecutionEngine _handlerExecutionEngine = handlerExecutionEngine;
    readonly Inbox.IMessageStorage _storage = storage;
 
-   class RequestData
+   static async Task<TransportMessage.InComing> CreateIncomingMessage(HttpRequest request, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
    {
-      RequestData(Guid messageId, TypeId typeId, string json, TransportMessage.InComing transportMessage)
-      {
-         MessageId = messageId;
-         TypeId = typeId;
-         Json = json;
-         TransportMessage = transportMessage;
-      }
+      var messageId = Guid.Parse(request.Headers["MessageId"][0].NotNull());
+      var typeIdStr = request.Headers["PayloadTypeId"][0].NotNull();
+      var typeId = new TypeId(Guid.Parse(typeIdStr));
 
-      internal Guid MessageId { get; }
-      internal TypeId TypeId { get; }
-      internal string Json { get; }
-      internal TransportMessage.InComing TransportMessage { get; }
+      using var reader = new StreamReader(request.Body);
+      var queryJson = await reader.ReadToEndAsync().CaF();
 
-      internal static async Task<RequestData> Create(HttpRequest request, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-      {
-         var messageId = Guid.Parse(request.Headers["MessageId"][0].NotNull());
-         var typeIdStr = request.Headers["PayloadTypeId"][0].NotNull();
-         var typeId = new TypeId(Guid.Parse(typeIdStr));
-
-         using var reader = new StreamReader(request.Body);
-         var queryJson = await reader.ReadToEndAsync().CaF();
-
-         var transportMessage = new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
-         return new RequestData(messageId, typeId, queryJson, transportMessage);
-      }
+      return new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
    }
 
    [HttpPost("/internal/rpc/query")] public async Task<IActionResult> Query()
    {
-      var requestData = await RequestData.Create(HttpContext.Request, _typeMapper, _serializer).CaF();
+      var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
 
       try
       {
-         var queryResultObject = (await _handlerExecutionEngine.Enqueue(requestData.TransportMessage).CaF()).NotNull();
+         var queryResultObject = (await _handlerExecutionEngine.Enqueue(incomingMessage).CaF()).NotNull();
          var responseJson = _serializer.SerializeResponse(queryResultObject);
          return Ok(responseJson);
       }
@@ -65,12 +48,12 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
    [HttpPost("/internal/rpc/command-with-result")]
    public async Task<IActionResult> CommandWithResult()
    {
-      var requestData = await RequestData.Create(HttpContext.Request, _typeMapper, _serializer).CaF();
+      var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
 
       try
       {
-         _storage.SaveIncomingMessage(requestData.TransportMessage);
-         var queryResultObject = (await _handlerExecutionEngine.Enqueue(requestData.TransportMessage).CaF()).NotNull();
+         _storage.SaveIncomingMessage(incomingMessage);
+         var queryResultObject = (await _handlerExecutionEngine.Enqueue(incomingMessage).CaF()).NotNull();
          var responseJson = _serializer.SerializeResponse(queryResultObject);
          return Ok(responseJson);
       }
@@ -83,12 +66,12 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
    [HttpPost("/internal/rpc/command-no-result")]
    public async Task<IActionResult> CommandWithNoResult()
    {
-      var requestData = await RequestData.Create(HttpContext.Request, _typeMapper, _serializer).CaF();
+      var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
 
       try
       {
-         _storage.SaveIncomingMessage(requestData.TransportMessage);
-         await _handlerExecutionEngine.Enqueue(requestData.TransportMessage).CaF();
+         _storage.SaveIncomingMessage(incomingMessage);
+         await _handlerExecutionEngine.Enqueue(incomingMessage).CaF();
          return Ok();
       }
       catch(Exception exception)
