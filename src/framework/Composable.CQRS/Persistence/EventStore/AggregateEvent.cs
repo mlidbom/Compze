@@ -6,10 +6,9 @@ namespace Composable.Persistence.EventStore;
 
 public abstract class AggregateEvent<TBaseEventInterface> : MessageTypes.WrapperEvent<TBaseEventInterface>,
                                                             IAggregateEvent<TBaseEventInterface>
-
    where TBaseEventInterface : IAggregateEvent
 {
-   public AggregateEvent(TBaseEventInterface @event) : base(@event) {}
+   protected AggregateEvent(TBaseEventInterface @event) : base(@event) {}
 }
 
 public abstract class AggregateEvent : ValueObject<AggregateEvent>, IAggregateEvent
@@ -17,7 +16,7 @@ public abstract class AggregateEvent : ValueObject<AggregateEvent>, IAggregateEv
    protected AggregateEvent()
    {
       MessageId = Guid.NewGuid();
-      UtcTimeStamp = DateTime.UtcNow;//Todo:bug: Should use timesource.
+      UtcTimeStamp = DateTime.UtcNow; //Todo:bug: Should use timesource.
    }
 
    protected AggregateEvent(Guid aggregateId) : this() => AggregateId = aggregateId;
