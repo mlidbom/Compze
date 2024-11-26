@@ -59,12 +59,10 @@ partial class DocumentDbSession : IDocumentDbSession
    DocumentItem GetDocumentItem(object key, Type documentType)
    {
       var documentKey = new DocumentKey(key, documentType);
+      if(_handledDocuments.TryGetValue(documentKey, out var doc)) return doc;
 
-      if(!_handledDocuments.TryGetValue(documentKey, out var doc))
-      {
-         doc = new DocumentItem(documentKey, _backingStore, _persistentValues);
-         _handledDocuments.Add(documentKey, doc);
-      }
+      doc = new DocumentItem(documentKey, _backingStore, _persistentValues);
+      _handledDocuments.Add(documentKey, doc);
 
       return doc;
    }

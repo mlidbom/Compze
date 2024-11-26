@@ -41,19 +41,13 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
       var idstring = GetIdString(id);
       value = null;
 
-      if(!_db.TryGetValue(idstring, out var matchesId))
-      {
-         return false;
-      }
+      if(!_db.TryGetValue(idstring, out var matchesId)) return false;
 
       var found = matchesId.Where(typeOfValue.IsInstanceOfType).ToList();
-      if(found.Any())
-      {
-         value = found.Single();
-         return true;
-      }
+      if(!found.Any()) return false;
 
-      return false;
+      value = found.Single();
+      return true;
    }
 
    static string GetIdString(object id) => Contract.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
