@@ -28,15 +28,15 @@ namespace Composable.Messaging.Hypermedia;
       return _transport.PostAsync(command);
    }
 
-   public Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
+   public async Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
    {
       MessageInspector.AssertValidToSendRemote(query);
       if(query is ICreateMyOwnResultQuery<TResult> selfCreating)
-         return Task.FromResult(selfCreating.CreateResult());
+         return await Task.FromResult(selfCreating.CreateResult()).CaF();
 
-      return GetAsyncAfterFastPathOptimization(query);
+      return await GetAsyncAfterFastPathOptimization(query).CaF();
    }
-   Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => _transport.GetAsync(query);
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transport.GetAsync(query).CaF();
 
    TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableQuery<TResult> query) => GetAsync(query).ResultUnwrappingException();
 }
