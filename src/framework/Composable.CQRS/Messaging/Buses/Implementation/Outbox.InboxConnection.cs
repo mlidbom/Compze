@@ -32,12 +32,9 @@ partial class Outbox
 
       public async Task SendAsync(IExactlyOnceEvent @event)
       {
-         var taskCompletionSource = new AsyncTaskCompletionSource();
          var outGoingMessage = TransportMessage.OutGoing.Create(@event, _typeMapper, _serializer);
-
-         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
-         SendMessage(outGoingMessage);
-         await taskCompletionSource.Task.CaF();
+         _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
+         await _httpClient.PostAsync(_remoteAddress, outGoingMessage, @event, _serializer).CaF();
       }
 
       public async Task SendAsync(IExactlyOnceCommand command)

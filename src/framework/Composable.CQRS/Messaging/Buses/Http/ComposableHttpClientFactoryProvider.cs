@@ -105,7 +105,7 @@ interface IComposableHttpClientFactoryProvider
          return Unit.Instance;
       }).CaF();
    }
-   
+
    async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceCommand command, IRemotableMessageSerializer serializer)
    {
       await UseAsync(async it =>
@@ -123,6 +123,36 @@ interface IComposableHttpClientFactoryProvider
                                                          Uri:        {requestUri}
                                                          StatusCode: {response.StatusCode}
                                                          Type:       {command.GetType().FullName}
+                                                         Body:
+                                                         {message.Body}
+
+                                                         Exception Type: {problemDetails.Type}
+                                                         Exception Message: {problemDetails.Detail}
+                                                         """);
+         }
+
+         await response.Content.ReadAsStringAsync().CaF();
+         return Unit.Instance;
+      }).CaF();
+   }
+   
+   async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceEvent @event, IRemotableMessageSerializer serializer)
+   {
+      await UseAsync(async it =>
+      {
+         var content = new StringContent(message.Body);
+         content.Headers.Add("MessageId", message.Id.ToString());
+         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
+         var requestUri = new Uri($"{address.AspNetAddress}/internal/messaging/event");
+         var response = await it.PostAsync(requestUri, content).CaF();
+         if(!response.IsSuccessStatusCode)
+         {
+            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+
+            throw new MessageDispatchingFailedException($"""
+                                                         Uri:        {requestUri}
+                                                         StatusCode: {response.StatusCode}
+                                                         Type:       {@event.GetType().FullName}
                                                          Body:
                                                          {message.Body}
 
