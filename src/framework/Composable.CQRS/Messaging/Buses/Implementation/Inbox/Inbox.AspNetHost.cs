@@ -14,10 +14,11 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-public class InternalControllerFeatureProvider : ControllerFeatureProvider
+class InternalControllerFeatureProvider : ControllerFeatureProvider
 {
    protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType() == typeof(QueryController);
 }
+
 partial class Inbox
 {
    internal class AspNetHost : IAsyncDisposable
@@ -31,6 +32,7 @@ partial class Inbox
          _serviceLocator = serviceLocator;
          _container = container;
       }
+
       public string Address => _webApplication!.Urls.First();
 
       public async Task StartAsync() => _webApplication = await StartServerAsync().CaF();
