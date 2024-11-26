@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Composable.Messaging.Buses.Implementation.Http;
 
-class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : Controller
+class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : Controller
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableMessageSerializer _serializer = serializer;
@@ -48,7 +48,7 @@ class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMa
 
    [HttpPost("/internal/rpc/query")] public async Task<IActionResult> Query()
    {
-      var requestData = RequestData.Create(HttpContext.Request, _typeMapper, _serializer).Result;
+      var requestData = await RequestData.Create(HttpContext.Request, _typeMapper, _serializer).CaF();
 
       try
       {
@@ -63,9 +63,9 @@ class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMa
    }
 
    [HttpPost("/internal/rpc/command-with-result")]
-   public async Task<IActionResult> CommandWithNoResult()
+   public async Task<IActionResult> CommandWithResult()
    {
-      var requestData = RequestData.Create(HttpContext.Request, _typeMapper, _serializer).Result;
+      var requestData = await RequestData.Create(HttpContext.Request, _typeMapper, _serializer).CaF();
 
       try
       {
@@ -73,6 +73,23 @@ class QueryController(IRemotableMessageSerializer serializer, ITypeMapper typeMa
          var queryResultObject = (await _handlerExecutionEngine.Enqueue(requestData.TransportMessage).CaF()).NotNull();
          var responseJson = _serializer.SerializeResponse(queryResultObject);
          return Ok(responseJson);
+      }
+      catch(Exception exception)
+      {
+         return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
+      }
+   }
+
+   [HttpPost("/internal/rpc/command-no-result")]
+   public async Task<IActionResult> CommandWithNoResult()
+   {
+      var requestData = await RequestData.Create(HttpContext.Request, _typeMapper, _serializer).CaF();
+
+      try
+      {
+         _storage.SaveIncomingMessage(requestData.TransportMessage);
+         await _handlerExecutionEngine.Enqueue(requestData.TransportMessage).CaF();
+         return Ok();
       }
       catch(Exception exception)
       {

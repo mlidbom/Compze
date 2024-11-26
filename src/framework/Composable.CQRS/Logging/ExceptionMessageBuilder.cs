@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -20,11 +21,11 @@ static class ExceptionMessageBuilder
    {
       var builder = new StringBuilder();
 
-      builder.AppendLine($"""
-                          ERROR: 
-                          {IndentWith}Originator: {type.GetFullNameCompilable()}
-                          {IndentWith}MESSAGE: {message} 
-                          """);
+      builder.AppendLine(CultureInfo.InvariantCulture, $"""
+                                                          ERROR: 
+                                                          {IndentWith}Originator: {type.GetFullNameCompilable()}
+                                                          {IndentWith}MESSAGE: {message} 
+                                                          """);
 
       if(exception is AggregateException aggregateException)
       {

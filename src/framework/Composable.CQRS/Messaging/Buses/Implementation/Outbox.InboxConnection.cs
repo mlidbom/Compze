@@ -26,6 +26,7 @@ partial class Outbox
       readonly EndPointAddress _remoteAddress;
       readonly IComposableHttpClientFactoryProvider _httpClient;
       readonly NetMQQueue<TransportMessage.OutGoing> _sendQueue = new();
+
       // ReSharper disable once InconsistentNaming we use this naming variation to try and make it extra clear that this must only ever be accessed from the poller thread.
       readonly IDisposable _socketDisposable;
 
@@ -58,11 +59,9 @@ partial class Outbox
 
       public async Task PostAsync(IAtMostOnceHypermediaCommand command)
       {
-         var taskCompletionSource = new AsyncTaskCompletionSource();
          var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
-         _state.Update(state => state.ExpectedCompletionTasks.Add(outGoingMessage.Id, taskCompletionSource));
-         SendMessage(outGoingMessage);
-         await taskCompletionSource.Task.CaF();
+         _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
+         await _httpClient.PostAsync(_remoteAddress, outGoingMessage, command, _serializer).CaF();
       }
 
       public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
@@ -95,7 +94,7 @@ partial class Outbox
          _remoteAddress = remoteAddress;
          _httpClient = httpClient;
          var socket = new DealerSocket();
-         _socketDisposable = socket;//Getting rid of the type means we don't need to worry about usage from the wrong threads.
+         _socketDisposable = socket; //Getting rid of the type means we don't need to worry about usage from the wrong threads.
          _state = ThreadShared.WithDefaultTimeout(new InboxConnectionState());
 
          poller.Add(_sendQueue);

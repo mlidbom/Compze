@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Composable.Functional;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Serialization;
+using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses.Http;
@@ -22,12 +25,17 @@ interface IComposableHttpClientFactoryProvider
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
+            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+
             throw new MessageDispatchingFailedException($"""
                                                          Uri:        {requestUri}
                                                          StatusCode: {response.StatusCode}
                                                          Type:       {query.GetType().FullName}
                                                          Body:
                                                          {message.Body}
+
+                                                         Exception Type: {problemDetails.Type}
+                                                         Exception Message: {problemDetails.Detail}
                                                          """);
          }
 
@@ -48,12 +56,17 @@ interface IComposableHttpClientFactoryProvider
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
+            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+
             throw new MessageDispatchingFailedException($"""
                                                          Uri:        {requestUri}
                                                          StatusCode: {response.StatusCode}
                                                          Type:       {query.GetType().FullName}
                                                          Body:
                                                          {message.Body}
+
+                                                         Exception Type: {problemDetails.Type}
+                                                         Exception Message: {problemDetails.Detail}
                                                          """);
          }
 
@@ -62,6 +75,45 @@ interface IComposableHttpClientFactoryProvider
          return result;
       }).CaF();
    }
+
+   async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IAtMostOnceHypermediaCommand query, IRemotableMessageSerializer serializer)
+   {
+      await UseAsync(async it =>
+      {
+         var content = new StringContent(message.Body);
+         content.Headers.Add("MessageId", message.Id.ToString());
+         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
+         var requestUri = new Uri($"{address.AspNetAddress}/internal/rpc/command-no-result");
+         var response = await it.PostAsync(requestUri, content).CaF();
+         if(!response.IsSuccessStatusCode)
+         {
+            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+
+            throw new MessageDispatchingFailedException($"""
+                                                         Uri:        {requestUri}
+                                                         StatusCode: {response.StatusCode}
+                                                         Type:       {query.GetType().FullName}
+                                                         Body:
+                                                         {message.Body}
+
+                                                         Exception Type: {problemDetails.Type}
+                                                         Exception Message: {problemDetails.Detail}
+                                                         """);
+         }
+
+         await response.Content.ReadAsStringAsync().CaF();
+         return Unit.Instance;
+      }).CaF();
+   }
+}
+
+public class ProblemDetails
+{
+   public string Type { get; set; }
+   public string Title { get; set; }
+   public int Status { get; set; }
+   public string Detail { get; set; }
+   public string Instance { get; set; }
 }
 
 class ComposableHttpClientFactoryProvider : IComposableHttpClientFactoryProvider

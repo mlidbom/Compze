@@ -17,7 +17,7 @@ namespace Composable.Messaging.Buses.Implementation;
 
 class InternalControllerFeatureProvider : ControllerFeatureProvider
 {
-   protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType() == typeof(QueryController);
+   protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType() == typeof(RpcController);
 }
 
 partial class Inbox
