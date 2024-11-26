@@ -59,7 +59,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
       if(!_disposed)
       {
          _disposed = true;
-         this.Log().LogAndSuppressExceptions(() => WaitForEndpointsToBeAtRest(timeoutOverride:1.Seconds()));
+         this.Log().LogAndSuppressExceptions(() => WaitForEndpointsToBeAtRest(timeoutOverride:5.Seconds()));
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 

@@ -17,10 +17,10 @@ interface IDbConnectionPool<out TConnection, out TCommand>
       UseConnectionAsyncFlex(SyncOrAsync.Sync, func.AsAsync()).SyncResult();
 
    void UseConnection(Action<TConnection> action) =>
-      UseConnectionAsyncFlex(SyncOrAsync.Sync, action.AsVoidFunc().AsAsync()).SyncResult();
+      UseConnectionAsyncFlex(SyncOrAsync.Sync, action.AsUnitFunc().AsAsync()).SyncResult();
 
    async Task UseConnectionAsync(Func<TConnection, Task> action) =>
-      await UseConnectionAsyncFlex(SyncOrAsync.Async, action.AsVoidFunc()).CaF();
+      await UseConnectionAsyncFlex(SyncOrAsync.Async, action.AsUnitFunc()).CaF();
 
    async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func) =>
       await UseConnectionAsyncFlex(SyncOrAsync.Async, func).CaF();
