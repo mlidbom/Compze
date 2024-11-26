@@ -7,6 +7,7 @@ using Composable.Messaging.Buses.Implementation;
 using Composable.Serialization;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
+using JetBrains.Annotations;
 
 namespace Composable.Messaging.Buses.Http;
 
@@ -135,7 +136,7 @@ interface IComposableHttpClientFactoryProvider
          return Unit.Instance;
       }).CaF();
    }
-   
+
    async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceEvent @event, IRemotableMessageSerializer serializer)
    {
       await UseAsync(async it =>
@@ -167,7 +168,7 @@ interface IComposableHttpClientFactoryProvider
    }
 }
 
-class ProblemDetails
+[UsedImplicitly]class ProblemDetails
 {
    public string Type { get; set; } = "";
    public string Title { get; set; } = "";

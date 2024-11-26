@@ -13,10 +13,12 @@ partial class Inbox
    {
       Thread? _awaitDispatchableMessageThread;
 
-      readonly IReadOnlyList<IMessageDispatchingRule> _dispatchingRules = [
-                                                                             new QueriesExecuteAfterAllCommandsAndEventsAreDone(),
-                                                                             new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
-                                                                          ];
+      readonly IReadOnlyList<IMessageDispatchingRule> _dispatchingRules =
+      [
+         new QueriesExecuteAfterAllCommandsAndEventsAreDone(),
+         new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
+      ];
+
       readonly Coordinator _coordinator;
 
       public HandlerExecutionEngine(IGlobalBusStateTracker globalStateTracker,

@@ -8,7 +8,6 @@ using Composable.Serialization;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
-using NetMQ;
 
 namespace Composable.Messaging.Buses.Implementation;
 
@@ -16,9 +15,6 @@ partial class Transport : ITransport, IDisposable
 {
    readonly IGlobalBusStateTracker _globalBusStateTracker;
    readonly ITypeMapper _typeMapper;
-#pragma warning disable CA2213 // Disposable fields should be disposed: This is a bug in the analyzer.
-   readonly NetMQPoller _poller;
-#pragma warning restore CA2213 // Disposable fields should be disposed
    readonly IRemotableMessageSerializer _serializer;
    readonly IComposableHttpClientFactoryProvider _httpClient;
 
@@ -30,22 +26,19 @@ partial class Transport : ITransport, IDisposable
    public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IComposableHttpClientFactoryProvider httpClient)
    {
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
-      _runningAndNotDisposed = new AssertAndRun(() => Assert.State.Assert(_running, _poller != null, _poller.IsRunning));
+      _runningAndNotDisposed = new AssertAndRun(() => Assert.State.Assert(_running));
       _router = new Router(typeMapper);
       _serializer = serializer;
       _httpClient = httpClient;
       _globalBusStateTracker = globalBusStateTracker;
       _typeMapper = typeMapper;
-
-      _poller = new NetMQPoller();
-      _poller.RunAsync($"{nameof(Outbox)}_{nameof(NetMQPoller)}");
       _running = true;
    }
 
    public async Task ConnectAsync(EndPointAddress remoteEndpointAdress)
    {
       _runningAndNotDisposed.Assert();
-      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _httpClient, _poller, _typeMapper, _serializer);
+      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _httpClient, _typeMapper, _serializer);
 
       await clientConnection.Init().CaF();
 
@@ -84,7 +77,6 @@ partial class Transport : ITransport, IDisposable
    public void Stop() => _runningAndNotDisposed.Do(() =>
    {
       _running = false;
-      _poller.StopAsync();
    });
 
    bool _disposed;
@@ -97,7 +89,6 @@ partial class Transport : ITransport, IDisposable
          {
             Stop();
          }
-         _poller.Dispose();
          _inboxConnections.Values.DisposeAll();
       }
    }
