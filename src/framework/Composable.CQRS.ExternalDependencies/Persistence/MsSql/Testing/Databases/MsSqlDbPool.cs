@@ -34,15 +34,11 @@ class MsSqlDbPool : DbPool
       } else
       {
          ResetConnectionPool(db);
-         var createDatabaseCommand = $@"CREATE DATABASE [{databaseName}]";
-         if(!DatabaseRootFolderOverride.IsNullEmptyOrWhiteSpace())
-            createDatabaseCommand += $@"
-ON      ( NAME = {databaseName}_data, FILENAME = '{DatabaseRootFolderOverride}\{databaseName}.mdf') 
-LOG ON  ( NAME = {databaseName}_log, FILENAME = '{DatabaseRootFolderOverride}\{databaseName}.ldf');";
-
-         createDatabaseCommand += $@"
-ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
-ALTER DATABASE[{databaseName}] SET READ_COMMITTED_SNAPSHOT ON";
+         var createDatabaseCommand = $"""
+                                      CREATE DATABASE [{databaseName}]
+                                      ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
+                                      ALTER DATABASE[{databaseName}] SET READ_COMMITTED_SNAPSHOT ON
+                                      """;
 
          _masterConnectionPool.ExecuteNonQuery(createDatabaseCommand);
       }

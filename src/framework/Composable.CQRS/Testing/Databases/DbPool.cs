@@ -16,18 +16,12 @@ namespace Composable.Testing.Databases;
 abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
-   protected static string? DatabaseRootFolderOverride;
    static TimeSpan _reservationLength;
    const int NumberOfDatabases = 30;
 
    protected DbPool()
    {
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
-
-      if(ComposableTempFolder.IsOverridden)
-      {
-         DatabaseRootFolderOverride = ComposableTempFolder.EnsureFolderExists("DatabasePoolData");
-      }
 
       MachineWideState = MachineWideSharedObject<SharedState>.For(GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), usePersistentFile: true);
    }
