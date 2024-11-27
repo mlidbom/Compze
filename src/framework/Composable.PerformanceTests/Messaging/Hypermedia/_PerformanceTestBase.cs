@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.Hypermedia;
 
-public class PerformanceTestBase(string unknown) : DuplicateByPluggableComponentTest(unknown)
+public class PerformanceTestBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    protected ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }

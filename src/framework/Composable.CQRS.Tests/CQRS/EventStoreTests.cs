@@ -26,7 +26,7 @@ class SomeEvent : AggregateEvent, ISomeEvent
 }
 
 //[ConfigurationBasedDuplicateByDimensions]
-public class EventStoreTests(string unknown) : DuplicateByPluggableComponentTest(unknown)
+public class EventStoreTests(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    IEventStore EventStore => _serviceLocator.EventStore();
 

@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class UserStoryTest([NotNull] string unknown) : DuplicateByPluggableComponentTest(unknown)
+public class UserStoryTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    protected ITestingEndpointHost Host { get; set; }
    IEndpoint _clientEndpoint;

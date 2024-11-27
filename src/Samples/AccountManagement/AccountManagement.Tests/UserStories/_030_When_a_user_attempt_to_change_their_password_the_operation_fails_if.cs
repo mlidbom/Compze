@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class _030_When_a_user_attempt_to_change_their_password_the_operation_fails_if([NotNull] string unknown) : UserStoryTest(unknown)
+public class _030_When_a_user_attempt_to_change_their_password_the_operation_fails_if([NotNull] string pluggableComponentsCombination) : UserStoryTest(pluggableComponentsCombination)
 {
    [Test] public void New_password_is_invalid() =>
       TestData.Passwords.Invalid.All.ForEach(invalidPassword => Scenario.ChangePassword().WithNewPassword(invalidPassword).ExecutingShouldThrow<Exception>());

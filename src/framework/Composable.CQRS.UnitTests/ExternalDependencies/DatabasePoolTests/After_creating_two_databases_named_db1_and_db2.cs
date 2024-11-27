@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
 
-public class After_creating_two_databases_named_db1_and_db2(string unknown) : DatabasePoolTest(unknown)
+public class After_creating_two_databases_named_db1_and_db2(string pluggableComponentsCombination) : DatabasePoolTest(pluggableComponentsCombination)
 {
    DatabasePool _manager;
    const string Db1 = "LocalDBManagerTests_After_creating_connection_Db1";

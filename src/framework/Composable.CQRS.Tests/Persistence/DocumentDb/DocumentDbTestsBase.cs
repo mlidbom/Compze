@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace Composable.Tests.Persistence.DocumentDb;
 
 //[ConfigurationBasedDuplicateByDimensions]
-class DocumentDbTestsBase([NotNull] string unknown) : DuplicateByPluggableComponentTest(unknown)
+class DocumentDbTestsBase([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
    protected IServiceLocator ServiceLocator { get; private set; }

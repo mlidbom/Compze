@@ -28,7 +28,7 @@ using NUnit.Framework;
 namespace Composable.Tests.CQRS;
 
 //[ConfigurationBasedDuplicateByDimensions]
-public class EventStoreUpdaterTest([NotNull] string unknown) : DuplicateByPluggableComponentTest(unknown)
+public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    class EventSpy
    {

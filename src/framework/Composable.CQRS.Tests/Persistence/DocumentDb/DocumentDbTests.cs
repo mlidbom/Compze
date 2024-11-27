@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Persistence.DocumentDb;
 
-class DocumentDbTests([NotNull] string unknown) : DocumentDbTestsBase(unknown)
+class DocumentDbTests([NotNull] string pluggableComponentsCombination) : DocumentDbTestsBase(pluggableComponentsCombination)
 {
    [Test]
    public void CanSaveAndLoadDocument()

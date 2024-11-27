@@ -22,7 +22,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public partial class Fixture(string unknown) : DuplicateByPluggableComponentTest(unknown)
+public partial class Fixture(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    static readonly TimeSpan _timeout = 10.Seconds();
    internal ITestingEndpointHost Host;

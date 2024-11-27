@@ -19,7 +19,7 @@ using JetBrains.Annotations;
 namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
 
 [LongRunning]
-public class EventMigrationPerformanceTest([NotNull] string unknown) : EventMigrationTestBase(unknown)
+public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
 {
    List<AggregateEvent> _history;
    TestAggregate _aggregate;

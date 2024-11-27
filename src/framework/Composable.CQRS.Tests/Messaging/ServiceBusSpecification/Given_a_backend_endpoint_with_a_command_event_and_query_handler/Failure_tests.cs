@@ -9,7 +9,7 @@ using Assert = Xunit.Assert;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Failure_tests(string unknown) : Fixture(unknown)
+public class Failure_tests(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {
    [Test] public async Task If_command_handler_with_result_throws_awaiting_SendAsync_throws()
    {

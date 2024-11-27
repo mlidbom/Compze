@@ -16,7 +16,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification;
 
-public class Navigator_specification(string unknown) : DuplicateByPluggableComponentTest(unknown)
+public class Navigator_specification(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
 
    ITestingEndpointHost _host;

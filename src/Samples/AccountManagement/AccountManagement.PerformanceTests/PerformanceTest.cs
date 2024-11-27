@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 namespace AccountManagement;
 
-class PerformanceTest([NotNull] string pluggableComponentsColonSeparated) : DuplicateByPluggableComponentTest(pluggableComponentsColonSeparated)
+class PerformanceTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    ITestingEndpointHost _host;
    IEndpoint _clientEndpoint;
