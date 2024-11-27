@@ -6,7 +6,6 @@ using Composable.Messaging.Buses.Implementation;
 using Composable.Messaging.Buses.Implementation.Http;
 using Composable.Serialization;
 using Composable.SystemCE.ThreadingCE.TasksCE;
-using Microsoft.AspNetCore.Http;
 
 namespace Composable.Messaging.Buses.Http;
 
