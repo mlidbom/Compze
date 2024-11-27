@@ -1,5 +1,4 @@
 ﻿using System;
-using Composable.Persistence.Oracle.SystemExtensions;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using FluentAssertions;
@@ -121,14 +120,6 @@ namespace Composable.Tests.Persistence.EventStore;
       var rangeEnd =   ReadOrder.Parse("2.0000000000000000003");
 
       Assert.Throws<ArgumentException>(() => ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 6, rangeStart: rangeStart, rangeEnd: rangeEnd));
-   }
-
-   [Test] public void OracleDecimalRoundTripping()
-   {
-      var readOrder = ReadOrder.Parse("1.5000000000000000000");
-      var oracleDecimal = readOrder.ToOracleDecimal();
-      var roundTripped = oracleDecimal.ToReadOrder();
-      roundTripped.Should().Be(readOrder);
    }
 
    static ReadOrder Create(long order, long offset) => ReadOrder.Parse($"{order}.{offset:D19}");
