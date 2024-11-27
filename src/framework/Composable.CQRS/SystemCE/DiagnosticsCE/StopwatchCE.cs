@@ -17,6 +17,7 @@ public static class StopwatchCE
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    internal static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
+
    internal static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action).CaF();
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
@@ -52,17 +53,6 @@ public static class StopwatchCE
       return new TimedExecutionSummary(iterations, total);
    }
 
-   internal static async Task<TimeSpan> TimeExecutionFlexAsync(SyncOrAsync syncOrAsync, [InstantHandle] Func<SyncOrAsync, Task> syncOrAsyncAction)
-   {
-      if(syncOrAsync == SyncOrAsync.Async)
-      {
-         return await TimeExecutionAsync(syncOrAsyncAction.AsAsync()).CaF();
-      } else
-      {
-         return TimeExecution(syncOrAsyncAction.AsSync());
-      }
-   }
-
    // ReSharper disable once MethodOverloadWithOptionalParameter
    public static TimedExecutionSummary TimeExecution([InstantHandle] Action action, int iterations = 1)
    {
@@ -93,9 +83,9 @@ public static class StopwatchCE
          () => Parallel.For(fromInclusive: 0,
                             toExclusive: iterations,
                             body: _ => action(),
-                            parallelOptions: new ParallelOptions {MaxDegreeOfParallelism = maxDegreeOfParallelism}));
+                            parallelOptions: new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }));
 
-      return new TimedExecutionSummary(iterations,  total);
+      return new TimedExecutionSummary(iterations, total);
    }
 
    public static TimedThreadedExecutionSummary TimeExecutionThreaded([InstantHandle] Action action, int iterations = 1, int maxDegreeOfParallelism = -1)
@@ -120,7 +110,7 @@ public static class StopwatchCE
                                var timing = TimedAction();
                                individual.Push(timing);
                             },
-                            parallelOptions: new ParallelOptions {MaxDegreeOfParallelism = maxDegreeOfParallelism}));
+                            parallelOptions: new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }));
 
       return new TimedThreadedExecutionSummary(iterations, individual.ToList(), total);
    }
@@ -141,6 +131,7 @@ public static class StopwatchCE
    public class TimedThreadedExecutionSummary : TimedExecutionSummary
    {
       readonly string _description;
+
       public TimedThreadedExecutionSummary(int iterations, IReadOnlyList<TimeSpan> individualExecutionTimes, TimeSpan total, string description = "") : base(iterations, total)
       {
          _description = description;

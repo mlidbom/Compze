@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Persistence.MsSql.SystemExtensions;
 
@@ -29,8 +30,10 @@ interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, S
                   IComposableMsSqlConnection.Create);
             });
       }
+      
 
-      public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMsSqlConnection, Task<TResult>> func) => Pool.UseConnectionAsyncFlex(syncOrAsync, func);
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
+      public TResult UseConnection<TResult>(Func<IComposableMsSqlConnection, TResult> func) => _pool.Value.UseConnection(func);
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<IComposableMsSqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
    }
 }

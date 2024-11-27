@@ -39,12 +39,15 @@ interface IComposableDB2Connection : IPoolableConnection, IComposableDbConnectio
                }));
       }
 
-      async Task IPoolableConnection.OpenAsyncFlex(SyncOrAsync syncOrAsync)
+      public void Open()
       {
-         await syncOrAsync.Run(
-            () => Connection.Open(),
-            () => Connection.OpenAsync()).CaF();
+         Connection.Open();
+         _transactionParticipant.Value.EnsureEnlistedInAnyAmbientTransaction();
+      }
 
+      public async Task OpenAsync()
+      {
+         await Connection.OpenAsync().CaF();
          _transactionParticipant.Value.EnsureEnlistedInAnyAmbientTransaction();
       }
 

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using IBM.Data.DB2.Core;
 
 namespace Composable.Persistence.DB2.SystemExtensions;
@@ -28,9 +29,9 @@ interface IDB2ConnectionPool : IDbConnectionPool<IComposableDB2Connection, DB2Co
                   IComposableDB2Connection.Create);
             });
       }
-      public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableDB2Connection, Task<TResult>> func) =>
-         _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
 
       public override string ToString() => $"MsSql::{_pool.ValueIfInitialized()?.ToString() ?? "Not initialized"}";
+      public TResult UseConnection<TResult>(Func<IComposableDB2Connection, TResult> func) => _pool.Value.UseConnection(func);
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<IComposableDB2Connection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF(); 
    }
 }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
@@ -64,7 +63,7 @@ class TimingsStatisticsCollector
    public TResult Time<TResult>(Func<TResult> func)
    {
       TResult? result = default;
-      var time = StopwatchCE.TimeExecution(() =>result = func());
+      var time = StopwatchCE.TimeExecution(() => result = func());
       RegisterCall(time);
       return result!;
    }
@@ -72,13 +71,6 @@ class TimingsStatisticsCollector
    public async Task TimeAsync(Func<Task> func)
    {
       var time = await StopwatchCE.TimeExecutionAsync(func).CaF();
-      RegisterCall(time);
-   }
-
-   public async Task TimeAsyncFlex(SyncOrAsync syncOrAsync, Func<SyncOrAsync, Task> syncOrAsyncFunc)
-   {
-
-      var time = await StopwatchCE.TimeExecutionFlexAsync(syncOrAsync, syncOrAsyncFunc).CaF();
       RegisterCall(time);
    }
 

@@ -19,10 +19,8 @@ interface IComposableOracleConnection : IPoolableConnection, IComposableDbConnec
 
       internal ComposableOracleConnection(string connectionString) => Connection = new OracleConnection(connectionString);
 
-      async Task IPoolableConnection.OpenAsyncFlex(SyncOrAsync syncOrAsync) =>
-         await syncOrAsync.Run(
-            () => Connection.Open(),
-            () => Connection.OpenAsync()).CaF();
+      public void Open() => Connection.Open();
+      public async Task OpenAsync() => await Connection.OpenAsync().CaF();
 
       DbCommand IComposableDbConnection.CreateCommand() => CreateCommand();
 

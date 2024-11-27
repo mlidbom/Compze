@@ -2,7 +2,6 @@ using System;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Persistence.Common.AdoCE;
@@ -11,19 +10,13 @@ interface IDbConnectionPool<out TConnection, out TCommand>
    where TConnection : IPoolableConnection, IComposableDbConnection<TCommand>
    where TCommand : DbCommand
 {
-   Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<TConnection, Task<TResult>> func);
+   TResult UseConnection<TResult>(Func<TConnection, TResult> func);
 
-   TResult UseConnection<TResult>(Func<TConnection, TResult> func) =>
-      UseConnectionAsyncFlex(SyncOrAsync.Sync, func.AsAsync()).SyncResult();
+   void UseConnection(Action<TConnection> action) => UseConnection(action.AsUnitFunc());
 
-   void UseConnection(Action<TConnection> action) =>
-      UseConnectionAsyncFlex(SyncOrAsync.Sync, action.AsUnitFunc().AsAsync()).SyncResult();
+   async Task UseConnectionAsync(Func<TConnection, Task> func) => await UseConnectionAsync(func.AsUnitFunc()).CaF(); 
 
-   async Task UseConnectionAsync(Func<TConnection, Task> action) =>
-      await UseConnectionAsyncFlex(SyncOrAsync.Async, action.AsUnitFunc()).CaF();
-
-   async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func) =>
-      await UseConnectionAsyncFlex(SyncOrAsync.Async, func).CaF();
+   Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func);
 
    int ExecuteNonQuery(string commandText) =>
       UseConnection(connection => connection.ExecuteNonQuery(commandText));
