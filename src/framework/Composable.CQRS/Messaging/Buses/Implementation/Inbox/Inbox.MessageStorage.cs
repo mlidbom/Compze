@@ -5,11 +5,9 @@ using Composable.SystemCE.ReflectionCE;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-class InboxMessageStorage : Inbox.IMessageStorage
+class InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) : Inbox.IMessageStorage
 {
-   readonly IServiceBusPersistenceLayer.IInboxPersistenceLayer _persistenceLayer;
-
-   public InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => _persistenceLayer = persistenceLayer;
+   readonly IServiceBusPersistenceLayer.IInboxPersistenceLayer _persistenceLayer = persistenceLayer;
 
    public void SaveIncomingMessage(TransportMessage.InComing message)
       => _persistenceLayer.SaveMessage(message.MessageId, message.MessageTypeId.GuidValue, message.Body);

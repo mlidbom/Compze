@@ -4,12 +4,11 @@ using Composable.Messaging.Buses;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-class LoginScenario : ScenarioBase<AccountResource.Command.LogIn.LoginAttemptResult>
+class LoginScenario(IEndpoint clientEndpoint, string email, string password) : ScenarioBase<AccountResource.Command.LogIn.LoginAttemptResult>
 {
-   readonly IEndpoint _clientEndpoint;
-   public string Password { get; set; }
-   public string Email { get; set; }
-
+   readonly IEndpoint _clientEndpoint = clientEndpoint;
+   public string Password { get; set; } = password;
+   public string Email { get; set; } = email;
 
    public LoginScenario WithEmail(string email) => this.mutate(it => it.Email = email);
    public LoginScenario WithPassword(string password) => this.mutate(it => it.Password = password);
@@ -22,13 +21,6 @@ class LoginScenario : ScenarioBase<AccountResource.Command.LogIn.LoginAttemptRes
    }
 
    public LoginScenario(IEndpoint clientEndpoint, AccountResource account, string password) : this(clientEndpoint, account.Email.ToString(), password) {}
-
-   public LoginScenario(IEndpoint clientEndpoint, string email, string password)
-   {
-      Email = email;
-      Password = password;
-      _clientEndpoint = clientEndpoint;
-   }
 
    public override AccountResource.Command.LogIn.LoginAttemptResult Execute() => Api.Command.Login(Email, Password).ExecuteAsClientRequestOn(_clientEndpoint);
 }

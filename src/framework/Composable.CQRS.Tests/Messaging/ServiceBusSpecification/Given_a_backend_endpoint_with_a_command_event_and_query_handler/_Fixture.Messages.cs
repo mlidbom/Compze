@@ -27,7 +27,7 @@ using Composable.Testing;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public partial class Fixture : DuplicateByPluggableComponentTest
+public partial class Fixture
 {
    protected static class MyAggregateEvent
    {
@@ -43,10 +43,7 @@ public partial class Fixture : DuplicateByPluggableComponentTest
          }
 
          // ReSharper disable once MemberHidesStaticFromOuterClass
-         public class Created : Root, MyAggregateEvent.Created
-         {
-            public Created(Guid aggregateId) : base(aggregateId) {}
-         }
+         public class Created(Guid aggregateId) : Root(aggregateId), MyAggregateEvent.Created;
 
          // ReSharper disable once MemberHidesStaticFromOuterClass
          public class Updated : Root, MyAggregateEvent.Updated {}

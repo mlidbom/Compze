@@ -11,18 +11,11 @@ namespace Composable.Messaging.Buses;
 
 class Endpoint : IEndpoint
 {
-   class ServerComponents : IDisposable
+   class ServerComponents(CommandScheduler commandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
-      readonly CommandScheduler _commandScheduler;
-      public readonly IInbox Inbox;
-      readonly IOutbox _outbox;
-
-      public ServerComponents(CommandScheduler commandScheduler, IInbox inbox, IOutbox outbox)
-      {
-         _commandScheduler = commandScheduler;
-         Inbox = inbox;
-         _outbox = outbox;
-      }
+      readonly CommandScheduler _commandScheduler = commandScheduler;
+      public readonly IInbox Inbox = inbox;
+      readonly IOutbox _outbox = outbox;
 
       public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).CaF();
       public async Task StopAsync()

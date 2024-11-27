@@ -9,11 +9,9 @@ using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 
 namespace Composable.Persistence.DB2.EventStore;
 
-partial class DB2EventStorePersistenceLayer : IEventStorePersistenceLayer
+partial class DB2EventStorePersistenceLayer(DB2EventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {
-   readonly DB2EventStoreConnectionManager _connectionManager;
-
-   public DB2EventStorePersistenceLayer(DB2EventStoreConnectionManager connectionManager) => _connectionManager = connectionManager;
+   readonly DB2EventStoreConnectionManager _connectionManager = connectionManager;
 
    static string CreateLockHint(bool takeWriteLock) => takeWriteLock ? "FOR READ ONLY WITH RS USE AND KEEP EXCLUSIVE LOCKS" : "";
 

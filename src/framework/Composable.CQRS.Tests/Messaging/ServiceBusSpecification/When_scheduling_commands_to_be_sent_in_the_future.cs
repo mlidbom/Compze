@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification;
 
-public class When_scheduling_commands_to_be_sent_in_the_future : DuplicateByPluggableComponentTest
+public class When_scheduling_commands_to_be_sent_in_the_future(string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    IUtcTimeTimeSource _timeSource;
    IThreadGate _receivedCommandGate;
@@ -67,6 +67,4 @@ public class When_scheduling_commands_to_be_sent_in_the_future : DuplicateByPlug
    [TearDown]public async Task TearDown() => await _host.DisposeAsync().CaF();
 
    class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command {}
-
-   public When_scheduling_commands_to_be_sent_in_the_future(string _) : base(_) {}
 }

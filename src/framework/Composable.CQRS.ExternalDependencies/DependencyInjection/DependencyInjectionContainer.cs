@@ -42,10 +42,9 @@ public static class DependencyInjectionContainer
       return container;
    }
 
-   class TestingEndpointHostDisposer : IAsyncDisposable
+   class TestingEndpointHostDisposer(ITestingEndpointHost host) : IAsyncDisposable
    {
-      readonly ITestingEndpointHost _host;
-      public TestingEndpointHostDisposer(ITestingEndpointHost host) => _host = host;
+      readonly ITestingEndpointHost _host = host;
       public async ValueTask DisposeAsync() => await _host.DisposeAsync().CaF();
    }
 }

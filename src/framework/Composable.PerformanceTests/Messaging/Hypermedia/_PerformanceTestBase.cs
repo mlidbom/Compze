@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.Hypermedia;
 
-public class PerformanceTestBase : DuplicateByPluggableComponentTest
+public class PerformanceTestBase(string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    protected ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
@@ -50,6 +50,4 @@ public class PerformanceTestBase : DuplicateByPluggableComponentTest
    protected class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult> {}
    protected class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult> {}
    protected internal class MyQueryResult {}
-
-   public PerformanceTestBase(string _) : base(_) {}
 }

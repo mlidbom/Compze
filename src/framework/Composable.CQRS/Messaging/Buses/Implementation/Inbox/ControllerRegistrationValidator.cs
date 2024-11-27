@@ -33,7 +33,4 @@ static class ControllerRegistrationValidator
       }
    }
 }
-public class InvalidControllerRegistrationException : Exception
-{
-   public InvalidControllerRegistrationException(string message, Exception ex) : base(message, ex) {}
-}
+public class InvalidControllerRegistrationException(string message, Exception ex) : Exception(message, ex);

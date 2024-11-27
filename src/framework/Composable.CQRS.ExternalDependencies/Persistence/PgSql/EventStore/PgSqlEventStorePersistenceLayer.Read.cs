@@ -11,11 +11,9 @@ using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 
 namespace Composable.Persistence.PgSql.EventStore;
 
-partial class PgSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+partial class PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {
-   readonly PgSqlEventStoreConnectionManager _connectionManager;
-
-   public PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager connectionManager) => _connectionManager = connectionManager;
+   readonly PgSqlEventStoreConnectionManager _connectionManager = connectionManager;
 
    static string CreateSelectClause() => InternalSelect();
 

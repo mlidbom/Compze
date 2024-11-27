@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Parallelism_policies : Fixture
+public class Parallelism_policies(string unknown) : Fixture(unknown)
 {
    [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_QueryAsync()
    {
@@ -67,6 +67,4 @@ public class Parallelism_policies : Fixture
       MyCreateAggregateCommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                                .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
-
-   public Parallelism_policies(string _) : base(_) {}
 }

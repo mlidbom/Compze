@@ -19,7 +19,7 @@ using JetBrains.Annotations;
 namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
 
 [LongRunning]
-public class EventMigrationPerformanceTest : EventMigrationTestBase
+public class EventMigrationPerformanceTest([NotNull] string unknown) : EventMigrationTestBase(unknown)
 {
    List<AggregateEvent> _history;
    TestAggregate _aggregate;
@@ -120,6 +120,4 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
          maxCachedLoadTime: TestEnv.PersistenceLayer.ValueFor(db2: 5, memory: 5, msSql: 5, mySql: 5, orcl: 5, pgSql: 5).Milliseconds().EnvMultiply(instrumented: 2.5),
          eventMigrations).CaF();
    }
-
-   public EventMigrationPerformanceTest([NotNull] string _) : base(_) {}
 }

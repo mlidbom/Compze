@@ -12,13 +12,12 @@ namespace Composable.DependencyInjection;
 
 partial class ComposableDependencyInjectionContainer
 {
-   class ServiceLocatorImplementation : IServiceLocator, IServiceLocatorKernel
+   class ServiceLocatorImplementation(List<ComponentRegistration> components) : IServiceLocator, IServiceLocatorKernel
    {
       readonly AsyncLocal<ScopeCache?> _scopeCache = new();
-      readonly RootCache _rootCache;
+      readonly RootCache _rootCache = new(components);
 
       bool _disposed;
-      public ServiceLocatorImplementation(List<ComponentRegistration> components) => _rootCache = new RootCache(components);
 
       TService[] IServiceLocator.ResolveAll<TService>() => throw new NotImplementedException();
 

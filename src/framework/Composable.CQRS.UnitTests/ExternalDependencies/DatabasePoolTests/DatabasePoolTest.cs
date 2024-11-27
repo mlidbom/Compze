@@ -17,7 +17,7 @@ using Composable.Testing.Databases;
 namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
 
 //[ConfigurationBasedDuplicateByDimensions]
-public class DatabasePoolTest : DuplicateByPluggableComponentTest
+public class DatabasePoolTest(string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    internal static DatabasePool CreatePool() =>
       TestEnv.PersistenceLayer.Current switch
@@ -70,6 +70,4 @@ public class DatabasePoolTest : DuplicateByPluggableComponentTest
 
    static void UseComposableDB2Connection(string connectionStringFor, Action<IComposableDbConnection> func) =>
       IDB2ConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
-
-   public DatabasePoolTest(string _) : base(_) {}
 }

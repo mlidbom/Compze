@@ -9,10 +9,9 @@ using Schema =  Composable.Messaging.Buses.Implementation.IServiceBusPersistence
 
 namespace Composable.Persistence.MsSql.Messaging.Buses.Implementation;
 
-partial class MsSqlInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersistenceLayer
+partial class MsSqlInboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IInboxPersistenceLayer
 {
-   readonly IMsSqlConnectionPool _connectionFactory;
-   public MsSqlInboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) => _connectionFactory = connectionFactory;
+   readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
 
    public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
    {

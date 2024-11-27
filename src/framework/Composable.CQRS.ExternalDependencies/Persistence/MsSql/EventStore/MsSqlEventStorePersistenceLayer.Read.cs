@@ -11,11 +11,9 @@ using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
 
 namespace Composable.Persistence.MsSql.EventStore;
 
-partial class MsSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+partial class MsSqlEventStorePersistenceLayer(MsSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {
-   readonly MsSqlEventStoreConnectionManager _connectionManager;
-
-   public MsSqlEventStorePersistenceLayer(MsSqlEventStoreConnectionManager connectionManager) => _connectionManager = connectionManager;
+   readonly MsSqlEventStoreConnectionManager _connectionManager = connectionManager;
 
    static string CreateSelectClause(bool takeWriteLock) => InternalSelect(takeWriteLock: takeWriteLock);
    static string CreateSelectTopClause(int top, bool takeWriteLock) => InternalSelect(top: top, takeWriteLock: takeWriteLock);

@@ -15,7 +15,7 @@ using CreatesItsOwnResultQuery = Composable.Messaging.MessageTypes.Remotable.Non
 
 namespace Composable.Tests.Messaging.Hypermedia;
 
-public class RemoteQueryPerformanceTests : PerformanceTestBase
+public class RemoteQueryPerformanceTests(string unknown) : PerformanceTestBase(unknown)
 {
    [Test] public void SingleThreaded_Runs_100_local_requests_making_one_remote_query_each_in_60_milliseconds() =>
       RunScenario(threaded: false, requests: 100, queriesPerRequest: 1, maxTotal: 60.Milliseconds().EnvMultiply(instrumented:1.5), query: new MyRemoteQuery());
@@ -97,6 +97,4 @@ public class RemoteQueryPerformanceTests : PerformanceTestBase
 
       await TimeAsserter.ExecuteAsync(RunScenarioAsync, maxTotal: maxTotal).CaF();
    }
-
-   public RemoteQueryPerformanceTests(string _) : base(_) {}
 }

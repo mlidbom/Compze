@@ -92,10 +92,7 @@ public class AggregateTests
 
    interface ITriggeringEvent : IAggregateCreatedEvent {}
 
-   class TriggeringEvent : AggregateEvent, ITriggeringEvent
-   {
-      public TriggeringEvent() : base(Guid.NewGuid()) {}
-   }
+   class TriggeringEvent() : AggregateEvent(Guid.NewGuid()), ITriggeringEvent;
 
    interface ITriggeredEvent : IAggregateEvent {}
    class TriggeredEvent : AggregateEvent, ITriggeredEvent {

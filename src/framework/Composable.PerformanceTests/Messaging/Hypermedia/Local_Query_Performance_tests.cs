@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.Hypermedia;
 
-public class Local_Query_performance_tests : PerformanceTestBase
+public class Local_Query_performance_tests(string unknown) : PerformanceTestBase(unknown)
 {
    [Test] public void Runs_10_000__MultiThreaded_local_requests_making_a_single_local_query_each_in_20_milliseconds() =>
       RunScenario(threaded: true, requests: 10_000.EnvDivide(instrumented:12), queriesPerRequest: 1, maxTotal: 20.Milliseconds());
@@ -45,6 +45,4 @@ public class Local_Query_performance_tests : PerformanceTestBase
          TimeAsserter.Execute(RunRequest, iterations: requests, maxTotal: maxTotal);
       }
    }
-
-   public Local_Query_performance_tests(string _) : base(_) {}
 }

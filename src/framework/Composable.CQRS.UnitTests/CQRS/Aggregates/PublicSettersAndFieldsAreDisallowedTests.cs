@@ -63,32 +63,24 @@ public class PublicSettersAndFieldsAreDisallowedTests
 
    }
 
-   class Root : Aggregate<Root, RootEvent.Root, RootEvent.IRoot>
+   class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootEvent.Root, RootEvent.IRoot>(timeSource)
    {
-      public Root(IUtcTimeTimeSource timeSource) : base(timeSource) {}
-
-      public class AggComponent : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>
+      public class AggComponent(Root aggregate) : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(aggregate)
       {
-         public AggComponent(Root aggregate) : base(aggregate) {}
-
          public string Public { get; set; } = string.Empty;
 
-         public class NestedAggComponent : AggComponent.NestedComponent<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>
+         public class NestedAggComponent(AggComponent parent) : AggComponent.NestedComponent<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>(parent)
          {
-            public NestedAggComponent(AggComponent parent) : base(parent) {}
-
             public string Public { get; set; } = string.Empty;
          }
       }
 
-      public class AggEntity : Root.Entity<AggEntity, Guid, RootEvent.Entity.Root, RootEvent.Entity.IRoot,RootEvent.Entity.IRoot, RootEvent.Entity.Root.GetterSetter>
+      public class AggEntity(Root aggregate) : Root.Entity<AggEntity, Guid, RootEvent.Entity.Root, RootEvent.Entity.IRoot, RootEvent.Entity.IRoot, RootEvent.Entity.Root.GetterSetter>(aggregate)
       {
-         public AggEntity(Root aggregate) : base(aggregate) {}
          public string Public { get; set; }  = string.Empty;
 
-         public class EntNestedComp : AggEntity.NestedComponent<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>
+         public class EntNestedComp(AggEntity parent) : AggEntity.NestedComponent<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>(parent)
          {
-            public EntNestedComp(AggEntity parent) : base(parent) {}
             public string Public2 { get; set; } = string.Empty;
          }
       }

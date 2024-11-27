@@ -3,31 +3,18 @@ using System.Transactions;
 
 namespace Composable.Testing.Threading;
 
-class TransactionSnapshot
+class TransactionSnapshot(Transaction transaction)
 {
-   public TransactionSnapshot(Transaction transaction)
+   public class TransactionInformationSnapshot(TransactionInformation information)
    {
-      IsolationLevel = transaction.IsolationLevel;
-      TransactionInformation = new TransactionInformationSnapshot(transaction.TransactionInformation);
+      public string LocalIdentifier { get; } = information.LocalIdentifier;
+      public Guid DistributedIdentifier { get; } = information.DistributedIdentifier;
+      public TransactionStatus Status { get; } = information.Status;
    }
 
-   public class TransactionInformationSnapshot
-   {
-      public TransactionInformationSnapshot(TransactionInformation information)
-      {
-         LocalIdentifier = information.LocalIdentifier;
-         DistributedIdentifier = information.DistributedIdentifier;
-         Status = information.Status;
-      }
+   public IsolationLevel IsolationLevel { get; } = transaction.IsolationLevel;
 
-      public string LocalIdentifier { get; }
-      public Guid DistributedIdentifier { get; }
-      public TransactionStatus Status { get; }
-   }
-
-   public IsolationLevel IsolationLevel { get; }
-
-   public TransactionInformationSnapshot TransactionInformation { get; }
+   public TransactionInformationSnapshot TransactionInformation { get; } = new(transaction.TransactionInformation);
 
    public static TransactionSnapshot? TakeSnapshot()
    {

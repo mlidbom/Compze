@@ -13,21 +13,14 @@ using Composable.SystemCE.TransactionsCE;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-class CommandScheduler : IDisposable
+class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) : IDisposable
 {
-   readonly IOutbox _transport;
-   readonly IUtcTimeTimeSource _timeSource;
-   readonly ITaskRunner _taskRunner;
+   readonly IOutbox _transport = transport;
+   readonly IUtcTimeTimeSource _timeSource = timeSource;
+   readonly ITaskRunner _taskRunner = taskRunner;
    Timer? _scheduledMessagesTimer;
    readonly List<ScheduledCommand> _scheduledMessages = [];
    readonly MonitorCE _guard = MonitorCE.WithTimeout(1.Seconds());
-
-   public CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner)
-   {
-      _transport = transport;
-      _timeSource = timeSource;
-      _taskRunner = taskRunner;
-   }
 
    public async Task StartAsync()
    {
@@ -56,15 +49,9 @@ class CommandScheduler : IDisposable
 
    public void Stop() => _scheduledMessagesTimer?.Dispose();
 
-   class ScheduledCommand
+   class ScheduledCommand(DateTime sendAt, IExactlyOnceCommand command)
    {
-      public DateTime SendAt { get; }
-      public IExactlyOnceCommand Command { get; }
-
-      public ScheduledCommand(DateTime sendAt, IExactlyOnceCommand command)
-      {
-         SendAt = sendAt.ToUniversalTimeSafely();
-         Command = command;
-      }
+      public DateTime SendAt { get; } = sendAt.ToUniversalTimeSafely();
+      public IExactlyOnceCommand Command { get; } = command;
    }
 }

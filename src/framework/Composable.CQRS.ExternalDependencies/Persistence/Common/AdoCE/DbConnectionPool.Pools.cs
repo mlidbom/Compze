@@ -19,16 +19,10 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
    where TConnection : IPoolableConnection, IComposableDbConnection<TCommand>
    where TCommand : DbCommand
 {
-   class DefaultDbConnectionManager : DbConnectionManager<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>
+   class DefaultDbConnectionManager(string connectionString, Func<string, TConnection> createConnection) : DbConnectionManager<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>
    {
-      readonly string _connectionString;
-      readonly Func<string, TConnection> _createConnection;
-
-      public DefaultDbConnectionManager(string connectionString, Func<string, TConnection> createConnection)
-      {
-         _connectionString = connectionString;
-         _createConnection = createConnection;
-      }
+      readonly string _connectionString = connectionString;
+      readonly Func<string, TConnection> _createConnection = createConnection;
 
       static int _openings = 0;
 
@@ -84,12 +78,10 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
       public override string ToString() => _connectionString;
    }
 
-   class TransactionAffinityDbConnectionManager : DefaultDbConnectionManager
+   class TransactionAffinityDbConnectionManager(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionManager(connectionString, createConnection)
    {
       readonly IThreadShared<Dictionary<string, Task<TConnection>>> _transactionConnections =
          ThreadShared.WithDefaultTimeout<Dictionary<string, Task<TConnection>>>();
-
-      public TransactionAffinityDbConnectionManager(string connectionString, Func<string, TConnection> createConnection) : base(connectionString, createConnection) {}
 
       public override async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
       {

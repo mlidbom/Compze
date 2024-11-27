@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class _030_When_a_user_attempt_to_change_their_password_the_operation_fails_if : UserStoryTest
+public class _030_When_a_user_attempt_to_change_their_password_the_operation_fails_if([NotNull] string unknown) : UserStoryTest(unknown)
 {
    [Test] public void New_password_is_invalid() =>
       TestData.Passwords.Invalid.All.ForEach(invalidPassword => Scenario.ChangePassword().WithNewPassword(invalidPassword).ExecutingShouldThrow<Exception>());
@@ -20,6 +20,4 @@ public class _030_When_a_user_attempt_to_change_their_password_the_operation_fai
       Scenario.ChangePassword().WithOldPassword("Wrong").ExecutingShouldThrow<Exception>().And.Message.ToUpperInvariant().Should().Contain("PASSWORD").And.Contain("WRONG");
       Host.AssertThrown<Exception>().Message.ToUpperInvariant().Should().Contain("PASSWORD").And.Contain("WRONG");
    }
-
-   public _030_When_a_user_attempt_to_change_their_password_the_operation_fails_if([NotNull] string _) : base(_) {}
 }

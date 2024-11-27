@@ -60,12 +60,7 @@ static class TestData
          };
 
 
-      public class StringTestData : TestData<string>
-      {
-         public StringTestData(string data, string description) : base(data, description)
-         {
-         }
-      }
+      public class StringTestData(string data, string description) : TestData<string>(data, description);
 
       public class TestData<TData> : TestCaseData
          where TData : class

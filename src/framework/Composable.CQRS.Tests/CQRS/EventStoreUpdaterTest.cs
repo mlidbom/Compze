@@ -28,7 +28,7 @@ using NUnit.Framework;
 namespace Composable.Tests.CQRS;
 
 //[ConfigurationBasedDuplicateByDimensions]
-public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
+public class EventStoreUpdaterTest([NotNull] string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    class EventSpy
    {
@@ -659,5 +659,4 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
          AssertThrows.Exception<ComponentUsedByMultipleTransactionsException>(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)));
       }
    }
-   public EventStoreUpdaterTest([NotNull] string _) : base(_) {}
 }

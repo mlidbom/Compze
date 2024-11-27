@@ -11,14 +11,12 @@ namespace Composable.Testing.Threading;
 ///<summary>
 /// Runs and monitors tasks on background threads.
 /// Throws <see cref="AggregateException"/> on dispose if any throw exceptions or do not complete within timeout. </summary>
-public sealed class TestingTaskRunner : IDisposable
+public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable
 {
    readonly List<Task> _monitoredTasks = [];
-   readonly TimeSpan _timeout;
+   readonly TimeSpan _timeout = timeout;
 
    public static TestingTaskRunner WithTimeout(TimeSpan timeout) => new(timeout);
-
-   public TestingTaskRunner(TimeSpan timeout) => _timeout = timeout;
 
    public void Monitor(IEnumerable<Task> tasks) => Monitor(tasks.ToArray());
    public void Monitor(params Task[] task) => _monitoredTasks.AddRange(task);

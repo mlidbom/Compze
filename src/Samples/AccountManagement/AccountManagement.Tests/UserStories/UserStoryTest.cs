@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class UserStoryTest : DuplicateByPluggableComponentTest
+public class UserStoryTest([NotNull] string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    protected ITestingEndpointHost Host { get; set; }
    IEndpoint _clientEndpoint;
@@ -25,6 +25,4 @@ public class UserStoryTest : DuplicateByPluggableComponentTest
    }
 
    [TearDown] public async Task Teardown() => await Host.DisposeAsync().CaF();
-
-   public UserStoryTest([NotNull] string _) : base(_) {}
 }

@@ -115,30 +115,19 @@ public static class StopwatchCE
       return new TimedThreadedExecutionSummary(iterations, individual.ToList(), total);
    }
 
-   public class TimedExecutionSummary
+   public class TimedExecutionSummary(int iterations, TimeSpan total)
    {
-      public TimedExecutionSummary(int iterations, TimeSpan total)
-      {
-         Iterations = iterations;
-         Total = total;
-      }
-
-      int Iterations { get; }
-      public TimeSpan Total { get; }
+      int Iterations { get; } = iterations;
+      public TimeSpan Total { get; } = total;
       public TimeSpan Average => (Total.TotalMilliseconds / Iterations).Milliseconds();
    }
 
-   public class TimedThreadedExecutionSummary : TimedExecutionSummary
+   public class TimedThreadedExecutionSummary(int iterations, IReadOnlyList<TimeSpan> individualExecutionTimes, TimeSpan total, string description = "")
+      : TimedExecutionSummary(iterations, total)
    {
-      readonly string _description;
+      readonly string _description = description;
 
-      public TimedThreadedExecutionSummary(int iterations, IReadOnlyList<TimeSpan> individualExecutionTimes, TimeSpan total, string description = "") : base(iterations, total)
-      {
-         _description = description;
-         IndividualExecutionTimes = individualExecutionTimes;
-      }
-
-      public IReadOnlyList<TimeSpan> IndividualExecutionTimes { get; }
+      public IReadOnlyList<TimeSpan> IndividualExecutionTimes { get; } = individualExecutionTimes;
 
       public override string ToString() => $@"
 {_description}

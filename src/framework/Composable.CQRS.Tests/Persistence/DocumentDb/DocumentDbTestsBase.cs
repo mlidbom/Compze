@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace Composable.Tests.Persistence.DocumentDb;
 
 //[ConfigurationBasedDuplicateByDimensions]
-class DocumentDbTestsBase : DuplicateByPluggableComponentTest
+class DocumentDbTestsBase([NotNull] string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
    protected IServiceLocator ServiceLocator { get; private set; }
@@ -31,5 +31,4 @@ class DocumentDbTestsBase : DuplicateByPluggableComponentTest
    }
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) => ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));
    internal void UseInScope([InstantHandle]Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader()));
-   public DocumentDbTestsBase([NotNull] string _) : base(_) {}
 }

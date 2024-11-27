@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Fixture_tests : Fixture
+public class Fixture_tests(string unknown) : Fixture(unknown)
 {
    [Test] public async Task If_command_handler_throws_disposing_host_throws_AggregateException_containing_a_single_exception_that_is_the_thrown_exception()
    {
@@ -55,6 +55,4 @@ public class Fixture_tests : Fixture
 
    readonly IntentionalException _thrownException = new();
    class IntentionalException : Exception {}
-
-   public Fixture_tests(string _) : base(_) {}
 }

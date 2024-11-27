@@ -22,12 +22,12 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
       internal abstract Action<IEvent>? TryCreateHandlerFor(Type eventType);
    }
 
-   class RegisteredHandler<THandledEvent> : RegisteredHandler
+   class RegisteredHandler<THandledEvent>(Action<THandledEvent> handler) : RegisteredHandler
       where THandledEvent : IEvent
    {
       //Since handler has specified no preference for wrapper type the most generic of all will do and any wrapped event containing a matching event should be dispatched to this handler.
-      readonly Action<THandledEvent> _handler;
-      public RegisteredHandler(Action<THandledEvent> handler) => _handler = handler;
+      readonly Action<THandledEvent> _handler = handler;
+
       internal override Action<IEvent>? TryCreateHandlerFor(Type eventType)
       {
          if(typeof(THandledEvent).IsAssignableFrom(eventType))
@@ -43,12 +43,11 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
       }
    }
 
-   class RegisteredWrappedHandler<THandledWrapperEvent> : RegisteredHandler
+   class RegisteredWrappedHandler<THandledWrapperEvent>(Action<THandledWrapperEvent> handler) : RegisteredHandler
       where THandledWrapperEvent : IWrapperEvent<IEvent>
    {
-      readonly Action<THandledWrapperEvent> _handler;
+      readonly Action<THandledWrapperEvent> _handler = handler;
 
-      public RegisteredWrappedHandler(Action<THandledWrapperEvent> handler) => _handler = handler;
       internal override Action<IEvent>? TryCreateHandlerFor(Type eventType) =>
          typeof(THandledWrapperEvent).IsAssignableFrom(eventType)
             ? @event => _handler((THandledWrapperEvent)@event)
@@ -67,11 +66,9 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
 
    public IEventHandlerRegistrar<TEvent> Register() => new RegistrationBuilder(this);
 
-   class RegistrationBuilder : IEventHandlerRegistrar<TEvent>
+   class RegistrationBuilder(CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> owner) : IEventHandlerRegistrar<TEvent>
    {
-      readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> _owner;
-
-      public RegistrationBuilder(CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> owner) => _owner = owner;
+      readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> _owner = owner;
 
       ///<summary>Registers a for any event that implements THandledEvent. All matching handlers will be called in the order they were registered.</summary>
       RegistrationBuilder For<THandledEvent>(Action<THandledEvent> handler) where THandledEvent : TEvent => ForGenericEvent(handler);
@@ -208,8 +205,4 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
    public bool Handles(IAggregateEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
 }
 
-public class EventUnhandledException : Exception
-{
-   public EventUnhandledException(Type handlerType, Type eventType)
-      : base($@"{handlerType} does not handle nor ignore incoming event {eventType}") {}
-}
+public class EventUnhandledException(Type handlerType, Type eventType) : Exception($@"{handlerType} does not handle nor ignore incoming event {eventType}");

@@ -211,18 +211,13 @@ public static class Contract
       }
    }
 
-   class ContractAssertionImplementation : IContractAssertion
+   class ContractAssertionImplementation(InspectionType inspectionType) : IContractAssertion
    {
-      public ContractAssertionImplementation(InspectionType inspectionType) => InspectionType = inspectionType;
-      public InspectionType InspectionType { get; }
+      public InspectionType InspectionType { get; } = inspectionType;
    }
 }
 
-public class ContractAssertThatException : Exception
-{
-   public ContractAssertThatException(int condition):base($"Condition: {condition} was false")
-   {}
-}
+public class ContractAssertThatException(int condition) : Exception($"Condition: {condition} was false");
 
 interface IContractAssertion
 {

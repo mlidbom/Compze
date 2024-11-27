@@ -25,7 +25,7 @@ using JetBrains.Annotations;
 namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
 
 //refactor: this test. It is too monolithic and hard to read and extend.
-public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
+public abstract class EventMigrationTestBase([NotNull] string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    internal async Task RunMigrationTest(params MigrationScenario[] scenarios)
    {
@@ -247,5 +247,4 @@ public abstract class EventMigrationTestBase : DuplicateByPluggableComponentTest
          throw;
       }
    }
-   protected EventMigrationTestBase([NotNull] string _) : base(_) {}
 }

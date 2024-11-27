@@ -65,10 +65,9 @@ List of problem members:{Environment.NewLine}{brokenMembers}{Environment.NewLine
                                                                                     .ToList();
 }
 
-[UsedImplicitly] class AggregateTypeValidator : IAggregateTypeValidator
+[UsedImplicitly] class AggregateTypeValidator(ITypeMapper typeMapper) : IAggregateTypeValidator
 {
-   readonly ITypeMapper _typeMapper;
-   public AggregateTypeValidator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
+   readonly ITypeMapper _typeMapper = typeMapper;
 
    public void AssertIsValid<TAggregate>() => ValidatorFor<TAggregate>.AssertValid(_typeMapper);
 

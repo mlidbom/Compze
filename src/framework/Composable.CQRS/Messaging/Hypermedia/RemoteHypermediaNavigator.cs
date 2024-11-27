@@ -6,11 +6,9 @@ using JetBrains.Annotations;
 namespace Composable.Messaging.Hypermedia;
 
 //Todo: Build a pipeline to handle things like command validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
-[UsedImplicitly] class RemoteHypermediaNavigator : IRemoteHypermediaNavigator
+[UsedImplicitly] class RemoteHypermediaNavigator(ITransport transport) : IRemoteHypermediaNavigator
 {
-   readonly ITransport _transport;
-
-   public RemoteHypermediaNavigator(ITransport transport) => _transport = transport;
+   readonly ITransport _transport = transport;
 
    public void Post(IAtMostOnceHypermediaCommand command) => PostAsync(command).WaitUnwrappingException();
 

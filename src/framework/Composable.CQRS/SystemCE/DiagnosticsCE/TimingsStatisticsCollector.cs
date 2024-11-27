@@ -13,18 +13,12 @@ namespace Composable.SystemCE.DiagnosticsCE;
 //Todo: Replace implementation with App.Metrics https://www.app-metrics.io/getting-started/metric-types/timers/. Design a wrapper around App.Metrics that can be injected and used as simply and flexibly as this class.
 class TimingsStatisticsCollector
 {
-   class RangeStats
+   class RangeStats(TimeSpan start, TimeSpan end)
    {
       long _calls = 0;
-      public TimeSpan Start { get; }
-      public TimeSpan End { get; }
+      public TimeSpan Start { get; } = start;
+      public TimeSpan End { get; } = end;
       public long Calls => _calls;
-
-      public RangeStats(TimeSpan start, TimeSpan end)
-      {
-         Start = start;
-         End = end;
-      }
 
       public void IncrementIfMatching(TimeSpan time)
       {

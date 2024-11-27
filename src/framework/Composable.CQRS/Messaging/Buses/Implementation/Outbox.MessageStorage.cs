@@ -10,18 +10,11 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Outbox
 {
-   internal class MessageStorage : Outbox.IMessageStorage
+   internal class MessageStorage(IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer) : Outbox.IMessageStorage
    {
-      readonly IServiceBusPersistenceLayer.IOutboxPersistenceLayer _persistenceLayer;
-      readonly ITypeMapper _typeMapper;
-      readonly IRemotableMessageSerializer _serializer;
-
-      public MessageStorage(IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-      {
-         _persistenceLayer = persistenceLayer;
-         _typeMapper = typeMapper;
-         _serializer = serializer;
-      }
+      readonly IServiceBusPersistenceLayer.IOutboxPersistenceLayer _persistenceLayer = persistenceLayer;
+      readonly ITypeMapper _typeMapper = typeMapper;
+      readonly IRemotableMessageSerializer _serializer = serializer;
 
       public void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds)
       {

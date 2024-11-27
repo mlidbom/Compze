@@ -14,11 +14,9 @@ interface IComposableNpgsqlConnection : IPoolableConnection, IComposableDbConnec
    //Verify Windows-only distributed transactions work on .NET 7.0 � Issue #4581 � npgsql/npgsql � GitHub https://github.com/npgsql/npgsql/issues/4581
    internal static IComposableNpgsqlConnection Create(string connString) => new ComposableNpgsqlConnection(connString);
 
-   sealed class ComposableNpgsqlConnection : IComposableNpgsqlConnection
+   sealed class ComposableNpgsqlConnection(string connectionString) : IComposableNpgsqlConnection
    {
-      NpgsqlConnection Connection { get; }
-
-      public ComposableNpgsqlConnection(string connectionString) => Connection = new NpgsqlConnection(connectionString);
+      NpgsqlConnection Connection { get; } = new(connectionString);
 
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().CaF();

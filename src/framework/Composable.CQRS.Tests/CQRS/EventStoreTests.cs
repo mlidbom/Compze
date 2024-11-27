@@ -26,7 +26,7 @@ class SomeEvent : AggregateEvent, ISomeEvent
 }
 
 //[ConfigurationBasedDuplicateByDimensions]
-public class EventStoreTests : DuplicateByPluggableComponentTest
+public class EventStoreTests(string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    IEventStore EventStore => _serviceLocator.EventStore();
 
@@ -189,5 +189,4 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
 
       Assert.That(firstRead, Is.SameAs(secondRead));
    }
-   public EventStoreTests(string _) : base(_) {}
 }

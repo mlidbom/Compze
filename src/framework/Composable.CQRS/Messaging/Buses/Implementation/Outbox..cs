@@ -9,18 +9,11 @@ using Composable.SystemCE.TransactionsCE;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-partial class Outbox : IOutbox
+partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, RealEndpointConfiguration configuration) : IOutbox
 {
-   readonly IMessageStorage _storage;
-   readonly RealEndpointConfiguration _configuration;
-   readonly ITransport _transport;
-
-   public Outbox(ITransport transport, IMessageStorage messageStorage, RealEndpointConfiguration configuration)
-   {
-      _storage = messageStorage;
-      _transport = transport;
-      _configuration = configuration;
-   }
+   readonly IMessageStorage _storage = messageStorage;
+   readonly RealEndpointConfiguration _configuration = configuration;
+   readonly ITransport _transport = transport;
 
    public void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent)
    {

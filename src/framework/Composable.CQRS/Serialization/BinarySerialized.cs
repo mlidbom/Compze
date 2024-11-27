@@ -67,17 +67,12 @@ abstract partial class BinarySerialized<TInheritor> where TInheritor : BinarySer
       internal abstract void Deserialize(TInheritor inheritor, BinaryReader reader);
    }
 
-   protected abstract class MemberGetterSetter<TValue> : MemberGetterSetter
+   protected abstract class MemberGetterSetter<TValue>(MemberGetterSetter<TValue>.GetterFunction getter, MemberGetterSetter<TValue>.SetterFunction setter) : MemberGetterSetter
    {
       public delegate void SetterFunction(TInheritor inheritor, TValue? value);
       public delegate TValue? GetterFunction(TInheritor inheritor);
 
-      protected readonly GetterFunction Getter;
-      protected readonly SetterFunction Setter;
-      protected MemberGetterSetter(GetterFunction getter, SetterFunction setter)
-      {
-         Getter = getter;
-         Setter = setter;
-      }
+      protected readonly GetterFunction Getter = getter;
+      protected readonly SetterFunction Setter = setter;
    }
 }

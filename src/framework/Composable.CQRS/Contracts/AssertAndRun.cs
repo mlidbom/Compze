@@ -4,10 +4,9 @@ using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Contracts;
 
-public class AssertAndRun
+public class AssertAndRun(Action assertion)
 {
-   readonly Action _assertion;
-   public AssertAndRun(Action assertion) => _assertion = assertion;
+   readonly Action _assertion = assertion;
 
    internal TResult Do<TResult>(Func<TResult> action)
    {

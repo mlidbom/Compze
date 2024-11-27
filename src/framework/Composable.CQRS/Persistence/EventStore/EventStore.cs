@@ -406,15 +406,9 @@ AggregateIds:
    {
    }
 
-   class AggregateEventWithRefactoringInformation
+   class AggregateEventWithRefactoringInformation(AggregateEvent @event, AggregateEventStorageInformation storageInformation)
    {
-      public AggregateEventWithRefactoringInformation(AggregateEvent @event, AggregateEventStorageInformation storageInformation)
-      {
-         Event = @event;
-         StorageInformation = storageInformation;
-      }
-
-      internal AggregateEvent Event { get; }
-      internal AggregateEventStorageInformation StorageInformation { get; }
+      internal AggregateEvent Event { get; } = @event;
+      internal AggregateEventStorageInformation StorageInformation { get; } = storageInformation;
    }
 }

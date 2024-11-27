@@ -4,13 +4,12 @@ using Composable.SystemCE.ConfigurationCE;
 
 namespace Composable.Messaging.Buses.Implementation;
 
-class AppConfigEndpointRegistry : IEndpointRegistry
+class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) : IEndpointRegistry
 {
-#pragma warning disable IDE0052
-   // ReSharper disable once NotAccessedField.Local
-   readonly IConfigurationParameterProvider _settingsProvider;
-#pragma warning restore IDE0052
-   public AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) => _settingsProvider = settingsProvider;
+#pragma warning disable CA1823
+   // ReSharper disable once UnusedMember.Local
+   readonly IConfigurationParameterProvider _settingsProvider = settingsProvider;
+#pragma warning restore CA1823
 
    public IEnumerable<EndPointAddress> ServerEndpoints => throw new NotImplementedException();
    // var configurationValue = _settingsProvider.GetString("ServerEndpoints");

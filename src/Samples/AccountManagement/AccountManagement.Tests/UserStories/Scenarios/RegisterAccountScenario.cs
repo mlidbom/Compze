@@ -6,26 +6,18 @@ using Composable.Messaging.Buses;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-class RegisterAccountScenario : ScenarioBase<(AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource Account)>
+class RegisterAccountScenario(IEndpoint clientEndpoint, string email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource Account)>
 {
-   readonly IEndpoint _clientEndpoint;
+   readonly IEndpoint _clientEndpoint = clientEndpoint;
 
-   public Guid AccountId;
-   public string Email;
-   public string Password;
+   public Guid AccountId = Guid.NewGuid();
+   public string Email = email ?? TestData.Emails.CreateUnusedEmail();
+   public string Password = password;
 
 
    public RegisterAccountScenario WithAccountId(Guid acountId) => this.mutate(it => it.AccountId = acountId);
    public RegisterAccountScenario WithEmail(string email) => this.mutate(it => it.Email = email);
    public RegisterAccountScenario WithPassword(string password) => this.mutate(it => it.Password = password);
-
-   public RegisterAccountScenario(IEndpoint clientEndpoint, string email = null, string password = TestData.Passwords.ValidPassword)
-   {
-      _clientEndpoint = clientEndpoint;
-      AccountId = Guid.NewGuid();
-      Password = password;
-      Email = email ?? TestData.Emails.CreateUnusedEmail();
-   }
 
    public override (AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource Account) Execute()
    {

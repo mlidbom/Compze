@@ -13,9 +13,9 @@ namespace Composable.Persistence.EventStore;
 
 class EventCache : IDisposable
 {
-   class TransactionalOverlay
+   class TransactionalOverlay(EventCache eventCache)
    {
-      readonly EventCache _parent;
+      readonly EventCache _parent = eventCache;
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
       readonly IThreadShared<Dictionary<string, Dictionary<Guid, Entry>>> _overlays = ThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<Guid, Entry>>>();
@@ -43,8 +43,6 @@ class EventCache : IDisposable
             return overlay;
          }
       }
-
-      public TransactionalOverlay(EventCache eventCache) => _parent = eventCache;
 
       internal void Add(Guid aggregateId, Entry entry) => _monitor.Update(
          () => CurrentOverlay[aggregateId] = entry);

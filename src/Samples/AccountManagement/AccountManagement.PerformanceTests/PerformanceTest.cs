@@ -18,10 +18,8 @@ using NUnit.Framework;
 
 namespace AccountManagement;
 
-class PerformanceTest : DuplicateByPluggableComponentTest
+class PerformanceTest([NotNull] string pluggableComponentsColonSeparated) : DuplicateByPluggableComponentTest(pluggableComponentsColonSeparated)
 {
-   public PerformanceTest([NotNull] string pluggableComponentsColonSeparated) : base(pluggableComponentsColonSeparated) {}
-
    ITestingEndpointHost _host;
    IEndpoint _clientEndpoint;
    AccountScenarioApi _scenarioApi;

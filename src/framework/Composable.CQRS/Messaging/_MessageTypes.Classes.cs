@@ -20,10 +20,10 @@ public static partial class MessageTypes
          public abstract class StrictlyLocalQuery<TQuery, TResult> : IStrictlyLocalQuery<TQuery, TResult> where TQuery : StrictlyLocalQuery<TQuery, TResult> {}
 #pragma warning restore CA1724 //
 
-         public sealed class EntityLink<TResult> : StrictlyLocal.Queries.StrictlyLocalQuery<EntityLink<TResult>, TResult> where TResult : IHasPersistentIdentity<Guid>
+         [method: JsonConstructor] public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Queries.StrictlyLocalQuery<EntityLink<TResult>, TResult>
+            where TResult : IHasPersistentIdentity<Guid>
          {
-            [JsonConstructor] public EntityLink(Guid entityId) => EntityId = entityId;
-            public Guid EntityId { get; private set; }
+            public Guid EntityId { get; private set; } = entityId;
          }
       }
 
@@ -98,10 +98,9 @@ public static partial class MessageTypes
             }
 
             ///<summary>Implement <see cref="IRemotableCreateMyOwnResultQuery{TResult}"/> by passing a func to this base class.</summary>
-            public abstract class FuncResultQuery<TResult> : Query<TResult>, IRemotableCreateMyOwnResultQuery<TResult>
+            public abstract class FuncResultQuery<TResult>(Func<TResult> factory) : Query<TResult>, IRemotableCreateMyOwnResultQuery<TResult>
             {
-               readonly Func<TResult> _factory;
-               protected FuncResultQuery(Func<TResult> factory) => _factory = factory;
+               readonly Func<TResult> _factory = factory;
                public TResult CreateResult() => _factory();
             }
 

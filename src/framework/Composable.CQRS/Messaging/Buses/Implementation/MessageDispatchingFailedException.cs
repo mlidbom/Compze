@@ -2,10 +2,7 @@
 
 namespace Composable.Messaging.Buses.Implementation;
 
-public class MessageDispatchingFailedException : Exception
-{
-   public MessageDispatchingFailedException(string remoteExceptionAsString) : base($"""
-                                                                                    Dispatching message failed. Remote exception message: 
-                                                                                    {remoteExceptionAsString} 
-                                                                                    """) {}
-}
+public class MessageDispatchingFailedException(string remoteExceptionAsString) : Exception($"""
+                                                                                            Dispatching message failed. Remote exception message: 
+                                                                                            {remoteExceptionAsString} 
+                                                                                            """);

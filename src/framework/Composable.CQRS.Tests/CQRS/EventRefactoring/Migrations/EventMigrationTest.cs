@@ -22,7 +22,7 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
 
 //Todo: Write tests that verify that none of the persistence layers lose precision in the persisted ReadOrder when persisting refactorings.
 //[ConfigurationBasedDuplicateByDimensions]
-public class EventMigrationTest : EventMigrationTestBase
+public class EventMigrationTest([NotNull] string unknown) : EventMigrationTestBase(unknown)
 {
    [Test]
    public async Task Base_class_method_should_detect_incorrect_type_order()
@@ -616,5 +616,4 @@ public class EventMigrationTest : EventMigrationTestBase
 
       EventMigrationTestBase.AssertStreamsAreIdentical(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
    }
-   public EventMigrationTest([NotNull] string _) : base(_) {}
 }

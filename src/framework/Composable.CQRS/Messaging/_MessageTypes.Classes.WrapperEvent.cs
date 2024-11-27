@@ -131,10 +131,9 @@ public static partial class MessageTypes
       }
    }
 
-   public class WrapperEvent<TEventInterface> : IWrapperEvent<TEventInterface>
+   public class WrapperEvent<TEventInterface>(TEventInterface @event) : IWrapperEvent<TEventInterface>
       where TEventInterface : IEvent
    {
-      public WrapperEvent(TEventInterface @event) => Event = @event;
-      public TEventInterface Event { get; }
+      public TEventInterface Event { get; } = @event;
    }
 }

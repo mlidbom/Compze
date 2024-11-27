@@ -53,10 +53,9 @@ interface IUserChangedEmail : IUserEvent
 {
    string Email { get; }
 }
-class UserChangedEmail : UserEvent, IUserChangedEmail
+class UserChangedEmail(string email) : UserEvent, IUserChangedEmail
 {
-   public UserChangedEmail(string email) => Email = email;
-   public string Email { get; private set; }
+   public string Email { get; private set; } = email;
 }
 
 interface IUserChangedPassword : IUserEvent
@@ -64,10 +63,9 @@ interface IUserChangedPassword : IUserEvent
    string Password { get; }
 }
 
-class UserChangedPassword : UserEvent, IUserChangedPassword
+class UserChangedPassword(string password) : UserEvent, IUserChangedPassword
 {
-   public UserChangedPassword(string password) => Password = password;
-   public string Password { get; private set; }
+   public string Password { get; private set; } = password;
 }
 
 interface IUserRegistered : IUserEvent, IAggregateCreatedEvent
@@ -76,16 +74,10 @@ interface IUserRegistered : IUserEvent, IAggregateCreatedEvent
    string Password { get; }
 }
 
-class UserRegistered : UserEvent, IUserRegistered
+class UserRegistered(Guid userId, string email, string password) : UserEvent(userId), IUserRegistered
 {
-   public UserRegistered(Guid userId, string email, string password) : base(userId)
-   {
-      Email = email;
-      Password = password;
-   }
-
-   public string Email { get; private set; }
-   public string Password { get; private set; }
+   public string Email { get; private set; } = email;
+   public string Password { get; private set; } = password;
 }
 
 interface IMigratedBeforeUserRegisteredEvent : IUserEvent, IAggregateCreatedEvent {}

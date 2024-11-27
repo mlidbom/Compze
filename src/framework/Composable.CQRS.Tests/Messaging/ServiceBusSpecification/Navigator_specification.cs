@@ -16,7 +16,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification;
 
-public class Navigator_specification : DuplicateByPluggableComponentTest
+public class Navigator_specification(string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
 
    ITestingEndpointHost _host;
@@ -89,16 +89,14 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
       public RegisterUserCommand RegisterUser(string userName) => RegisterUserCommand.Create(userName);
    }
 
-   protected class GetUserQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
+   protected class GetUserQuery(string name) : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
    {
-      public GetUserQuery(string name) => Name = name;
-      public string Name { get; private set; }
+      public string Name { get; private set; } = name;
    }
 
-   protected class UserResource
+   protected class UserResource(string name)
    {
-      public UserResource(string name) => Name = name;
-      public string Name { get; private set; }
+      public string Name { get; private set; } = name;
    }
 
    protected class RegisterUserCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<UserRegisteredConfirmationResource>
@@ -114,13 +112,11 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
       public string Name { get; private set; }
    }
 
-   protected class UserRegisteredConfirmationResource
+   protected class UserRegisteredConfirmationResource(string name)
    {
-      public UserRegisteredConfirmationResource(string name) => Name = name;
       public GetUserQuery User => new(Name);
-      public string Name { get; }
+      public string Name { get; } = name;
    }
 
    class UserApiStartPageQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserApiStartPage> {}
-   public Navigator_specification(string _) : base(_) {}
 }

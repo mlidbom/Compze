@@ -175,8 +175,5 @@ Individual execution times
 
    static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
 
-   public class TimeOutException : Exception
-   {
-      public TimeOutException(string message) : base(message) {}
-   }
+   public class TimeOutException(string message) : Exception(message);
 }

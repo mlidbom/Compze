@@ -2,7 +2,7 @@ using System;
 using Composable.DDD;
 using JetBrains.Annotations;
 using NUnit.Framework;
-#pragma warning disable IDE0052 //Review OK:unread private members are intentional in this test.
+#pragma warning disable CA1823 //Review OK:unread private members are intentional in this test.
 #pragma warning disable CA1508 //Yes I use code where the value of the comparisons can be statically deternmined. It's on purpose.
 
 namespace Composable.Tests.DDD;
@@ -31,20 +31,16 @@ public class ValueObjectTests
       public string Guid { get;  set; }
    }
 
-   class GuidHolder : ValueObject<GuidHolder>
+   class GuidHolder(Guid id) : ValueObject<GuidHolder>
    {
-      public GuidHolder(Guid id) => Id = id;
-
-      // ReSharper disable once UnusedAutoPropertyAccessor.Local
-      Guid Id { get; set; }
+      // ReSharper disable once UnusedMember.Local
+      Guid Id { get; set; } = id;
    }
 
-   class ExpandedAddress : Address
+   class ExpandedAddress(string address1, string address2, string city, params string[] states)
+      : Address(address1, city, states)
    {
-      [UsedImplicitly] readonly string _address2;
-
-      public ExpandedAddress(string address1, string address2, string city, params string[] states)
-         : base(address1, city, states) => _address2 = address2;
+      [UsedImplicitly] readonly string _address2 = address2;
    }
 
    [Test]

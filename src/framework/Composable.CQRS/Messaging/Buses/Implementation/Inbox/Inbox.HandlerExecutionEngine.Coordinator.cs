@@ -15,22 +15,13 @@ partial class Inbox
    partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all message type specific responsibilities into the message class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator
+      partial class Coordinator(IGlobalBusStateTracker globalStateTracker, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry messageHandlerRegistry)
       {
-         readonly ITaskRunner _taskRunner;
-         readonly IMessageStorage _messageStorage;
-         readonly IServiceLocator _serviceLocator;
-         readonly IMessageHandlerRegistry _messageHandlerRegistry;
-         readonly IThreadShared<NonThreadsafeImplementation> _implementation;
-
-         public Coordinator(IGlobalBusStateTracker globalStateTracker, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry messageHandlerRegistry)
-         {
-            _taskRunner = taskRunner;
-            _messageStorage = messageStorage;
-            _serviceLocator = serviceLocator;
-            _messageHandlerRegistry = messageHandlerRegistry;
-            _implementation = ThreadShared.WithDefaultTimeout(new NonThreadsafeImplementation(globalStateTracker));
-         }
+         readonly ITaskRunner _taskRunner = taskRunner;
+         readonly IMessageStorage _messageStorage = messageStorage;
+         readonly IServiceLocator _serviceLocator = serviceLocator;
+         readonly IMessageHandlerRegistry _messageHandlerRegistry = messageHandlerRegistry;
+         readonly IThreadShared<NonThreadsafeImplementation> _implementation = ThreadShared.WithDefaultTimeout(new NonThreadsafeImplementation(globalStateTracker));
 
          internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<IMessageDispatchingRule> dispatchingRules)
          {
@@ -50,10 +41,10 @@ partial class Inbox
 
          void Failed(HandlerExecutionTask queuedMessageInformation, Exception exception) => _implementation.Update(implementation => implementation.Failed(queuedMessageInformation, exception));
 
-         class NonThreadsafeImplementation : IExecutingMessagesSnapshot
+         class NonThreadsafeImplementation(IGlobalBusStateTracker globalStateTracker) : IExecutingMessagesSnapshot
          {
             const int MaxConcurrentlyExecutingHandlers = 20;
-            readonly IGlobalBusStateTracker _globalStateTracker;
+            readonly IGlobalBusStateTracker _globalStateTracker = globalStateTracker;
 
 
             //performance: Split waiting messages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional query
@@ -65,7 +56,6 @@ partial class Inbox
             public IReadOnlyList<TransportMessage.InComing> ExecutingNonTransactionalQueries => _executingNonTransactionalQueries;
 
             readonly List<HandlerExecutionTask> _messagesWaitingToExecute = [];
-            public NonThreadsafeImplementation(IGlobalBusStateTracker globalStateTracker) => _globalStateTracker = globalStateTracker;
 
             internal bool TryGetDispatchableMessage(IReadOnlyList<IMessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
             {

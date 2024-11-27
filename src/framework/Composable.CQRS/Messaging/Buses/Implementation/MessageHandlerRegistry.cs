@@ -13,9 +13,9 @@ using Composable.SystemCE.ThreadingCE.ResourceAccess;
 namespace Composable.Messaging.Buses.Implementation;
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. QueryTypeIndexFor<TQuery>.Index. Etc
-class MessageHandlerRegistry : IMessageHandlerRegistrar, IMessageHandlerRegistry
+class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar, IMessageHandlerRegistry
 {
-   readonly ITypeMapper _typeMapper;
+   readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _commandHandlers = new Dictionary<Type, Action<object>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<IEvent>>> _eventHandlers = new Dictionary<Type, IReadOnlyList<Action<IEvent>>>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _queryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
@@ -23,8 +23,6 @@ class MessageHandlerRegistry : IMessageHandlerRegistrar, IMessageHandlerRegistry
    IReadOnlyList<EventHandlerRegistration> _eventHandlerRegistrations = new List<EventHandlerRegistration>();
 
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-
-   public MessageHandlerRegistry(ITypeMapper typeMapper) => _typeMapper = typeMapper;
 
    IMessageHandlerRegistrar IMessageHandlerRegistrar.ForEvent<TEvent>(Action<TEvent> handler) => _monitor.Update(() =>
    {
@@ -140,40 +138,21 @@ class MessageHandlerRegistry : IMessageHandlerRegistrar, IMessageHandlerRegistry
                          .ToSet();
    }
 
-   class EventHandlerRegistration
+   class EventHandlerRegistration(Type type, Action<IEventHandlerRegistrar<IEvent>> registerHandlerWithRegistrar)
    {
-      public Type Type { get; }
-      public Action<IEventHandlerRegistrar<IEvent>> RegisterHandlerWithRegistrar { get; }
-      public EventHandlerRegistration(Type type, Action<IEventHandlerRegistrar<IEvent>> registerHandlerWithRegistrar)
-      {
-         Type = type;
-         RegisterHandlerWithRegistrar = registerHandlerWithRegistrar;
-      }
+      public Type Type { get; } = type;
+      public Action<IEventHandlerRegistrar<IEvent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
    }
 
-   abstract class HandlerWithResultRegistration
+   abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
    {
-      protected HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
-      {
-         ReturnValueType = returnValueType;
-         HandlerMethod = handlerMethod;
-      }
-
-      internal Type ReturnValueType { get; }
-      internal Func<object, object> HandlerMethod { get; }
+      internal Type ReturnValueType { get; } = returnValueType;
+      internal Func<object, object> HandlerMethod { get; } = handlerMethod;
    }
 
-   class CommandHandlerWithResultRegistration<TCommand, TResult> : HandlerWithResultRegistration
-   {
-      public CommandHandlerWithResultRegistration(Func<TCommand, TResult> handlerMethod)
-         : base(typeof(TResult),
-                command => handlerMethod((TCommand)command) ?? throw new Exception("You cannot return null from a command handler")) {}
-   }
+   class CommandHandlerWithResultRegistration<TCommand, TResult>(Func<TCommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+                                                                                                                                        command => handlerMethod((TCommand)command) ?? throw new Exception("You cannot return null from a command handler"));
 
-   class QueryHandlerRegistration<TQuery, TResult> : HandlerWithResultRegistration
-   {
-      public QueryHandlerRegistration(Func<TQuery, TResult> handlerMethod)
-         : base(typeof(TResult),
-                command => handlerMethod((TQuery)command) ?? throw new Exception("You cannot return null from a query handler")) {}
-   }
+   class QueryHandlerRegistration<TQuery, TResult>(Func<TQuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+                                                                                                                        command => handlerMethod((TQuery)command) ?? throw new Exception("You cannot return null from a query handler"));
 }

@@ -22,7 +22,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Experiment_with_unifying_events_and_commands_test : DuplicateByPluggableComponentTest
+public class Experiment_with_unifying_events_and_commands_test(string unknown) : DuplicateByPluggableComponentTest(unknown)
 {
    ITestingEndpointHost _host;
 
@@ -109,10 +109,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
             protected Root(Guid aggregateId) : base(aggregateId) {}
          }
 
-         public class UserRegisteredEvent : Root, IUserRegistered
-         {
-            public UserRegisteredEvent(Guid userId) : base(userId) {}
-         }
+         public class UserRegisteredEvent(Guid userId) : Root(userId), IUserRegistered;
       }
    }
 
@@ -139,10 +136,7 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
             protected Root(Guid aggregateId) : base(aggregateId) {}
          }
 
-         public class Created : Root, IAggregateCreatedEvent
-         {
-            public Created() : base(UserRegistrarAggregate.SingleId) {}
-         }
+         public class Created() : Root(UserRegistrarAggregate.SingleId), IAggregateCreatedEvent;
       }
    }
 
@@ -177,23 +171,18 @@ public class Experiment_with_unifying_events_and_commands_test : DuplicateByPlug
       }
    }
 
-   public class GetUserQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
+   public class GetUserQuery(Guid userId) : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
    {
-      public Guid UserId { get; private set; }
-      public GetUserQuery(Guid userId) => UserId = userId;
+      public Guid UserId { get; private set; } = userId;
    }
 
-   public class UserResource
+   public class UserResource(IEnumerable<IAggregateEvent> history)
    {
-      public IEnumerable<IAggregateEvent> History { get; }
-      public UserResource(IEnumerable<IAggregateEvent> history) => History = history;
+      public IEnumerable<IAggregateEvent> History { get; } = history;
    }
 
-   public class RegisterUserResult
+   public class RegisterUserResult(Guid userId)
    {
-      public GetUserQuery UserLink { get; private set; }
-      public RegisterUserResult(Guid userId) => UserLink = new GetUserQuery(userId);
+      public GetUserQuery UserLink { get; private set; } = new(userId);
    }
-
-   public Experiment_with_unifying_events_and_commands_test(string _) : base(_) {}
 }

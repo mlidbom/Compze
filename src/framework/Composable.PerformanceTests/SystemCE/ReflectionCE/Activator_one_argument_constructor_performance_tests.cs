@@ -18,11 +18,11 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
 {
    const string Argument = "AnArgument";
 
-   [UsedImplicitly] class Simple
+#pragma warning disable CS9113
+   [UsedImplicitly] class Simple(string arg1)
    {
-#pragma warning disable IDE0060 //Review OK: unused parameter is intentional
+#pragma warning disable CA1823  //Review OK: unused parameter is intentional
 #pragma warning disable CA1801  // Review unused parameters
-      public Simple(string arg1){}
 #pragma warning restore CA1801  // Review unused parameters
 #pragma warning restore IDE0060 // Remove unused parameter
    }

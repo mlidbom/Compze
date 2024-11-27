@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace AccountManagement;
 
-public class SetupTest : DuplicateByPluggableComponentTest
+public class SetupTest([NotNull] string pluggableComponentsColonSeparated) : DuplicateByPluggableComponentTest(pluggableComponentsColonSeparated)
 {
    [Test] public async Task TestSetup()
    {
@@ -18,6 +18,4 @@ public class SetupTest : DuplicateByPluggableComponentTest
       host.RegisterTestingEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       await host.StartAsync().CaF();
    }
-
-   public SetupTest([NotNull] string pluggableComponentsColonSeparated) : base(pluggableComponentsColonSeparated) {}
 }

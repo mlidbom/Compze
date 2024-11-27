@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Query_policies : Fixture
+public class Query_policies(string unknown) : Fixture(unknown)
 {
    [Test] public async Task The_same_query_can_be_reused_in_parallel_without_issues()
    {
@@ -24,6 +24,4 @@ public class Query_policies : Fixture
 
       await queriesResults.CaF();
    }
-
-   public Query_policies(string _) : base(_) {}
 }

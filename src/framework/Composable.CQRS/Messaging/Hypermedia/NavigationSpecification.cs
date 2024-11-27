@@ -14,11 +14,9 @@ public abstract class NavigationSpecification
    public void NavigateOn(IRemoteHypermediaNavigator busSession) => NavigateOnAsync(busSession).WaitUnwrappingException();
    public abstract Task NavigateOnAsync(IRemoteHypermediaNavigator busSession);
 
-   class VoidCommand : NavigationSpecification
+   class VoidCommand(IAtMostOnceHypermediaCommand command) : NavigationSpecification
    {
-      readonly IAtMostOnceHypermediaCommand _command;
-
-      public VoidCommand(IAtMostOnceHypermediaCommand command) => _command = command;
+      readonly IAtMostOnceHypermediaCommand _command = command;
 
       public override async Task NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_command).CaF();
    }
