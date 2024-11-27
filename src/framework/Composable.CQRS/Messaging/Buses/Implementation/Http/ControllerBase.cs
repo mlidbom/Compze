@@ -18,8 +18,8 @@ abstract class ControllerBase(IRemotableMessageSerializer serializer, ITypeMappe
 
    protected async Task<TransportMessage.InComing> CreateIncomingMessage()
    {
-      var messageId = Guid.Parse(Request.Headers["MessageId"][0].NotNull());
-      var typeIdStr = Request.Headers["PayloadTypeId"][0].NotNull();
+      var messageId = Guid.Parse(Request.Headers[HttpConstants.Headers.MessageId][0].NotNull());
+      var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0].NotNull();
       var typeId = new TypeId(Guid.Parse(typeIdStr));
 
       using var reader = new StreamReader(HttpContext.Request.Body);

@@ -21,9 +21,9 @@ class ComposableHttpClientFactoryProvider : IRpcClient, IMessageSender
       return await UseAsync(async it =>
       {
          var content = new StringContent(message.Body);
-         content.Headers.Add("MessageId", message.Id.ToString());
-         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Rpc.Query}");
+         content.Headers.Add(HttpConstants.Headers.MessageId, message.Id.ToString());
+         content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, message.Type.GuidValue.ToString());
+         var requestUri = new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Rpc.Query}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
@@ -52,9 +52,9 @@ class ComposableHttpClientFactoryProvider : IRpcClient, IMessageSender
       return await UseAsync(async it =>
       {
          var content = new StringContent(message.Body);
-         content.Headers.Add("MessageId", message.Id.ToString());
-         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Rpc.CommandWithResult}");
+         content.Headers.Add(HttpConstants.Headers.MessageId, message.Id.ToString());
+         content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, message.Type.GuidValue.ToString());
+         var requestUri = new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Rpc.CommandWithResult}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
@@ -83,9 +83,9 @@ class ComposableHttpClientFactoryProvider : IRpcClient, IMessageSender
       await UseAsync(async it =>
       {
          var content = new StringContent(message.Body);
-         content.Headers.Add("MessageId", message.Id.ToString());
-         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Rpc.CommandNoResult}");
+         content.Headers.Add(HttpConstants.Headers.MessageId, message.Id.ToString());
+         content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, message.Type.GuidValue.ToString());
+         var requestUri = new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Rpc.CommandNoResult}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
@@ -113,9 +113,9 @@ class ComposableHttpClientFactoryProvider : IRpcClient, IMessageSender
       await UseAsync(async it =>
       {
          var content = new StringContent(message.Body);
-         content.Headers.Add("MessageId", message.Id.ToString());
-         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Messaging.Command}");
+         content.Headers.Add(HttpConstants.Headers.MessageId, message.Id.ToString());
+         content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, message.Type.GuidValue.ToString());
+         var requestUri = new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Messaging.Command}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
@@ -143,9 +143,9 @@ class ComposableHttpClientFactoryProvider : IRpcClient, IMessageSender
       await UseAsync(async it =>
       {
          var content = new StringContent(message.Body);
-         content.Headers.Add("MessageId", message.Id.ToString());
-         content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Messaging.Event}");
+         content.Headers.Add(HttpConstants.Headers.MessageId, message.Id.ToString());
+         content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, message.Type.GuidValue.ToString());
+         var requestUri = new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Messaging.Event}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {

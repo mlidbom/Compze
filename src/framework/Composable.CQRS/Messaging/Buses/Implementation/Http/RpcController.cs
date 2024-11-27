@@ -12,7 +12,7 @@ namespace Composable.Messaging.Buses.Implementation.Http;
 
 class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : ControllerBase(serializer, typeMapper, handlerExecutionEngine, storage)
 {
-   [HttpPost(Routes.Rpc.Query)] public async Task<IActionResult> Query()
+   [HttpPost(HttpConstants.Routes.Rpc.Query)] public async Task<IActionResult> Query()
    {
       var incomingMessage = await CreateIncomingMessage().CaF();
 
@@ -28,7 +28,7 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
       }
    }
 
-   [HttpPost(Routes.Rpc.CommandWithResult)]
+   [HttpPost(HttpConstants.Routes.Rpc.CommandWithResult)]
    public async Task<IActionResult> CommandWithResult()
    {
       var incomingMessage = await CreateIncomingMessage().CaF();
@@ -46,7 +46,7 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
       }
    }
 
-   [HttpPost(Routes.Rpc.CommandNoResult)]
+   [HttpPost(HttpConstants.Routes.Rpc.CommandNoResult)]
    public async Task<IActionResult> CommandWithNoResult()
    {
       var incomingMessage = await CreateIncomingMessage().CaF();

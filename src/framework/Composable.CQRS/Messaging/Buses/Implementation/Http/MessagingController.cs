@@ -12,7 +12,7 @@ namespace Composable.Messaging.Buses.Implementation.Http;
 
 class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : ControllerBase(serializer, typeMapper, handlerExecutionEngine, storage)
 {
-   [HttpPost(Routes.Messaging.Event)]
+   [HttpPost(HttpConstants.Routes.Messaging.Event)]
    public async Task<IActionResult> Event()
    {
       var incomingMessage = await CreateIncomingMessage().CaF();
@@ -28,7 +28,7 @@ class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper ty
       }
    }
 
-   [HttpPost(Routes.Messaging.Command)]
+   [HttpPost(HttpConstants.Routes.Messaging.Command)]
    public async Task<IActionResult> Command()
    {
       var incomingMessage = await CreateIncomingMessage().CaF();
