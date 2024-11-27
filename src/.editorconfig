@@ -13,7 +13,7 @@ csharp_style_expression_bodied_methods = when_on_single_line
 csharp_style_expression_bodied_operators = when_on_single_line
 csharp_style_expression_bodied_local_functions = when_on_single_line
 
-csharp_style_prefer_primary_constructors = false # I hardly know what to say after digging into primary constructors. Absurdity perhaps. Monstrosity. Collossal mistake?
+csharp_style_prefer_primary_constructors = false # I hardly know what to say after digging into primary constructors. Absurdity perhaps. Monstrosity. Colossal mistake?
 
 dotnet_diagnostic.CA1707.severity = none # We use underscores in test names.
 dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for this.
