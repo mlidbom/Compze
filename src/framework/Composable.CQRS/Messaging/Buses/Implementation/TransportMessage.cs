@@ -25,12 +25,9 @@ static class TransportMessage
       internal readonly TypeId MessageTypeId;
       readonly Type _messageType;
       internal readonly TransportMessageType MessageTypeEnum;
-      internal bool Is<TType>() => typeof(TType).IsAssignableFrom(_messageType);
 
       IMessage? _message;
-      readonly ITypeMapper _typeMapper;
 
-      //performance: detect BinarySerializable and use instead.
       public IMessage DeserializeMessageAndCacheForNextCall()
       {
          if(_message == null)
@@ -46,7 +43,6 @@ static class TransportMessage
       internal InComing(string body, TypeId messageTypeId, byte[] client, Guid messageId, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
          _serializer = serializer;
-         _typeMapper = typeMapper;
          Body = body;
          MessageTypeId = messageTypeId;
          _messageType = typeMapper.GetType(messageTypeId);
@@ -83,7 +79,6 @@ static class TransportMessage
       public static OutGoing Create(IRemotableMessage message, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
          var messageId = (message as IAtMostOnceMessage)?.MessageId ?? Guid.NewGuid();
-         //performance: detect implementation of BinarySerialized and use that when available
          var body = serializer.SerializeMessage(message);
          return new OutGoing(typeMapper.GetId(message.GetType()), messageId, body, message is IExactlyOnceMessage);
       }
@@ -94,44 +89,6 @@ static class TransportMessage
          Type = type;
          Id = id;
          Body = body;
-      }
-   }
-
-   internal static class Response
-   {
-      internal enum ResponseType
-      {
-         SuccessWithData,
-         FailureExpectedReturnValue,
-         Failure,
-         Received,
-         Success
-      }
-
-      static class Constants
-      {
-         public const string NullString = "NULL";
-      }
-
-      internal class Incoming
-      {
-         internal readonly string? Body;
-         readonly TypeId? _responseTypeId;
-         readonly ITypeMapper _typeMapper;
-         readonly IRemotableMessageSerializer _serializer;
-         object? _result;
-         internal ResponseType ResponseType { get; }
-         internal Guid RespondingToMessageId { get; }
-
-         Incoming(ResponseType type, Guid respondingToMessageId, string? body, TypeId? responseTypeId, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-         {
-            Body = body;
-            _responseTypeId = responseTypeId;
-            _typeMapper = typeMapper;
-            _serializer = serializer;
-            ResponseType = type;
-            RespondingToMessageId = respondingToMessageId;
-         }
       }
    }
 }
