@@ -7,16 +7,17 @@ using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses.Implementation.Http;
 
-class HttpApiClient(IHttpClientFactoryCE clientFactory) : IHttpApiClient
+class HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer) : IHttpApiClient
 {
    readonly IHttpClientFactoryCE _clientFactory = clientFactory;
+   readonly IRemotableMessageSerializer _serializer = serializer;
 
-   public async Task<TResult> PostAsync<TResult>(TransportMessage.OutGoing message, object realMessage, IRemotableMessageSerializer serializer, Uri requestUri)
+   public async Task<TResult> PostAsync<TResult>(TransportMessage.OutGoing message, object realMessage, Uri requestUri)
    {
       var response = await PostAsync(message, realMessage, requestUri).CaF();
 
       var resultJson = await response.Content.ReadAsStringAsync().CaF();
-      var result = (TResult)serializer.DeserializeResponse(typeof(TResult), resultJson);
+      var result = (TResult)_serializer.DeserializeResponse(typeof(TResult), resultJson);
       return result;
    }
 

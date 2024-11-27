@@ -16,22 +16,20 @@ partial class Transport : ITransport, IDisposable
    readonly IGlobalBusStateTracker _globalBusStateTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableMessageSerializer _serializer;
-   readonly IRpcClient _rpcClient;
-   readonly IMessageSender _messageSender;
+   readonly IHttpApiClient _httpApiClient;
 
    bool _running;
    readonly Router _router;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
    readonly AssertAndRun _runningAndNotDisposed;
 
-   public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRpcClient rpcClient, IMessageSender messageSender)
+   public Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
    {
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
       _runningAndNotDisposed = new AssertAndRun(() => Assert.State.Assert(_running));
       _router = new Router(typeMapper);
       _serializer = serializer;
-      _rpcClient = rpcClient;
-      _messageSender = messageSender;
+      _httpApiClient = httpApiClient;
       _globalBusStateTracker = globalBusStateTracker;
       _typeMapper = typeMapper;
       _running = true;
@@ -40,7 +38,7 @@ partial class Transport : ITransport, IDisposable
    public async Task ConnectAsync(EndPointAddress remoteEndpointAdress)
    {
       _runningAndNotDisposed.Assert();
-      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _typeMapper, _serializer, _rpcClient, _messageSender);
+      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _typeMapper, _serializer, _httpApiClient);
 
       await clientConnection.Init().CaF();
 

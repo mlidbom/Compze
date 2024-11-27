@@ -93,12 +93,11 @@ class ServerEndpointBuilder : IEndpointBuilder
          Singleton.For<ITypeMappingRegistar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
          Singleton.For<IGlobalBusStateTracker>().CreatedBy(() => _globalStateTracker),
          Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
-         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRpcClient rpcClient, IMessageSender messageSender)
-                                                  => new Transport(globalBusStateTracker, typeMapper, serializer, rpcClient, messageSender)),
+         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
+                                                  => new Transport(globalBusStateTracker, typeMapper, serializer, httpApiClient)),
          Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
          Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()),
-         Singleton.For<IHttpApiClient>().CreatedBy((IHttpClientFactoryCE factory) => new HttpApiClient(factory)),
-         Singleton.For<IRpcClient, IMessageSender>().CreatedBy((IHttpApiClient httpClient) => new RpcClient(httpClient))
+         Singleton.For<IHttpApiClient>().CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer))
       );
 
       if(!Configuration.IsPureClientEndpoint)

@@ -1,28 +1,38 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Messaging.Buses.Implementation.Http;
+using Composable.Messaging.Buses.Http;
+using Composable.Refactoring.Naming;
 using Composable.Serialization;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Buses.Http;
+namespace Composable.Messaging.Buses.Implementation.Http;
 
-class RpcClient(IHttpApiClient httpClient) : IRpcClient, IMessageSender
+class RpcClient(IHttpApiClient httpClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IGlobalBusStateTracker globalBusStateTracker) : IRpcClient
 {
    readonly IHttpApiClient _client = httpClient;
+   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly IRemotableMessageSerializer _serializer = serializer;
+   readonly IGlobalBusStateTracker _globalBusStateTracker = globalBusStateTracker;
+   readonly string _remoteAddress = remoteAddress.AspNetAddress;
 
-   public async Task<TResult> PostAsync<TResult>(EndPointAddress address, TransportMessage.OutGoing message, IAtMostOnceCommand<TResult> query, IRemotableMessageSerializer serializer) =>
-      await _client.PostAsync<TResult>(message, query, serializer, new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Rpc.CommandWithResult}")).CaF();
+   public async Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command)
+   {
+      var message = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
+      _globalBusStateTracker.SendingMessageOnTransport(message);
+      return await _client.PostAsync<TResult>(message, command, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.CommandWithResult}")).CaF();
+   }
 
-   public async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IAtMostOnceHypermediaCommand query, IRemotableMessageSerializer serializer) =>
-      await _client.PostAsync(message, query, new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Rpc.CommandNoResult}")).CaF();
+   public async Task PostAsync(IAtMostOnceHypermediaCommand command)
+   {
+      var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
+      _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
+      await _client.PostAsync(outGoingMessage, command, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.CommandNoResult}")).CaF();
+   }
 
-   public async Task<TResult> QueryAsync<TResult>(EndPointAddress address, TransportMessage.OutGoing message, IRemotableQuery<TResult> query, IRemotableMessageSerializer serializer) =>
-      await _client.PostAsync<TResult>(message, query, serializer, new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Rpc.Query}")).CaF();
-
-   public async Task SendAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceCommand command, IRemotableMessageSerializer serializer) =>
-      await _client.PostAsync(message, command, new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Messaging.Command}")).CaF();
-
-   public async Task SendAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceEvent @event, IRemotableMessageSerializer serializer) =>
-      await _client.PostAsync(message, @event, new Uri($"{address.AspNetAddress}{HttpConstants.Routes.Messaging.Event}")).CaF();
+   public async Task<TResult> QueryAsync<TResult>(IRemotableQuery<TResult> query)
+   {
+      var message = TransportMessage.OutGoing.Create(query, _typeMapper, _serializer);
+      _globalBusStateTracker.SendingMessageOnTransport(message);
+      return await _client.PostAsync<TResult>(message, query, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.Query}")).CaF();
+   }
 }
