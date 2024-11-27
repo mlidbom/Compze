@@ -1,10 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Linq;
-using Composable.SystemCE;
-using IBM.Data.DB2.Core;
+﻿using Composable.SystemCE;
+using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using Npgsql;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Composable.Persistence;
 
@@ -15,24 +12,6 @@ static class SqlExceptions
    {
       const int PrimaryKeyViolationSqlErrorNumber = 2627;
       internal static bool IsPrimaryKeyViolation(SqlException e) => e.Number == PrimaryKeyViolationSqlErrorNumber;
-   }
-
-   internal static class DB2
-   {
-      const string DeadlockOrTimeout = "40001";
-      internal static bool IsDeadlockOrTimeOut(DB2Exception exception) => exception.Errors.Cast<DB2Error>().Any(error => error.SQLState == DeadlockOrTimeout);
-
-      const string PrimaryKeyViolationSqlState = "23505";
-      internal static bool IsPrimaryKeyViolation(DB2Exception exception) => exception.Errors.Cast<DB2Error>().Any(error => error.SQLState == PrimaryKeyViolationSqlState);
-
-      //Todo: Properly implement this.
-      public static bool IsUniqueConstraintViolation_TODO(DB2Exception _) => false;
-   }
-
-   internal static class Oracle
-   {
-      //Todo: Implement IsPrimaryKeyViolation for oracle.
-      internal static bool IsPrimaryKeyViolation_TODO(OracleException _) => false;
    }
 
    internal static class MySql

@@ -7,26 +7,18 @@
 ###Memory:Composable
 ###MySql:Composable
 ###PostgreSql:Composable
-###Oracle:Composable
-###IBMDB2:Composable
 
 MicrosoftSQLServer:Microsoft
 ###Memory:Microsoft
 ###MySql:Microsoft
 ###PostgreSql:Microsoft
-###Oracle:Microsoft
-###IBMDB2:Microsoft
 
 ###MicrosoftSQLServer:SimpleInjector
 ###Memory:SimpleInjector
 ###MySql:SimpleInjector
 ###PostgreSql:SimpleInjector
-###Oracle:SimpleInjector
-###IBMDB2:SimpleInjector
 
 ###MicrosoftSQLServer:WindsorCastle
 ###Memory:WindsorCastle
 ###MySql:WindsorCastle
 ###PostgreSql:WindsorCastle
-###Oracle:WindsorCastle
-###IBMDB2:WindsorCastle

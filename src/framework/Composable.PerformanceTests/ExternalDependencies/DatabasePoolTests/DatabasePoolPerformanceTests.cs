@@ -1,10 +1,8 @@
 ﻿using System;
 using Composable.DependencyInjection;
 using Composable.Logging;
-using Composable.Persistence.DB2.SystemExtensions;
 using Composable.Persistence.MySql.SystemExtensions;
 using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.Persistence.Oracle.SystemExtensions;
 using Composable.Persistence.PgSql.SystemExtensions;
 using Composable.SystemCE;
 using Composable.Testing;
@@ -136,14 +134,6 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
          case PersistenceLayer.PostgreSql:
             var pgSqlConnectionProvider = IPgSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => pgSqlConnectionProvider.UseConnection(_ => {});
-            break;
-         case PersistenceLayer.Oracle:
-            var oracleConnectionProvider = IOracleConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
-            useConnection = () => oracleConnectionProvider .UseConnection(_ => {});
-            break;
-         case PersistenceLayer.IBMDB2:
-            var composableDB2ConnectionProvider = IDB2ConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
-            useConnection = () => composableDB2ConnectionProvider.UseConnection(_ => {});
             break;
          default:
             throw new ArgumentOutOfRangeException();

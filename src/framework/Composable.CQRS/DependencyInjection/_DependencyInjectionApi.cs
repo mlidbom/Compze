@@ -44,9 +44,7 @@ public enum PersistenceLayer
    MicrosoftSQLServer,
    Memory,
    MySql,
-   PostgreSql,
-   Oracle,
-   IBMDB2
+   PostgreSql
 }
 public enum DIContainer
 {
