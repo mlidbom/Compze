@@ -18,7 +18,7 @@ abstract partial class DatabasePool : StrictlyManagedResourceBase<DatabasePool>
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
    protected static string? DatabaseRootFolderOverride;
    static TimeSpan _reservationLength;
-   const int NumberOfDatabases = 10;
+   const int NumberOfDatabases = 30;
 
    protected DatabasePool()
    {
