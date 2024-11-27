@@ -10,33 +10,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Composable.Messaging.Buses.Implementation.Http;
 
-class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : Controller
+class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : ControllerBase(serializer, typeMapper, handlerExecutionEngine, storage)
 {
-   readonly ITypeMapper _typeMapper = typeMapper;
-   readonly IRemotableMessageSerializer _serializer = serializer;
-   readonly Inbox.HandlerExecutionEngine _handlerExecutionEngine = handlerExecutionEngine;
-   readonly Inbox.IMessageStorage _storage = storage;
-
-   static async Task<TransportMessage.InComing> CreateIncomingMessage(HttpRequest request, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-   {
-      var messageId = Guid.Parse(request.Headers["MessageId"][0].NotNull());
-      var typeIdStr = request.Headers["PayloadTypeId"][0].NotNull();
-      var typeId = new TypeId(Guid.Parse(typeIdStr));
-
-      using var reader = new StreamReader(request.Body);
-      var queryJson = await reader.ReadToEndAsync().CaF();
-
-      return new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
-   }
-
    [HttpPost(Routes.Messaging.Event)]
    public async Task<IActionResult> Event()
    {
-      var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
+      var incomingMessage = await CreateIncomingMessage().CaF();
       try
       {
-         _storage.SaveIncomingMessage(incomingMessage);
-         await _handlerExecutionEngine.Enqueue(incomingMessage).CaF();
+         Storage.SaveIncomingMessage(incomingMessage);
+         await HandlerExecutionEngine.Enqueue(incomingMessage).CaF();
          return Ok();
       }
       catch(Exception exception)
@@ -48,12 +31,12 @@ class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper ty
    [HttpPost(Routes.Messaging.Command)]
    public async Task<IActionResult> Command()
    {
-      var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
+      var incomingMessage = await CreateIncomingMessage().CaF();
 
       try
       {
-         _storage.SaveIncomingMessage(incomingMessage);
-         await _handlerExecutionEngine.Enqueue(incomingMessage).CaF();
+         Storage.SaveIncomingMessage(incomingMessage);
+         await HandlerExecutionEngine.Enqueue(incomingMessage).CaF();
          return Ok();
       }
       catch(Exception exception)

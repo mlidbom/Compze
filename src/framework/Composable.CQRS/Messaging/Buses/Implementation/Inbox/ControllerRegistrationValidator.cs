@@ -18,7 +18,9 @@ static class ControllerRegistrationValidator
 
       using var aspNetScope = serviceProvider.CreateScope();
       using var serviceLocatorScope = serviceLocator.BeginScope();
-      foreach(var controllerType in feature.Controllers.Where(it => it.AsType().IsSubclassOf(typeof(Controller))))
+      foreach(var controllerType in feature.Controllers
+                                           .Where(it => it.AsType().IsSubclassOf(typeof(Controller)))
+                                           .Where(it => !it.IsAbstract))
       {
          try
          {
