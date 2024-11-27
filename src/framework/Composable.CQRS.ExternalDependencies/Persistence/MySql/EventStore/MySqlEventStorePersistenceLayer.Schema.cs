@@ -27,7 +27,7 @@ partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
         {Event.Event}                MEDIUMTEXT                 NOT NULL,
         {Event.EventId}              {MySqlGuidType}            NOT NULL,
         {Event.InsertedVersion}      int                        NOT NULL,
-        {Event.SqlInsertTimeStamp}   datetime(6)                NOT NULL  default CURRENT_TIMESTAMP,
+        {Event.SqlInsertTimeStamp} TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
         {Event.ReadOrder}            {Event.ReadOrderType}      NOT NULL,    
         {Event.EffectiveVersion}     int                        NOT NULL,
         {Event.TargetEvent}          {MySqlGuidType}            NULL,

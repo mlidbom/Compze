@@ -19,7 +19,7 @@ sealed class MySqlDatabasePool : DatabasePool
    public MySqlDatabasePool()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                ?? "Server=localhost;Database=mysql;Uid=root;Pwd=;";
+                                ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";
 
       _masterConnectionPool = IMySqlConnectionPool.CreateInstance(masterConnectionString);
       _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new MySqlConnectionStringBuilder(masterConnectionString));
