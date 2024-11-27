@@ -29,12 +29,9 @@ namespace Composable.Messaging.Buses.Implementation.Http;
    }
 }
 
-class FailedToExtractProblemDetailsException : Exception
-{
-   public FailedToExtractProblemDetailsException(HttpResponseMessage response) : base($"""
-                                                                                       Failed to extract problem details from response.
-                                                                                       RequestUri: {response.RequestMessage?.RequestUri} 
-                                                                                       Status code: {response.StatusCode}
-                                                                                       Reason: {response.ReasonPhrase}
-                                                                                       """) {}
-}
+class FailedToExtractProblemDetailsException(HttpResponseMessage response) : Exception($"""
+                                                                                        Failed to extract problem details from response.
+                                                                                        RequestUri: {response.RequestMessage?.RequestUri} 
+                                                                                        Status code: {response.StatusCode}
+                                                                                        Reason: {response.ReasonPhrase}
+                                                                                        """);
