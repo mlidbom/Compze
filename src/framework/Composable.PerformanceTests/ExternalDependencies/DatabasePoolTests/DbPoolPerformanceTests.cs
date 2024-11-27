@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
 
-public class DatabasePoolPerformanceTests : DatabasePoolTest
+public class DbPoolPerformanceTests : DbPoolTest
 {
    [OneTimeSetUp]public void WarmUpCache()
    {
@@ -136,5 +136,5 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
       );
    }
 
-   public DatabasePoolPerformanceTests(string _) : base(_) {}
+   public DbPoolPerformanceTests(string _) : base(_) {}
 }

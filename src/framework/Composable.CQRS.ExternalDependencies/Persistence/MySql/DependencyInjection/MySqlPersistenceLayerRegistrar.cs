@@ -23,13 +23,13 @@ public static class MySqlPersistenceLayerRegistrar
       //Connection management
       if(container.RunMode.IsTesting)
       {
-         container.Register(Singleton.For<MySqlDatabasePool>()
-                                     .CreatedBy((IConfigurationParameterProvider _) => new MySqlDatabasePool())
+         container.Register(Singleton.For<MySqlDbPool>()
+                                     .CreatedBy((IConfigurationParameterProvider _) => new MySqlDbPool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(
             Singleton.For<IMySqlConnectionPool>()
-                     .CreatedBy((MySqlDatabasePool pool) => IMySqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
+                     .CreatedBy((MySqlDbPool pool) => IMySqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
          );
       } else
       {

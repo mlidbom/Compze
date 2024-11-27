@@ -13,14 +13,14 @@ using Composable.SystemCE.TransactionsCE;
 
 namespace Composable.Testing.Databases;
 
-abstract partial class DatabasePool : StrictlyManagedResourceBase<DatabasePool>
+abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
    protected static string? DatabaseRootFolderOverride;
    static TimeSpan _reservationLength;
    const int NumberOfDatabases = 30;
 
-   protected DatabasePool()
+   protected DbPool()
    {
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
 
@@ -32,13 +32,13 @@ abstract partial class DatabasePool : StrictlyManagedResourceBase<DatabasePool>
       MachineWideState = MachineWideSharedObject<SharedState>.For(GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), usePersistentFile: true);
    }
 
-   const string PoolDatabaseNamePrefix = $"Composable_{nameof(DatabasePool)}_";
+   const string PoolDatabaseNamePrefix = $"Composable_{nameof(DbPool)}_";
 
    readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
    readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<Database> _transientCache = new List<Database>();
 
-   static ILogger Log = Logger.For<DatabasePool>();
+   static ILogger Log = Logger.For<DbPool>();
    bool _disposed;
 
    public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => Log = Log.WithLogLevel(logLevel));

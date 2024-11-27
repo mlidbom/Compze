@@ -6,14 +6,14 @@ using Composable.Testing.Databases;
 
 namespace Composable.Persistence.MsSql.Testing.Databases;
 
-class MsSqlDatabasePool : DatabasePool
+class MsSqlDbPool : DbPool
 {
    readonly string _masterConnectionString;
    readonly IMsSqlConnectionPool _masterConnectionPool;
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
 
-   public MsSqlDatabasePool()
+   public MsSqlDbPool()
    {
       _masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                              ?? "Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;";

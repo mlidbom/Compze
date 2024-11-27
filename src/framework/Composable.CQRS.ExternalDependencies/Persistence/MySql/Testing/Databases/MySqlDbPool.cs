@@ -8,7 +8,7 @@ using Composable.Testing.Databases;
 
 namespace Composable.Persistence.MySql.Testing.Databases;
 
-sealed class MySqlDatabasePool : DatabasePool
+sealed class MySqlDbPool : DbPool
 {
    readonly IMySqlConnectionPool _masterConnectionPool;
 
@@ -16,7 +16,7 @@ sealed class MySqlDatabasePool : DatabasePool
 
    readonly IThreadShared<MySqlConnectionStringBuilder> _connectionStringBuilder;
 
-   public MySqlDatabasePool()
+   public MySqlDbPool()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                                 ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";

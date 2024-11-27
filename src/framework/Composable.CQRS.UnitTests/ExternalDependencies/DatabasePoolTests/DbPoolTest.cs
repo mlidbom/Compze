@@ -13,18 +13,18 @@ using Composable.Testing.Databases;
 namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
 
 //[ConfigurationBasedDuplicateByDimensions]
-public class DatabasePoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
-   internal static DatabasePool CreatePool() =>
+   internal static DbPool CreatePool() =>
       TestEnv.PersistenceLayer.Current switch
       {
-         PersistenceLayer.MicrosoftSQLServer => new MsSqlDatabasePool(),
-         PersistenceLayer.MySql => new MySqlDatabasePool(),
-         PersistenceLayer.PostgreSql => new PgSqlDatabasePool(),
+         PersistenceLayer.MicrosoftSQLServer => new MsSqlDbPool(),
+         PersistenceLayer.MySql => new MySqlDbPool(),
+         PersistenceLayer.PostgreSql => new PgSqlDbPool(),
          _ => throw new ArgumentOutOfRangeException()
       };
 
-   internal static void UseConnection(string connectionString, DatabasePool pool, Action<IComposableDbConnection> func)
+   internal static void UseConnection(string connectionString, DbPool pool, Action<IComposableDbConnection> func)
    {
       switch(TestEnv.PersistenceLayer.Current)
       {

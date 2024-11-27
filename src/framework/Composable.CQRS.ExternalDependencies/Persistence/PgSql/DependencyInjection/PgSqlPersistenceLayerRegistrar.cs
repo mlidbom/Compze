@@ -23,13 +23,13 @@ public static class PgSqlPersistenceLayerRegistrar
       //Connection management
       if(container.RunMode.IsTesting)
       {
-         container.Register(Singleton.For<PgSqlDatabasePool>()
-                                     .CreatedBy((IConfigurationParameterProvider _) => new PgSqlDatabasePool())
+         container.Register(Singleton.For<PgSqlDbPool>()
+                                     .CreatedBy((IConfigurationParameterProvider _) => new PgSqlDbPool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(
             Singleton.For<IPgSqlConnectionPool>()
-                     .CreatedBy((PgSqlDatabasePool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName)))
+                     .CreatedBy((PgSqlDbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName)))
          );
       } else
       {

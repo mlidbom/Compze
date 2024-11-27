@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Composable.Testing.Databases;
 
-partial class DatabasePool
+partial class DbPool
 {
    internal class Database : BinarySerialized<Database>
    {

@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 
 namespace Composable.Testing.Databases;
 
-partial class DatabasePool
+partial class DbPool
 {
    [UsedImplicitly] protected class SharedState : BinarySerialized<SharedState>
    {
