@@ -15,6 +15,7 @@ csharp_style_expression_bodied_local_functions = when_on_single_line
 
 csharp_style_prefer_primary_constructors = false # I hardly know what to say after digging into primary constructors. Absurdity perhaps. Monstrosity. Colossal mistake?
 
+dotnet_diagnostic.CA1064.severity = none # We create a lot of specific exceptions to help debugging, they are not for public consumption. We decide which to make part of our public API
 dotnet_diagnostic.CA1707.severity = none # We use underscores in test names.
 dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for this.
 dotnet_diagnostic.CA1852.severity = none # making every single class that could theoretically be sealed sealed as a nano optimization. NO thanks. sealed has an actual semantic meaning and I only seal classes where it applies.
