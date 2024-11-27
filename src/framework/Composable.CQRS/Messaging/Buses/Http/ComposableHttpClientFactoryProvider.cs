@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Composable.Functional;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Messaging.Buses.Implementation.Http;
 using Composable.Serialization;
-using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 
 namespace Composable.Messaging.Buses.Http;
 
-interface IComposableHttpClientFactoryProvider
+class ComposableHttpClientFactoryProvider : IRpcClient, IMessageSender
 {
-   Task<TResult> UseAsync<TResult>(Func<HttpClient, Task<TResult>> action);
+   static readonly SocketsHttpHandler Handler = new()
+                                                {
+                                                   PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+                                                };
 
-   async Task<TResult> QueryAsync<TResult>(EndPointAddress address, TransportMessage.OutGoing message, IRemotableQuery<TResult> query, IRemotableMessageSerializer serializer)
+   public async Task<TResult> QueryAsync<TResult>(EndPointAddress address, TransportMessage.OutGoing message, IRemotableQuery<TResult> query, IRemotableMessageSerializer serializer)
    {
       return await UseAsync(async it =>
       {
@@ -48,7 +48,7 @@ interface IComposableHttpClientFactoryProvider
       }).CaF();
    }
 
-   async Task<TResult> PostAsync<TResult>(EndPointAddress address, TransportMessage.OutGoing message, IAtMostOnceCommand<TResult> query, IRemotableMessageSerializer serializer)
+   public async Task<TResult> PostAsync<TResult>(EndPointAddress address, TransportMessage.OutGoing message, IAtMostOnceCommand<TResult> query, IRemotableMessageSerializer serializer)
    {
       return await UseAsync(async it =>
       {
@@ -79,7 +79,7 @@ interface IComposableHttpClientFactoryProvider
       }).CaF();
    }
 
-   async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IAtMostOnceHypermediaCommand query, IRemotableMessageSerializer serializer)
+   public async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IAtMostOnceHypermediaCommand query, IRemotableMessageSerializer serializer)
    {
       await UseAsync(async it =>
       {
@@ -109,7 +109,7 @@ interface IComposableHttpClientFactoryProvider
       }).CaF();
    }
 
-   async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceCommand command, IRemotableMessageSerializer serializer)
+   public async Task SendAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceCommand command, IRemotableMessageSerializer serializer)
    {
       await UseAsync(async it =>
       {
@@ -139,7 +139,7 @@ interface IComposableHttpClientFactoryProvider
       }).CaF();
    }
 
-   async Task PostAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceEvent @event, IRemotableMessageSerializer serializer)
+   public async Task SendAsync(EndPointAddress address, TransportMessage.OutGoing message, IExactlyOnceEvent @event, IRemotableMessageSerializer serializer)
    {
       await UseAsync(async it =>
       {
@@ -168,46 +168,6 @@ interface IComposableHttpClientFactoryProvider
          return Unit.Instance;
       }).CaF();
    }
-}
-
-[UsedImplicitly]class ProblemDetails
-{
-   public string Type { get; set; } = "";
-   public string Title { get; set; } = "";
-   public int Status { get; set; }
-   public string Detail { get; set; } = "";
-   public string Instance { get; set; } = "";
-
-   internal static async Task<ProblemDetails> FromResponse(HttpResponseMessage response)
-   {
-      try
-      {
-         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
-      }catch(Exception)
-      {
-         throw new FailedToExtractProblemDetailsException(response);
-      }
-   }
-}
-
-class FailedToExtractProblemDetailsException : Exception
-{
-   public FailedToExtractProblemDetailsException(HttpResponseMessage response) : base($"""
-                                                                                       Failed to extract problem details from response.
-                                                                                       RequestUri: {response.RequestMessage?.RequestUri} 
-                                                                                       Status code: {response.StatusCode}
-                                                                                       Reason: {response.ReasonPhrase}
-                                                                                       """)
-   {
-   }
-}
-
-class ComposableHttpClientFactoryProvider : IComposableHttpClientFactoryProvider
-{
-   static readonly SocketsHttpHandler Handler = new()
-                                                {
-                                                   PooledConnectionLifetime = TimeSpan.FromMinutes(2)
-                                                };
 
    // ReSharper disable once MemberCanBeMadeStatic.Local
    HttpClient CreateClient() => new(Handler, disposeHandler: false);

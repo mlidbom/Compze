@@ -57,14 +57,12 @@ class ServerEndpointBuilder : IEndpointBuilder
       Container = container;
       _globalStateTracker = globalStateTracker;
 
-
       Configuration = configuration;
 
       _typeMapper = new TypeMapper();
 
       _registry = new MessageHandlerRegistry(_typeMapper);
       RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.ServiceLocator));
-
    }
 
    //todo: find a better place for this. I just can't be bothered right now during a huge refactoring of other stuff.
@@ -93,18 +91,12 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Container.Register(
          Singleton.For<ITypeMappingRegistar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
-
-
          Singleton.For<IGlobalBusStateTracker>().CreatedBy(() => _globalStateTracker),
-
-
          Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
-
-         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IComposableHttpClientFactoryProvider httpClient)
-                                                  => new Transport(globalBusStateTracker, typeMapper, serializer, httpClient)),
-
+         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRpcClient rpcClient, IMessageSender messageSender)
+                                                  => new Transport(globalBusStateTracker, typeMapper, serializer, rpcClient, messageSender)),
          Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
-         Singleton.For<Http.IComposableHttpClientFactoryProvider>().CreatedBy(() => new Http.ComposableHttpClientFactoryProvider())
+         Singleton.For<IRpcClient, IMessageSender>().CreatedBy(() => new ComposableHttpClientFactoryProvider())
       );
 
       if(!Configuration.IsPureClientEndpoint)
@@ -113,30 +105,24 @@ class ServerEndpointBuilder : IEndpointBuilder
             Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => Container),
             Singleton.For<EndpointId>().CreatedBy(() => Configuration.Id),
             Singleton.For<EndpointConfiguration>().CreatedBy(() => Configuration),
-
             Singleton.For<IMessageHandlerRegistry, IMessageHandlerRegistrar, MessageHandlerRegistry>().CreatedBy(() => _registry),
-
             Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunner()),
-
             Singleton.For<RealEndpointConfiguration>().CreatedBy((EndpointConfiguration conf, IConfigurationParameterProvider configurationParameterProvider)
                                                                     => new RealEndpointConfiguration(conf, configurationParameterProvider)),
-
             Singleton.For<Outbox.IMessageStorage>()
                      .CreatedBy((IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
                                    => new Outbox.MessageStorage(persistenceLayer, typeMapper, serializer)),
             Singleton.For<IOutbox>().CreatedBy((RealEndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
                                                   => new Outbox(transport, messageStorage, configuration)),
-
             Singleton.For<IEventStoreEventPublisher>().CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
                                                                     => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)),
-
             Singleton.For<Inbox.IMessageStorage>().CreatedBy((IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => new InboxMessageStorage(persistenceLayer)),
             Singleton.For<Inbox.HandlerExecutionEngine>().CreatedBy((IGlobalBusStateTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
                                                                        => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
             Scoped.For<RpcController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
-                                                       => new RpcController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
+                                                     => new RpcController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
             Scoped.For<MessagingController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
-                                                     => new MessagingController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
+                                                           => new MessagingController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
             Singleton.For<Inbox.AspNetHost>().CreatedBy((IServiceLocator serviceLocator, IDependencyInjectionContainer container) => new Inbox.AspNetHost(serviceLocator, container)),
             Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, Inbox.AspNetHost aspNetHost)
                                                  => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, aspNetHost)),
@@ -145,10 +131,10 @@ class ServerEndpointBuilder : IEndpointBuilder
             Scoped.For<ILocalHypermediaNavigator>().CreatedBy((IMessageHandlerRegistry messageHandlerRegistry) => new LocalHypermediaNavigator(messageHandlerRegistry))
          );
       }
-
    }
 
    bool _disposed;
+
    public void Dispose()
    {
       if(!_disposed)
