@@ -1,10 +1,9 @@
 using System;
-using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
+using Microsoft.Data.SqlClient;
 
 namespace Composable.Persistence.MsSql.SystemExtensions;
 
@@ -16,7 +15,6 @@ interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, S
    class MsSqlConnectionPool : IMsSqlConnectionPool
    {
       readonly OptimizedLazy<IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>> _pool;
-      IDbConnectionPool<IComposableMsSqlConnection, SqlCommand> Pool => _pool.Value;
 
       public MsSqlConnectionPool(Func<string> getConnectionString)
       {
@@ -30,7 +28,6 @@ interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, S
                   IComposableMsSqlConnection.Create);
             });
       }
-      
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
       public TResult UseConnection<TResult>(Func<IComposableMsSqlConnection, TResult> func) => _pool.Value.UseConnection(func);

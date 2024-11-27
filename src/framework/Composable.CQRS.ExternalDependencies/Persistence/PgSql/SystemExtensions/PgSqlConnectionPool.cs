@@ -15,7 +15,6 @@ interface IPgSqlConnectionPool : IDbConnectionPool<IComposableNpgsqlConnection, 
    class PgSqlConnectionPool : IPgSqlConnectionPool
    {
       readonly OptimizedLazy<IDbConnectionPool<IComposableNpgsqlConnection, NpgsqlCommand>> _pool;
-      IDbConnectionPool<IComposableNpgsqlConnection, NpgsqlCommand> Pool => _pool.Value;
 
       public PgSqlConnectionPool(string connectionString) : this(() => connectionString) {}
 

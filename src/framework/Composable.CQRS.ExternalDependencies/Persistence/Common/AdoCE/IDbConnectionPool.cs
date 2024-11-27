@@ -14,7 +14,7 @@ interface IDbConnectionPool<out TConnection, out TCommand>
 
    void UseConnection(Action<TConnection> action) => UseConnection(action.AsUnitFunc());
 
-   async Task UseConnectionAsync(Func<TConnection, Task> func) => await UseConnectionAsync(func.AsUnitFunc()).CaF(); 
+   async Task UseConnectionAsync(Func<TConnection, Task> func) => await UseConnectionAsync(func.AsUnitFunc()).CaF();
 
    Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func);
 

@@ -13,7 +13,6 @@ partial class Outbox
 {
    internal class InboxConnection : IInboxConnection
    {
-      readonly IThreadShared<InboxConnectionState> _state;
       public MessageTypes.Internal.EndpointInformation EndpointInformation { get; private set; }
       readonly ITypeMapper _typeMapper;
       readonly IRemotableMessageSerializer _serializer;
@@ -71,17 +70,10 @@ partial class Outbox
          _globalBusStateTracker = globalBusStateTracker;
          _remoteAddress = remoteAddress;
          _httpClient = httpClient;
-         _state = ThreadShared.WithDefaultTimeout(new InboxConnectionState());
       }
 
       public void Dispose()
       {
-      }
-
-      class InboxConnectionState
-      {
-         internal readonly Dictionary<Guid, AsyncTaskCompletionSource<Func<object>>> ExpectedResponseTasks = new();
-         internal readonly Dictionary<Guid, AsyncTaskCompletionSource> ExpectedCompletionTasks = new();
       }
    }
 }
