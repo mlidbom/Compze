@@ -50,7 +50,6 @@ public enum DIContainer
 {
    Composable,
    SimpleInjector,
-   WindsorCastle,
    Microsoft
 }
 enum Lifestyle

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Composable.DependencyInjection.Microsoft;
 using Composable.DependencyInjection.SimpleInjector;
-using Composable.DependencyInjection.Windsor;
 using Composable.Messaging.Buses;
 using Composable.Persistence.Common.DependencyInjection;
 using Composable.SystemCE.ThreadingCE.TasksCE;
@@ -33,7 +32,6 @@ public static class DependencyInjectionContainer
       {
          DIContainer.Composable => new ComposableDependencyInjectionContainer(runMode),
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(runMode),
-         DIContainer.WindsorCastle => new WindsorDependencyInjectionContainer(runMode),
          DIContainer.Microsoft => new MicrosoftDependencyInjectionContainer(runMode),
          _ => throw new ArgumentOutOfRangeException()
       };

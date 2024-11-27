@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Composable.DependencyInjection.Microsoft;
 using Composable.DependencyInjection.SimpleInjector;
-using Composable.DependencyInjection.Windsor;
 using Composable.SystemCE.LinqCE;
 
 namespace Composable.DependencyInjection.Testing;
 
 static class TestingExtensions
 {
-   static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer, WindsorDependencyInjectionContainer>()
+   static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer>()
                                                                                         .ToList();
 
    public static IServiceLocator Clone(this IServiceLocator @this)
@@ -22,7 +21,6 @@ static class TestingExtensions
       {
 #pragma warning disable CA2000 // Dispose objects before losing scope: Review: OK-ish. We dispose the container byr registering its created serviceLocator in the container. It will dispose the container when disposed.
          ComposableDependencyInjectionContainer _ => new ComposableDependencyInjectionContainer(sourceContainer.RunMode),
-         WindsorDependencyInjectionContainer _ => new WindsorDependencyInjectionContainer(sourceContainer.RunMode),
          SimpleInjectorDependencyInjectionContainer _ => new SimpleInjectorDependencyInjectionContainer(sourceContainer.RunMode),
          MicrosoftDependencyInjectionContainer => new MicrosoftDependencyInjectionContainer(sourceContainer.RunMode),
          _ => throw new ArgumentOutOfRangeException()

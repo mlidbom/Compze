@@ -17,8 +17,3 @@ MicrosoftSQLServer:Microsoft
 ###Memory:SimpleInjector
 ###MySql:SimpleInjector
 ###PostgreSql:SimpleInjector
-
-###MicrosoftSQLServer:WindsorCastle
-###Memory:WindsorCastle
-###MySql:WindsorCastle
-###PostgreSql:WindsorCastle
