@@ -18,9 +18,9 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
 
       try
       {
-         var queryResultObject = (await HandlerExecutionEngine.Enqueue(incomingMessage).CaF()).NotNull();
-         var responseJson = Serializer.SerializeResponse(queryResultObject);
-         return Ok(responseJson);
+         var queryResponse = (await HandlerExecutionEngine.Enqueue(incomingMessage).CaF()).NotNull();
+         var queryResponseJson = Serializer.SerializeResponse(queryResponse);
+         return Ok(queryResponseJson);
       }
       catch(Exception exception)
       {
@@ -36,9 +36,9 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
       try
       {
          Storage.SaveIncomingMessage(incomingMessage);
-         var queryResultObject = (await HandlerExecutionEngine.Enqueue(incomingMessage).CaF()).NotNull();
-         var responseJson = Serializer.SerializeResponse(queryResultObject);
-         return Ok(responseJson);
+         var commandResponse = (await HandlerExecutionEngine.Enqueue(incomingMessage).CaF()).NotNull();
+         var commandResponseJson = Serializer.SerializeResponse(commandResponse);
+         return Ok(commandResponseJson);
       }
       catch(Exception exception)
       {

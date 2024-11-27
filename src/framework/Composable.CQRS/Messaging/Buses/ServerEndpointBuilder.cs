@@ -96,7 +96,9 @@ class ServerEndpointBuilder : IEndpointBuilder
          Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRpcClient rpcClient, IMessageSender messageSender)
                                                   => new Transport(globalBusStateTracker, typeMapper, serializer, rpcClient, messageSender)),
          Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
-         Singleton.For<IRpcClient, IMessageSender>().CreatedBy(() => new ComposableHttpClientFactoryProvider())
+         Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()),
+         Singleton.For<IHttpApiClient>().CreatedBy((IHttpClientFactoryCE factory) => new HttpApiClient(factory)),
+         Singleton.For<IRpcClient, IMessageSender>().CreatedBy((IHttpApiClient httpClient) => new RpcClient(httpClient))
       );
 
       if(!Configuration.IsPureClientEndpoint)
