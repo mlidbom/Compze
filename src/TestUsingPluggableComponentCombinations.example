@@ -4,16 +4,13 @@
 #Empty/Whitespace lines are ignored
 
 ###MicrosoftSQLServer:Composable
-###Memory:Composable
 ###MySql:Composable
 ###PostgreSql:Composable
 
 MicrosoftSQLServer:Microsoft
-###Memory:Microsoft
 ###MySql:Microsoft
 ###PostgreSql:Microsoft
 
 ###MicrosoftSQLServer:SimpleInjector
-###Memory:SimpleInjector
 ###MySql:SimpleInjector
 ###PostgreSql:SimpleInjector
