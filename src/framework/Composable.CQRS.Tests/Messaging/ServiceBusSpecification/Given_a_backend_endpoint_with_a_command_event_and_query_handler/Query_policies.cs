@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Composable.Messaging.Buses;
+using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing.Threading;
 using NUnit.Framework;
 
@@ -7,18 +10,19 @@ namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_end
 
 public class Query_policies : Fixture
 {
-   [Test] public void The_same_query_can_be_reused_in_parallel_without_issues()
+   [Test] public async Task The_same_query_can_be_reused_in_parallel_without_issues()
    {
-      var test = new MyQuery();
+      var myQuery = new MyQuery();
 
       QueryHandlerThreadGate.Close();
 
-      var(result1, result2) = ClientEndpoint.ExecuteClientRequest(navigator => (navigator.GetAsync(test), navigator.GetAsync(test)));
+      var queriesResults = Task.WhenAll(1.Through(5)
+                                         .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(navigator => navigator.GetAsync(myQuery))));
 
-      QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 2);
+      QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 5);
       QueryHandlerThreadGate.Open();
 
-      Task.WaitAll(result1, result2);
+      await queriesResults.CaF();
    }
 
    public Query_policies(string _) : base(_) {}

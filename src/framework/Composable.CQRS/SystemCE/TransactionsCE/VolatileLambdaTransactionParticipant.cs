@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Transactions;
 using Composable.Contracts;
-using Composable.SystemCE.LinqCE;
+using Composable.Functional;
 
 namespace Composable.SystemCE.TransactionsCE;
 
@@ -30,13 +30,13 @@ class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
    }
 
    internal VolatileLambdaTransactionParticipant AddCommitTasks(params Action[] tasks) =>
-      this.Mutate(_ => _commitTasks.AddRange(tasks));
+      this.mutate(_ => _commitTasks.AddRange(tasks));
 
    internal VolatileLambdaTransactionParticipant AddPrepareTasks(params Action[] tasks) =>
-      this.Mutate(_ => _prepareTasks.AddRange(tasks));
+      this.mutate(_ => _prepareTasks.AddRange(tasks));
 
    internal VolatileLambdaTransactionParticipant AddRollbackTasks(params Action[] tasks) =>
-      this.Mutate(_ => _rollbackTasks.AddRange(tasks));
+      this.mutate(_ => _rollbackTasks.AddRange(tasks));
 
    protected override void OnCommit() => _commitTasks.InvokeAll();
    protected override void OnRollback() => _rollbackTasks.InvokeAll();

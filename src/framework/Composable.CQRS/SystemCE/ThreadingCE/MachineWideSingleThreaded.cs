@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
@@ -33,7 +32,7 @@ class MachineWideSingleThreaded
 
                                                           if(OperatingSystem.IsWindows())
                                                           {
-                                                             MutexSecurity mutexSecurity = new MutexSecurity();
+                                                             var mutexSecurity = new MutexSecurity();
                                                              mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
                                                                                                              MutexRights.FullControl,
                                                                                                              AccessControlType.Allow));

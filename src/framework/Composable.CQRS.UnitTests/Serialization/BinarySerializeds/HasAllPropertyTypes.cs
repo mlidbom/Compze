@@ -58,20 +58,20 @@ class HasAllPropertyTypes : BinarySerialized<HasAllPropertyTypes>
    public List<HasAllPropertyTypes> RecursiveListProperty { get; set; }
    public HasAllPropertyTypes[] RecursiveArrayProperty { get; set; }
 
-   public Boolean Boolean { get; set; }
-   public Byte Byte { get; set; }
+   public bool Boolean { get; set; }
+   public byte Byte { get; set; }
    public char Char { get; set; }
-   public Decimal Decimal { get; set; }
-   public Double Double { get; set; }
-   public Int16 Int16 { get; set; }
-   public Int32 Int32 { get; set; }
-   public Int64 Int64 { get; set; }
-   public UInt16 UInt16 { get; set; }
-   public UInt32 UInt32 { get; set; }
-   public UInt64 UInt64 { get; set; }
-   public Single Single { get; set; }
-   public SByte SByte { get; set; }
-   public String String { get; set; }
+   public decimal Decimal { get; set; }
+   public double Double { get; set; }
+   public short Int16 { get; set; }
+   public int Int32 { get; set; }
+   public long Int64 { get; set; }
+   public ushort UInt16 { get; set; }
+   public uint UInt32 { get; set; }
+   public ulong UInt64 { get; set; }
+   public float Single { get; set; }
+   public sbyte SByte { get; set; }
+   public string String { get; set; }
    public Guid Guid { get; set; }
    public DateTime DateTime { get; set; }
 }

@@ -3,6 +3,7 @@ using AccountManagement.API;
 using AccountManagement.UserStories.Scenarios;
 using Composable.DependencyInjection;
 using Composable.Messaging.Buses;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -20,10 +21,10 @@ public class UserStoryTest : DuplicateByPluggableComponentTest
       Host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterTestingEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
-      await Host.StartAsync();
+      await Host.StartAsync().CaF();
    }
 
-   [TearDown] public void Teardown() => Host.Dispose();
+   [TearDown] public async Task Teardown() => await Host.DisposeAsync().CaF();
 
    public UserStoryTest([NotNull] string _) : base(_) {}
 }

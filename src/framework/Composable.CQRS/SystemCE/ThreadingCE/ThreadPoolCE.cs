@@ -11,7 +11,7 @@ static class ThreadPoolCE
    const string FakeTaskName = $"{nameof(ThreadPoolCE)}_{nameof(TryToEnsureSufficientIdleThreadsToRunTasksConcurrently)}";
    internal static void TryToEnsureSufficientIdleThreadsToRunTasksConcurrently(int threadCount)
    {
-      for(int tries = 1; Idle <= threadCount && tries < 5; tries++)
+      for(var tries = 1; Idle <= threadCount && tries < 5; tries++)
       {
          var waitForAllThreadsToStart = new CountdownEvent(threadCount);
          Task.WaitAll(1.Through(threadCount).Select(_ => TaskCE.Run(FakeTaskName, () =>

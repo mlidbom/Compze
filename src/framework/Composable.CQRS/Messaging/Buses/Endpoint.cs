@@ -5,7 +5,6 @@ using Composable.Contracts;
 using Composable.DependencyInjection;
 using Composable.Messaging.Buses.Implementation;
 using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses;
@@ -25,17 +24,14 @@ class Endpoint : IEndpoint
          _outbox = outbox;
       }
 
-      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).NoMarshalling();
-      public void Stop()
+      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).CaF();
+      public async Task StopAsync()
       {
          _commandScheduler.Stop();
-         Inbox.Stop();
+         await Inbox.StopAsync().CaF();
       }
 
-      public void Dispose()
-      {
-         _commandScheduler.Dispose();
-      }
+      public void Dispose() => _commandScheduler.Dispose();
    }
 
    readonly EndpointConfiguration _configuration;
@@ -74,7 +70,7 @@ class Endpoint : IEndpoint
       {
          _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await _serverComponents.InitAsync().NoMarshalling();
+         await _serverComponents.InitAsync().CaF();
       }
 
 
@@ -88,33 +84,31 @@ class Endpoint : IEndpoint
       {
          serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
       }
-      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).NoMarshalling();
+      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).CaF();
    }
 
-   static void RunSanityChecks()
-   {
-      AssertAllTypesNeedingMappingsAreMapped();
-   }
+   static void RunSanityChecks() => AssertAllTypesNeedingMappingsAreMapped();
 
    //todo: figure out how to do this sanely
    static void AssertAllTypesNeedingMappingsAreMapped()
    {
    }
 
-   public void Stop()
+   public async Task StopAsync()
    {
       Assert.State.Assert(IsRunning);
       IsRunning = false;
       _transport.Stop();
-      _serverComponents?.Stop();
+      if(_serverComponents != null )
+         await _serverComponents.StopAsync().CaF();
    }
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoMessagesInFlight(timeoutOverride);
 
-   public void Dispose()
+   public async ValueTask DisposeAsync()
    {
-      if(IsRunning) Stop();
-      ServiceLocator.Dispose();
+      if(IsRunning) await StopAsync().CaF();
+      await ServiceLocator.DisposeAsync().CaF();
       _serverComponents?.Dispose();
    }
 }

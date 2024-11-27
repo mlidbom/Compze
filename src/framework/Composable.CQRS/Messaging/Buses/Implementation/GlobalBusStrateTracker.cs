@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Composable.SystemCE;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -16,7 +17,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
    public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) => _implementation.Update(implementation => implementation.SendingMessageOnTransport(transportMessage));
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) =>
-      _implementation.Await(implementation => implementation.InflightMessages.Count == 0);
+      _implementation.Await(timeoutOverride ?? 5.Seconds(), implementation => implementation.InflightMessages.Count == 0);
 
    public void DoneWith(Guid messageId, Exception? exception) =>
       _implementation.Update(implementation => implementation.DoneWith(messageId, exception));
@@ -28,7 +29,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
 
    class NonThreadSafeImplementation
    {
-      internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = new();
+      internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = [];
 
       readonly List<Exception> _busExceptions = [];
 
@@ -36,7 +37,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
 
       public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage)
       {
-         var inFlightMessage = InflightMessages.GetOrAdd(transportMessage.MessageId, () => new InFlightMessage());
+         var inFlightMessage = InflightMessages.GetOrAdd(transportMessage.Id, () => new InFlightMessage());
          inFlightMessage.RemainingReceivers++;
       }
 
@@ -59,7 +60,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
 
 class NullOpGlobalBusStateTracker : IGlobalBusStateTracker
 {
-   public IReadOnlyList<Exception> GetExceptions() => new List<Exception>();
+   public IReadOnlyList<Exception> GetExceptions() => [];
    public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) { }
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) { }
    public void DoneWith(Guid message, Exception? exception) { }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Hypermedia;
@@ -21,7 +20,7 @@ public abstract class NavigationSpecification
 
       public VoidCommand(IAtMostOnceHypermediaCommand command) => _command = command;
 
-      public override async Task NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_command).NoMarshalling();
+      public override async Task NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_command).CaF();
    }
 }
 
@@ -52,7 +51,7 @@ public abstract class NavigationSpecification<TResult>
 
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession)
       {
-         var previousResult = await _previous.NavigateOnAsync(busSession).NoMarshalling();
+         var previousResult = await _previous.NavigateOnAsync(busSession).CaF();
          return _select(previousResult);
       }
    }
@@ -63,7 +62,7 @@ public abstract class NavigationSpecification<TResult>
 
       internal StartQuery(IRemotableQuery<TResult> start) => _start = start;
 
-      public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.GetAsync(_start).NoMarshalling();
+      public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.GetAsync(_start).CaF();
    }
 
    class StartCommand : NavigationSpecification<TResult>
@@ -72,7 +71,7 @@ public abstract class NavigationSpecification<TResult>
 
       internal StartCommand(IAtMostOnceCommand<TResult> start) => _start = start;
 
-      public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_start).NoMarshalling();
+      public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_start).CaF();
    }
 
    class ContinuationQuery<TPrevious> : NavigationSpecification<TResult>
@@ -88,9 +87,9 @@ public abstract class NavigationSpecification<TResult>
 
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession)
       {
-         var previousResult = await _previous.NavigateOnAsync(busSession).NoMarshalling();
+         var previousResult = await _previous.NavigateOnAsync(busSession).CaF();
          var currentQuery = _nextQuery(previousResult);
-         return await busSession.GetAsync(currentQuery).NoMarshalling();
+         return await busSession.GetAsync(currentQuery).CaF();
       }
    }
 
@@ -106,9 +105,9 @@ public abstract class NavigationSpecification<TResult>
 
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession)
       {
-         var previousResult = await _previous.NavigateOnAsync(busSession).NoMarshalling();
+         var previousResult = await _previous.NavigateOnAsync(busSession).CaF();
          var currentCommand = _next(previousResult);
-         return await busSession.PostAsync(currentCommand).NoMarshalling();
+         return await busSession.PostAsync(currentCommand).CaF();
       }
    }
 
@@ -124,9 +123,9 @@ public abstract class NavigationSpecification<TResult>
 
       public override async Task NavigateOnAsync(IRemoteHypermediaNavigator busSession)
       {
-         var previousResult = await _previous.NavigateOnAsync(busSession).NoMarshalling();
+         var previousResult = await _previous.NavigateOnAsync(busSession).CaF();
          var currentCommand = _next(previousResult);
-         await busSession.PostAsync(currentCommand).NoMarshalling();
+         await busSession.PostAsync(currentCommand).CaF();
       }
    }
 }

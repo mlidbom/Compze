@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses.Implementation;
@@ -41,6 +40,6 @@ partial class Outbox
          Assert.Result.Assert(affectedRows == 1);
       }
 
-      public async Task StartAsync() => await _persistenceLayer.InitAsync().NoMarshalling();
+      public async Task StartAsync() => await _persistenceLayer.InitAsync().CaF();
    }
 }

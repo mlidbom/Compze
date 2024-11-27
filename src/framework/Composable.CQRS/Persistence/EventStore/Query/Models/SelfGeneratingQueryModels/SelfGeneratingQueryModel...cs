@@ -12,10 +12,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
    where TAggregateEvent : class, IAggregateEvent
 {
    //Yes empty. Id should be assigned by an action and it should be obvious that the aggregate in invalid until that happens
-   protected SelfGeneratingQueryModel() : base(Guid.Empty)
-   {
-      Contract.Assert.That(typeof(TAggregateEvent).IsInterface, "typeof(TAggregateEvent).IsInterface");
-   }
+   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Contract.Assert.That(typeof(TAggregateEvent).IsInterface, "typeof(TAggregateEvent).IsInterface");
 
    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventDispatcher = new();
 

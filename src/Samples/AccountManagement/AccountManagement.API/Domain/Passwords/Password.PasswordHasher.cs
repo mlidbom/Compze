@@ -17,8 +17,7 @@ public partial class Password
          var encodedPassword = Encoding.Unicode.GetBytes(password);
          var saltedPassword = salt.Concat(encodedPassword).ToArray();
 
-         using var algorithm = SHA256.Create();
-         return algorithm.ComputeHash(saltedPassword);
+         return SHA256.HashData(saltedPassword);
       }
    }
 }

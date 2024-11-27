@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.SystemCE;
 using Composable.SystemCE.ReflectionCE;
@@ -11,13 +12,13 @@ namespace Composable.DependencyInjection;
 
 partial class ComposableDependencyInjectionContainer
 {
-   class ServiceLocator : IServiceLocator, IServiceLocatorKernel
+   class ServiceLocatorImplementation : IServiceLocator, IServiceLocatorKernel
    {
       readonly AsyncLocal<ScopeCache?> _scopeCache = new();
       readonly RootCache _rootCache;
 
       bool _disposed;
-      public ServiceLocator(List<ComponentRegistration> components) => _rootCache = new RootCache(components);
+      public ServiceLocatorImplementation(List<ComponentRegistration> components) => _rootCache = new RootCache(components);
 
       TService[] IServiceLocator.ResolveAll<TService>() => throw new NotImplementedException();
 
@@ -141,7 +142,6 @@ partial class ComposableDependencyInjectionContainer
             }
          });
 
-      //Todo: Performance: Implement IAsyncDisposable.
       public void Dispose()
       {
          if(!_disposed)
@@ -151,5 +151,7 @@ partial class ComposableDependencyInjectionContainer
             _rootCache.Dispose();
          }
       }
+
+      public ValueTask DisposeAsync() => throw new NotImplementedException();
    }
 }

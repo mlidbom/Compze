@@ -1,11 +1,12 @@
 using System;
 using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using JetBrains.Annotations;
 
 namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 
 partial class Component
 {
-   public class Entity : Component.RemovableNestedEntity<Entity,
+   [UsedImplicitly]public class Entity : Component.RemovableNestedEntity<Entity,
       Guid,
       RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.IRoot,
@@ -20,7 +21,7 @@ partial class Component
            .For<RootEvent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
       }
 
-      public void Rename(string name) { Publish(new RootEvent.Component.Entity.Implementation.Renamed(name)); }
+      public void Rename(string name) => Publish(new RootEvent.Component.Entity.Implementation.Renamed(name));
       public void Remove() => Publish(new RootEvent.Component.Entity.Implementation.Removed());
    }
 }

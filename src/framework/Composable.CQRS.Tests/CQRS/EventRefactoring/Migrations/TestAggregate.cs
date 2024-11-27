@@ -25,8 +25,6 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations
         class Ec1 : EcAbstract{}
         class Ec2 : EcAbstract{}
         class Ec3 : EcAbstract{}
-        // ReSharper restore ClassNeverInstantiated.Global
-
         class E1 : RootEvent { }
         class E2 : RootEvent { }
         class E3 : RootEvent { }
@@ -37,6 +35,7 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations
         class E8 : RootEvent { }
         class E9 : RootEvent { }
         class Ef : RootEvent { }
+        // ReSharper restore ClassNeverInstantiated.Global
     }
 
 
@@ -60,15 +59,9 @@ namespace Composable.Tests.CQRS.EventRefactoring.Migrations
 
 
         [Obsolete("For serialization only", error: true), UsedImplicitly]
-        public TestAggregate()
-        {
-            SetupAppliers();
-        }
+        public TestAggregate() => SetupAppliers();
 
-        TestAggregate(IUtcTimeTimeSource timeSource):base(timeSource)
-        {
-            SetupAppliers();
-        }
+        TestAggregate(IUtcTimeTimeSource timeSource):base(timeSource) => SetupAppliers();
 
         void SetupAppliers()
         {

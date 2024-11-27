@@ -1,6 +1,8 @@
 ﻿using Composable.DependencyInjection;
 using Composable.GenericAbstractions.Time;
+using Composable.Messaging.Buses.Http;
 using Composable.Messaging.Buses.Implementation;
+using Composable.Messaging.Buses.Implementation.Http;
 using Composable.Messaging.Hypermedia;
 using Composable.Persistence.EventStore;
 using Composable.Refactoring.Naming;
@@ -33,7 +35,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       SetupContainer();
       SetupInternalTypeMap();
       MessageTypes.Internal.RegisterHandlers(RegisterHandlers);
-      var serviceLocator = Container.CreateServiceLocator();
+      var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<IGlobalBusStateTracker>(),
                                   serviceLocator.Resolve<ITransport>(),
@@ -55,15 +57,15 @@ class ServerEndpointBuilder : IEndpointBuilder
       Container = container;
       _globalStateTracker = globalStateTracker;
 
-
       Configuration = configuration;
 
       _typeMapper = new TypeMapper();
 
       _registry = new MessageHandlerRegistry(_typeMapper);
-      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.CreateServiceLocator()));
-
+      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.ServiceLocator));
    }
+
+   //todo: find a better place for this. I just can't be bothered right now during a huge refactoring of other stuff.
 
    void SetupContainer()
    {
@@ -89,54 +91,51 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Container.Register(
          Singleton.For<ITypeMappingRegistar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
-
-
          Singleton.For<IGlobalBusStateTracker>().CreatedBy(() => _globalStateTracker),
-
-
          Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
-
-         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-                                                  => new Transport(globalBusStateTracker, typeMapper, serializer)),
-
-         Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport))
-
+         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
+                                                  => new Transport(globalBusStateTracker, typeMapper, serializer, httpApiClient)),
+         Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
+         Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()),
+         Singleton.For<IHttpApiClient>().CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer))
       );
 
       if(!Configuration.IsPureClientEndpoint)
       {
          Container.Register(
+            Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => Container),
             Singleton.For<EndpointId>().CreatedBy(() => Configuration.Id),
             Singleton.For<EndpointConfiguration>().CreatedBy(() => Configuration),
-
             Singleton.For<IMessageHandlerRegistry, IMessageHandlerRegistrar, MessageHandlerRegistry>().CreatedBy(() => _registry),
-
             Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunner()),
-
             Singleton.For<RealEndpointConfiguration>().CreatedBy((EndpointConfiguration conf, IConfigurationParameterProvider configurationParameterProvider)
                                                                     => new RealEndpointConfiguration(conf, configurationParameterProvider)),
-
             Singleton.For<Outbox.IMessageStorage>()
                      .CreatedBy((IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
                                    => new Outbox.MessageStorage(persistenceLayer, typeMapper, serializer)),
             Singleton.For<IOutbox>().CreatedBy((RealEndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
                                                   => new Outbox(transport, messageStorage, configuration)),
-
             Singleton.For<IEventStoreEventPublisher>().CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
                                                                     => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)),
-
             Singleton.For<Inbox.IMessageStorage>().CreatedBy((IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => new InboxMessageStorage(persistenceLayer)),
-            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, RealEndpointConfiguration endpointConfiguration, ITaskRunner taskRunner, IRemotableMessageSerializer serializer, Inbox.IMessageStorage messageStorage)
-                                                 => new Inbox(serviceLocator, _globalStateTracker, _registry, endpointConfiguration, messageStorage, _typeMapper, taskRunner, serializer)),
+            Singleton.For<Inbox.HandlerExecutionEngine>().CreatedBy((IGlobalBusStateTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
+                                                                       => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
+            Scoped.For<RpcController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
+                                                     => new RpcController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
+            Scoped.For<MessagingController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
+                                                           => new MessagingController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
+            Singleton.For<Inbox.AspNetHost>().CreatedBy((IServiceLocator serviceLocator, IDependencyInjectionContainer container) => new Inbox.AspNetHost(serviceLocator, container)),
+            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, Inbox.AspNetHost aspNetHost)
+                                                 => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, aspNetHost)),
             Singleton.For<CommandScheduler>().CreatedBy((IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) => new CommandScheduler(transport, timeSource, taskRunner)),
             Scoped.For<IServiceBusSession>().CreatedBy((IOutbox outbox, CommandScheduler commandScheduler) => new ServiceBusSession(outbox, commandScheduler)),
             Scoped.For<ILocalHypermediaNavigator>().CreatedBy((IMessageHandlerRegistry messageHandlerRegistry) => new LocalHypermediaNavigator(messageHandlerRegistry))
          );
       }
-
    }
 
    bool _disposed;
+
    public void Dispose()
    {
       if(!_disposed)

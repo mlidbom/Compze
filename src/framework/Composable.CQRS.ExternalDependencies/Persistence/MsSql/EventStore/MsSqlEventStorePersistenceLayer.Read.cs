@@ -8,7 +8,6 @@ using Composable.Persistence.Common.AdoCE;
 using Composable.Persistence.MsSql.SystemExtensions;
 using Composable.Persistence.EventStore.PersistenceLayer;
 using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Composable.Persistence.MsSql.EventStore;
 

@@ -25,7 +25,7 @@ public static class Singleton
    public static SingletonRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2, TService3, TService4>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2, TService3, TService4>());
    public static SingletonRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2, TService3>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2, TService3>());
    public static SingletonRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2>());
-   public static SingletonRegistrationWithoutInstantiationSpec<TService> For<TService>() where TService : class => For<TService>(new List<Type>());
+   public static SingletonRegistrationWithoutInstantiationSpec<TService> For<TService>() where TService : class => For<TService>([]);
    static SingletonRegistrationWithoutInstantiationSpec<TService> For<TService>(IEnumerable<Type> additionalServices) where TService : class => new(additionalServices);
 }
 
@@ -39,7 +39,7 @@ public static class Scoped
    public static ComponentRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2, TService3, TService4>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2, TService3, TService4>());
    public static ComponentRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2, TService3>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2, TService3>());
    public static ComponentRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2>());
-   public static ComponentRegistrationWithoutInstantiationSpec<TService> For<TService>() where TService : class => For<TService>(new List<Type>());
+   public static ComponentRegistrationWithoutInstantiationSpec<TService> For<TService>() where TService : class => For<TService>([]);
    static ComponentRegistrationWithoutInstantiationSpec<TService> For<TService>(IEnumerable<Type> additionalServices) where TService : class => new(Lifestyle.Scoped, additionalServices);
 }
 
@@ -50,7 +50,7 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
    internal ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
    {
       _lifestyle = lifestyle;
-      ServiceTypes = serviceTypes.Concat(new List<Type> {typeof(TService)}).ToList();
+      ServiceTypes = serviceTypes.Concat([typeof(TService)]).ToList();
    }
 
    internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceLocatorKernel, TImplementation> factoryMethod)
@@ -100,30 +100,25 @@ class InstantiationSpec
    {
       FactoryMethodReturnType = factoryMethodReturnType;
 
-      if(!LogSlowConstructions)
-      {
-         FactoryMethod = factoryMethod;
-      } else
-      {
-         FactoryMethod = kern =>
-         {
+      FactoryMethod = !LogSlowConstructions
+                         ? factoryMethod
+                         : kern =>
+                         {
+                            object instance = null!;
 
-            object instance = null!;
+                            IEnumerable<string> ignoredTypePatterns = EnumerableCE.Create(nameof(EventCache),           //Constructing the system provided cache is slow.
+                                                                                          nameof(EventStoreSerializer), //Caused by NewtonsoftJson initialization that is static and happens only once.
+                                                                                          "DatabasePool"                //This is slow the first time because it sets up the MachineWideSharedObject
+                            );
 
-            IEnumerable<string> ignoredTypePatterns = EnumerableCE.Create(nameof(EventCache),           //Constructing the system provided cache is slow.
-                                                                          nameof(EventStoreSerializer), //Caused by NewtonsoftJson initialization that is static and happens only once.
-                                                                          "DatabasePool"                //This is slow the first time because it sets up the MachineWideSharedObject
-            );
+                            var constructionTime = StopwatchCE.TimeExecution(() => instance = factoryMethod(kern));
+                            if(constructionTime > 5.Milliseconds() && ignoredTypePatterns.None(ignored => factoryMethodReturnType.Name.ContainsInvariant(ignored)))
+                            {
+                               this.Log().Warning($"###########################################################: Component: {factoryMethodReturnType.GetFullNameCompilable()} took: {constructionTime:ss\\.fff} to construct");
+                            }
 
-            var constructionTime = StopwatchCE.TimeExecution(() => instance = factoryMethod(kern));
-            if(constructionTime > 5.Milliseconds() && ignoredTypePatterns.None(ignored => factoryMethodReturnType.Name.ContainsInvariant(ignored)))
-            {
-               this.Log().Warning($"###########################################################: Component: {factoryMethodReturnType.GetFullNameCompilable()} took: {constructionTime:ss\\.fff} to construct");
-            }
-
-            return instance;
-         };
-      }
+                            return instance;
+                         };
    }
 
    InstantiationSpec(object singletonInstance)

@@ -7,8 +7,6 @@ using Composable.Messaging.Events;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ReactiveCE;
-using JetBrains.Annotations;
-
 
 namespace Composable.Persistence.EventStore.Aggregates;
 
@@ -113,6 +111,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    protected virtual void AssertInvariantsAreMet() {}
 
    readonly SimpleObservable<TAggregateEventImplementation> _eventStream = new();
+#pragma warning disable CA1033 //These method should NOT clutter the public interface of Aggregates.
    IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
 
    public void Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents)
@@ -121,7 +120,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       _unCommittedEvents.Clear();
    }
 
-   void IEventStored.SetTimeSource(IUtcTimeTimeSource timeSource) { TimeSource = timeSource; }
+   void IEventStored.SetTimeSource(IUtcTimeTimeSource timeSource) => TimeSource = timeSource;
 
    void IEventStored.LoadFromHistory(IEnumerable<IAggregateEvent> history)
    {
@@ -129,4 +128,5 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       history.ForEach(theEvent => ApplyEvent((TAggregateEvent)theEvent));
       AssertInvariantsAreMet();
    }
+#pragma warning restore CA1033
 }

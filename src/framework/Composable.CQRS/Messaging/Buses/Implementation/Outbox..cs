@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Composable.Contracts;
 using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.SystemCE.TransactionsCE;
 
@@ -74,6 +73,6 @@ partial class Outbox : IOutbox
    public async Task StartAsync()
    {
       if(!_configuration.IsPureClientEndpoint)
-         await _storage.StartAsync().NoMarshalling();
+         await _storage.StartAsync().CaF();
    }
 }

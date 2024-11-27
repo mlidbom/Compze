@@ -1,5 +1,9 @@
-﻿using Composable.Messaging.Buses;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Composable.Messaging.Buses;
 using Composable.SystemCE;
+using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
@@ -8,12 +12,17 @@ namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_end
 
 public class Parallelism_policies : Fixture
 {
-   [Test] public void Five_query_handlers_can_execute_in_parallel_when_using_QueryAsync()
+   [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_QueryAsync()
    {
-      CloseGates();
-      TaskRunner.StartTimes(5, () => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyQuery())));
+      QueryHandlerThreadGate.Close();
+
+      var tasks = Task.WhenAll(1.Through(5)
+                                .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(session =>
+                                                                                          session.GetAsync(new MyQuery()))));
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      OpenGates();
+      await tasks.CaF();
    }
 
    [Test] public void Five_query_handlers_can_execute_in_parallel_when_using_Query()

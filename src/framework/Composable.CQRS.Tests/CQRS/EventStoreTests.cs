@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using Composable.DependencyInjection;
 using Composable.Persistence.EventStore;
 using Composable.Refactoring.Naming;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.SystemCE.TransactionsCE;
 using Composable.Testing;
 using FluentAssertions;
@@ -38,7 +40,7 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
                      .Map<UserRegistered>("e965b5d4-6f1a-45fa-9660-2fec0abc4a0a");
    }
 
-   [TearDown] public void TearDownTask() { _serviceLocator.Dispose(); }
+   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync().CaF();
 
    [Test] public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
@@ -181,9 +183,9 @@ public class EventStoreTests : DuplicateByPluggableComponentTest
          });
       }
 
-      IAggregateEvent firstRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
+      var firstRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
-      IAggregateEvent secondRead = _serviceLocator.ExecuteInIsolatedScope(() =>  _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
+      var secondRead = _serviceLocator.ExecuteInIsolatedScope(() =>  _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
       Assert.That(firstRead, Is.SameAs(secondRead));
    }

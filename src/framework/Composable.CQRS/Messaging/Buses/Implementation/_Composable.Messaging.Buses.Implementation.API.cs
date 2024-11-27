@@ -15,7 +15,7 @@ interface IInbox
 {
    EndPointAddress Address { get; }
    Task StartAsync();
-   void Stop();
+   Task StopAsync();
 }
 
 interface IOutbox
@@ -27,7 +27,7 @@ interface IOutbox
 
 interface ITransport
 {
-   Task ConnectAsync(EndPointAddress remoteEndpoint);
+   Task ConnectAsync(EndPointAddress remoteEndpointAdress);
    void Stop();
 
    IInboxConnection ConnectionToHandlerFor(IRemotableCommand command);

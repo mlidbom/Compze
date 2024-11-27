@@ -50,6 +50,7 @@ public class DatabasePoolTest : DuplicateByPluggableComponentTest
          case PersistenceLayer.IBMDB2:
             UseComposableDB2Connection(pool.ConnectionStringFor(connectionString), func);
             break;
+         case PersistenceLayer.Memory:
          default:
             throw new ArgumentOutOfRangeException();
       }

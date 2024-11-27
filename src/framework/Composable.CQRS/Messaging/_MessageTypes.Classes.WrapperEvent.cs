@@ -86,7 +86,7 @@ public static partial class MessageTypes
          return (Func<IEvent, IWrapperEvent<IEvent>>)constructorCallMethod.CreateDelegate(typeof(Func<IEvent, IWrapperEvent<IEvent>>));
       }
 
-      static string DescribeParameterList(IEnumerable<Type> parameterTypes) { return parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", "); }
+      static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
 
       static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
       static Type CreateGenericWrapperEventType(Type wrapperEventType)
@@ -108,13 +108,13 @@ public static partial class MessageTypes
 
          var genericWrapperEventType = AssemblyBuilderCE.Module.Update(module =>
          {
-            TypeBuilder wrapperEventBuilder = module.DefineType(
+            var wrapperEventBuilder = module.DefineType(
                name: $"{wrapperEventType}_ilgen_impl",
                attr: TypeAttributes.Public,
                parent: null,
                interfaces: [wrapperEventType]);
 
-            GenericTypeParameterBuilder wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
+            var wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
 
             wrappedEventTypeParameter.SetInterfaceConstraints(requiredEventInterface);
 

@@ -27,15 +27,8 @@ class TestingTimeSource : IUtcTimeTimeSource
 
    public void FreezeAtUtcTime(DateTime time) => _freezeAt = time.ToUniversalTimeSafely();
 
-   public void FreezeAtUtcTime(String time) => FreezeAtUtcTime(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
+   public void FreezeAtUtcTime(string time) => FreezeAtUtcTime(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
 
-   ///<summary>Gets or sets the current UTC time.</summary>
-   public DateTime UtcNow
-   {
-      get
-      {
-         if(_freezeAt != null) return _freezeAt.Value;
-         return DateTime.UtcNow;
-      }
-   }
+   ///<summary>Gets the current UTC time.</summary>
+   public DateTime UtcNow => _freezeAt ?? DateTime.UtcNow;
 }

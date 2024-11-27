@@ -4,11 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Composable.Contracts;
 using Composable.DDD;
+using Composable.Functional;
 using Composable.GenericAbstractions.Time;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
 using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
 
 namespace Composable.Persistence.DocumentDb;
 
@@ -33,7 +33,7 @@ class DocumentDb : IDocumentDb
       value = default;
       var idString = GetIdString(id);
 
-      if(!_persistenceLayer.TryGet(idString, AcceptableTypeIds(typeof(TDocument)), useUpdateLock, out var readRow)) return false;
+      if(!_persistenceLayer.TryGet(idString, AcceptableTypeIds<TDocument>(), useUpdateLock, out var readRow)) return false;
 
       var found = Deserialize<TDocument>(readRow);
 
@@ -62,7 +62,7 @@ class DocumentDb : IDocumentDb
    public void Remove(object id, Type documentType)
    {
       var rowsAffected = _persistenceLayer.Remove(GetIdString(id), AcceptableTypeIds(documentType));
-
+#pragma warning disable IDE0010
       switch(rowsAffected)
       {
          case < 1:
@@ -70,6 +70,7 @@ class DocumentDb : IDocumentDb
          case > 1:
             throw new TooManyItemsDeletedException();
       }
+#pragma warning restore IDE0010
    }
 
    public void Update(IEnumerable<KeyValuePair<string, object>> values, Dictionary<Type, Dictionary<string, string>> persistentValues)
@@ -103,12 +104,12 @@ class DocumentDb : IDocumentDb
 
    public IEnumerable<TDocument> GetAll<TDocument>(IEnumerable<Guid> ids) where TDocument : IHasPersistentIdentity<Guid>
    {
-      var storedList = _persistenceLayer.GetAll(ids, AcceptableTypeIds(typeof(TDocument)));
+      var storedList = _persistenceLayer.GetAll(ids, AcceptableTypeIds<TDocument>());
 
       return storedList.Select(Deserialize<TDocument>);
    }
 
-   public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _persistenceLayer.GetAllIds(AcceptableTypeIds(typeof(T)));
+   public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _persistenceLayer.GetAllIds(AcceptableTypeIds<T>());
 
 
    [return:NotNull]TDocument Deserialize<TDocument>(IDocumentDbPersistenceLayer.ReadRow stored) =>

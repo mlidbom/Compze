@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
-using Composable.GenericAbstractions;
-using Composable.SystemCE;
+using Composable.Functional;
+using Composable.Logging;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
@@ -73,8 +73,17 @@ partial class Inbox
                               _messageStorage.MarkAsFailed(TransportMessage);
                            }
 
-                           _taskCompletionSource.ScheduleException(exception);
-                           _coordinator.Failed(this, exception);
+                           try { _taskCompletionSource.ScheduleException(exception); }
+                           catch(Exception e)
+                           {
+                              this.Log().Error(e);
+                           }
+
+                           try { _coordinator.Failed(this, exception); }
+                           catch(Exception e)
+                           {
+                              this.Log().Error(e);
+                           }
                            return;
                         }
                      }
@@ -113,13 +122,13 @@ partial class Inbox
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
                      commandHandler((IAtMostOnceHypermediaCommand)message);
-                     return VoidCE.Instance; //Todo:Properly handle commands with and without return values
+                     return Unit.Instance; //Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.ExactlyOnceCommand => message =>
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
                      commandHandler((IExactlyOnceCommand)message);
-                     return VoidCE.Instance;//Todo:Properly handle commands with and without return values
+                     return Unit.Instance;//Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.NonTransactionalQuery => actualMessage =>
                   {

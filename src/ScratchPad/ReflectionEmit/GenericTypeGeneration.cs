@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using Composable.SystemCE.ReflectionCE;
 using Composable.SystemCE.ReflectionCE.EmitCE;
 using Composable.SystemCE.ThreadingCE;
@@ -29,7 +28,7 @@ public class Example
       var genericWrapperEventType = CreateGenericWrapperEventType(typeof(IUserWrapperEvent<>));
 
       //instantiate a concrete version.
-      Type wrapperEventIUserEvent = genericWrapperEventType.MakeGenericType(typeof(IUserEvent));
+      var wrapperEventIUserEvent = genericWrapperEventType.MakeGenericType(typeof(IUserEvent));
 
       var constructor = (Func<IUserEvent, IUserWrapperEvent<IUserEvent>>)Constructor.Compile.ForReturnType(wrapperEventIUserEvent).WithArgumentTypes(typeof(IUserEvent));
 
@@ -62,13 +61,13 @@ public class Example
 
          var genericWrapperEventType = AssemblyBuilderCE.Module.Update(module =>
          {
-            TypeBuilder wrapperEventBuilder = module.DefineType(
+            var wrapperEventBuilder = module.DefineType(
                name: $"{wrapperEventType}_ilgen_impl",
                attr: TypeAttributes.Public,
                parent: null,
                interfaces: [wrapperEventType]);
 
-            GenericTypeParameterBuilder wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
+            var wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
 
             wrappedEventTypeParameter.SetInterfaceConstraints(requiredEventInterface);
 

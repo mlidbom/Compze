@@ -1,8 +1,8 @@
 ﻿using AccountManagement.API;
 using AccountManagement.Domain;
+using Composable.Functional;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
-using Composable.SystemCE.LinqCE;
 
 namespace AccountManagement.UserStories.Scenarios;
 
@@ -13,7 +13,7 @@ class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
    public string NewEmail = TestData.Emails.CreateUnusedEmail();
    public readonly Email OldEmail;
 
-   public ChangeAccountEmailScenario WithNewEmail(string newEmail) => this.Mutate(it => it.NewEmail = newEmail);
+   public ChangeAccountEmailScenario WithNewEmail(string newEmail) => this.mutate(it => it.NewEmail = newEmail);
 
 
    public AccountResource Account { get; private set; }

@@ -82,11 +82,8 @@ class MessageHandlerRegistry : IMessageHandlerRegistrar, IMessageHandlerRegistry
 
    public Func<IQuery<object>, object> GetQueryHandler(Type queryType) => _queryHandlers[queryType].HandlerMethod;
 
-   public IReadOnlyList<Action<IEvent>> GetEventHandlers(Type eventType)
-   {
-      //performance: Use static caching trick.
-      return _eventHandlers.Where(it => it.Key.IsAssignableFrom(eventType)).SelectMany(it => it.Value).ToList();
-   }
+   //performance: Use static caching trick.
+   public IReadOnlyList<Action<IEvent>> GetEventHandlers(Type eventType) => _eventHandlers.Where(it => it.Key.IsAssignableFrom(eventType)).SelectMany(it => it.Value).ToList();
 
    public Func<IStrictlyLocalQuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>
    {

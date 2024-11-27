@@ -55,8 +55,9 @@ public static class TimeAsserter
                                                                             string description = "",
                                                                             uint maxTries = MaxTriesDefault,
                                                                             [InstantHandle] Action? setup = null,
-                                                                            [InstantHandle] Action? tearDown = null) =>
-      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries).NoMarshalling();
+                                                                            [InstantHandle] Action? tearDown = null,
+                                                                            [InstantHandle] Func<Task>? tearDownAsync = null) =>
+      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync).CaF();
 
    static TReturnValue InternalExecute<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                      int iterations,
@@ -75,7 +76,8 @@ public static class TimeAsserter
                                                                       string description,
                                                                       [InstantHandle] Action? setup,
                                                                       [InstantHandle] Action? tearDown,
-                                                                      uint maxTries = MaxTriesDefault) where TReturnValue : StopwatchCE.TimedExecutionSummary
+                                                                      uint maxTries = MaxTriesDefault,
+                                                                      [InstantHandle] Func<Task>? tearDownAsync = null) where TReturnValue : StopwatchCE.TimedExecutionSummary
    {
       Assert.Argument.Assert(maxTries > 0);
       maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
@@ -89,23 +91,36 @@ public static class TimeAsserter
       for(var tries = 1; tries <= maxTries; tries++)
       {
          setup?.Invoke();
-         using var _ = DisposableCE.Create(() => tearDown?.Invoke());
-         var executionSummary = await runScenario().NoMarshalling();
 
-         var failureMessage = GetFailureMessage(executionSummary, maxAverage, maxTotal);
-         if(failureMessage.Length > 0)
+         try
          {
-            if(tries >= maxTries) throw new TimeOutException(failureMessage);
-            var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds();//Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
-            ConsoleCE.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
-            Thread.Sleep(waitTime);
-            continue;
-         }
+            var executionSummary = await runScenario().CaF();
 
-         PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
-         ConsoleCE.WriteImportantLine("DONE");
-         ConsoleCE.WriteLine();
-         return executionSummary;
+            var failureMessage = GetFailureMessage(executionSummary, maxAverage, maxTotal);
+            if(failureMessage.Length > 0)
+            {
+               if(tries >= maxTries) throw new TimeOutException(failureMessage);
+               var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
+               ConsoleCE.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               Thread.Sleep(waitTime);
+               continue;
+            }
+
+            PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
+            ConsoleCE.WriteImportantLine("DONE");
+            ConsoleCE.WriteLine();
+            return executionSummary;
+         }
+         finally
+         {
+            if(tearDownAsync != null)
+            {
+               await tearDownAsync().CaF();
+            }else if(tearDown != null)
+            {
+               tearDown();
+            }
+         }
       }
 
       throw new Exception("Unreachable");
@@ -113,7 +128,7 @@ public static class TimeAsserter
 
    static string GetFailureMessage(StopwatchCE.TimedExecutionSummary executionSummary, TimeSpan? maxAverage, TimeSpan? maxTotal)
    {
-      string failureMessage = "";
+      var failureMessage = "";
       if(maxTotal.HasValue && executionSummary.Total > maxTotal.Value)
       {
          failureMessage = $"Total:{executionSummary.Total.FormatReadable()} {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
@@ -127,13 +142,13 @@ public static class TimeAsserter
 
    static void PrintSummary(StopwatchCE.TimedExecutionSummary executionSummary, int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal)
    {
-      string maxAverageReport = maxAverage == null
-                                   ? ""
-                                   : $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
+      var maxAverageReport = maxAverage == null
+                                ? ""
+                                : $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
 
-      string maxTotalReport = maxTotal == null
-                                 ? ""
-                                 : $" {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
+      var maxTotalReport = maxTotal == null
+                              ? ""
+                              : $" {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
 
       if(iterations > 1)
       {
@@ -158,7 +173,7 @@ Individual execution times
       }
    }
 
-   static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)((percent.TotalMilliseconds / of.TotalMilliseconds) * 100)}%";
+   static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
 
    public class TimeOutException : Exception
    {

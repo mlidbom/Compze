@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
 namespace Composable.Persistence.PgSql.SystemExtensions;
@@ -15,7 +15,6 @@ interface IPgSqlConnectionPool : IDbConnectionPool<IComposableNpgsqlConnection, 
    class PgSqlConnectionPool : IPgSqlConnectionPool
    {
       readonly OptimizedLazy<IDbConnectionPool<IComposableNpgsqlConnection, NpgsqlCommand>> _pool;
-      IDbConnectionPool<IComposableNpgsqlConnection, NpgsqlCommand> Pool => _pool.Value;
 
       public PgSqlConnectionPool(string connectionString) : this(() => connectionString) {}
 
@@ -32,8 +31,8 @@ interface IPgSqlConnectionPool : IDbConnectionPool<IComposableNpgsqlConnection, 
             });
       }
 
-      public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableNpgsqlConnection, Task<TResult>> func) =>
-         Pool.UseConnectionAsyncFlex(syncOrAsync, func);
+      public TResult UseConnection<TResult>(Func<IComposableNpgsqlConnection, TResult> func) => _pool.Value.UseConnection(func);
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<IComposableNpgsqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
    }

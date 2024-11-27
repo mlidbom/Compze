@@ -24,7 +24,7 @@ public static class DB2PersistenceLayerRegistrar
       if(container.RunMode.IsTesting)
       {
          container.Register(Singleton.For<DB2DatabasePool>()
-                                     .CreatedBy(((IConfigurationParameterProvider _) => new DB2DatabasePool()))
+                                     .CreatedBy((IConfigurationParameterProvider _) => new DB2DatabasePool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(

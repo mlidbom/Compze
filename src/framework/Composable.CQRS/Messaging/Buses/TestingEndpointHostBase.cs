@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Composable.DependencyInjection;
 using Composable.Logging;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Refactoring.Naming;
+using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses;
 
 public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-   readonly ILogger _log = Logger.For<TestingEndpointHostBase>();
-
    readonly List<Exception> _expectedExceptions = [];
    public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => GlobalBusStateTracker = new GlobalBusStateTracker();
 
@@ -20,12 +21,12 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
                                                                    .Select(it => it.Address!)
                                                                    .ToList();
 
-   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) { Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride)); }
+   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride));
    public IEndpoint RegisterTestingEndpoint(string? name = null, EndpointId? id = null, Action<IEndpointBuilder>? setup = null)
    {
       var endpointId = id ?? new EndpointId(Guid.NewGuid());
       name ??= $"TestingEndpoint-{endpointId.GuidValue}";
-      setup ??= (_ => {});
+      setup ??= _ => {};
       return RegisterEndpoint(name, endpointId, setup);
    }
 
@@ -53,23 +54,23 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    }
 
    bool _disposed;
-   protected override void Dispose(bool disposing) => _log.ExceptionsAndRethrow(() =>
+   protected override async ValueTask DisposeAsync(bool disposing)
    {
       if(!_disposed)
       {
          _disposed = true;
-         WaitForEndpointsToBeAtRest();
+         this.Log().LogAndSuppressExceptions(() => WaitForEndpointsToBeAtRest(timeoutOverride:5.Seconds()));
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
-         base.Dispose(disposing);
+         await base.DisposeAsync(disposing).CaF();
 
          if(unHandledExceptions.Any())
          {
-            throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions.ToArray());
+            throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions);
          }
       }
-   });
+   }
 
    List<Exception> GetThrownExceptions() => GlobalBusStateTracker.GetExceptions().ToList();
 }

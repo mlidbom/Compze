@@ -29,10 +29,7 @@ partial class DocumentDbSession
       bool ScheduledForRemoval => IsInBackingStore && IsDeleted;
       bool ScheduledForUpdate => IsInBackingStore && !IsDeleted;
 
-      public void Delete()
-      {
-         IsDeleted = true;
-      }
+      public void Delete() => IsDeleted = true;
 
       public void Save(object document)
       {

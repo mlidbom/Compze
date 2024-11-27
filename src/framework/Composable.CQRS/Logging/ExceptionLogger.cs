@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Logging;
@@ -17,6 +16,18 @@ static class ExceptionLogger
       {
          log.Error(e);
          throw;
+      }
+   }
+
+   internal static void LogAndSuppressExceptions(this ILogger log, Action action)
+   {
+      try
+      {
+         action();
+      }
+      catch(Exception e)
+      {
+         log.Error(e);
       }
    }
 
@@ -37,7 +48,7 @@ static class ExceptionLogger
    {
       try
       {
-         await action().NoMarshalling();
+         await action().CaF();
       }
       catch(Exception e)
       {

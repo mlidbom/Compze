@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Linq;
 using Composable.Logging;
 using Composable.Persistence.EventStore;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
 using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.LinqCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
 using FluentAssertions;
 using JetBrains.Annotations;
-using NCrunch.Framework;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Composable.Tests.Serialization;
@@ -66,14 +59,14 @@ public class NewtonSoftEventStoreEventSerializerTests
          aggregateVersion:  2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
-      TestEvent eventWithOnlySubclassValues = new TestEvent("Test1", "Test2")
-                                              {
-                                                 UtcTimeStamp = DateTime.MinValue
-                                              };
+      var eventWithOnlySubclassValues = new TestEvent("Test1", "Test2")
+                                        {
+                                           UtcTimeStamp = DateTime.MinValue
+                                        };
 
       var eventWithAllValuesJson = _eventSerializer.Serialize(eventWithAllValuesSet);
       var eventWithOnlySubclassValuesJson = _eventSerializer.Serialize(eventWithOnlySubclassValues);
-      TestEvent roundTripped = (TestEvent)_eventSerializer.Deserialize(typeof(TestEvent), eventWithAllValuesJson);
+      var roundTripped = (TestEvent)_eventSerializer.Deserialize(typeof(TestEvent), eventWithAllValuesJson);
 
       ConsoleCE.WriteLine(eventWithAllValuesJson);
 

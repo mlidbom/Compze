@@ -20,6 +20,6 @@ partial class Component : Root.Component<Component, RootEvent.Component.Implemen
 
    public string Name { get; private set; } = string.Empty;
    public IReadOnlyEntityCollection<Entity, Guid> Entities => _entities.Entities;
-   public void Rename(string name) { Publish(new RootEvent.Component.Implementation.Renamed(name)); }
+   public void Rename(string name) => Publish(new RootEvent.Component.Implementation.Renamed(name));
    public Component.Entity AddEntity(string name, Guid id) => _entities.AddByPublishing(new RootEvent.Component.Entity.Implementation.Created(id, name));
 }

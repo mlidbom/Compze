@@ -8,7 +8,6 @@ using Composable.Persistence.PgSql.SystemExtensions;
 using Npgsql;
 using NpgsqlTypes;
 using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Composable.Persistence.PgSql.EventStore;
 
@@ -62,10 +61,9 @@ FROM {Event.TableName}";
 
    public IReadOnlyList<EventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
-      IReadOnlyList<EventDataRow> GetHistory()
-      {
-         return _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                              command => command.SetCommandText($@"
+      IReadOnlyList<EventDataRow> GetHistory() =>
+         _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                       command => command.SetCommandText($@"
 
 {CreateSelectClause()} 
 WHERE {Event.AggregateId} = @{Event.AggregateId}
@@ -73,13 +71,12 @@ WHERE {Event.AggregateId} = @{Event.AggregateId}
     AND {Event.EffectiveVersion} > 0
 ORDER BY {Event.ReadOrder} ASC;
 ")
-                                                                .AddParameter(Event.AggregateId, aggregateId)
-                                                                .AddParameter("CachedVersion", startAfterInsertedVersion)
-                                                                .PrepareStatement()
-                                                                .ExecuteReaderAndSelect(ReadDataRow)
-                                                                .SkipWhile(it => it.StorageInformation.InsertedVersion <= startAfterInsertedVersion)
-                                                                .ToList());
-      }
+                                                         .AddParameter(Event.AggregateId, aggregateId)
+                                                         .AddParameter("CachedVersion", startAfterInsertedVersion)
+                                                         .PrepareStatement()
+                                                         .ExecuteReaderAndSelect(ReadDataRow)
+                                                         .SkipWhile(it => it.StorageInformation.InsertedVersion <= startAfterInsertedVersion)
+                                                         .ToList());
 
       if(takeWriteLock)
       {

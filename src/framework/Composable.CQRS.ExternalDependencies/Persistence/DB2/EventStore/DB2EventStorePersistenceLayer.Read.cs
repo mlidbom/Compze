@@ -6,7 +6,6 @@ using Composable.Persistence.EventStore.PersistenceLayer;
 using Composable.Persistence.DB2.SystemExtensions;
 using IBM.Data.DB2.Core;
 using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Composable.Persistence.DB2.EventStore;
 

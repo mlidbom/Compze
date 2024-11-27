@@ -1,8 +1,8 @@
 using System;
+using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
 using MySql.Data.MySqlClient;
 using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
 
@@ -19,14 +19,14 @@ sealed class MySqlDatabasePool : DatabasePool
    public MySqlDatabasePool()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                                ?? "Server=localhost;Database=mysql;Uid=root;Pwd=;";
+                                ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";
 
       _masterConnectionPool = IMySqlConnectionPool.CreateInstance(masterConnectionString);
       _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new MySqlConnectionStringBuilder(masterConnectionString));
    }
 
    protected override string ConnectionStringFor(Database db)
-      => _connectionStringBuilder.Update(it => it.Mutate(me =>
+      => _connectionStringBuilder.Update(it => it.mutate(me =>
       {
          me.Database = db.Name;
          me.MinimumPoolSize = 1;

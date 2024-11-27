@@ -33,8 +33,5 @@ public class ExceptionExtensionsTests
    }
 
    [Test]
-   public void GetRootCauseExceptionShouldReturnMostNestedException()
-   {
-      _secondNestingException.GetRootCauseException().Should().Be(_originalException);
-   }
+   public void GetRootCauseExceptionShouldReturnMostNestedException() => _secondNestingException.GetRootCauseException().Should().Be(_originalException);
 }

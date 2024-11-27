@@ -2,6 +2,7 @@
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable InconsistentNaming
+#pragma warning disable CA1715 //The naming without I is very much a thought out design
 
 namespace AccountManagement.Domain.Events;
 

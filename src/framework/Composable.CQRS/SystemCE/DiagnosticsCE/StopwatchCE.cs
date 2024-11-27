@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Composable.SystemCE.ThreadingCE;
@@ -18,7 +17,8 @@ public static class StopwatchCE
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    internal static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
-   internal static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action).NoMarshalling();
+
+   internal static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action).CaF();
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    static TimeSpan TimeExecution(this Stopwatch @this, [InstantHandle] Action action)
@@ -34,7 +34,7 @@ public static class StopwatchCE
    {
       @this.Reset();
       @this.Start();
-      await action().NoMarshalling();
+      await action().CaF();
       return @this.Elapsed;
    }
 
@@ -46,22 +46,11 @@ public static class StopwatchCE
                      {
                         for(var i = 0; i < iterations; i++)
                         {
-                           await action().NoMarshalling();
+                           await action().CaF();
                         }
-                     }).NoMarshalling();
+                     }).CaF();
 
       return new TimedExecutionSummary(iterations, total);
-   }
-
-   internal static async Task<TimeSpan> TimeExecutionFlexAsync(SyncOrAsync syncOrAsync, [InstantHandle] Func<SyncOrAsync, Task> syncOrAsyncAction)
-   {
-      if(syncOrAsync == SyncOrAsync.Async)
-      {
-         return await TimeExecutionAsync(syncOrAsyncAction.AsAsync()).NoMarshalling();
-      } else
-      {
-         return TimeExecution(syncOrAsyncAction.AsSync());
-      }
    }
 
    // ReSharper disable once MethodOverloadWithOptionalParameter
@@ -94,9 +83,9 @@ public static class StopwatchCE
          () => Parallel.For(fromInclusive: 0,
                             toExclusive: iterations,
                             body: _ => action(),
-                            parallelOptions: new ParallelOptions {MaxDegreeOfParallelism = maxDegreeOfParallelism}));
+                            parallelOptions: new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }));
 
-      return new TimedExecutionSummary(iterations,  total);
+      return new TimedExecutionSummary(iterations, total);
    }
 
    public static TimedThreadedExecutionSummary TimeExecutionThreaded([InstantHandle] Action action, int iterations = 1, int maxDegreeOfParallelism = -1)
@@ -121,7 +110,7 @@ public static class StopwatchCE
                                var timing = TimedAction();
                                individual.Push(timing);
                             },
-                            parallelOptions: new ParallelOptions {MaxDegreeOfParallelism = maxDegreeOfParallelism}));
+                            parallelOptions: new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }));
 
       return new TimedThreadedExecutionSummary(iterations, individual.ToList(), total);
    }
@@ -142,6 +131,7 @@ public static class StopwatchCE
    public class TimedThreadedExecutionSummary : TimedExecutionSummary
    {
       readonly string _description;
+
       public TimedThreadedExecutionSummary(int iterations, IReadOnlyList<TimeSpan> individualExecutionTimes, TimeSpan total, string description = "") : base(iterations, total)
       {
          _description = description;

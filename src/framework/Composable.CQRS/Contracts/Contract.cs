@@ -93,7 +93,7 @@ public static class Contract
 #pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
    static void ArgumentNotNull(params (object? Argument, string Name)[] arguments)
    {
-      for(int i = 0; i < arguments.Length; i++)
+      for(var i = 0; i < arguments.Length; i++)
       {
          if(arguments[i].Argument is null)
          {
@@ -104,7 +104,7 @@ public static class Contract
 
    static void ArgumentNotNullOrDefault(params (object? Value, string Name)[] arguments)
    {
-      for(int i = 0; i < arguments.Length; i++)
+      for(var i = 0; i < arguments.Length; i++)
       {
          if(NullOrDefaultTester<object>.IsNullOrDefault(arguments[i].Value))
          {
@@ -115,7 +115,7 @@ public static class Contract
 
    static void ArgumentNotNullOrEmpty(params (string? Value, string Name)[] arguments)
    {
-      for(int i = 0; i < arguments.Length; i++)
+      for(var i = 0; i < arguments.Length; i++)
       {
          if(string.IsNullOrEmpty(arguments[i].Value))
          {
@@ -126,7 +126,7 @@ public static class Contract
 
    static void ArgumentNotNullEmptyOrWhitespace(params (string? Value, string Name)[] arguments)
    {
-      for(int i = 0; i < arguments.Length; i++)
+      for(var i = 0; i < arguments.Length; i++)
       {
          if(arguments[i].Value.IsNullEmptyOrWhiteSpace())
          {

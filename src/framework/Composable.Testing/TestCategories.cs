@@ -4,7 +4,7 @@ using NUnit.Framework.Internal;
 namespace Composable.Testing;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class LongRunningAttribute : Attribute,
+public sealed class LongRunningAttribute : Attribute,
                                     NUnit.Framework.Interfaces.IApplyToTest
 {
    public void ApplyToTest(Test test)
@@ -12,7 +12,7 @@ public class LongRunningAttribute : Attribute,
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Assembly)]
-public class LevelOfParallelismCEAttribute : Attribute,
+public sealed class LevelOfParallelismCEAttribute : Attribute,
                                              NUnit.Framework.Interfaces.IApplyToTest
 {
    public void ApplyToTest(Test test)

@@ -11,7 +11,7 @@
   </Settings>
   <EngineModes>
     <EngineMode>
-      <Name>Run all tests automatically except Performance tests.</Name>
+      <Name>All but Performance</Name>
       <Settings>
         <TestsToExecuteAutomatically>DoesNotHaveCategory 'Performance'</TestsToExecuteAutomatically>
       </Settings>

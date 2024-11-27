@@ -10,7 +10,6 @@ using Composable.SystemCE;
 using MySql.Data.MySqlClient;
 using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
 using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Composable.Persistence.MySql.EventStore;
 
@@ -32,13 +31,10 @@ INSERT {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
 (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
 VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrder}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
 
-
-IF @{Event.ReadOrder} = '0.0000000000000000000' THEN
-
-    UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-    SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
-    WHERE {Event.EventId} = @{Event.EventId};
-END IF;
+UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
+WHERE {Event.EventId} = @{Event.EventId} 
+AND @{Event.ReadOrder} = '0.0000000000000000000';
 ")
                                     .AddParameter(Event.AggregateId, data.AggregateId)
                                     .AddParameter(Event.InsertedVersion, data.StorageInformation.InsertedVersion)

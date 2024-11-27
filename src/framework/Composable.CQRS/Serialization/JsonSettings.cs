@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+#pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
+#pragma warning disable CA2327 //Todo about this resides elsewhere search for CA2326 to find it
 
 namespace Composable.Serialization;
 

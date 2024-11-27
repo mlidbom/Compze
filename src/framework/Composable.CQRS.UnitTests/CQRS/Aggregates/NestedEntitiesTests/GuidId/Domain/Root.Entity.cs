@@ -23,7 +23,7 @@ partial class RemovableEntity : Root.RemovableEntity<RemovableEntity,
    public IReadOnlyEntityCollection<RemovableNestedEntity, Guid> Entities => _entities.Entities;
    readonly RemovableNestedEntity.CollectionManager _entities;
 
-   public void Rename(string name) { Publish(new RootEvent.Entity.Implementation.Renamed(name)); }
+   public void Rename(string name) => Publish(new RootEvent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootEvent.Entity.Implementation.Removed());
 
    public RemovableNestedEntity AddEntity(string name, Guid id)

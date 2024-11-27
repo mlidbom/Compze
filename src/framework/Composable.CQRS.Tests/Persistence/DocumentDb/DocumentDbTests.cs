@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Composable.DDD;
 using Composable.DependencyInjection;
 using Composable.DependencyInjection.Testing;
@@ -9,6 +10,7 @@ using Composable.Persistence.DocumentDb;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -735,19 +737,20 @@ class DocumentDbTests : DocumentDbTestsBase
 
    }
 
-   void InsertUsersInOtherDocumentDb(Guid userId)
+   async Task InsertUsersInOtherDocumentDb(Guid userId)
    {
-      using var cloneServiceLocator = ServiceLocator.Clone();
+      var cloneServiceLocator = ServiceLocator.Clone();
+      await using var serviceLocator = cloneServiceLocator.CaF();
       cloneServiceLocator.ExecuteTransactionInIsolatedScope(() => cloneServiceLocator.DocumentDbUpdater()
                                                                                      .Save(new User {Id = userId}));
    }
 
    [Test]
-   public void Can_get_document_of_previously_unknown_class_added_by_onother_documentDb_instance()
+   public async Task Can_get_document_of_previously_unknown_class_added_by_onother_documentDb_instance()
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      InsertUsersInOtherDocumentDb(userId);
+      await InsertUsersInOtherDocumentDb(userId).CaF();
 
       using(ServiceLocator.BeginScope())
       {
@@ -756,11 +759,11 @@ class DocumentDbTests : DocumentDbTestsBase
    }
 
    [Test]
-   public void Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance()
+   public async Task Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance()
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      InsertUsersInOtherDocumentDb(userId);
+      await InsertUsersInOtherDocumentDb(userId).CaF();
 
       using (ServiceLocator.BeginScope())
       {
@@ -769,11 +772,11 @@ class DocumentDbTests : DocumentDbTestsBase
    }
 
    [Test]
-   public void Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance_byId()
+   public async Task Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance_byId()
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      InsertUsersInOtherDocumentDb(userId);
+      await InsertUsersInOtherDocumentDb(userId).CaF();
 
       UseInScope(reader => reader.GetAll<User>(EnumerableCE.Create(userId))
                                  .Count()

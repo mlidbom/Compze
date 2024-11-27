@@ -16,7 +16,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
 
 [TestFixture]public class Activator_one_argument_constructor_performance_tests
 {
-   static readonly string _argument = "AnArgument";
+   const string Argument = "AnArgument";
 
    [UsedImplicitly] class Simple
    {
@@ -27,7 +27,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
 #pragma warning restore IDE0060 // Remove unused parameter
    }
 
-   [Test] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(_argument).Should().NotBe(null);
+   [Test] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument).Should().NotBe(null);
 
    [Test] public void _005_Constructs_1_00_000_instances_within_60_percent_of_normal_constructor_call()
    {
@@ -57,7 +57,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime.EnvMultiply(instrumented: 25, unoptimized:1.3));
    }
 
-   static void DynamicModuleConstruct() => Constructor.For<Simple>.WithArguments<string>.Instance(_argument);
+   static void DynamicModuleConstruct() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument);
 
    // ReSharper disable once ObjectCreationAsStatement
    static void DefaultConstructor() => FakeActivator.CreateWithDefaultConstructor();
@@ -68,13 +68,13 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
    static class FakeActivator
    {
       // ReSharper disable once ObjectCreationAsStatement
-      internal static void CreateWithDefaultConstructor() => new Simple(_argument);
+      internal static void CreateWithDefaultConstructor() => new Simple(Argument);
 
       internal static void CreateUsingActivatorCreateInstance() => Activator.CreateInstance(
          type: typeof(Simple),
          bindingAttr: BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public,
          binder: null,
-         args: [_argument],
+         args: [Argument],
          culture: null);
    }
 }

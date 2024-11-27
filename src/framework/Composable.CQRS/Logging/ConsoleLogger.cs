@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using Composable.Serialization;
+using Composable.Functional;
 using Composable.SystemCE;
-using Composable.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Composable.Logging;
+
+#pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
 
 enum LogLevel
 {
@@ -29,111 +25,58 @@ class ConsoleLogger : ILogger
    ConsoleLogger(Type type) => _type = type;
 
    public static ILogger Create(Type type) => new ConsoleLogger(type);
-   public ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type){_logLevel =  level};
-   public void Error(Exception exception, string? message)
+   public ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type) { _logLevel = level };
+
+   public Unit Error(Exception exception, string? message)
    {
       if(_logLevel >= LogLevel.Error)
       {
-         ConsoleCE.WriteLine($@"
-############################################# ERROR in : {_type.GetFullNameCompilable()} #############################################
-MESSAGE: {message} 
-EXCEPTION: {exception}
-
-{(exception is AggregateException aggregateException
-     ? $@"
-############################################# SERIALIZED AGGREGATE EXCEPTION #############################################
-{SerializeExceptions(aggregateException.InnerExceptions)}"
-     : $@"
-############################################# SERIALIZED EXCEPTION #############################################
-{SerializeException(exception)}")}
-
-############################################# END ERROR #############################################
-");
+         ConsoleCE.WriteLine(ExceptionMessageBuilder.BuildExceptionLogMessage(exception, _type, message));
       }
+
+      return Unit.Instance;
    }
 
-
-
-   static string SerializeExceptions(ReadOnlyCollection<Exception> exceptions) =>
-      exceptions.Select((exception, index) => $@"
-
-############################################# INNER EXCEPTION {index + 1} #############################################
-{SerializeException(exception)}
-############################################# END EXCEPTION {index + 1} #############################################
-
-").Join(string.Empty);
-
-   static string SerializeException(Exception exception)
-   {
-      try
-      {
-         return JsonConvert.SerializeObject(exception, Formatting.Indented, ExceptionSerializationSettings);
-      }
-      catch(Exception e)
-      {
-         return $"Serialization Failed with message: {e.Message}";
-      }
-   }
-
-   public void Warning(string message)
+   public Unit Warning(string message)
    {
       if(_logLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
+
+      return Unit.Instance;
    }
 
-   public void Warning(Exception exception, string message)
+   public Unit Warning(Exception exception, string message)
    {
       if(_logLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}, \n: Exception: {exception}");
       }
+
+      return Unit.Instance;
    }
 
-   public void Info(string message)
+   public Unit Info(string message)
    {
       if(_logLevel >= LogLevel.Info)
       {
          ConsoleCE.WriteLine($"INFO:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
+
+      return Unit.Instance;
    }
-   public void Debug(string message)
+
+   public Unit Debug(string message)
    {
       if(_logLevel >= LogLevel.Debug)
       {
          ConsoleCE.WriteLine($"DEBUG:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
+
+      return Unit.Instance;
    }
 
-   [StringFormatMethod(formatParameterName:"message")]
-   public void DebugFormat(string message, params object[] arguments) => StringCE.FormatInvariant(message, arguments);
-
-   static readonly JsonSerializerSettings ExceptionSerializationSettings =
-      new()
-      {
-         TypeNameHandling = TypeNameHandling.All,
-         ContractResolver = IgnoreStackTraces.Instance
-      };
-
-   class IgnoreStackTraces : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
-   {
-      public new static readonly IgnoreStackTraces Instance = new();
-      IgnoreStackTraces()
-      {
-         IgnoreSerializableInterface = true;
-         IgnoreSerializableAttribute = true;
-      }
-      protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-      {
-         var property = base.CreateProperty(member, memberSerialization);
-
-         if(property.PropertyName is nameof(Exception.StackTrace) or "StackTraceString")
-         {
-            property.Ignored = true;
-         }
-
-         return property;
-      }
-   }
+   [StringFormatMethod(formatParameterName: "message")]
+   public Unit DebugFormat(string message, params object[] arguments) => Unit.From(() => StringCE.FormatInvariant(message, arguments));
 }

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Message = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using D = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
@@ -14,6 +13,7 @@ partial class MsSqlOutboxPersistenceLayer
       //Performance: Why is the MessageId not the primary key? Are we worried about performance loss because of fragmentation because of non-sequential Guids? Is there a (performant and truly reliable) sequential-guid-generator we could use? How does it not being the clustered index impact row vs page etc locking?
       public static async Task EnsureTablesExistAsync(IMsSqlConnectionPool connectionFactory)
       {
+#pragma warning disable CA1849 //The warning is right, this is a blocking call in an async method. But if I make the async call it crashes!
          // ReSharper disable once MethodHasAsyncOverload | THis crashes with weird exception if called async so ...
          connectionFactory.ExecuteNonQuery($"""
 
@@ -45,7 +45,8 @@ partial class MsSqlOutboxPersistenceLayer
                                             END
 
                                             """);
-         await Task.CompletedTask.NoMarshalling();
+#pragma warning restore CA1849
+         await Task.CompletedTask.CaF();
       }
    }
 }

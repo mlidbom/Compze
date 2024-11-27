@@ -1,8 +1,8 @@
 using System;
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
+using Composable.Functional;
 using Composable.Messaging.Buses;
-using Composable.SystemCE.LinqCE;
 
 namespace AccountManagement.UserStories.Scenarios;
 
@@ -11,13 +11,13 @@ class RegisterAccountScenario : ScenarioBase<(AccountResource.Command.Register.R
    readonly IEndpoint _clientEndpoint;
 
    public Guid AccountId;
-   public String Email;
+   public string Email;
    public string Password;
 
 
-   public RegisterAccountScenario WithAccountId(Guid acountId) => this.Mutate(it => it.AccountId = acountId);
-   public RegisterAccountScenario WithEmail(string email) => this.Mutate(it => it.Email = email);
-   public RegisterAccountScenario WithPassword(string password) => this.Mutate(it => it.Password = password);
+   public RegisterAccountScenario WithAccountId(Guid acountId) => this.mutate(it => it.AccountId = acountId);
+   public RegisterAccountScenario WithEmail(string email) => this.mutate(it => it.Email = email);
+   public RegisterAccountScenario WithPassword(string password) => this.mutate(it => it.Password = password);
 
    public RegisterAccountScenario(IEndpoint clientEndpoint, string email = null, string password = TestData.Passwords.ValidPassword)
    {

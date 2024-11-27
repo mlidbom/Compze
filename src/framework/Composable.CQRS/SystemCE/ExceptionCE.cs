@@ -13,7 +13,7 @@ static class ExceptionCE
    public static IEnumerable<Exception> GetAllExceptionsInStack(this Exception exception)
    {
       Contract.ArgumentNotNull(exception, nameof(exception));
-      Exception? current = exception;
+      var current = exception;
       while (current != null)
       {
          yield return current;

@@ -7,7 +7,6 @@ using Composable.SystemCE.DiagnosticsCE;
 using Composable.SystemCE.LinqCE;
 using Composable.Testing;
 using Composable.Testing.Performance;
-using NCrunch.Framework;
 using Newtonsoft.Json;
 using NUnit.Framework;
 

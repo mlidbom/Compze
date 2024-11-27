@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.SystemCE.LinqCE;
+using Composable.Functional;
 
 namespace Composable.SystemCE.CollectionsCE.GenericCE;
 
@@ -9,14 +9,14 @@ static class ReadonlyCollectionsCE
    public static Dictionary<TKey, TValue> AddToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) {{key, value}};
 
    public static Dictionary<TKey, TValue> AddRangeToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, IEnumerable<KeyValuePair<TKey, TValue>> range) where TKey : notnull =>
-      new Dictionary<TKey, TValue>(@this).Mutate(me => me.AddRange(range));
+      new Dictionary<TKey, TValue>(@this).mutate(me => me.AddRange(range));
 
    public static List<T> AddToCopy<T>(this IReadOnlyList<T> @this, T item) => [..@this, item];
 
    public static HashSetCEx<T> AddToCopy<T>(this IReadonlySetCEx<T> @this, T item) => new(@this) {item};
 
    public static List<T> AddRangeToCopy<T>(this IReadOnlyList<T> @this, IEnumerable<T> items) =>
-      new List<T>(@this).Mutate(me => me.AddRange(items));
+      new List<T>(@this).mutate(me => me.AddRange(items));
 
    public static T[] AddToCopy<T>(this T[] @this, T itemToAdd)
    {

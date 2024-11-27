@@ -78,8 +78,8 @@ public class After_creating_two_databases_named_db1_and_db2 : DatabasePoolTest
       // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
       _manager.Invoking(action: _ => _manager.ConnectionStringFor(Db1))
               .Should().Throw<Exception>()
-              .Where(exceptionExpression: exception => exception.Message.ToLowerInvariant()
-                                                                .Contains("disposed"));
+              .Where(exceptionExpression: exception => exception.Message.ToUpperInvariant()
+                                                                .Contains("DISPOSED", StringComparison.InvariantCulture));
    }
 
    public After_creating_two_databases_named_db1_and_db2(string _) : base(_) {}

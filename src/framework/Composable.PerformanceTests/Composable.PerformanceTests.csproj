@@ -8,6 +8,10 @@
     <RootNamespace>Composable.Tests</RootNamespace>
 
     <NuGetAuditMode>direct</NuGetAuditMode>
+
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+
+    <AnalysisLevel>latest-all</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

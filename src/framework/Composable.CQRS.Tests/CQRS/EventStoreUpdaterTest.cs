@@ -33,7 +33,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
    class EventSpy
    {
       public IEnumerable<IExactlyOnceEvent> DispatchedMessages => _events.ToList();
-      public void Receive(IExactlyOnceEvent @event) { _events.Add(@event); }
+      public void Receive(IExactlyOnceEvent @event) => _events.Add(@event);
       readonly List<IExactlyOnceEvent> _events = [];
    }
 
@@ -68,11 +68,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
                      .Map<Composable.Tests.CQRS.IUserRegistered>("6a9b3276-cedc-4dae-a15c-4d386c935a48");
    }
 
-   [TearDown] public void TearDownTask()
-   {
-      _serviceLocator.Dispose();
-   }
-
+   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync().CaF();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IEventStoreUpdater> useSession)
       => _serviceLocator.ExecuteTransactionInIsolatedScope(
@@ -83,10 +79,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
          () => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
 
    [Test]
-   public void WhenFetchingAggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
-   {
-      UseInTransactionalScope(session => Assert.Throws<AggregateNotFoundException>(() => session.Get<User>(Guid.NewGuid())));
-   }
+   public void WhenFetchingAggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown() => UseInTransactionalScope(session => Assert.Throws<AggregateNotFoundException>(() => session.Get<User>(Guid.NewGuid())));
 
    [Test]
    public void CanSaveAndLoadAggregate()
@@ -435,15 +428,12 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
       var threadedIterations = 20;
       var delayEachTransactionBy = 1.Milliseconds();
 
-      void ReadUserHistory()
-      {
+      void ReadUserHistory() =>
          UseInTransactionalScope(session =>
          {
             ((IEventStoreReader)session).GetHistory(user.Id);
             Thread.Sleep(delayEachTransactionBy);
          });
-      }
-
 
       var singleThreadedExecutionTime = StopwatchCE.TimeExecution(ReadUserHistory, iterations: threadedIterations).Total;
 
@@ -498,13 +488,14 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
    }
 
    [Test]
-   public void InsertNewEventType_should_not_throw_exception_if_the_event_type_has_been_inserted_by_something_else()
+   public async Task InsertNewEventType_should_not_throw_exception_if_the_event_type_has_been_inserted_by_something_else()
    {
       User otherUser = null;
       User user = null;
-      void ChangeAnotherUsersEmailInOtherInstance()
+      async Task ChangeAnotherUsersEmailInOtherInstance()
       {
-         using var clonedServiceLocator = _serviceLocator.Clone();
+         var clonedServiceLocator = _serviceLocator.Clone();
+         await using var serviceLocator = clonedServiceLocator.CaF();
          clonedServiceLocator.ExecuteTransactionInIsolatedScope(() =>
          {
             // ReSharper disable once AccessToDisposedClosure
@@ -519,7 +510,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
       UseInTransactionalScope(session => user = User.Register(session, "email@email.se", "password", Guid.NewGuid()));
 
-      ChangeAnotherUsersEmailInOtherInstance();
+      await ChangeAnotherUsersEmailInOtherInstance().CaF();
       UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
 
       UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));
@@ -533,8 +524,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
       UseInTransactionalScope(session => session.Save(user));
 
-      void ChangeUserEmail(bool failOnPrepare)
-      {
+      void ChangeUserEmail(bool failOnPrepare) =>
          UseInTransactionalScope(session =>
          {
             if(failOnPrepare)
@@ -544,7 +534,6 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
             var loadedUser = session.Get<User>(user.Id);
             loadedUser.ChangeEmail("new@email.com");
          });
-      }
 
       AssertThrows.Exception<Exception>(() => ChangeUserEmail(failOnPrepare: true));
 
@@ -565,8 +554,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
       var getHistorySection = GatedCodeSection.WithTimeout(2.Seconds());
       var changeEmailSection = GatedCodeSection.WithTimeout(2.Seconds());
 
-      void UpdateEmail()
-      {
+      void UpdateEmail() =>
          UseInScope(session =>
          {
             using(getHistorySection.Enter())
@@ -582,7 +570,6 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
                }
             });
          });
-      }
 
       var threads = 2;
       var tasks = 1.Through(threads).Select(_ => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
@@ -618,8 +605,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
 
       var changeEmailSection = GatedCodeSection.WithTimeout(20.Seconds());
       var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(20.Seconds());
-      void UpdateEmail()
-      {
+      void UpdateEmail() =>
          UseInTransactionalScope(session =>
          {
             using(changeEmailSection.Enter())
@@ -629,7 +615,6 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest
                userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
             }
          });
-      }
 
       var threads = 2;
 

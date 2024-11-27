@@ -7,7 +7,6 @@ using Composable.DependencyInjection;
 using Composable.Logging;
 using Composable.Messaging.Buses.Implementation;
 using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Messaging.Buses;
@@ -17,10 +16,8 @@ public class EndpointHost : IEndpointHost
    readonly IRunMode _mode;
    readonly Func<IRunMode, IDependencyInjectionContainer> _containerFactory;
    bool _disposed;
-   protected List<IEndpoint> Endpoints { get; } = [];
+   protected IList<IEndpoint> Endpoints { get; } = [];
    internal IGlobalBusStateTracker GlobalBusStateTracker;
-
-   readonly ILogger _log = Logger.For<EndpointHost>();
 
    protected EndpointHost(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory)
    {
@@ -56,37 +53,43 @@ public class EndpointHost : IEndpointHost
 
    bool _isStarted;
 
-   public async Task StartAsync() => await _log.ExceptionsAndRethrowAsync(async () =>
+   public async Task StartAsync()
    {
-      Assert.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
-      _isStarted = true;
+      try
+      {
+         Assert.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
+         _isStarted = true;
 
-      await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).NoMarshalling();
-      await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).NoMarshalling();
-   }).NoMarshalling();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).WithAggregateExceptions().CaF();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).WithAggregateExceptions().CaF();
+      }catch(Exception e)
+      {
+         this.Log().Error(e, "Failed to start host");
+         await DisposeAsync().CaF();
+         throw;
+      }
+   }
 
    public void Start() => StartAsync().WaitUnwrappingException();
 
-   protected virtual void Dispose(bool disposing) => _log.ExceptionsAndRethrow(() =>
+   protected virtual async ValueTask DisposeAsync(bool disposing)
    {
       if(!_disposed)
       {
          _disposed = true;
          if(_isStarted)
          {
-
-            Assert.State.Assert(_isStarted);
             _isStarted = false;
-            Endpoints.Where(endpoint => endpoint.IsRunning).ForEach(endpoint => endpoint.Stop());
+            await Task.WhenAll(Endpoints.Where(endpoint => endpoint.IsRunning).Select(endpoint => endpoint.StopAsync())).WithAggregateExceptions().CaF();
          }
 
-         Endpoints.ForEach(endpoint => endpoint.Dispose());
+         await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().CaF();
       }
-   });
+   }
 
-   public void Dispose()
+   public async ValueTask DisposeAsync()
    {
-      Dispose(true);
+      await DisposeAsync(true).WithAggregateExceptions().CaF();
       GC.SuppressFinalize(this);
    }
 }

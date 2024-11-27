@@ -4,7 +4,6 @@ using Composable.Contracts;
 using Composable.Messaging.Buses.Implementation;
 using Composable.Persistence.Common.AdoCE;
 using Composable.Persistence.DB2.SystemExtensions;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Schema =  Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
@@ -91,5 +90,5 @@ WHERE {Schema.MessageId} = @{Schema.MessageId}
                    .ExecuteNonQuery());
    }
 
-   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).NoMarshalling();
+   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).CaF();
 }

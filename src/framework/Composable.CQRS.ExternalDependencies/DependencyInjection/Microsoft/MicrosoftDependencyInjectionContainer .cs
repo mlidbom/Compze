@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.SystemCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Composable.DependencyInjection.Microsoft;
@@ -62,12 +64,14 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      _serviceProvider ??= _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-      return this;
+      get
+      {
+         _serviceProvider ??= _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+         return this;
+      }
    }
-
 
    IServiceProvider CurrentProvider()
    {
@@ -89,7 +93,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>()
    {
-      if(_isDisposed) throw new ObjectDisposedException(nameof(MicrosoftDependencyInjectionContainer));
+      ObjectDisposedException.ThrowIf(_isDisposed, typeof(MicrosoftDependencyInjectionContainer));
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
@@ -115,5 +119,20 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
       _isDisposed = true;
       (_serviceProvider as IDisposable)?.Dispose();
       _serviceProvider = null;
+   }
+
+   public async ValueTask DisposeAsync()
+   {
+      Contract.Assert.That(_scopeCache.Value == null, "Scopes must be disposed before the container");
+      if(!_isDisposed)
+      {
+         _isDisposed = true;
+         if(_serviceProvider != null)
+         {
+            await ((IAsyncDisposable)_serviceProvider).DisposeAsync().CaF();
+         }
+         _serviceProvider = null;
+      }
+      await Task.CompletedTask.CaF();
    }
 }

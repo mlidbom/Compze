@@ -24,7 +24,7 @@ public static class OraclePersistenceLayerRegistrar
       if(container.RunMode.IsTesting)
       {
          container.Register(Singleton.For<OracleDatabasePool>()
-                                     .CreatedBy(((IConfigurationParameterProvider _) => new OracleDatabasePool()))
+                                     .CreatedBy((IConfigurationParameterProvider _) => new OracleDatabasePool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(

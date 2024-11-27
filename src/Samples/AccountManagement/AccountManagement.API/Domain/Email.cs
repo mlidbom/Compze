@@ -27,8 +27,9 @@ public class Email : ValueObject<Email>
    {
       if(string.IsNullOrWhiteSpace(emailAddress)) return false;
       if(!BasicEmailValidationRegex.IsMatch(emailAddress)) return false;
-      if(emailAddress.Contains("..")) return false;
-      if(emailAddress.Contains("@.") || emailAddress.Contains(".@")) return false;
+      if(emailAddress.Contains("..", StringComparison.Ordinal)) return false;
+      // ReSharper disable once ConvertIfStatementToReturnStatement
+      if(emailAddress.Contains("@.", StringComparison.Ordinal) || emailAddress.Contains(".@", StringComparison.Ordinal)) return false;
 
       return true;
    }

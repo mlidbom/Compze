@@ -32,7 +32,7 @@ class CommandScheduler : IDisposable
    public async Task StartAsync()
    {
       _scheduledMessagesTimer = new Timer(callback: _ => SendDueCommands(), state: null, dueTime: 0.Seconds(), period: 100.Milliseconds());
-      await Task.CompletedTask.NoMarshalling();
+      await Task.CompletedTask.CaF();
    }
 
    public void Schedule(DateTime sendAt, IExactlyOnceCommand message) => _guard.Update(() =>
@@ -54,7 +54,7 @@ class CommandScheduler : IDisposable
 
    public void Dispose() => Stop();
 
-   public void Stop() { _scheduledMessagesTimer?.Dispose(); }
+   public void Stop() => _scheduledMessagesTimer?.Dispose();
 
    class ScheduledCommand
    {

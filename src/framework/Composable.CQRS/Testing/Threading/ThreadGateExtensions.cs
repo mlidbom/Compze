@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Composable.Contracts;
 using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing.Transactions;
 
@@ -37,6 +36,7 @@ static class ThreadGateExtensions
 
    public static IThreadGate AwaitQueueLengthEqualTo(this IThreadGate @this, int length) => @this.Await(() => @this.Queued == length);
    public static IThreadGate AwaitQueueLengthEqualTo(this IThreadGate @this, int length, TimeSpan timeout) => @this.Await(timeout, () => @this.Queued == length);
+   public static IThreadGate AwaitQueueLengthAtLeast(this IThreadGate @this, int length, TimeSpan timeout) => @this.Await(timeout, () => @this.Queued >= length);
    public static bool TryAwaitQueueLengthEqualTo(this IThreadGate @this, int length, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Queued == length);
 
    public static IThreadGate AwaitPassedThroughCountEqualTo(this IThreadGate @this, int length) => @this.Await(() => @this.Passed == length);

@@ -16,7 +16,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
    readonly IThreadShared<State> _state = ThreadShared.WithDefaultTimeout(new State());
    readonly TransactionLockManager _transactionLockManager = new();
 
-   public InMemoryEventStorePersistenceLayer() { _state.Update(state => state.Init(_state)); }
+   public InMemoryEventStorePersistenceLayer() => _state.Update(state => state.Init(_state));
 
    public void InsertSingleAggregateEvents(IReadOnlyList<EventDataRow> events) =>
       _transactionLockManager.WithTransactionWideLock(
@@ -130,19 +130,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
       List<EventDataRow> _events = [];
       IThreadShared<State> _state = null!;
 
-      public IReadOnlyList<EventDataRow> Events
-      {
-         get
-         {
-            if(TransactionalOverlay == null)
-            {
-               return _events;
-            } else
-            {
-               return _events.Concat(TransactionalOverlay).ToList();
-            }
-         }
-      }
+      public IReadOnlyList<EventDataRow> Events => TransactionalOverlay == null ? _events : _events.Concat(TransactionalOverlay).ToList();
 
       readonly Dictionary<string, List<EventDataRow>> _overlays = new();
 

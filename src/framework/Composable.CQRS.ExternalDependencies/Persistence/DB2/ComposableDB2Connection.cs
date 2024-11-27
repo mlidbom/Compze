@@ -1,11 +1,10 @@
-using System;
 using System.Data.Common;
 using System.Threading.Tasks;
 using System.Transactions;
 using Composable.Contracts;
+using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.SystemCE.TransactionsCE;
@@ -40,12 +39,15 @@ interface IComposableDB2Connection : IPoolableConnection, IComposableDbConnectio
                }));
       }
 
-      async Task IPoolableConnection.OpenAsyncFlex(SyncOrAsync syncOrAsync)
+      public void Open()
       {
-         await syncOrAsync.Run(
-            () => Connection.Open(),
-            () => Connection.OpenAsync()).NoMarshalling();
+         Connection.Open();
+         _transactionParticipant.Value.EnsureEnlistedInAnyAmbientTransaction();
+      }
 
+      public async Task OpenAsync()
+      {
+         await Connection.OpenAsync().CaF();
          _transactionParticipant.Value.EnsureEnlistedInAnyAmbientTransaction();
       }
 
@@ -56,7 +58,7 @@ interface IComposableDB2Connection : IPoolableConnection, IComposableDbConnectio
          Assert.State.Assert(Connection.IsOpen);
          _transactionParticipant.Value.EnsureEnlistedInAnyAmbientTransaction();
 
-         return Connection.CreateCommand().Mutate(it => it.Transaction = _db2Transaction);
+         return Connection.CreateCommand().mutate(it => it.Transaction = _db2Transaction);
       }
 
       public void Dispose()

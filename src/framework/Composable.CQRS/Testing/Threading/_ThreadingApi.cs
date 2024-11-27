@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Composable.Functional;
 
 namespace Composable.Testing.Threading;
 
 interface IThreadGateVisitor
 {
-   void AwaitPassThrough();
+   Unit AwaitPassThrough();
 }
 
 interface IThreadGate : IThreadGateVisitor

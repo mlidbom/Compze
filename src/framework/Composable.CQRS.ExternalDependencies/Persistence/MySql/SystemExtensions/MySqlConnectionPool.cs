@@ -3,14 +3,15 @@ using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 
 namespace Composable.Persistence.MySql.SystemExtensions;
 
 interface IMySqlConnectionPool : IDbConnectionPool<IComposableMySqlConnection, MySqlCommand>
 {
-   public static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-   public static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
+   static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
+   static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
    class MySqlConnectionPool : IMySqlConnectionPool
    {
@@ -29,9 +30,8 @@ interface IMySqlConnectionPool : IDbConnectionPool<IComposableMySqlConnection, M
             });
       }
 
-      public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMySqlConnection, Task<TResult>> func)
-         => _pool.Value.UseConnectionAsyncFlex(syncOrAsync, func);
-
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
+      public TResult UseConnection<TResult>(Func<IComposableMySqlConnection, TResult> func) => _pool.Value.UseConnection(func);
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<IComposableMySqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
    }
 }

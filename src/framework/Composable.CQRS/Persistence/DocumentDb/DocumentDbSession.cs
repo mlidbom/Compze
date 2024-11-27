@@ -5,7 +5,6 @@ using System.Linq;
 using System.Transactions;
 using Composable.Contracts;
 using Composable.DDD;
-using Composable.Logging;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
@@ -60,12 +59,10 @@ partial class DocumentDbSession : IDocumentDbSession
    DocumentItem GetDocumentItem(object key, Type documentType)
    {
       var documentKey = new DocumentKey(key, documentType);
+      if(_handledDocuments.TryGetValue(documentKey, out var doc)) return doc;
 
-      if(!_handledDocuments.TryGetValue(documentKey, out var doc))
-      {
-         doc = new DocumentItem(documentKey, _backingStore, _persistentValues);
-         _handledDocuments.Add(documentKey, doc);
-      }
+      doc = new DocumentItem(documentKey, _backingStore, _persistentValues);
+      _handledDocuments.Add(documentKey, doc);
 
       return doc;
    }
@@ -184,12 +181,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _backingStore.GetAllIds<T>();
 
-   public virtual void Dispose()
-   {
-      _usageGuard.AssertNoContextChangeOccurred(this);
-      //Can be called before the transaction commits....
-      //_idMap.Clear();
-   }
+   public virtual void Dispose() => _usageGuard.AssertNoContextChangeOccurred(this);
 
    public override string ToString() => $"{_id}: {GetType().FullName}";
 

@@ -11,7 +11,7 @@ namespace Composable.SystemCE.ReflectionCE;
 ///<summary>Provides high performance access to object fields and properties.</summary>
 static class MemberAccessorHelper
 {
-   static readonly IDictionary<Type, Func<Object, Object>[]> TypeFields = new ConcurrentDictionary<Type, Func<Object, Object>[]>();
+   static readonly IDictionary<Type, Func<object, object>[]> TypeFields = new ConcurrentDictionary<Type, Func<object, object>[]>();
 
    static Func<object, object> BuildFieldGetter(FieldInfo field)
    {
@@ -32,7 +32,7 @@ static class MemberAccessorHelper
    }
 
    ///<summary>Returns functions that when invoked will return the values of the fields an properties in an instance of the supplied type.</summary>
-   public static Func<Object, Object>[] GetFieldGetters(Type type)
+   public static Func<object, object>[] GetFieldGetters(Type type)
    {
       Contract.ArgumentNotNull(type, nameof(type));
 
@@ -44,7 +44,7 @@ static class MemberAccessorHelper
 
       if (!TypeFields.TryGetValue(type, out var fields))
       {
-         var newFields = new List<Func<Object, object>>();
+         var newFields = new List<Func<object, object>>();
          if (!type.IsPrimitive)
          {
             newFields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Select(BuildFieldGetter));
@@ -65,7 +65,7 @@ static class MemberAccessorHelper
 static class MemberAccessorHelper<T>
 {
    // ReSharper disable StaticFieldInGenericType
-   static readonly Func<Object, Object>[] Fields = MemberAccessorHelper.GetFieldGetters(typeof(T));
+   static readonly Func<object, object>[] Fields = MemberAccessorHelper.GetFieldGetters(typeof(T));
    // ReSharper restore StaticFieldInGenericType
 
    ///<summary>Returns functions that when invoked will return the values of the fields an properties in an instance of the supplied type.</summary>
@@ -73,10 +73,6 @@ static class MemberAccessorHelper<T>
    {
       Contract.ArgumentNotNull(type, nameof(type));
 
-      if(type == typeof(T))
-      {
-         return Fields;
-      }
-      return MemberAccessorHelper.GetFieldGetters(type);
+      return type == typeof(T) ? Fields : MemberAccessorHelper.GetFieldGetters(type);
    }
 }

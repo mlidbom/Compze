@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 namespace Composable.Persistence.EventStore.Aggregates;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-public class AllowPublicSettersAttribute : Attribute {}
+public sealed class AllowPublicSettersAttribute : Attribute {}
 
 static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
 {
@@ -70,7 +70,7 @@ List of problem members:{Environment.NewLine}{brokenMembers}{Environment.NewLine
    readonly ITypeMapper _typeMapper;
    public AggregateTypeValidator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
 
-   public void AssertIsValid<TAggregate>() { ValidatorFor<TAggregate>.AssertValid(_typeMapper); }
+   public void AssertIsValid<TAggregate>() => ValidatorFor<TAggregate>.AssertValid(_typeMapper);
 
    static class ValidatorFor<TAggregate>
    {

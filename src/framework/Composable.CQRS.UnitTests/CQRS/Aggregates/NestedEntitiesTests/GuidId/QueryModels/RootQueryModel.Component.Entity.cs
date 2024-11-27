@@ -1,11 +1,12 @@
 using System;
 using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using JetBrains.Annotations;
 
 namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
 partial class Component
 {
-   public class Entity : Component.RemovableNestedEntity<Entity,
+   [UsedImplicitly]public class Entity : Component.RemovableNestedEntity<Entity,
       Guid,
       RootEvent.Component.Entity.IRoot,
       RootEvent.Component.Entity.Created,

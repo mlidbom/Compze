@@ -11,10 +11,7 @@ namespace Composable.Persistence.InMemory.DependencyInjection;
 
 public static class InMemoryPersistenceLayerRegistrar
 {
-   public static void RegisterInMemoryPersistenceLayer(this IEndpointBuilder @this)
-   {
-      @this.Container.RegisterInMemoryPersistenceLayer(@this.Configuration.ConnectionStringName);
-   }
+   public static void RegisterInMemoryPersistenceLayer(this IEndpointBuilder @this) => @this.Container.RegisterInMemoryPersistenceLayer(@this.Configuration.ConnectionStringName);
 
    public static void RegisterInMemoryPersistenceLayer(this IDependencyInjectionContainer container, string _)
    {

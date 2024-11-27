@@ -29,7 +29,7 @@ class PluggableComponentsTestFixtureSource : IEnumerable<string>
          return File.ReadAllLines(TestUsingPluggableComponentCombinations)
                     .Select(it => it.Trim())
                     .Where(line => !string.IsNullOrEmpty(line))
-                    .Where(line => !line.StartsWith("#", StringComparison.InvariantCulture))
+                    .Where(line => !line.StartsWith('#'))
                     .ToArray();
       }
       catch(Exception e)

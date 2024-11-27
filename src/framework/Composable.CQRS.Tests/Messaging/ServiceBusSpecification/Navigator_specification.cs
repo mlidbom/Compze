@@ -7,6 +7,7 @@ using Composable.Messaging;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
 using Composable.Persistence.Common.DependencyInjection;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
@@ -53,13 +54,10 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await _host.StartAsync();
+      await _host.StartAsync().CaF();
    }
 
-   [TearDown] public void TearDown()
-   {
-      _host.Dispose();
-   }
+   [TearDown] public async Task TearDown() => await _host.DisposeAsync().CaF();
 
    [Test] public void Can_get_command_result()
    {
@@ -82,7 +80,7 @@ public class Navigator_specification : DuplicateByPluggableComponentTest
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                     .Get(registerUserResult => registerUserResult.User));
 
-      (await userResource).Name.Should().Be("new-user-name");
+      (await userResource.CaF()).Name.Should().Be("new-user-name");
    }
 
    class UserApiStartPage

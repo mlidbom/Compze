@@ -9,15 +9,7 @@ class OptimizedLazy<TValue> where TValue : class
    TValue? _value;
    readonly Func<TValue> _factory;
 
-   public TValue Value
-   {
-      get
-      {
-         if(_value != null) return _value;
-
-         return _monitor.Update(() => _value ??= _factory());
-      }
-   }
+   public TValue Value => _value ?? _monitor.Update(() => _value ??= _factory());
 
    public bool IsInitialized => _monitor.Read(() => _value != null);
    public TValue? ValueIfInitialized() => _value;

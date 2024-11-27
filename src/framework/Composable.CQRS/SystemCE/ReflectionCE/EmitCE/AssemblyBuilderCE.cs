@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Composable.Messaging;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1810 // Initialize reference type static fields inline
@@ -25,9 +24,9 @@ public static class TypeBuilderCE
 
    public static (FieldInfo, PropertyInfo) ImplementProperty(this TypeBuilder typeBuilder, string propertyName, Type propertyType)
    {
-      FieldBuilder fieldBuilder = typeBuilder.DefineField($"_{propertyName}",
-                                                          propertyType,
-                                                          FieldAttributes.Private);
+      var fieldBuilder = typeBuilder.DefineField($"_{propertyName}",
+                                                 propertyType,
+                                                 FieldAttributes.Private);
 
       var propertyBuilder = typeBuilder.DefineProperty(name: propertyName,
                                                        attributes: PropertyAttributes.HasDefault,

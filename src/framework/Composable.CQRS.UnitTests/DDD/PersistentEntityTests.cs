@@ -4,6 +4,8 @@ using NUnit.Framework;
 
 namespace Composable.Tests.DDD;
 
+#pragma warning disable CA1508 //Avoid dead conditional code
+
 [TestFixture]
 public class PersistentEntityTests
 {

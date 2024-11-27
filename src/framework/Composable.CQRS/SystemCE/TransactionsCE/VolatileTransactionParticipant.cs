@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Transactions;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Composable.SystemCE.TransactionsCE;

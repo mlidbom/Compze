@@ -3,6 +3,7 @@ using Composable.DDD;
 using JetBrains.Annotations;
 using NUnit.Framework;
 #pragma warning disable IDE0052 //Review OK:unread private members are intentional in this test.
+#pragma warning disable CA1508 //Yes I use code where the value of the comparisons can be statically deternmined. It's on purpose.
 
 namespace Composable.Tests.DDD;
 

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
 
 namespace AccountManagement.Domain.Passwords;
 
@@ -14,29 +12,31 @@ namespace AccountManagement.Domain.Passwords;
 /// </summary>
 public partial class Password
 {
-   public byte[] Hash { get; private set; }
-   public byte[] Salt { get; private set; }
+   readonly byte[] _hash;
+   readonly byte[] _salt;
+   public byte[] GetHash() => _hash;
+   public byte[] GetSalt() => _salt;
 
 #pragma warning disable IDE0051 // Remove unused private members
    [JsonConstructor]Password(byte[] hash, byte[] salt)
 #pragma warning restore IDE0051 // Remove unused private members
    {
-      Hash = hash;
-      Salt = salt;
+      _hash = hash;
+      _salt = salt;
    }
 
    public Password(string password)
    {
       Policy.AssertPasswordMatchesPolicy(password); //Use a nested class to make the policy easily discoverable while keeping this class short and expressive.
-      Salt = Guid.NewGuid().ToByteArray();
-      Hash = PasswordHasher.HashPassword(salt: Salt, password: password);
+      _salt = Guid.NewGuid().ToByteArray();
+      _hash = PasswordHasher.HashPassword(salt: GetSalt(), password: password);
    }
 
    /// <summary>
    /// Returns true if the supplied password parameter is the same string that was used to create this password.
    /// In other words if the user should succeed in logging in using that password.
    /// </summary>
-   public bool IsCorrectPassword(string password) => Hash.SequenceEqual(PasswordHasher.HashPassword(Salt, password));
+   public bool IsCorrectPassword(string password) => GetHash().SequenceEqual(PasswordHasher.HashPassword(GetSalt(), password));
 
    public void AssertIsCorrectPassword(string attemptedPassword)
    {

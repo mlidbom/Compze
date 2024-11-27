@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Testing.Threading;
@@ -37,11 +36,7 @@ public sealed class TestingTaskRunner : IDisposable
    public void StartTimes(int times, Action task) => Start(1.Through(times).Select(selector: _ => task));
    public void StartTimes(int times, Action<int> task) => Start(1.Through(times).Select<int, Action>(selector: index => () => task(index)));
 
-   public void Dispose()
-   {
-      WaitForTasksToComplete();
-      GC.SuppressFinalize(this);
-   }
+   public void Dispose() => WaitForTasksToComplete();
 
    public void WaitForTasksToComplete()
    {

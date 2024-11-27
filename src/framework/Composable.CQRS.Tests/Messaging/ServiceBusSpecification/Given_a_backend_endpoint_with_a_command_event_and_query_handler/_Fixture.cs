@@ -2,29 +2,27 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
+using Composable.Functional;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
 using Composable.Persistence.Common.DependencyInjection;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
-using Composable.Testing.Threading;
-using JetBrains.Annotations;
-using NUnit.Framework;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
+using Composable.Testing.Threading;
+using NUnit.Framework;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
 
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
 #pragma warning disable CA1724  // Type names should not match namespaces
+#pragma warning disable CA1715  // Interfaces should start with I
 
 namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Fixture : DuplicateByPluggableComponentTest
+public partial class Fixture : DuplicateByPluggableComponentTest
 {
    static readonly TimeSpan _timeout = 10.Seconds();
    internal ITestingEndpointHost Host;
@@ -37,14 +35,14 @@ public class Fixture : DuplicateByPluggableComponentTest
    internal IThreadGate EventHandlerThreadGate;
    internal IThreadGate QueryHandlerThreadGate;
 
-   internal IReadOnlyList<IThreadGate> AllGates;
+   internal IReadOnlyList<IThreadGate> AllGates = [];
 
    protected TestingTaskRunner TaskRunner { get; } = TestingTaskRunner.WithTimeout(_timeout);
    protected IEndpoint ClientEndpoint { get; set; }
    protected IEndpoint RemoteEndpoint { get; set; }
    protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
 
-   [SetUp]public async Task Setup()
+   [SetUp] public async Task Setup()
    {
       static void MapBackendEndpointTypes(IEndpointBuilder builder) =>
          builder.TypeMapper.Map<MyExactlyOnceCommand>("0ddefcaa-4d4d-48b2-9e1a-762c0b835275")
@@ -77,12 +75,12 @@ public class Fixture : DuplicateByPluggableComponentTest
 
             builder.RegisterHandlers
                    .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
-                   .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassthroughAndExecute(() => MyAggregate.Create(command.AggregateId, navigator)))
-                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassthroughAndExecute(() => navigator.Execute(new ComposableApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
+                   .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => MyAggregate.Create(command.AggregateId, navigator)))
+                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => navigator.Execute(new ComposableApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
                    .ForEvent((IMyExactlyOnceEvent _) => EventHandlerThreadGate.AwaitPassThrough())
                    .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
-                   .ForQuery((MyQuery _) => QueryHandlerThreadGate.AwaitPassthroughAndReturn(new MyQueryResult()))
-                   .ForCommandWithResult((MyAtMostOnceCommandWithResult _) => CommandHandlerWithResultThreadGate.AwaitPassthroughAndReturn(new MyCommandResult()));
+                   .ForQuery((MyQuery _) => QueryHandlerThreadGate.AwaitPassThrough().then(new MyQueryResult()))
+                   .ForCommandWithResult((MyAtMostOnceCommandWithResult _) => CommandHandlerWithResultThreadGate.AwaitPassThrough().then(() => new MyCommandResult()));
 
             MapBackendEndpointTypes(builder);
          });
@@ -98,111 +96,30 @@ public class Fixture : DuplicateByPluggableComponentTest
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await Host.StartAsync();
+      await Host.StartAsync().CaF();
       AllGates = new List<IThreadGate>
                  {
-                    (CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout)),
-                    (QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout))
+                    (CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate))),
+                    (CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate))),
+                    (MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate))),
+                    (MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate))),
+                    (MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate))),
+                    (MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate))),
+                    (EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate))),
+                    (QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(QueryHandlerThreadGate)))
                  };
    }
 
-   [TearDown]public virtual void TearDown()
+   [TearDown] public virtual async Task TearDownAsync()
    {
       OpenGates();
       TaskRunner.Dispose();
-      Host.Dispose();
+      await Host.DisposeAsync().CaF();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
 
-   protected void OpenGates() => AllGates?.ForEach(gate => gate.Open());
-
-   protected static class MyAggregateEvent
-   {
-      public interface IRoot : IAggregateEvent {}
-      public interface Created : IRoot, IAggregateCreatedEvent {}
-      public interface Updated : IRoot {}
-      public static class Implementation
-      {
-         public class Root : AggregateEvent, IRoot
-         {
-            protected Root() {}
-            protected Root(Guid aggregateId) : base(aggregateId) {}
-         }
-
-         // ReSharper disable once MemberHidesStaticFromOuterClass
-         public class Created : Root, MyAggregateEvent.Created
-         {
-            public Created(Guid aggregateId) : base(aggregateId) {}
-         }
-
-         // ReSharper disable once MemberHidesStaticFromOuterClass
-         public class Updated : Root, MyAggregateEvent.Updated {}
-      }
-   }
-
-   protected class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.Implementation.Root, MyAggregateEvent.IRoot>
-   {
-      public MyAggregate() : base(new DateTimeNowTimeSource())
-      {
-         RegisterEventAppliers()
-           .IgnoreUnhandled<MyAggregateEvent.IRoot>();
-      }
-
-      internal void Update() => Publish(new MyAggregateEvent.Implementation.Updated());
-
-      internal static void Create(Guid id, ILocalHypermediaNavigator bus)
-      {
-         var created = new MyAggregate();
-         created.Publish(new MyAggregateEvent.Implementation.Created(id));
-         bus.Execute(new ComposableApi().EventStore.Commands.Save(created));
-      }
-   }
-
-   protected class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
-   {
-      MyCreateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
-
-      internal static MyCreateAggregateCommand Create() => new()
-                                                           {
-                                                              MessageId = Guid.NewGuid(),
-                                                              AggregateId = Guid.NewGuid()
-                                                           };
-
-      public Guid AggregateId { get; set; }
-   }
-
-   protected class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
-   {
-      [UsedImplicitly] MyUpdateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
-      public MyUpdateAggregateCommand(Guid aggregateId) : base(DeduplicationIdHandling.Create) => AggregateId = aggregateId;
-      public Guid AggregateId { get; private set; }
-   }
-
-   protected class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command {}
-
-   protected interface IMyExactlyOnceEvent : IAggregateEvent {}
-   protected class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent {}
-   protected class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult> {}
-   protected class MyQueryResult {}
-   protected class MyAtMostOnceCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
-   {
-      protected MyAtMostOnceCommand() : base(DeduplicationIdHandling.Reuse) {}
-      internal static MyAtMostOnceCommand Create() => new() {MessageId = Guid.NewGuid()};
-   }
-
-   protected class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
-   {
-      MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-      internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.NewGuid()};
-   }
-   protected class MyCommandResult {}
+   protected void OpenGates() => AllGates.ForEach(gate => gate.Open());
 
    public Fixture(string _) : base(_) {}
 }

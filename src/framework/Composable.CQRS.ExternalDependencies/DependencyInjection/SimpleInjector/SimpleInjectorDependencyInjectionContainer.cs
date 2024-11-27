@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Composable.Contracts;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -82,14 +84,18 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
 
    bool _verified;
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      if(!_verified)
+      get
       {
-         _verified = true;
-         _container.Verify();
+         if(!_verified)
+         {
+            _verified = true;
+            _container.Verify();
+         }
+
+         return this;
       }
-      return this;
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class => _container.GetInstance<TComponent>();
@@ -99,6 +105,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
 
 
    public void Dispose() => _container.Dispose();
+
+   public async ValueTask DisposeAsync() => await _container.DisposeAsync().CaF();
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>() => _container.GetInstance<TComponent>();
 }

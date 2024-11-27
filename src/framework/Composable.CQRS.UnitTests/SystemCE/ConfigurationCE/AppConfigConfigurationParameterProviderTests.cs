@@ -8,7 +8,7 @@ namespace Composable.Tests.SystemCE.ConfigurationCE;
 [TestFixture] public class AppConfigConfigurationParameterProviderTests
 {
    AppSettingsJsonConfigurationParameterProvider _provider;
-   [SetUp] public void SetupTask() { _provider = new AppSettingsJsonConfigurationParameterProvider(); }
+   [SetUp] public void SetupTask() => _provider = new AppSettingsJsonConfigurationParameterProvider();
 
    [Test] public void ParameterProvider_should_return_the_value_specified_in_the_configuration_file() =>
       Assert.That("ValueTest1", Is.EqualTo(_provider.GetString("KeyTest1")));

@@ -1,8 +1,8 @@
 using System;
+using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
 using Oracle.ManagedDataAccess.Client;
 using Composable.Persistence.Oracle.SystemExtensions;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
 
@@ -26,7 +26,7 @@ sealed class OracleDatabasePool : DatabasePool
    }
 
    protected override string ConnectionStringFor(Database db)
-      => _connectionStringBuilder.Update(it => it.Mutate(me =>
+      => _connectionStringBuilder.Update(it => it.mutate(me =>
       {
          me.UserID = db.Name.ToUpperInvariant();
          me.MinPoolSize = 1;

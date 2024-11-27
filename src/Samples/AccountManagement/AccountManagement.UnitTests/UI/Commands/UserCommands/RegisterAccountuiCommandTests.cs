@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AccountManagement.API;
-using Composable.SystemCE.LinqCE;
+using Composable.Functional;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -15,7 +15,7 @@ public class RegisterAccountUICommandTests
    [SetUp]
    public void CreateValidCommand()
    {
-      _registerAccountUiCommand = AccountResource.Command.Register.Create().Mutate(it =>
+      _registerAccountUiCommand = AccountResource.Command.Register.Create().mutate(it =>
       {
          it.Email = "valid.email@google.com";
          it.Password = "AComplex!1Password";

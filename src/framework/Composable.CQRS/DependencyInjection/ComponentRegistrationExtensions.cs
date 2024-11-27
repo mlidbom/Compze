@@ -13,10 +13,8 @@ public static class ComponentRegistrationExtensions
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation>(
       this ComponentRegistrationWithoutInstantiationSpec<TService> @this,
       Func<TImplementation> factoryMethod) where TService : class
-                                           where TImplementation : TService
-   {
-      return @this.CreatedBy(_ => factoryMethod());
-   }
+                                           where TImplementation : TService =>
+      @this.CreatedBy(_ => factoryMethod());
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1>(
       this ComponentRegistrationWithoutInstantiationSpec<TService> @this,

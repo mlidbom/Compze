@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE.IOCE;
 using Composable.SystemCE.LinqCE;
@@ -59,7 +60,7 @@ public class DirectoryExtensionsTest
 
       directoryPath.AsDirectory().Create();
       ConsoleCE.WriteLine("created directory {0}", directoryPath);
-      var fileContent = new Byte[100];
+      var fileContent = new byte[100];
       var size = 0;
       directoryPath.Repeat(2).Select(dir => Path.Combine(dir, Guid.NewGuid().ToString())).ForEach(
          file =>

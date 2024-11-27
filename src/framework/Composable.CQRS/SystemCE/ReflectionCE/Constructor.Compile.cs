@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Composable.Contracts;
 
 namespace Composable.SystemCE.ReflectionCE;
 
@@ -52,7 +51,7 @@ static partial class Constructor
             var instanceType = delegateTypeGenericArgumentTypes[^1];
             var constructorArgumentTypes = delegateTypeGenericArgumentTypes[..^1];
 
-            ConstructorInfo? constructor = instanceType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, binder: null, types: constructorArgumentTypes, modifiers: null);
+            var constructor = instanceType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, binder: null, types: constructorArgumentTypes, modifiers: null);
             if (constructor == null)
             {
                throw new Exception($"Expected to find a constructor with the signature: [private|protected|public] {instanceType.GetFullNameCompilable()}({DescribeParameterList(constructorArgumentTypes)})");
@@ -69,10 +68,7 @@ static partial class Constructor
             return constructorCallMethod.CreateDelegate(delegateType);
          }
 
-         static string DescribeParameterList(IEnumerable<Type> parameterTypes)
-         {
-            return parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
-         }
+         static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
       }
    }
 }

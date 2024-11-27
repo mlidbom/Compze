@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
@@ -64,28 +63,21 @@ class TimingsStatisticsCollector
    public TResult Time<TResult>(Func<TResult> func)
    {
       TResult? result = default;
-      var time = StopwatchCE.TimeExecution(() =>result = func());
+      var time = StopwatchCE.TimeExecution(() => result = func());
       RegisterCall(time);
       return result!;
    }
 
    public async Task TimeAsync(Func<Task> func)
    {
-      var time = await StopwatchCE.TimeExecutionAsync(func).NoMarshalling();
-      RegisterCall(time);
-   }
-
-   public async Task TimeAsyncFlex(SyncOrAsync syncOrAsync, Func<SyncOrAsync, Task> syncOrAsyncFunc)
-   {
-
-      var time = await StopwatchCE.TimeExecutionFlexAsync(syncOrAsync, syncOrAsyncFunc).NoMarshalling();
+      var time = await StopwatchCE.TimeExecutionAsync(func).CaF();
       RegisterCall(time);
    }
 
    public async Task<TResult> TimeAsync<TResult>(Func<Task<TResult>> func)
    {
       TResult? result = default;
-      var time = await StopwatchCE.TimeExecutionAsync(async () => result = await func().NoMarshalling()).NoMarshalling();
+      var time = await StopwatchCE.TimeExecutionAsync(async () => result = await func().CaF()).CaF();
       RegisterCall(time);
       return result!;
    }
@@ -95,7 +87,7 @@ class TimingsStatisticsCollector
       Interlocked.Increment(ref _totalCalls);
       using(_monitor.EnterUpdateLock()) TotalTime += time;
       // ReSharper disable once ForCanBeConvertedToForeach
-      for(int i = 0; i < _callStats.Length; ++i)
+      for(var i = 0; i < _callStats.Length; ++i)
       {
          _callStats[i].IncrementIfMatching(time);
       }

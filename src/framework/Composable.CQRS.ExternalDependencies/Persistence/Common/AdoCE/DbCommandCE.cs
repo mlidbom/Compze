@@ -5,10 +5,10 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Composable.Contracts;
+using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Persistence.Common.AdoCE;
@@ -19,35 +19,35 @@ static class DbCommandCE
       @this.SetCommandText(commandText).ExecuteScalar();
 
    public static async Task<object?> ExecuteScalarAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).ExecuteScalarAsync().NoMarshalling();
+      await @this.SetCommandText(commandText).ExecuteScalarAsync().CaF();
 
    public static int ExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteNonQuery();
 
    public static async Task<int> ExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).ExecuteNonQueryAsync().NoMarshalling();
+      await @this.SetCommandText(commandText).ExecuteNonQueryAsync().CaF();
 
 
    public static object? PrepareAndExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteScalar();
 
    public static async Task<object?> PrepareAndExecuteScalarAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).PrepareStatement().ExecuteScalarAsync().NoMarshalling();
+      await @this.SetCommandText(commandText).PrepareStatement().ExecuteScalarAsync().CaF();
 
    public static int PrepareAndExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQuery();
 
    public static async Task<int> PrepareAndExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().NoMarshalling();
+      await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().CaF();
 
    public static TCommand AppendCommandText<TCommand>(this TCommand @this, string append) where TCommand : DbCommand =>
-      @this.Mutate(me => me.CommandText += append);
+      @this.mutate(me => me.CommandText += append);
 
    public static TCommand SetCommandText<TCommand>(this TCommand @this, string commandText) where TCommand : DbCommand =>
-      @this.Mutate(me => me.CommandText = commandText);
+      @this.mutate(me => me.CommandText = commandText);
 
    public static TCommand SetStoredProcedure<TCommand>(this TCommand @this, string storedProcedure) where TCommand : DbCommand =>
-      @this.Mutate(me =>
+      @this.mutate(me =>
       {
          me.CommandType = CommandType.StoredProcedure;
          me.CommandText = storedProcedure;
@@ -56,13 +56,13 @@ static class DbCommandCE
    public static TCommand PrepareStatement<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       Contract.Arguments.Assert(@this.CommandText.Length > 0, "Cannot prepare statement with empty CommandText");
-      return @this.Mutate(me => me.Prepare());
+      return @this.mutate(me => me.Prepare());
    }
 
    public static async Task<TCommand> PrepareStatementAsync<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       Contract.Arguments.Assert(@this.CommandText.Length > 0, "Cannot prepare statement with empty CommandText");
-      return await @this.MutateAsync(async me => await me.PrepareAsync().NoMarshalling()).NoMarshalling();
+      return await @this.mutateAsync(async me => await me.PrepareAsync().CaF()).CaF();
    }
 
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)

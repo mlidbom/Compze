@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Lifestyle;
 using Castle.MicroKernel.Registration;
@@ -37,16 +38,21 @@ class WindsorDependencyInjectionContainer : IDependencyInjectionContainer, IServ
    }
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      _locked = true;
-      return this;
+      get
+      {
+         _locked = true;
+         return this;
+      }
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class => _windsorContainer.Resolve<TComponent>();
    public TComponent[] ResolveAll<TComponent>() where TComponent : class => _windsorContainer.ResolveAll<TComponent>().ToArray();
    IDisposable IServiceLocator.BeginScope() => _windsorContainer.BeginScope();
    void IDisposable.Dispose() => _windsorContainer.Dispose();
+
+   public ValueTask DisposeAsync() => throw new NotImplementedException();
 
    static IRegistration ToWindsorRegistration(ComponentRegistration componentRegistration)
    {

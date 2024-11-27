@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Composable.Contracts;
 using Composable.DDD;
+using Composable.Functional;
 using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
@@ -13,7 +14,7 @@ namespace Composable.Persistence.DocumentDb;
 
 class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
 {
-   readonly Dictionary<string, List<Object>> _db = new(StringComparer.InvariantCultureIgnoreCase);
+   readonly Dictionary<string, List<object>> _db = new(StringComparer.InvariantCultureIgnoreCase);
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
    internal bool Contains(Type type, object id) => _monitor.Read(() => ContainsInternal(type, id));
@@ -40,19 +41,13 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
       var idstring = GetIdString(id);
       value = null;
 
-      if(!_db.TryGetValue(idstring, out var matchesId))
-      {
-         return false;
-      }
+      if(!_db.TryGetValue(idstring, out var matchesId)) return false;
 
       var found = matchesId.Where(typeOfValue.IsInstanceOfType).ToList();
-      if(found.Any())
-      {
-         value = found.Single();
-         return true;
-      }
+      if(!found.Any()) return false;
 
-      return false;
+      value = found.Single();
+      return true;
    }
 
    static string GetIdString(object id) => Contract.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');

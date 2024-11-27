@@ -35,8 +35,5 @@ public class ExpressionValueExtractorTests
       Assert.That(result, Is.SameAs(TestString));
    }
 
-   static TValue ReturnExtractedParameterValue<TValue>(TValue param)
-   {
-      return ContractsExpression.ExtractValue(() => param);
-   }
+   static TValue ReturnExtractedParameterValue<TValue>(TValue param) => ContractsExpression.ExtractValue(() => param);
 }

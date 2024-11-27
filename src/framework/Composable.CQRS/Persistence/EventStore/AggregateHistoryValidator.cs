@@ -8,7 +8,7 @@ static class AggregateHistoryValidator
 {
    public static void ValidateHistory(Guid aggregateId, IReadOnlyList<IAggregateEvent> history)
    {
-      int version = 1;
+      var version = 1;
       foreach(var aggregateEvent in history)
       {
          if(aggregateEvent.AggregateVersion != version++)

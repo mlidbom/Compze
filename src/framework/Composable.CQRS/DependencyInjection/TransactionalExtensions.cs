@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.SystemCE.TransactionsCE;
 using JetBrains.Annotations;
@@ -45,7 +44,7 @@ static class ServiceLocatorTransactionRunner
    {
       using (me.BeginScope())
       {
-         return await function().NoMarshalling();
+         return await function().CaF();
       }
    }
 
@@ -53,7 +52,7 @@ static class ServiceLocatorTransactionRunner
    {
       using (me.BeginScope())
       {
-         await action().NoMarshalling();
+         await action().CaF();
       }
    }
 }

@@ -1,21 +1,20 @@
 using System;
-using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
+using Microsoft.Data.SqlClient;
 
 namespace Composable.Persistence.MsSql.SystemExtensions;
 
 interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>
 {
-   public static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
-   public static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
+   static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
+   static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
    class MsSqlConnectionPool : IMsSqlConnectionPool
    {
       readonly OptimizedLazy<IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>> _pool;
-      IDbConnectionPool<IComposableMsSqlConnection, SqlCommand> Pool => _pool.Value;
 
       public MsSqlConnectionPool(Func<string> getConnectionString)
       {
@@ -30,7 +29,8 @@ interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, S
             });
       }
 
-      public Task<TResult> UseConnectionAsyncFlex<TResult>(SyncOrAsync syncOrAsync, Func<IComposableMsSqlConnection, Task<TResult>> func) => Pool.UseConnectionAsyncFlex(syncOrAsync, func);
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
+      public TResult UseConnection<TResult>(Func<IComposableMsSqlConnection, TResult> func) => _pool.Value.UseConnection(func);
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<IComposableMsSqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
    }
 }

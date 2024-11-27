@@ -1,33 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Composable.DependencyInjection;
 
-public interface IDependencyInjectionContainer : IDisposable
+public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
    IRunMode RunMode { get; }
    void Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
-   IServiceLocator CreateServiceLocator();
+   IServiceLocator ServiceLocator { get; }
+
+   void RegisterToHandleServiceResolutionFor(IServiceCollection services)
+   {
+      var serviceLocator = ServiceLocator;
+      foreach(var component in RegisteredComponents())
+      {
+         foreach(var serviceType in component.ServiceTypes)
+         {
+            //We handle lifetimes ourselves so registering everything as transient in the other container will avoid duplicate Dispose calls.
+            services.AddTransient(serviceType, _ => component.Resolve(serviceLocator));
+         }
+      }
+   }
 }
 
-public interface IServiceLocator : IDisposable
+public interface IServiceLocator : IDisposable, IAsyncDisposable
 {
    TComponent Resolve<TComponent>() where TComponent : class;
    TComponent[] ResolveAll<TComponent>() where TComponent : class;
    IDisposable BeginScope();
 }
-
 interface IServiceLocatorKernel
 {
    TComponent Resolve<TComponent>() where TComponent : class;
 }
-
 public interface IRunMode
 {
    bool IsTesting { get; }
 }
-
 public enum PersistenceLayer
 {
    MicrosoftSQLServer,
@@ -37,12 +48,13 @@ public enum PersistenceLayer
    Oracle,
    IBMDB2
 }
-
 public enum DIContainer
 {
-   Composable, SimpleInjector, WindsorCastle, Microsoft
+   Composable,
+   SimpleInjector,
+   WindsorCastle,
+   Microsoft
 }
-
 enum Lifestyle
 {
    Singleton,

@@ -33,7 +33,7 @@ class EventCache : IDisposable
                return Assert.Result.NotNull(overlay);
             }
 
-            overlay = new Dictionary<Guid, Entry>();
+            overlay = [];
 
             _overlays.Update(it => it.Add(transactionId, overlay));
 
@@ -65,7 +65,7 @@ class EventCache : IDisposable
       public static readonly Entry Empty = new();
       Entry()
       {
-         Events = Array.Empty<AggregateEvent>();
+         Events = [];
          MaxSeenInsertedVersion = 0;
       }
 
@@ -151,8 +151,5 @@ class EventCache : IDisposable
       originalCache.Dispose();
    }
 
-   public void Dispose()
-   {
-      _internalCache.Dispose();
-   }
+   public void Dispose() => _internalCache.Dispose();
 }

@@ -52,7 +52,7 @@ public static partial class TestEnv
    public static class Performance
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
-      public static readonly bool AreOptimizationsDisabled = ((DebuggableAttribute)typeof(TestEnv).Assembly.GetCustomAttribute(typeof(DebuggableAttribute))!).IsJITOptimizerDisabled;
+      public static readonly bool AreOptimizationsDisabled = typeof(TestEnv).Assembly.GetCustomAttribute<DebuggableAttribute>()!.IsJITOptimizerDisabled;
 
       public static readonly bool IsInstrumented = CheckIfInstrumented();
       static bool CheckIfInstrumented()
@@ -67,10 +67,7 @@ public static partial class TestEnv
                                               },
                                               iterations: 500);
 
-         if(time.Total > 1.Milliseconds())
-            return true;
-         else
-            return false;
+         return time.Total > 1.Milliseconds();
       }
 
       static readonly double MachineSlowness = DetectEnvironmentPerformanceAdjustment();

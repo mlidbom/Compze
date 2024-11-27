@@ -15,7 +15,7 @@ namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
 public class NestedEntitiesTests
 {
    [Test]
-   public void ConstructorWorks() { new Root("root").Name.Should().Be("root"); }
+   public void ConstructorWorks() => new Root("root").Name.Should().Be("root");
 
    [Test]
    public void Createing_nested_entities_works_and_events_dispatch_correctly()

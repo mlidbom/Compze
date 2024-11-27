@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Threading.Tasks;
+using Composable.Functional;
 using Composable.Persistence.Common.AdoCE;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Oracle.ManagedDataAccess.Client;
@@ -19,15 +19,13 @@ interface IComposableOracleConnection : IPoolableConnection, IComposableDbConnec
 
       internal ComposableOracleConnection(string connectionString) => Connection = new OracleConnection(connectionString);
 
-      async Task IPoolableConnection.OpenAsyncFlex(SyncOrAsync syncOrAsync) =>
-         await syncOrAsync.Run(
-            () => Connection.Open(),
-            () => Connection.OpenAsync()).NoMarshalling();
+      public void Open() => Connection.Open();
+      public async Task OpenAsync() => await Connection.OpenAsync().CaF();
 
       DbCommand IComposableDbConnection.CreateCommand() => CreateCommand();
 
       public OracleCommand CreateCommand() =>
-         Connection.CreateCommand().Mutate(it => it.BindByName = true);
+         Connection.CreateCommand().mutate(it => it.BindByName = true);
 
       public void Dispose() => Connection.Dispose();
 

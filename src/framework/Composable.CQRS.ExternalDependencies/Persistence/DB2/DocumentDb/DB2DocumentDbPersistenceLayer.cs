@@ -122,7 +122,7 @@ WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptable
                            .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuidFromString(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IEnumerable<Guid> acceptableTypeIds) { return "IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')"; }
+   static string TypeInClause(IEnumerable<Guid> acceptableTypeIds) => "IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')";
 
    // ReSharper disable once UnusedParameter.Local
    static string UseUpdateLock(bool _) => ""; // useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";

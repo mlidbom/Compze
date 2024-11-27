@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Composable.Contracts;
 
 namespace Composable.DependencyInjection;
@@ -8,7 +9,7 @@ namespace Composable.DependencyInjection;
 partial class ComposableDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator
 {
    IServiceLocator? _createdServiceLocator;
-   readonly Dictionary<Guid, ComponentRegistration> _registeredComponents = new();
+   readonly Dictionary<Guid, ComponentRegistration> _registeredComponents = [];
    bool _disposed;
 
    public IRunMode RunMode { get; }
@@ -27,17 +28,20 @@ partial class ComposableDependencyInjectionContainer : IDependencyInjectionConta
       }
    }
 
-   IServiceLocator IDependencyInjectionContainer.CreateServiceLocator()
+   IServiceLocator IDependencyInjectionContainer.ServiceLocator
    {
-      Assert.State.Assert(!_disposed);
-      if(_createdServiceLocator == null)
+      get
       {
-         _createdServiceLocator = new ServiceLocator(_registeredComponents.Values.ToList());
-         //This shows as a hotspot for the tests when profiling. But does not negatively effect total test suite execution time according to my tests.
-         Verify();
-      }
+         Assert.State.Assert(!_disposed);
+         if(_createdServiceLocator == null)
+         {
+            _createdServiceLocator = new ServiceLocatorImplementation(_registeredComponents.Values.ToList());
+            //This shows as a hotspot for the tests when profiling. But does not negatively effect total test suite execution time according to my tests.
+            Verify();
+         }
 
-      return this;
+         return this;
+      }
    }
 
    void Verify()
@@ -59,6 +63,8 @@ partial class ComposableDependencyInjectionContainer : IDependencyInjectionConta
          _createdServiceLocator?.Dispose();
       }
    }
+
+   public ValueTask DisposeAsync() => throw new NotImplementedException();
 
    TComponent IServiceLocator.Resolve<TComponent>() where TComponent : class => _createdServiceLocator!.Resolve<TComponent>();
    TComponent[] IServiceLocator.ResolveAll<TComponent>() where TComponent : class => _createdServiceLocator!.ResolveAll<TComponent>();

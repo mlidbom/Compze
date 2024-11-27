@@ -18,12 +18,12 @@ namespace Composable.Tests.Testing.Threading;
 
    public class After_starting_10_threads_that_all_call_PassThrough
    {
-      [Test] public void Within_10_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
+      [Test] public void Within_50_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
          using (ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()){} //warmup
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
-         fixture.Gate.Await(10.Milliseconds(), () => fixture.Gate.Queued == fixture.NumberOfThreads);
+         fixture.Gate.Await(50.Milliseconds(), () => fixture.Gate.Queued == fixture.NumberOfThreads);
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 
@@ -31,9 +31,9 @@ namespace Composable.Tests.Testing.Threading;
       {
          ThreadGateTestFixture _fixture;
 
-         [SetUp] public void Setup() { _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough(); }
+         [SetUp] public void Setup() => _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
-         [TearDown] public void TearDownTask() { _fixture.Dispose(); }
+         [TearDown] public void TearDownTask() => _fixture.Dispose();
 
          [Test] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(0);
 

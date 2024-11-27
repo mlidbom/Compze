@@ -8,15 +8,17 @@ namespace Composable.Messaging.Buses.Implementation;
 
 partial class Inbox
 {
-   partial class HandlerExecutionEngine
+   // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
+   internal partial class HandlerExecutionEngine
    {
       Thread? _awaitDispatchableMessageThread;
 
-      readonly IReadOnlyList<IMessageDispatchingRule> _dispatchingRules = new List<IMessageDispatchingRule>
-                                                                          {
-                                                                             new QueriesExecuteAfterAllCommandsAndEventsAreDone(),
-                                                                             new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
-                                                                          };
+      readonly IReadOnlyList<IMessageDispatchingRule> _dispatchingRules =
+      [
+         new QueriesExecuteAfterAllCommandsAndEventsAreDone(),
+         new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
+      ];
+
       readonly Coordinator _coordinator;
 
       public HandlerExecutionEngine(IGlobalBusStateTracker globalStateTracker,

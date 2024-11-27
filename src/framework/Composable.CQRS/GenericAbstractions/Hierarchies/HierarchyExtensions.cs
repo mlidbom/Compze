@@ -33,7 +33,7 @@ static class HierarchyExtensions
    {
       readonly Func<T, IEnumerable<T>> _childGetter;
 
-      public IEnumerable<IAutoHierarchy<T>> Children { get { return _childGetter(Wrapped).Select(child => child.AsHierarchy(_childGetter)); } }
+      public IEnumerable<IAutoHierarchy<T>> Children => _childGetter(Wrapped).Select(child => child.AsHierarchy(_childGetter));
 
       public T Wrapped { get; private set; }
 

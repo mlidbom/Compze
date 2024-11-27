@@ -1,9 +1,8 @@
 using System;
+using Composable.Functional;
 using Npgsql;
-using Castle.Core.Internal;
 using Composable.Persistence.Common.AdoCE;
 using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
 #pragma warning disable CA1308 // Normalize strings to uppercase
@@ -27,7 +26,7 @@ sealed class PgSqlDatabasePool : DatabasePool
    }
 
    protected override string ConnectionStringFor(Database db)
-      => _connectionStringBuilder.Update(it => it.Mutate(me =>
+      => _connectionStringBuilder.Update(it => it.mutate(me =>
       {
          me.Database = db.Name.ToLowerInvariant();
          me.MinPoolSize = 1;

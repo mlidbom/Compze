@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Threading;
 using Composable.DDD;
 using Composable.Messaging.Buses.Implementation;
-using Composable.Persistence.EventStore;
 using Composable.Refactoring.Naming;
-using Composable.SystemCE;
-using Composable.SystemCE.ReflectionCE.EmitCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Newtonsoft.Json;
 
 // ReSharper disable RedundantNameQualifier

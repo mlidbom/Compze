@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Composable.Functional;
 
 namespace Composable.SystemCE;
 
 static class VoidCEExtensions
 {
-   internal static Func<TParam, VoidCE> AsVoidFunc<TParam>(this Action<TParam> @this) =>
+   internal static Func<TParam, Unit> AsUnitFunc<TParam>(this Action<TParam> @this) =>
       param =>
       {
          @this(param);
-         return VoidCE.Instance;
+         return Unit.Instance;
       };
 
-   internal static Func<TParam, Task<VoidCE>> AsVoidFunc<TParam>(this Func<TParam, Task> @this) =>
+   internal static Func<TParam, Task<Unit>> AsUnitFunc<TParam>(this Func<TParam, Task> @this) =>
       param =>
       {
          @this(param);
-         return VoidCE.InstanceTask;
+         return Unit.InstanceTask;
       };
 
-   internal static Func<VoidCE> AsVoidFunc(this Action @this) =>
+   internal static Func<Unit> AsUnitFunc(this Action @this) =>
       () =>
       {
          @this();
-         return VoidCE.Instance;
+         return Unit.Instance;
       };
 }

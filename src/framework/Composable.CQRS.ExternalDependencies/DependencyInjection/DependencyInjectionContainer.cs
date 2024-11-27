@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Composable.DependencyInjection.Microsoft;
 using Composable.DependencyInjection.SimpleInjector;
 using Composable.DependencyInjection.Windsor;
 using Composable.Messaging.Buses;
 using Composable.Persistence.Common.DependencyInjection;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using JetBrains.Annotations;
 
@@ -36,14 +38,14 @@ public static class DependencyInjectionContainer
          _ => throw new ArgumentOutOfRangeException()
       };
 
-      container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.CreateServiceLocator()));
+      container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
       return container;
    }
 
-   class TestingEndpointHostDisposer : IDisposable
+   class TestingEndpointHostDisposer : IAsyncDisposable
    {
       readonly ITestingEndpointHost _host;
       public TestingEndpointHostDisposer(ITestingEndpointHost host) => _host = host;
-      public void Dispose() => _host.Dispose();
+      public async ValueTask DisposeAsync() => await _host.DisposeAsync().CaF();
    }
 }

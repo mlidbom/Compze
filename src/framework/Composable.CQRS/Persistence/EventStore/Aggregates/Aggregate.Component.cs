@@ -1,7 +1,5 @@
 ﻿using System;
-using Composable.DDD;
 using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
 using Composable.Messaging.Events;
 
 namespace Composable.Persistence.EventStore.Aggregates;
@@ -26,10 +24,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
       IUtcTimeTimeSource TimeSource { get; set; }
 
-      void ApplyEvent(TComponentEvent @event)
-      {
-         _eventAppliersEventDispatcher.Dispatch(@event);
-      }
+      void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
       protected Component(TAggregate aggregate)
          : this(

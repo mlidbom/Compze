@@ -6,7 +6,6 @@ using Composable.Contracts;
 using Composable.Logging;
 using Composable.Persistence;
 using Composable.SystemCE;
-using Composable.SystemCE.CollectionsCE.GenericCE;
 using Composable.SystemCE.ReflectionCE;
 using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
@@ -19,7 +18,7 @@ abstract partial class DatabasePool : StrictlyManagedResourceBase<DatabasePool>
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
    protected static string? DatabaseRootFolderOverride;
    static TimeSpan _reservationLength;
-   const int NumberOfDatabases = 10;
+   const int NumberOfDatabases = 30;
 
    protected DatabasePool()
    {

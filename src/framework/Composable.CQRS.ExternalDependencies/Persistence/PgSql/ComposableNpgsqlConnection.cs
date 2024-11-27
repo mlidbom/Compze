@@ -20,10 +20,8 @@ interface IComposableNpgsqlConnection : IPoolableConnection, IComposableDbConnec
 
       public ComposableNpgsqlConnection(string connectionString) => Connection = new NpgsqlConnection(connectionString);
 
-      async Task IPoolableConnection.OpenAsyncFlex(SyncOrAsync syncOrAsync) =>
-         await syncOrAsync.Run(
-            () => Connection.Open(),
-            () => Connection.OpenAsync()).NoMarshalling();
+      public void Open() => Connection.Open();
+      public async Task OpenAsync() => await Connection.OpenAsync().CaF();
 
       DbCommand IComposableDbConnection.CreateCommand() => CreateCommand();
       public NpgsqlCommand CreateCommand() => Connection.CreateCommand();

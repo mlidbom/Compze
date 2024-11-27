@@ -10,6 +10,7 @@ namespace Composable.Tests.StrictlyManagedResource;
 [TestFixture]public class StrictlyManagedResourcePerformanceTests
 {
    // ReSharper disable once ClassNeverInstantiated.Local
+   #pragma warning disable ca1812 // Class is never instantiated
    class StrictResource : IStrictlyManagedResource
    {
       public void Dispose() {}

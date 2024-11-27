@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.Testing;
@@ -11,7 +10,7 @@ public static class AssertThrows
    {
       try
       {
-         await action().NoMarshalling();
+         await action().CaF();
       }
       catch(TException exception)
       {

@@ -122,7 +122,7 @@ WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId}  {TypeInClause(acceptabl
                            .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IEnumerable<Guid> acceptableTypeIds) { return "IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n"; }
+   static string TypeInClause(IEnumerable<Guid> acceptableTypeIds) => "IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n";
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 
+#pragma warning disable CA1308 // Normalize strings to uppercase
+
 namespace AccountManagement;
 
 static class TestData
@@ -16,8 +18,8 @@ static class TestData
          public const string Null = null;
          public static readonly string EmptyString = string.Empty;
          public static readonly string ShorterThanFourCharacters = ValidPassword[0..3];
-         public static readonly string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
-         public static readonly string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
+         public const string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
+         public const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
          public static readonly string MissingUpperCaseCharacter = ValidPassword.ToLowerInvariant();
          public static readonly string MissingLowercaseCharacter = ValidPassword.ToUpperInvariant();
 
