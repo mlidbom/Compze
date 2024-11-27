@@ -29,7 +29,7 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
       return new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
    }
 
-   [HttpPost("/internal/rpc/query")] public async Task<IActionResult> Query()
+   [HttpPost(Routes.Rpc.Query)] public async Task<IActionResult> Query()
    {
       var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
 
@@ -45,7 +45,7 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
       }
    }
 
-   [HttpPost("/internal/rpc/command-with-result")]
+   [HttpPost(Routes.Rpc.CommandWithResult)]
    public async Task<IActionResult> CommandWithResult()
    {
       var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
@@ -63,7 +63,7 @@ class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapp
       }
    }
 
-   [HttpPost("/internal/rpc/command-no-result")]
+   [HttpPost(Routes.Rpc.CommandNoResult)]
    public async Task<IActionResult> CommandWithNoResult()
    {
       var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();

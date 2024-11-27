@@ -4,10 +4,12 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Composable.Functional;
 using Composable.Messaging.Buses.Implementation;
+using Composable.Messaging.Buses.Implementation.Http;
 using Composable.Serialization;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Composable.Messaging.Buses.Http;
 
@@ -22,11 +24,11 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(message.Body);
          content.Headers.Add("MessageId", message.Id.ToString());
          content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}/internal/rpc/query");
+         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Rpc.Query}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
-            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+            var problemDetails = await ProblemDetails.FromResponse(response).CaF();
 
             throw new MessageDispatchingFailedException($"""
                                                          Uri:        {requestUri}
@@ -53,11 +55,11 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(message.Body);
          content.Headers.Add("MessageId", message.Id.ToString());
          content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}/internal/rpc/command-with-result");
+         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Rpc.CommandWithResult}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
-            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+            var problemDetails = await ProblemDetails.FromResponse(response).CaF();
 
             throw new MessageDispatchingFailedException($"""
                                                          Uri:        {requestUri}
@@ -84,11 +86,11 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(message.Body);
          content.Headers.Add("MessageId", message.Id.ToString());
          content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}/internal/rpc/command-no-result");
+         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Rpc.CommandNoResult}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
-            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+            var problemDetails = await ProblemDetails.FromResponse(response).CaF();
 
             throw new MessageDispatchingFailedException($"""
                                                          Uri:        {requestUri}
@@ -114,11 +116,11 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(message.Body);
          content.Headers.Add("MessageId", message.Id.ToString());
          content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}/internal/messaging/command");
+         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Messaging.Command}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
-            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+            var problemDetails = await ProblemDetails.FromResponse(response).CaF();
 
             throw new MessageDispatchingFailedException($"""
                                                          Uri:        {requestUri}
@@ -144,11 +146,11 @@ interface IComposableHttpClientFactoryProvider
          var content = new StringContent(message.Body);
          content.Headers.Add("MessageId", message.Id.ToString());
          content.Headers.Add("PayloadTypeId", message.Type.GuidValue.ToString());
-         var requestUri = new Uri($"{address.AspNetAddress}/internal/messaging/event");
+         var requestUri = new Uri($"{address.AspNetAddress}{Routes.Messaging.Event}");
          var response = await it.PostAsync(requestUri, content).CaF();
          if(!response.IsSuccessStatusCode)
          {
-            var problemDetails = (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+            var problemDetails = await ProblemDetails.FromResponse(response).CaF();
 
             throw new MessageDispatchingFailedException($"""
                                                          Uri:        {requestUri}
@@ -175,6 +177,29 @@ interface IComposableHttpClientFactoryProvider
    public int Status { get; set; }
    public string Detail { get; set; } = "";
    public string Instance { get; set; } = "";
+
+   internal static async Task<ProblemDetails> FromResponse(HttpResponseMessage response)
+   {
+      try
+      {
+         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+      }catch(Exception)
+      {
+         throw new FailedToExtractProblemDetailsException(response);
+      }
+   }
+}
+
+class FailedToExtractProblemDetailsException : Exception
+{
+   public FailedToExtractProblemDetailsException(HttpResponseMessage response) : base($"""
+                                                                                       Failed to extract problem details from response.
+                                                                                       RequestUri: {response.RequestMessage?.RequestUri} 
+                                                                                       Status code: {response.StatusCode}
+                                                                                       Reason: {response.ReasonPhrase}
+                                                                                       """)
+   {
+   }
 }
 
 class ComposableHttpClientFactoryProvider : IComposableHttpClientFactoryProvider

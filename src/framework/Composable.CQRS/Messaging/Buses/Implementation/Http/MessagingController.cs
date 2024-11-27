@@ -29,7 +29,7 @@ class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper ty
       return new TransportMessage.InComing(queryJson, typeId, [], messageId, typeMapper, serializer);
    }
 
-   [HttpPost("/internal/messaging/event")]
+   [HttpPost(Routes.Messaging.Event)]
    public async Task<IActionResult> Event()
    {
       var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
@@ -45,7 +45,7 @@ class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper ty
       }
    }
 
-   [HttpPost("/internal/messaging/command")]
+   [HttpPost(Routes.Messaging.Command)]
    public async Task<IActionResult> Command()
    {
       var incomingMessage = await CreateIncomingMessage(HttpContext.Request, _typeMapper, _serializer).CaF();
