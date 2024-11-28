@@ -37,17 +37,6 @@ sealed class PgSqlDbPool : DbPool
    protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
    {
       var databaseName = db.Name.ToLowerInvariant();
-      //            if(!_databaseRootFolderOverride.IsNullEmptyOrWhiteSpace())
-      //            {
-      //                createDatabaseCommand += $@"
-      //ON      ( NAME = {databaseName}_data, FILENAME = '{_databaseRootFolderOverride}\{databaseName}.mdf')
-      //LOG ON  ( NAME = {databaseName}_log, FILENAME = '{_databaseRootFolderOverride}\{databaseName}.ldf');";
-      //            }
-
-      //            createDatabaseCommand += $@"
-      //ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
-      //ALTER DATABASE[{ databaseName}] SET READ_COMMITTED_SNAPSHOT ON";
-
       ResetConnectionPool(db);
       var exists = (string?)_masterConnectionPool.ExecuteScalar($"SELECT datname FROM pg_database WHERE datname = '{databaseName.ToLowerInvariant()}'");
       if (!string.IsNullOrEmpty(exists))
