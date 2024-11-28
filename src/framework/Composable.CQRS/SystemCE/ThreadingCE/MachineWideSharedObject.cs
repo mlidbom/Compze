@@ -81,10 +81,11 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
       {
          return Deserialize(json);
       }
-      catch(Exception)
+      catch(Exception exception)
       {
          File.WriteAllText($"{_filePath}_{Guid.NewGuid()}.DEBUG", json, Encoding.UTF8);
-         throw;
+         File.Delete(_filePath);
+         throw new Exception($"Failed to deserialize object from file {_filePath}. Deleted file.", exception);
       }
    }
 

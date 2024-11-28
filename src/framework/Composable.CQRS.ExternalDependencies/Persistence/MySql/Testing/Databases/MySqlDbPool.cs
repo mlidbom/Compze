@@ -1,10 +1,9 @@
 using System;
 using Composable.Functional;
-using Composable.Persistence.Common.AdoCE;
-using MySql.Data.MySqlClient;
 using Composable.Persistence.MySql.SystemExtensions;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.Testing.Databases;
+using MySql.Data.MySqlClient;
 
 namespace Composable.Persistence.MySql.Testing.Databases;
 
@@ -36,21 +35,17 @@ sealed class MySqlDbPool : DbPool
 
    protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
    {
-      var databaseName = db.Name;
-
       ResetConnectionPool(db);
-      _masterConnectionPool.ExecuteNonQuery($@"
-DROP DATABASE IF EXISTS {databaseName};
-CREATE DATABASE {databaseName};");
+      ResetDatabase(db);
    }
 
    protected override void ResetDatabase(Database db)
    {
-      IMySqlConnectionPool.CreateInstance(ConnectionStringFor(db))
-                          .UseCommand(
-                              command => command.SetCommandText($@"
-DROP DATABASE {db.Name};
-CREATE DATABASE {db.Name};").ExecuteNonQuery());
+      //I experimented with dropping objects like for the other databases, but it was not faster than just dropping and recreating the database.
+      _masterConnectionPool.ExecuteNonQuery($"""
+                                             DROP DATABASE IF EXISTS {db.Name};
+                                             CREATE DATABASE {db.Name};
+                                             """);
    }
 
    void ResetConnectionPool(Database db)
