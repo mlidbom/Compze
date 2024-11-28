@@ -14,11 +14,9 @@ namespace Composable.Testing.Databases;
 
 partial class DbPool
 {
-   [UsedImplicitly] protected class SharedState : BinarySerialized<SharedState>
+   [UsedImplicitly] protected class SharedState
    {
       const int CleanDatabaseNumberTarget = 10;
-      protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForBinarySerializableList(it => it._databases, (it, value) => it._databases = value.NotNull())];
-
       [JsonProperty]
       List<Database> _databases = [];
 

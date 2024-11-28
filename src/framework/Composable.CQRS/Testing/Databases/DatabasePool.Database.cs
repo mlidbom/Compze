@@ -9,18 +9,8 @@ namespace Composable.Testing.Databases;
 
 partial class DbPool
 {
-   internal class Database : BinarySerialized<Database>
+   internal class Database
    {
-      protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() =>
-      [
-         GetterSetter.ForInt32(it => it.Id, (it, value) => it.Id = value),
-         GetterSetter.ForBoolean(it => it.IsReserved, (it, value) => it.IsReserved = value),
-         GetterSetter.ForDateTime(it => it.ReservationExpirationTime, (it, value) => it.ReservationExpirationTime = value),
-         GetterSetter.ForString(it => it.ReservationName, (it, value) => it.ReservationName = value.NotNull()),
-         GetterSetter.ForGuid(it => it.ReservedByPoolId, (it, value) => it.ReservedByPoolId = value),
-         GetterSetter.ForBoolean(it => it.IsClean, (it, value) => it.IsClean = value)
-      ];
-
       public int Id { get; private set; }
       public bool IsReserved { get; private set; }
       public bool IsClean { get; private set; } = true;
