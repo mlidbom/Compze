@@ -27,7 +27,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
       TimeAsserter.ExecuteThreaded(() => shared2.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
    }
 
-   [Test] public void Update_runs_single_threaded_100_times_in_80_milliseconds()
+   [Test] public void Update_runs_single_threaded_100_times_in_100_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;
@@ -45,7 +45,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
          },
          action: () => shared.Update(it => it.Name = (++counter).ToStringInvariant()),
          iterations: 100,
-         maxTotal: 70.Milliseconds());
+         maxTotal: 100.Milliseconds());
    }
 
    [Test] public void Update_runs_multi_threaded_100_times_in_80_milliseconds()

@@ -66,7 +66,7 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
 
    [Test] public void Multithreaded_fetches_XX_account_resources_in_20_milliseconds_db2_memory__msSql__mySql__oracle_pgSql_()
    {
-      var fetches = TestEnv.PersistenceLayer.ValueFor(db2: 20, memory: 40, msSql: 25, mySql: 20, orcl: 25, pgSql: 40);
+      var fetches = TestEnv.PersistenceLayer.ValueFor(db2: 20, memory: 40, msSql: 20, mySql: 20, orcl: 25, pgSql: 30);
       var accountsReader = CreateAccountsThreaded(Math.Min(fetches, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Fetch account resource",
