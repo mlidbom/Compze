@@ -1,12 +1,13 @@
 ﻿using System;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.Testing;
 using Composable.Testing.Performance;
 using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.ThreadingCE;
 
-[TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests
+[TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    MachineWideSharedObject<SharedObject> _shared;
    [SetUp] public void SetupTask()

@@ -1,4 +1,5 @@
-﻿using Composable.Functional;
+﻿using System;
+using Composable.Functional;
 using Composable.SystemCE;
 using FluentAssertions;
 using NUnit.Framework;
@@ -16,7 +17,8 @@ class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(plugg
             _ = CreatePool();
          });
 
-         UncatchableExceptionsGatherer.ForceGcCollectionWaitForFinalizersAndConsumeErrors().Should().HaveCount(1);
+         Assert.Throws<AggregateException>(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
+               .InnerExceptions.Should().HaveCount(1);
       });
    }
 }

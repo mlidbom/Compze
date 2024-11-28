@@ -1,4 +1,5 @@
 ﻿using AccountManagement.Domain.Passwords;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -6,7 +7,8 @@ using NUnit.Framework;
 
 namespace AccountManagement.UnitTests.Passwords;
 
-static class After_creating_a_password_From_the_string_Pass
+// ReSharper disable once ClassNeverInstantiated.Global
+class After_creating_a_password_From_the_string_Pass : UniversalTestBase
 {
    static readonly Password _password = new("Pass");
 

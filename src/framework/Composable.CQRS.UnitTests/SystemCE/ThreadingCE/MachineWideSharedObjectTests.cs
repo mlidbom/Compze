@@ -5,6 +5,7 @@ using System.Threading;
 using Composable.Serialization;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.Testing;
 using Composable.Testing.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -20,7 +21,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
    public string Name { get; set; } = "Default";
 }
 
-[TestFixture] public class MachineWideSharedObjectTests
+[TestFixture] public class MachineWideSharedObjectTests : UniversalTestBase
 {
    [Test] public void Create()
    {

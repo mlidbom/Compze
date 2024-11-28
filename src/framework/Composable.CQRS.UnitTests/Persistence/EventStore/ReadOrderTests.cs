@@ -1,13 +1,14 @@
 ﻿using System;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
 
 namespace Composable.Tests.Persistence.EventStore;
 
-[TestFixture] public class ReadOrderTests
+[TestFixture] public class ReadOrderTests : UniversalTestBase
 {
    [Test] public void Parse_followed_by_ToString_always_results_in_identical_string()
    {

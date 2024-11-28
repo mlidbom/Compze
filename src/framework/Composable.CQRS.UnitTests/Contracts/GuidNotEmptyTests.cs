@@ -1,5 +1,6 @@
 ﻿using System;
 using Composable.Contracts;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
@@ -7,7 +8,7 @@ using Assert = NUnit.Framework.Assert;
 namespace Composable.Tests.Contracts;
 
 [TestFixture]
-public class GuidNotEmptyTests
+public class GuidNotEmptyTests : UniversalTestBase
 {
    [Test]
    public void NotEmptyThrowsArgumentExceptionForEmptyGuid()

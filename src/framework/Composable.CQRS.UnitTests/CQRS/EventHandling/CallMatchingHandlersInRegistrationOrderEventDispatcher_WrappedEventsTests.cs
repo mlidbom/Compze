@@ -1,11 +1,12 @@
 ﻿using Composable.Messaging;
 using Composable.Messaging.Events;
 using Composable.Persistence.EventStore;
+using Composable.Testing;
 using NUnit.Framework;
 
 namespace Composable.Tests.CQRS.EventHandling;
 
-[TestFixture]public class CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests
+[TestFixture]public class CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests : UniversalTestBase
 {
    interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent {}
    class UserWrapperEvent<TEvent> : MessageTypes.WrapperEvent<TEvent>, IUserWrapperEvent<TEvent> where TEvent : IUserEvent

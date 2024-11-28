@@ -6,7 +6,7 @@ using Composable.Testing;
 
 namespace Composable.Tests.Contracts;
 
-[TestFixture] public class ObjectNotDefaultPerformanceTests
+[TestFixture] public class ObjectNotDefaultPerformanceTests : UniversalTestBase
 {
    [Test] public void ShouldRun300TestsIn1Milliseconds()
    {

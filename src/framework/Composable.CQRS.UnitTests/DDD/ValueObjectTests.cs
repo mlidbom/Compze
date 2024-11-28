@@ -1,5 +1,6 @@
 using System;
 using Composable.DDD;
+using Composable.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
 #pragma warning disable CA1823 //Review OK:unread private members are intentional in this test.
@@ -8,7 +9,7 @@ using NUnit.Framework;
 namespace Composable.Tests.DDD;
 
 [TestFixture]
-public class ValueObjectTests
+public class ValueObjectTests : UniversalTestBase
 {
    class Address : ValueObject<Address>
    {

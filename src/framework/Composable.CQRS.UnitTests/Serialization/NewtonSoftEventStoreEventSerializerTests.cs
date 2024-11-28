@@ -4,6 +4,7 @@ using Composable.Persistence.EventStore;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
 using Composable.SystemCE;
+using Composable.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -11,7 +12,7 @@ using NUnit.Framework;
 namespace Composable.Tests.Serialization;
 
 [TestFixture]
-public class NewtonSoftEventStoreEventSerializerTests
+public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
 {
    IEventStoreSerializer _eventSerializer;
 

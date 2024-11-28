@@ -6,7 +6,7 @@ using Composable.Testing;
 
 namespace Composable.Tests.Contracts;
 
-[TestFixture] public class LambdaBasedArgumentSpecsPerformanceTests
+[TestFixture] public class LambdaBasedArgumentSpecsPerformanceTests : UniversalTestBase
 {
    [Test] public void ShouldRun10_000TestsIn30Millisecond() //The expression compilation stuff was worrying but this should be OK except for tight loops.
    {

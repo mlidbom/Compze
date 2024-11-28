@@ -18,16 +18,16 @@ static class UncatchableExceptionsGatherer
 
    internal static IReadOnlyList<Exception> Exceptions => _exceptions.ToList();
 
-   internal static IReadOnlyList<Exception> Consume() => Monitor.Update(() =>
+   internal static Unit ConsumeAndThrowAnyExceptionsGathered() => Monitor.Update(() =>
    {
       var exceptions = _exceptions;
       _exceptions = [];
-      return exceptions.ToArray();
+      if(exceptions.Any()) throw new AggregateException(exceptions);
    });
 
-   internal static IReadOnlyList<Exception> ForceGcCollectionWaitForFinalizersAndConsumeErrors()
+   internal static Unit ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions()
    {
       GCCE.ForceFullGcAllGenerationsAndWaitForFinalizers();
-      return Consume();
+      return ConsumeAndThrowAnyExceptionsGathered();
    }
 }

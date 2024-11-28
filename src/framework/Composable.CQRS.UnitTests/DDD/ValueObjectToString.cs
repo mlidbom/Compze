@@ -1,12 +1,13 @@
 using System;
 using Composable.DDD;
+using Composable.Testing;
 using NUnit.Framework;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace Composable.Tests.DDD;
 
 [TestFixture]
-public class ValueObjectToString
+public class ValueObjectToString : UniversalTestBase
 {
    class Root : ValueObject<Root>
    {

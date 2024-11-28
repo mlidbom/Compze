@@ -1,11 +1,12 @@
 ﻿using System;
 using Composable.SystemCE.ConfigurationCE;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.ConfigurationCE;
 
-[TestFixture] public class AppConfigConfigurationParameterProviderTests
+[TestFixture] public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
 {
    AppSettingsJsonConfigurationParameterProvider _provider;
    [SetUp] public void SetupTask() => _provider = new AppSettingsJsonConfigurationParameterProvider();

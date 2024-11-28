@@ -1,6 +1,7 @@
 ﻿using System;
 using Composable.Persistence.EventStore;
 using Composable.SystemCE.ReactiveCE;
+using Composable.Testing;
 using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
@@ -17,7 +18,7 @@ using NUnit.Framework;
 namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId;
 
 [TestFixture]
-public class NestedEntitiesTests
+public class NestedEntitiesTests : UniversalTestBase
 {
    Root Ag;
    RootQueryModel Qm;

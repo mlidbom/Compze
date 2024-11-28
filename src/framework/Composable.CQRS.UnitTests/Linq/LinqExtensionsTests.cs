@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Composable.SystemCE.LinqCE;
+using Composable.Testing;
 using NUnit.Framework;
 
 namespace Composable.Tests.Linq;
 
 [TestFixture]
-public class LinqExtensionsTests
+public class LinqExtensionsTests : UniversalTestBase
 {
    [Test]
    public void FlattenShouldIterateAllNestedCollectionInstances()

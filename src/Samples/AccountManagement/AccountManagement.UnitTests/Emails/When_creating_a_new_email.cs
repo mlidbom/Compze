@@ -1,12 +1,13 @@
 ﻿using AccountManagement.Domain;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace AccountManagement.UnitTests.Emails;
 
-[TestFixture] public class When_creating_a_new_email
+[TestFixture] public class When_creating_a_new_email : UniversalTestBase
 {
-   [TestFixture] public class An_InvalidEmailException_containing_the_email_is_thrown_if_email
+   [TestFixture] public class An_InvalidEmailException_containing_the_email_is_thrown_if_email : UniversalTestBase
    {
       [Test, TestCaseSource(typeof(TestData.Emails), nameof(TestData.Emails.InvalidEmailsTestData))]
       public void _(string invalidEmail)//The _ name is a hack that colludes with the test data source to manage to get the ReSharper, VS, and NCrunch test runners to all show a descriptive name based on the test source data for each case

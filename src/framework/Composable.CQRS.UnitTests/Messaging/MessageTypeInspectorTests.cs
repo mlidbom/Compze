@@ -1,5 +1,6 @@
 ﻿using System;
 using Composable.Messaging;
+using Composable.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
@@ -8,15 +9,15 @@ namespace Composable.Tests.Messaging;
 interface INonGenericWrapperEvent : IWrapperEvent<IEvent>{}
 interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent> {}
 
-[TestFixture]public static class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_
+[TestFixture]public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
 {
    static void AssertInvalidForSending<TMessage>() => Assert.Throws<MessageTypeInspector.MessageTypeDesignViolationException>(MessageInspector.AssertValid<TMessage>);
    static void AssertInvalidForSubscription<TMessage>() => Assert.Throws<MessageTypeInspector.MessageTypeDesignViolationException>(MessageInspector.AssertValidForSubscription<TMessage>);
 
 
-   [TestFixture]public static class Inspecting_type_for_subscription_
+   [TestFixture]public class Inspecting_type_for_subscription_ : UniversalTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_
+      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
          [Test] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 
@@ -25,9 +26,9 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent> {}
    }
 
 
-   [TestFixture]public class Inspecting_type_for_sending_and_
+   [TestFixture]public class Inspecting_type_for_sending_and_ : UniversalTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_
+      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
          [Test] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 

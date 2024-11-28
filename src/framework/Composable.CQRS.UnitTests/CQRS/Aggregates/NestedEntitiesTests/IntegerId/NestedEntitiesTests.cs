@@ -1,4 +1,5 @@
 ﻿using System;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 // ReSharper disable ImplicitlyCapturedClosure
@@ -12,7 +13,7 @@ using NUnit.Framework;
 namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
 
 [TestFixture]
-public class NestedEntitiesTests
+public class NestedEntitiesTests : UniversalTestBase
 {
    [Test]
    public void ConstructorWorks() => new Root("root").Name.Should().Be("root");

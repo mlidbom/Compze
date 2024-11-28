@@ -4,13 +4,14 @@ using Composable.GenericAbstractions.Time;
 using Composable.Persistence.EventStore;
 using Composable.Persistence.EventStore.Aggregates;
 using Composable.SystemCE.ReactiveCE;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Composable.Tests.CQRS;
 
 [TestFixture]
-public class AggregateTests
+public class AggregateTests : UniversalTestBase
 {
    [Test]
    public void VersionIncreasesWithEachAppliedEvent()

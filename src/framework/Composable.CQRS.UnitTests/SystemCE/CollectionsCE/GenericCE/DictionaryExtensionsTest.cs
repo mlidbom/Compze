@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Composable.SystemCE.CollectionsCE.GenericCE;
+using Composable.Testing;
 using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.CollectionsCE.GenericCE;
@@ -14,7 +15,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    const int ResultOfDefaultConstructor = new();
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : UniversalTestBase
    {
       [Test]
       public void ShouldReturnResulOfConstructor()
@@ -34,7 +35,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : UniversalTestBase
    {
       [Test]
       public void ShouldReturnExistingValue()
@@ -56,7 +57,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
 
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: UniversalTestBase
    {
       [Test]
       public void ShouldReturnResulOfConstructor()
@@ -76,7 +77,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: UniversalTestBase
    {
       [Test]
       public void ShouldReturnExistingValue()

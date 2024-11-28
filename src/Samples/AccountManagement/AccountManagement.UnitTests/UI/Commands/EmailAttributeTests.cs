@@ -1,5 +1,6 @@
 ﻿using AccountManagement.API.ValidationAttributes;
 using AccountManagement.UnitTests.UI.Commands.UserCommands;
+using Composable.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -7,7 +8,7 @@ using NUnit.Framework;
 namespace AccountManagement.UnitTests.UI.Commands;
 
 [TestFixture]
-public class EmailAttributeTests
+public class EmailAttributeTests : UniversalTestBase
 {
    [Test]
    public void IsNotValidIfEmailIsNull()

@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Serialization;
 
-public class NewtonSoftEventStoreEventSerializerPerformanceTests
+public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTestBase
 {
    IEventStoreSerializer _eventSerializer;
 

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using Composable.GenericAbstractions.Time;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Composable.Tests.GenericAbstractions.Time;
 
 [TestFixture]
-public class DummyTimeSourceTests
+public class DummyTimeSourceTests : UniversalTestBase
 {
    [Test]
    public void Now_should_return_within_100_millisecond_of_datetime_UtcNow()

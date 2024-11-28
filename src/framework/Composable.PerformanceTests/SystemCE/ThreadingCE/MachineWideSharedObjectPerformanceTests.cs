@@ -1,13 +1,14 @@
 ﻿using System;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE;
+using Composable.Testing;
 using Composable.Testing.Performance;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.ThreadingCE;
 
-[TestFixture] public class MachineWideSharedObjectPerformanceTests
+[TestFixture] public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    [Test] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
    {

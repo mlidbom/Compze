@@ -3,6 +3,7 @@ using System.Threading;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Composable.Testing;
 using Composable.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,12 +12,12 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Testing.Threading;
 
-[TestFixture] public class Given_a_locked_ThreadGate
+[TestFixture] public class Given_a_locked_ThreadGate : UniversalTestBase
 {
    [Test] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
       => Assert.Throws<AwaitingConditionTimeoutException>(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough());
 
-   public class After_starting_10_threads_that_all_call_PassThrough
+   public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {
       [Test] public void Within_50_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
@@ -27,7 +28,7 @@ namespace Composable.Tests.Testing.Threading;
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 
-      public class And_all_have_queued_up_calling_PassThrough
+      public class And_all_have_queued_up_calling_PassThrough : UniversalTestBase
       {
          ThreadGateTestFixture _fixture;
 
@@ -45,7 +46,7 @@ namespace Composable.Tests.Testing.Threading;
       }
    }
 
-   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once
+   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once : UniversalTestBase
    {
       ThreadGateTestFixture _fixture;
       [SetUp] public void SetupTask()
@@ -65,7 +66,7 @@ namespace Composable.Tests.Testing.Threading;
       [Test] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
    }
 
-   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times
+   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : UniversalTestBase
    {
       ThreadGateTestFixture _fixture;
       [SetUp] public void SetupTask()
@@ -95,7 +96,7 @@ namespace Composable.Tests.Testing.Threading;
    [TestFixture(10, 8)]
    [TestFixture(10, 9)]
    [TestFixture(10, 10)]
-   public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y
+   public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y : UniversalTestBase
    {
       readonly int _threads;
       readonly int _timesToCallLetOneThreadPassThrough;

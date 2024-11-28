@@ -1,11 +1,12 @@
 ﻿using Composable.Persistence.DocumentDb;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Composable.Tests.KeyValueStorage;
 
 [TestFixture]
-public class DocumentDBSession_DocumentKeyTests
+public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
 {
    class Base
    {}

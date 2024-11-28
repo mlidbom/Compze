@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Composable.Contracts;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
@@ -10,7 +11,7 @@ namespace Composable.Tests.Contracts;
 // ReSharper disable ConvertToConstant.Local
 // ReSharper disable ExpressionIsAlwaysNull
 [TestFixture]
-public class ObjectNotNullTests
+public class ObjectNotNullTests : UniversalTestBase
 {
    [Test]
    public void ThrowsObjectNullExceptionForNullValues()

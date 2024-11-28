@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using Composable.SystemCE.LinqCE;
+using Composable.Testing;
 using NUnit.Framework;
 
 namespace Composable.Tests.Linq;
 
 [TestFixture]
-public class SeqTests
+public class SeqTests : UniversalTestBase
 {
    [Test]
    public void CreateShouldEnumerateAllParamsInOrder()

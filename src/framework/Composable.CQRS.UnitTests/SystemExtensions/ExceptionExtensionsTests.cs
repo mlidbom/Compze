@@ -1,13 +1,14 @@
 ﻿using System;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Composable.Tests.SystemExtensions;
 
 [TestFixture]
-public class ExceptionExtensionsTests
+public class ExceptionExtensionsTests : UniversalTestBase
 {
    Exception _originalException;
    Exception _firstNestingException;

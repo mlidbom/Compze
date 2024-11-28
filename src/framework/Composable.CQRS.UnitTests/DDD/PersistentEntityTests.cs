@@ -1,5 +1,6 @@
 using System;
 using Composable.DDD;
+using Composable.Testing;
 using NUnit.Framework;
 
 namespace Composable.Tests.DDD;
@@ -7,7 +8,7 @@ namespace Composable.Tests.DDD;
 #pragma warning disable CA1508 //Avoid dead conditional code
 
 [TestFixture]
-public class PersistentEntityTests
+public class PersistentEntityTests : UniversalTestBase
 {
    class Person : Entity<Person>
    {

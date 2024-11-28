@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.ReflectionCE;
 
-[TestFixture]public class Activator_one_argument_constructor_performance_tests
+[TestFixture]public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
 {
    const string Argument = "AnArgument";
 

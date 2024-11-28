@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.ThreadingCE.TasksCE;
 
-public class TaskCEExceptionsTests
+public class TaskCEExceptionsTests : UniversalTestBase
 {
    static async Task FailingMethod()
    {

@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.CQRS.Aggregates;
 
-public class PublicSettersAndFieldsAreDisallowedTests
+public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {
    public static class RootEvent
    {

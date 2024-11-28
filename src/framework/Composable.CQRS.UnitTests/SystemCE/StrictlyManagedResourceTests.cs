@@ -1,12 +1,14 @@
 ﻿using System;
 using Composable.Functional;
 using Composable.SystemCE;
+using Composable.Testing;
 using FluentAssertions;
+using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE;
 
-class StrictlyManagedResourceTests
+class StrictlyManagedResourceTests : UniversalTestBase
 {
    [Test] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {
@@ -17,11 +19,12 @@ class StrictlyManagedResourceTests
             _ = new StrictlyManagedResource<MyClass>();
          });
 
-         UncatchableExceptionsGatherer.ForceGcCollectionWaitForFinalizersAndConsumeErrors().Should().HaveCount(1);
+         Assert.Throws<AggregateException>(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
+               .InnerExceptions.Should().HaveCount(1);
       });
    }
 
-   class MyClass : IStrictlyManagedResource
+   [UsedImplicitly]class MyClass : IStrictlyManagedResource
    {
       public void Dispose() => throw new NotImplementedException();
    }

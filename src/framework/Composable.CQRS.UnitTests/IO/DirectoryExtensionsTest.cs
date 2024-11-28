@@ -5,12 +5,13 @@ using Composable.Functional;
 using Composable.Logging;
 using Composable.SystemCE.IOCE;
 using Composable.SystemCE.LinqCE;
+using Composable.Testing;
 using NUnit.Framework;
 
 namespace Composable.Tests.IO;
 
 [TestFixture]
-public class DirectoryExtensionsTest
+public class DirectoryExtensionsTest : UniversalTestBase
 {
    [Test]
    public void AsDirectoryShouldReturnDirectoryInfoWithFullNameBeingTheOriginalString()

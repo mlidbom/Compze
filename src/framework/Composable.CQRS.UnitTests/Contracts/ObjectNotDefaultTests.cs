@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using Composable.Contracts;
+using Composable.Testing;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace Composable.Tests.Contracts;
 
 [TestFixture]
-public class ObjectNotDefaultTests
+public class ObjectNotDefaultTests : UniversalTestBase
 {
    [Test]
    public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()

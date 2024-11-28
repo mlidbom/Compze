@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using Composable.DDD;
+using Composable.Testing;
 using NUnit.Framework;
 
 namespace Composable.Tests.DDD;
 
 [TestFixture]
-public class ValueObjectsWithCollectionsTests
+public class ValueObjectsWithCollectionsTests : UniversalTestBase
 {
    class ExternalJobsDashboardViewModel : ValueObject<ExternalJobsDashboardViewModel>
    {

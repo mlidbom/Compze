@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.ResourceAccess;
 using Composable.SystemCE.ThreadingCE.TasksCE;
+using Composable.Testing;
 using FluentAssertions;
 using NCrunch.Framework;
 using NUnit.Framework;
@@ -14,7 +15,7 @@ using Assert = NUnit.Framework.Assert;
 
 namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
-[TestFixture] public class MonitorCE_specification
+[TestFixture] public class MonitorCE_specification : UniversalTestBase
 {
    [Test] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
@@ -53,7 +54,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
    }
 
-   [TestFixture] public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout
+   [TestFixture] public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
    {
       [Test,EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
          RunScenario(ownerThreadBlockTime:20.Milliseconds(), timeToWaitForStackTrace:5.Seconds(), monitorTimeout: 10.Milliseconds()).Should().BeOfType<EnterLockTimeoutException>();

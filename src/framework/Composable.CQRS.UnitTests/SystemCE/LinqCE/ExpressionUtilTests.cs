@@ -1,11 +1,12 @@
 ﻿using Composable.SystemCE.LinqCE;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.LinqCE;
 
 [TestFixture]
-public class ExpressionUtilTests
+public class ExpressionUtilTests: UniversalTestBase
 {
    [Test]
    public void CanExtractFromMemberAccessingLambdaWithNoParameter() => ExpressionUtil.ExtractMemberName(() => MyMember).Should().Be("MyMember");

@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.StrictlyManagedResource;
 
-[TestFixture]public class StrictlyManagedResourcePerformanceTests
+[TestFixture]public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
 {
    // ReSharper disable once ClassNeverInstantiated.Local
    #pragma warning disable ca1812 // Class is never instantiated

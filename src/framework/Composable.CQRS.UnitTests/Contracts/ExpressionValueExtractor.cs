@@ -1,11 +1,12 @@
 ﻿using Composable.Contracts;
+using Composable.Testing;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace Composable.Tests.Contracts;
 
 [TestFixture]
-public class ExpressionValueExtractorTests
+public class ExpressionValueExtractorTests : UniversalTestBase
 {
    string TestString { get; } = "TestString";
 

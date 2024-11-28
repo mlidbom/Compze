@@ -2,13 +2,14 @@
 using System.Linq;
 using AccountManagement.API;
 using Composable.Functional;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace AccountManagement.UnitTests.UI.Commands.UserCommands;
 
 [TestFixture]
-public class RegisterAccountUICommandTests
+public class RegisterAccountUICommandTests : UniversalTestBase
 {
    AccountResource.Command.Register _registerAccountUiCommand;
 

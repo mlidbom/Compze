@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Composable.Refactoring.Naming;
 using Composable.Serialization;
+using Composable.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -90,7 +91,7 @@ namespace Composable.Tests.Serialization
         }
     }
 
-    [TestFixture] public class TypeRenamingSerializationTests
+    [TestFixture] public class TypeRenamingSerializationTests : UniversalTestBase
     {
         ITypeMapper _originaltypesMap;
         ITypeMapper _renamedTypesMap;

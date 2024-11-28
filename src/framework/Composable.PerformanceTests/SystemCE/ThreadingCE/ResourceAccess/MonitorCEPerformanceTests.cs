@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
-public class MonitorCEPerformanceTests
+public class MonitorCEPerformanceTests : UniversalTestBase
 {
    class MyLong
    {
