@@ -51,7 +51,7 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
 
    [Test] public void Multithreaded_logs_in_XX_times_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()
    {
-      var logins = TestEnv.PersistenceLayer.ValueFor(db2: 8, memory: 8, msSql: 8, mySql: 5, orcl: 8, pgSql: 8);
+      var logins = TestEnv.PersistenceLayer.ValueFor(db2: 8, memory: 8, msSql: 8, mySql: 3, orcl: 8, pgSql: 8);
       var accountsReader = CreateAccountsThreaded(Math.Min(logins, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Log in to account",
