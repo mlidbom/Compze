@@ -107,7 +107,7 @@ public class DbPoolPerformanceTests : DbPoolTest
       manager.SetLogLevel(LogLevel.Warning);
       var reservationName = Guid.NewGuid().ToString();
 
-      Action useConnection = null;
+      Action useConnection;
 
       switch(TestEnv.PersistenceLayer.Current)
       {
