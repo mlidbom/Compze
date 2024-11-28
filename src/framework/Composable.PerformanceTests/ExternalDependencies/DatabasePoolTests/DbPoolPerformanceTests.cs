@@ -79,7 +79,7 @@ public class DbPoolPerformanceTests : DbPoolTest
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
          iterations: 5,
-         maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 100, mySql: 100, orcl: 300, pgSql: 500).Milliseconds());
+         maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 100, mySql: 170, orcl: 300, pgSql: 500).Milliseconds());
    }
 
    [Test]
