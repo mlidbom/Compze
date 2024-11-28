@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Composable.Testing.Databases;
 
-partial class DatabasePool
+partial class DbPool
 {
    internal class Database : BinarySerialized<Database>
    {
@@ -21,12 +21,12 @@ partial class DatabasePool
          GetterSetter.ForBoolean(it => it.IsClean, (it, value) => it.IsClean = value)
       ];
 
-      internal int Id { get; private set; }
-      internal bool IsReserved { get; private set; }
-      internal bool IsClean { get; private set; } = true;
+      public int Id { get; private set; }
+      public bool IsReserved { get; private set; }
+      public bool IsClean { get; private set; } = true;
       public DateTime ReservationExpirationTime { get; private set; } = DateTime.MinValue;
-      internal string ReservationName { get; private set; } = string.Empty;
-      internal Guid ReservedByPoolId { get; private set; } = Guid.Empty;
+      public string ReservationName { get; private set; } = string.Empty;
+      public Guid ReservedByPoolId { get; private set; } = Guid.Empty;
 
       internal string Name => $"{PoolDatabaseNamePrefix}{Id:0000}";
 

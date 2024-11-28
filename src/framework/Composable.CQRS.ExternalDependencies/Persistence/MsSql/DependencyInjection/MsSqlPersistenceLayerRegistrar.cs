@@ -24,13 +24,13 @@ public static class MsSqlPersistenceLayerRegistrar
       //Connection management
       if(container.RunMode.IsTesting)
       {
-         container.Register(Singleton.For<MsSqlDatabasePool>()
-                                     .CreatedBy((IConfigurationParameterProvider _) => new MsSqlDatabasePool())
+         container.Register(Singleton.For<MsSqlDbPool>()
+                                     .CreatedBy((IConfigurationParameterProvider _) => new MsSqlDbPool())
                                      .DelegateToParentServiceLocatorWhenCloning());
 
          container.Register(
             Singleton.For<IMsSqlConnectionPool>()
-                     .CreatedBy((MsSqlDatabasePool pool) => IMsSqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
+                     .CreatedBy((MsSqlDbPool pool) => IMsSqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
          );
       } else
       {

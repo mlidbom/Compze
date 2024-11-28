@@ -9,14 +9,14 @@ using Composable.Testing.Databases;
 
 namespace Composable.Persistence.PgSql.Testing.Databases;
 
-sealed class PgSqlDatabasePool : DatabasePool
+sealed class PgSqlDbPool : DbPool
 {
    readonly IPgSqlConnectionPool _masterConnectionPool;
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
    readonly IThreadShared<NpgsqlConnectionStringBuilder> _connectionStringBuilder;
 
-   public PgSqlDatabasePool()
+   public PgSqlDbPool()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                                 ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";

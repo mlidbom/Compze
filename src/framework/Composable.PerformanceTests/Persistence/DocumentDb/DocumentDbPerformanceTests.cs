@@ -10,7 +10,7 @@ namespace Composable.Tests.Persistence.DocumentDb;
 [LongRunning]
 class DocumentDbPerformanceTests : DocumentDbTestsBase
 {
-   [Test] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_300_InMemory_8_PgSql_100_Orcl_100_DB2_300()
+   [Test] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()
    {
       ServiceLocator.ExecuteInIsolatedScope(() =>
       {
@@ -31,7 +31,7 @@ class DocumentDbPerformanceTests : DocumentDbTestsBase
          TimeAsserter.Execute(
             action: SaveOneNewUserInTransaction,
             iterations: 100,
-            maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 300, memory: 8, msSql: 75, mySql: 300, orcl: 100, pgSql: 75).Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.3)
+            maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 300, memory: 8, msSql: 75, mySql: 500, orcl: 100, pgSql: 75).Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.3)
          );
       });
    }

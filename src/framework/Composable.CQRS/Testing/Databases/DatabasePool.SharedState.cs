@@ -8,16 +8,18 @@ using Composable.Serialization;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Composable.Testing.Databases;
 
-partial class DatabasePool
+partial class DbPool
 {
    [UsedImplicitly] protected class SharedState : BinarySerialized<SharedState>
    {
       const int CleanDatabaseNumberTarget = 10;
       protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForBinarySerializableList(it => it._databases, (it, value) => it._databases = value.NotNull())];
 
+      [JsonProperty]
       List<Database> _databases = [];
 
       IEnumerable<Database> UnReserved => _databases.Where(db => !db.IsReserved)

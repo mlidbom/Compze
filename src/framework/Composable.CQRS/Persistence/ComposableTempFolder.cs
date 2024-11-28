@@ -12,12 +12,11 @@ using SPath = Path;
 ///<summary>Manages the Temp folder in a machine wide thread safe manner.</summary>
 static class ComposableTempFolder
 {
-   static readonly MachineWideSingleThreaded WithMachineWideLock = MachineWideSingleThreaded.For(nameof(ComposableTempFolder));
+   static readonly MachineWideSingleThreaded MachineWideLock = MachineWideSingleThreaded.For(nameof(ComposableTempFolder));
    static readonly string DefaultPath = SPath.Combine(SPath.GetTempPath(), "Composable_TEMP");
    static readonly string Path = EnsureFolderExists();
-   internal static readonly bool IsOverridden = Path != DefaultPath;
 
-   internal static string EnsureFolderExists(string folderName) => WithMachineWideLock.Execute(() =>
+   internal static string EnsureFolderExists(string folderName) => MachineWideLock.Execute(() =>
    {
       var folder = SPath.Combine(Path, folderName);
       if(!Directory.Exists(folder))
@@ -30,20 +29,13 @@ static class ComposableTempFolder
 
    static string EnsureFolderExists()
    {
-      return WithMachineWideLock.Execute(() =>
+      return MachineWideLock.Execute(() =>
       {
-         var path = Environment.GetEnvironmentVariable("COMPOSABLE_TEMP_DRIVE");
-         if(path == null || path.IsNullEmptyOrWhiteSpace())
+         if(!Directory.Exists(DefaultPath))
          {
-            path = DefaultPath;
+            Directory.CreateDirectory(DefaultPath);
          }
-
-         if(!Directory.Exists(path))
-         {
-            Directory.CreateDirectory(path);
-         }
-
-         return path;
+         return DefaultPath;
       });
    }
 }

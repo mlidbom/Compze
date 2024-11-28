@@ -15,10 +15,9 @@ using NUnit.Framework;
 
 namespace Composable.Tests.SystemCE.ThreadingCE;
 
-[UsedImplicitly] class SharedObject : BinarySerialized<SharedObject>
+[UsedImplicitly] class SharedObject
 {
    public string Name { get; set; } = "Default";
-   protected override IEnumerable<MemberGetterSetter> CreateGetterSetters() => [GetterSetter.ForString(it => it.Name, (it, value) => it.Name = value)];
 }
 
 [TestFixture] public class MachineWideSharedObjectTests
@@ -36,17 +35,17 @@ namespace Composable.Tests.SystemCE.ThreadingCE;
    {
       var name = Guid.NewGuid().ToString();
       using var shared = MachineWideSharedObject<SharedObject>.For(name);
-      var test = shared.GetCopy();
+      var value = shared.GetCopy();
 
-      test.Name.Should().Be("Default");
+      value.Name.Should().Be("Default");
 
-      test = shared.Update(it => it.Name = "Updated");
+      value = shared.Update(it => it.Name = "Updated");
 
-      test.Name.Should().Be("Updated");
+      value.Name.Should().Be("Updated");
 
-      test = shared.GetCopy();
+      value = shared.GetCopy();
 
-      test.Name.Should().Be("Updated");
+      value.Name.Should().Be("Updated");
    }
 
    [Test] public void Two_instances_with_same_name_share_data()

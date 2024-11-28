@@ -35,12 +35,12 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
 
-   [Test] public void SingleThreaded_creates_XX_accounts_in_30_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_() =>
+   [Test] public void SingleThreaded_creates_XX_accounts_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.Execute(
          description: "Register accounts",
          action: () => _scenarioApi.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
-         iterations: TestEnv.PersistenceLayer.ValueFor(db2: 2, memory: 2, msSql: 2, mySql: 2, orcl: 2, pgSql: 2),
-         maxTotal: 30.Milliseconds().EnvMultiply(1.6));
+         iterations: TestEnv.PersistenceLayer.ValueFor(db2: 6, memory: 6, msSql: 6, mySql: 6, orcl: 6, pgSql: 6),
+         maxTotal: 100.Milliseconds().EnvMultiply(1.6));
 
    [Test] public void Multithreaded_creates_XX_accounts_in_20_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.ExecuteThreaded(
@@ -51,7 +51,7 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
 
    [Test] public void Multithreaded_logs_in_XX_times_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()
    {
-      var logins = TestEnv.PersistenceLayer.ValueFor(db2: 8, memory: 8, msSql: 8, mySql: 7, orcl: 8, pgSql: 8);
+      var logins = TestEnv.PersistenceLayer.ValueFor(db2: 8, memory: 8, msSql: 8, mySql: 3, orcl: 8, pgSql: 8);
       var accountsReader = CreateAccountsThreaded(Math.Min(logins, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Log in to account",

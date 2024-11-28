@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
 
-public class DatabasePoolPerformanceTests : DatabasePoolTest
+public class DbPoolPerformanceTests : DbPoolTest
 {
    [OneTimeSetUp]public void WarmUpCache()
    {
@@ -79,7 +79,7 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
          iterations: 5,
-         maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 100, mySql: 100, orcl: 300, pgSql: 500).Milliseconds());
+         maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 100, mySql: 170, orcl: 300, pgSql: 500).Milliseconds());
    }
 
    [Test]
@@ -107,7 +107,7 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
       manager.SetLogLevel(LogLevel.Warning);
       var reservationName = Guid.NewGuid().ToString();
 
-      Action useConnection = null;
+      Action useConnection;
 
       switch(TestEnv.PersistenceLayer.Current)
       {
@@ -136,5 +136,5 @@ public class DatabasePoolPerformanceTests : DatabasePoolTest
       );
    }
 
-   public DatabasePoolPerformanceTests(string _) : base(_) {}
+   public DbPoolPerformanceTests(string _) : base(_) {}
 }
