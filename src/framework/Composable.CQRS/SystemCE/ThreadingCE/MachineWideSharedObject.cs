@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using Composable.Contracts;
 using Composable.Functional;
 using Composable.Logging;
@@ -55,79 +56,55 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
       });
    }
 
-   internal TObject Update(Action<TObject> action)
+   internal TObject Update(Action<TObject> action) => _synchronizer.Execute(() =>
    {
       Contract.Assert.That(!_disposed, "Attempt to use disposed object.");
+      var wrapper = Load();
+      action(wrapper.Object);
+      Save(wrapper);
+      return wrapper.Object;
+   });
 
-      return _synchronizer.Execute(() =>
-      {
-         var wrapper = Load();
-         action(wrapper.Object);
-         Save(wrapper);
-         return wrapper.Object;
-      });
-   }
+   internal TObject GetCopy() => Contract.Assert.That(!_disposed, "Attempt to use disposed object.")
+                                         .then(() => _synchronizer.Execute(() => Load().Object));
 
    void Save(ReferenceCountingWrapper wrapper)
    {
       var json = Serialize(wrapper);
-      File.WriteAllText(_filePath, json);
+      File.WriteAllText(_filePath, json, Encoding.UTF8);
    }
 
    ReferenceCountingWrapper Load()
    {
-      var json = File.ReadAllText(_filePath);
+      var json = File.ReadAllText(_filePath, Encoding.UTF8);
       try
       {
          return Deserialize(json);
-      }catch(Exception exception)
+      }
+      catch(Exception)
       {
-         var debugfile = _filePath + ".debug";
-         this.Log().Warning($"Failed, attempting to save debug file: {debugfile}");
-         File.WriteAllText(debugfile, json);
-         this.Log().Warning($"Failed, successfully saved debug file: {debugfile}");
+         File.WriteAllText($"{_filePath}_{Guid.NewGuid()}.DEBUG", json, Encoding.UTF8);
          throw;
       }
    }
 
-   internal TObject GetCopy()
-   {
-      Contract.Assert.That(!_disposed, "Attempt to use disposed object.");
-
-      return _synchronizer.Execute(() =>
-      {
-         if(!File.Exists(_filePath))
-         {
-            var referenceCountingWrapper = new ReferenceCountingWrapper();
-            Save(referenceCountingWrapper);
-            return referenceCountingWrapper.Object;
-         }
-
-         return Load().Object;
-      });
-   }
-
-   public void Dispose()
+   public void Dispose() => _synchronizer.Execute(() =>
    {
       if(!_disposed)
       {
-         _synchronizer.Execute(() =>
          {
-            if(File.Exists(_filePath))
+            var wrapper = Load();
+            wrapper.References--;
+            if(wrapper.References <= 0 && !_usePersistentFile)
             {
-               var wrapper = Load();
-               wrapper.References--;
-               if(wrapper.References <= 0 && !_usePersistentFile)
-               {
-                  File.Delete(_filePath);
-               } else
-               {
-                  Save(wrapper);
-               }
+               File.Delete(_filePath);
+            } else
+            {
+               Save(wrapper);
             }
-         });
+         }
       }
 
       _disposed = true;
-   }
+   });
 }
