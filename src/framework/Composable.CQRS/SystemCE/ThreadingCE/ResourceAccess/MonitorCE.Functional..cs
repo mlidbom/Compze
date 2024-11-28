@@ -1,4 +1,5 @@
 ﻿using System;
+using Composable.Functional;
 
 namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -11,9 +12,10 @@ public partial class MonitorCE
       using(EnterLock()) return func();
    }
 
-   public void Update(Action action)
+   public Unit Update(Action action)
    {
       using(EnterUpdateLock()) action();
+      return Unit.Instance;
    }
 
    public T Update<T>(Func<T> func)

@@ -19,7 +19,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
    static TimeSpan _reservationLength;
    const int NumberOfDatabases = 30;
 
-   protected DbPool()
+   protected DbPool() : base(forceStackTraceAllocation:true)
    {
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
 

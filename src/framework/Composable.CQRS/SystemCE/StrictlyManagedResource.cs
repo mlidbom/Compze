@@ -88,6 +88,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
          {
             try
             {
+               UncatchableExceptionsGatherer.Register(exception);
                this.Log().Error(exception);
                //Todo: Log metric here.
                using(StaticMonitor.EnterUpdateLock())
@@ -126,11 +127,11 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
 ///}
 ///</code>
 ///</example>
-public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManagedResource where TInheritor : StrictlyManagedResourceBase<TInheritor>
+public abstract class StrictlyManagedResourceBase<TInheritor>(bool forceStackTraceAllocation = false, bool needsFileInfo = false) : IStrictlyManagedResource
+   where TInheritor : StrictlyManagedResourceBase<TInheritor>
 {
    bool _disposed;
-   readonly StrictlyManagedResource<TInheritor> _strictlyManagedResource;
-   protected StrictlyManagedResourceBase(bool forceStackTraceAllocation = false, bool needsFileInfo = false) => _strictlyManagedResource = new StrictlyManagedResource<TInheritor>(forceStackTraceAllocation, needsFileInfo);
+   readonly StrictlyManagedResource<TInheritor> _strictlyManagedResource = new(forceStackTraceAllocation, needsFileInfo);
 
    public void Dispose()
    {
