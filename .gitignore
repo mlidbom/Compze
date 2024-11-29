@@ -31,3 +31,4 @@ nCrunchTemp*
 /src/framework/Documentation/Website/adoc-render-test/
 /src/NCrunchDuplicateByDimensions
 /src/TestUsingPluggableComponentCombinations
+/src/_site/*
