@@ -1,1 +1,3 @@
-include::_sections/_include-directory.adoc[]
+Level 1
+
+[!INCLUDE [Sections](_sections/_include-directory.md)]

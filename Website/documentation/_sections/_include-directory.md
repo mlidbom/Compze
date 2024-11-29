@@ -1,7 +1,8 @@
-include::introduction.adoc[]
+[!INCLUDE [Introduction](introduction.md)]
 
-include::concepts/_include-directory.adoc[]
-include::components/_include-directory.adoc[]
+[!INCLUDE [Concepts](concepts/_include-directory.md)]
+
+[!INCLUDE [Components](components/_include-directory.md)]
 
 
 

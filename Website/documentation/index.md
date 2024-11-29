@@ -1,16 +1,7 @@
 # Documentation
-:page-permalink: /documentation/
-:page-toc:
-:sectnums:
-:doctype: book
-:imagesdir: images
-:source-highlighter: highlightjs
-:highlightjs-theme: agate
 
 
-
-include::_include-directory.adoc[]
-
+[!INCLUDE [Everything](_include-directory.md)] 
 
 
 

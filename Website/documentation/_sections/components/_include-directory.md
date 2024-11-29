@@ -1,12 +1,11 @@
 # Components Basics
 
-include::event-store/basics.adoc[]
-
+[!INCLUDE [EventStoreBasics](event-store/basics.md)]
 
 
 # Components Advanced
 
-include::event-store/refactoring.adoc[]
+[!INCLUDE [EventStoreRefactoring](event-store/refactoring.md)]
 
 
 

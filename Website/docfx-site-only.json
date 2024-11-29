@@ -9,7 +9,6 @@
         "exclude": [
           "_site/**",
           "api/**",
-          "Documentation/**",
           "node_modules/**"
         ]
       }
