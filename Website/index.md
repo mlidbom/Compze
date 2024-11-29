@@ -6,9 +6,10 @@ _layout: landing
 ## Modern architecture for normal projects
 Composable provides tooling for normal modern architecture projects.
 
-Modern architectures::
+### Modern architectures
 By modern architecture we mean software that tend to use tools or designs with labels such as Event Driven Architecture, Event Driven SOA, CQRS, Microservices, NoSql, Event Sourcing etc.
-Normal projects::
+
+### Normal projects
 By normal projects we mean the vast majority of projects. Projects where reliability, productivity and maintainability are the top priorities. Projects where extreme scalability and availability are not required.
 
 ### Existing tooling and platforms
