@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -8,7 +9,13 @@ class NUnitTestEnricher : ILogEventEnricher
 {
    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
    {
-      logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("NUnit_Test", TestContext.CurrentContext.Test.FullName));
-      logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("NUnit_TestId", TestContext.CurrentContext.Test.ID));
+      logEvent.AddOrUpdateProperty(
+         propertyFactory.CreateProperty("NUnit",
+                                        new Dictionary<string, object>
+                                        {
+                                           ["Test"] = TestContext.CurrentContext.Test.FullName,
+                                           ["Id"] = TestContext.CurrentContext.Test.ID
+                                        },
+                                        destructureObjects: true));
    }
 }
