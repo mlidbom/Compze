@@ -31,22 +31,22 @@ A unified messaging platform that gives you
  * Powerful zero configuration routing
  * A service bus with an exactly-once delivery guarantee
  * RPC style communication with optional command deduplication
- ** Letting you build
- *** Type safe Hypermedia APIs that can be consumed with with full intellisense and type safety in
- **** .Net language clients such as ASP.Net or Blazor (Blazor support not yet implemented)
- **** Typescript (Not yet implemented)
- * All the features from <<How Composable components are different>>
+   * Letting you build
+     * Type safe Hypermedia APIs that can be consumed with with full intellisense and type safety in
+       * .Net language clients such as ASP.Net or Blazor (Blazor support not yet implemented)
+       * Typescript (Not yet implemented)
+ * All the features from [How Composable components are different](#how-composable-components-are-different)
 
 ### Event Store
 * Build complex aggregates nesting entities and components in each other to arbitrary depths with ease by leveraging semantic events.
 * Refactoring of event histories including fully removing obsolete code
 * Performant on-demand generation of query models from events dramatically reduces the need for persisted query models
-* All the features from <<How Composable components are different>>
+* All the features from [How Composable components are different](#how-composable-components-are-different)
 
 ### Document Database
 * Save or load instances of any class serializable with Newtonsoft.Json with a single line of code.
 * Automatically tracks and persists changes to loaded documents
-* All the features from <<How Composable components are different>>
+* All the features from [How Composable components are different](#how-composable-components-are-different)
 
 ### Hypermedia API
 Most APIs consist of a number of service classes and interfaces. Imagine instead an APIs that is a lot like a website. That had a start resource from which you follow links to other resources where you could fill in commands and post them. That is essentially what a Hypermedia API is. Hypermedia API have these advantages among others:

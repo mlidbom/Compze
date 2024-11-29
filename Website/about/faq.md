@@ -1,6 +1,6 @@
-= FAQ
+# FAQ
 
-== General
+## General
 How stable is Composable?::
 The event store and the document database have been proven in production for a number of years. The current code has only minor changes. The service bus is new, under development, and untried in production. Of course all the components have test suites. No component has known bugs. We normally prioritize bug fixes over all feature development.
 
@@ -21,7 +21,7 @@ Given this requirement we assume that you are willing to sacrifice some level of
 What if we need extreme write side scalability?::
 If only a small subset of your data requires this level of write scalability, consider implementing only that part using other tools. If most of your data requires that level of scalability we would not recommend using our tools.
 
-== Reliability
+## Reliability
 
 Why do you enforce transactions for all updates?::
 Because it is our opinion that without transactions you have to sacrifice either reliability or simplicity/maintainability and we prioritize those over scalability and performance.
