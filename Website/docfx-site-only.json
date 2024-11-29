@@ -17,7 +17,8 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "favicon.ico"
         ]
       }
     ],
@@ -29,6 +30,7 @@
     "globalMetadata": {
       "_appName": "Composable",
       "_appTitle": "Composable",
+      "_appFaviconPath": "favicon.ico",
       "_enableSearch": true,
       "pdf": false
     }
