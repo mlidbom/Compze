@@ -25,6 +25,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Release\Composable.Testing.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -22,6 +22,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Release\Composable.CQRS.ExternalDependencies.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
