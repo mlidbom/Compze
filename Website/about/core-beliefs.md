@@ -1,4 +1,4 @@
-== Core beliefs
+## Core beliefs
 
 We believe that if you are considering using our tools you really should read all of this page to determine if it is likely to be a good fit for you and your organization. You may have trouble seeing the relevance at first, but it should all fit together as a whole in the end.
 
