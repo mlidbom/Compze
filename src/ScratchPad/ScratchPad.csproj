@@ -34,11 +34,18 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	  <PackageReference Include="Serilog" Version="4.1.0" />
+	  <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+	  <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+	  <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	  <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	  <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\framework\Composable.CQRS.ExternalDependencies\Composable.CQRS.ExternalDependencies.csproj" />
     <ProjectReference Include="..\framework\Composable.CQRS\Composable.CQRS.csproj" />
+    <ProjectReference Include="..\framework\Composable.Testing\Composable.Testing.csproj" />
     <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.API\AccountManagement.API.csproj" />
     <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
     <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.Server\AccountManagement.Server.csproj" />

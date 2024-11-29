@@ -14,11 +14,9 @@ interface ILogger
    Unit Warning(Exception exception, string message);
    Unit Info(string message);
    Unit Debug(string message);
-   [StringFormatMethod(formatParameterName: "queuedMessageInformation")]
-   Unit DebugFormat(string message, params object[] arguments);
 }
 
-static class Logger
+static class ComposableLogger
 {
    // ReSharper disable once UnusedParameter.Global removing the parameter would make it impossible to invoke this as an extension method :)
 #pragma warning disable IDE0060 //Review OK: removing the parameter would make it impossible to invoke this as an extension method :)
@@ -28,7 +26,7 @@ static class Logger
    internal static ILogger For<T>() => LogCache<T>.Logger;
    internal static ILogger For(Type loggingType) => LoggerFactoryMethod(loggingType);
 
-   static readonly Func<Type, ILogger> LoggerFactoryMethod = ConsoleLogger.Create;
+   internal static Func<Type, ILogger> LoggerFactoryMethod = ConsoleLogger.Create;
    static class LogCache<T>
    {
       // ReSharper disable once StaticFieldInGenericType

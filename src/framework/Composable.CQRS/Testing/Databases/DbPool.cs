@@ -32,7 +32,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
    readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<Database> _transientCache = new List<Database>();
 
-   static ILogger Log = Logger.For<DbPool>();
+   static ILogger Log = ComposableLogger.For<DbPool>();
    bool _disposed;
 
    public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => Log = Log.WithLogLevel(logLevel));

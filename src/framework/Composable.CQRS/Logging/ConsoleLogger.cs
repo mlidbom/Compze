@@ -76,7 +76,4 @@ class ConsoleLogger : ILogger
 
       return Unit.Instance;
    }
-
-   [StringFormatMethod(formatParameterName: "message")]
-   public Unit DebugFormat(string message, params object[] arguments) => Unit.From(() => StringCE.FormatInvariant(message, arguments));
 }

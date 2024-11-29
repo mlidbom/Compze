@@ -89,7 +89,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
             try
             {
                UncatchableExceptionsGatherer.Register(exception);
-               this.Log().Error(exception);
+               this.Log().Error(exception, $"{typeof(TManagedResource).GetFullNameCompilable()} was finalized without being disposed.");
                //Todo: Log metric here.
                using(StaticMonitor.EnterUpdateLock())
                {
