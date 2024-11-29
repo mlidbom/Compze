@@ -32,3 +32,4 @@ nCrunchTemp*
 /src/NCrunchDuplicateByDimensions
 /src/TestUsingPluggableComponentCombinations
 /src/_site/*
+/src/api/*

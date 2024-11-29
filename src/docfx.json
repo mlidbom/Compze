@@ -4,7 +4,7 @@
     {
       "src": [
         {
-          "src": "../src",
+          "src": "../src/framework",
           "files": [
             "**/*.csproj"
           ]
@@ -40,7 +40,7 @@
       "_appName": "Composable",
       "_appTitle": "Composable",
       "_enableSearch": true,
-      "pdf": true
+      "pdf": false
     }
   }
 }
