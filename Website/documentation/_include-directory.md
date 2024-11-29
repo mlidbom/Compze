@@ -1,3 +1,1 @@
-Level 1
-
 [!INCLUDE [Sections](_sections/_include-directory.md)]
