@@ -22,9 +22,11 @@ class PlayWithSerilog : UniversalTestBase
       var log = logger.ForContext<PlayWithSerilog>();
       for(var i = 1; i < 100; i++)
       {
-         log.Information("Another message, world! {@Something}", new Something() { Age = i });
+         log.Information("Another message, world! {@SomeThing}", new Something() { Age = i });
       }
 
+      log.Information("Val1: {val}, val2: {vop}", "vallo", "villo");
+      
       await logger.DisposeAsync().CaF();
    }
 
