@@ -2,10 +2,20 @@
   "scripts": {
     "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
     "watch": "start /min npm-watch build & start /min npm run browser-livereload",
-    "build": "docfx build"
+    "build": "docfx build",
+    "browser-livereload-site-only": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
+    "watch-site-only": "start /min npm-watch build-site-only & start /min npm run browser-livereload-site-only",
+    "build-site-only": "docfx build docfx-site-only.json"
   },
   "watch": {
     "build": {
+      "patterns": [ "./*" ],
+      "extensions": "md,yml",
+      "quiet": false,
+      "ignore": "_site/*",
+      "delay": 500
+    },
+    "build-site-only": {
       "patterns": [ "./*" ],
       "extensions": "md,yml",
       "quiet": false,
