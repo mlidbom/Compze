@@ -25,7 +25,8 @@
         ],
         "exclude": [
           "_site/**",
-          "Documentation/**"
+          "Documentation/**",
+          "node_modules/**"
         ]
       }
     ],
