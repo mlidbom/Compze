@@ -7,8 +7,8 @@ using NUnit.Framework;
 
 namespace AccountManagement.UnitTests.Passwords;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-class After_creating_a_password_From_the_string_Pass : UniversalTestBase
+[TestFixture]
+public class After_creating_a_password_From_the_string_Pass : UniversalTestBase
 {
    static readonly Password _password = new("Pass");
 
