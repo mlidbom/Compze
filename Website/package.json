@@ -1,0 +1,20 @@
+﻿{
+  "scripts": {
+    "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
+    "watch": "start /min npm-watch build & start /min npm run browser-livereload",
+    "build": "docfx build"
+  },
+  "watch": {
+    "build": {
+      "patterns": [ "./*" ],
+      "extensions": "md,yml",
+      "quiet": false,
+      "ignore": "_site/*",
+      "delay": 500
+    }
+  },
+  "devDependencies": {
+    "npm-watch": "^0.11.0",
+    "browser-sync": "^2.27.11"
+  }
+}
