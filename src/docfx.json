@@ -7,6 +7,9 @@
           "src": "../src/framework",
           "files": [
             "**/*.csproj"
+          ],
+          "exclude": [
+            "**/*tests*.csproj"
           ]
         }
       ],
