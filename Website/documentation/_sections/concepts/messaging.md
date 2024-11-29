@@ -1,5 +1,5 @@
 
-== Messaging
+## Messaging
 Any method call can, if you squint, be viewed as one object sending a message to another object.
 However, this ties the sender tightly to the receiver.
 Loose coupling benefits can be had by making the message passing explicit.
@@ -8,7 +8,7 @@ Doing so is called messaging.
 
 TIP: Messaging is also known as message passing.
 
-=== Messaging terms
+### Messaging terms
 Here we define some terms as they are used in the context of this document.
 
 Message::
@@ -127,11 +127,11 @@ TIP: You always publish/Raise events.
 Keeping Send separate from Publish in your mind is fundamental to understanding.
 
 
-=== Semantic Routing
+### Semantic Routing
 NOTE: Semantic routing is used throughout the toolkit. It is foundational for the Event Store, Service Bus, Query Model updaters and Generators...
 
 
-==== Definition
+#### Definition
 * Messages are delivered to every registered handler with a compatible argument type.
 * Commands and query message types must have exactly one handler.
 
@@ -139,7 +139,7 @@ TIP: The first rule is really just polymorphism.
 
 TIP: Semantic Routing is also known as "Polymorphic routing" or "Polymorphic  dispatching".
 
-==== Clarifying examples
+#### Clarifying examples
 
 [source]
 .Given these event interfaces and implementing classes
@@ -169,7 +169,7 @@ serviceBus.Publish(new B()); //Delivered to HandleA and HandleB
 serviceBus.Publish(new C()); //Delivered to HandleA, HandleB and HandleC
 ----
 
-==== Loose coupling through interfaces
+#### Loose coupling through interfaces
 Working with events in terms of interfaces maintains flexibility.
 Here is a partial list of things it is possible to do without having to change any code in any event listener.
 

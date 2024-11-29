@@ -1,4 +1,4 @@
-= Documentation
+# Documentation
 :page-permalink: /documentation/
 :page-toc:
 :sectnums:

@@ -1,4 +1,4 @@
-= Basic Concepts
+# Basic Concepts
 NOTE: The code blocks in this section contain pseudo code for illustration purposes.
 It is not compatible with any specific library including Composable.
 

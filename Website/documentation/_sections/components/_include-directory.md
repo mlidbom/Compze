@@ -1,10 +1,10 @@
-= Components Basics
+# Components Basics
 
 include::event-store/basics.adoc[]
 
 
 
-= Components Advanced
+# Components Advanced
 
 include::event-store/refactoring.adoc[]
 
