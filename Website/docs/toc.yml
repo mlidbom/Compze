@@ -1,4 +1,4 @@
-- name: Messaging Basics
-  href: messaging/basics.md
-- name: Messaging Semantic Routing
-  href: messaging/semantic-routing.md
+- name: Messaging
+  items:
+    - href: messaging/basics.md
+    - href: messaging/semantic-routing.md
