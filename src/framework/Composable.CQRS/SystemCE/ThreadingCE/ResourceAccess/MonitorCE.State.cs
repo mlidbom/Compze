@@ -13,7 +13,6 @@ public partial class MonitorCE
 
    //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible.
    readonly Lock _lock;
-   readonly NotifyOneLock _notifyOneLock;
    readonly NotifyAllLock _notifyAllLock;
 
    static readonly TimeSpan InfiniteTimeout = -1.Milliseconds();
@@ -30,7 +29,6 @@ public partial class MonitorCE
    {
       _lock = new Lock(this);
       _stackTraceFetchTimeout = null;
-      _notifyOneLock = new NotifyOneLock(this);
       _notifyAllLock = new NotifyAllLock(this);
       _timeout = timeout;
    }

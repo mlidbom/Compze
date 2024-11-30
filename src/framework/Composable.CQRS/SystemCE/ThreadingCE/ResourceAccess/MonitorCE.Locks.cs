@@ -11,12 +11,6 @@ public partial class MonitorCE
       return _lock;
    }
 
-   internal NotifyOneLock EnterNotifyOnlyOneUpdateLock()
-   {
-      Enter();
-      return _notifyOneLock;
-   }
-
    public NotifyAllLock EnterUpdateLock()
    {
       Enter();
@@ -29,15 +23,6 @@ public partial class MonitorCE
       readonly MonitorCE _monitor;
       internal NotifyAllLock(MonitorCE monitor) => _monitor = monitor;
       public void Dispose() => _monitor.NotifyAllExit();
-   }
-
-   ///<summary>Ensure you only call <see cref="Dispose"/> once on an instance.</summary>
-   internal sealed class NotifyOneLock : IDisposable
-   {
-      readonly MonitorCE _monitor;
-      internal NotifyOneLock(MonitorCE monitor) => _monitor = monitor;
-
-      public void Dispose() => _monitor.NotifyOneExit();
    }
 
    internal sealed class Lock : IDisposable
