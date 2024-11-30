@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Composable.Contracts;
 using Composable.SystemCE;
 using Composable.SystemCE.ReflectionCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.DependencyInjection;
 
@@ -151,6 +152,14 @@ partial class ComposableDependencyInjectionContainer
          }
       }
 
-      public ValueTask DisposeAsync() => throw new NotImplementedException();
+      public async ValueTask DisposeAsync()
+      {
+         if(!_disposed)
+         {
+            _disposed = true;
+            _parentComponentStorage.Dispose();
+            await _rootCache.DisposeAsync().CaF();
+         }
+      }
    }
 }

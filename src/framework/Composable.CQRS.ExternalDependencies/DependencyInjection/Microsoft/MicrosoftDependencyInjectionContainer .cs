@@ -14,7 +14,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 {
    readonly IServiceCollection _services;
    readonly List<ComponentRegistration> _registeredComponents = [];
-   IServiceProvider? _serviceProvider;
+   ServiceProvider? _serviceProvider;
    bool _isDisposed;
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
@@ -64,7 +64,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
-   IServiceLocator IDependencyInjectionContainer.ServiceLocator
+   public IServiceLocator ServiceLocator
    {
       get
       {
@@ -117,7 +117,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
       Contract.Assert.That(_scopeCache.Value == null, "Scopes must be disposed before the container");
       if(_isDisposed) return;
       _isDisposed = true;
-      (_serviceProvider as IDisposable)?.Dispose();
+      _serviceProvider?.Dispose();
       _serviceProvider = null;
    }
 

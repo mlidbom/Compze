@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
+using Composable.Contracts;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.DependencyInjection;
 
 partial class ComposableDependencyInjectionContainer
 {
-   class RootCache : IDisposable
+   class RootCache : IDisposable, IAsyncDisposable
    {
       readonly int[] _serviceTypeIndexToComponentIndex;
       readonly (ComponentRegistration[] Registrations, object Instance)[] _cache;
@@ -23,9 +26,10 @@ partial class ComposableDependencyInjectionContainer
          {
             _serviceTypeIndexToComponentIndex[index] = serviceCount;
          }
+
          _cache = new (ComponentRegistration[] Registrations, object Instance)[serviceCount + 1];
 
-         registrations.SelectMany(registration => registration.ServiceTypes.Select(serviceType => new {registration, serviceType, typeIndex = ServiceTypeIndex.For(serviceType)}))
+         registrations.SelectMany(registration => registration.ServiceTypes.Select(serviceType => new { registration, serviceType, typeIndex = ServiceTypeIndex.For(serviceType) }))
                       .GroupBy(registrationPerTypeIndex => registrationPerTypeIndex.typeIndex)
                       .ForEach(registrationsOnTypeIndex =>
                        {
@@ -33,15 +37,15 @@ partial class ComposableDependencyInjectionContainer
                           _cache[registrationsOnTypeIndex.Key].Registrations = registrationsOnTypeIndex.Select(regs => regs.registration).ToArray();
                        });
 
-
-         foreach (var registration in registrations)
+         foreach(var registration in registrations)
          {
-            foreach (var serviceTypeIndex in registration.ServiceTypeIndexes)
+            foreach(var serviceTypeIndex in registration.ServiceTypeIndexes)
             {
                if(_serviceTypeIndexToComponentIndex[serviceTypeIndex] != serviceCount)
                {
                   throw new Exception($"Already has a component registered for service: {ServiceTypeIndex.GetServiceForIndex(serviceTypeIndex)}");
                }
+
                _serviceTypeIndexToComponentIndex[serviceTypeIndex] = registration.ComponentIndex;
             }
          }
@@ -55,12 +59,37 @@ partial class ComposableDependencyInjectionContainer
 
       public void Dispose()
       {
-         // ReSharper disable ConditionIsAlwaysTrueOrFalse
-         DisposeComponents(_cache.Where(it => it is { Registrations: not null, Instance: not null })
-                                  // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                                 .Where(it => it.Registrations[0].InstantiationSpec.SingletonInstance == null) //We don't dispose instance registrations.
-                                 .Select(it => it.Instance)
-                                 .OfType<IDisposable>());
+         var asyncDisposables = AsyncDisposableInstances().ToHashSet(ReferenceEqualityComparer.Instance);
+         var disposables = DisposableInstances().ToHashSet(ReferenceEqualityComparer.Instance);
+
+         asyncDisposables.ExceptWith(disposables);
+         if(asyncDisposables.Any())
+         {
+            var invalidComponent = asyncDisposables.First().NotNull();
+            throw new InvalidOperationException($"{invalidComponent.GetType().FullName} only supports DisposeAsync");
+         }
+         DisposeComponents(disposables.Cast<IDisposable>());
+      }
+
+      IEnumerable<IDisposable> DisposableInstances() => InstancesToDispose().OfType<IDisposable>();
+      IEnumerable<IAsyncDisposable> AsyncDisposableInstances() => InstancesToDispose().OfType<IAsyncDisposable>();
+
+      IEnumerable<object> InstancesToDispose()
+      {
+         return _cache.Where(it => it is { Registrations: not null, Instance: not null })
+                      .Where(it => it.Registrations[0].InstantiationSpec.SingletonInstance == null) //We don't dispose instance registrations.
+                      .Select(it => it.Instance);
+      }
+
+      public async ValueTask DisposeAsync()
+      {
+         var asyncDisposables = DisposableInstances().OfType<IAsyncDisposable>().ToHashSet<IAsyncDisposable>(ReferenceEqualityComparer.Instance);
+         var disposables = DisposableInstances().ToHashSet(ReferenceEqualityComparer.Instance);
+
+         disposables.ExceptWith(asyncDisposables);
+         DisposeComponents(disposables.Cast<IDisposable>());
+
+         await Task.WhenAll(asyncDisposables.Select(async it => await it.DisposeAsync().CaF())).CaF();
       }
    }
 
@@ -68,7 +97,7 @@ partial class ComposableDependencyInjectionContainer
    {
       bool _isDisposed;
       readonly int[] _serviceTypeIndexToComponentIndex;
-      readonly object[] _instances;
+      readonly object?[] _instances;
       readonly LinkedList<IDisposable> _disposables = [];
 
       public void Set(object instance, ComponentRegistration registration)
@@ -80,9 +109,9 @@ partial class ComposableDependencyInjectionContainer
          }
       }
 
-      internal bool TryGet<TService>([MaybeNullWhen(false)]out TService service)
+      internal bool TryGet<TService>(out TService? service)
       {
-         service = (TService)_instances[_serviceTypeIndexToComponentIndex[ServiceTypeIndex.ForService<TService>.Index]];
+         service = (TService?)_instances[_serviceTypeIndexToComponentIndex[ServiceTypeIndex.ForService<TService>.Index]];
          return !Equals(service, default);
       }
 
@@ -92,13 +121,23 @@ partial class ComposableDependencyInjectionContainer
          _instances = new object[serviceServiceTypeToComponentIndex.Length];
       }
 
-
       public void Dispose()
       {
          if(!_isDisposed)
          {
-            _isDisposed = true;
-            DisposeComponents(_disposables);
+            var instances = _instances.Where(it => it != null).ToList();
+            var asyncDisposables = instances.OfType<IAsyncDisposable>().ToHashSet(ReferenceEqualityComparer.Instance);
+            var disposables = instances.OfType<IDisposable>().ToHashSet(ReferenceEqualityComparer.Instance);
+
+            asyncDisposables.ExceptWith(disposables);
+            if(asyncDisposables.Any())
+            {
+               var invalidComponent = asyncDisposables.First().NotNull();
+               throw new InvalidOperationException($"{invalidComponent.GetType().FullName} only supports DisposeAsync");
+            }
+
+            var enumerable = disposables.Cast<IDisposable>();
+            DisposeComponents(enumerable);
          }
       }
    }
@@ -107,8 +146,7 @@ partial class ComposableDependencyInjectionContainer
    {
       var exceptions = disposables
                       .Select(disposable => ExceptionCE.TryCatch(disposable.Dispose))
-                      .Where(me => me != null)
-                       // ReSharper disable once RedundantEnumerableCastCall
+                      .Where(exception => exception != null)
                       .Cast<Exception>()
                       .ToList();
 

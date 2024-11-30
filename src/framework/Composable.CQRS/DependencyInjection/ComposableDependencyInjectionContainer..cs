@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Composable.Contracts;
+using Composable.SystemCE.ThreadingCE.TasksCE;
 
 namespace Composable.DependencyInjection;
 
@@ -28,7 +29,7 @@ partial class ComposableDependencyInjectionContainer : IDependencyInjectionConta
       }
    }
 
-   IServiceLocator IDependencyInjectionContainer.ServiceLocator
+   public IServiceLocator ServiceLocator
    {
       get
       {
@@ -64,7 +65,14 @@ partial class ComposableDependencyInjectionContainer : IDependencyInjectionConta
       }
    }
 
-   public ValueTask DisposeAsync() => throw new NotImplementedException();
+   public async ValueTask DisposeAsync()
+   {
+      if(!_disposed && _createdServiceLocator != null)
+      {
+         _disposed = true;
+         await _createdServiceLocator.DisposeAsync().CaF();
+      }
+   }
 
    TComponent IServiceLocator.Resolve<TComponent>() where TComponent : class => _createdServiceLocator!.Resolve<TComponent>();
    TComponent[] IServiceLocator.ResolveAll<TComponent>() where TComponent : class => _createdServiceLocator!.ResolveAll<TComponent>();
