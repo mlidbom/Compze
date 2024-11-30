@@ -3,6 +3,7 @@ using Composable.SystemCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Composable.Testing;
 using Composable.Testing.Logging.Serilog;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using Serilog;
 
@@ -20,9 +21,10 @@ class PlayWithSerilog : UniversalTestBase
                   .CreateLogger();
 
       var log = logger.ForContext<PlayWithSerilog>();
-      for(var i = 1; i < 100; i++)
+      for(var age = 10; age < 20; age++)
       {
-         log.Information("Another message, world! {@SomeThing}", new Something() { Age = i });
+         log.Information("A deconstructed object: {@SomeThing}", new Something(age, $"Andrew{age}"));
+         log.Information("Structured log entry: {Name} is {Age} years old", $"Andrew{age}", age);
       }
 
       log.Information("Val1: {val}, val2: {vop}", "vallo", "villo");
@@ -30,9 +32,9 @@ class PlayWithSerilog : UniversalTestBase
       await logger.DisposeAsync().CaF();
    }
 
-   class Something
+   class Something(int age, string name)
    {
-      public string Name { get; set; } = "Andrew";
-      public int Age { get; set; } = 60;
+      [UsedImplicitly] public string Name { get; set; } = name;
+      [UsedImplicitly] public int Age { get; set; } = age;
    }
 }
