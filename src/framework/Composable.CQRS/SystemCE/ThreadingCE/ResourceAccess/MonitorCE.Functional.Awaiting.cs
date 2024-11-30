@@ -46,29 +46,16 @@ public partial class MonitorCE
 
    bool TryEnterWhen(TimeSpan conditionTimeout, Func<bool> condition)
    {
-      bool CheckConditionWhileAllowingReentrancy()
-      {
-         try
-         {
-            _allowReentrancyIfGreaterThanZero++;
-            return condition();
-         }
-         finally
-         {
-            _allowReentrancyIfGreaterThanZero--;
-         }
-      }
-
       if(conditionTimeout == InfiniteTimeout)
       {
          Enter(DefaultTimeout);
-         while(!CheckConditionWhileAllowingReentrancy()) Wait(InfiniteTimeout);
+         while(!condition()) Wait(InfiniteTimeout);
       } else
       {
          var startTime = DateTime.UtcNow;
          Enter(conditionTimeout);
 
-         while(!CheckConditionWhileAllowingReentrancy())
+         while(!condition())
          {
             var elapsedTime = DateTime.UtcNow - startTime;
             var timeRemaining = conditionTimeout - elapsedTime;

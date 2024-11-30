@@ -12,9 +12,10 @@ public partial class MonitorCE
       return _lock;
    }
 
-   public NotifyAllLock EnterUpdateLock()
+   internal NotifyAllLock EnterUpdateLock() => EnterUpdateLock(_timeout);
+   internal NotifyAllLock EnterUpdateLock(TimeSpan timeout)
    {
-      Enter();
+      Enter(timeout);
       return _notifyAllLock;
    }
 

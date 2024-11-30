@@ -43,15 +43,20 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
       Task.WaitAll(otherThreadTask);
    }
 
-   [Test] public void When_one_thread_calls_AwaitUpdateLock_twice_an_exception_is_thrown()
+   [Test] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
       var monitor = MonitorCE.WithTimeout(1.Seconds());
 
       using(monitor.EnterUpdateLock())
       {
-         Assert.Throws<InvalidOperationException>(() => monitor.EnterUpdateLock());
+         using(monitor.EnterUpdateLock())
+         {
+         }
+
+         AssertThrows.Exception<Exception>(() => Task.Run(() => monitor.EnterUpdateLock(timeout:10.Milliseconds())).Wait());
       }
 
+      Task.Run(() => monitor.EnterUpdateLock(timeout:0.Milliseconds())).Wait();
    }
 
    [TestFixture] public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
