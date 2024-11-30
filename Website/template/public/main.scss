@@ -1,0 +1,11 @@
+﻿.alert {
+  --bs-alert-padding-y: 0.3rem;
+
+  p:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+[data-layout="landing"] .container-xxl {
+  max-width: 1000px;
+}
