@@ -128,10 +128,10 @@ Current state of gate:
    public IReadOnlyList<string> GetGlobalLog() => new List<string>(GlobalLog);
    public IReadOnlyList<string> GetLog() => new List<string>(_log);
 
-   IDisposable LogMethodEntryExit(string method) => _logMonitor.Update(() =>
+   IDisposable LogMethodEntryExit(string method) => _monitor.Update(() =>
    {
       LogThreadUnsafeCallerMustLock($"Entering {method}");
-      return DisposableCE.Create(() => _logMonitor.Update(() => LogThreadUnsafeCallerMustLock($"Exiting  {method}")));
+      return DisposableCE.Create(() => _monitor.Update(() => LogThreadUnsafeCallerMustLock($"Exiting  {method}")));
    });
 
    void LogThreadUnsafeCallerMustLock(string @event)
@@ -144,7 +144,6 @@ Current state of gate:
 
    string Name { get; }
    readonly MonitorCE _monitor;
-   readonly MonitorCE _logMonitor = MonitorCE.WithTimeout(1.Seconds());
    static readonly MonitorCE GlobalLogMonitor = MonitorCE.WithTimeout(1.Seconds());
    bool _lockOnNextPass;
    Action<ThreadSnapshot> _passThroughAction = _ => {};
