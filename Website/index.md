@@ -1,9 +1,7 @@
 ---
 _layout: landing
 ---
-# Composable: Modern architecture for normal projects
-
-## Modern architecture for normal projects
+# Modern architecture for normal projects
 Composable provides tooling for normal modern architecture projects.
 
 ### Modern architectures
