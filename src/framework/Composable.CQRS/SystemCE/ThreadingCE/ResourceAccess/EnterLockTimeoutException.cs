@@ -9,7 +9,7 @@ public class EnterLockTimeoutException : Exception
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 
-   internal EnterLockTimeoutException(TimeSpan timeout, TimeSpan? stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") => 
+   internal EnterLockTimeoutException(TimeSpan timeout, TimeSpan? stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
       _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout ?? 1.Seconds();
 
    public override string Message
