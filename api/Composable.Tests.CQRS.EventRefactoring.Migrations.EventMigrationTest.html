@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class EventMigrationTest | Composable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class EventMigrationTest | Composable ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Composable/new/docfx/apiSpec/new?filename=Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest.md&amp;value=---%0Auid%3A%20Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Composable">
+            Composable
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest">
+
+
+
+  <h1 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest" class="text-break">
+Class EventMigrationTest  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Composable.html">Composable</a>.<a class="xref" href="Composable.Tests.html">Tests</a>.<a class="xref" href="Composable.Tests.CQRS.html">CQRS</a>.<a class="xref" href="Composable.Tests.CQRS.EventRefactoring.html">EventRefactoring</a>.<a class="xref" href="Composable.Tests.CQRS.EventRefactoring.Migrations.html">Migrations</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Composable.CQRS.Tests.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class EventMigrationTest : EventMigrationTestBase</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Composable.Testing.UniversalTestBase.html">UniversalTestBase</a></div>
+      <div><a class="xref" href="Composable.Testing.DuplicateByPluggableComponentTest.html">DuplicateByPluggableComponentTest</a></div>
+      <div><a class="xref" href="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTestBase.html">EventMigrationTestBase</a></div>
+      <div><span class="xref">EventMigrationTest</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTestBase.html#Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTestBase_ClearCache_Composable_DependencyInjection_IServiceLocator_">EventMigrationTestBase.ClearCache(IServiceLocator)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTestBase.html#Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTestBase_CreateServiceLocatorForEventStoreType_System_Func_System_Collections_Generic_IReadOnlyList_Composable_Persistence_EventStore_Refactoring_Migrations_IEventMigration___">EventMigrationTestBase.CreateServiceLocatorForEventStoreType(Func&lt;IReadOnlyList&lt;IEventMigration&gt;&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTestBase.html#Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTestBase_AssertStreamsAreIdentical_System_Collections_Generic_IReadOnlyList_Composable_Persistence_EventStore_IAggregateEvent__System_Collections_Generic_IReadOnlyList_Composable_Persistence_EventStore_IAggregateEvent__System_String_">EventMigrationTestBase.AssertStreamsAreIdentical(IReadOnlyList&lt;IAggregateEvent&gt;, IReadOnlyList&lt;IAggregateEvent&gt;, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Testing.UniversalTestBase.html#Composable_Testing_UniversalTestBase_SurfaceAnyUncatchableExceptions">UniversalTestBase.SurfaceAnyUncatchableExceptions()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutateAsync__1___0_System_Func___0_System_Threading_Tasks_Task__">Pipe.mutateAsync&lt;T&gt;(T, Func&lt;T, Task&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutate__1___0_System_Action___0__">Pipe.mutate&lt;T&gt;(T, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_select__2___0_System_Func___0___1__">Pipe.select&lt;TValue, TResult&gt;(TValue, Func&lt;TValue, TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0_System_Func___1__">Pipe.then&lt;TValue, TResult&gt;(TValue, Func&lt;TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0___1_">Pipe.then&lt;TValue, TResult&gt;(TValue, TResult)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.SystemCE.NullableCE.html#Composable_SystemCE_NullableCE_NotNull__1___0_">NullableCE.NotNull&lt;T&gt;(T?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.ObjectCE.html#Composable_Functional_ObjectCE_ToStringNotNull_System_Object_">ObjectCE.ToStringNotNull(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest__ctor_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.#ctor*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest__ctor_System_String_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.#ctor(System.String)">
+  EventMigrationTest(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventMigrationTest(string pluggableComponentsCombination)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pluggableComponentsCombination</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Base_class_method_should_detect_incorrect_type_order_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Base_class_method_should_detect_incorrect_type_order*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Base_class_method_should_detect_incorrect_type_order" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Base_class_method_should_detect_incorrect_type_order">
+  Base_class_method_should_detect_incorrect_type_order()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Base_class_method_should_detect_incorrect_type_order()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4">
+  Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2">
+  Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4">
+  Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException">
+  Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1">
+  Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L519"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_Before_E1_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_Before_E1*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_Before_E1" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_Before_E1">
+  Inserting_E2_Before_E1()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L566"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E2_Before_E1()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1">
+  Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L472"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_after_E1_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_after_E1*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_after_E1" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_after_E1">
+  Inserting_E2_after_E1()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E2_after_E1()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_after_E1_at_end_of_stream_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_after_E1_at_end_of_stream*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_after_E1_at_end_of_stream" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_after_E1_at_end_of_stream">
+  Inserting_E2_after_E1_at_end_of_stream()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L236"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E2_after_E1_at_end_of_stream()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_before_E1_then_E3_before_E2_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_before_E1_then_E3_before_E2*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E2_before_E1_then_E3_before_E2" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E2_before_E1_then_E3_before_E2">
+  Inserting_E2_before_E1_then_E3_before_E2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E2_before_E1_then_E3_before_E2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1">
+  Inserting_E3_E4_before_E1()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E3_E4_before_E1()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E3_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E3*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E3" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E3">
+  Inserting_E3_E4_before_E1_then_E5_before_E3()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E3_E4_before_E1_then_E5_before_E3()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E3_2_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E3_2*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E3_2" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E3_2">
+  Inserting_E3_E4_before_E1_then_E5_before_E3_2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E3_E4_before_E1_then_E5_before_E3_2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E4_2_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E4_2*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E4_2" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E4_2">
+  Inserting_E3_E4_before_E1_then_E5_before_E4_2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E3_E4_before_E1_then_E5_before_E4_2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6">
+  Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7">
+  Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_before_E1_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_before_E1*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Inserting_E3_before_E1" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Inserting_E3_before_E1">
+  Inserting_E3_before_E1()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Inserting_E3_before_E1()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_PersistingMigrationsOfTheSameAggregateMultipleTimes_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.PersistingMigrationsOfTheSameAggregateMultipleTimes*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_PersistingMigrationsOfTheSameAggregateMultipleTimes" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.PersistingMigrationsOfTheSameAggregateMultipleTimes">
+  PersistingMigrationsOfTheSameAggregateMultipleTimes()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L259"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task PersistingMigrationsOfTheSameAggregateMultipleTimes()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter">
+  PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L337"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories">
+  Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L576"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2">
+  Replacing_E1_with_E2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3">
+  Replacing_E1_with_E2_E3()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2_E3()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_2_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_2*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_2" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_2">
+  Replacing_E1_with_E2_E3_2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2_E3_2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_at_end_of_stream_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_at_end_of_stream*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_at_end_of_stream" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_at_end_of_stream">
+  Replacing_E1_with_E2_E3_at_end_of_stream()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2_E3_at_end_of_stream()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_then_E2_with_E4_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_then_E2_with_E4*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_then_E2_with_E4" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_then_E2_with_E4">
+  Replacing_E1_with_E2_E3_then_E2_with_E4()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2_E3_then_E2_with_E4()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2">
+  Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_at_end_of_stream_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_at_end_of_stream*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_at_end_of_stream" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_at_end_of_stream">
+  Replacing_E1_with_E2_at_end_of_stream()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2_at_end_of_stream()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_then_irrelevant_migration_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_then_irrelevant_migration*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_Replacing_E1_with_E2_then_irrelevant_migration" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.Replacing_E1_with_E2_then_irrelevant_migration">
+  Replacing_E1_with_E2_then_irrelevant_migration()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task Replacing_E1_with_E2_then_irrelevant_migration()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_UpdatingAnAggregateAfterPersistingMigrations_" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.UpdatingAnAggregateAfterPersistingMigrations*"></a>
+
+  <h3 id="Composable_Tests_CQRS_EventRefactoring_Migrations_EventMigrationTest_UpdatingAnAggregateAfterPersistingMigrations" data-uid="Composable.Tests.CQRS.EventRefactoring.Migrations.EventMigrationTest.UpdatingAnAggregateAfterPersistingMigrations">
+  UpdatingAnAggregateAfterPersistingMigrations()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L423"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Test]
+public Task UpdatingAnAggregateAfterPersistingMigrations()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/CQRS/EventRefactoring/Migrations/EventMigrationTest.cs/#L25" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

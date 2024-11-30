@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Experiment_with_unifying_events_and_commands_test.UserAggregate | Composable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Experiment_with_unifying_events_and_commands_test.UserAggregate | Composable ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Composable/new/docfx/apiSpec/new?filename=Composable_Tests_Messaging_ServiceBusSpecification_Given_a_backend_endpoint_with_a_command_event_and_query_handler_Experiment_with_unifying_events_and_commands_test_UserAggregate.md&amp;value=---%0Auid%3A%20Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Composable">
+            Composable
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate">
+
+
+
+  <h1 id="Composable_Tests_Messaging_ServiceBusSpecification_Given_a_backend_endpoint_with_a_command_event_and_query_handler_Experiment_with_unifying_events_and_commands_test_UserAggregate" data-uid="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate" class="text-break">
+Class Experiment_with_unifying_events_and_commands_test.UserAggregate  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/Messaging/ServiceBusSpecification/Given_a_backend_endpoint_with_a_command_event_and_query_handler/Experiment_with_unifying_events_and_commands_test.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Composable.html">Composable</a>.<a class="xref" href="Composable.Tests.html">Tests</a>.<a class="xref" href="Composable.Tests.Messaging.html">Messaging</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.html">ServiceBusSpecification</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.html">Given_a_backend_endpoint_with_a_command_event_and_query_handler</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Composable.CQRS.Tests.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class Experiment_with_unifying_events_and_commands_test.UserAggregate : Aggregate&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root, Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IHasPersistentIdentity&lt;Guid&gt;, IEquatable&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate&gt;, IEventStored&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IEventStored</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Composable.DDD.Entity-2.html">Entity</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate.html">UserAggregate</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</div>
+      <div><a class="xref" href="Composable.DDD.Entity-1.html">Entity</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate.html">UserAggregate</a>&gt;</div>
+      <div><a class="xref" href="Composable.DDD.VersionedEntity-1.html">VersionedEntity</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate.html">UserAggregate</a>&gt;</div>
+      <div><a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.html">Aggregate</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate.html">UserAggregate</a>, <a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.html">UserEvent</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.html">Implementation</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root.html">Root</a>, <a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.html">UserEvent</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot.html">IRoot</a>, <a class="xref" href="Composable.Persistence.EventStore.AggregateEvent-1.html">AggregateEvent</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.html">UserEvent</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot.html">IRoot</a>&gt;, <a class="xref" href="Composable.Persistence.EventStore.IAggregateEvent-1.html">IAggregateEvent</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.html">UserEvent</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot.html">IRoot</a>&gt;&gt;</div>
+      <div><a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-3.html">Aggregate</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate.html">UserAggregate</a>, <a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.html">UserEvent</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.html">Implementation</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root.html">Root</a>, <a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.html">UserEvent</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot.html">IRoot</a>&gt;</div>
+      <div><span class="xref">Experiment_with_unifying_events_and_commands_test.UserAggregate</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Composable.DDD.IHasPersistentIdentity-1.html">IHasPersistentIdentity</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserAggregate.html">UserAggregate</a>&gt;</div>
+      <div><a class="xref" href="Composable.Persistence.EventStore.IEventStored-1.html">IEventStored</a>&lt;<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.html">Experiment_with_unifying_events_and_commands_test</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.html">UserEvent</a>.<a class="xref" href="Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot.html">IRoot</a>&gt;</div>
+      <div><a class="xref" href="Composable.Persistence.EventStore.IEventStored.html">IEventStored</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.html#Composable_Persistence_EventStore_Aggregates_Aggregate_5_TimeSource">Aggregate&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root, Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot, AggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IAggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;&gt;.TimeSource</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.html#Composable_Persistence_EventStore_Aggregates_Aggregate_5_Publish__1___0_">Aggregate&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root, Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot, AggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IAggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;&gt;.Publish&lt;TEvent&gt;(TEvent)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.html#Composable_Persistence_EventStore_Aggregates_Aggregate_5_RegisterEventAppliers">Aggregate&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root, Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot, AggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IAggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;&gt;.RegisterEventAppliers()</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.html#Composable_Persistence_EventStore_Aggregates_Aggregate_5_RegisterEventHandlers">Aggregate&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root, Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot, AggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IAggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;&gt;.RegisterEventHandlers()</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.html#Composable_Persistence_EventStore_Aggregates_Aggregate_5_AssertInvariantsAreMet">Aggregate&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root, Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot, AggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IAggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;&gt;.AssertInvariantsAreMet()</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.html#Composable_Persistence_EventStore_Aggregates_Aggregate_5_Commit_System_Action_System_Collections_Generic_IReadOnlyList_Composable_Persistence_EventStore_IAggregateEvent___">Aggregate&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Experiment_with_unifying_events_and_commands_test.UserEvent.Implementation.Root, Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot, AggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;, IAggregateEvent&lt;Experiment_with_unifying_events_and_commands_test.UserEvent.IRoot&gt;&gt;.Commit(Action&lt;IReadOnlyList&lt;IAggregateEvent&gt;&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.VersionedEntity-1.html#Composable_DDD_VersionedEntity_1_Version">VersionedEntity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate&gt;.Version</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-1.html#Composable_DDD_Entity_1_Equals__0_">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate&gt;.Equals(Experiment_with_unifying_events_and_commands_test.UserAggregate)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-1.html#Composable_DDD_Entity_1_Equals_System_Object_">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate&gt;.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-1.html#Composable_DDD_Entity_1_GetHashCode">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate&gt;.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-2.html#Composable_DDD_Entity_2_Id">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Guid&gt;.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-2.html#Composable_DDD_Entity_2_SetIdBeVerySureYouKnowWhatYouAreDoing__1_">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Guid&gt;.SetIdBeVerySureYouKnowWhatYouAreDoing(Guid)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-2.html#Composable_DDD_Entity_2_GetIdBypassContractValidation">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Guid&gt;.GetIdBypassContractValidation()</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-2.html#Composable_DDD_Entity_2_Equals__0_">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Guid&gt;.Equals(Experiment_with_unifying_events_and_commands_test.UserAggregate)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-2.html#Composable_DDD_Entity_2_Equals_System_Object_">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Guid&gt;.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-2.html#Composable_DDD_Entity_2_GetHashCode">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Guid&gt;.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="Composable.DDD.Entity-2.html#Composable_DDD_Entity_2_ToString">Entity&lt;Experiment_with_unifying_events_and_commands_test.UserAggregate, Guid&gt;.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutateAsync__1___0_System_Func___0_System_Threading_Tasks_Task__">Pipe.mutateAsync&lt;T&gt;(T, Func&lt;T, Task&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutate__1___0_System_Action___0__">Pipe.mutate&lt;T&gt;(T, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_select__2___0_System_Func___0___1__">Pipe.select&lt;TValue, TResult&gt;(TValue, Func&lt;TValue, TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0_System_Func___1__">Pipe.then&lt;TValue, TResult&gt;(TValue, Func&lt;TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0___1_">Pipe.then&lt;TValue, TResult&gt;(TValue, TResult)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.SystemCE.NullableCE.html#Composable_SystemCE_NullableCE_NotNull__1___0_">NullableCE.NotNull&lt;T&gt;(T?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.ObjectCE.html#Composable_Functional_ObjectCE_ToStringNotNull_System_Object_">ObjectCE.ToStringNotNull(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Composable/blob/docfx/src/framework/Composable.CQRS.Tests/Messaging/ServiceBusSpecification/Given_a_backend_endpoint_with_a_command_event_and_query_handler/Experiment_with_unifying_events_and_commands_test.cs/#L160" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
