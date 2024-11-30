@@ -18,7 +18,6 @@ namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 public partial class MonitorCE
 {
-   long _contendedLocks;
    readonly System.Threading.Lock _timeoutLock = new();
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
 
@@ -44,7 +43,6 @@ public partial class MonitorCE
    {
       if(!Monitor.TryEnter(_lockObject)) //This will never block and calling it first improves performance quite a bit.
       {
-         Interlocked.Increment(ref _contendedLocks);
          var lockTaken = false;
          try
          {

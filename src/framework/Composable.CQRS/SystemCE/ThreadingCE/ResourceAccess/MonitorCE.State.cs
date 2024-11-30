@@ -8,7 +8,6 @@ public partial class MonitorCE
    public static MonitorCE WithInfiniteTimeout() => new(InfiniteTimeout);
    public static MonitorCE WithTimeout(TimeSpan timeout) => new(timeout);
 
-   int _waitingThreadCount;
    readonly object _lockObject = new();
 
    //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible.
