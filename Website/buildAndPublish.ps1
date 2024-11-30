@@ -1,5 +1,7 @@
 Push-Location $PSScriptRoot #knowing which folder we are in is good :)
 
+dotnet tool update -g docfx
+
 $buildFolder = "$PSScriptRoot\_site"
 $ghPagesCheckoutFolder = "$PSScriptRoot/../../Composable-gh-pages"
 
@@ -24,7 +26,7 @@ git pull
 Pop-Location
 Get-Location
 
-docfx.exe build
+docfx.exe
 
 robocopy.exe /MIR "$buildFolder" "$ghPagesCheckoutFolder" /XD ".git" "node_modules" /XF ".gitignore" "CNAME"
 
