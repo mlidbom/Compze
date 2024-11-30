@@ -1,129 +1,113 @@
-<!doctype html>
-<html class="no-js" lang="en">
-    <head>
-    <!--foundation template lines-->
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/agate.min.css" >
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title> | Composable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content=" | Composable ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Composable/blob/docfx/Website/about/core-beliefs.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="stylesheet" href="/vendor/foundation-6.2.4-complete.zip/css/foundation.css">
-    <script>hljs.initHighlightingOnLoad();</script>
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <!--End foundation template lines-->
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
 
+  </head>
 
-    <link rel="stylesheet" href="/vendor-css/font-awesome-4.7.0.min.css">
-    <link rel="stylesheet" href="/vendor-css/asciidoctor.css">
-
-
-    <meta name="description" content="A .Net toolkit making CQRS, Event Sourcing, Event Driven Architecture, VEST testing and DDD simpler and more productive.
-">
-    <link rel="stylesheet" href="/styles/app.css">
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
-</head>
-<head>
-    <title></title>
-</head>
-<body>
-    <div class="row">
-        <div id="page-start-anchor" ></div>
-
-        <div class="top-bar">
-    <div class="top-bar-left">
-        <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
-            <li class="menu-text">Composable Toolkit</li>
-            <li>
-                <a href="/">Home</a>
-            </li>
-            <li>
-                <a href="/documentation/">Documentation</a>
-            </li>
-            <!--
-            <li>
-                <a href="/about/">About</a>
-            </li>
-
-            <li>
-                <a href="/documentation/">Documentation</a>
-                <ul class="menu">
-                    <li>
-                        <a href="/documentation/">Written</a>
-                    </li>
-                    <li>
-                        <a href="/apidoc/">(Legacy API)</a>
-                        <ul class="menu">
-                            <li><a href="/apidocs/3.4.6">Version 3.4.6</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            -->
-
-            <li>
-                <a href="/about/faq">FAQ</a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-
-        
-            <div class="large-12 columns asciidoc" role="content">
-                <div class="sect1">
-<h2 id="core_beliefs">Core beliefs</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>We believe that if you are considering using our tools you really should read all of this page to determine if it is likely to be a good fit for you and your organization. You may have trouble seeing the relevance at first, but it should all fit together as a whole in the end.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">We believe that people should always be a vital consideration</dt>
-<dd>
-<p>We believe that our level of success of failure in collaborative endeavors hinges more on the humans, relationships and cultures involved than on any other factor. On how well we collaborate, communicate, motivate etc. We believe that this in turn hinges on our understanding of ourselves, on our understanding of human nature, on our understanding of the human mind and its properties, strengths and weaknesses. We believe that this understanding must include our drives, instincts, emotions and feelings. We believe that whenever we lose sight of this as a vital consideration when making choices we are likely to make choices with poor outcomes. This includes software design choices.</p>
-</dd>
-<dt class="hdlist1">We believe in the necessity of accepting complexity and letting go of certainty</dt>
-<dd>
-<p>We believe we all instinctively prefer simplicity, certainty and absolutes. That this is a trait that was likely adaptive when we lived as hunter gatherers. We believe that this is no longer a primarily adaptive trait. We believe that succumbing to this trait cripples our ability to see the true complexity of the reality we have before us. Rather than clear cut wrong and right ways to do things we believe that we face great complexity and a great amount of possible choices in every situation. We believe that we must accept the weight of the uncertainty of this reality in order to make good choices.</p>
-</dd>
-<dt class="hdlist1">We believe in the superiority of motivated belief over dichotomies and absolutes</dt>
-<dd>
-<p>We believe that succumbing to the desire to think and debate in terms of simple good versus bad dichotomies or absolutes such as "best way" is crippling. That it cripples not only our own understanding, but even more so our ability to collaborate in teams and larger communities. We believe that it is far better to say: "We believe" and then motivate that belief, than to state something as a fact without motivation. We believe that we must resist the temptation to talk about good versus bad and wrong versus right. We believe that there is no such thing as a "best" way to do anything, rather every option has a complex set of consequences in any specific set of circumstances which we never fully understand. We believe that we should abandon the false simplicity of right versus wrong dichotomies and absolutes such as "best".</p>
-</dd>
-<dt class="hdlist1">We believe that development should focus on shared mental models designed for humans</dt>
-<dd>
-<p>We believe that developing software is first and foremost a process of collaboratively designing and communicating shared mental models.  We believe that our focus must be on the quality and clarity of our mental models and the clarity and expressiveness of the code that we use to communicate these mental models to each other and our future selves. That the quality of a design is determined by how easily the totality of the mental models that it contains can be learned, communicated, and modified by human beings.</p>
-</dd>
-<dt class="hdlist1">We believe that the primary limiting factor is the mental burden imposed by the totality of our shared mental models</dt>
-<dd>
-<p>We believe that in the majority of software development situations a lack of focus on the quality of the mental models is ultimately the primary factor limiting progress. That progress slows and ultimately stalls when the totality of our mental models fall into a state where the humans developing them can no longer effectively learn, understand, modify and communicate them. We believe that if we continually refactor our mental models to fit the human mind it is possible to maintain progress indefinitely without stalling and with limited slowdown even when facing immensely complicated software. We believe that this is the implicit principle underpinning approaches such as Domain Driven Design and principles such as SOLID.</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Composable">
+            Composable
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
             </div>
-        
-
-    </div>
-
-    <footer class="row">
-    <div class="large-12 columns">
-        <hr>
-        <div class="row">
-            <div class="large-12 columns">
-
-            </div>
+          </div>
         </div>
-    </div>
-</footer>
+      </nav>
+    </header>
 
-    <script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/jquery.js"></script>
-<script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/what-input.js"></script>
-<script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/foundation.js"></script>
-<script src="/js/app.js"></script>
+    <main class="container-xxl">
 
-</body>
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<h2 id="core-beliefs">Core beliefs</h2>
+<p>We believe that if you are considering using our tools you really should read all of this page to determine if it is likely to be a good fit for you and your organization. You may have trouble seeing the relevance at first, but it should all fit together as a whole in the end.</p>
+<p>We believe that people should always be a vital consideration::</p>
+<p>We believe that our level of success of failure in collaborative endeavors hinges more on the humans, relationships and cultures involved than on any other factor. On how well we collaborate, communicate, motivate etc. We believe that this in turn hinges on our understanding of ourselves, on our understanding of human nature, on our understanding of the human mind and its properties, strengths and weaknesses. We believe that this understanding must include our drives, instincts, emotions and feelings. We believe that whenever we lose sight of this as a vital consideration when making choices we are likely to make choices with poor outcomes. This includes software design choices.</p>
+<p>We believe in the necessity of accepting complexity and letting go of certainty::</p>
+<p>We believe we all instinctively prefer simplicity, certainty and absolutes. That this is a trait that was likely adaptive when we lived as hunter gatherers. We believe that this is no longer a primarily adaptive trait. We believe that succumbing to this trait cripples our ability to see the true complexity of the reality we have before us. Rather than clear cut wrong and right ways to do things we believe that we face great complexity and a great amount of possible choices in every situation. We believe that we must accept the weight of the uncertainty of this reality in order to make good choices.</p>
+<p>We believe in the superiority of motivated belief over dichotomies and absolutes::</p>
+<p>We believe that succumbing to the desire to think and debate in terms of simple good versus bad dichotomies or absolutes such as &quot;best way&quot; is crippling. That it cripples not only our own understanding, but even more so our ability to collaborate in teams and larger communities. We believe that it is far better to say: &quot;We believe&quot; and then motivate that belief, than to state something as a fact without motivation. We believe that we must resist the temptation to talk about good versus bad and wrong versus right. We believe that there is no such thing as a &quot;best&quot; way to do anything, rather every option has a complex set of consequences in any specific set of circumstances which we never fully understand. We believe that we should abandon the false simplicity of right versus wrong dichotomies and absolutes such as &quot;best&quot;.</p>
+<p>We believe that development should focus on shared mental models designed for humans::</p>
+<p>We believe that developing software is first and foremost a process of collaboratively designing and communicating shared mental models.  We believe that our focus must be on the quality and clarity of our mental models and the clarity and expressiveness of the code that we use to communicate these mental models to each other and our future selves. That the quality of a design is determined by how easily the totality of the mental models that it contains can be learned, communicated, and modified by human beings.</p>
+<p>We believe that the primary limiting factor is the mental burden imposed by the totality of our shared mental models::</p>
+<p>We believe that in the majority of software development situations a lack of focus on the quality of the mental models is ultimately the primary factor limiting progress. That progress slows and ultimately stalls when the totality of our mental models fall into a state where the humans developing them can no longer effectively learn, understand, modify and communicate them. We believe that if we continually refactor our mental models to fit the human mind it is possible to maintain progress indefinitely without stalling and with limited slowdown even when facing immensely complicated software. We believe that this is the implicit principle underpinning approaches such as Domain Driven Design and principles such as SOLID.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Composable/blob/docfx/Website/about/core-beliefs.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>

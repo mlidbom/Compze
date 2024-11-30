@@ -1,124 +1,118 @@
-<!doctype html>
-<html class="no-js" lang="en">
-    <head>
-    <!--foundation template lines-->
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/agate.min.css" >
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title> | Composable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content=" | Composable ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Composable/blob/docfx/Website/about/primary-architectural-choices.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="stylesheet" href="/vendor/foundation-6.2.4-complete.zip/css/foundation.css">
-    <script>hljs.initHighlightingOnLoad();</script>
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <!--End foundation template lines-->
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
 
+  </head>
 
-    <link rel="stylesheet" href="/vendor-css/font-awesome-4.7.0.min.css">
-    <link rel="stylesheet" href="/vendor-css/asciidoctor.css">
-
-
-    <meta name="description" content="A .Net toolkit making CQRS, Event Sourcing, Event Driven Architecture, VEST testing and DDD simpler and more productive.
-">
-    <link rel="stylesheet" href="/styles/app.css">
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
-</head>
-<head>
-    <title></title>
-</head>
-<body>
-    <div class="row">
-        <div id="page-start-anchor" ></div>
-
-        <div class="top-bar">
-    <div class="top-bar-left">
-        <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
-            <li class="menu-text">Composable Toolkit</li>
-            <li>
-                <a href="/">Home</a>
-            </li>
-            <li>
-                <a href="/documentation/">Documentation</a>
-            </li>
-            <!--
-            <li>
-                <a href="/about/">About</a>
-            </li>
-
-            <li>
-                <a href="/documentation/">Documentation</a>
-                <ul class="menu">
-                    <li>
-                        <a href="/documentation/">Written</a>
-                    </li>
-                    <li>
-                        <a href="/apidoc/">(Legacy API)</a>
-                        <ul class="menu">
-                            <li><a href="/apidocs/3.4.6">Version 3.4.6</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            -->
-
-            <li>
-                <a href="/about/faq">FAQ</a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-
-        
-            <div class="large-12 columns asciidoc" role="content">
-                <div class="sect1">
-<h2 id="primary_architectural_choices">Primary architectural choices</h2>
-<div class="sectionbody">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">We require you to learn a "new" modelling paradigm, semantic events</dt>
-<dd>
-<p>We do not believe that we would be able to build highly complicated software using a language that did not support a flexible modelling paradigm, such as object oriented programming, without great loss of productivity, simplicity and safety. We believe that such standardized modelling paradigms enable us to successfully manage far greater levels of complexity than we could without them.</p>
-<div class="paragraph">
-<p>This is what we aim to achieve by ubiquitously leveraging the semantic event modeling paradigm throughout our tools. Using the existing interface support in C# we enable you to model a highly complicated domain in terms of which events can occur and how the meanings of these events relate to each other, the aggregate root to which they belong, and to other abstractions in the domain. The same modelling paradigm is utilized at all levels of design. From the smallest component or entity nested in an aggregate to designing and implementing the highest level integrations in an ecosystem of integrated systems.</p>
-</div>
-<div class="paragraph">
-<p>Our experience is that this new modelling paradigm, this new view of your domain and ecosystem of domains, is highly beneficial to managing and scaling complexity of the domains and integrations between them. We also find it highly beneficial in communicating with with domain experts. It has given us an expressive way of viewing a system in terms of what can happen, without getting bogged down in the details of how.</p>
-</div>
-<div class="paragraph">
-<p>On the technical side it enables us to dramatically cut down on manual code and manual configuration. It enables us to build complicated aggregates, read models, and message based integrations with simple, SOLID, expressive code. All with zero manual routing code or configuration to take into consideration. You can use the same powerful mental model to understand how everything will work at all levels instead of having to design and remember countless custom routes within aggregates and within the bus.</p>
-</div>
-<div class="paragraph">
-<p>Our experience is that this as a whole dramatically reduces the total mental burden of understanding a large system or ecosystem of systems. Our experience is that it allows us to scale to far greater complexity of a domain and exposed features without development slowing or virtually stalling due to the runaway mental burden of an implementation that does not leverage a powerful modelling paradigm.</p>
-</div>
-</dd>
-<dt class="hdlist1">We enforce the use of transactions for all domain data updates</dt>
-<dt class="hdlist1">We enforce the use of exactly once delivery for domain events and commands</dt>
-</dl>
-</div>
-</div>
-</div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Composable">
+            Composable
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
             </div>
-        
-
-    </div>
-
-    <footer class="row">
-    <div class="large-12 columns">
-        <hr>
-        <div class="row">
-            <div class="large-12 columns">
-
-            </div>
+          </div>
         </div>
-    </div>
-</footer>
+      </nav>
+    </header>
 
-    <script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/jquery.js"></script>
-<script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/what-input.js"></script>
-<script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/foundation.js"></script>
-<script src="/js/app.js"></script>
+    <main class="container-xxl">
 
-</body>
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<h2 id="primary-architectural-choices">Primary architectural choices</h2>
+<p>We require you to learn a &quot;new&quot; modelling paradigm, semantic events::
+We do not believe that we would be able to build highly complicated software using a language that did not support a flexible modelling paradigm, such as object oriented programming, without great loss of productivity, simplicity and safety. We believe that such standardized modelling paradigms enable us to successfully manage far greater levels of complexity than we could without them.</p>
+<ul>
+<li><p>This is what we aim to achieve by ubiquitously leveraging the semantic event modeling paradigm throughout our tools. Using the existing interface support in C# we enable you to model a highly complicated domain in terms of which events can occur and how the meanings of these events relate to each other, the aggregate root to which they belong, and to other abstractions in the domain. The same modelling paradigm is utilized at all levels of design. From the smallest component or entity nested in an aggregate to designing and implementing the highest level integrations in an ecosystem of integrated systems.</p>
+</li>
+<li><p>Our experience is that this new modelling paradigm, this new view of your domain and ecosystem of domains, is highly beneficial to managing and scaling complexity of the domains and integrations between them. We also find it highly beneficial in communicating with with domain experts. It has given us an expressive way of viewing a system in terms of what can happen, without getting bogged down in the details of how.</p>
+</li>
+<li><p>On the technical side it enables us to dramatically cut down on manual code and manual configuration. It enables us to build complicated aggregates, read models, and message based integrations with simple, SOLID, expressive code. All with zero manual routing code or configuration to take into consideration. You can use the same powerful mental model to understand how everything will work at all levels instead of having to design and remember countless custom routes within aggregates and within the bus.</p>
+</li>
+<li><p>Our experience is that this as a whole dramatically reduces the total mental burden of understanding a large system or ecosystem of systems. Our experience is that it allows us to scale to far greater complexity of a domain and exposed features without development slowing or virtually stalling due to the runaway mental burden of an implementation that does not leverage a powerful modelling paradigm.</p>
+</li>
+<li><p>We enforce the use of transactions for all domain data updates::</p>
+</li>
+<li><p>We enforce the use of exactly once delivery for domain events and commands::</p>
+</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Composable/blob/docfx/Website/about/primary-architectural-choices.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>

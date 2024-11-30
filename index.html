@@ -1,257 +1,162 @@
-<!doctype html>
-<html class="no-js" lang="en">
-    <head>
-    <!--foundation template lines-->
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/agate.min.css" >
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Modern architecture for normal projects | Composable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Modern architecture for normal projects | Composable ">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Composable/blob/docfx/Website/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="stylesheet" href="/vendor/foundation-6.2.4-complete.zip/css/foundation.css">
-    <script>hljs.initHighlightingOnLoad();</script>
+      <script type="module" src="./public/docfx.min.js"></script>
 
-    <!--End foundation template lines-->
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
 
+  </head>
 
-    <link rel="stylesheet" href="/vendor-css/font-awesome-4.7.0.min.css">
-    <link rel="stylesheet" href="/vendor-css/asciidoctor.css">
-
-
-    <meta name="description" content="A .Net toolkit making CQRS, Event Sourcing, Event Driven Architecture, VEST testing and DDD simpler and more productive.
-">
-    <link rel="stylesheet" href="/styles/app.css">
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
-</head>
-<head>
-    <title>Composable: Modern architecture for normal projects</title>
-</head>
-<body>
-    <div class="row">
-        <div id="page-start-anchor" ></div>
-
-        <div class="top-bar">
-    <div class="top-bar-left">
-        <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
-            <li class="menu-text">Composable Toolkit</li>
-            <li>
-                <a href="/">Home</a>
-            </li>
-            <li>
-                <a href="/documentation/">Documentation</a>
-            </li>
-            <!--
-            <li>
-                <a href="/about/">About</a>
-            </li>
-
-            <li>
-                <a href="/documentation/">Documentation</a>
-                <ul class="menu">
-                    <li>
-                        <a href="/documentation/">Written</a>
-                    </li>
-                    <li>
-                        <a href="/apidoc/">(Legacy API)</a>
-                        <ul class="menu">
-                            <li><a href="/apidocs/3.4.6">Version 3.4.6</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            -->
-
-            <li>
-                <a href="/about/faq">FAQ</a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-
-        
-            <div class="large-12 columns asciidoc" role="content">
-                <div class="sect1">
-<h2 id="modern_architecture_for_normal_projects">Modern architecture for normal projects</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Composable provides tooling for normal modern architecture projects.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Modern architectures</dt>
-<dd>
-<p>By modern architecture we mean software that tend to use tools or designs with labels such as Event Driven Architecture, Event Driven SOA, CQRS, Microservices, NoSql, Event Sourcing etc.</p>
-</dd>
-<dt class="hdlist1">Normal projects</dt>
-<dd>
-<p>By normal projects we mean the vast majority of projects. Projects where reliability, productivity and maintainability are the top priorities. Projects where extreme scalability and availability are not required.</p>
-</dd>
-</dl>
-</div>
-<div class="sect2">
-<h3 id="existing_tooling_and_platforms">Existing tooling and platforms</h3>
-<div class="paragraph">
-<p>Unfortunately, it seems to us that most modern architecture tooling and platforms do not target normal projects. Instead they sacrifice reliability on the altar of nominal scalability and availability. In our experience this tends to result in a complexity explosion as the developers try to build reliable software with tooling not designed for reliability. Ultimately scalability and availability often disappear along with both productivity and maintainability as the complexity skyrockets.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="how_composable_components_are_different">How Composable components are different</h3>
-<div class="paragraph">
-<p>Composable consistently prioritizes reliability, productivity and maintainability for normal projects. Therefore all our tools fully support the following:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Transactions and TransactionScope.</p>
-</li>
-<li>
-<p>High performance black box testing using the real production components.</p>
-</li>
-<li>
-<p>Renaming and moving classes already persisted in production data without breaking production data</p>
-</li>
-<li>
-<p>Renaming properties and fields without breaking production data (using Newtonsoft.Net attributes)</p>
-</li>
-<li>
-<p>Powerful semantic event modelling paradigm</p>
-</li>
-<li>
-<p>Compile time and runtime design validation catching all known common design mistakes.</p>
-</li>
-<li>
-<p><a href="about/faq#performance">All the performance and scalability that we can squeeze out</a></p>
-</li>
-</ul>
-</div>
-<div class="sect3">
-<h4 id="hypermedia_service_bus">Hypermedia Service Bus</h4>
-<div class="paragraph">
-<p>A unified messaging platform that gives you</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Powerful zero configuration routing</p>
-</li>
-<li>
-<p>A service bus with an exactly-once delivery guarantee</p>
-</li>
-<li>
-<p>RPC style communication with optional command deduplication</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Letting you build</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Type safe Hypermedia APIs that can be consumed with with full intellisense and type safety in</p>
-<div class="ulist">
-<ul>
-<li>
-<p>.Net language clients such as ASP.Net or Blazor (Blazor support not yet implemented)</p>
-</li>
-<li>
-<p>Typescript (Not yet implemented)</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>All the features from <a href="#how_composable_components_are_different">How Composable components are different</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="event_store">Event Store</h4>
-<div class="ulist">
-<ul>
-<li>
-<p>Build complex aggregates nesting entities and components in each other to arbitrary depths with ease by leveraging semantic events.</p>
-</li>
-<li>
-<p>Refactoring of event histories including fully removing obsolete code</p>
-</li>
-<li>
-<p>Performant on-demand generation of query models from events dramatically reduces the need for persisted query models</p>
-</li>
-<li>
-<p>All the features from <a href="#how_composable_components_are_different">How Composable components are different</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="document_database">Document Database</h4>
-<div class="ulist">
-<ul>
-<li>
-<p>Save or load instances of any class serializable with Newtonsoft.Json with a single line of code.</p>
-</li>
-<li>
-<p>Automatically tracks and persists changes to loaded documents</p>
-</li>
-<li>
-<p>All the features from <a href="#how_composable_components_are_different">How Composable components are different</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="hypermedia_api">Hypermedia API</h4>
-<div class="paragraph">
-<p>Most APIs consist of a number of service classes and interfaces. Imagine instead an APIs that is a lot like a website. That had a start resource from which you follow links to other resources where you could fill in commands and post them. That is essentially what a Hypermedia API is. Hypermedia API have these advantages among others:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>You expose zero implementation details about your API. Clients only know about the hypermedia controls such as commands, resources and links.</p>
-</li>
-<li>
-<p>Developers don&#8217;t need to read a ton of documentation to figure out how to use your API or what functionality is available. Instead they just follow the links using intellisense from your start-resource to explore the functionality.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="semantic_event_modelling_paradigm">Semantic event modelling paradigm</h4>
-<div class="paragraph">
-<p>Simply means that you declare how the meaning of one event relates to the meaning of another through .Net interface inheritance. As it turns out this enables very flexible and powerful domain designs with complex aggregates, zero configuration routing and elimination of a ton of duplicated event handler code.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
+  <body class="tex2jax_ignore" data-layout="landing" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="logo.svg" alt="Composable">
+            Composable
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
             </div>
-        
-
-    </div>
-
-    <footer class="row">
-    <div class="large-12 columns">
-        <hr>
-        <div class="row">
-            <div class="large-12 columns">
-
-            </div>
+          </div>
         </div>
-    </div>
-</footer>
+      </nav>
+    </header>
 
-    <script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/jquery.js"></script>
-<script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/what-input.js"></script>
-<script src="/vendor/foundation-6.2.4-complete.zip/js/vendor/foundation.js"></script>
-<script src="/js/app.js"></script>
+    <main class="container-xxl">
 
-</body>
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="modern-architecture-for-normal-projects">Modern architecture for normal projects</h1>
+
+<p>Composable provides tooling for normal modern architecture projects.</p>
+<h3 id="modern-architectures">Modern architectures</h3>
+<p>By modern architecture we mean software that tend to use tools or designs with labels such as Event Driven Architecture, Event Driven SOA, CQRS, Microservices, NoSql, Event Sourcing etc.</p>
+<h3 id="normal-projects">Normal projects</h3>
+<p>By normal projects we mean the vast majority of projects. Projects where reliability, productivity and maintainability are the top priorities. Projects where extreme scalability and availability are not required.</p>
+<h3 id="existing-tooling-and-platforms">Existing tooling and platforms</h3>
+<p>Unfortunately, it seems to us that most modern architecture tooling and platforms do not target normal projects. Instead they sacrifice reliability on the altar of nominal scalability and availability. In our experience this tends to result in a complexity explosion as the developers try to build reliable software with tooling not designed for reliability. Ultimately scalability and availability often disappear along with both productivity and maintainability as the complexity skyrockets.</p>
+<h3 id="how-composable-components-are-different">How Composable components are different</h3>
+<p>Composable consistently prioritizes reliability, productivity and maintainability for normal projects. Therefore all our tools fully support the following:</p>
+<ul>
+<li>Transactions and TransactionScope.</li>
+<li>High performance black box testing using the real production components.</li>
+<li>Renaming and moving classes already persisted in production data without breaking production data</li>
+<li>Renaming properties and fields without breaking production data (using Newtonsoft.Net attributes)</li>
+<li>Powerful semantic event modelling paradigm</li>
+<li>Compile time and runtime design validation catching all known common design mistakes.</li>
+<li>link:about/faq#performance[All the performance and scalability that we can squeeze out]</li>
+</ul>
+<h3 id="hypermedia-service-bus">Hypermedia Service Bus</h3>
+<p>A unified messaging platform that gives you</p>
+<ul>
+<li>Powerful zero configuration routing</li>
+<li>A service bus with an exactly-once delivery guarantee</li>
+<li>RPC style communication with optional command deduplication
+<ul>
+<li>Letting you build
+<ul>
+<li>Type safe Hypermedia APIs that can be consumed with with full intellisense and type safety in
+<ul>
+<li>.Net language clients such as ASP.Net or Blazor (Blazor support not yet implemented)</li>
+<li>Typescript (Not yet implemented)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>All the features from <a href="#how-composable-components-are-different">How Composable components are different</a></li>
+</ul>
+<h3 id="event-store">Event Store</h3>
+<ul>
+<li>Build complex aggregates nesting entities and components in each other to arbitrary depths with ease by leveraging semantic events.</li>
+<li>Refactoring of event histories including fully removing obsolete code</li>
+<li>Performant on-demand generation of query models from events dramatically reduces the need for persisted query models</li>
+<li>All the features from <a href="#how-composable-components-are-different">How Composable components are different</a></li>
+</ul>
+<h3 id="document-database">Document Database</h3>
+<ul>
+<li>Save or load instances of any class serializable with Newtonsoft.Json with a single line of code.</li>
+<li>Automatically tracks and persists changes to loaded documents</li>
+<li>All the features from <a href="#how-composable-components-are-different">How Composable components are different</a></li>
+</ul>
+<h3 id="hypermedia-api">Hypermedia API</h3>
+<p>Most APIs consist of a number of service classes and interfaces. Imagine instead an APIs that is a lot like a website. That had a start resource from which you follow links to other resources where you could fill in commands and post them. That is essentially what a Hypermedia API is. Hypermedia API have these advantages among others:</p>
+<ul>
+<li>You expose zero implementation details about your API. Clients only know about the hypermedia controls such as commands, resources and links.</li>
+<li>Developers don't need to read a ton of documentation to figure out how to use your API or what functionality is available. Instead they just follow the links using intellisense from your start-resource to explore the functionality.</li>
+</ul>
+<h3 id="semantic-event-modelling-paradigm">Semantic event modelling paradigm</h3>
+<p>Simply means that you declare how the meaning of one event relates to the meaning of another through .Net interface inheritance. As it turns out this enables very flexible and powerful domain designs with complex aggregates, zero configuration routing and elimination of a ton of duplicated event handler code.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Composable/blob/docfx/Website/index.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>
