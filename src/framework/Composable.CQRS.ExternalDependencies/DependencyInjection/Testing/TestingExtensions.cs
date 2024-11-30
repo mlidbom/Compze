@@ -28,6 +28,7 @@ static class TestingExtensions
       };
 
       cloneContainer.Register(Singleton.For<IServiceLocator>().CreatedBy(() => cloneContainer.ServiceLocator));
+      cloneContainer.Register(Singleton.For<IDependencyInjectionContainer>().Instance(cloneContainer));
 
       sourceContainer.RegisteredComponents()
                      .Where(component => TypesThatAreFacadesForTheContainer.None(facadeForTheContainer => component.ServiceTypes.Contains(facadeForTheContainer)))
