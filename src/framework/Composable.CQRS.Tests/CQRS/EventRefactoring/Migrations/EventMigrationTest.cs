@@ -582,13 +582,9 @@ public class EventMigrationTest([NotNull] string pluggableComponentsCombination)
       // ReSharper disable once AccessToModifiedClosure this is exactly what we wish to achieve here...
       var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations);
       await using var locator = serviceLocator.CaF();
-      IEventStore PersistingEventStore() => serviceLocator.Resolve<IEventStore>();
 
       var otherProcessServiceLocator = serviceLocator.Clone();
       await using var processServiceLocator = otherProcessServiceLocator.CaF();
-
-      // ReSharper disable once AccessToDisposedClosure
-      IEventStoreUpdater OtherEventStoreSession() => otherProcessServiceLocator.Resolve<IEventStoreUpdater>();
 
       var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
@@ -615,5 +611,11 @@ public class EventMigrationTest([NotNull] string pluggableComponentsCombination)
       EventStorageTestHelper.StripSeventhDecimalPointFromSecondFractionOnUtcUpdateTime(secondProcessHistory);
 
       EventMigrationTestBase.AssertStreamsAreIdentical(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
+      return;
+
+      IEventStore PersistingEventStore() => serviceLocator.Resolve<IEventStore>();
+
+      // ReSharper disable once AccessToDisposedClosure
+      IEventStoreUpdater OtherEventStoreSession() => otherProcessServiceLocator.Resolve<IEventStoreUpdater>();
    }
 }

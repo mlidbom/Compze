@@ -77,28 +77,32 @@ public class MonitorCEPerformanceTests : UniversalTestBase
 
    static void RunSingleThreadedScenario(Action action, TimeSpan singleThreadMaxTime)
    {
+      //ncrunch: no coverage end
+
+      TimeAsserter.Execute(HammerScenario, description: "Singlethreaded", maxTotal: singleThreadMaxTime);
+      return;
+
       //ncrunch: no coverage start
       void HammerScenario()
       {
          for(var i = 0; i < TotalLocks; i++)
             action();
       }
-      //ncrunch: no coverage end
-
-      TimeAsserter.Execute(HammerScenario, description: "Singlethreaded", maxTotal: singleThreadMaxTime);
    }
 
    static void RunMultiThreadedScenario(Action action, TimeSpan multiThreadAllowedTime)
    {
+      //ncrunch: no coverage end
+
+      TimeAsserter.ExecuteThreadedLowOverhead(HammerScenario, Iterations, description: "Multithreaded", maxTotal: multiThreadAllowedTime);
+      return;
+
       //ncrunch: no coverage start
       void HammerScenario()
       {
          for(var i = 0; i < LocksPerIteration; i++)
             action();
       }
-      //ncrunch: no coverage end
-
-      TimeAsserter.ExecuteThreadedLowOverhead(HammerScenario, Iterations, description: "Multithreaded", maxTotal: multiThreadAllowedTime);
    }
 
    // ReSharper disable once InconsistentNaming

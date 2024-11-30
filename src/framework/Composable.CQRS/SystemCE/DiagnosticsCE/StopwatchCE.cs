@@ -96,7 +96,6 @@ public static class StopwatchCE
 
       maxDegreeOfParallelism = Math.Min(maxDegreeOfParallelism, iterations);
 
-      TimeSpan TimedAction() => TimeExecution(action);
       var individual = new ConcurrentStack<TimeSpan>();
 
       //Profiling shows that the max time for this line to execute is quite high. So it should be improving consistency of measurements significantly as compared to taking the hit during timing.
@@ -113,6 +112,8 @@ public static class StopwatchCE
                             parallelOptions: new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }));
 
       return new TimedThreadedExecutionSummary(iterations, individual.ToList(), total);
+
+      TimeSpan TimedAction() => TimeExecution(action);
    }
 
    public class TimedExecutionSummary(int iterations, TimeSpan total)

@@ -16,12 +16,6 @@ class DocumentDbPerformanceTests : DocumentDbTestsBase
       {
          var updater = ServiceLocator.DocumentDbUpdater();
 
-         void SaveOneNewUserInTransaction()
-         {
-            var user = new User();
-            updater.Save(user);
-         }
-
          //Warm up caches etc
          SaveOneNewUserInTransaction();
 
@@ -33,6 +27,13 @@ class DocumentDbPerformanceTests : DocumentDbTestsBase
             iterations: 100,
             maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 300, memory: 8, msSql: 75, mySql: 500, orcl: 100, pgSql: 75).Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.3)
          );
+         return;
+
+         void SaveOneNewUserInTransaction()
+         {
+            var user = new User();
+            updater.Save(user);
+         }
       });
    }
 

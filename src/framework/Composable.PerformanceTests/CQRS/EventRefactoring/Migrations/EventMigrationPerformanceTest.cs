@@ -54,9 +54,6 @@ public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsC
    {
       _currentMigrations = migrations;
 
-      void LoadWithCloneLocator(IServiceLocator locator) => locator.ExecuteTransactionInIsolatedScope(() => locator.Resolve<IEventStoreUpdater>()
-                                                                                                                   .Get<TestAggregate>(_aggregate.Id));
-
       IServiceLocator clonedLocator = null;
 
       await TimeAsserter.ExecuteAsync(
@@ -79,6 +76,11 @@ public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsC
             maxTotal: maxCachedLoadTime,
             action: () => LoadWithCloneLocator(clonedLocator));
       }
+
+      return;
+
+      void LoadWithCloneLocator(IServiceLocator locator) => locator.ExecuteTransactionInIsolatedScope(() => locator.Resolve<IEventStoreUpdater>()
+                                                                                                                   .Get<TestAggregate>(_aggregate.Id));
    }
 
    //Performance: Figure out why oracle under performs so dramatically in these tests and fix it. (Hmm. Adding FOR UPDATE to the DB2 query really really slowed DB2 down. Might Oracle be similar?)

@@ -39,6 +39,9 @@ namespace Composable.Tests.Persistence.EventStore;
 
    [Test] public void RoundTripping_SqlDecimal_results_in_same_value()
    {
+      TestValue(Create(1, 2));
+      return;
+
       static void TestValue(ReadOrder value)
       {
          var stringValue = value.ToString();
@@ -53,8 +56,6 @@ namespace Composable.Tests.Persistence.EventStore;
 
          ReadOrder.FromSqlDecimal(sql).ToString().Should().Be(stringValue);
       }
-
-      TestValue(Create(1, 2));
    }
 
    [Test] public void InsertionIntervals()

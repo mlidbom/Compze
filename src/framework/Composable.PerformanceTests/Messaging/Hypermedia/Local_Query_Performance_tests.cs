@@ -24,15 +24,6 @@ public class Local_Query_performance_tests(string pluggableComponentsCombination
 
    void RunScenario(bool threaded, int requests, int queriesPerRequest, TimeSpan maxTotal)
    {
-      //ncrunch: no coverage start
-      void RunRequest() =>
-         ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
-         {
-            for(var i = 0; i < queriesPerRequest; i++)
-            {
-               LocalNavigator.Execute(new MyLocalStrictlyLocalQuery());
-            }
-         });
       //ncrunch: no coverage end
 
       if(threaded)
@@ -44,5 +35,17 @@ public class Local_Query_performance_tests(string pluggableComponentsCombination
          StopwatchCE.TimeExecution(RunRequest, iterations: requests);
          TimeAsserter.Execute(RunRequest, iterations: requests, maxTotal: maxTotal);
       }
+
+      return;
+
+      //ncrunch: no coverage start
+      void RunRequest() =>
+         ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
+         {
+            for(var i = 0; i < queriesPerRequest; i++)
+            {
+               LocalNavigator.Execute(new MyLocalStrictlyLocalQuery());
+            }
+         });
    }
 }

@@ -428,13 +428,6 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
       var threadedIterations = 20;
       var delayEachTransactionBy = 1.Milliseconds();
 
-      void ReadUserHistory() =>
-         UseInTransactionalScope(session =>
-         {
-            ((IEventStoreReader)session).GetHistory(user.Id);
-            Thread.Sleep(delayEachTransactionBy);
-         });
-
       var singleThreadedExecutionTime = StopwatchCE.TimeExecution(ReadUserHistory, iterations: threadedIterations).Total;
 
       var timingsSummary = TimeAsserter.ExecuteThreaded(
@@ -445,6 +438,14 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
          description: $"If access is serialized the time will be approximately {singleThreadedExecutionTime} milliseconds. If parallelized it should be far below this value.");
 
       timingsSummary.IndividualExecutionTimes.Sum().Should().BeGreaterThan(timingsSummary.Total, "If the sum elapsed time of the parts that run in parallel is not greater than the clock time passed parallelism is not taking place.");
+      return;
+
+      void ReadUserHistory() =>
+         UseInTransactionalScope(session =>
+         {
+            ((IEventStoreReader)session).GetHistory(user.Id);
+            Thread.Sleep(delayEachTransactionBy);
+         });
    }
 
    [Test]
@@ -492,6 +493,15 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
    {
       User otherUser = null;
       User user = null;
+
+      UseInTransactionalScope(session => user = User.Register(session, "email@email.se", "password", Guid.NewGuid()));
+
+      await ChangeAnotherUsersEmailInOtherInstance().CaF();
+      UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
+
+      UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));
+      return;
+
       async Task ChangeAnotherUsersEmailInOtherInstance()
       {
          var clonedServiceLocator = _serviceLocator.Clone();
@@ -507,13 +517,6 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
             otherUser.ChangeEmail("otheruser@email.new");
          });
       }
-
-      UseInTransactionalScope(session => user = User.Register(session, "email@email.se", "password", Guid.NewGuid()));
-
-      await ChangeAnotherUsersEmailInOtherInstance().CaF();
-      UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
-
-      UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));
    }
 
 
@@ -523,6 +526,11 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
       user.Register("email@email.se", "password", Guid.NewGuid());
 
       UseInTransactionalScope(session => session.Save(user));
+
+      AssertThrows.Exception<Exception>(() => ChangeUserEmail(failOnPrepare: true));
+
+      ChangeUserEmail(failOnPrepare: false);
+      return;
 
       void ChangeUserEmail(bool failOnPrepare) =>
          UseInTransactionalScope(session =>
@@ -534,10 +542,6 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
             var loadedUser = session.Get<User>(user.Id);
             loadedUser.ChangeEmail("new@email.com");
          });
-
-      AssertThrows.Exception<Exception>(() => ChangeUserEmail(failOnPrepare: true));
-
-      ChangeUserEmail(failOnPrepare: false);
    }
 
    [Test, LongRunning]
@@ -553,23 +557,6 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
 
       var getHistorySection = GatedCodeSection.WithTimeout(2.Seconds());
       var changeEmailSection = GatedCodeSection.WithTimeout(2.Seconds());
-
-      void UpdateEmail() =>
-         UseInScope(session =>
-         {
-            using(getHistorySection.Enter())
-            {
-               ((IEventStoreReader)session).GetHistory(user.Id);
-            }
-            TransactionScopeCe.Execute(() =>
-            {
-               using(changeEmailSection.Enter())
-               {
-                  var userToUpdate = session.Get<User>(user.Id);
-                  userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
-               }
-            });
-         });
 
       var threads = 2;
       var tasks = 1.Through(threads).Select(_ => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
@@ -589,6 +576,24 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
             userHistory.Length.Should()
                        .Be(threads + 2); //Make sure that all of the transactions completed
          });
+      return;
+
+      void UpdateEmail() =>
+         UseInScope(session =>
+         {
+            using(getHistorySection.Enter())
+            {
+               ((IEventStoreReader)session).GetHistory(user.Id);
+            }
+            TransactionScopeCe.Execute(() =>
+            {
+               using(changeEmailSection.Enter())
+               {
+                  var userToUpdate = session.Get<User>(user.Id);
+                  userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
+               }
+            });
+         });
    }
 
    [Test, LongRunning]
@@ -605,16 +610,6 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
 
       var changeEmailSection = GatedCodeSection.WithTimeout(20.Seconds());
       var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(20.Seconds());
-      void UpdateEmail() =>
-         UseInTransactionalScope(session =>
-         {
-            using(changeEmailSection.Enter())
-            {
-               var userToUpdate = session.Get<User>(user.Id);
-               hasFetchedUser.AwaitPassThrough();
-               userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
-            }
-         });
 
       var threads = 2;
 
@@ -643,6 +638,18 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
                                                           .ToArray(); //Reading the aggregate will throw an exception if the history is invalid.
             userHistory.Length.Should()
                        .Be(threads + 2); //Make sure that all of the transactions completed
+         });
+      return;
+
+      void UpdateEmail() =>
+         UseInTransactionalScope(session =>
+         {
+            using(changeEmailSection.Enter())
+            {
+               var userToUpdate = session.Get<User>(user.Id);
+               hasFetchedUser.AwaitPassThrough();
+               userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
+            }
          });
    }
 

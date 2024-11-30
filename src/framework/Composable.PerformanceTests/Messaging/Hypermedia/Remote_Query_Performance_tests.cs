@@ -55,16 +55,6 @@ public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) 
    {
       var navigationSpecification = NavigationSpecification.Get(query);
 
-      //ncrunch: no coverage start
-      void RunRequest() =>
-         ClientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
-         {
-            for(var i = 0; i < queriesPerRequest; i++)
-            {
-               RemoteNavigator.Navigate(navigationSpecification);
-            }
-         });
-
       //ncrunch: no coverage end
 
       if(threaded)
@@ -76,11 +66,31 @@ public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) 
          StopwatchCE.TimeExecution(RunRequest, iterations: requests); //Warmup
          TimeAsserter.Execute(RunRequest, iterations: requests, maxTotal: maxTotal);
       }
+
+      return;
+
+      //ncrunch: no coverage start
+      void RunRequest() =>
+         ClientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
+         {
+            for(var i = 0; i < queriesPerRequest; i++)
+            {
+               RemoteNavigator.Navigate(navigationSpecification);
+            }
+         });
    }
 
    async Task RunAsyncScenario(int requests, int queriesPerRequest, TimeSpan maxTotal, IRemotableQuery<MyQueryResult> query)
    {
       var navigationSpecification = NavigationSpecification.Get(query);
+
+      //ncrunch: no coverage end
+
+      //Warmup
+      await RunScenarioAsync().CaF();
+
+      await TimeAsserter.ExecuteAsync(RunScenarioAsync, maxTotal: maxTotal).CaF();
+      return;
 
       //ncrunch: no coverage start
       async Task RunRequestAsync() =>
@@ -90,11 +100,5 @@ public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) 
                                             .ToArray()).CaF()).CaF();
 
       async Task RunScenarioAsync() => await Task.WhenAll(1.Through(requests).Select(_ => RunRequestAsync()).ToArray()).CaF();
-      //ncrunch: no coverage end
-
-      //Warmup
-      await RunScenarioAsync().CaF();
-
-      await TimeAsserter.ExecuteAsync(RunScenarioAsync, maxTotal: maxTotal).CaF();
    }
 }
