@@ -9,14 +9,14 @@
   "watch": {
     "build": {
       "patterns": [ "./*" ],
-      "extensions": "md,yml",
+      "extensions": "md,yml,css",
       "quiet": false,
       "ignore": "_site/*",
       "delay": 500
     },
     "build-site-only": {
       "patterns": [ "./*" ],
-      "extensions": "md,yml",
+      "extensions": "md,yml,css",
       "quiet": false,
       "ignore": "_site/*",
       "delay": 500
