@@ -110,20 +110,16 @@ An object for the purpose of sending data to a receiver.</p>
 The System.Type returned by <code>message.GetType()</code>.</p>
 <p><strong>Message Handler</strong><br>
 In principle just a function that takes a message as a parameter.</p>
-<blockquote>
 <pre><code>void Handle(RegisterAccountCommand command);
 </code></pre>
-</blockquote>
 <p>In practice most message handlers need to have one or more dependencies injected into them.
 In order to support this handlers are often required to be wrapped inside interfaces.
 That way instances of implementing classes can be resolved from an IOC container easily.</p>
-<blockquote>
 <pre><code>interface IMessageHandler&lt;RegisterAccountCommand&gt;
 {
     void Handle(RegisterAccountCommand aMessage);
 }
 </code></pre>
-</blockquote>
 <p><strong>Routing</strong><br>
 The mechanism by which messages are delivered to handlers.</p>
 <p><strong>Service Bus</strong>
@@ -131,22 +127,17 @@ A component which decouples message senders from message handlers.
 Instead of client code calling handler methods, clients send and receive messages via the bus.
 The bus is responsible for routing the messages to the appropriate handler(s) and invoking them.</p>
 <p>.Manual service invocation requires an instance of the service.</p>
-<blockquote>
 <pre><code>serviceInstance.RegisterAccount(arguments....
 </code></pre>
-</blockquote>
-<p>.Client don't even know where the service is when accessing it across a bus</p>
-<blockquote>
+<p>Client don't even know where the service is when accessing it across a bus</p>
 <pre><code>bus.Send(new RegisterAccountCommand(
 </code></pre>
-</blockquote>
 <div class="TIP">
 <h5>Tip</h5>
 <p>The benefits of this decoupling may not be obvious at first, but they are profound.</p>
 </div>
 <p><strong>Command</strong><br>
 A message that instructs the handler to perform an action.</p>
-<blockquote>
 <pre><code>class RegisterAccountCommand
 {
     AccountId AccountId { get; }
@@ -154,11 +145,8 @@ A message that instructs the handler to perform an action.</p>
     Email Email { get; }
 }
 </code></pre>
-</blockquote>
-<hr>
 <p><strong>Event</strong><br>
 A message that informs handlers about something that has happened.</p>
-<blockquote>
 <pre><code>interface IAccountRegisteredEvent
 {
     AccountId AccountId { get; }
@@ -166,16 +154,13 @@ A message that informs handlers about something that has happened.</p>
     Email Email { get; }
 }
 </code></pre>
-</blockquote>
 <p><strong>Query</strong><br>
 A message that asks the handler to supply some data.</p>
-<blockquote>
 <pre><code>class RecentlyRegisteredAccountsQuery
 {
     TimeSpan MaxAge { get; }
 }
 </code></pre>
-</blockquote>
 <p><strong>Command Handler</strong><br>
 A message handler for a command. Must ensure that the command is successfully executed or throw an exception.</p>
 <p><strong>Query Handler</strong><br>
@@ -192,7 +177,7 @@ An event handler registered on a service bus.</p>
 Asking a service bus to deliver a message to its handler.</p>
 <p><strong>Publishing an event</strong><br>
 Delivering an event to all it's subscribers.</p>
-<p><strong>Raising an event</strong><br>
+<p><strong>Raising an event</strong>
 Same as Publishing an event</p>
 <div class="TIP">
 <h5>Tip</h5>

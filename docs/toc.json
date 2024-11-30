@@ -1,2 +1,2 @@
 
-{"items":[{"name":"Messaging Basics","href":"messaging/basics.html","topicHref":"messaging/basics.html"},{"name":"Messaging Semantic Routing","href":"messaging/semantic-routing.html","topicHref":"messaging/semantic-routing.html"}],"pdf":false}
+{"items":[{"name":"Messaging","items":[{"name":"Messaging Basics","href":"messaging/basics.html","topicHref":"messaging/basics.html"},{"name":"Semantic Routing","href":"messaging/semantic-routing.html","topicHref":"messaging/semantic-routing.html"}]}],"pdf":false}
