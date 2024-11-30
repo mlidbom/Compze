@@ -17,32 +17,25 @@
 
 Given these event interfaces and implementing classes
 
-```
-interface IA
-interface IB : IA
-interface IC : IB
-
-class A : IA {}
-class B : IB {}
-class C : IC {}
-```
+    interface IA
+    interface IB : IA
+    interface IC : IB
+    
+    class A : IA {}
+    class B : IB {}
+    class C : IC {}
 
 And these handler methods registered on our service bus
-```
-void HandleA(IA ia){} //Handles IA, IB and IC
-void HandleB(IB ib){} //Handles IB and IC
-void HandleC(IC ic){} //Handles only IC
-```
 
+    void HandleA(IA ia){} //Handles IA, IB and IC
+    void HandleB(IB ib){} //Handles IB and IC
+    void HandleC(IC ic){} //Handles only IC
 
 .Let's publish some events and examine the results.
 
-```
-serviceBus.Publish(new A()); //Delivered to HandleA
-serviceBus.Publish(new B()); //Delivered to HandleA and HandleB
-serviceBus.Publish(new C()); //Delivered to HandleA, HandleB and HandleC
-```
-
+    serviceBus.Publish(new A()); //Delivered to HandleA
+    serviceBus.Publish(new B()); //Delivered to HandleA and HandleB
+    serviceBus.Publish(new C()); //Delivered to HandleA, HandleB and HandleC
 
 ### Loose coupling through interfaces
 Working with events in terms of interfaces maintains flexibility.
