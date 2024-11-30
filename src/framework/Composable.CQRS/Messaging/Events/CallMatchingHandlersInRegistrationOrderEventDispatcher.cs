@@ -205,4 +205,4 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
    public bool Handles(IAggregateEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
 }
 
-public class EventUnhandledException(Type handlerType, Type eventType) : Exception($@"{handlerType} does not handle nor ignore incoming event {eventType}");
+public class EventUnhandledException(Type handlerType, Type eventType) : Exception($"{handlerType} does not handle nor ignore incoming event {eventType}");

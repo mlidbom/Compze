@@ -123,7 +123,7 @@ static class TypeCE
 
       var typeArguments = @this.GenericTypeArguments;
       // ReSharper disable once PossibleNullReferenceException
-      var genericTypeName = @this.GetGenericTypeDefinition().GetFullNameCompilable().ReplaceInvariant($@"`{typeArguments.Length}", "");
+      var genericTypeName = @this.GetGenericTypeDefinition().GetFullNameCompilable().ReplaceInvariant($"`{typeArguments.Length}", "");
 
       var name = $"{genericTypeName}<{typeArguments.Select(type => type.GetFullNameCompilable()).Join(",")}>";
 

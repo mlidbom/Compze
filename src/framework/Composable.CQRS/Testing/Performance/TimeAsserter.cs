@@ -158,7 +158,7 @@ Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}"
                                .RemoveLeadingLineBreak());
       } else
       {
-         ConsoleCE.WriteLine($@"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
+         ConsoleCE.WriteLine($"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
       }
 
       if(executionSummary is StopwatchCE.TimedThreadedExecutionSummary threadedSummary)

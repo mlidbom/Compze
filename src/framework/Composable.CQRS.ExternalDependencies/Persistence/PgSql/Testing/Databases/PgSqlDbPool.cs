@@ -44,7 +44,7 @@ sealed class PgSqlDbPool : DbPool
          ResetDatabase(db);
       } else
       {
-         _masterConnectionPool.ExecuteNonQuery($@"CREATE DATABASE {databaseName};");
+         _masterConnectionPool.ExecuteNonQuery($"CREATE DATABASE {databaseName};");
       }
    }
 
