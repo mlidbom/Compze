@@ -26,11 +26,7 @@ partial class InMemoryEventStorePersistenceLayer
          return func();
       }
 
-      public void WithTransactionWideLock(Guid aggregateId, Action action) => WithTransactionWideLock(aggregateId, true, () =>
-      {
-         action();
-         return 1;
-      });
+      public void WithTransactionWideLock(Guid aggregateId, Action action) => WithTransactionWideLock(aggregateId, true, action.AsUnitFunc());
 
       class TransactionWideLock
       {
