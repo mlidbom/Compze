@@ -46,8 +46,6 @@ public partial class MonitorCE
 
    bool TryEnterWhen(TimeSpan conditionTimeout, Func<bool> condition)
    {
-      var acquiredLockStartingWait = false;
-
       bool CheckConditionWhileAllowingReentrancy()
       {
          try
@@ -61,38 +59,27 @@ public partial class MonitorCE
          }
       }
 
-      try
+      if(conditionTimeout == InfiniteTimeout)
       {
-         if(conditionTimeout == InfiniteTimeout)
-         {
-            Enter(DefaultTimeout);
-            acquiredLockStartingWait = true;
-            Interlocked.Increment(ref _waitingThreadCount);
-            while(!CheckConditionWhileAllowingReentrancy()) Wait(InfiniteTimeout);
-         } else
-         {
-            var startTime = DateTime.UtcNow;
-            Enter(conditionTimeout);
-            acquiredLockStartingWait = true;
-            Interlocked.Increment(ref _waitingThreadCount);
+         Enter(DefaultTimeout);
+         while(!CheckConditionWhileAllowingReentrancy()) Wait(InfiniteTimeout);
+      } else
+      {
+         var startTime = DateTime.UtcNow;
+         Enter(conditionTimeout);
 
-            while(!CheckConditionWhileAllowingReentrancy())
+         while(!CheckConditionWhileAllowingReentrancy())
+         {
+            var elapsedTime = DateTime.UtcNow - startTime;
+            var timeRemaining = conditionTimeout - elapsedTime;
+            if(elapsedTime > conditionTimeout)
             {
-               var elapsedTime = DateTime.UtcNow - startTime;
-               var timeRemaining = conditionTimeout - elapsedTime;
-               if(elapsedTime > conditionTimeout)
-               {
-                  Exit();
-                  return false;
-               }
-
-               Wait(timeRemaining);
+               Exit();
+               return false;
             }
+
+            Wait(timeRemaining);
          }
-      }
-      finally
-      {
-         if(acquiredLockStartingWait) Interlocked.Decrement(ref _waitingThreadCount);
       }
 
       return true;

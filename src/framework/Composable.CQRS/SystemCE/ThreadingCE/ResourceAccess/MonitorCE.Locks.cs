@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -23,7 +24,7 @@ public partial class MonitorCE
       internal NotifyAllLock(MonitorCE monitor) => _monitor = monitor;
       public void Dispose()
       {
-         _monitor.NotifyAllWaitingThreads();
+         Monitor.PulseAll(_monitor._lockObject);   //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
          _monitor.Exit();
       }
    }
