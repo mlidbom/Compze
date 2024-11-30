@@ -12,11 +12,7 @@ public partial class MonitorCE
       using(EnterLock()) return func();
    }
 
-   public Unit Update(Action action)
-   {
-      using(EnterUpdateLock()) action();
-      return Unit.Instance;
-   }
+   public Unit Update(Action action) => Update(action.AsUnitFunc());
 
    public T Update<T>(Func<T> func)
    {
