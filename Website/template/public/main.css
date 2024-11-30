@@ -1,5 +1,5 @@
 ﻿.alert {
-    --bs-alert-padding-y: 0px;
+    --bs-alert-padding-y: 0.3rem;
     p:last-of-type {
         margin-bottom: 0;
     }
