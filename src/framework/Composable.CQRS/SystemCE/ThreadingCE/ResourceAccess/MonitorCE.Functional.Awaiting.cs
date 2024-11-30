@@ -5,13 +5,13 @@ namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class MonitorCE
 {
-   internal NotifyAllLock EnterUpdateLockWhen(Func<bool> condition) =>
+   internal UpdateLock EnterUpdateLockWhen(Func<bool> condition) =>
       EnterUpdateLockWhen(InfiniteTimeout, condition);
 
-   internal NotifyAllLock EnterUpdateLockWhen(TimeSpan conditionTimeout, Func<bool> condition)
+   internal UpdateLock EnterUpdateLockWhen(TimeSpan conditionTimeout, Func<bool> condition)
    {
       EnterWhen(conditionTimeout, condition);
-      return _notifyAllLock;
+      return _updateLock;
    }
 
    internal void Await(Func<bool> condition) => Await(InfiniteTimeout, condition);
