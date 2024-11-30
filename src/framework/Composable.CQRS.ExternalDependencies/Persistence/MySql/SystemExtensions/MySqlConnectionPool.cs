@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Composable.Persistence.Common.AdoCE;
 using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 

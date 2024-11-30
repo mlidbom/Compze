@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using Composable.Contracts;
 using Composable.Functional;
-using Composable.Logging;
 using Composable.Persistence;
 using Composable.Serialization;
 using Composable.SystemCE.LinqCE;

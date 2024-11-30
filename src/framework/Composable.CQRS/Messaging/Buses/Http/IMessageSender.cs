@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Composable.Messaging.Buses.Implementation;
 
 namespace Composable.Messaging.Buses.Http;
 

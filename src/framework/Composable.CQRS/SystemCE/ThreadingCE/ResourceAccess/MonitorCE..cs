@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 
 //An attribute is used rather than a pragma because the roslyn analyzers are confused by the multiple files of this partial class and keep calling

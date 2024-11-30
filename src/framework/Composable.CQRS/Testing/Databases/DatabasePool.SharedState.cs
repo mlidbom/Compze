@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Composable.Contracts;
 using Composable.Functional;
-using Composable.Serialization;
 using Composable.SystemCE;
 using Composable.SystemCE.LinqCE;
 using JetBrains.Annotations;

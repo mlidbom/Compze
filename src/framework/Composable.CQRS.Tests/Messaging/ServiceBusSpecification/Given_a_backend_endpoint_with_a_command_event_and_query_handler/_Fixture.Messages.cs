@@ -1,22 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Functional;
 using Composable.GenericAbstractions.Time;
 using Composable.Messaging;
-using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
-using Composable.Persistence.Common.DependencyInjection;
 using Composable.Persistence.EventStore;
 using Composable.Persistence.EventStore.Aggregates;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing.Threading;
 using JetBrains.Annotations;
-using NUnit.Framework;
-using Composable.Testing;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing

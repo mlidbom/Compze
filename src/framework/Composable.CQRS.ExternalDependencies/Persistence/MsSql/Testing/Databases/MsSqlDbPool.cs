@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Data.SqlClient;
 using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.SystemCE;
 using Composable.Testing.Databases;
 
 namespace Composable.Persistence.MsSql.Testing.Databases;

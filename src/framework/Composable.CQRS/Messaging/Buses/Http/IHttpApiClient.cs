@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Composable.Messaging.Buses.Implementation;
-using Composable.Serialization;
 
 namespace Composable.Messaging.Buses.Http;
 

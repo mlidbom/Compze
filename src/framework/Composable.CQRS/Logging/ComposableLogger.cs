@@ -1,6 +1,5 @@
 ﻿using System;
 using Composable.Functional;
-using JetBrains.Annotations;
 
 // ReSharper disable UnusedMember.Global
 

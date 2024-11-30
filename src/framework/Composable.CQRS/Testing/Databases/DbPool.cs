@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using Composable.Contracts;
 using Composable.Logging;
-using Composable.Persistence;
 using Composable.SystemCE;
 using Composable.SystemCE.ReflectionCE;
 using Composable.SystemCE.ThreadingCE;
