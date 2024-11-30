@@ -16,13 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packaging", "Packaging", "{
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "SandcastleDocumentation", "framework\SandcastleDocumentation\SandcastleDocumentation.shfbproj", "{467A4F57-7791-4771-B7FC-0EEAD508723D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4C78131D-DD7B-4C3E-B931-D4C6436EE09E} = {4C78131D-DD7B-4C3E-B931-D4C6436EE09E}
-		{3632254D-0C4A-4EB8-B388-4C99F8939584} = {3632254D-0C4A-4EB8-B388-4C99F8939584}
-		{3B776BD4-0EDD-4A83-BC9A-3A53D6649AB0} = {3B776BD4-0EDD-4A83-BC9A-3A53D6649AB0}
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8C1D34C7-3F68-4179-BC52-B5527F718DF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AccountManagement", "AccountManagement", "{FE65D43F-7A41-4448-A23E-E574CC91A185}"
@@ -87,8 +80,6 @@ Global
 		{3B776BD4-0EDD-4A83-BC9A-3A53D6649AB0}.docs|Any CPU.Build.0 = Debug|Any CPU
 		{3B776BD4-0EDD-4A83-BC9A-3A53D6649AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B776BD4-0EDD-4A83-BC9A-3A53D6649AB0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{467A4F57-7791-4771-B7FC-0EEAD508723D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{467A4F57-7791-4771-B7FC-0EEAD508723D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F40E3779-B691-44B9-A820-577C5C11035F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F40E3779-B691-44B9-A820-577C5C11035F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F40E3779-B691-44B9-A820-577C5C11035F}.docs|Any CPU.ActiveCfg = Debug|Any CPU
