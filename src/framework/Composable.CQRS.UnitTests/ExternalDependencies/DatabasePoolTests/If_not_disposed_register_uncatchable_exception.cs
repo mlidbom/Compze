@@ -1,6 +1,8 @@
 ﻿using System;
+using Composable.DependencyInjection;
 using Composable.Functional;
 using Composable.SystemCE;
+using Composable.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -10,6 +12,7 @@ class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(plugg
 {
    [Test] public void Register_uncatchable_exception()
    {
+      if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {
          Unit.From(() =>
