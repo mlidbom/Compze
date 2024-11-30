@@ -72,7 +72,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
          var monitor = MonitorCE.WithTimeout(monitorTimeout);
          if (timeToWaitForStackTrace.HasValue)
          {
-            monitor.SetTimeToWaitForStackTrac(timeToWaitForStackTrace.Value);
+            monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
          }
 
          var threadOneHasTakenUpdateLock = new ManualResetEvent(false);

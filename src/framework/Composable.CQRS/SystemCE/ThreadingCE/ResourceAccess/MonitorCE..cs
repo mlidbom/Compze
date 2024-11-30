@@ -35,25 +35,13 @@ public partial class MonitorCE
       }
    }
 
-   internal void SetTimeToWaitForStackTrac(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+   internal void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
    void Exit()
    {
       UpdateAnyRegisteredTimeoutExceptions();
       OnBeforeLockExit_Must_be_called_by_any_code_exiting_lock_including_waits();
       Monitor.Exit(_lockObject);
-   }
-
-   void NotifyOneExit()
-   {
-      NotifyOneWaitingThread();
-      Exit();
-   }
-
-   void NotifyAllExit()
-   {
-      NotifyAllWaitingThreads();
-      Exit();
    }
 
    bool TryEnter(TimeSpan timeout)

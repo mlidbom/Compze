@@ -17,12 +17,15 @@ public partial class MonitorCE
       return _notifyAllLock;
    }
 
-   ///<summary>Ensure you only call <see cref="Dispose"/> once on an instance.</summary>
    public sealed class NotifyAllLock : IDisposable
    {
       readonly MonitorCE _monitor;
       internal NotifyAllLock(MonitorCE monitor) => _monitor = monitor;
-      public void Dispose() => _monitor.NotifyAllExit();
+      public void Dispose()
+      {
+         _monitor.NotifyAllWaitingThreads();
+         _monitor.Exit();
+      }
    }
 
    internal sealed class Lock : IDisposable
