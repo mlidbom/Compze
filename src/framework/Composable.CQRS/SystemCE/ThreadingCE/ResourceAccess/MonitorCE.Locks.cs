@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -11,33 +12,22 @@ public partial class MonitorCE
       return _lock;
    }
 
-   internal NotifyOneLock EnterNotifyOnlyOneUpdateLock()
+   internal NotifyAllLock EnterUpdateLock() => EnterUpdateLock(_timeout);
+   internal NotifyAllLock EnterUpdateLock(TimeSpan timeout)
    {
-      Enter();
-      return _notifyOneLock;
-   }
-
-   public NotifyAllLock EnterUpdateLock()
-   {
-      Enter();
+      Enter(timeout);
       return _notifyAllLock;
    }
 
-   ///<summary>Ensure you only call <see cref="Dispose"/> once on an instance.</summary>
    public sealed class NotifyAllLock : IDisposable
    {
       readonly MonitorCE _monitor;
       internal NotifyAllLock(MonitorCE monitor) => _monitor = monitor;
-      public void Dispose() => _monitor.NotifyAllExit();
-   }
-
-   ///<summary>Ensure you only call <see cref="Dispose"/> once on an instance.</summary>
-   internal sealed class NotifyOneLock : IDisposable
-   {
-      readonly MonitorCE _monitor;
-      internal NotifyOneLock(MonitorCE monitor) => _monitor = monitor;
-
-      public void Dispose() => _monitor.NotifyOneExit();
+      public void Dispose()
+      {
+         Monitor.PulseAll(_monitor._lockObject);   //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
+         _monitor.Exit();
+      }
    }
 
    internal sealed class Lock : IDisposable

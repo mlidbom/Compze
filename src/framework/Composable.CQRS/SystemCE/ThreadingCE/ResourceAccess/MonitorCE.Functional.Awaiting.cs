@@ -46,61 +46,31 @@ public partial class MonitorCE
 
    bool TryEnterWhen(TimeSpan conditionTimeout, Func<bool> condition)
    {
-      var acquiredLockStartingWait = false;
-
-      bool CheckConditionWhileAllowingReentrancy()
+      if(conditionTimeout == InfiniteTimeout)
       {
-         try
-         {
-            _allowReentrancyIfGreaterThanZero++;
-            return condition();
-         }
-         finally
-         {
-            _allowReentrancyIfGreaterThanZero--;
-         }
-      }
-
-      try
+         Enter(DefaultTimeout);
+         while(!condition()) Wait(InfiniteTimeout);
+      } else
       {
-         if(conditionTimeout == InfiniteTimeout)
-         {
-            Enter(DefaultTimeout);
-            acquiredLockStartingWait = true;
-            Interlocked.Increment(ref _waitingThreadCount);
-            while(!CheckConditionWhileAllowingReentrancy()) Wait(InfiniteTimeout);
-         } else
-         {
-            var startTime = DateTime.UtcNow;
-            Enter(conditionTimeout);
-            acquiredLockStartingWait = true;
-            Interlocked.Increment(ref _waitingThreadCount);
+         var startTime = DateTime.UtcNow;
+         Enter(conditionTimeout);
 
-            while(!CheckConditionWhileAllowingReentrancy())
+         while(!condition())
+         {
+            var elapsedTime = DateTime.UtcNow - startTime;
+            var timeRemaining = conditionTimeout - elapsedTime;
+            if(elapsedTime > conditionTimeout)
             {
-               var elapsedTime = DateTime.UtcNow - startTime;
-               var timeRemaining = conditionTimeout - elapsedTime;
-               if(elapsedTime > conditionTimeout)
-               {
-                  Exit();
-                  return false;
-               }
-
-               Wait(timeRemaining);
+               Exit();
+               return false;
             }
+
+            Wait(timeRemaining);
          }
-      }
-      finally
-      {
-         if(acquiredLockStartingWait) Interlocked.Decrement(ref _waitingThreadCount);
       }
 
       return true;
    }
 
-   void Wait(TimeSpan timeout)
-   {
-      OnBeforeLockExit_Must_be_called_by_any_code_exiting_lock_including_waits();
-      Monitor.Wait(_lockObject, timeout);
-   }
+   void Wait(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
 }

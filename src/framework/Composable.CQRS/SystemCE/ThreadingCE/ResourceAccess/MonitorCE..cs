@@ -18,52 +18,31 @@ namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 public partial class MonitorCE
 {
-   ulong _lockId;
-   long _contendedLocks;
    readonly System.Threading.Lock _timeoutLock = new();
-   int _allowReentrancyIfGreaterThanZero;
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
 
    void Enter() => Enter(_timeout);
 
    void Enter(TimeSpan timeout)
    {
-      var currentLock = _lockId;
       if(!TryEnter(timeout))
       {
-         RegisterAndThrowTimeoutException(currentLock);
+         RegisterAndThrowTimeoutException();
       }
    }
 
-   internal void SetTimeToWaitForStackTrac(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+   internal void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
    void Exit()
    {
-      UpdateAnyRegisteredTimeoutExceptions();
-      OnBeforeLockExit_Must_be_called_by_any_code_exiting_lock_including_waits();
+      UpdateAnyRegisteredTimeoutExceptions();//If we are in a reentrant lock calling this is actually still fine, our stack trace will contain the original lock taking stack trace...
       Monitor.Exit(_lockObject);
-   }
-
-   void NotifyOneExit()
-   {
-      NotifyOneWaitingThread();
-      Exit();
-   }
-
-   void NotifyAllExit()
-   {
-      NotifyAllWaitingThreads();
-      Exit();
    }
 
    bool TryEnter(TimeSpan timeout)
    {
-      //todo: Why is MonitorCE not reentrant? Can we fix it? It's a major limitation that is quite painful.
-      // ThreadGate now uses a separate monitor for logging. Is that truly reliable I doubt it...
-      if(_allowReentrancyIfGreaterThanZero == 0 && IsEntered()) throw new InvalidOperationException($"{nameof(MonitorCE)} is not reentrant.");
       if(!Monitor.TryEnter(_lockObject)) //This will never block and calling it first improves performance quite a bit.
       {
-         Interlocked.Increment(ref _contendedLocks);
          var lockTaken = false;
          try
          {
@@ -81,29 +60,11 @@ public partial class MonitorCE
       return true;
    }
 
-   bool IsEntered() => Monitor.IsEntered(_lockObject);
-
-   void OnBeforeLockExit_Must_be_called_by_any_code_exiting_lock_including_waits()
-   {
-      unchecked { _lockId++; }
-   }
-
-   void NotifyOneWaitingThread()
-   {
-      if(_waitingThreadCount > 0) Monitor.Pulse(_lockObject); //One thread blocked on Monitor.Wait for our _lockObject, will now try and reacquire the lock.
-   }
-
-   void NotifyAllWaitingThreads()
-   {
-      if(_waitingThreadCount > 1) Monitor.PulseAll(_lockObject);   //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock.
-      else if(_waitingThreadCount > 0) Monitor.Pulse(_lockObject); //One thread blocked on Monitor.Wait for our _lockObject, will now try and reacquire the lock.
-   }
-
-   void RegisterAndThrowTimeoutException(ulong currentLock)
+   void RegisterAndThrowTimeoutException()
    {
       lock(_timeoutLock)
       {
-         var exception = new EnterLockTimeoutException(lockId: currentLock, _timeout, _stackTraceFetchTimeout);
+         var exception = new EnterLockTimeoutException(_timeout, _stackTraceFetchTimeout);
          ThreadSafe.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
          throw exception;
       }
@@ -116,7 +77,7 @@ public partial class MonitorCE
          lock(_timeoutLock)
          {
             var stackTrace = new StackTrace(fNeedFileInfo: true);
-            foreach(var exception in _timeOutExceptionsOnOtherThreads.Where(exception => exception.LockId == _lockId))
+            foreach(var exception in _timeOutExceptionsOnOtherThreads)
             {
                exception.SetBlockingThreadsDisposeStackTrace(stackTrace);
             }

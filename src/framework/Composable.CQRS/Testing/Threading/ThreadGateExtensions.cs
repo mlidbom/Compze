@@ -47,7 +47,7 @@ static class ThreadGateExtensions
    public static bool TryAwaitEmptyQueue(this IThreadGate @this, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Queued == 0);
 
    public static IThreadGate ThrowPostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ => throw exception);
-   public static IThreadGate ThrowPrePassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ => throw exception);
+   public static IThreadGate ThrowPrePassThrough(this IThreadGate @this, Exception exception) => @this.SetPrePassThroughAction(_ => throw exception);
 
    public static IThreadGate FailTransactionOnPreparePostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ =>
    {

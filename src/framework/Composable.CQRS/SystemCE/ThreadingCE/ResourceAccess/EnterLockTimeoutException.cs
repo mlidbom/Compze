@@ -7,14 +7,10 @@ public class EnterLockTimeoutException : Exception
 {
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
-   internal ulong LockId { get; }
    string? _blockingThreadStacktrace;
 
-   internal EnterLockTimeoutException(ulong lockId, TimeSpan timeout, TimeSpan? stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.")
-   {
+   internal EnterLockTimeoutException(TimeSpan timeout, TimeSpan? stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") => 
       _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout ?? 1.Seconds();
-      LockId = lockId;
-   }
 
    public override string Message
    {
