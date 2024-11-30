@@ -25,16 +25,19 @@ The System.Type returned by `message.GetType()`.
 **Message Handler**  
 In principle just a function that takes a message as a parameter.
 
->     void Handle(RegisterAccountCommand command);
+```
+void Handle(RegisterAccountCommand command);
+```
 
 In practice most message handlers need to have one or more dependencies injected into them.
 In order to support this handlers are often required to be wrapped inside interfaces.
  That way instances of implementing classes can be resolved from an IOC container easily.
-
->     interface IMessageHandler<RegisterAccountCommand>
->     {
->         void Handle(RegisterAccountCommand aMessage);
->     }
+```
+interface IMessageHandler<RegisterAccountCommand>
+{
+    void Handle(RegisterAccountCommand aMessage);
+}
+```
 
 
 **Routing**  
@@ -46,10 +49,14 @@ Instead of client code calling handler methods, clients send and receive message
 The bus is responsible for routing the messages to the appropriate handler(s) and invoking them.
 
 .Manual service invocation requires an instance of the service.
->     serviceInstance.RegisterAccount(arguments....
+```
+serviceInstance.RegisterAccount(arguments....
+```
 
-.Client don't even know where the service is when accessing it across a bus
->     bus.Send(new RegisterAccountCommand(
+Client don't even know where the service is when accessing it across a bus
+```
+bus.Send(new RegisterAccountCommand(
+```
 
 > [!TIP]
 > The benefits of this decoupling may not be obvious at first, but they are profound.
@@ -57,29 +64,35 @@ The bus is responsible for routing the messages to the appropriate handler(s) an
 **Command**  
 A message that instructs the handler to perform an action.
 
->     class RegisterAccountCommand
->     {
->         AccountId AccountId { get; }
->         Password Password { get; }
->         Email Email { get; }
->     }
-----
+```
+class RegisterAccountCommand
+{
+    AccountId AccountId { get; }
+    Password Password { get; }
+    Email Email { get; }
+}
+```
+
 
 **Event**  
 A message that informs handlers about something that has happened.
->     interface IAccountRegisteredEvent
->     {
->         AccountId AccountId { get; }
->         Password Password { get; }
->         Email Email { get; }
->     }
+```
+interface IAccountRegisteredEvent
+{
+    AccountId AccountId { get; }
+    Password Password { get; }
+    Email Email { get; }
+}
+```
 
 **Query**  
 A message that asks the handler to supply some data.
->     class RecentlyRegisteredAccountsQuery
->     {
->         TimeSpan MaxAge { get; }
->     }
+```
+class RecentlyRegisteredAccountsQuery
+{
+    TimeSpan MaxAge { get; }
+}
+```
 
 **Command Handler**  
 A message handler for a command. Must ensure that the command is successfully executed or throw an exception.
