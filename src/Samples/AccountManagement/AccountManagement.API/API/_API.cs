@@ -4,7 +4,7 @@ using System;
 using Composable.Messaging;
 using Composable.Messaging.Buses;
 using Composable.Messaging.Hypermedia;
-using Composable.Persistence.MsSql.DependencyInjection;
+using Composable.Persistence.InMemory.DependencyInjection;
 using Composable.SystemCE;
 
 namespace AccountManagement.API;
@@ -54,7 +54,7 @@ public class AccountApi : IStaticInstancePropertySingleton
    ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Eventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
    public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
    {
-      builder.RegisterMsSqlPersistenceLayer();
+      builder.RegisterInMemoryPersistenceLayer();
 
       AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
    }

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Composable.DependencyInjection;
-using Composable.Messaging.Buses.Implementation.Http;
 using Composable.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -52,7 +51,7 @@ partial class Inbox
       {
          var builder = WebApplication.CreateBuilder();
          builder.Logging.SetMinimumLevel(LogLevel.Information);
-         
+
          builder.Services.AddLogging(something => something.AddSeq(serverUrl: "http://192.168.0.11:5341"));
 
          builder.Services.AddControllers().ConfigureApplicationPartManager(it =>

@@ -13,12 +13,14 @@ In the root of the project:
 * Open Composable.Everything.sln in Visual Studio 2022 or Rider.
 
 ## Tests
-* You administrator access to a SQL database server. Microsoft SQL Server, MySql or PostgreSql. 
+* Preferably you should have administrator access to a SQL database server. By default, Microsoft SQL Server 
   * To change which database servers the tests run against, edit `TestUsingPluggableComponentCombinations` in the project root
 * If this connection string is valid you're good to go, otherwise set the environment variable below:
   `Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;`
 
->Running the tests will create several databases on your SQL server prefixed: `Composable_DatabasePool_`.
+>Running the tests will create several databases on your SQL server prefixed: `Composable_DatabasePool_`.  
+
+>If you don't have any Sql server, configure `TestUsingPluggableComponentCombinations` to use only the `Memory` `PersistenceLayer`.
  
 ### Environment variables you should know about when running the tests
 
@@ -27,7 +29,9 @@ Sets the connection string to use for the database pools that the tests use.
 
 **COMPOSABLE_SQL_SERVER_DATABASE_POOL_MASTER_CONNECTIONSTRING**
 **COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING**  
-**COMPOSABLE_MYSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING**
+**COMPOSABLE_MYSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING**  
+**COMPOSABLE_DB2_DATABASE_POOL_MASTER_CONNECTIONSTRING**  
+**COMPOSABLE_ORACLE_DATABASE_POOL_MASTER_CONNECTIONSTRING**
 
 
 ### Performance

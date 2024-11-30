@@ -26,7 +26,7 @@ class PlayWithSerilog : UniversalTestBase
       }
 
       log.Information("Val1: {val}, val2: {vop}", "vallo", "villo");
-      
+
       await logger.DisposeAsync().CaF();
    }
 
