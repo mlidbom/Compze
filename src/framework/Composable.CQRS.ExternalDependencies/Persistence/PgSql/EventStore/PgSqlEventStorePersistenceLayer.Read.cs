@@ -40,7 +40,7 @@ FROM {Event.TableName}";
          aggregateId: Guid.Parse(eventReader.GetString(2)),
          //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
          utcTimeStamp: DateTime.SpecifyKind(eventReader.GetDateTime(5), DateTimeKind.Utc),
-         storageInformation: new AggregateEventStorageInformation()
+         storageInformation: new AggregateEventStorageInformation
                              {
                                 ReadOrder = ReadOrder.Parse(eventReader.GetString(10)),
                                 InsertedVersion = eventReader.GetInt32(9),

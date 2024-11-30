@@ -59,7 +59,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
                                                       specification.EffectiveVersion,
                                                       @event.AggregateId,
                                                       @event.UtcTimeStamp,
-                                                      new AggregateEventStorageInformation()
+                                                      new AggregateEventStorageInformation
                                                       {
                                                          EffectiveVersion = specification.EffectiveVersion,
                                                          ReadOrder = @event.StorageInformation.ReadOrder,

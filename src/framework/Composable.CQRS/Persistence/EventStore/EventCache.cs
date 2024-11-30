@@ -145,7 +145,7 @@ class EventCache : IDisposable
    public void Clear()
    {
       var originalCache = _internalCache;
-      _internalCache = new MemoryCache(new MemoryCacheOptions()) {};
+      _internalCache = new MemoryCache(new MemoryCacheOptions());
       originalCache.Dispose();
    }
 

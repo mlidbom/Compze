@@ -140,14 +140,14 @@ public class ValueObjectsWithCollectionsTests : UniversalTestBase
                 };
       var rhs = new ExternalJobsDashboardViewModel
                 {
-                   JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement> {}
+                   JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>()
                 };
 
       Assert.That(lhs, Is.Not.EqualTo(rhs));
 
       lhs = new ExternalJobsDashboardViewModel
             {
-               JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement> { }
+               JobAdvertisements = new List<ExternalJobsDashboardViewModel.JobAdvertisement>()
             };
       rhs = new ExternalJobsDashboardViewModel
             {

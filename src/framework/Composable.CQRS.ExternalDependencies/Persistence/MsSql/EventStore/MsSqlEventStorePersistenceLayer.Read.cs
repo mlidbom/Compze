@@ -38,7 +38,7 @@ FROM {Event.TableName} {lockHint} ";
       aggregateId: eventReader.GetGuid(2),
       //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
       utcTimeStamp: DateTime.SpecifyKind(eventReader.GetDateTime(5), DateTimeKind.Utc),
-      storageInformation: new AggregateEventStorageInformation()
+      storageInformation: new AggregateEventStorageInformation
                           {
                              ReadOrder = ReadOrder.FromSqlDecimal(eventReader.GetSqlDecimal(10)),
                              InsertedVersion = eventReader.GetInt32(9),

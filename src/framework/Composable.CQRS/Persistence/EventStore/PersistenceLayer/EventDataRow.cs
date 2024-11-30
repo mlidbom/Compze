@@ -28,7 +28,7 @@ class EventDataRow
       AggregateId = @event.AggregateId;
       UtcTimeStamp = @event.UtcTimeStamp;
 
-      StorageInformation = new AggregateEventStorageInformation()
+      StorageInformation = new AggregateEventStorageInformation
                            {
                               InsertedVersion = specification.InsertedVersion,
                               EffectiveVersion = specification.EffectiveVersion
