@@ -18,7 +18,7 @@ public class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPlug
    internal static DbPool CreatePool() =>
       TestEnv.PersistenceLayer.Current switch
       {
-         PersistenceLayer.MicrosoftSQLServer => new MsSqlDbPool(),
+         PersistenceLayer.MicrosoftSqlServer => new MsSqlDbPool(),
          PersistenceLayer.MySql => new MySqlDbPool(),
          PersistenceLayer.PostgreSql => new PgSqlDbPool(),
          PersistenceLayer.Memory => throw new ArgumentOutOfRangeException(),
@@ -29,7 +29,7 @@ public class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPlug
    {
       switch(TestEnv.PersistenceLayer.Current)
       {
-         case PersistenceLayer.MicrosoftSQLServer:
+         case PersistenceLayer.MicrosoftSqlServer:
             UseMsSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
          case PersistenceLayer.PostgreSql:

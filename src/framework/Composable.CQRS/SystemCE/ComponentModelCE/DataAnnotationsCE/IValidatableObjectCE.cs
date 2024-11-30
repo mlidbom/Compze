@@ -8,7 +8,7 @@ using Composable.Contracts;
 namespace Composable.SystemCE.ComponentModelCE.DataAnnotationsCE;
 
 ///<summary>Extensions for <see cref="IValidatableObject"/> intended to make type safe implementations easy.</summary>
-public static class IValidatableObjectCE
+public static class ValidatableObjectCE
 {
    static string ExtractMemberName(Expression<Func<object>> accessor)
    {

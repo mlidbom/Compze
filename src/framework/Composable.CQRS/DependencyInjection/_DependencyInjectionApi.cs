@@ -41,7 +41,7 @@ public interface IRunMode
 }
 public enum PersistenceLayer
 {
-   MicrosoftSQLServer,
+   MicrosoftSqlServer,
    Memory,
    MySql,
    PostgreSql

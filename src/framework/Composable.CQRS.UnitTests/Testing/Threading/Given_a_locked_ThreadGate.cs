@@ -24,7 +24,7 @@ namespace Composable.Tests.Testing.Threading;
          using (ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()){} //warmup
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
-         fixture.Gate.Await(50.Milliseconds(), () => fixture.Gate.Queued == fixture.NumberOfThreads);
+         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 50.Milliseconds());
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 

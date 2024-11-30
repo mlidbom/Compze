@@ -30,7 +30,7 @@ public static partial class TestEnv
          =>
             Current switch
             {
-               DependencyInjection.PersistenceLayer.MicrosoftSQLServer => SelectValue(msSql, nameof(msSql)),
+               DependencyInjection.PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
                DependencyInjection.PersistenceLayer.Memory => SelectValue(memory, nameof(memory)),
                DependencyInjection.PersistenceLayer.MySql => SelectValue(mySql, nameof(mySql)),
                DependencyInjection.PersistenceLayer.PostgreSql => SelectValue(pgSql, nameof(pgSql)),

@@ -17,7 +17,7 @@ public static class TestingPersistenceLayerRegistrar
    {
       switch(TestEnv.PersistenceLayer.Current)
       {
-         case PersistenceLayer.MicrosoftSQLServer:
+         case PersistenceLayer.MicrosoftSqlServer:
             container.RegisterMsSqlPersistenceLayer(connectionStringName);
             break;
          case PersistenceLayer.MySql:

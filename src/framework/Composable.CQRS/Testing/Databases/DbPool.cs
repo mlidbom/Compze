@@ -31,10 +31,10 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
    readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<Database> _transientCache = new List<Database>();
 
-   static ILogger Log = ComposableLogger.For<DbPool>();
+   static ILogger _log = ComposableLogger.For<DbPool>();
    bool _disposed;
 
-   public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => Log = Log.WithLogLevel(logLevel));
+   public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => _log = _log.WithLogLevel(logLevel));
 
    public string ConnectionStringFor(string reservationName) => _guard.Update(() =>
    {
@@ -45,7 +45,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
       if(reservedDatabase != null)
       {
-         Log.Debug($"Retrieved reserved pool database: {reservedDatabase.Id}");
+         _log.Debug($"Retrieved reserved pool database: {reservedDatabase.Id}");
          return ConnectionStringFor(reservedDatabase);
       }
 
@@ -60,7 +60,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
             {
                if(machineWide.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase))
                {
-                  Log.Info($"Reserved pool database: {reservedDatabase.Name}");
+                  _log.Info($"Reserved pool database: {reservedDatabase.Name}");
                   ThreadSafe.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
                }
             });
@@ -77,7 +77,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
       }
       catch(Exception exception)
       {
-         Log.Error(exception);
+         _log.Error(exception);
          TransactionScopeCe.SuppressAmbient(() => EnsureDatabaseExistsAndIsEmpty(reservedDatabase));
       }
 

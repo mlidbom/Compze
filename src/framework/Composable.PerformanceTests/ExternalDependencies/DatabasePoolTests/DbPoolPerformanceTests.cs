@@ -121,7 +121,7 @@ public class DbPoolPerformanceTests : DbPoolTest
 
       switch(TestEnv.PersistenceLayer.Current)
       {
-         case PersistenceLayer.MicrosoftSQLServer:
+         case PersistenceLayer.MicrosoftSqlServer:
             var msSqlConnectionProvider = IMsSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => msSqlConnectionProvider.UseConnection(_ => {});
             break;
