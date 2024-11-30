@@ -1,0 +1,29 @@
+﻿{
+  "scripts": {
+    "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
+    "watch": "npm-watch build",
+    "build": "docfx build",
+    "watch-site-only": "npm-watch build-site-only",
+    "build-site-only": "docfx build docfx-site-only.json"
+  },
+  "watch": {
+    "build": {
+      "patterns": [ "./*" ],
+      "extensions": "md,yml,css",
+      "quiet": false,
+      "ignore": "_site/*",
+      "delay": 500
+    },
+    "build-site-only": {
+      "patterns": [ "./*" ],
+      "extensions": "md,yml,css",
+      "quiet": false,
+      "ignore": "_site/*",
+      "delay": 500
+    }
+  },
+  "devDependencies": {
+    "npm-watch": "^0.11.0",
+    "browser-sync": "^2.27.11"
+  }
+}

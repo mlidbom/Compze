@@ -1,0 +1,6 @@
+- name: Docs
+  href: docs/
+- name: FAQ
+  href: about/faq.md
+- name: API
+  href: api/

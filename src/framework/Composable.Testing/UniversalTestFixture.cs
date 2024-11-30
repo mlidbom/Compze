@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Composable.Logging;
@@ -41,7 +42,7 @@ namespace Composable.Testing;
                   .Enrich.With<NUnitTestEnricher>()
                   .MinimumLevel.Debug()
                   .WriteTo.Seq("http://192.168.0.11:5341")
-                  .WriteTo.Console()
+                  .WriteTo.Console(formatProvider:CultureInfo.InvariantCulture)
                   .CreateLogger();
 
       ComposableLogger.LoggerFactoryMethod = SerilogLogger.Create;

@@ -5,8 +5,8 @@ using NUnit.Framework;
 
 namespace AccountManagement.UnitTests.Passwords;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-class A_password_is_invalid_if_it : UniversalTestBase
+[TestFixture]
+public class A_password_is_invalid_if_it : UniversalTestBase
 {
    [Test] public static void Is_null() => AssertCreatingPasswordThrowsExceptionContainingFailure(null!, Password.Policy.Failures.Null);
    [Test] public static void Is_shorter_than_four_characters() => AssertCreatingPasswordThrowsExceptionContainingFailure("abc", Password.Policy.Failures.ShorterThanFourCharacters);

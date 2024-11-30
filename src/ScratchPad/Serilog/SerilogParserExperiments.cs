@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 using Serilog;
@@ -24,12 +25,12 @@ class SerilogParserExperiments
                                    p => p.Item1.PropertyName,
                                    LogEventPropertyValue (p) => new ScalarValue(p.Item2));
 
-      var rendered = template.Render(properties);
+      var rendered = template.Render(properties, formatProvider:CultureInfo.InvariantCulture);
 
       Assert.That(rendered, Is.EqualTo("\"Bob\" is 34 years old."));
 
       var logger = new LoggerConfiguration()
-                  .WriteTo.Console()
+                  .WriteTo.Console(formatProvider:CultureInfo.InvariantCulture)
                   .CreateLogger();
 
       logger.Information(messageTemplate, "Bob", 34);
