@@ -18,7 +18,6 @@ namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 public partial class MonitorCE
 {
-   ulong _lockId;
    long _contendedLocks;
    readonly System.Threading.Lock _timeoutLock = new();
    int _allowReentrancyIfGreaterThanZero;
@@ -28,10 +27,9 @@ public partial class MonitorCE
 
    void Enter(TimeSpan timeout)
    {
-      var currentLock = _lockId;
       if(!TryEnter(timeout))
       {
-         RegisterAndThrowTimeoutException(currentLock);
+         RegisterAndThrowTimeoutException();
       }
    }
 
@@ -40,7 +38,6 @@ public partial class MonitorCE
    void Exit()
    {
       UpdateAnyRegisteredTimeoutExceptions();
-      OnBeforeLockExit_Must_be_called_by_any_code_exiting_lock_including_waits();
       Monitor.Exit(_lockObject);
    }
 
@@ -71,16 +68,11 @@ public partial class MonitorCE
 
    bool IsEntered() => Monitor.IsEntered(_lockObject);
 
-   void OnBeforeLockExit_Must_be_called_by_any_code_exiting_lock_including_waits()
-   {
-      unchecked { _lockId++; }
-   }
-
-   void RegisterAndThrowTimeoutException(ulong currentLock)
+   void RegisterAndThrowTimeoutException()
    {
       lock(_timeoutLock)
       {
-         var exception = new EnterLockTimeoutException(lockId: currentLock, _timeout, _stackTraceFetchTimeout);
+         var exception = new EnterLockTimeoutException(_timeout, _stackTraceFetchTimeout);
          ThreadSafe.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
          throw exception;
       }
@@ -93,7 +85,7 @@ public partial class MonitorCE
          lock(_timeoutLock)
          {
             var stackTrace = new StackTrace(fNeedFileInfo: true);
-            foreach(var exception in _timeOutExceptionsOnOtherThreads.Where(exception => exception.LockId == _lockId))
+            foreach(var exception in _timeOutExceptionsOnOtherThreads)
             {
                exception.SetBlockingThreadsDisposeStackTrace(stackTrace);
             }

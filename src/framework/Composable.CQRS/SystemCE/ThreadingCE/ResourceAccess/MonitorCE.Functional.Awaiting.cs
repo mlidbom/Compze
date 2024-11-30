@@ -85,9 +85,5 @@ public partial class MonitorCE
       return true;
    }
 
-   void Wait(TimeSpan timeout)
-   {
-      OnBeforeLockExit_Must_be_called_by_any_code_exiting_lock_including_waits();
-      Monitor.Wait(_lockObject, timeout);
-   }
+   void Wait(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
 }
