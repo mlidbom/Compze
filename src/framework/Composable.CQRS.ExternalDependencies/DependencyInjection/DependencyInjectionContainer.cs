@@ -30,7 +30,6 @@ public static class DependencyInjectionContainer
    {
       IDependencyInjectionContainer container = TestEnv.DIContainer.Current switch
       {
-         DIContainer.Composable => new ComposableDependencyInjectionContainer(runMode),
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(runMode),
          DIContainer.Microsoft => new MicrosoftDependencyInjectionContainer(runMode),
          _ => throw new ArgumentOutOfRangeException()

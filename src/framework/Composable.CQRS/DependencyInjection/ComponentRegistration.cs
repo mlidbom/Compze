@@ -145,7 +145,7 @@ public abstract class ComponentRegistration
    {
       serviceTypes = serviceTypes.ToList();
 
-      ServiceTypeIndexes = serviceTypes.Select(ComposableDependencyInjectionContainer.ServiceTypeIndex.For).ToArray();
+      ServiceTypeIndexes = serviceTypes.Select(ServiceTypeIndex.For).ToArray();
       Contract.Arguments.That(lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null, $"{nameof(InstantiationSpec.SingletonInstance)} registrations must be {nameof(Lifestyle.Singleton)}s");
 
       ServiceTypes = serviceTypes;
@@ -169,7 +169,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       return this;
    }
 
-   internal override int ComponentIndex => ComposableDependencyInjectionContainer.ServiceTypeIndex.ForService<TService>.Index;
+   internal override int ComponentIndex => ServiceTypeIndex.ForService<TService>.Index;
    internal override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
    {
       if(!ShouldDelegateToParentWhenCloning)

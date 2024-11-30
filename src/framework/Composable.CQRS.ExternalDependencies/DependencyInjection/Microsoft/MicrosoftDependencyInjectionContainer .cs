@@ -129,7 +129,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
          _isDisposed = true;
          if(_serviceProvider != null)
          {
-            await ((IAsyncDisposable)_serviceProvider).DisposeAsync().CaF();
+            await _serviceProvider.DisposeAsync().CaF();
          }
          _serviceProvider = null;
       }

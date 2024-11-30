@@ -34,7 +34,7 @@ class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 
    internal static class ForService<TType>
    {
-      internal static readonly int Index = ComposableDependencyInjectionContainer.ServiceTypeIndex.For(typeof(TType));
+      internal static readonly int Index = ServiceTypeIndex.For(typeof(TType));
    }
 
    public static Type GetServiceForIndex(int serviceTypeIndex) => _backMap[serviceTypeIndex];

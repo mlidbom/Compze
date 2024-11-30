@@ -2,9 +2,7 @@
 
 namespace Composable.DependencyInjection;
 
-partial class ComposableDependencyInjectionContainer
+// ReSharper disable once ClassNeverInstantiated.Global Because static classes cannot be used as type arguments.
+class ServiceTypeIndex : TypeIndex<ServiceTypeIndex>
 {
-   internal class ServiceTypeIndex : TypeIndex<ServiceTypeIndex>
-   {
-   }
 }

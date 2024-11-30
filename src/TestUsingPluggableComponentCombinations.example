@@ -3,11 +3,6 @@
 #Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
 #Empty/Whitespace lines are ignored
 
-###MicrosoftSQLServer:Composable
-###Memory:Composable
-###MySql:Composable
-###PostgreSql:Composable
-
 ###MicrosoftSQLServer:Microsoft
 ###Memory:Microsoft
 ###MySql:Microsoft

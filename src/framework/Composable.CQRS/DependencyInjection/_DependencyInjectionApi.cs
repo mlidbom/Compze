@@ -48,7 +48,6 @@ public enum PersistenceLayer
 }
 public enum DIContainer
 {
-   Composable,
    SimpleInjector,
    Microsoft
 }
