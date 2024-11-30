@@ -15,46 +15,46 @@ interface IThreadShared<out TResource>
 static class ThreadShared
 {
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>() where TShared : new() =>
-      new ResourceGuardThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithDefaultTimeout());
+      new MonitorCEThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>(TShared shared) =>
-      new ResourceGuardThreadShared<TShared>(shared, MonitorCE.WithDefaultTimeout());
+      new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan timeout) where TShared : new() =>
-      new ResourceGuardThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithTimeout(timeout));
+      new MonitorCEThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithTimeout(timeout));
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan timeOut, TShared shared) =>
-      new ResourceGuardThreadShared<TShared>(shared, MonitorCE.WithTimeout(timeOut));
+      new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithTimeout(timeOut));
 
    public static IThreadShared<TShared> WithInfiniteTimeout<TShared>() where TShared : new() =>
-      new ResourceGuardThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithInfiniteTimeout());
+      new MonitorCEThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithInfiniteTimeout());
 
    public static IThreadShared<TShared> WithInfiniteTimeout<TShared>(TShared shared) =>
-      new ResourceGuardThreadShared<TShared>(shared, MonitorCE.WithInfiniteTimeout());
+      new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithInfiniteTimeout());
 
 
-   class ResourceGuardThreadShared<TShared> : IThreadShared<TShared>
+   class MonitorCEThreadShared<TShared> : IThreadShared<TShared>
    {
-      readonly MonitorCE _guard;
+      readonly MonitorCE _monitor;
 
       readonly TShared _shared;
 
-      internal ResourceGuardThreadShared(TShared shared, MonitorCE guard)
+      internal MonitorCEThreadShared(TShared shared, MonitorCE monitor)
       {
          _shared = shared;
-         _guard = guard;
+         _monitor = monitor;
       }
 
       public TResult Read<TResult>(Func<TShared, TResult> read) =>
-         _guard.Read(() => read(_shared));
+         _monitor.Read(() => read(_shared));
 
       public TResult Update<TResult>(Func<TShared, TResult> update) =>
-         _guard.Update(() => update(_shared));
+         _monitor.Update(() => update(_shared));
 
       public void Update(Action<TShared> update) =>
-         _guard.Update(() => update(_shared));
+         _monitor.Update(() => update(_shared));
 
-      public void Await(Func<TShared, bool> condition) => _guard.Await(() => condition(_shared));
-      public void Await(TimeSpan timeout, Func<TShared, bool> condition) => _guard.Await(timeout, () => condition(_shared));
+      public void Await(Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared));
+      public void Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(timeout, () => condition(_shared));
    }
 }
