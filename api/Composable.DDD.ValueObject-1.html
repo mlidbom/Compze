@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ValueObject&lt;T&gt; | Composable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ValueObject&lt;T&gt; | Composable ">
+      
+      <meta name="description" content="Base class for value objects that implements value equality based on instance fields. Properties are ignored when comparing. Only fields are used.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Composable/new/develop/apiSpec/new?filename=Composable_DDD_ValueObject_1.md&amp;value=---%0Auid%3A%20Composable.DDD.ValueObject%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Composable">
+            Composable
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Composable.DDD.ValueObject`1">
+
+
+
+  <h1 id="Composable_DDD_ValueObject_1" data-uid="Composable.DDD.ValueObject`1" class="text-break">
+Class ValueObject&lt;T&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Composable.html">Composable</a>.<a class="xref" href="Composable.DDD.html">DDD</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Composable.CQRS.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Base class for value objects that implements value equality based on instance fields.
+Properties are ignored when comparing. Only fields are used.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class ValueObject&lt;T&gt; : IEquatable&lt;T&gt; where T : ValueObject&lt;T&gt;</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ValueObject&lt;T&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;T&gt;</div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Composable.Messaging.Buses.EndpointId.html">EndpointId</a></div>
+      <div><a class="xref" href="Composable.Messaging.Buses.Implementation.EndPointAddress.html">EndPointAddress</a></div>
+      <div><a class="xref" href="Composable.Messaging.MessageTypes.Remotable.ExactlyOnce.Command.html">MessageTypes.Remotable.ExactlyOnce.Command</a></div>
+      <div><a class="xref" href="Composable.Persistence.EventStore.AggregateEvent.html">AggregateEvent</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutateAsync__1___0_System_Func___0_System_Threading_Tasks_Task__">Pipe.mutateAsync&lt;T&gt;(T, Func&lt;T, Task&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutate__1___0_System_Action___0__">Pipe.mutate&lt;T&gt;(T, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_select__2___0_System_Func___0___1__">Pipe.select&lt;TValue, TResult&gt;(TValue, Func&lt;TValue, TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0_System_Func___1__">Pipe.then&lt;TValue, TResult&gt;(TValue, Func&lt;TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0___1_">Pipe.then&lt;TValue, TResult&gt;(TValue, TResult)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.SystemCE.NullableCE.html#Composable_SystemCE_NullableCE_NotNull__1___0_">NullableCE.NotNull&lt;T&gt;(T?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.ObjectCE.html#Composable_Functional_ObjectCE_ToStringNotNull_System_Object_">ObjectCE.ToStringNotNull(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Composable_DDD_ValueObject_1_Equals_" data-uid="Composable.DDD.ValueObject`1.Equals*"></a>
+
+  <h3 id="Composable_DDD_ValueObject_1_Equals_System_Object_" data-uid="Composable.DDD.ValueObject`1.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_DDD_ValueObject_1_Equals_" data-uid="Composable.DDD.ValueObject`1.Equals*"></a>
+
+  <h3 id="Composable_DDD_ValueObject_1_Equals__0_" data-uid="Composable.DDD.ValueObject`1.Equals(`0)">
+  Equals(T?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool Equals(T? other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_DDD_ValueObject_1_GetHashCode_" data-uid="Composable.DDD.ValueObject`1.GetHashCode*"></a>
+
+  <h3 id="Composable_DDD_ValueObject_1_GetHashCode" data-uid="Composable.DDD.ValueObject`1.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_DDD_ValueObject_1_ToString_" data-uid="Composable.DDD.ValueObject`1.ToString*"></a>
+
+  <h3 id="Composable_DDD_ValueObject_1_ToString" data-uid="Composable.DDD.ValueObject`1.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A JSON serialized version of the instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="Composable_DDD_ValueObject_1_op_Equality_" data-uid="Composable.DDD.ValueObject`1.op_Equality*"></a>
+
+  <h3 id="Composable_DDD_ValueObject_1_op_Equality_Composable_DDD_ValueObject__0__Composable_DDD_ValueObject__0__" data-uid="Composable.DDD.ValueObject`1.op_Equality(Composable.DDD.ValueObject{`0},Composable.DDD.ValueObject{`0})">
+  operator ==(ValueObject&lt;T&gt;?, ValueObject&lt;T&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the objects for equality using value semantics</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(ValueObject&lt;T&gt;? lhs, ValueObject&lt;T&gt;? rhs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lhs</code> <a class="xref" href="Composable.DDD.ValueObject-1.html">ValueObject</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>rhs</code> <a class="xref" href="Composable.DDD.ValueObject-1.html">ValueObject</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Composable_DDD_ValueObject_1_op_Inequality_" data-uid="Composable.DDD.ValueObject`1.op_Inequality*"></a>
+
+  <h3 id="Composable_DDD_ValueObject_1_op_Inequality_Composable_DDD_ValueObject__0__Composable_DDD_ValueObject__0__" data-uid="Composable.DDD.ValueObject`1.op_Inequality(Composable.DDD.ValueObject{`0},Composable.DDD.ValueObject{`0})">
+  operator !=(ValueObject&lt;T&gt;, ValueObject&lt;T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the objects for inequality using value semantics</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(ValueObject&lt;T&gt; lhs, ValueObject&lt;T&gt; rhs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lhs</code> <a class="xref" href="Composable.DDD.ValueObject-1.html">ValueObject</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>rhs</code> <a class="xref" href="Composable.DDD.ValueObject-1.html">ValueObject</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/DDD/ValueObject.cs/#L16" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

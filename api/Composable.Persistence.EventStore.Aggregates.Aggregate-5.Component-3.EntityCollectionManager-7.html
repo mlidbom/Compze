@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Component&lt;TComponent, TComponentEventImplementation, TComponentEvent&gt;.EntityCollectionManager&lt;TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter&gt; | Composable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Component&lt;TComponent, TComponentEventImplementation, TComponentEvent&gt;.EntityCollectionManager&lt;TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter&gt; | Composable ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Composable/new/develop/apiSpec/new?filename=Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7.md&amp;value=---%0Auid%3A%20Composable.Persistence.EventStore.Aggregates.Aggregate%605.Component%603.EntityCollectionManager%607%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Composable">
+            Composable
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7">
+
+
+
+  <h1 id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7" class="text-break">
+Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Component&lt;TComponent, TComponentEventImplementation, TComponentEvent&gt;.EntityCollectionManager&lt;TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/Persistence/EventStore/Aggregates/Aggregate.Component.EntityCollectionManager.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Composable.html">Composable</a>.<a class="xref" href="Composable.Persistence.html">Persistence</a>.<a class="xref" href="Composable.Persistence.EventStore.html">EventStore</a>.<a class="xref" href="Composable.Persistence.EventStore.Aggregates.html">Aggregates</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Composable.CQRS.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Component&lt;TComponent, TComponentEventImplementation, TComponentEvent&gt;.EntityCollectionManager&lt;TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter&gt; where TEntity : Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Component&lt;TEntity, TEntityEventImplementation, TEntityEvent&gt; where TEntityId : notnull where TEntityEventImplementation : TEntityEvent, TAggregateEventImplementation where TEntityEvent : class, TAggregateEvent where TEntityCreatedEvent : TEntityEvent where TEntityEventIdGetterSetter : IGetAggregateEntityEventEntityId&lt;TEntityEvent, TEntityId&gt;</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TParent</code></dt>
+    <dd></dd>
+    <dt><code>TEntity</code></dt>
+    <dd></dd>
+    <dt><code>TEntityId</code></dt>
+    <dd></dd>
+    <dt><code>TEntityEventImplementation</code></dt>
+    <dd></dd>
+    <dt><code>TEntityEvent</code></dt>
+    <dd></dd>
+    <dt><code>TEntityCreatedEvent</code></dt>
+    <dd></dd>
+    <dt><code>TEntityEventIdGetterSetter</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Component&lt;TComponent, TComponentEventImplementation, TComponentEvent&gt;.EntityCollectionManager&lt;TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter&gt;</span></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.CollectionManager.html">Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Component&lt;TComponent, TComponentEventImplementation, TComponentEvent&gt;.NestedEntity&lt;TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter&gt;.CollectionManager</a></div>
+      <div><a class="xref" href="Composable.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.CollectionManager.html">Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;.Entity&lt;TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter&gt;.CollectionManager</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutateAsync__1___0_System_Func___0_System_Threading_Tasks_Task__">Pipe.mutateAsync&lt;T&gt;(T, Func&lt;T, Task&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_mutate__1___0_System_Action___0__">Pipe.mutate&lt;T&gt;(T, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_select__2___0_System_Func___0___1__">Pipe.select&lt;TValue, TResult&gt;(TValue, Func&lt;TValue, TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0_System_Func___1__">Pipe.then&lt;TValue, TResult&gt;(TValue, Func&lt;TResult&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.Pipe.html#Composable_Functional_Pipe_then__2___0___1_">Pipe.then&lt;TValue, TResult&gt;(TValue, TResult)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.SystemCE.NullableCE.html#Composable_SystemCE_NullableCE_NotNull__1___0_">NullableCE.NotNull&lt;T&gt;(T?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Composable.Functional.ObjectCE.html#Composable_Functional_ObjectCE_ToStringNotNull_System_Object_">ObjectCE.ToStringNotNull(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7__ctor_" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.#ctor*"></a>
+
+  <h3 id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7__ctor__8_System_Action__11__Composable_Messaging_Events_IEventHandlerRegistrar__12__" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.#ctor(`8,System.Action{`11},Composable.Messaging.Events.IEventHandlerRegistrar{`12})">
+  EntityCollectionManager(TParent, Action&lt;TEntityEventImplementation&gt;, IEventHandlerRegistrar&lt;TEntityEvent&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/Persistence/EventStore/Aggregates/Aggregate.Component.EntityCollectionManager.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected EntityCollectionManager(TParent parent, Action&lt;TEntityEventImplementation&gt; raiseEventThroughParent, IEventHandlerRegistrar&lt;TEntityEvent&gt; appliersRegistrar)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>parent</code> <span class="xref">TParent</span></dt>
+    <dd></dd>
+    <dt><code>raiseEventThroughParent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;TEntityEventImplementation&gt;</dt>
+    <dd></dd>
+    <dt><code>appliersRegistrar</code> <a class="xref" href="Composable.Messaging.Events.IEventHandlerRegistrar-1.html">IEventHandlerRegistrar</a>&lt;TEntityEvent&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7_IdGetter" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.IdGetter">
+  IdGetter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/Persistence/EventStore/Aggregates/Aggregate.Component.EntityCollectionManager.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected static readonly TEntityEventIdGetterSetter IdGetter</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">TEntityEventIdGetterSetter</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7_Entities_" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.Entities*"></a>
+
+  <h3 id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7_Entities" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.Entities">
+  Entities
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/Persistence/EventStore/Aggregates/Aggregate.Component.EntityCollectionManager.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyEntityCollection&lt;TEntity, TEntityId&gt; Entities { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Composable.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html">IReadOnlyEntityCollection</a>&lt;TEntity, TEntityId&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7_ManagedEntities_" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.ManagedEntities*"></a>
+
+  <h3 id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7_ManagedEntities" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.ManagedEntities">
+  ManagedEntities
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/Persistence/EventStore/Aggregates/Aggregate.Component.EntityCollectionManager.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected EntityCollection&lt;TEntity, TEntityId&gt; ManagedEntities { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Composable.Persistence.EventStore.Aggregates.EntityCollection-2.html">EntityCollection</a>&lt;TEntity, TEntityId&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7_AddByPublishing_" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.AddByPublishing*"></a>
+
+  <h3 id="Composable_Persistence_EventStore_Aggregates_Aggregate_5_Component_3_EntityCollectionManager_7_AddByPublishing__1___0_" data-uid="Composable.Persistence.EventStore.Aggregates.Aggregate`5.Component`3.EntityCollectionManager`7.AddByPublishing``1(``0)">
+  AddByPublishing&lt;TCreationEvent&gt;(TCreationEvent)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/Persistence/EventStore/Aggregates/Aggregate.Component.EntityCollectionManager.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TEntity AddByPublishing&lt;TCreationEvent&gt;(TCreationEvent creationEvent) where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>creationEvent</code> <span class="xref">TCreationEvent</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">TEntity</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCreationEvent</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Composable/blob/develop/src/framework/Composable.CQRS/Persistence/EventStore/Aggregates/Aggregate.Component.EntityCollectionManager.cs/#L19" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
