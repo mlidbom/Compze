@@ -62,8 +62,6 @@ public partial class MonitorCE
       return true;
    }
 
-   bool IsEntered() => Monitor.IsEntered(_lockObject);
-
    void RegisterAndThrowTimeoutException()
    {
       lock(_timeoutLock)
