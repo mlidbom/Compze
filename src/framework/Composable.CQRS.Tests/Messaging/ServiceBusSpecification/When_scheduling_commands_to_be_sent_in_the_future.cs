@@ -66,5 +66,5 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
 
    [TearDown]public async Task TearDown() => await _host.DisposeAsync().CaF();
 
-   class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command {}
+   class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 }

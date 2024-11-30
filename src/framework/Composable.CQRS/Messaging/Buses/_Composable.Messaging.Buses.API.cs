@@ -84,10 +84,7 @@ interface IExecutingMessagesSnapshot
    IReadOnlyList<TransportMessage.InComing> ExecutingNonTransactionalQueries { get; }
 }
 
-interface IMessageDispatchingPolicy
-{
-
-}
+interface IMessageDispatchingPolicy;
 
 interface IMessageDispatchingRule
 {

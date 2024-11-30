@@ -97,9 +97,9 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 
    public static class UserEvent
    {
-      public interface IRoot : IAggregateEvent {}
+      public interface IRoot : IAggregateEvent;
 
-      public interface IUserRegistered : IRoot, IAggregateCreatedEvent {}
+      public interface IUserRegistered : IRoot, IAggregateCreatedEvent;
 
       public static class Implementation
       {
@@ -127,7 +127,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 
    public static class UserRegistrarEvent
    {
-      public interface IRoot : IAggregateEvent {}
+      public interface IRoot : IAggregateEvent;
       public static class Implementation
       {
          public class Root : AggregateEvent, IRoot

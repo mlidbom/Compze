@@ -70,6 +70,6 @@ public static partial class AccountEvent
          public LoggedIn(string token) => AuthenticationToken = token;
       }
 
-      public class LoginFailed : Root, AccountEvent.LoginFailed {}
+      public class LoginFailed : Root, AccountEvent.LoginFailed;
    }
 }

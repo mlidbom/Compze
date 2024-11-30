@@ -15,11 +15,11 @@ static partial class RootEvent
          int EntityId { get; }
       }
 
-      internal interface Created : IRoot, PropertyUpdated.Name {}
+      internal interface Created : IRoot, PropertyUpdated.Name;
 
-      interface Renamed : IRoot, PropertyUpdated.Name {}
+      interface Renamed : IRoot, PropertyUpdated.Name;
 
-      internal interface Removed : IRoot {}
+      internal interface Removed : IRoot;
 
       internal static class PropertyUpdated
       {
@@ -58,7 +58,7 @@ static partial class RootEvent
             public string Name { get; }
          }
 
-         public class Removed : Root, Entity.Removed {}
+         public class Removed : Root, Entity.Removed;
       }
    }
 }

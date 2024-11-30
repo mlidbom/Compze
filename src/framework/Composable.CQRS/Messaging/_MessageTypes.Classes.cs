@@ -17,7 +17,7 @@ public static partial class MessageTypes
       public static class Queries
       {
 #pragma warning disable CA1724 //Class name conflicts with namespace name.
-         public abstract class StrictlyLocalQuery<TQuery, TResult> : IStrictlyLocalQuery<TQuery, TResult> where TQuery : StrictlyLocalQuery<TQuery, TResult> {}
+         public abstract class StrictlyLocalQuery<TQuery, TResult> : IStrictlyLocalQuery<TQuery, TResult> where TQuery : StrictlyLocalQuery<TQuery, TResult>;
 #pragma warning restore CA1724 //
 
          [method: JsonConstructor] public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Queries.StrictlyLocalQuery<EntityLink<TResult>, TResult>
@@ -29,9 +29,9 @@ public static partial class MessageTypes
 
       public static class Commands
       {
-         public abstract class StrictlyLocalCommand : IStrictlyLocalCommand {}
+         public abstract class StrictlyLocalCommand : IStrictlyLocalCommand;
 
-         public abstract class StrictlyLocalCommand<TResult> : IStrictlyLocalCommand<TResult> {}
+         public abstract class StrictlyLocalCommand<TResult> : IStrictlyLocalCommand<TResult>;
       }
    }
 
@@ -86,7 +86,7 @@ public static partial class MessageTypes
          public static class Queries
          {
 #pragma warning disable CA1724 //Class name conflicts with namespace name.
-            public abstract class Query<TResult> : IRemotableQuery<TResult> {}
+            public abstract class Query<TResult> : IRemotableQuery<TResult>;
 #pragma warning restore CA1724 //Class name conflicts with namespace name.
 
             public class EntityLink<TResult> : Remotable.NonTransactional.Queries.Query<TResult> where TResult : IHasPersistentIdentity<Guid>

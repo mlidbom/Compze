@@ -2,4 +2,4 @@
 
 namespace Composable.Persistence.DocumentDb;
 
-public class TooManyItemsDeletedException : Exception {}
+public class TooManyItemsDeletedException : Exception;

@@ -14,9 +14,9 @@ public static partial class MessageTypes
 {
    internal static class Internal
    {
-      internal interface IMessage {}
+      internal interface IMessage;
 
-      internal class EndpointInformationQuery : Internal.IMessage, IRemotableQuery<EndpointInformation> {}
+      internal class EndpointInformationQuery : Internal.IMessage, IRemotableQuery<EndpointInformation>;
 
       internal class EndpointInformation
       {

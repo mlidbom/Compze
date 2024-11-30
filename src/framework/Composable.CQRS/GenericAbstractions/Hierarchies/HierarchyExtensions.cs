@@ -20,9 +20,7 @@ namespace Composable.GenericAbstractions.Hierarchies;
 /// </example>
 /// 
 /// </summary>
-interface IAutoHierarchy<T> : IHierarchy<IAutoHierarchy<T>>, IWrapper<T>
-{
-}
+interface IAutoHierarchy<T> : IHierarchy<IAutoHierarchy<T>>, IWrapper<T>;
 
 /// <summary>
 /// Provides extension methods for working with hierarchical data.

@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace Composable.Tests.CQRS;
 
-interface ISomeEvent : IAggregateEvent {}
+interface ISomeEvent : IAggregateEvent;
 
 class SomeEvent : AggregateEvent, ISomeEvent
 {

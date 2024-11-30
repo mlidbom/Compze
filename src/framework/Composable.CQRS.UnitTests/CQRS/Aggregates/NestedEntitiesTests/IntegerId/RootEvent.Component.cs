@@ -7,9 +7,9 @@ static partial class RootEvent
 {
    public static partial class Component
    {
-      public interface IRoot : RootEvent.IRoot {}
+      public interface IRoot : RootEvent.IRoot;
 
-      interface Renamed : IRoot, PropertyUpdated.Name {}
+      interface Renamed : IRoot, PropertyUpdated.Name;
 
       public static class PropertyUpdated
       {
@@ -21,7 +21,7 @@ static partial class RootEvent
 
       internal static class Implementation
       {
-         public abstract class Root : RootEvent.Implementation.Root, Component.IRoot {}
+         public abstract class Root : RootEvent.Implementation.Root, Component.IRoot;
 
          public class Renamed : Root, Component.Renamed
          {

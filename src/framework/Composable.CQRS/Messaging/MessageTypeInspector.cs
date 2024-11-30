@@ -88,15 +88,15 @@ partial class MessageTypeInspector
       protected override string CreateMessage(Type type) => $"{type.GetFullNameCompilable()} implements both {typeof(TInterface1).GetFullNameCompilable()} and {typeof(TInterface2).GetFullNameCompilable()}";
    }
 
-   class CannotBeBothCommandAndEvent : MutuallyExclusiveInterfaces<ICommand, IEvent> {}
+   class CannotBeBothCommandAndEvent : MutuallyExclusiveInterfaces<ICommand, IEvent>;
 
-   class CannotBeBothCommandAndQuery : MutuallyExclusiveInterfaces<ICommand, IQuery<object>> {}
+   class CannotBeBothCommandAndQuery : MutuallyExclusiveInterfaces<ICommand, IQuery<object>>;
 
-   class CannotBeBothEventAndQuery : MutuallyExclusiveInterfaces<IEvent, IQuery<object>> {}
+   class CannotBeBothEventAndQuery : MutuallyExclusiveInterfaces<IEvent, IQuery<object>>;
 
-   class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableMessage, IStrictlyLocalMessage> {}
+   class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableMessage, IStrictlyLocalMessage>;
 
-   class CannotForbidAndRequireTransactionalSender : MutuallyExclusiveInterfaces<IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction> {}
+   class CannotForbidAndRequireTransactionalSender : MutuallyExclusiveInterfaces<IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction>;
 
    class WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : MessageTypeDesignRule
    {

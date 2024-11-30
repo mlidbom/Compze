@@ -8,26 +8,26 @@ namespace Composable.Tests.CQRS.EventHandling;
 
 [TestFixture]public class CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests : UniversalTestBase
 {
-   interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent {}
+   interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent;
    class UserWrapperEvent<TEvent> : MessageTypes.WrapperEvent<TEvent>, IUserWrapperEvent<TEvent> where TEvent : IUserEvent
    {
       public UserWrapperEvent(TEvent @event) : base(@event) {}
    }
 
-   interface IUserEvent : IAggregateEvent {}
-   interface IUserCreatedEvent : IUserEvent {}
-   class UserCreatedEvent : AggregateEvent, IUserCreatedEvent {}
+   interface IUserEvent : IAggregateEvent;
+   interface IUserCreatedEvent : IUserEvent;
+   class UserCreatedEvent : AggregateEvent, IUserCreatedEvent;
 
 
-   interface IAdminUserWrapperEvent<out TEvent> : IUserWrapperEvent<TEvent> where TEvent : IUserEvent {}
+   interface IAdminUserWrapperEvent<out TEvent> : IUserWrapperEvent<TEvent> where TEvent : IUserEvent;
    class AdminUserWrapperEvent<TEvent> : UserWrapperEvent<TEvent>, IAdminUserWrapperEvent<TEvent> where TEvent : IUserEvent
    {
       public AdminUserWrapperEvent(TEvent @event) : base(@event) {}
    }
 
-   interface IAdminUserEvent : IUserEvent {}
-   interface IAdminUserCreatedEvent : IAdminUserEvent, IUserCreatedEvent {}
-   class AdminUserCreatedEvent : AggregateEvent, IAdminUserCreatedEvent {}
+   interface IAdminUserEvent : IUserEvent;
+   interface IAdminUserCreatedEvent : IAdminUserEvent, IUserCreatedEvent;
+   class AdminUserCreatedEvent : AggregateEvent, IAdminUserCreatedEvent;
 
 
    CallMatchingHandlersInRegistrationOrderEventDispatcher<IEvent> _dispatcher;

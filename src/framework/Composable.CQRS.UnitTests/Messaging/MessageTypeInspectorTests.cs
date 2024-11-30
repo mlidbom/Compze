@@ -6,8 +6,8 @@ using NUnit.Framework;
 
 namespace Composable.Tests.Messaging;
 
-interface INonGenericWrapperEvent : IWrapperEvent<IEvent>{}
-interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent> {}
+interface INonGenericWrapperEvent : IWrapperEvent<IEvent>;
+interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
 
 [TestFixture]public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
 {
@@ -35,19 +35,19 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent> {}
          [Test] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperEvent>();
       }
 
-      interface INotMessage{}
+      interface INotMessage;
       [Test] public void Is_not_IMessage() => AssertInvalidForSending<INotMessage>();
 
-      interface ICommandAndEvent : IEvent, ICommand{}
+      interface ICommandAndEvent : IEvent, ICommand;
       [Test] public void Is_Both_command_and_event() => AssertInvalidForSending<ICommandAndEvent>();
 
-      interface ICommandAndQuery : IEvent, IQuery<object> {}
+      interface ICommandAndQuery : IEvent, IQuery<object>;
       [Test] public void Is_Both_command_and_query() => AssertInvalidForSending<ICommandAndQuery>();
 
-      interface IStrictlyLocalAndRemotable : IRemotableMessage, IStrictlyLocalMessage {}
+      interface IStrictlyLocalAndRemotable : IRemotableMessage, IStrictlyLocalMessage;
       [Test] public void Is_Both_strictly_local_and_remotable() => AssertInvalidForSending<IStrictlyLocalAndRemotable>();
 
-      interface IForbidAndRequireTransactionalSender : IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction {}
+      interface IForbidAndRequireTransactionalSender : IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction;
       [Test] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
 
       [UsedImplicitly]class AtMostOnceCommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaCommand

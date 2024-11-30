@@ -31,9 +31,9 @@ public partial class Fixture
 {
    protected static class MyAggregateEvent
    {
-      public interface IRoot : IAggregateEvent {}
-      public interface Created : IRoot, IAggregateCreatedEvent {}
-      public interface Updated : IRoot {}
+      public interface IRoot : IAggregateEvent;
+      public interface Created : IRoot, IAggregateCreatedEvent;
+      public interface Updated : IRoot;
       public static class Implementation
       {
          public class Root : AggregateEvent, IRoot
@@ -46,7 +46,7 @@ public partial class Fixture
          public class Created(Guid aggregateId) : Root(aggregateId), MyAggregateEvent.Created;
 
          // ReSharper disable once MemberHidesStaticFromOuterClass
-         public class Updated : Root, MyAggregateEvent.Updated {}
+         public class Updated : Root, MyAggregateEvent.Updated;
       }
    }
 
@@ -88,12 +88,12 @@ public partial class Fixture
       public Guid AggregateId { get; private set; }
    }
 
-   protected class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command {}
+   protected class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 
-   protected interface IMyExactlyOnceEvent : IAggregateEvent {}
-   protected class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent {}
-   protected class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult> {}
-   protected class MyQueryResult {}
+   protected interface IMyExactlyOnceEvent : IAggregateEvent;
+   protected class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
+   protected class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
+   protected class MyQueryResult;
    protected class MyAtMostOnceCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
    {
       protected MyAtMostOnceCommand() : base(DeduplicationIdHandling.Reuse) {}
@@ -105,5 +105,5 @@ public partial class Fixture
       MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
       internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.NewGuid()};
    }
-   protected class MyCommandResult {}
+   protected class MyCommandResult;
 }

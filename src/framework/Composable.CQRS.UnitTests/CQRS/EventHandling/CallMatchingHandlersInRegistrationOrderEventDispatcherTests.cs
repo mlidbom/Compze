@@ -82,22 +82,20 @@ public abstract class CallMatchingHandlersInRegistrationOrderEventDispatcherTest
          }
       }
 
-      interface IUserEvent : IAggregateEvent {}
-      interface IUserCreatedEvent : IUserEvent {}
-      interface IUserRegistered : IUserCreatedEvent{}
-      interface IUserSkillsEvent : IUserEvent {}
-      interface IUserSkillsAdded : IUserSkillsEvent {}
-      interface IUserSkillsRemoved : IUserSkillsEvent {}
-      interface IIgnoredUserEvent : IUserEvent {}
+      interface IUserEvent : IAggregateEvent;
+      interface IUserCreatedEvent : IUserEvent;
+      interface IUserRegistered : IUserCreatedEvent;
+      interface IUserSkillsEvent : IUserEvent;
+      interface IUserSkillsAdded : IUserSkillsEvent;
+      interface IUserSkillsRemoved : IUserSkillsEvent;
+      interface IIgnoredUserEvent : IUserEvent;
 
-      class UnHandledUserEvent : AggregateEvent, IUserEvent {}
+      class UnHandledUserEvent : AggregateEvent, IUserEvent;
 
-      class IgnoredUserEvent : AggregateEvent, IIgnoredUserEvent {}
+      class IgnoredUserEvent : AggregateEvent, IIgnoredUserEvent;
 
-      class UserCreatedEvent : AggregateEvent, IUserCreatedEvent
-      {}
+      class UserCreatedEvent : AggregateEvent, IUserCreatedEvent;
 
-      class UserRegistered : AggregateEvent, IUserRegistered
-      {}
+      class UserRegistered : AggregateEvent, IUserRegistered;
    }
 }

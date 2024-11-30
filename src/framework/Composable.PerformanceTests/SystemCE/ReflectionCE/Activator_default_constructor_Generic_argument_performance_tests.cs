@@ -13,8 +13,7 @@ namespace Composable.Tests.SystemCE.ReflectionCE;
 
 [TestFixture]public class Activator_default_constructor_Generic_argument_performance_tests : UniversalTestBase
 {
-   [UsedImplicitly] class Simple
-   {}
+   [UsedImplicitly] class Simple;
 
    [Test] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Should().NotBe(null);
 

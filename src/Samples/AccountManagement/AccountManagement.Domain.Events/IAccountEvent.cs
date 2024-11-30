@@ -8,25 +8,23 @@ namespace AccountManagement.Domain.Events;
 
 public static partial class AccountEvent
 {
-   public interface Root : IAggregateEvent {}
+   public interface Root : IAggregateEvent;
 
-   public interface Created : Root, IAggregateCreatedEvent
-   //Used in multiple places by the infrastructure and clients. Things WILL BREAK without this.
+   public interface Created : Root, IAggregateCreatedEvent;
+      //Used in multiple places by the infrastructure and clients. Things WILL BREAK without this.
    //Aggregate: Sets the ID when such an event is raised.
    //Creates a viewmodel automatically when received by an SingleAggregateQueryModelUpdater
-   {}
-
 
    public interface UserRegistered :
       Created,
       PropertyUpdated.Email,
-      PropertyUpdated.Password {}
+      PropertyUpdated.Password;
 
    public interface UserChangedEmail :
-      PropertyUpdated.Email {}
+      PropertyUpdated.Email;
 
    public interface UserChangedPassword :
-      PropertyUpdated.Password {}
+      PropertyUpdated.Password;
 
    public static class PropertyUpdated
    {
@@ -41,16 +39,12 @@ public static partial class AccountEvent
       }
    }
 
-   public interface LoginAttempted : AccountEvent.Root
-   {
-   }
+   public interface LoginAttempted : AccountEvent.Root;
 
    public interface LoggedIn : LoginAttempted
    {
       string AuthenticationToken { get; }
    }
 
-   public interface LoginFailed : LoginAttempted
-   {
-   }
+   public interface LoginFailed : LoginAttempted;
 }

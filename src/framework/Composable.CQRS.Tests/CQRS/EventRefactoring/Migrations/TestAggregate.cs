@@ -11,30 +11,28 @@ using JetBrains.Annotations;
 
 namespace Composable.Tests.CQRS.EventRefactoring.Migrations
 {
-    interface IRootEvent : IAggregateEvent { }
+    interface IRootEvent : IAggregateEvent;
 
-    abstract class RootEvent : AggregateEvent, IRootEvent
-    {}
+    abstract class RootEvent : AggregateEvent, IRootEvent;
 
     namespace Events
     {
-        abstract class EcAbstract : RootEvent, IAggregateCreatedEvent
-        {}
+        abstract class EcAbstract : RootEvent, IAggregateCreatedEvent;
 
         // ReSharper disable ClassNeverInstantiated.Global
-        class Ec1 : EcAbstract{}
-        class Ec2 : EcAbstract{}
-        class Ec3 : EcAbstract{}
-        class E1 : RootEvent { }
-        class E2 : RootEvent { }
-        class E3 : RootEvent { }
-        class E4 : RootEvent { }
-        class E5 : RootEvent { }
-        class E6 : RootEvent { }
-        class E7 : RootEvent { }
-        class E8 : RootEvent { }
-        class E9 : RootEvent { }
-        class Ef : RootEvent { }
+        class Ec1 : EcAbstract;
+        class Ec2 : EcAbstract;
+        class Ec3 : EcAbstract;
+        class E1 : RootEvent;
+        class E2 : RootEvent;
+        class E3 : RootEvent;
+        class E4 : RootEvent;
+        class E5 : RootEvent;
+        class E6 : RootEvent;
+        class E7 : RootEvent;
+        class E8 : RootEvent;
+        class E9 : RootEvent;
+        class Ef : RootEvent;
         // ReSharper restore ClassNeverInstantiated.Global
     }
 

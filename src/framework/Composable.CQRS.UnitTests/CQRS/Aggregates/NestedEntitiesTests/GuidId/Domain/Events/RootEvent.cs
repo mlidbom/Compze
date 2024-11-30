@@ -8,9 +8,9 @@ namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Eve
 
 static partial class RootEvent
 {
-   public interface IRoot : IAggregateEvent {}
+   public interface IRoot : IAggregateEvent;
 
-   interface Created : IRoot, IAggregateCreatedEvent, PropertyUpdated.Name {}
+   interface Created : IRoot, IAggregateCreatedEvent, PropertyUpdated.Name;
 
    public static class PropertyUpdated
    {

@@ -4,9 +4,7 @@ using Composable.Messaging;
 namespace Composable.Persistence.EventStore;
 
 public interface IAggregateEvent<out TEventInterface> : IExactlyOnceWrapperEvent<TEventInterface>
-   where TEventInterface : IAggregateEvent
-{
-}
+   where TEventInterface : IAggregateEvent;
 
 public interface IAggregateEvent : IExactlyOnceEvent
 {

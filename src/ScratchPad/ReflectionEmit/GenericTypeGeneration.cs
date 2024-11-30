@@ -15,11 +15,11 @@ using Composable.SystemCE.ThreadingCE.ResourceAccess;
 namespace ScratchPad.ReflectionEmit;
 
 public interface IUserWrapperEvent<out TWrappedUserEvent> : IWrapperEvent<TWrappedUserEvent>
-   where TWrappedUserEvent : IUserEvent {}
+   where TWrappedUserEvent : IUserEvent;
 
-public interface IUserEvent : IEvent {}
+public interface IUserEvent : IEvent;
 
-class UserEvent : IUserEvent {}
+class UserEvent : IUserEvent;
 
 public class Example
 {

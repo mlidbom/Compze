@@ -118,5 +118,5 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
       public string Name { get; } = name;
    }
 
-   class UserApiStartPageQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserApiStartPage> {}
+   class UserApiStartPageQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserApiStartPage>;
 }

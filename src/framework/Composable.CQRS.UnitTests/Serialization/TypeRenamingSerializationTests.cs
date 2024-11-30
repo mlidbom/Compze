@@ -15,7 +15,7 @@ namespace Composable.Tests.Serialization
 {
     namespace OriginalTypes
     {
-        class BaseTypeA {}
+        class BaseTypeA;
 
         class TypeA : BaseTypeA
         {
@@ -60,7 +60,7 @@ namespace Composable.Tests.Serialization
 
     namespace RenamedTypes
     {
-        class BaseTypeA {}
+        class BaseTypeA;
 
         class TypeA : BaseTypeA
         {

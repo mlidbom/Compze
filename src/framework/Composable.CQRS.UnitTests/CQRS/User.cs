@@ -42,7 +42,7 @@ class User : Aggregate<User,UserEvent, IUserEvent>
    public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
 }
 
-interface IUserEvent : IAggregateEvent {}
+interface IUserEvent : IAggregateEvent;
 
 abstract class UserEvent : AggregateEvent, IUserEvent
 {
@@ -81,11 +81,11 @@ class UserRegistered(Guid userId, string email, string password) : UserEvent(use
    public string Password { get; private set; } = password;
 }
 
-interface IMigratedBeforeUserRegisteredEvent : IUserEvent, IAggregateCreatedEvent {}
-[UsedImplicitly] class MigratedBeforeUserRegisteredEvent : UserEvent, IMigratedBeforeUserRegisteredEvent {}
+interface IMigratedBeforeUserRegisteredEvent : IUserEvent, IAggregateCreatedEvent;
+[UsedImplicitly] class MigratedBeforeUserRegisteredEvent : UserEvent, IMigratedBeforeUserRegisteredEvent;
 
-interface IMigratedAfterUserChangedEmailEvent : IUserEvent, IAggregateCreatedEvent {}
-[UsedImplicitly] class MigratedAfterUserChangedEmailEvent : UserEvent, IMigratedAfterUserChangedEmailEvent {}
+interface IMigratedAfterUserChangedEmailEvent : IUserEvent, IAggregateCreatedEvent;
+[UsedImplicitly] class MigratedAfterUserChangedEmailEvent : UserEvent, IMigratedAfterUserChangedEmailEvent;
 
-interface IMigratedReplaceUserChangedPasswordEvent : IUserEvent, IAggregateCreatedEvent {}
-[UsedImplicitly] class MigratedReplaceUserChangedPasswordEvent : UserEvent, IMigratedReplaceUserChangedPasswordEvent {}
+interface IMigratedReplaceUserChangedPasswordEvent : IUserEvent, IAggregateCreatedEvent;
+[UsedImplicitly] class MigratedReplaceUserChangedPasswordEvent : UserEvent, IMigratedReplaceUserChangedPasswordEvent;

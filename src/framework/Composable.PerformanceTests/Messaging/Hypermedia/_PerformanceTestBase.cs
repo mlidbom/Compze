@@ -47,7 +47,7 @@ public class PerformanceTestBase(string pluggableComponentsCombination) : Duplic
 
    [TearDown] public async Task TearDown() => await Host.DisposeAsync().CaF();
 
-   protected class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult> {}
-   protected class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult> {}
-   protected internal class MyQueryResult {}
+   protected class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
+   protected class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult>;
+   protected internal class MyQueryResult;
 }

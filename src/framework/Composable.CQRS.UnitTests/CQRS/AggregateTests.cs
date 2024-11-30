@@ -91,11 +91,10 @@ public class AggregateTests : UniversalTestBase
       public void RaiseTriggeringEvent() => Publish(new TriggeringEvent());
    }
 
-   interface ITriggeringEvent : IAggregateCreatedEvent {}
+   interface ITriggeringEvent : IAggregateCreatedEvent;
 
    class TriggeringEvent() : AggregateEvent(Guid.NewGuid()), ITriggeringEvent;
 
-   interface ITriggeredEvent : IAggregateEvent {}
-   class TriggeredEvent : AggregateEvent, ITriggeredEvent {
-   }
+   interface ITriggeredEvent : IAggregateEvent;
+   class TriggeredEvent : AggregateEvent, ITriggeredEvent;
 }

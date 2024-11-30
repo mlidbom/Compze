@@ -2,6 +2,4 @@
 
 namespace AccountManagement.UnitTests;
 
-[SetUpFixture] public class UniversalTestFixture : Composable.Testing.UniversalTestFixture
-{
-}
+[SetUpFixture] public class UniversalTestFixture : Composable.Testing.UniversalTestFixture;

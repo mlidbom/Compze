@@ -18,10 +18,10 @@ static partial class RootEvent
             Guid NestedEntityId { get; }
          }
 
-         public interface Created : IRoot, PropertyUpdated.Name {}
+         public interface Created : IRoot, PropertyUpdated.Name;
 
-         interface Renamed : IRoot, PropertyUpdated.Name {}
-         public interface Removed : IRoot { }
+         interface Renamed : IRoot, PropertyUpdated.Name;
+         public interface Removed : IRoot;
 
          public static class PropertyUpdated
          {
@@ -60,9 +60,7 @@ static partial class RootEvent
                public string Name { get; }
             }
 
-            public class Removed : Root, NestedEntity.Removed
-            {
-            }
+            public class Removed : Root, NestedEntity.Removed;
          }
       }
    }

@@ -54,5 +54,5 @@ public class Fixture_tests(string pluggableComponentsCombination) : Fixture(plug
    }
 
    readonly IntentionalException _thrownException = new();
-   class IntentionalException : Exception {}
+   class IntentionalException : Exception;
 }

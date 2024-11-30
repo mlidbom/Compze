@@ -31,7 +31,7 @@ static class StrictlyManagedResources
 /// <para>Implementing this interface MUST be done by inheriting from <see cref="StrictlyManagedResourceBase{TInheritor}"/> or having a readonly field of type <see cref="StrictlyManagedResource{TManagedResource}"/>.
 ///  This guarantees the expected behavior including the ability to enable and disable the collection of stacktraces for the allocations.</para>
 /// </summary>
-interface IStrictlyManagedResource : IDisposable {}
+interface IStrictlyManagedResource : IDisposable;
 
 ///<summary>
 /// Helper class for implementing <see cref="IStrictlyManagedResource"/>

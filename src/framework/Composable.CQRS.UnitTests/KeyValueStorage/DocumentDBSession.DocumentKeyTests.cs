@@ -8,15 +8,13 @@ namespace Composable.Tests.KeyValueStorage;
 [TestFixture]
 public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
 {
-   class Base
-   {}
+   class Base;
 
    // ReSharper disable once ClassNeverInstantiated.Local
-   class Inheritor : Base
-   {}
+   class Inheritor : Base;
 
    // ReSharper disable once ClassNeverInstantiated.Local
-   class Unrelated{}
+   class Unrelated;
 
 
    [Test]
