@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyDescription("Composable")]
+[assembly: AssemblyDescription("Compze")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Composable")]
+[assembly: AssemblyCompany("Compze")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

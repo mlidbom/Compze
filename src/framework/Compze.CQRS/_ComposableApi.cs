@@ -4,7 +4,7 @@ using Compze.Persistence.EventStore;
 
 namespace Compze;
 
-public class ComposableApi
+public class CompzeApi
 {
    public EventStoreApi EventStore => new();
    public DocumentDbApi DocumentDb => new();

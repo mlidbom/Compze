@@ -8,10 +8,10 @@ using SPath = Path;
 #pragma warning restore IDE0065
 
 ///<summary>Manages the Temp folder in a machine wide thread safe manner.</summary>
-static class ComposableTempFolder
+static class CompzeTempFolder
 {
-   static readonly MachineWideSingleThreaded MachineWideLock = MachineWideSingleThreaded.For(nameof(ComposableTempFolder));
-   static readonly string DefaultPath = SPath.Combine(SPath.GetTempPath(), "Composable_TEMP");
+   static readonly MachineWideSingleThreaded MachineWideLock = MachineWideSingleThreaded.For(nameof(CompzeTempFolder));
+   static readonly string DefaultPath = SPath.Combine(SPath.GetTempPath(), "Compze_TEMP");
    static readonly string Path = EnsureFolderExists();
 
    internal static string EnsureFolderExists(string folderName) => MachineWideLock.Execute(() =>

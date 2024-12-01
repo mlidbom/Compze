@@ -1,4 +1,4 @@
-# Composable
+# Compz
 
 [Project site](http://composabletk.net/)
 
@@ -18,7 +18,7 @@ In the root of the project:
 * If this connection string is valid you're good to go, otherwise set the environment variable below:
   `Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;`
 
->Running the tests will create several databases on your SQL server prefixed: `Composable_DatabasePool_`.  
+>Running the tests will create several databases on your SQL server prefixed: `Compz_DatabasePool_`.  
 
 >If you don't have any Sql server, configure `TestUsingPluggableComponentCombinations` to use only the `Memory` `PersistenceLayer`.
  

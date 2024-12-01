@@ -14,7 +14,7 @@ using Compze.SystemCE.TransactionsCE;
 namespace Compze.Persistence.Common.AdoCE;
 
 abstract partial class DbConnectionManager<TConnection, TCommand>
-   where TConnection : IPoolableConnection, IComposableDbConnection<TCommand>
+   where TConnection : IPoolableConnection, ICompzDbConnection<TCommand>
    where TCommand : DbCommand
 {
    class DefaultDbConnectionManager(string connectionString, Func<string, TConnection> createConnection) : DbConnectionManager<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>

@@ -25,7 +25,7 @@ public class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPlug
          _ => throw new ArgumentOutOfRangeException()
       };
 
-   internal static void UseConnection(string connectionString, DbPool pool, Action<IComposableDbConnection> func)
+   internal static void UseConnection(string connectionString, DbPool pool, Action<ICompzDbConnection> func)
    {
       switch(TestEnv.PersistenceLayer.Current)
       {
@@ -44,12 +44,12 @@ public class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPlug
       }
    }
 
-   static void UseMySqlConnection(string connectionStringFor, Action<IComposableDbConnection> func) =>
+   static void UseMySqlConnection(string connectionStringFor, Action<ICompzDbConnection> func) =>
       IMySqlConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
 
-   static void UsePgSqlConnection(string connectionStringFor, Action<IComposableDbConnection> func) =>
+   static void UsePgSqlConnection(string connectionStringFor, Action<ICompzDbConnection> func) =>
       IPgSqlConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
 
-   static void UseMsSqlConnection(string connectionStringFor, Action<IComposableDbConnection> func) =>
+   static void UseMsSqlConnection(string connectionStringFor, Action<ICompzDbConnection> func) =>
       IMsSqlConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
 }

@@ -19,11 +19,11 @@ class ThreadExceptionHandler
          }
          catch(Exception exception) when(exception is OperationCanceledException or ThreadInterruptedException or ThreadAbortException)
          {
-            ComposableLogger.For<ThreadExceptionHandler>().Info($"Thread: {Thread.CurrentThread.Name} is terminating because it received a: {exception.GetType().Name}.");
+            CompzeLogger.For<ThreadExceptionHandler>().Info($"Thread: {Thread.CurrentThread.Name} is terminating because it received a: {exception.GetType().Name}.");
          }
          catch(Exception exception)
          {
-            ComposableLogger.For<ThreadExceptionHandler>().Error(exception, $"Error occured on background poller thread: {Thread.CurrentThread.Name}. Thread is no longer running.");
+            CompzeLogger.For<ThreadExceptionHandler>().Error(exception, $"Error occured on background poller thread: {Thread.CurrentThread.Name}. Thread is no longer running.");
          }
       };
 }

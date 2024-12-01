@@ -6,20 +6,20 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Persistence.MsSql;
 
-interface IComposableMsSqlConnection : IPoolableConnection, IComposableDbConnection<SqlCommand>
+interface ICompzMsSqlConnection : IPoolableConnection, ICompzDbConnection<SqlCommand>
 {
-   internal static IComposableMsSqlConnection Create(string connString) => new ComposableMsSqlConnection(connString);
+   internal static ICompzMsSqlConnection Create(string connString) => new CompzMsSqlConnection(connString);
 
-   sealed class ComposableMsSqlConnection : IComposableMsSqlConnection
+   sealed class CompzMsSqlConnection : ICompzMsSqlConnection
    {
       SqlConnection Connection { get; }
 
-      internal ComposableMsSqlConnection(string connectionString) => Connection = new SqlConnection(connectionString);
+      internal CompzMsSqlConnection(string connectionString) => Connection = new SqlConnection(connectionString);
 
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().CaF();
 
-      DbCommand IComposableDbConnection.CreateCommand() => CreateCommand();
+      DbCommand ICompzDbConnection.CreateCommand() => CreateCommand();
       public SqlCommand CreateCommand() => Connection.CreateCommand();
 
       public void Dispose() => Connection.Dispose();

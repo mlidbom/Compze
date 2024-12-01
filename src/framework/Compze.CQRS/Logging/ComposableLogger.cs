@@ -15,7 +15,7 @@ interface ILogger
    Unit Debug(string message);
 }
 
-static class ComposableLogger
+static class CompzeLogger
 {
    // ReSharper disable once UnusedParameter.Global removing the parameter would make it impossible to invoke this as an extension method :)
 #pragma warning disable IDE0060 //Review OK: removing the parameter would make it impossible to invoke this as an extension method :)

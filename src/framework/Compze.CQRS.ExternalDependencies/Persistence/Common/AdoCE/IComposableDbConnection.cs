@@ -5,12 +5,12 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Persistence.Common.AdoCE;
 
-interface IComposableDbConnection
+interface ICompzDbConnection
 {
    DbCommand CreateCommand();
 }
 
-interface IComposableDbConnection<out TCommand> : IComposableDbConnection
+interface ICompzDbConnection<out TCommand> : ICompzDbConnection
    where TCommand : DbCommand
 {
    new TCommand CreateCommand();

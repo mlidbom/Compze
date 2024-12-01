@@ -19,7 +19,7 @@ class EventStore : IEventStore
 {
    readonly ITypeMapper _typeMapper;
    readonly IEventStoreSerializer _serializer;
-   static readonly ILogger Log = ComposableLogger.For<EventStore>();
+   static readonly ILogger Log = CompzeLogger.For<EventStore>();
 
    readonly SingleThreadUseGuard _usageGuard;
 

@@ -58,7 +58,7 @@ public partial class Fixture(string pluggableComponentsCombination) : DuplicateB
             builder.RegisterHandlers
                    .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
                    .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => MyAggregate.Create(command.AggregateId, navigator)))
-                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => navigator.Execute(new ComposableApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
+                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => navigator.Execute(new CompzeApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
                    .ForEvent((IMyExactlyOnceEvent _) => EventHandlerThreadGate.AwaitPassThrough())
                    .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
                    .ForQuery((MyQuery _) => QueryHandlerThreadGate.AwaitPassThrough().then(new MyQueryResult()))

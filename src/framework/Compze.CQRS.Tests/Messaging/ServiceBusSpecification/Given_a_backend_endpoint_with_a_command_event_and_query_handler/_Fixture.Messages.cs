@@ -52,7 +52,7 @@ public partial class Fixture
       {
          var created = new MyAggregate();
          created.Publish(new MyAggregateEvent.Implementation.Created(id));
-         bus.Execute(new ComposableApi().EventStore.Commands.Save(created));
+         bus.Execute(new CompzeApi().EventStore.Commands.Save(created));
       }
    }
 

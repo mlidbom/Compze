@@ -45,7 +45,7 @@ namespace Compze.Testing;
                   .WriteTo.Console(formatProvider:CultureInfo.InvariantCulture)
                   .CreateLogger();
 
-      ComposableLogger.LoggerFactoryMethod = SerilogLogger.Create;
+      CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 
    void AssertTestInheritsUniversalTestBase()

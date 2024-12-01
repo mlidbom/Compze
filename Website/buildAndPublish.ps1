@@ -3,13 +3,13 @@ Push-Location $PSScriptRoot #knowing which folder we are in is good :)
 dotnet tool update -g docfx
 
 $buildFolder = "$PSScriptRoot\_site"
-$ghPagesCheckoutFolder = "$PSScriptRoot/../../Composable-gh-pages"
+$ghPagesCheckoutFolder = "$PSScriptRoot/../../Compz-gh-pages"
 
 if(!(Test-Path $ghPagesCheckoutFolder))
 {
     Write-Host "Missing gh-pages checkout. Cloning"
     Push-Location "$ghPagesCheckoutFolder/.."
-    git clone --quiet --single-branch --branch gh-pages 'https://github.com/mlidbom/Compze.git' Composable-gh-pages
+    git clone --quiet --single-branch --branch gh-pages 'https://github.com/mlidbom/Compze.git' Compz-gh-pages
     Pop-Location
 }
 

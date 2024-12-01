@@ -16,7 +16,7 @@
 //
 // class MachineWideSharedObject
 // {
-//    protected static readonly string DataFolder = ComposableTempFolder.EnsureFolderExists("MemoryMappedFiles");
+//    protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("MemoryMappedFiles");
 // }
 //
 // //[SupportedOSPlatform("windows")]
@@ -38,7 +38,7 @@
 //    {
 //       _usePersistentFile = usePersistentFile;
 //       _capacity = capacity;
-//       var name1 = $"Composable_{name}";
+//       var name1 = $"Compze_{name}";
 //       var fileName = $"{nameof(MachineWideSharedObject<TObject>)}_{name1}";
 //       _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
 //

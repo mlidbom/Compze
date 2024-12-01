@@ -59,11 +59,11 @@
     <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="C:\Dev\Composable\src\framework\Compze.CQRS.UnitTests\.editorconfig" />
+    <None Include="C:\Dev\Compz\src\framework\Compze.CQRS.UnitTests\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <EditorConfigFiles Remove="C:\Dev\Composable\src\framework\Compze.CQRS.UnitTests\.editorconfig" />
+    <EditorConfigFiles Remove="C:\Dev\Compz\src\framework\Compze.CQRS.UnitTests\.editorconfig" />
   </ItemGroup>
 
 </Project>

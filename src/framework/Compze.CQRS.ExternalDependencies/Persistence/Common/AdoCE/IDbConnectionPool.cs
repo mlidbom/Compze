@@ -7,7 +7,7 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 namespace Compze.Persistence.Common.AdoCE;
 
 interface IDbConnectionPool<out TConnection, out TCommand>
-   where TConnection : IPoolableConnection, IComposableDbConnection<TCommand>
+   where TConnection : IPoolableConnection, ICompzDbConnection<TCommand>
    where TCommand : DbCommand
 {
    TResult UseConnection<TResult>(Func<TConnection, TResult> func);

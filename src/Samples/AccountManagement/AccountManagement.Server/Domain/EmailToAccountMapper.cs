@@ -11,7 +11,7 @@ namespace AccountManagement.Domain;
 
 [UsedImplicitly] class EmailToAccountMapper
 {
-   static DocumentDbApi DocumentDb => new ComposableApi().DocumentDb;
+   static DocumentDbApi DocumentDb => new CompzeApi().DocumentDb;
 
    internal static void UpdateMappingWhenEmailChanges(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForEvent(
       (AccountEvent.PropertyUpdated.Email emailUpdated, ILocalHypermediaNavigator navigator) =>

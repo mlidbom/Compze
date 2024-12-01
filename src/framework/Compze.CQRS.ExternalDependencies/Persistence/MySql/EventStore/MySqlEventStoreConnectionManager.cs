@@ -11,7 +11,7 @@ class MySqlEventStoreConnectionManager
    readonly IMySqlConnectionPool _connectionPool;
    public MySqlEventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool) => _connectionPool = sqlConnectionPool;
 
-   public void UseConnection([InstantHandle] Action<IComposableMySqlConnection> action)
+   public void UseConnection([InstantHandle] Action<ICompzMySqlConnection> action)
    {
       AssertTransactionPolicy(false);
       _connectionPool.UseConnection(action);

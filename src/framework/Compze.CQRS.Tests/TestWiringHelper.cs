@@ -43,7 +43,7 @@ static class TestWiringHelper
    static void RegisterTestingEventStore(this IDependencyInjectionContainer @this) => @this.RegisterEventStore(EventStoreConnectionStringName);
 
    internal static IServiceLocator SetupTestingServiceLocator([InstantHandle] Action<IEndpointBuilder> configureContainer = null) =>
-      ComposableLogger.For(typeof(TestWiringHelper)).ExceptionsAndRethrow(() =>
+      CompzeLogger.For(typeof(TestWiringHelper)).ExceptionsAndRethrow(() =>
                                                                    DependencyInjectionContainer.CreateServiceLocatorForTesting(container =>
                                                                    {
                                                                       container.Container.RegisterTestingDocumentDb();

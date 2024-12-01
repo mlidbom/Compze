@@ -25,13 +25,13 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
       MachineWideState = MachineWideSharedObject<SharedState>.For(GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), usePersistentFile: true);
    }
 
-   const string PoolDatabaseNamePrefix = $"Composable_{nameof(DbPool)}_";
+   const string PoolDatabaseNamePrefix = $"Compze_{nameof(DbPool)}_";
 
    readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
    readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<Database> _transientCache = new List<Database>();
 
-   static ILogger _log = ComposableLogger.For<DbPool>();
+   static ILogger _log = CompzeLogger.For<DbPool>();
    bool _disposed;
 
    public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => _log = _log.WithLogLevel(logLevel));

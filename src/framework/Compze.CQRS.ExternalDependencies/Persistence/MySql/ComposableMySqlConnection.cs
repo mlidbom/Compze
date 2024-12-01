@@ -6,20 +6,20 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Persistence.MySql;
 
-interface IComposableMySqlConnection : IPoolableConnection, IComposableDbConnection<MySqlCommand>
+interface ICompzMySqlConnection : IPoolableConnection, ICompzDbConnection<MySqlCommand>
 {
-   internal static IComposableMySqlConnection Create(string connString) => new ComposableMySqlConnection(connString);
+   internal static ICompzMySqlConnection Create(string connString) => new CompzMySqlConnection(connString);
 
-   sealed class ComposableMySqlConnection : IComposableMySqlConnection
+   sealed class CompzMySqlConnection : ICompzMySqlConnection
    {
       MySqlConnection Connection { get; }
 
-      internal ComposableMySqlConnection(string connectionString) => Connection = new MySqlConnection(connectionString);
+      internal CompzMySqlConnection(string connectionString) => Connection = new MySqlConnection(connectionString);
 
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().CaF();
 
-      DbCommand IComposableDbConnection.CreateCommand() => CreateCommand();
+      DbCommand ICompzDbConnection.CreateCommand() => CreateCommand();
       public MySqlCommand CreateCommand() => Connection.CreateCommand();
 
       public void Dispose() => Connection.Dispose();

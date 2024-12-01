@@ -12,7 +12,7 @@ namespace Compze.SystemCE.ThreadingCE;
 
 class MachineWideSharedObject
 {
-   protected static readonly string DataFolder = ComposableTempFolder.EnsureFolderExists("SharedFiles");
+   protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
 }
 
 class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : new()
@@ -35,7 +35,7 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
 
    MachineWideSharedObject(string name, bool usePersistentFile)
    {
-      var fileName = $"Composable_{name}";
+      var fileName = $"Compze_{name}";
       // ReSharper disable once AccessToModifiedClosure
       Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
 
