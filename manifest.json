@@ -1,5 +1,5 @@
 {
-  "source_base_path": "C:/Dev/Composable/Website",
+  "source_base_path": "C:/Dev/Compze/Website",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -62,3080 +62,3060 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.ComposableApi.yml",
+      "source_relative_path": "api/Compze.CompzeApi.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.ComposableApi.html"
+          "relative_path": "api/Compze.CompzeApi.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.Assert.AssertionException.yml",
+      "source_relative_path": "api/Compze.Contracts.Assert.AssertionException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.Assert.AssertionException.html"
+          "relative_path": "api/Compze.Contracts.Assert.AssertionException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.Assert.BaseAssertion.yml",
+      "source_relative_path": "api/Compze.Contracts.Assert.BaseAssertion.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.Assert.BaseAssertion.html"
+          "relative_path": "api/Compze.Contracts.Assert.BaseAssertion.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.Assert.ChainedAssertion.yml",
+      "source_relative_path": "api/Compze.Contracts.Assert.ChainedAssertion.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.Assert.ChainedAssertion.html"
+          "relative_path": "api/Compze.Contracts.Assert.ChainedAssertion.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.Assert.yml",
+      "source_relative_path": "api/Compze.Contracts.Assert.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.Assert.html"
+          "relative_path": "api/Compze.Contracts.Assert.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.AssertAndRun.yml",
+      "source_relative_path": "api/Compze.Contracts.AssertAndRun.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.AssertAndRun.html"
+          "relative_path": "api/Compze.Contracts.AssertAndRun.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.AssertionException.yml",
+      "source_relative_path": "api/Compze.Contracts.AssertionException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.AssertionException.html"
+          "relative_path": "api/Compze.Contracts.AssertionException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.Contract.yml",
+      "source_relative_path": "api/Compze.Contracts.Contract.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.Contract.html"
+          "relative_path": "api/Compze.Contracts.Contract.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.ContractAssertThatException.yml",
+      "source_relative_path": "api/Compze.Contracts.ContractAssertThatException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.ContractAssertThatException.html"
+          "relative_path": "api/Compze.Contracts.ContractAssertThatException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.ContractViolationException.yml",
+      "source_relative_path": "api/Compze.Contracts.ContractViolationException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.ContractViolationException.html"
+          "relative_path": "api/Compze.Contracts.ContractViolationException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.IInspected-1.yml",
+      "source_relative_path": "api/Compze.Contracts.IInspected-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.IInspected-1.html"
+          "relative_path": "api/Compze.Contracts.IInspected-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.IInspectedValue-1.yml",
+      "source_relative_path": "api/Compze.Contracts.IInspectedValue-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.IInspectedValue-1.html"
+          "relative_path": "api/Compze.Contracts.IInspectedValue-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.IInspectedValue.yml",
+      "source_relative_path": "api/Compze.Contracts.IInspectedValue.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.IInspectedValue.html"
+          "relative_path": "api/Compze.Contracts.IInspectedValue.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.InspectionType.yml",
+      "source_relative_path": "api/Compze.Contracts.InspectionType.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.InspectionType.html"
+          "relative_path": "api/Compze.Contracts.InspectionType.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.InvalidAccessorLambdaException.yml",
+      "source_relative_path": "api/Compze.Contracts.InvalidAccessorLambdaException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.InvalidAccessorLambdaException.html"
+          "relative_path": "api/Compze.Contracts.InvalidAccessorLambdaException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.ObjectInspector.yml",
+      "source_relative_path": "api/Compze.Contracts.ObjectInspector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.ObjectInspector.html"
+          "relative_path": "api/Compze.Contracts.ObjectInspector.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.StringInspector.yml",
+      "source_relative_path": "api/Compze.Contracts.StringInspector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.StringInspector.html"
+          "relative_path": "api/Compze.Contracts.StringInspector.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Contracts.yml",
+      "source_relative_path": "api/Compze.Contracts.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Contracts.html"
+          "relative_path": "api/Compze.Contracts.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DDD.Entity-1.yml",
+      "source_relative_path": "api/Compze.DDD.Entity-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DDD.Entity-1.html"
+          "relative_path": "api/Compze.DDD.Entity-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DDD.Entity-2.yml",
+      "source_relative_path": "api/Compze.DDD.Entity-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DDD.Entity-2.html"
+          "relative_path": "api/Compze.DDD.Entity-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DDD.IHasPersistentIdentity-1.yml",
+      "source_relative_path": "api/Compze.DDD.IHasPersistentIdentity-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DDD.IHasPersistentIdentity-1.html"
+          "relative_path": "api/Compze.DDD.IHasPersistentIdentity-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DDD.ValueObject-1.yml",
+      "source_relative_path": "api/Compze.DDD.ValueObject-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DDD.ValueObject-1.html"
+          "relative_path": "api/Compze.DDD.ValueObject-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DDD.VersionedEntity-1.yml",
+      "source_relative_path": "api/Compze.DDD.VersionedEntity-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DDD.VersionedEntity-1.html"
+          "relative_path": "api/Compze.DDD.VersionedEntity-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DDD.yml",
+      "source_relative_path": "api/Compze.DDD.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DDD.html"
+          "relative_path": "api/Compze.DDD.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.ComponentRegistration-1.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.ComponentRegistration-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.ComponentRegistration-1.html"
+          "relative_path": "api/Compze.DependencyInjection.ComponentRegistration-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.ComponentRegistration.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.ComponentRegistration.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.ComponentRegistration.html"
+          "relative_path": "api/Compze.DependencyInjection.ComponentRegistration.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.ComponentRegistrationExtensions.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.ComponentRegistrationExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.ComponentRegistrationExtensions.html"
+          "relative_path": "api/Compze.DependencyInjection.ComponentRegistrationExtensions.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.ComponentRegistrationWithoutInstantiationSpec-1.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.ComponentRegistrationWithoutInstantiationSpec-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.ComponentRegistrationWithoutInstantiationSpec-1.html"
+          "relative_path": "api/Compze.DependencyInjection.ComponentRegistrationWithoutInstantiationSpec-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.DIContainer.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.DIContainer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.DIContainer.html"
+          "relative_path": "api/Compze.DependencyInjection.DIContainer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.DependencyInjectionContainer.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.DependencyInjectionContainer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.DependencyInjectionContainer.html"
+          "relative_path": "api/Compze.DependencyInjection.DependencyInjectionContainer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.IDependencyInjectionContainer.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.IDependencyInjectionContainer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.IDependencyInjectionContainer.html"
+          "relative_path": "api/Compze.DependencyInjection.IDependencyInjectionContainer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.IRunMode.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.IRunMode.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.IRunMode.html"
+          "relative_path": "api/Compze.DependencyInjection.IRunMode.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.IServiceLocator.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.IServiceLocator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.IServiceLocator.html"
+          "relative_path": "api/Compze.DependencyInjection.IServiceLocator.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.html"
+          "relative_path": "api/Compze.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.Microsoft.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.Microsoft.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.Microsoft.html"
+          "relative_path": "api/Compze.DependencyInjection.Microsoft.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.PersistenceLayer.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.PersistenceLayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.PersistenceLayer.html"
+          "relative_path": "api/Compze.DependencyInjection.PersistenceLayer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.Scoped.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.Scoped.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.Scoped.html"
+          "relative_path": "api/Compze.DependencyInjection.Scoped.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.SimpleInjector.SimpleInjectorDependencyInjectionContainer.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.SimpleInjector.SimpleInjectorDependencyInjectionContainer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.SimpleInjector.SimpleInjectorDependencyInjectionContainer.html"
+          "relative_path": "api/Compze.DependencyInjection.SimpleInjector.SimpleInjectorDependencyInjectionContainer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.SimpleInjector.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.SimpleInjector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.SimpleInjector.html"
+          "relative_path": "api/Compze.DependencyInjection.SimpleInjector.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.Singleton.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.Singleton.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.Singleton.html"
+          "relative_path": "api/Compze.DependencyInjection.Singleton.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.SingletonRegistrationWithoutInstantiationSpec-1.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.SingletonRegistrationWithoutInstantiationSpec-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.SingletonRegistrationWithoutInstantiationSpec-1.html"
+          "relative_path": "api/Compze.DependencyInjection.SingletonRegistrationWithoutInstantiationSpec-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.DependencyInjection.yml",
+      "source_relative_path": "api/Compze.DependencyInjection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.DependencyInjection.html"
+          "relative_path": "api/Compze.DependencyInjection.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.DiscriminatedUnion-3.yml",
+      "source_relative_path": "api/Compze.Functional.DiscriminatedUnion-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.DiscriminatedUnion-3.html"
+          "relative_path": "api/Compze.Functional.DiscriminatedUnion-3.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.DiscriminatedUnion-4.yml",
+      "source_relative_path": "api/Compze.Functional.DiscriminatedUnion-4.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.DiscriminatedUnion-4.html"
+          "relative_path": "api/Compze.Functional.DiscriminatedUnion-4.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.DiscriminatedUnion-5.yml",
+      "source_relative_path": "api/Compze.Functional.DiscriminatedUnion-5.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.DiscriminatedUnion-5.html"
+          "relative_path": "api/Compze.Functional.DiscriminatedUnion-5.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.DiscriminatedUnion-6.yml",
+      "source_relative_path": "api/Compze.Functional.DiscriminatedUnion-6.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.DiscriminatedUnion-6.html"
+          "relative_path": "api/Compze.Functional.DiscriminatedUnion-6.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.DiscriminatedUnion-7.yml",
+      "source_relative_path": "api/Compze.Functional.DiscriminatedUnion-7.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.DiscriminatedUnion-7.html"
+          "relative_path": "api/Compze.Functional.DiscriminatedUnion-7.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.None-1.yml",
+      "source_relative_path": "api/Compze.Functional.None-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.None-1.html"
+          "relative_path": "api/Compze.Functional.None-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.ObjectCE.yml",
+      "source_relative_path": "api/Compze.Functional.ObjectCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.ObjectCE.html"
+          "relative_path": "api/Compze.Functional.ObjectCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.Option-1.yml",
+      "source_relative_path": "api/Compze.Functional.Option-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.Option-1.html"
+          "relative_path": "api/Compze.Functional.Option-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.Option.yml",
+      "source_relative_path": "api/Compze.Functional.Option.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.Option.html"
+          "relative_path": "api/Compze.Functional.Option.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.Pipe.yml",
+      "source_relative_path": "api/Compze.Functional.Pipe.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.Pipe.html"
+          "relative_path": "api/Compze.Functional.Pipe.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.Some-1.yml",
+      "source_relative_path": "api/Compze.Functional.Some-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.Some-1.html"
+          "relative_path": "api/Compze.Functional.Some-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.Unit.yml",
+      "source_relative_path": "api/Compze.Functional.Unit.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.Unit.html"
+          "relative_path": "api/Compze.Functional.Unit.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Functional.yml",
+      "source_relative_path": "api/Compze.Functional.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Functional.html"
+          "relative_path": "api/Compze.Functional.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.GenericAbstractions.OptimizedInitializer.yml",
+      "source_relative_path": "api/Compze.GenericAbstractions.OptimizedInitializer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.GenericAbstractions.OptimizedInitializer.html"
+          "relative_path": "api/Compze.GenericAbstractions.OptimizedInitializer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.GenericAbstractions.Time.DateTimeNowTimeSource.yml",
+      "source_relative_path": "api/Compze.GenericAbstractions.Time.DateTimeNowTimeSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.GenericAbstractions.Time.DateTimeNowTimeSource.html"
+          "relative_path": "api/Compze.GenericAbstractions.Time.DateTimeNowTimeSource.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.GenericAbstractions.Time.IUtcTimeTimeSource.yml",
+      "source_relative_path": "api/Compze.GenericAbstractions.Time.IUtcTimeTimeSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.GenericAbstractions.Time.IUtcTimeTimeSource.html"
+          "relative_path": "api/Compze.GenericAbstractions.Time.IUtcTimeTimeSource.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.GenericAbstractions.Time.yml",
+      "source_relative_path": "api/Compze.GenericAbstractions.Time.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.GenericAbstractions.Time.html"
+          "relative_path": "api/Compze.GenericAbstractions.Time.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.GenericAbstractions.yml",
+      "source_relative_path": "api/Compze.GenericAbstractions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.GenericAbstractions.html"
+          "relative_path": "api/Compze.GenericAbstractions.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.EndpointHost.Production.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.EndpointHost.Production.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.EndpointHost.Production.html"
+          "relative_path": "api/Compze.Messaging.Buses.EndpointHost.Production.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.EndpointHost.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.EndpointHost.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.EndpointHost.html"
+          "relative_path": "api/Compze.Messaging.Buses.EndpointHost.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.EndpointId.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.EndpointId.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.EndpointId.html"
+          "relative_path": "api/Compze.Messaging.Buses.EndpointId.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.EndpointRequestExecutor.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.EndpointRequestExecutor.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.EndpointRequestExecutor.html"
+          "relative_path": "api/Compze.Messaging.Buses.EndpointRequestExecutor.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.IEndpoint.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.IEndpoint.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.IEndpoint.html"
+          "relative_path": "api/Compze.Messaging.Buses.IEndpoint.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.IEndpointBuilder.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.IEndpointBuilder.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.IEndpointBuilder.html"
+          "relative_path": "api/Compze.Messaging.Buses.IEndpointBuilder.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.IEndpointHost.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.IEndpointHost.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.IEndpointHost.html"
+          "relative_path": "api/Compze.Messaging.Buses.IEndpointHost.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.IMessageHandlerRegistrar.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.IMessageHandlerRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.IMessageHandlerRegistrar.html"
+          "relative_path": "api/Compze.Messaging.Buses.IMessageHandlerRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.IServiceBusSession.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.IServiceBusSession.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.IServiceBusSession.html"
+          "relative_path": "api/Compze.Messaging.Buses.IServiceBusSession.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.ITestingEndpointHost.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.ITestingEndpointHost.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.ITestingEndpointHost.html"
+          "relative_path": "api/Compze.Messaging.Buses.ITestingEndpointHost.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.CommandValidationFailureException.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.CommandValidationFailureException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.CommandValidationFailureException.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.CommandValidationFailureException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.EndPointAddress.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.EndPointAddress.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.EndPointAddress.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.EndPointAddress.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.EndpointConfiguration.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.EndpointConfiguration.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.EndpointConfiguration.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.EndpointConfiguration.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.InvalidControllerRegistrationException.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.InvalidControllerRegistrationException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.InvalidControllerRegistrationException.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.InvalidControllerRegistrationException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.MessageDispatchingFailedException.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.MessageDispatchingFailedException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.MessageDispatchingFailedException.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.MessageDispatchingFailedException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.NoHandlerException.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.NoHandlerException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.NoHandlerException.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.NoHandlerException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.NoHandlerForMessageTypeException.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.NoHandlerForMessageTypeException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.NoHandlerForMessageTypeException.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.NoHandlerForMessageTypeException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.Implementation.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.Implementation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.Implementation.html"
+          "relative_path": "api/Compze.Messaging.Buses.Implementation.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html"
+          "relative_path": "api/Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.html"
+          "relative_path": "api/Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.TestingEndpointHost.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.TestingEndpointHost.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.TestingEndpointHost.html"
+          "relative_path": "api/Compze.Messaging.Buses.TestingEndpointHost.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.TestingEndpointHostBase.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.TestingEndpointHostBase.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.TestingEndpointHostBase.html"
+          "relative_path": "api/Compze.Messaging.Buses.TestingEndpointHostBase.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.TestingHostExtensions.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.TestingHostExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.TestingHostExtensions.html"
+          "relative_path": "api/Compze.Messaging.Buses.TestingHostExtensions.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Buses.yml",
+      "source_relative_path": "api/Compze.Messaging.Buses.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Buses.html"
+          "relative_path": "api/Compze.Messaging.Buses.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Events.CallMatchingHandlersInRegistrationOrderEventDispatcher-1.yml",
+      "source_relative_path": "api/Compze.Messaging.Events.CallMatchingHandlersInRegistrationOrderEventDispatcher-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Events.CallMatchingHandlersInRegistrationOrderEventDispatcher-1.html"
+          "relative_path": "api/Compze.Messaging.Events.CallMatchingHandlersInRegistrationOrderEventDispatcher-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Events.EventUnhandledException.yml",
+      "source_relative_path": "api/Compze.Messaging.Events.EventUnhandledException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Events.EventUnhandledException.html"
+          "relative_path": "api/Compze.Messaging.Events.EventUnhandledException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Events.IEventHandlerRegistrar-1.yml",
+      "source_relative_path": "api/Compze.Messaging.Events.IEventHandlerRegistrar-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Events.IEventHandlerRegistrar-1.html"
+          "relative_path": "api/Compze.Messaging.Events.IEventHandlerRegistrar-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Events.ISingleAggregateQueryModel.yml",
+      "source_relative_path": "api/Compze.Messaging.Events.ISingleAggregateQueryModel.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Events.ISingleAggregateQueryModel.html"
+          "relative_path": "api/Compze.Messaging.Events.ISingleAggregateQueryModel.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Events.yml",
+      "source_relative_path": "api/Compze.Messaging.Events.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Events.html"
+          "relative_path": "api/Compze.Messaging.Events.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Hypermedia.ILocalHypermediaNavigator.yml",
+      "source_relative_path": "api/Compze.Messaging.Hypermedia.ILocalHypermediaNavigator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Hypermedia.ILocalHypermediaNavigator.html"
+          "relative_path": "api/Compze.Messaging.Hypermedia.ILocalHypermediaNavigator.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Hypermedia.IRemoteHypermediaNavigator.yml",
+      "source_relative_path": "api/Compze.Messaging.Hypermedia.IRemoteHypermediaNavigator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Hypermedia.IRemoteHypermediaNavigator.html"
+          "relative_path": "api/Compze.Messaging.Hypermedia.IRemoteHypermediaNavigator.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Hypermedia.NavigationSpecification-1.yml",
+      "source_relative_path": "api/Compze.Messaging.Hypermedia.NavigationSpecification-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Hypermedia.NavigationSpecification-1.html"
+          "relative_path": "api/Compze.Messaging.Hypermedia.NavigationSpecification-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Hypermedia.NavigationSpecification.yml",
+      "source_relative_path": "api/Compze.Messaging.Hypermedia.NavigationSpecification.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Hypermedia.NavigationSpecification.html"
+          "relative_path": "api/Compze.Messaging.Hypermedia.NavigationSpecification.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Hypermedia.NavigationSpecificationMessageExtensions.yml",
+      "source_relative_path": "api/Compze.Messaging.Hypermedia.NavigationSpecificationMessageExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Hypermedia.NavigationSpecificationMessageExtensions.html"
+          "relative_path": "api/Compze.Messaging.Hypermedia.NavigationSpecificationMessageExtensions.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.Hypermedia.yml",
+      "source_relative_path": "api/Compze.Messaging.Hypermedia.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.Hypermedia.html"
+          "relative_path": "api/Compze.Messaging.Hypermedia.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IAtMostOnceCommand-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IAtMostOnceCommand-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IAtMostOnceCommand-1.html"
+          "relative_path": "api/Compze.Messaging.IAtMostOnceCommand-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IAtMostOnceHypermediaCommand.yml",
+      "source_relative_path": "api/Compze.Messaging.IAtMostOnceHypermediaCommand.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IAtMostOnceHypermediaCommand.html"
+          "relative_path": "api/Compze.Messaging.IAtMostOnceHypermediaCommand.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IAtMostOnceMessage.yml",
+      "source_relative_path": "api/Compze.Messaging.IAtMostOnceMessage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IAtMostOnceMessage.html"
+          "relative_path": "api/Compze.Messaging.IAtMostOnceMessage.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.ICannotBeSentRemotelyFromWithinTransaction.yml",
+      "source_relative_path": "api/Compze.Messaging.ICannotBeSentRemotelyFromWithinTransaction.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.ICannotBeSentRemotelyFromWithinTransaction.html"
+          "relative_path": "api/Compze.Messaging.ICannotBeSentRemotelyFromWithinTransaction.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.ICommand-1.yml",
+      "source_relative_path": "api/Compze.Messaging.ICommand-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.ICommand-1.html"
+          "relative_path": "api/Compze.Messaging.ICommand-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.ICommand.yml",
+      "source_relative_path": "api/Compze.Messaging.ICommand.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.ICommand.html"
+          "relative_path": "api/Compze.Messaging.ICommand.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.ICreateMyOwnResultQuery-1.yml",
+      "source_relative_path": "api/Compze.Messaging.ICreateMyOwnResultQuery-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.ICreateMyOwnResultQuery-1.html"
+          "relative_path": "api/Compze.Messaging.ICreateMyOwnResultQuery-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IEvent.yml",
+      "source_relative_path": "api/Compze.Messaging.IEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IEvent.html"
+          "relative_path": "api/Compze.Messaging.IEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IExactlyOnceCommand.yml",
+      "source_relative_path": "api/Compze.Messaging.IExactlyOnceCommand.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IExactlyOnceCommand.html"
+          "relative_path": "api/Compze.Messaging.IExactlyOnceCommand.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IExactlyOnceEvent.yml",
+      "source_relative_path": "api/Compze.Messaging.IExactlyOnceEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IExactlyOnceEvent.html"
+          "relative_path": "api/Compze.Messaging.IExactlyOnceEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IExactlyOnceMessage.yml",
+      "source_relative_path": "api/Compze.Messaging.IExactlyOnceMessage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IExactlyOnceMessage.html"
+          "relative_path": "api/Compze.Messaging.IExactlyOnceMessage.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IExactlyOnceWrapperEvent-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IExactlyOnceWrapperEvent-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IExactlyOnceWrapperEvent-1.html"
+          "relative_path": "api/Compze.Messaging.IExactlyOnceWrapperEvent-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IHasReturnValue-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IHasReturnValue-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IHasReturnValue-1.html"
+          "relative_path": "api/Compze.Messaging.IHasReturnValue-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IHypermediaMessage.yml",
+      "source_relative_path": "api/Compze.Messaging.IHypermediaMessage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IHypermediaMessage.html"
+          "relative_path": "api/Compze.Messaging.IHypermediaMessage.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IMessage.yml",
+      "source_relative_path": "api/Compze.Messaging.IMessage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IMessage.html"
+          "relative_path": "api/Compze.Messaging.IMessage.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IMustBeHandledTransactionally.yml",
+      "source_relative_path": "api/Compze.Messaging.IMustBeHandledTransactionally.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IMustBeHandledTransactionally.html"
+          "relative_path": "api/Compze.Messaging.IMustBeHandledTransactionally.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IMustBeSentAndHandledTransactionally.yml",
+      "source_relative_path": "api/Compze.Messaging.IMustBeSentAndHandledTransactionally.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IMustBeSentAndHandledTransactionally.html"
+          "relative_path": "api/Compze.Messaging.IMustBeSentAndHandledTransactionally.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IMustBeSentTransactionally.yml",
+      "source_relative_path": "api/Compze.Messaging.IMustBeSentTransactionally.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IMustBeSentTransactionally.html"
+          "relative_path": "api/Compze.Messaging.IMustBeSentTransactionally.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IQuery-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IQuery-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IQuery-1.html"
+          "relative_path": "api/Compze.Messaging.IQuery-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IRemotableCommand-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IRemotableCommand-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IRemotableCommand-1.html"
+          "relative_path": "api/Compze.Messaging.IRemotableCommand-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IRemotableCommand.yml",
+      "source_relative_path": "api/Compze.Messaging.IRemotableCommand.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IRemotableCommand.html"
+          "relative_path": "api/Compze.Messaging.IRemotableCommand.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IRemotableCreateMyOwnResultQuery-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IRemotableCreateMyOwnResultQuery-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IRemotableCreateMyOwnResultQuery-1.html"
+          "relative_path": "api/Compze.Messaging.IRemotableCreateMyOwnResultQuery-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IRemotableEvent.yml",
+      "source_relative_path": "api/Compze.Messaging.IRemotableEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IRemotableEvent.html"
+          "relative_path": "api/Compze.Messaging.IRemotableEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IRemotableMessage.yml",
+      "source_relative_path": "api/Compze.Messaging.IRemotableMessage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IRemotableMessage.html"
+          "relative_path": "api/Compze.Messaging.IRemotableMessage.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IRemotableQuery-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IRemotableQuery-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IRemotableQuery-1.html"
+          "relative_path": "api/Compze.Messaging.IRemotableQuery-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IRequireAResponse.yml",
+      "source_relative_path": "api/Compze.Messaging.IRequireAResponse.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IRequireAResponse.html"
+          "relative_path": "api/Compze.Messaging.IRequireAResponse.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IStrictlyLocalCommand-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IStrictlyLocalCommand-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IStrictlyLocalCommand-1.html"
+          "relative_path": "api/Compze.Messaging.IStrictlyLocalCommand-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IStrictlyLocalCommand.yml",
+      "source_relative_path": "api/Compze.Messaging.IStrictlyLocalCommand.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IStrictlyLocalCommand.html"
+          "relative_path": "api/Compze.Messaging.IStrictlyLocalCommand.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IStrictlyLocalEvent.yml",
+      "source_relative_path": "api/Compze.Messaging.IStrictlyLocalEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IStrictlyLocalEvent.html"
+          "relative_path": "api/Compze.Messaging.IStrictlyLocalEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IStrictlyLocalMessage.yml",
+      "source_relative_path": "api/Compze.Messaging.IStrictlyLocalMessage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IStrictlyLocalMessage.html"
+          "relative_path": "api/Compze.Messaging.IStrictlyLocalMessage.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IStrictlyLocalQuery-2.yml",
+      "source_relative_path": "api/Compze.Messaging.IStrictlyLocalQuery-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IStrictlyLocalQuery-2.html"
+          "relative_path": "api/Compze.Messaging.IStrictlyLocalQuery-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.IWrapperEvent-1.yml",
+      "source_relative_path": "api/Compze.Messaging.IWrapperEvent-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.IWrapperEvent-1.html"
+          "relative_path": "api/Compze.Messaging.IWrapperEvent-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.DeduplicationIdHandling.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.DeduplicationIdHandling.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.DeduplicationIdHandling.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.DeduplicationIdHandling.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.AtMostOnce.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.AtMostOnce.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.ExactlyOnce.Command.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.ExactlyOnce.Command.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.ExactlyOnce.Command.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.ExactlyOnce.Command.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.ExactlyOnce.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.ExactlyOnce.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.ExactlyOnce.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.ExactlyOnce.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.EntityLink-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.EntityLink-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.EntityLink-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.EntityLink-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.Query-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.Query-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.Query-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.Query-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.NonTransactional.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.NonTransactional.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.Remotable.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.Remotable.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.Remotable.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.Remotable.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Commands.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Commands.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Commands.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Commands.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Queries.EntityLink-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Queries.EntityLink-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Queries.EntityLink-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Queries.EntityLink-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery-2.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery-2.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Queries.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Queries.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.Queries.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.Queries.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.StrictlyLocal.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.StrictlyLocal.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.WrapperEvent-1.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.WrapperEvent-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.WrapperEvent-1.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.WrapperEvent-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.WrapperEvent.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.WrapperEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.WrapperEvent.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.WrapperEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.MessageTypes.yml",
+      "source_relative_path": "api/Compze.Messaging.MessageTypes.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.MessageTypes.html"
+          "relative_path": "api/Compze.Messaging.MessageTypes.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Messaging.yml",
+      "source_relative_path": "api/Compze.Messaging.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Messaging.html"
+          "relative_path": "api/Compze.Messaging.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.DependencyInjection.DocumentDbRegistrar.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.DependencyInjection.DocumentDbRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.DependencyInjection.DocumentDbRegistrar.html"
+          "relative_path": "api/Compze.Persistence.Common.DependencyInjection.DocumentDbRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.DependencyInjection.DocumentDbRegistrationBuilder.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.DependencyInjection.DocumentDbRegistrationBuilder.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.DependencyInjection.DocumentDbRegistrationBuilder.html"
+          "relative_path": "api/Compze.Persistence.Common.DependencyInjection.DocumentDbRegistrationBuilder.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.DependencyInjection.EventStoreRegistrar.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.DependencyInjection.EventStoreRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.DependencyInjection.EventStoreRegistrar.html"
+          "relative_path": "api/Compze.Persistence.Common.DependencyInjection.EventStoreRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.DependencyInjection.EventStoreRegistrationBuilder.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.DependencyInjection.EventStoreRegistrationBuilder.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.DependencyInjection.EventStoreRegistrationBuilder.html"
+          "relative_path": "api/Compze.Persistence.Common.DependencyInjection.EventStoreRegistrationBuilder.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.DependencyInjection.TestingPersistenceLayerRegistrar.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.DependencyInjection.TestingPersistenceLayerRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.DependencyInjection.TestingPersistenceLayerRegistrar.html"
+          "relative_path": "api/Compze.Persistence.Common.DependencyInjection.TestingPersistenceLayerRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.DependencyInjection.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.DependencyInjection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.DependencyInjection.html"
+          "relative_path": "api/Compze.Persistence.Common.DependencyInjection.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.EventStore.EventDuplicateKeyException.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.EventStore.EventDuplicateKeyException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.EventStore.EventDuplicateKeyException.html"
+          "relative_path": "api/Compze.Persistence.Common.EventStore.EventDuplicateKeyException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.EventStore.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.EventStore.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.EventStore.html"
+          "relative_path": "api/Compze.Persistence.Common.EventStore.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.Common.yml",
+      "source_relative_path": "api/Compze.Persistence.Common.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.Common.html"
+          "relative_path": "api/Compze.Persistence.Common.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.AttemptToSaveAlreadyPersistedValueException.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.AttemptToSaveAlreadyPersistedValueException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.AttemptToSaveAlreadyPersistedValueException.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.AttemptToSaveAlreadyPersistedValueException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.Command.DeleteDocument-1.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.Command.DeleteDocument-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.Command.DeleteDocument-1.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.Command.DeleteDocument-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.Command.SaveDocument-1.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.Command.SaveDocument-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.Command.SaveDocument-1.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.Command.SaveDocument-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.Command.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.Command.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.Command.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.Command.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetDocumentForUpdate-1.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetDocumentForUpdate-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetDocumentForUpdate-1.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetDocumentForUpdate-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetReadonlyCopyOfDocument-1.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetReadonlyCopyOfDocument-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetReadonlyCopyOfDocument-1.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.GetReadonlyCopyOfDocument-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.TryGetDocument-1.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.TryGetDocument-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.TryGetDocument-1.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.TryGetDocument-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.QueryApi.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.QueryApi.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentDbApi.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentDbApi.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.DocumentIdIsEmptyGuidException.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.DocumentIdIsEmptyGuidException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.DocumentIdIsEmptyGuidException.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.DocumentIdIsEmptyGuidException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.IDocumentDbBulkReader.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbBulkReader.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.IDocumentDbBulkReader.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbBulkReader.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.IDocumentDbReader.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbReader.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.IDocumentDbReader.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbReader.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.IDocumentDbUpdater.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbUpdater.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.IDocumentDbUpdater.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbUpdater.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.NoSuchDocumentException.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.NoSuchDocumentException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.NoSuchDocumentException.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.NoSuchDocumentException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.TooManyItemsDeletedException.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.TooManyItemsDeletedException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.TooManyItemsDeletedException.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.TooManyItemsDeletedException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.DocumentDb.yml",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.DocumentDb.html"
+          "relative_path": "api/Compze.Persistence.DocumentDb.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.AggregateEvent-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.AggregateEvent-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.AggregateEvent-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.AggregateEvent-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.AggregateEvent.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.AggregateEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.AggregateEvent.html"
+          "relative_path": "api/Compze.Persistence.EventStore.AggregateEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.AggregateNotFoundException.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.AggregateNotFoundException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.AggregateNotFoundException.html"
+          "relative_path": "api/Compze.Persistence.EventStore.AggregateNotFoundException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-3.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-3.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-3.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.EntityCollectionManager-7.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.EntityCollectionManager-7.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.EntityCollectionManager-7.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.EntityCollectionManager-7.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedComponent-3.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedComponent-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedComponent-3.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedComponent-3.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.CollectionManager.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.CollectionManager.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.CollectionManager.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.CollectionManager.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.EntityCollectionManagerBase.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.EntityCollectionManagerBase.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.EntityCollectionManagerBase.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.EntityCollectionManagerBase.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.SlavedNestedEntity-5.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.CollectionManager.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.CollectionManager.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.CollectionManager.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.CollectionManager.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.RemovableEntity-7.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.RemovableEntity-7.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.RemovableEntity-7.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.RemovableEntity-7.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.Aggregate-5.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.AllowPublicSettersAttribute.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.AllowPublicSettersAttribute.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.AllowPublicSettersAttribute.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.AllowPublicSettersAttribute.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.EntityCollection-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.EntityCollection-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.EntityCollection-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.EntityCollection-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.IGetAggregateEntityEventEntityId-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.IGetAggregateEntityEventEntityId-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.IGetAggregateEntityEventEntityId-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.IGetAggregateEntityEventEntityId-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.IGetSetAggregateEntityEventEntityId-3.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.IGetSetAggregateEntityEventEntityId-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.IGetSetAggregateEntityEventEntityId-3.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.IGetSetAggregateEntityEventEntityId-3.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Aggregates.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Aggregates.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.AttemptToSaveAlreadyPersistedAggregateException.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.AttemptToSaveAlreadyPersistedAggregateException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.AttemptToSaveAlreadyPersistedAggregateException.html"
+          "relative_path": "api/Compze.Persistence.EventStore.AttemptToSaveAlreadyPersistedAggregateException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.AttemptToSaveEmptyAggregateException.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.AttemptToSaveEmptyAggregateException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.AttemptToSaveEmptyAggregateException.html"
+          "relative_path": "api/Compze.Persistence.EventStore.AttemptToSaveEmptyAggregateException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.Command.SaveAggregate-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.Command.SaveAggregate-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.Command.SaveAggregate-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.Command.SaveAggregate-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.Command.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.Command.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.Command.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.Command.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.GetAggregateHistory-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.GetAggregateHistory-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.GetAggregateHistory-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.GetAggregateHistory-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.QueryApi.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.QueryApi.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.EventStoreApi.html"
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreApi.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IAggregateCreatedEvent.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IAggregateCreatedEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IAggregateCreatedEvent.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IAggregateCreatedEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IAggregateDeletedEvent.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IAggregateDeletedEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IAggregateDeletedEvent.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IAggregateDeletedEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IAggregateEvent-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IAggregateEvent-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IAggregateEvent-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IAggregateEvent-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IAggregateEvent.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IAggregateEvent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IAggregateEvent.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IAggregateEvent.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IEventStoreReader.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IEventStoreReader.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IEventStoreReader.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IEventStoreReader.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IEventStoreUpdater.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IEventStoreUpdater.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IEventStoreUpdater.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IEventStoreUpdater.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IEventStored-1.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IEventStored-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IEventStored-1.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IEventStored-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.IEventStored.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IEventStored.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.IEventStored.html"
+          "relative_path": "api/Compze.Persistence.EventStore.IEventStored.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.InvalidHistoryException.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.InvalidHistoryException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.InvalidHistoryException.html"
+          "relative_path": "api/Compze.Persistence.EventStore.InvalidHistoryException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.Generators.IQueryModelGenerator.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.IQueryModelGenerator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.Generators.IQueryModelGenerator.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.IQueryModelGenerator.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.Generators.SingleAggregateQueryModelGenerator-4.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.SingleAggregateQueryModelGenerator-4.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.Generators.SingleAggregateQueryModelGenerator-4.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.SingleAggregateQueryModelGenerator-4.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.Generators.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.Generators.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedComponent-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedComponent-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedComponent-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedComponent-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.CollectionManager.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.CollectionManager.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.CollectionManager.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.CollectionManager.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.NestedEntity-5.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.QueryModelEntityCollectionManager-6.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.QueryModelEntityCollectionManager-6.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.QueryModelEntityCollectionManager-6.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.QueryModelEntityCollectionManager-6.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.EntityCollectionManagerBase.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.EntityCollectionManagerBase.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.EntityCollectionManagerBase.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.EntityCollectionManagerBase.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.CollectionManager.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.CollectionManager.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.CollectionManager.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.CollectionManager.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-5.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-6.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-6.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-6.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-6.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Query.Models.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Query.Models.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.IEventMigration.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.IEventMigration.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.IEventMigration.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.IEventMigration.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.IEventModifier.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.IEventModifier.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.IEventModifier.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.IEventModifier.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.ISingleAggregateInstanceHandlingEventMigrator.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.ISingleAggregateInstanceHandlingEventMigrator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.ISingleAggregateInstanceHandlingEventMigrator.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.ISingleAggregateInstanceHandlingEventMigrator.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.NonIdempotentMigrationDetectedException.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.NonIdempotentMigrationDetectedException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.NonIdempotentMigrationDetectedException.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.NonIdempotentMigrationDetectedException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.Refactoring.Migrations.html"
+          "relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.EventStore.yml",
+      "source_relative_path": "api/Compze.Persistence.EventStore.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.EventStore.html"
+          "relative_path": "api/Compze.Persistence.EventStore.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.yml",
+      "source_relative_path": "api/Compze.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.html"
+          "relative_path": "api/Compze.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.yml",
+      "source_relative_path": "api/Compze.Persistence.InMemory.DependencyInjection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.html"
+          "relative_path": "api/Compze.Persistence.InMemory.DependencyInjection.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.MsSql.DependencyInjection.MsSqlPersistenceLayerRegistrar.yml",
+      "source_relative_path": "api/Compze.Persistence.MsSql.DependencyInjection.MsSqlPersistenceLayerRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.MsSql.DependencyInjection.MsSqlPersistenceLayerRegistrar.html"
+          "relative_path": "api/Compze.Persistence.MsSql.DependencyInjection.MsSqlPersistenceLayerRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.MsSql.DependencyInjection.yml",
+      "source_relative_path": "api/Compze.Persistence.MsSql.DependencyInjection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.MsSql.DependencyInjection.html"
+          "relative_path": "api/Compze.Persistence.MsSql.DependencyInjection.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.MySql.DependencyInjection.MySqlPersistenceLayerRegistrar.yml",
+      "source_relative_path": "api/Compze.Persistence.MySql.DependencyInjection.MySqlPersistenceLayerRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.MySql.DependencyInjection.MySqlPersistenceLayerRegistrar.html"
+          "relative_path": "api/Compze.Persistence.MySql.DependencyInjection.MySqlPersistenceLayerRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.MySql.DependencyInjection.yml",
+      "source_relative_path": "api/Compze.Persistence.MySql.DependencyInjection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.MySql.DependencyInjection.html"
+          "relative_path": "api/Compze.Persistence.MySql.DependencyInjection.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.PgSql.DependencyInjection.PgSqlPersistenceLayerRegistrar.yml",
+      "source_relative_path": "api/Compze.Persistence.PgSql.DependencyInjection.PgSqlPersistenceLayerRegistrar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.PgSql.DependencyInjection.PgSqlPersistenceLayerRegistrar.html"
+          "relative_path": "api/Compze.Persistence.PgSql.DependencyInjection.PgSqlPersistenceLayerRegistrar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.PgSql.DependencyInjection.yml",
+      "source_relative_path": "api/Compze.Persistence.PgSql.DependencyInjection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.PgSql.DependencyInjection.html"
+          "relative_path": "api/Compze.Persistence.PgSql.DependencyInjection.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Persistence.yml",
+      "source_relative_path": "api/Compze.Persistence.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Persistence.html"
+          "relative_path": "api/Compze.Persistence.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Refactoring.Naming.CouldNotFindTypeForTypeIdException.yml",
+      "source_relative_path": "api/Compze.Refactoring.Naming.CouldNotFindTypeForTypeIdException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Refactoring.Naming.CouldNotFindTypeForTypeIdException.html"
+          "relative_path": "api/Compze.Refactoring.Naming.CouldNotFindTypeForTypeIdException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Refactoring.Naming.ITypeMappingRegistar.yml",
+      "source_relative_path": "api/Compze.Refactoring.Naming.ITypeMappingRegistar.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Refactoring.Naming.ITypeMappingRegistar.html"
+          "relative_path": "api/Compze.Refactoring.Naming.ITypeMappingRegistar.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Refactoring.Naming.yml",
+      "source_relative_path": "api/Compze.Refactoring.Naming.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Refactoring.Naming.html"
+          "relative_path": "api/Compze.Refactoring.Naming.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader-1.yml",
+      "source_relative_path": "api/Compze.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader-1.html"
+          "relative_path": "api/Compze.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader.yml",
+      "source_relative_path": "api/Compze.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader.html"
+          "relative_path": "api/Compze.SystemCE.CollectionsCE.ConcurrentCE.ConcurrentCircularReader.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.CollectionsCE.ConcurrentCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.CollectionsCE.ConcurrentCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.CollectionsCE.ConcurrentCE.html"
+          "relative_path": "api/Compze.SystemCE.CollectionsCE.ConcurrentCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.IValidatableObjectCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.IValidatableObjectCE.html"
+          "relative_path": "api/Compze.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ComponentModelCE.DataAnnotationsCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.html"
+          "relative_path": "api/Compze.SystemCE.ComponentModelCE.DataAnnotationsCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ConfigurationCE.IConfigurationParameterProvider.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.html"
+          "relative_path": "api/Compze.SystemCE.ConfigurationCE.IConfigurationParameterProvider.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ConfigurationCE.IConfigurationParameterProvider.yml",
+      "source_relative_path": "api/Compze.SystemCE.ConfigurationCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ConfigurationCE.IConfigurationParameterProvider.html"
+          "relative_path": "api/Compze.SystemCE.ConfigurationCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ConfigurationCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.DiagnosticsCE.StopwatchCE.TimedExecutionSummary.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ConfigurationCE.html"
+          "relative_path": "api/Compze.SystemCE.DiagnosticsCE.StopwatchCE.TimedExecutionSummary.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.DiagnosticsCE.StopwatchCE.TimedExecutionSummary.yml",
+      "source_relative_path": "api/Compze.SystemCE.DiagnosticsCE.StopwatchCE.TimedThreadedExecutionSummary.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.DiagnosticsCE.StopwatchCE.TimedExecutionSummary.html"
+          "relative_path": "api/Compze.SystemCE.DiagnosticsCE.StopwatchCE.TimedThreadedExecutionSummary.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.DiagnosticsCE.StopwatchCE.TimedThreadedExecutionSummary.yml",
+      "source_relative_path": "api/Compze.SystemCE.DiagnosticsCE.StopwatchCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.DiagnosticsCE.StopwatchCE.TimedThreadedExecutionSummary.html"
+          "relative_path": "api/Compze.SystemCE.DiagnosticsCE.StopwatchCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.DiagnosticsCE.StopwatchCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.DiagnosticsCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.DiagnosticsCE.StopwatchCE.html"
+          "relative_path": "api/Compze.SystemCE.DiagnosticsCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.DiagnosticsCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.IStaticInstancePropertySingleton.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.DiagnosticsCE.html"
+          "relative_path": "api/Compze.SystemCE.IStaticInstancePropertySingleton.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.IStaticInstancePropertySingleton.yml",
+      "source_relative_path": "api/Compze.SystemCE.LinqCE.EnumerableCE.IterationSpecification.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.IStaticInstancePropertySingleton.html"
+          "relative_path": "api/Compze.SystemCE.LinqCE.EnumerableCE.IterationSpecification.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.LinqCE.EnumerableCE.IterationSpecification.yml",
+      "source_relative_path": "api/Compze.SystemCE.LinqCE.EnumerableCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.LinqCE.EnumerableCE.IterationSpecification.html"
+          "relative_path": "api/Compze.SystemCE.LinqCE.EnumerableCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.LinqCE.EnumerableCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.LinqCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.LinqCE.EnumerableCE.html"
+          "relative_path": "api/Compze.SystemCE.LinqCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.LinqCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.NullableCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.LinqCE.html"
+          "relative_path": "api/Compze.SystemCE.NullableCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.NullableCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.AssemblyBuilderCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.NullableCE.html"
+          "relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.AssemblyBuilderCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ReflectionCE.EmitCE.AssemblyBuilderCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.TypeBuilderCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ReflectionCE.EmitCE.AssemblyBuilderCE.html"
+          "relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.TypeBuilderCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ReflectionCE.EmitCE.TypeBuilderCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ReflectionCE.EmitCE.TypeBuilderCE.html"
+          "relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ReflectionCE.EmitCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.StrictAggregateDisposable.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ReflectionCE.EmitCE.html"
+          "relative_path": "api/Compze.SystemCE.StrictAggregateDisposable.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.StrictAggregateDisposable.yml",
+      "source_relative_path": "api/Compze.SystemCE.StrictlyManagedResourceBase-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.StrictAggregateDisposable.html"
+          "relative_path": "api/Compze.SystemCE.StrictlyManagedResourceBase-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.StrictlyManagedResourceBase-1.yml",
+      "source_relative_path": "api/Compze.SystemCE.StrictlyManagedResourceLifespanWasExceededException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.StrictlyManagedResourceBase-1.html"
+          "relative_path": "api/Compze.SystemCE.StrictlyManagedResourceLifespanWasExceededException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.StrictlyManagedResourceLifespanWasExceededException.yml",
+      "source_relative_path": "api/Compze.SystemCE.StrictlyManagedResourceWasFinalizedException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.StrictlyManagedResourceLifespanWasExceededException.html"
+          "relative_path": "api/Compze.SystemCE.StrictlyManagedResourceWasFinalizedException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.StrictlyManagedResourceWasFinalizedException.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ComponentUsedByMultipleTransactionsException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.StrictlyManagedResourceWasFinalizedException.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ComponentUsedByMultipleTransactionsException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ComponentUsedByMultipleTransactionsException.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ISingleContextUseGuard.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ComponentUsedByMultipleTransactionsException.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ISingleContextUseGuard.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ISingleContextUseGuard.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.AwaitingConditionTimeoutException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ISingleContextUseGuard.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.AwaitingConditionTimeoutException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.AwaitingConditionTimeoutException.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.EnterLockTimeoutException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.AwaitingConditionTimeoutException.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.EnterLockTimeoutException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.EnterLockTimeoutException.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.OutParamFunc-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.EnterLockTimeoutException.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.OutParamFunc-1.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.NotifyAllLock.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.NotifyAllLock.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.OutParamFunc-1.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.OutParamFunc-1.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.TasksCE.TaskCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.TasksCE.TaskCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.TasksCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.TasksCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.TasksCE.TaskCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.TasksCE.TaskCE.html"
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.TasksCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.TransactionsCE.TransactionScopeCe.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.TasksCE.html"
+          "relative_path": "api/Compze.SystemCE.TransactionsCE.TransactionScopeCe.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.yml",
+      "source_relative_path": "api/Compze.SystemCE.TransactionsCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.ThreadingCE.html"
+          "relative_path": "api/Compze.SystemCE.TransactionsCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.TransactionsCE.TransactionScopeCe.yml",
+      "source_relative_path": "api/Compze.SystemCE.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.TransactionsCE.TransactionScopeCe.html"
+          "relative_path": "api/Compze.SystemCE.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.TransactionsCE.yml",
+      "source_relative_path": "api/Compze.Testing.AssertThrows.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.TransactionsCE.html"
+          "relative_path": "api/Compze.Testing.AssertThrows.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.SystemCE.yml",
+      "source_relative_path": "api/Compze.Testing.DuplicateByPluggableComponentTest.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.SystemCE.html"
+          "relative_path": "api/Compze.Testing.DuplicateByPluggableComponentTest.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.AssertThrows.yml",
+      "source_relative_path": "api/Compze.Testing.LevelOfParallelismCEAttribute.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.AssertThrows.html"
+          "relative_path": "api/Compze.Testing.LevelOfParallelismCEAttribute.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.DuplicateByPluggableComponentTest.yml",
+      "source_relative_path": "api/Compze.Testing.LongRunningAttribute.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.DuplicateByPluggableComponentTest.html"
+          "relative_path": "api/Compze.Testing.LongRunningAttribute.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.LevelOfParallelismCEAttribute.yml",
+      "source_relative_path": "api/Compze.Testing.Performance.TimeAsserter.TimeOutException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.LevelOfParallelismCEAttribute.html"
+          "relative_path": "api/Compze.Testing.Performance.TimeAsserter.TimeOutException.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.LongRunningAttribute.yml",
+      "source_relative_path": "api/Compze.Testing.Performance.TimeAsserter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.LongRunningAttribute.html"
+          "relative_path": "api/Compze.Testing.Performance.TimeAsserter.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.Performance.TimeAsserter.TimeOutException.yml",
+      "source_relative_path": "api/Compze.Testing.Performance.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.Performance.TimeAsserter.TimeOutException.html"
+          "relative_path": "api/Compze.Testing.Performance.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.Performance.TimeAsserter.yml",
+      "source_relative_path": "api/Compze.Testing.TestEnv.DIContainer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.Performance.TimeAsserter.html"
+          "relative_path": "api/Compze.Testing.TestEnv.DIContainer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.Performance.yml",
+      "source_relative_path": "api/Compze.Testing.TestEnv.Performance.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.Performance.html"
+          "relative_path": "api/Compze.Testing.TestEnv.Performance.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.TestEnv.DIContainer.yml",
+      "source_relative_path": "api/Compze.Testing.TestEnv.PersistenceLayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.TestEnv.DIContainer.html"
+          "relative_path": "api/Compze.Testing.TestEnv.PersistenceLayer.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.TestEnv.Performance.yml",
+      "source_relative_path": "api/Compze.Testing.TestEnv.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.TestEnv.Performance.html"
+          "relative_path": "api/Compze.Testing.TestEnv.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.TestEnv.PersistenceLayer.yml",
+      "source_relative_path": "api/Compze.Testing.Threading.TestingTaskRunner.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.TestEnv.PersistenceLayer.html"
+          "relative_path": "api/Compze.Testing.Threading.TestingTaskRunner.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.TestEnv.yml",
+      "source_relative_path": "api/Compze.Testing.Threading.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.TestEnv.html"
+          "relative_path": "api/Compze.Testing.Threading.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.Threading.TestingTaskRunner.yml",
+      "source_relative_path": "api/Compze.Testing.UniversalTestBase.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.Threading.TestingTaskRunner.html"
+          "relative_path": "api/Compze.Testing.UniversalTestBase.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.Threading.yml",
+      "source_relative_path": "api/Compze.Testing.UniversalTestFixture.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.Threading.html"
+          "relative_path": "api/Compze.Testing.UniversalTestFixture.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.UniversalTestBase.yml",
+      "source_relative_path": "api/Compze.Testing.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.UniversalTestBase.html"
+          "relative_path": "api/Compze.Testing.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.UniversalTestFixture.yml",
+      "source_relative_path": "api/Compze.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Composable.Testing.UniversalTestFixture.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Composable.Testing.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Composable.Testing.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Composable.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Composable.html"
+          "relative_path": "api/Compze.html"
         }
       },
       "version": ""

@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions | Compze ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/compze/apiSpec/new?filename=Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.md&amp;value=---%0Auid%3A%20Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions">
+
+
+
+  <h1 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions" class="text-break">
+Class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L5"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Compze.html">Compze</a>.<a class="xref" href="Compze.Messaging.html">Messaging</a>.<a class="xref" href="Compze.Messaging.Buses.html">Buses</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Compze.CQRS.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">MessageHandlerRegistrarWithDependencyInjectionSupportExtensions</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__10_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7___8___9__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``10(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-10">Func</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__11_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7___8___9___10__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``11(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9,``10})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class where TDependency9 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-11">Func</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+    <dt><code>TDependency9</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__2_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``2(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1})">
+  ForCommandWithResult&lt;TCommand, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt;</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TCommand, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__3_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``3(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;TCommand, TDependency1, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__4_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``4(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-4">Func</a>&lt;TCommand, TDependency1, TDependency2, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__5_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``5(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-5">Func</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__6_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``6(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-6">Func</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__7_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``7(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-7">Func</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__8_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``8(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-8">Func</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommandWithResult__9_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7___8__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommandWithResult``9(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7,``8})">
+  ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlersWithResults.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt; handler) where TCommand : ICommand&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-9">Func</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__1_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``1(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0})">
+  ForCommand&lt;TCommand&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand&gt; handler) where TCommand : ICommand</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;TCommand&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__10_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6___7___8___9__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``10(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class where TDependency9 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-10">Action</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+    <dt><code>TDependency9</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__2_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``2(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1})">
+  ForCommand&lt;TCommand, TDependency1&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1&gt; handler) where TCommand : ICommand where TDependency1 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;TCommand, TDependency1&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__3_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``3(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-3">Action</a>&lt;TCommand, TDependency1, TDependency2&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__4_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``4(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2, TDependency3&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2, TDependency3&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class where TDependency3 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-4">Action</a>&lt;TCommand, TDependency1, TDependency2, TDependency3&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__5_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``5(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-5">Action</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__6_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``6(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-6">Action</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__7_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``7(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-7">Action</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__8_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6___7__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``8(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6,``7})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-8">Action</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForCommand__9_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6___7___8__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForCommand``9(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8})">
+  ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.CommandHandlers.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt; handler) where TCommand : ICommand where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-9">Action</a>&lt;TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TCommand</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__1_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``1(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0})">
+  ForEvent&lt;TEvent&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent&gt; handler) where TEvent : IEvent</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;TEvent&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__10_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6___7___8___9__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``10(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class where TDependency9 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-10">Action</a>&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+    <dt><code>TDependency9</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__2_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``2(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1})">
+  ForEvent&lt;TEvent, TDependency1&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1&gt; handler) where TEvent : IEvent where TDependency1 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;TEvent, TDependency1&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__3_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``3(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-3">Action</a>&lt;TEvent, TDependency1, TDependency2&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__4_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``4(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2, TDependency3&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2, TDependency3&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class where TDependency3 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-4">Action</a>&lt;TEvent, TDependency1, TDependency2, TDependency3&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__5_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``5(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-5">Action</a>&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__6_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``6(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-6">Action</a>&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__7_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``7(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-7">Action</a>&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__8_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6___7__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``8(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6,``7})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-8">Action</a>&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForEvent__9_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Action___0___1___2___3___4___5___6___7___8__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForEvent``9(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8})">
+  ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.EventHandlers.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Action&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt; handler) where TEvent : IEvent where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-9">Action</a>&lt;TEvent, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TEvent</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__10_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7___8___9__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``10(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-10">Func</a>&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__11_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7___8___9___10__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``11(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9,``10})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class where TDependency8 : class where TDependency9 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-11">Func</a>&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TDependency8</code></dt>
+    <dd></dd>
+    <dt><code>TDependency9</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__2_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``2(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1})">
+  ForQuery&lt;TQuery, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt;</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TQuery, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__3_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``3(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2})">
+  ForQuery&lt;TQuery, TDependency1, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;TQuery, TDependency1, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__4_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``4(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-4">Func</a>&lt;TQuery, TDependency1, TDependency2, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__5_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``5(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-5">Func</a>&lt;TQuery, TDependency1, TDependency2, TDependency3, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__6_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``6(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-6">Func</a>&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__7_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``7(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-7">Func</a>&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__8_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``8(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-8">Func</a>&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery_" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery*"></a>
+
+  <h3 id="Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupportExtensions_ForQuery__9_Compze_Messaging_Buses_MessageHandlerRegistrarWithDependencyInjectionSupport_System_Func___0___1___2___3___4___5___6___7___8__" data-uid="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupportExtensions.ForQuery``9(Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport,System.Func{``0,``1,``2,``3,``4,``5,``6,``7,``8})">
+  ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;(MessageHandlerRegistrarWithDependencyInjectionSupport, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;(this MessageHandlerRegistrarWithDependencyInjectionSupport @this, Func&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt; handler) where TQuery : IQuery&lt;TResult&gt; where TDependency1 : class where TDependency2 : class where TDependency3 : class where TDependency4 : class where TDependency5 : class where TDependency6 : class where TDependency7 : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>this</code> <a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-9">Func</a>&lt;TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Compze.Messaging.Buses.MessageHandlerRegistrarWithDependencyInjectionSupport.html">MessageHandlerRegistrarWithDependencyInjectionSupport</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TQuery</code></dt>
+    <dd></dd>
+    <dt><code>TDependency1</code></dt>
+    <dd></dd>
+    <dt><code>TDependency2</code></dt>
+    <dd></dd>
+    <dt><code>TDependency3</code></dt>
+    <dd></dd>
+    <dt><code>TDependency4</code></dt>
+    <dd></dd>
+    <dt><code>TDependency5</code></dt>
+    <dd></dd>
+    <dt><code>TDependency6</code></dt>
+    <dd></dd>
+    <dt><code>TDependency7</code></dt>
+    <dd></dd>
+    <dt><code>TResult</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/Buses/MessageHandlerRegistrarWithDependencyInjectionSupport.QueryHandlers.cs/#L5" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
