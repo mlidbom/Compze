@@ -25,6 +25,7 @@ class ThreadGate : IThreadGate
    public IReadOnlyList<ThreadSnapshot> RequestedThreads => _monitor.Read(() => _requestsThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> QueuedThreads => _monitor.Read(() => _queuedThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> PassedThrough => _monitor.Read(() => _passedThreads.ToList());
+   public Unit Enablelogging(bool enable = true) => Unit.From(_enableLogging = enable);
    public Action<ThreadSnapshot> PassThroughAction => _monitor.Read(() => _passThroughAction);
 
    public IThreadGate Open()
@@ -130,22 +131,25 @@ Current state of gate:
 
    IDisposable LogMethodEntryExit(string method) => _monitor.Update(() =>
    {
-      LogThreadUnsafeCallerMustLock($"Entering {method}");
-      return DisposableCE.Create(() => _monitor.Update(() => LogThreadUnsafeCallerMustLock($"Exiting  {method}")));
-   });
+      Log($"Entering {method}");
+      return DisposableCE.Create(() => _monitor.Update(() => Log($"Exiting  {method}")));
 
-   void LogThreadUnsafeCallerMustLock(string @event)
-   {
-      var message = $"{@event} {this}";
-      this.Log().Info(message);
-      _log.Add(message);
-      GlobalLogMonitor.Update(() => GlobalLog.Add(message));
-   }
+      void Log(string @event)
+      {
+         if(!_enableLogging) return;
+
+         var message = $"{@event} {this}";
+         this.Log().Info(message);
+         _log.Add(message);
+         GlobalLogMonitor.Update(() => GlobalLog.Add(message));
+      }
+   });
 
    string Name { get; }
    readonly MonitorCE _monitor;
    static readonly MonitorCE GlobalLogMonitor = MonitorCE.WithTimeout(1.Seconds());
    bool _lockOnNextPass;
+   bool _enableLogging = false;
    Action<ThreadSnapshot> _passThroughAction = _ => {};
    Action<ThreadSnapshot> _prePassThroughAction = _ => {};
    Action<ThreadSnapshot> _postPassThroughAction = _ => {};

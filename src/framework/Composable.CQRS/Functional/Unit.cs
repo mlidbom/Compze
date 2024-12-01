@@ -16,6 +16,8 @@ public struct Unit : IEquatable<Unit>, IStaticInstancePropertySingleton
       return Instance;
    }
 
+   internal static Unit From<TValue>(TValue _) => Instance;
+
    public readonly override string ToString() => "()";
 
    public readonly bool Equals(Unit _) => true;
