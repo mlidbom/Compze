@@ -1,7 +1,7 @@
 ﻿using System;
 using AccountManagement.Domain.Passwords;
-using Composable.Contracts;
-using Composable.Persistence.EventStore;
+using Compze.Contracts;
+using Compze.Persistence.EventStore;
 using Newtonsoft.Json;
 
 // ReSharper disable MemberHidesStaticFromOuterClass

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
-using Composable.Messaging;
+using Compze.Messaging;
 using Newtonsoft.Json;
 
 namespace AccountManagement.API;

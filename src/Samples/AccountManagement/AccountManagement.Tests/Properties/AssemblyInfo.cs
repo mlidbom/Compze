@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
-using Composable.Testing;
+using Compze.Testing;
 using NUnit.Framework;
 
 

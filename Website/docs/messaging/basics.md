@@ -1,7 +1,7 @@
 # Messaging Basics
 > [!NOTE]
 > The code blocks in this section contain pseudocode for illustration purposes. 
-> It is not compatible with any specific library including Composable.
+> It is not compatible with any specific library including Compze.
 
 ## Messaging
 Any method call can, if you squint, be viewed as one object sending a message to another object.

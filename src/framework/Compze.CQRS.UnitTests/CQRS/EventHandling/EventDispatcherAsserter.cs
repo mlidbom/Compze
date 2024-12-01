@@ -1,0 +1,59 @@
+﻿using Compze.Messaging;
+using Compze.Messaging.Events;
+using FluentAssertions;
+
+namespace Compze.Tests.CQRS.EventHandling;
+
+static class EventDispatcherAsserter
+{
+   internal class DispatcherAssertion<TDispatcherRootEvent> where TDispatcherRootEvent : class, IEvent
+   {
+      readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher;
+      public DispatcherAssertion(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher) => _dispatcher = dispatcher;
+
+      public RouteAssertion<TDispatcherRootEvent> Event<TPublishedEvent>(TPublishedEvent @event) where TPublishedEvent : TDispatcherRootEvent => new(_dispatcher, @event);
+   }
+
+   internal class RouteAssertion<TDispatcherRootEvent> where TDispatcherRootEvent : class, IEvent
+   {
+      readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher;
+      readonly TDispatcherRootEvent _event;
+      public RouteAssertion(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher, TDispatcherRootEvent @event)
+      {
+         _dispatcher = dispatcher;
+         _event = @event;
+      }
+
+      public void DispatchesTo<THandlerEvent>()
+         where THandlerEvent : TDispatcherRootEvent
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().For((THandlerEvent _) => callCount++);
+         _dispatcher.Dispatch(_event);
+         callCount.Should().Be(1, "Message was not dispatched to handler.");
+      }
+
+      public void DispatchesToWrapped<THandlerEvent>()
+         where THandlerEvent : IWrapperEvent<TDispatcherRootEvent>
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForWrapped((THandlerEvent _) => callCount++);
+         _dispatcher.Dispatch(_event);
+         callCount.Should().Be(1, "Message was not dispatched to handler.");
+      }
+
+      public void DoesNotDispatchToWrapped<THandlerEvent>()
+         where THandlerEvent : IWrapperEvent<TDispatcherRootEvent>
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForWrapped((THandlerEvent _) => callCount++);
+         _dispatcher.Dispatch(_event);
+         callCount.Should().Be(0, "Message was dispatched to handler.");
+      }
+   }
+
+   internal static DispatcherAssertion<TEvent> Assert<TEvent>(this IMutableEventDispatcher<TEvent> @this) where TEvent : class, IEvent => new(@this);
+}

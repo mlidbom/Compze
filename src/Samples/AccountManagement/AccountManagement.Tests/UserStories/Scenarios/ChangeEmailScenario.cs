@@ -1,8 +1,8 @@
 ﻿using AccountManagement.API;
 using AccountManagement.Domain;
-using Composable.Functional;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
+using Compze.Functional;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
 
 namespace AccountManagement.UserStories.Scenarios;
 

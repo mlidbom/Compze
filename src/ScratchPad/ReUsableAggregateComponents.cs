@@ -1,4 +1,4 @@
-﻿using Composable.Persistence.EventStore;
+﻿using Compze.Persistence.EventStore;
 // ReSharper disable All
 #pragma warning disable 414
 #pragma warning disable IDE0059 // Unnecessary assignment of a value

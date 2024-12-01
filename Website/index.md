@@ -2,7 +2,7 @@
 _layout: landing
 ---
 # Modern architecture for normal projects
-Composable provides tooling for normal modern architecture projects.
+Compze provides tooling for normal modern architecture projects.
 
 ### Modern architectures
 By modern architecture we mean software that tend to use tools or designs with labels such as Event Driven Architecture, Event Driven SOA, CQRS, Microservices, NoSql, Event Sourcing etc.
@@ -13,8 +13,8 @@ By normal projects we mean the vast majority of projects. Projects where reliabi
 ### Existing tooling and platforms
 Unfortunately, it seems to us that most modern architecture tooling and platforms do not target normal projects. Instead they sacrifice reliability on the altar of nominal scalability and availability. In our experience this tends to result in a complexity explosion as the developers try to build reliable software with tooling not designed for reliability. Ultimately scalability and availability often disappear along with both productivity and maintainability as the complexity skyrockets.
 
-### How Composable components are different
-Composable consistently prioritizes reliability, productivity and maintainability for normal projects. Therefore all our tools fully support the following:
+### How Compze components are different
+Compze consistently prioritizes reliability, productivity and maintainability for normal projects. Therefore all our tools fully support the following:
 
 * Transactions and TransactionScope.
 * High performance black box testing using the real production components.
@@ -34,18 +34,18 @@ A unified messaging platform that gives you
      * Type safe Hypermedia APIs that can be consumed with with full intellisense and type safety in
        * .Net language clients such as ASP.Net or Blazor (Blazor support not yet implemented)
        * Typescript (Not yet implemented)
- * All the features from [How Composable components are different](#how-composable-components-are-different)
+ * All the features from [How Compze components are different](#how-composable-components-are-different)
 
 ### Event Store
 * Build complex aggregates nesting entities and components in each other to arbitrary depths with ease by leveraging semantic events.
 * Refactoring of event histories including fully removing obsolete code
 * Performant on-demand generation of query models from events dramatically reduces the need for persisted query models
-* All the features from [How Composable components are different](#how-composable-components-are-different)
+* All the features from [How Compze components are different](#how-composable-components-are-different)
 
 ### Document Database
 * Save or load instances of any class serializable with Newtonsoft.Json with a single line of code.
 * Automatically tracks and persists changes to loaded documents
-* All the features from [How Composable components are different](#how-composable-components-are-different)
+* All the features from [How Compze components are different](#how-composable-components-are-different)
 
 ### Hypermedia API
 Most APIs consist of a number of service classes and interfaces. Imagine instead an APIs that is a lot like a website. That had a start resource from which you follow links to other resources where you could fill in commands and post them. That is essentially what a Hypermedia API is. Hypermedia API have these advantages among others:

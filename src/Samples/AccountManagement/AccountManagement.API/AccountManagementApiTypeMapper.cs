@@ -1,5 +1,5 @@
-﻿using Composable.Messaging;
-using Composable.Refactoring.Naming;
+﻿using Compze.Messaging;
+using Compze.Refactoring.Naming;
 
 namespace AccountManagement;
 

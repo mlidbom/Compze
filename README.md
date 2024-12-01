@@ -1,4 +1,4 @@
-# Composable
+# Compze
 
 [Project site](http://composabletk.net/)
 
@@ -10,7 +10,7 @@
 # Set up development environment
 In the root of the project:
 * Copy `TestUsingPluggableComponentCombinations.example` to `TestUsingPluggableComponentCombinations`
-* Open Composable.Everything.sln in Visual Studio 2022 or Rider.
+* Open Compze.Everything.sln in Visual Studio 2022 or Rider.
 
 ## Tests
 * Preferably you should have administrator access to a SQL database server. By default, Microsoft SQL Server 
@@ -18,7 +18,7 @@ In the root of the project:
 * If this connection string is valid you're good to go, otherwise set the environment variable below:
   `Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;`
 
->Running the tests will create several databases on your SQL server prefixed: `Composable_DatabasePool_`.  
+>Running the tests will create several databases on your SQL server prefixed: `Compze_DatabasePool_`.  
 
 >If you don't have any Sql server, configure `TestUsingPluggableComponentCombinations` to use only the `Memory` `PersistenceLayer`.
  

@@ -1,4 +1,4 @@
-using Composable.Refactoring.Naming;
+using Compze.Refactoring.Naming;
 
 namespace AccountManagement;
 
@@ -6,7 +6,7 @@ static class DomainTypeMapper
 {
    //In order to allow you to rename types when you need to composable does not use type names in the persisted data in the event store, document database or the service bus.
    //In order to enable you to freely rename and move types you must map each concrete type to a unique Guid.
-   //To make this as easy as possible for you Composable will detect missing mappings and throw an exception telling exactly which lines of code you need to paste into the method below.
+   //To make this as easy as possible for you Compze will detect missing mappings and throw an exception telling exactly which lines of code you need to paste into the method below.
    //The lines you see here are pasted directly from the message in such an exception.
    public static void MapTypes(ITypeMappingRegistar typeMapper)
    {
@@ -28,7 +28,7 @@ static class DomainTypeMapper
         .Map<Domain.Events.AccountEvent.UserChangedPassword>("0f7e4685-20d6-4f3e-ab32-9d153bbdbfee")
         .Map<Domain.Events.AccountEvent.UserRegistered>("2c648c9f-4860-46e3-a672-6d81ea35cd3f")
         .Map<Domain.Events.AccountEvent.LoginAttempted>("e6f64c0d-bd21-45d1-8737-4764912fc303")
-        .Map<Composable.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>>("bae6bbcc-e69e-40ce-8872-d2683bfe4410")
+        .Map<Compze.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>>("bae6bbcc-e69e-40ce-8872-d2683bfe4410")
         .Map<AccountManagement.UI.QueryModels.AccountStatistics.SingletonStatisticsQueryModel>("2bc73c9f-df0a-4abd-b101-69e8ec7d01ec");
    }
 }

@@ -1,12 +1,12 @@
 ﻿using System;
 using AccountManagement.Domain.Events;
-using Composable.DependencyInjection;
-using Composable.Functional;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.DependencyInjection;
+using Compze.Functional;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace AccountManagement.UI.QueryModels;
 

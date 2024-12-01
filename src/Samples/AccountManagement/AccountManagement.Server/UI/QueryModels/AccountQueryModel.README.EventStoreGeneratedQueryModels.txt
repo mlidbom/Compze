@@ -7,7 +7,7 @@ Advantages:
 * Since events are agressively cached(1) this should be faster than fetching a query model from a document db.
 
 Disadvantages: 
-* Increases the risk of locking issues under high multi threaded load. (FIXED: Composable now requires the database to use read committed snapshot as the default isolation level and that does not have this problem.)
+* Increases the risk of locking issues under high multi threaded load. (FIXED: Compze now requires the database to use read committed snapshot as the default isolation level and that does not have this problem.)
 * Requires the clients to reference the events and the event store. (FIXED: Since you now expose only your Hypermedia API only the SOA contract types are exposed.)
 
 Recommendations:
@@ -19,4 +19,4 @@ If your query model's identity does not match the identity of an aggregate you m
 If your query model needs data from the history of many aggregates and this causes you to run into performance issues: Preaggregate the data into a persisted query model. See: AccountStatistics
 
 
-1) Caching events is safe because events never change once created. Composable enforces that event types have no public mutable data. Running into problems requires willful breaking of this rule by applying attributes that allow mutable data. 
+1) Caching events is safe because events never change once created. Compze enforces that event types have no public mutable data. Running into problems requires willful breaking of this rule by applying attributes that allow mutable data. 

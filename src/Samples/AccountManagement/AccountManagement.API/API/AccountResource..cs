@@ -1,6 +1,6 @@
 ﻿using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
-using Composable.DDD;
+using Compze.DDD;
 using Newtonsoft.Json;
 
 namespace AccountManagement.API;

@@ -2,9 +2,9 @@
 #pragma warning disable //Review OK: This is API experimental code that is never ever used.
 
 using System;
-using Composable.Messaging;
+using Compze.Messaging;
 
-namespace Composable.Tests.Messaging.APIDraft.Policyv2;
+namespace Compze.Tests.Messaging.APIDraft.Policyv2;
 
 interface IHandlerPolicyConfigurationBuilder
 {

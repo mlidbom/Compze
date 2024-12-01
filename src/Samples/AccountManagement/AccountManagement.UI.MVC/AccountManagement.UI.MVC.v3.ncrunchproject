@@ -3,6 +3,5 @@
     <HiddenComponentWarnings>
       <Value>InconsistentCompilerResultsOverGrid</Value>
     </HiddenComponentWarnings>
-    <NUnit3Enabled>False</NUnit3Enabled>
   </Settings>
 </ProjectConfiguration>

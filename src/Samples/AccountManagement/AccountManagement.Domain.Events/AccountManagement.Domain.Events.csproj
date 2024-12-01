@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-    <ProjectReference Include="..\..\..\framework\Composable.CQRS\Composable.CQRS.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.CQRS\Compze.CQRS.csproj" />
   </ItemGroup>
   
 

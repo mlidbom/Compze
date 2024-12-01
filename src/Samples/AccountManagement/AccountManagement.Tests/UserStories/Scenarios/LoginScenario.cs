@@ -1,6 +1,6 @@
 ﻿using AccountManagement.API;
-using Composable.Functional;
-using Composable.Messaging.Buses;
+using Compze.Functional;
+using Compze.Messaging.Buses;
 
 namespace AccountManagement.UserStories.Scenarios;
 

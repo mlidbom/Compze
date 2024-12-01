@@ -1,7 +1,7 @@
 ﻿// ReSharper disable All
 #pragma warning disable //Review OK: This is API experimental code that is never ever used.
 
-namespace Composable.Tests.Messaging.APIDraft.Policyv2;
+namespace Compze.Tests.Messaging.APIDraft.Policyv2;
 
 public class PausingAllOtherHandlers
 {

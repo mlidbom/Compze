@@ -1,17 +1,17 @@
 ﻿using AccountManagement.Domain.Events;
-using Composable;
-using Composable.Functional;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.DocumentDb;
+using Compze;
+using Compze.Functional;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.DocumentDb;
 using JetBrains.Annotations;
-using AccountLink = Composable.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
+using AccountLink = Compze.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
 
 namespace AccountManagement.Domain;
 
 [UsedImplicitly] class EmailToAccountMapper
 {
-   static DocumentDbApi DocumentDb => new ComposableApi().DocumentDb;
+   static DocumentDbApi DocumentDb => new CompzeApi().DocumentDb;
 
    internal static void UpdateMappingWhenEmailChanges(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForEvent(
       (AccountEvent.PropertyUpdated.Email emailUpdated, ILocalHypermediaNavigator navigator) =>

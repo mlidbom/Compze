@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyDescription("Composable")]
+[assembly: AssemblyDescription("Compze")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Composable")]
+[assembly: AssemblyCompany("Compze")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -24,19 +24,19 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.5.0.0")]
 
 
-[assembly: InternalsVisibleTo("Composable.HyperBus")]
+[assembly: InternalsVisibleTo("Compze.HyperBus")]
 [assembly: InternalsVisibleTo("NetMqProcess01")]
 [assembly: InternalsVisibleTo("NetMqProcess02")]
 [assembly: InternalsVisibleTo("NSpec.NUnit")]
-[assembly: InternalsVisibleTo("Composable.Testing")]
-[assembly: InternalsVisibleTo("Composable.CQRS.ExternalDependencies")]
-[assembly: InternalsVisibleTo("Composable.CQRS.Tests")]
-[assembly: InternalsVisibleTo("Composable.CQRS.Tests.SQLServer")]
-[assembly: InternalsVisibleTo("Composable.CQRS.Tests.MySql")]
-[assembly: InternalsVisibleTo("Composable.CQRS.Tests.InMemory")]
-[assembly: InternalsVisibleTo("Composable.CQRS.UnitTests")]
-[assembly: InternalsVisibleTo("Composable.CQRS.ExternalDependencies.Tests")]
-[assembly: InternalsVisibleTo("Composable.PerformanceTests")]
+[assembly: InternalsVisibleTo("Compze.Testing")]
+[assembly: InternalsVisibleTo("Compze.CQRS.ExternalDependencies")]
+[assembly: InternalsVisibleTo("Compze.CQRS.Tests")]
+[assembly: InternalsVisibleTo("Compze.CQRS.Tests.SQLServer")]
+[assembly: InternalsVisibleTo("Compze.CQRS.Tests.MySql")]
+[assembly: InternalsVisibleTo("Compze.CQRS.Tests.InMemory")]
+[assembly: InternalsVisibleTo("Compze.CQRS.UnitTests")]
+[assembly: InternalsVisibleTo("Compze.CQRS.ExternalDependencies.Tests")]
+[assembly: InternalsVisibleTo("Compze.PerformanceTests")]
 
 [assembly: InternalsVisibleTo("ScratchPad")]
 

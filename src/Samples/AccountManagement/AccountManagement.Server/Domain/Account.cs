@@ -3,11 +3,11 @@ using AccountManagement.API;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
-using Composable.Contracts;
-using Composable.Functional;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.EventStore.Aggregates;
+using Compze.Contracts;
+using Compze.Functional;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.EventStore.Aggregates;
 
 namespace AccountManagement.Domain;
 

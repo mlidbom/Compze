@@ -1,5 +1,5 @@
 ﻿using AccountManagement.Domain.Registration;
-using Composable.Contracts;
+using Compze.Contracts;
 using Newtonsoft.Json;
 
 // ReSharper disable MemberCanBeMadeStatic.Global Because we want these members to be accessed through the fluent API we don't want to make them static.
