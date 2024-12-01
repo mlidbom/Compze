@@ -25,17 +25,14 @@ The System.Type returned by `message.GetType()`.
 **Message Handler**  
 In principle just a function that takes a message as a parameter.
 
-    void Handle(RegisterAccountCommand command);
+[!code-csharp[](basics.cs#message_handler)]
 
 
 In practice most message handlers need to have one or more dependencies injected into them.
 In order to support this handlers are often required to be wrapped inside interfaces.
  That way instances of implementing classes can be resolved from an IOC container easily.
 
-    interface IMessageHandler<RegisterAccountCommand>
-    {
-        void Handle(RegisterAccountCommand aMessage);
-    }
+[!code-csharp[](basics.cs#register_account_command_handler)]
 
 **Routing**  
 The mechanism by which messages are delivered to handlers.
