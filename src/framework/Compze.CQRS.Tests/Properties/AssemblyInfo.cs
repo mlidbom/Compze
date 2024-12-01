@@ -40,7 +40,7 @@ using NUnit.Framework;
 [assembly: AssemblyVersion("1.0.0.0")]
 
 
-[assembly: InternalsVisibleTo("Composable.PerformanceTests")]
+[assembly: InternalsVisibleTo("Compze.PerformanceTests")]
 
 #if !NCRUNCH
 [assembly: Parallelizable(ParallelScope.Fixtures)]

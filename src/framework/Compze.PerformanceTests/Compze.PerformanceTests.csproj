@@ -29,10 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Composable.CQRS.ExternalDependencies\Composable.CQRS.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\Composable.CQRS.Tests\Composable.CQRS.Tests.csproj" />
-    <ProjectReference Include="..\Composable.CQRS.UnitTests\Composable.CQRS.UnitTests.csproj" />
-    <ProjectReference Include="..\Composable.CQRS\Composable.CQRS.csproj" />
+    <ProjectReference Include="..\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\Compze.CQRS.Tests\Compze.CQRS.Tests.csproj" />
+    <ProjectReference Include="..\Compze.CQRS.UnitTests\Compze.CQRS.UnitTests.csproj" />
+    <ProjectReference Include="..\Compze.CQRS\Compze.CQRS.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,13 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Configurations>Debug;Release</Configurations>
     <PlatformTarget>x64</PlatformTarget>
+    <IsPackable>false</IsPackable>
+    <Configurations>Debug;Release</Configurations>
     <Nullable>disable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <SignAssembly>False</SignAssembly>
-    <AssemblyOriginatorKeyFile>Void.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>False</DelaySign>
     <RootNamespace>Composable.Tests</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -25,15 +23,14 @@
 
 
   <ItemGroup>
-    <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Remove="appsettings-testing.json" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+    <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
     <PackageReference Include="NUnit" Version="4.2.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0">
       <PrivateAssets>all</PrivateAssets>
@@ -45,18 +42,28 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
+  
   <ItemGroup>
-    <ProjectReference Include="..\Composable.CQRS.ExternalDependencies\Composable.CQRS.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\Composable.CQRS\Composable.CQRS.csproj" />
-    <ProjectReference Include="..\Composable.Messaging.Hypermedia.Server\Composable.Messaging.Hypermedia.Server.csproj" />
-    <ProjectReference Include="..\Composable.Testing\Composable.Testing.csproj" />
+    <ProjectReference Include="..\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\Compze.CQRS\Compze.CQRS.csproj" />
+    <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="C:\Dev\Composable\src\framework\Composable.CQRS.UnitTests\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Dev\Composable\src\framework\Composable.CQRS.UnitTests\.editorconfig" />
   </ItemGroup>
 
 </Project>
