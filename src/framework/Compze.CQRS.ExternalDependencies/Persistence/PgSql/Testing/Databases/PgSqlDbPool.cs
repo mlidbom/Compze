@@ -1,13 +1,13 @@
 using System;
-using Composable.Functional;
+using Compze.Functional;
 using Npgsql;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.Testing.Databases;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Testing.Databases;
 #pragma warning disable CA1308 // Normalize strings to uppercase
 
-namespace Composable.Persistence.PgSql.Testing.Databases;
+namespace Compze.Persistence.PgSql.Testing.Databases;
 
 sealed class PgSqlDbPool : DbPool
 {

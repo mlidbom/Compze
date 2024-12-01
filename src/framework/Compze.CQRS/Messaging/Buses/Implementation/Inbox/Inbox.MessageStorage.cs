@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Contracts;
+using Compze.SystemCE.ReflectionCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 class InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) : Inbox.IMessageStorage
 {

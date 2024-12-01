@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using Composable.GenericAbstractions.Hierarchies;
-using Composable.SystemCE.LinqCE;
-using Composable.Testing;
+using Compze.GenericAbstractions.Hierarchies;
+using Compze.SystemCE.LinqCE;
+using Compze.Testing;
 using NUnit.Framework;
 
-namespace Composable.Tests.Linq;
+namespace Compze.Tests.Linq;
 
 [TestFixture]
 public class HierarchyTests : UniversalTestBase

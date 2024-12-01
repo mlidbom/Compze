@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE;
+using Compze.SystemCE;
 
-namespace Composable.Functional;
+namespace Compze.Functional;
 
 ///<summary>The functional programming unit concept. Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>. Simply return <see cref="Unit"/> instead of void from methods with no return value.</summary>
 public struct Unit : IEquatable<Unit>, IStaticInstancePropertySingleton

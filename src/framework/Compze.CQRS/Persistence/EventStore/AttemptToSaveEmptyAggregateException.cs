@@ -1,6 +1,6 @@
 using System;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 public class AttemptToSaveEmptyAggregateException : Exception
 {

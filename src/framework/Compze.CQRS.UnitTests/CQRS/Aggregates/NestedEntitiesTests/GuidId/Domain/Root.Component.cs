@@ -1,8 +1,8 @@
 using System;
-using Composable.Persistence.EventStore.Aggregates;
-using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Persistence.EventStore.Aggregates;
+using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 
 partial class Component : Root.Component<Component, RootEvent.Component.Implementation.Root, RootEvent.Component.IRoot>
 {

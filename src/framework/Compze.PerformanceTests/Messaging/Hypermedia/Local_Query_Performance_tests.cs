@@ -1,12 +1,12 @@
 ﻿using System;
-using Composable.DependencyInjection;
-using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
+using Compze.DependencyInjection;
+using Compze.SystemCE;
+using Compze.SystemCE.DiagnosticsCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
 using NUnit.Framework;
 
-namespace Composable.Tests.Messaging.Hypermedia;
+namespace Compze.Tests.Messaging.Hypermedia;
 
 public class Local_Query_performance_tests(string pluggableComponentsCombination) : PerformanceTestBase(pluggableComponentsCombination)
 {

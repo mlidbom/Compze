@@ -1,17 +1,17 @@
-﻿using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.PgSql.DocumentDb;
-using Composable.Persistence.PgSql.EventStore;
-using Composable.Persistence.PgSql.Messaging.Buses.Implementation;
-using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.Persistence.PgSql.Testing.Databases;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE.ConfigurationCE;
+﻿using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.PgSql.DocumentDb;
+using Compze.Persistence.PgSql.EventStore;
+using Compze.Persistence.PgSql.Messaging.Buses.Implementation;
+using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PgSql.Testing.Databases;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE.ConfigurationCE;
 
-namespace Composable.Persistence.PgSql.DependencyInjection;
+namespace Compze.Persistence.PgSql.DependencyInjection;
 
 public static class PgSqlPersistenceLayerRegistrar
 {

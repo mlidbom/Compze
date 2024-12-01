@@ -3,10 +3,10 @@ using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using Composable.Contracts;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.Persistence.EventStore.PersistenceLayer;
+namespace Compze.Persistence.EventStore.PersistenceLayer;
 
 readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {

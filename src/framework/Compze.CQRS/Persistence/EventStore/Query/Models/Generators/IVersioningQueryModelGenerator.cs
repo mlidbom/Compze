@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.Functional;
+using Compze.Functional;
 
-namespace Composable.Persistence.EventStore.Query.Models.Generators;
+namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
 interface IVersioningQueryModelGenerator : IQueryModelGenerator;
 

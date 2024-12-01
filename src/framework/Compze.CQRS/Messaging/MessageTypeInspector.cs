@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.Messaging;
+namespace Compze.Messaging;
 
 partial class MessageTypeInspector
 {

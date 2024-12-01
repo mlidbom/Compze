@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Transactions;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE.TransactionsCE;
+namespace Compze.SystemCE.TransactionsCE;
 
 static class TransactionCE
 {

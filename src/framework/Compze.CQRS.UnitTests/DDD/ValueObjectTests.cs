@@ -1,12 +1,12 @@
 using System;
-using Composable.DDD;
-using Composable.Testing;
+using Compze.DDD;
+using Compze.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
 #pragma warning disable CA1823 //Review OK:unread private members are intentional in this test.
 #pragma warning disable CA1508 //Yes I use code where the value of the comparisons can be statically deternmined. It's on purpose.
 
-namespace Composable.Tests.DDD;
+namespace Compze.Tests.DDD;
 
 [TestFixture]
 public class ValueObjectTests : UniversalTestBase

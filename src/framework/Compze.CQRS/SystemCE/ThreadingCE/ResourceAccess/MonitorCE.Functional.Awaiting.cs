@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class MonitorCE
 {

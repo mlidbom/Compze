@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 
 public class QueryModelEntityCollection<TEntity, TEntityId> : IReadonlyQueryModelEntityCollection<TEntity, TEntityId> where TEntityId : notnull
 {

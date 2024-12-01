@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Composable.SystemCE;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
+using Compze.SystemCE;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
 
-namespace Composable.Persistence.InMemory.EventStore;
+namespace Compze.Persistence.InMemory.EventStore;
 
 partial class InMemoryEventStorePersistenceLayer
 {

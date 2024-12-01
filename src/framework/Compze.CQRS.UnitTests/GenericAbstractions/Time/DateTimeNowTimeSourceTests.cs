@@ -1,11 +1,11 @@
 ﻿using System;
-using Composable.GenericAbstractions.Time;
-using Composable.SystemCE;
-using Composable.Testing;
+using Compze.GenericAbstractions.Time;
+using Compze.SystemCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.GenericAbstractions.Time;
+namespace Compze.Tests.GenericAbstractions.Time;
 
 [TestFixture]
 public class DateTimeNowTimeSourceTests : UniversalTestBase

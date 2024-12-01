@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.SystemCE.ThreadingCE;
+using Compze.DependencyInjection;
+using Compze.SystemCE.ThreadingCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 partial class Inbox
 {

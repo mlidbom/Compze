@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.Messaging.Events;
+namespace Compze.Messaging.Events;
 
 public interface IEventHandlerRegistrar<in TEvent>
    where TEvent : class, IEvent

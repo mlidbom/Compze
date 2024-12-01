@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.SystemCE;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using MySql.Data.MySqlClient;
-using Schema = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
+using Schema = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.DocumentDb;
+namespace Compze.Persistence.MySql.DocumentDb;
 
 partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {

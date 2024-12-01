@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Composable.Messaging.Hypermedia;
+namespace Compze.Messaging.Hypermedia;
 
 //Todo: Build a pipeline to handle things like command validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
 [UsedImplicitly] class RemoteHypermediaNavigator(ITransport transport) : IRemoteHypermediaNavigator

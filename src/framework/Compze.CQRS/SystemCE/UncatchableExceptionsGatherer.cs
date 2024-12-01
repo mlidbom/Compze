@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Functional;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Functional;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 static class UncatchableExceptionsGatherer
 {

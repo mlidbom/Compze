@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.SystemCE.TransactionsCE;
+namespace Compze.SystemCE.TransactionsCE;
 
 static class VolatileLambdaTransactionParticipantExtensions
 {

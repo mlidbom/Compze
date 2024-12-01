@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.Functional;
+using Compze.Functional;
 using Serilog;
 
-namespace Composable.Logging.Serilog;
+namespace Compze.Logging.Serilog;
 
 class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Testing;
+namespace Compze.Testing;
 
 public static class AssertThrows
 {

@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
-using Composable.Persistence.EventStore;
-using Composable.SystemCE;
+using Compze.Persistence.EventStore;
+using Compze.SystemCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Composable.Serialization;
+namespace Compze.Serialization;
 
 class IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
 {

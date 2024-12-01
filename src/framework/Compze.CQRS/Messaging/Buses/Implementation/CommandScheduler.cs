@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.GenericAbstractions.Time;
-using Composable.SystemCE;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.SystemCE.TransactionsCE;
+using Compze.GenericAbstractions.Time;
+using Compze.SystemCE;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.TransactionsCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) : IDisposable
 {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 static class CommandValidator
 {

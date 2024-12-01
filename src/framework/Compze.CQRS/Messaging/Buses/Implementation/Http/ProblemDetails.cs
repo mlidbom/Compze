@@ -2,11 +2,11 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Composable.Messaging.Buses.Implementation.Http;
+namespace Compze.Messaging.Buses.Implementation.Http;
 
 [UsedImplicitly] class ProblemDetails
 {

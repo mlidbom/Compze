@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.DependencyInjection.Testing;
-using Composable.GenericAbstractions.Time;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Refactoring.Migrations;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing.Performance;
-using Composable.Tests.CQRS.EventRefactoring.Migrations.Events;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Testing;
+using Compze.GenericAbstractions.Time;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Refactoring.Migrations;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing.Performance;
+using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using NUnit.Framework;
-using Composable.Testing;
+using Compze.Testing;
 using JetBrains.Annotations;
 
-namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
 
 [LongRunning]
 public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)

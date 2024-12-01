@@ -1,9 +1,9 @@
 ﻿using System;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using JetBrains.Annotations;
 
-namespace Composable.Logging;
+namespace Compze.Logging;
 
 static class ConsoleCE
 {

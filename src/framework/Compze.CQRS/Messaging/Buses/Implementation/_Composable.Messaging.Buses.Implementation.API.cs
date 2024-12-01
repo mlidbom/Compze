@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Composable.Messaging.Events;
-using Composable.Persistence.EventStore;
+using Compze.Messaging.Events;
+using Compze.Persistence.EventStore;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 interface IEventStoreEventPublisher
 {

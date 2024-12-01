@@ -1,5 +1,5 @@
 ﻿using System;
 
-namespace Composable.Persistence.EventStore.Refactoring.Migrations;
+namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 
 public class NonIdempotentMigrationDetectedException : Exception;

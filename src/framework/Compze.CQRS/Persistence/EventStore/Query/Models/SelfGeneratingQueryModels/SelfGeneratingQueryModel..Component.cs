@@ -1,6 +1,6 @@
-﻿using Composable.Messaging.Events;
+﻿using Compze.Messaging.Events;
 
-namespace Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 
 public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TAggregateEvent>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel,  TAggregateEvent>

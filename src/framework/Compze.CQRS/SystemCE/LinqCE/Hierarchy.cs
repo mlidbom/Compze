@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Composable.SystemCE.LinqCE;
+namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
 static class Hierarchy

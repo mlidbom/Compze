@@ -1,6 +1,6 @@
 using System;
 
-namespace Composable.DDD;
+namespace Compze.DDD;
 
 ///<summary>Base class for persistent entities with versioning information</summary>
 public class VersionedEntity<T> : Entity<T> where T : VersionedEntity<T>

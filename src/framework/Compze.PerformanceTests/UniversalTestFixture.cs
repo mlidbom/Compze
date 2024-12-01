@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
 
-namespace Composable.Tests;
+namespace Compze.Tests;
 
-[SetUpFixture] public class UniversalTestFixture : Composable.Testing.UniversalTestFixture;
+[SetUpFixture] public class UniversalTestFixture : Compze.Testing.UniversalTestFixture;

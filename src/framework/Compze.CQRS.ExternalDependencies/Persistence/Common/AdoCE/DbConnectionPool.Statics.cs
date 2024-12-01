@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE;
 
 abstract partial class DbConnectionManager<TConnection, TCommand>
    where TConnection : IPoolableConnection, IComposableDbConnection<TCommand>

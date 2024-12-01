@@ -1,10 +1,10 @@
 using System;
 using System.Transactions;
-using Composable.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.SystemExtensions;
 using JetBrains.Annotations;
 using MySql.Data.MySqlClient;
 
-namespace Composable.Persistence.MySql.EventStore;
+namespace Compze.Persistence.MySql.EventStore;
 
 class MySqlEventStoreConnectionManager
 {

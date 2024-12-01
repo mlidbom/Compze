@@ -1,9 +1,9 @@
 using System;
-using Composable.DDD;
-using Composable.Testing;
+using Compze.DDD;
+using Compze.Testing;
 using NUnit.Framework;
 
-namespace Composable.Tests.DDD;
+namespace Compze.Tests.DDD;
 
 #pragma warning disable CA1508 //Avoid dead conditional code
 

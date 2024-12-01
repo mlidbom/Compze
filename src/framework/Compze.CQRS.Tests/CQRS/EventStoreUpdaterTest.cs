@@ -4,28 +4,28 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
-using Composable.DependencyInjection;
-using Composable.DependencyInjection.Testing;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.Persistence.EventStore;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.SystemCE.TransactionsCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
-using Composable.Testing.Threading;
-using Composable.Testing.Transactions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Testing;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.Persistence.EventStore;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE;
+using Compze.SystemCE.DiagnosticsCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.TransactionsCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
+using Compze.Testing.Threading;
+using Compze.Testing.Transactions;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 // ReSharper disable AccessToDisposedClosure
 
-namespace Composable.Tests.CQRS;
+namespace Compze.Tests.CQRS;
 
 //[ConfigurationBasedDuplicateByDimensions]
 public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
@@ -51,21 +51,21 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
                      .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
 
       _serviceLocator.Resolve<ITypeMappingRegistar>()
-                     .Map<Composable.Tests.CQRS.User>("2cfabb11-5e5a-494d-898f-8bfc654544eb")
-                     .Map<Composable.Tests.CQRS.IUserEvent>("0727c209-2f49-46ab-a56b-a1332415a895")
-                     .Map<Composable.Tests.CQRS.MigratedAfterUserChangedEmailEvent>("9ff42a12-f28c-447a-8aa1-79e6f685fa41")
-                     .Map<Composable.Tests.CQRS.MigratedBeforeUserRegisteredEvent>("3338e1d4-3839-4f63-9248-ea4dd30c8348")
-                     .Map<Composable.Tests.CQRS.MigratedReplaceUserChangedPasswordEvent>("45db6370-f7e7-4eb8-b792-845485d86295")
-                     .Map<Composable.Tests.CQRS.UserChangedEmail>("40ae1f6d-5f95-4c60-ac5f-21a3d1c85de9")
-                     .Map<Composable.Tests.CQRS.UserChangedPassword>("0b3b57f6-fd69-4da1-bb52-15033495f044")
-                     .Map<Composable.Tests.CQRS.UserEvent>("fa71e035-571d-4231-bd65-e667c138ec36")
-                     .Map<Composable.Tests.CQRS.UserRegistered>("03265864-8e1d-4eb7-a7a9-63dfc2b965de")
-                     .Map<Composable.Tests.CQRS.IMigratedAfterUserChangedEmailEvent>("4ed567a3-724a-48d5-80f2-58978ca66922")
-                     .Map<Composable.Tests.CQRS.IMigratedBeforeUserRegisteredEvent>("dbe74932-9a8d-4977-8f85-d55de7711f26")
-                     .Map<Composable.Tests.CQRS.IMigratedReplaceUserChangedPasswordEvent>("798d793d-1866-41e5-8d59-26bf285dfc80")
-                     .Map<Composable.Tests.CQRS.IUserChangedEmail>("27cfff73-9f21-4835-83d1-fbb4d58419e3")
-                     .Map<Composable.Tests.CQRS.IUserChangedPassword>("9ee2f0e9-af5c-469b-8b85-7eda6a856b81")
-                     .Map<Composable.Tests.CQRS.IUserRegistered>("6a9b3276-cedc-4dae-a15c-4d386c935a48");
+                     .Map<Compze.Tests.CQRS.User>("2cfabb11-5e5a-494d-898f-8bfc654544eb")
+                     .Map<Compze.Tests.CQRS.IUserEvent>("0727c209-2f49-46ab-a56b-a1332415a895")
+                     .Map<Compze.Tests.CQRS.MigratedAfterUserChangedEmailEvent>("9ff42a12-f28c-447a-8aa1-79e6f685fa41")
+                     .Map<Compze.Tests.CQRS.MigratedBeforeUserRegisteredEvent>("3338e1d4-3839-4f63-9248-ea4dd30c8348")
+                     .Map<Compze.Tests.CQRS.MigratedReplaceUserChangedPasswordEvent>("45db6370-f7e7-4eb8-b792-845485d86295")
+                     .Map<Compze.Tests.CQRS.UserChangedEmail>("40ae1f6d-5f95-4c60-ac5f-21a3d1c85de9")
+                     .Map<Compze.Tests.CQRS.UserChangedPassword>("0b3b57f6-fd69-4da1-bb52-15033495f044")
+                     .Map<Compze.Tests.CQRS.UserEvent>("fa71e035-571d-4231-bd65-e667c138ec36")
+                     .Map<Compze.Tests.CQRS.UserRegistered>("03265864-8e1d-4eb7-a7a9-63dfc2b965de")
+                     .Map<Compze.Tests.CQRS.IMigratedAfterUserChangedEmailEvent>("4ed567a3-724a-48d5-80f2-58978ca66922")
+                     .Map<Compze.Tests.CQRS.IMigratedBeforeUserRegisteredEvent>("dbe74932-9a8d-4977-8f85-d55de7711f26")
+                     .Map<Compze.Tests.CQRS.IMigratedReplaceUserChangedPasswordEvent>("798d793d-1866-41e5-8d59-26bf285dfc80")
+                     .Map<Compze.Tests.CQRS.IUserChangedEmail>("27cfff73-9f21-4835-83d1-fbb4d58419e3")
+                     .Map<Compze.Tests.CQRS.IUserChangedPassword>("9ee2f0e9-af5c-469b-8b85-7eda6a856b81")
+                     .Map<Compze.Tests.CQRS.IUserRegistered>("6a9b3276-cedc-4dae-a15c-4d386c935a48");
    }
 
    [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync().CaF();

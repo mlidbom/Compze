@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.DDD;
-using Composable.DependencyInjection;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Refactoring.Naming;
+using Compze.Contracts;
+using Compze.DDD;
+using Compze.DependencyInjection;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Refactoring.Naming;
 using Newtonsoft.Json;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 ///<summary>Dispatches messages between processes.</summary>
 public interface IServiceBusSession

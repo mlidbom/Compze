@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Composable.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
 interface IReadonlySetCEx<TItem> : IReadOnlyCollection<TItem>
 {

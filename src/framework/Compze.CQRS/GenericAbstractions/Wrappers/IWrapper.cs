@@ -1,4 +1,4 @@
-﻿namespace Composable.GenericAbstractions.Wrappers;
+﻿namespace Compze.GenericAbstractions.Wrappers;
 
 /// <summary>
 /// Represents the generic concept of a type that extends another type by containing a value of the other type.

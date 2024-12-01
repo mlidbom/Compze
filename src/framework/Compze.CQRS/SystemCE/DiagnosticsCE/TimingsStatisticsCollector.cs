@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable UnusedMember.Local
 
-namespace Composable.SystemCE.DiagnosticsCE;
+namespace Compze.SystemCE.DiagnosticsCE;
 
 //Todo: Replace implementation with App.Metrics https://www.app-metrics.io/getting-started/metric-types/timers/. Design a wrapper around App.Metrics that can be injected and used as simply and flexibly as this class.
 class TimingsStatisticsCollector

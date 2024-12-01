@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Composable.Persistence.EventStore;
-using Composable.SystemCE.LinqCE;
+using Compze.Persistence.EventStore;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.Tests.CQRS;
+namespace Compze.Tests.CQRS;
 
 static class EventStorageTestHelper
 {

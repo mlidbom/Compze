@@ -1,17 +1,17 @@
-﻿using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.MySql.DocumentDb;
-using Composable.Persistence.MySql.EventStore;
-using Composable.Persistence.MySql.Messaging.Buses.Implementation;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.Persistence.MySql.Testing.Databases;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE.ConfigurationCE;
+﻿using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.MySql.DocumentDb;
+using Compze.Persistence.MySql.EventStore;
+using Compze.Persistence.MySql.Messaging.Buses.Implementation;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.Testing.Databases;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE.ConfigurationCE;
 
-namespace Composable.Persistence.MySql.DependencyInjection;
+namespace Compze.Persistence.MySql.DependencyInjection;
 
 public static class MySqlPersistenceLayerRegistrar
 {

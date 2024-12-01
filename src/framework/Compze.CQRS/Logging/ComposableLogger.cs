@@ -1,9 +1,9 @@
 ﻿using System;
-using Composable.Functional;
+using Compze.Functional;
 
 // ReSharper disable UnusedMember.Global
 
-namespace Composable.Logging;
+namespace Compze.Logging;
 
 interface ILogger
 {

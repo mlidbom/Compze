@@ -1,4 +1,4 @@
-﻿using Composable.Testing;
+﻿using Compze.Testing;
 using NUnit.Framework;
 
 #if !NCRUNCH

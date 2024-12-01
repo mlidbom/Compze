@@ -1,10 +1,10 @@
 using System;
 using System.Data;
-using Composable.SystemCE;
+using Compze.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace Composable.Persistence.PgSql.SystemExtensions;
+namespace Compze.Persistence.PgSql.SystemExtensions;
 
 static class NpgsqlCommandParameterExtensions
 {

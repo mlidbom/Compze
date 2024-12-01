@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 
 public interface IReadonlyQueryModelEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity>
 {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Composable.Contracts;
+using Compze.Contracts;
 
 namespace AccountManagement.Domain.Passwords;
 

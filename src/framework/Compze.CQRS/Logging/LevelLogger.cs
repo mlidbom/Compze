@@ -1,6 +1,6 @@
-﻿using Composable.Functional;
+﻿using Compze.Functional;
 
-namespace Composable.Logging;
+namespace Compze.Logging;
 
 interface ILevelLogger
 {

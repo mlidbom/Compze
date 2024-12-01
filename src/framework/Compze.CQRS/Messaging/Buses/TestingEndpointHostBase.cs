@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Logging;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.DependencyInjection;
+using Compze.Logging;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
-using Composable.Testing.Logging.Serilog;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
+using Compze.Testing.Logging.Serilog;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using Serilog;

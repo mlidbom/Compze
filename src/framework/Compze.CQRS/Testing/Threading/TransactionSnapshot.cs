@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Transactions;
 
-namespace Composable.Testing.Threading;
+namespace Compze.Testing.Threading;
 
 class TransactionSnapshot(Transaction transaction)
 {

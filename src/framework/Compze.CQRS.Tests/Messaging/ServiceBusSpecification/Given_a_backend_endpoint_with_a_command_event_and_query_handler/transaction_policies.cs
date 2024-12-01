@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using System.Transactions;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.SystemCE.TransactionsCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.SystemCE.TransactionsCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public class Transaction_policies : Fixture
 {

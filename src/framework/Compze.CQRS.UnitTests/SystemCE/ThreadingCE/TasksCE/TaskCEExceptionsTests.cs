@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Tests.SystemCE.ThreadingCE.TasksCE;
 
 public class TaskCEExceptionsTests : UniversalTestBase
 {

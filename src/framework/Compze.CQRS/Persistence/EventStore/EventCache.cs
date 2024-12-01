@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
-using Composable.Contracts;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
+using Compze.Contracts;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 class EventCache : IDisposable
 {

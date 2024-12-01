@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Composable.Functional;
-using Composable.SystemCE;
+using Compze.Functional;
+using Compze.SystemCE;
 
-namespace Composable.Logging;
+namespace Compze.Logging;
 
 static class LevelLoggerExtensions
 {

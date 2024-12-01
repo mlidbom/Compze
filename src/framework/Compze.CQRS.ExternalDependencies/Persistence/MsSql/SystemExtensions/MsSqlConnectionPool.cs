@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using Composable.Persistence.Common.AdoCE;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Persistence.Common.AdoCE;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Composable.Persistence.MsSql.SystemExtensions;
+namespace Compze.Persistence.MsSql.SystemExtensions;
 
 interface IMsSqlConnectionPool : IDbConnectionPool<IComposableMsSqlConnection, SqlCommand>
 {

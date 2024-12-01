@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 class OptimizedLazy<TValue>(Func<TValue> factory)
    where TValue : class

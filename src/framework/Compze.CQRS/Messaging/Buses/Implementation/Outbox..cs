@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Composable.Contracts;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.SystemCE.TransactionsCE;
+using Compze.Contracts;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.TransactionsCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, RealEndpointConfiguration configuration) : IOutbox
 {

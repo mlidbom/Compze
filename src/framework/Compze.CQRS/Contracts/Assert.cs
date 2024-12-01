@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using NotNull = System.Diagnostics.CodeAnalysis.NotNullAttribute;
 #pragma warning disable CA1815 // Override equals and operator equals on value types
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 public static class Assert
 {

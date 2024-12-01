@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.DependencyInjection;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification;
+namespace Compze.Tests.Messaging.ServiceBusSpecification;
 
 public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

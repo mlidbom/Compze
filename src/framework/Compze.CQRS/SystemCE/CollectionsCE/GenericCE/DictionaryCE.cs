@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Helpers for working with dictionaries</summary>
 static class DictionaryCE

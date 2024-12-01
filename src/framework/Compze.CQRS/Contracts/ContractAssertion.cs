@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Composable.Functional;
-using Composable.SystemCE;
+using Compze.Functional;
+using Compze.SystemCE;
 using JetBrains.Annotations;
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 static class ContractAssertion
 {

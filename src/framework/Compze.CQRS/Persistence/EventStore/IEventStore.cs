@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 interface IEventStore : IDisposable
 {

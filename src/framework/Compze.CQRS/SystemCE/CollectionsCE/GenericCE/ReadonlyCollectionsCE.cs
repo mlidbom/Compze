@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.Functional;
+using Compze.Functional;
 
-namespace Composable.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
 static class ReadonlyCollectionsCE
 {

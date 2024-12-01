@@ -1,10 +1,10 @@
 ﻿using System;
-using Composable.Messaging;
-using Composable.Testing;
+using Compze.Messaging;
+using Compze.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Composable.Tests.Messaging;
+namespace Compze.Tests.Messaging;
 
 interface INonGenericWrapperEvent : IWrapperEvent<IEvent>;
 interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;

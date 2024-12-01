@@ -1,11 +1,11 @@
 ﻿using System;
 using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
-using Composable;
-using Composable.Contracts;
-using Composable.Functional;
-using Composable.Messaging;
-using Composable.Persistence.EventStore;
+using Compze;
+using Compze.Contracts;
+using Compze.Functional;
+using Compze.Messaging;
+using Compze.Persistence.EventStore;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want _composable_ fluent APIs which does not happen with static members since we need instances to compose the API.
 

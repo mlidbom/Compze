@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.Testing;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -11,7 +11,7 @@ using NUnit.Framework;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Composable.Tests.Serialization
+namespace Compze.Tests.Serialization
 {
     namespace OriginalTypes
     {

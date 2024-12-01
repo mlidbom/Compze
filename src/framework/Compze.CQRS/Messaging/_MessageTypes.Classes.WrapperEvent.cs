@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Composable.Persistence.EventStore;
-using Composable.SystemCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.SystemCE.ReflectionCE.EmitCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Persistence.EventStore;
+using Compze.SystemCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.SystemCE.ReflectionCE.EmitCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace Composable.Messaging;
+namespace Compze.Messaging;
 
 public static partial class MessageTypes
 {

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.DependencyInjection;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Contracts;
+using Compze.DependencyInjection;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 class Endpoint : IEndpoint
 {

@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Composable.GenericAbstractions.Time;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
-using Composable.SystemCE.ReactiveCE;
-using Composable.Testing;
+using Compze.GenericAbstractions.Time;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Aggregates;
+using Compze.SystemCE.ReactiveCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.CQRS;
+namespace Compze.Tests.CQRS;
 
 [TestFixture]
 public class AggregateTests : UniversalTestBase

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Composable.Messaging.Hypermedia;
+namespace Compze.Messaging.Hypermedia;
 
 public interface IRemoteHypermediaNavigator
 {

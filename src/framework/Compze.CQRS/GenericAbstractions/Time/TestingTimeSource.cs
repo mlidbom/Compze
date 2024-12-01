@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using Composable.SystemCE;
+using Compze.SystemCE;
 
-namespace Composable.GenericAbstractions.Time;
+namespace Compze.GenericAbstractions.Time;
 
 /// <summary> Just statically returns whatever value was assigned.</summary>
 class TestingTimeSource : IUtcTimeTimeSource

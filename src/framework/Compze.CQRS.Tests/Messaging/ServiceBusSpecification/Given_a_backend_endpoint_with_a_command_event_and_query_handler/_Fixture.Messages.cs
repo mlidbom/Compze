@@ -1,9 +1,9 @@
 ﻿using System;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Aggregates;
 using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -13,7 +13,7 @@ using JetBrains.Annotations;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public partial class Fixture
 {

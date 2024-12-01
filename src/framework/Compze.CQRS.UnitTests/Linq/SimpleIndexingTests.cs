@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.SystemCE.LinqCE;
-using Composable.Testing;
+using Compze.SystemCE.LinqCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.Linq;
+namespace Compze.Tests.Linq;
 
 [TestFixture]
 public class SimpleIndexingTests : UniversalTestBase

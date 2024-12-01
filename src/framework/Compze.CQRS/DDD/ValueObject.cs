@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Composable.Serialization;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Serialization;
+using Compze.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 
-namespace Composable.DDD;
+namespace Compze.DDD;
 
 //review:mlidbo: Maybe this class can be removed now that C# has record types?
 //Review:mlidbo: Consider whether comparing using public properties only would make more sense. Maybe separate class?

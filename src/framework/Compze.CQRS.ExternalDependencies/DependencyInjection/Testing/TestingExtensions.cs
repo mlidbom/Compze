@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.DependencyInjection.Microsoft;
-using Composable.DependencyInjection.SimpleInjector;
-using Composable.SystemCE.LinqCE;
+using Compze.DependencyInjection.Microsoft;
+using Compze.DependencyInjection.SimpleInjector;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.DependencyInjection.Testing;
+namespace Compze.DependencyInjection.Testing;
 
 static class TestingExtensions
 {

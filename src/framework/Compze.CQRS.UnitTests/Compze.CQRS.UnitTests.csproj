@@ -7,7 +7,7 @@
     <Configurations>Debug;Release</Configurations>
     <Nullable>disable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <RootNamespace>Composable.Tests</RootNamespace>
+    <RootNamespace>Compze.Tests</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     <AnalysisLevel>latest-all</AnalysisLevel>
@@ -59,11 +59,11 @@
     <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="C:\Dev\Composable\src\framework\Composable.CQRS.UnitTests\.editorconfig" />
+    <None Include="C:\Dev\Composable\src\framework\Compze.CQRS.UnitTests\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <EditorConfigFiles Remove="C:\Dev\Composable\src\framework\Composable.CQRS.UnitTests\.editorconfig" />
+    <EditorConfigFiles Remove="C:\Dev\Composable\src\framework\Compze.CQRS.UnitTests\.editorconfig" />
   </ItemGroup>
 
 </Project>

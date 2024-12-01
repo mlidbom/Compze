@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Hypermedia;
+namespace Compze.Messaging.Hypermedia;
 
 public static class NavigationSpecificationMessageExtensions
 {

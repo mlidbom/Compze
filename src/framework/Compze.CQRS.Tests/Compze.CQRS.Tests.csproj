@@ -9,7 +9,7 @@
     <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile>Void.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
-    <RootNamespace>Composable.Tests</RootNamespace>
+    <RootNamespace>Compze.Tests</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     <AnalysisLevel>latest-all</AnalysisLevel>

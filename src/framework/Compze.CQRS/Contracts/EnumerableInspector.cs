@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 // ReSharper disable UnusedMethodReturnValue.Global
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 ///<summary>Performs inspections on <see cref="IEnumerable{T}"/> instances</summary>
 static class EnumerableInspector

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
-namespace Composable.Persistence.InMemory.ServiceBus;
+namespace Compze.Persistence.InMemory.ServiceBus;
 
 class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersistenceLayer
 {

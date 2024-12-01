@@ -15,7 +15,7 @@
 
     <PropertyGroup>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <RootNamespace>Composable</RootNamespace>
+        <RootNamespace>Compze</RootNamespace>
         <NuGetAuditMode>direct</NuGetAuditMode>
         <AnalysisLevel>latest-all</AnalysisLevel>
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -27,11 +27,11 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-        <DocumentationFile>bin\Release\Composable.CQRS.xml</DocumentationFile>
+        <DocumentationFile>bin\Release\Compze.CQRS.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="Composable.Core.v3.ncrunchproject" />
+        <None Remove="Compze.Core.v3.ncrunchproject" />
     </ItemGroup>
 
     <ItemGroup>

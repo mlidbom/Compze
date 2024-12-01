@@ -10,7 +10,7 @@
 # Set up development environment
 In the root of the project:
 * Copy `TestUsingPluggableComponentCombinations.example` to `TestUsingPluggableComponentCombinations`
-* Open Composable.Everything.sln in Visual Studio 2022 or Rider.
+* Open Compze.Everything.sln in Visual Studio 2022 or Rider.
 
 ## Tests
 * Preferably you should have administrator access to a SQL database server. By default, Microsoft SQL Server 

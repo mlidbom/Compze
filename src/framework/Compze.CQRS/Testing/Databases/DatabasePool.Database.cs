@@ -1,9 +1,9 @@
 ﻿using System;
-using Composable.Contracts;
-using Composable.SystemCE;
+using Compze.Contracts;
+using Compze.SystemCE;
 using JetBrains.Annotations;
 
-namespace Composable.Testing.Databases;
+namespace Compze.Testing.Databases;
 
 partial class DbPool
 {

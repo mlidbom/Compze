@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Composable.Messaging.Buses.Http;
+namespace Compze.Messaging.Buses.Http;
 
 interface IRpcClient
 {

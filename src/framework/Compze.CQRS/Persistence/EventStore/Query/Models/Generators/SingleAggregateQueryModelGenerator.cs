@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Composable.Functional;
-using Composable.Messaging.Events;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Functional;
+using Compze.Messaging.Events;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Composable.Persistence.EventStore.Query.Models.Generators;
+namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewModel, TEvent, TSession>

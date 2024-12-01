@@ -1,4 +1,4 @@
-﻿namespace Composable.Messaging.Hypermedia;
+﻿namespace Compze.Messaging.Hypermedia;
 
 ///<summary>Dispatches messages within a process.</summary>
 public interface ILocalHypermediaNavigator

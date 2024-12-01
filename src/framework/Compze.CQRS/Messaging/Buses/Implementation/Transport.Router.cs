@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 partial class Transport
 {

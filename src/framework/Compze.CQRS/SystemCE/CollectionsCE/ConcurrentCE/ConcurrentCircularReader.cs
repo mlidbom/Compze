@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.SystemCE.CollectionsCE.ConcurrentCE;
+namespace Compze.SystemCE.CollectionsCE.ConcurrentCE;
 
 public static class ConcurrentCircularReader
 {

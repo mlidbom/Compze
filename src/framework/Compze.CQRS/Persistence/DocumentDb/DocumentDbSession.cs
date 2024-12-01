@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
-using Composable.Contracts;
-using Composable.DDD;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.TransactionsCE;
+using Compze.Contracts;
+using Compze.DDD;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.TransactionsCE;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession

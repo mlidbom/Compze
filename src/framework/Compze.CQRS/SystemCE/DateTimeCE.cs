@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 static class DateTimeCE
 {

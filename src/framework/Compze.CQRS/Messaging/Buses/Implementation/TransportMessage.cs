@@ -1,9 +1,9 @@
 ﻿using System;
-using Composable.Contracts;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
+using Compze.Contracts;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 static class TransportMessage
 {

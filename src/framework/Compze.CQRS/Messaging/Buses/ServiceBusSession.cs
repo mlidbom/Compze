@@ -1,9 +1,9 @@
 ﻿using System;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.ThreadingCE;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 [UsedImplicitly] class ServiceBusSession : IServiceBusSession
 {

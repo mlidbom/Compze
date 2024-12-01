@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.SystemCE.ConfigurationCE;
+using Compze.SystemCE.ConfigurationCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) : IEndpointRegistry
 {

@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public class Fixture_tests(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {

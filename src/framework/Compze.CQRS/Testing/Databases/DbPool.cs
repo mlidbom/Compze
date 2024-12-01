@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Composable.Contracts;
-using Composable.Logging;
-using Composable.SystemCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
+using Compze.Contracts;
+using Compze.Logging;
+using Compze.SystemCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
 
-namespace Composable.Testing.Databases;
+namespace Compze.Testing.Databases;
 
 abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {

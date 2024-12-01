@@ -1,13 +1,13 @@
 ﻿using System;
-using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.Persistence.InMemory.DependencyInjection;
-using Composable.Persistence.MySql.DependencyInjection;
-using Composable.Persistence.MsSql.DependencyInjection;
-using Composable.Persistence.PgSql.DependencyInjection;
-using Composable.Testing;
+using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.Persistence.InMemory.DependencyInjection;
+using Compze.Persistence.MySql.DependencyInjection;
+using Compze.Persistence.MsSql.DependencyInjection;
+using Compze.Persistence.PgSql.DependencyInjection;
+using Compze.Testing;
 
-namespace Composable.Persistence.Common.DependencyInjection;
+namespace Compze.Persistence.Common.DependencyInjection;
 
 public static class TestingPersistenceLayerRegistrar
 {

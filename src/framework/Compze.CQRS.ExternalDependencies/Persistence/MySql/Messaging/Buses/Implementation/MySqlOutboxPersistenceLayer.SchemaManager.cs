@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using M = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using D = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using M = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using D = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.MySql.Messaging.Buses.Implementation;
 
 partial class MySqlOutboxPersistenceLayer
 {

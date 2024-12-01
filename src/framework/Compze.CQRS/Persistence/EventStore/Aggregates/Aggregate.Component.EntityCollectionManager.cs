@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.Messaging.Events;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Messaging.Events;
+using Compze.SystemCE.ReflectionCE;
 
-namespace Composable.Persistence.EventStore.Aggregates;
+namespace Compze.Persistence.EventStore.Aggregates;
 
 public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
    where TWrapperEventImplementation : TWrapperEventInterface

@@ -4,13 +4,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.Refactoring.Naming;
+namespace Compze.Refactoring.Naming;
 
 class TypeMapper : ITypeMapper, ITypeMappingRegistar
 {

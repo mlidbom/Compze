@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Persistence.EventStore;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Persistence.EventStore;
+using Compze.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Composable.Messaging.Events;
+namespace Compze.Messaging.Events;
 
 /// <summary>
 /// Calls all matching handlers in the order they were registered when an event is Dispatched.

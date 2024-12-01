@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
-using Composable.Logging;
-using Composable.Persistence.EventStore;
-using Composable.Serialization;
-using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Contracts;
+using Compze.Logging;
+using Compze.Persistence.EventStore;
+using Compze.Serialization;
+using Compze.SystemCE;
+using Compze.SystemCE.DiagnosticsCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable UnusedMember.Global
 
-namespace Composable.DependencyInjection;
+namespace Compze.DependencyInjection;
 
 public static class Singleton
 {

@@ -4,13 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Composable.Serialization;
-using Composable.SystemCE;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Serialization;
+using Compze.SystemCE;
+using Compze.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Composable.Logging;
+namespace Compze.Logging;
 
 static class ExceptionMessageBuilder
 {

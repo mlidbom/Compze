@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
-using Composable.Logging;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Logging;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Composable.SystemCE.ThreadingCE;
+namespace Compze.SystemCE.ThreadingCE;
 
 interface ITaskRunner
 {

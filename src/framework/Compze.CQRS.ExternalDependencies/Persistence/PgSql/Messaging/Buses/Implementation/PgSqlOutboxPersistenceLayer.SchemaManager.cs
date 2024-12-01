@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Message = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using Dispatch = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Message = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using Dispatch = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Composable.Persistence.PgSql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 
 partial class PgSqlOutboxPersistenceLayer
 {

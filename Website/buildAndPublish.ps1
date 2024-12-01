@@ -9,7 +9,7 @@ if(!(Test-Path $ghPagesCheckoutFolder))
 {
     Write-Host "Missing gh-pages checkout. Cloning"
     Push-Location "$ghPagesCheckoutFolder/.."
-    git clone --quiet --single-branch --branch gh-pages 'https://github.com/mlidbom/Composable.git' Composable-gh-pages
+    git clone --quiet --single-branch --branch gh-pages 'https://github.com/mlidbom/Compze.git' Composable-gh-pages
     Pop-Location
 }
 

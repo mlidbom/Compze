@@ -1,19 +1,19 @@
-﻿using Composable.DependencyInjection;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging.Buses.Http;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Messaging.Buses.Implementation.Http;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.EventStore;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.SystemCE;
-using Composable.SystemCE.ConfigurationCE;
-using Composable.SystemCE.ThreadingCE;
+﻿using Compze.DependencyInjection;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Buses.Http;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Messaging.Buses.Implementation.Http;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.EventStore;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.SystemCE;
+using Compze.SystemCE.ConfigurationCE;
+using Compze.SystemCE.ThreadingCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 class ServerEndpointBuilder : IEndpointBuilder
 {

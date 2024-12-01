@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Composable.DependencyInjection;
+using Compze.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 static class ControllerRegistrationValidator
 {

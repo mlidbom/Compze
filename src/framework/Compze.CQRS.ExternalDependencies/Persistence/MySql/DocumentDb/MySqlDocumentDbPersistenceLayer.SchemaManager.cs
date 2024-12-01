@@ -1,9 +1,9 @@
-﻿using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
-using Document = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
+﻿using Compze.Persistence.MySql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
+using Document = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.DocumentDb;
+namespace Compze.Persistence.MySql.DocumentDb;
 
 partial class MySqlDocumentDbPersistenceLayer
 {

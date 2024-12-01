@@ -1,11 +1,11 @@
 ﻿using System;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.Testing;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.SystemExtensions;
+namespace Compze.Tests.SystemExtensions;
 
 [TestFixture]
 public class ExceptionExtensionsTests : UniversalTestBase

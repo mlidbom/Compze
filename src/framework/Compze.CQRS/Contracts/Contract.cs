@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Composable.SystemCE;
+using Compze.SystemCE;
 using JetBrains.Annotations;
 using NotNull = global::System.Diagnostics.CodeAnalysis.NotNullAttribute;
 // ReSharper disable UnusedParameter.Global
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 /// <summary>Ensures that a class's contract is followed.</summary>
 public static class Contract

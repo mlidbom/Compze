@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.GenericAbstractions.Time;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
-using Composable.Testing;
+using Compze.GenericAbstractions.Time;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Aggregates;
+using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -12,7 +12,7 @@ using NUnit.Framework;
 // ReSharper disable MemberCanBeInternal
 #pragma warning disable CA1806 // Do not ignore method results
 
-namespace Composable.Tests.CQRS.Aggregates;
+namespace Compze.Tests.CQRS.Aggregates;
 
 public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Composable.Contracts;
+using Compze.Contracts;
 using JetBrains.Annotations;
 
-namespace Composable.SystemCE.LinqCE;
+namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
 public static partial class EnumerableCE

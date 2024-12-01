@@ -2,25 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.DependencyInjection;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Aggregates;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public class Experiment_with_unifying_events_and_commands_test(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

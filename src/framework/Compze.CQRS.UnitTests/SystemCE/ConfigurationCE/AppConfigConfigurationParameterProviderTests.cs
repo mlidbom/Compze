@@ -1,10 +1,10 @@
 ﻿using System;
-using Composable.SystemCE.ConfigurationCE;
-using Composable.Testing;
+using Compze.SystemCE.ConfigurationCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.SystemCE.ConfigurationCE;
+namespace Compze.Tests.SystemCE.ConfigurationCE;
 
 [TestFixture] public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
 {

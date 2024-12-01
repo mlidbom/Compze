@@ -1,6 +1,6 @@
-﻿using Composable.SystemCE.LinqCE;
+﻿using Compze.SystemCE.LinqCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 partial class Inbox
 {

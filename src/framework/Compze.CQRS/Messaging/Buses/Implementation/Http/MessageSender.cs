@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Messaging.Buses.Http;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Messaging.Buses.Http;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Buses.Implementation.Http;
+namespace Compze.Messaging.Buses.Implementation.Http;
 
 class MessageSender(IHttpApiClient httpClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IGlobalBusStateTracker globalBusStateTracker) : IMessageSender
 {

@@ -1,7 +1,7 @@
-using Composable.DependencyInjection;
-using Composable.SystemCE;
+using Compze.DependencyInjection;
+using Compze.SystemCE;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 public class MessageHandlerRegistrarWithDependencyInjectionSupport
 {

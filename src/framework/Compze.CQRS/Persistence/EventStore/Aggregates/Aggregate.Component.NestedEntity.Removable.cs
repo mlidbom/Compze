@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging.Events;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Events;
 
-namespace Composable.Persistence.EventStore.Aggregates;
+namespace Compze.Persistence.EventStore.Aggregates;
 
 public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
    where TWrapperEventImplementation : TWrapperEventInterface

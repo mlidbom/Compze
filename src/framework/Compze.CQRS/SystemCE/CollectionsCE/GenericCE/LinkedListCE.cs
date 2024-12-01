@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Adds some convenience features to linked list</summary>
 static class LinkedListCE

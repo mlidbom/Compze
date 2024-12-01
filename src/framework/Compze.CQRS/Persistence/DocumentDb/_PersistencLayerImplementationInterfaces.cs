@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Composable.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.CollectionsCE.GenericCE;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 interface IDocumentDbPersistenceLayer
 {

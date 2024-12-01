@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.Messaging;
-using Composable.Persistence.EventStore;
+using Compze.Messaging;
+using Compze.Persistence.EventStore;
 
-namespace Composable.Serialization;
+namespace Compze.Serialization;
 
 interface IJsonSerializer
 {

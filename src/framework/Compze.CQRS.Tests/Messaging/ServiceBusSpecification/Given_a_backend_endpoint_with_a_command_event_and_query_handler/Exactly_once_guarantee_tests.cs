@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Transactions;
-using Composable.Messaging.Buses;
-using Composable.SystemCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
-using Composable.Testing.Transactions;
+using Compze.Messaging.Buses;
+using Compze.SystemCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
+using Compze.Testing.Transactions;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public class Exactly_once_guarantee_tests : Fixture
 {

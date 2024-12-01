@@ -1,10 +1,10 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE;
 
 interface IDbConnectionPool<out TConnection, out TCommand>
    where TConnection : IPoolableConnection, IComposableDbConnection<TCommand>

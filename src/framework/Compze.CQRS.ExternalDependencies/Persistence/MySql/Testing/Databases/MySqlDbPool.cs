@@ -1,11 +1,11 @@
 using System;
-using Composable.Functional;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.Testing.Databases;
+using Compze.Functional;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Testing.Databases;
 using MySql.Data.MySqlClient;
 
-namespace Composable.Persistence.MySql.Testing.Databases;
+namespace Compze.Persistence.MySql.Testing.Databases;
 
 sealed class MySqlDbPool : DbPool
 {

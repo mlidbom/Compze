@@ -1,4 +1,4 @@
-namespace Composable.DDD;
+namespace Compze.DDD;
 
 /// <summary>
 /// Anything that can be uniquely identified using it's id over any number of persist/load cycles.

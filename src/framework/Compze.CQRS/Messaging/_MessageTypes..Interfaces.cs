@@ -2,7 +2,7 @@
 
 // ReSharper disable UnusedTypeParameter
 
-namespace Composable.Messaging;
+namespace Compze.Messaging;
 
 public interface IMessage;
 

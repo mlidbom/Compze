@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.DDD;
+using Compze.DDD;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 public interface IDocumentDbBulkReader : IDocumentDbReader
 {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using Composable.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE;
 
-namespace Composable.Persistence;
+namespace Compze.Persistence;
 
 #pragma warning disable IDE0065
 using SPath = Path;

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
-using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
+using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
 
-namespace Composable.Persistence.InMemory.EventStore;
+namespace Compze.Persistence.InMemory.EventStore;
 
 partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
 {

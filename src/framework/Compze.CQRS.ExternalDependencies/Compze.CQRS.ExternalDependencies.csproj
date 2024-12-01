@@ -10,7 +10,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <RootNamespace>Composable</RootNamespace>
+    <RootNamespace>Compze</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     <AnalysisLevel>latest-all</AnalysisLevel>
@@ -22,7 +22,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\Composable.CQRS.ExternalDependencies.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Compze.CQRS.ExternalDependencies.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

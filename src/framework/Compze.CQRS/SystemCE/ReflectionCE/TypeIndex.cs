@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.DependencyInjection;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.DependencyInjection;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Composable.SystemCE.ReflectionCE;
+namespace Compze.SystemCE.ReflectionCE;
 
 class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {

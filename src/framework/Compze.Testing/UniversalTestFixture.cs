@@ -2,16 +2,16 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.Logging;
-using Composable.Logging.Serilog;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing.Logging.Serilog;
+using Compze.Logging;
+using Compze.Logging.Serilog;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing.Logging.Serilog;
 using NUnit.Framework;
 using Serilog;
 using Serilog.Exceptions;
 
-namespace Composable.Testing;
+namespace Compze.Testing;
 
 [SetUpFixture] public class UniversalTestFixture
 {

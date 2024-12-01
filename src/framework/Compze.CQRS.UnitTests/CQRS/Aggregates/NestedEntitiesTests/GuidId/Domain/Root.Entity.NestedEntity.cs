@@ -1,8 +1,8 @@
 using System;
-using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 using JetBrains.Annotations;
 
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 
 [UsedImplicitly]partial class RemovableEntity
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 public class AssertionException : Exception
 {

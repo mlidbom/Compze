@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Contracts;
-using Composable.DDD;
-using Composable.Functional;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Contracts;
+using Compze.DDD;
+using Compze.Functional;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
 {

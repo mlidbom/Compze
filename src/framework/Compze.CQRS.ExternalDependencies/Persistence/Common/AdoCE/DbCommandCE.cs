@@ -4,14 +4,14 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.Functional;
-using Composable.Logging;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Contracts;
+using Compze.Functional;
+using Compze.Logging;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE;
 
 static class DbCommandCE
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 // ReSharper disable UnusedMethodReturnValue.Global
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 ///<summary>Performs inspections on Guid instances</summary>
 static class GuidInspector

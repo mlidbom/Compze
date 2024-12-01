@@ -1,6 +1,6 @@
 using System;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {

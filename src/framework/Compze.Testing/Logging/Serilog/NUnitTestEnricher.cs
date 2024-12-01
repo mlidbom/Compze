@@ -3,7 +3,7 @@ using NUnit.Framework;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Composable.Testing.Logging.Serilog;
+namespace Compze.Testing.Logging.Serilog;
 
 class NUnitTestEnricher : ILogEventEnricher
 {

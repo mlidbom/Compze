@@ -4,12 +4,12 @@ using AccountManagement.API;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
-using Composable.Contracts;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Contracts;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 
 namespace AccountManagement.UI.QueryModels;
 

@@ -1,7 +1,7 @@
-﻿using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.ThreadingCE;
+﻿using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.ThreadingCE;
 
-namespace Composable.Messaging.Hypermedia;
+namespace Compze.Messaging.Hypermedia;
 
 class LocalHypermediaNavigator : ILocalHypermediaNavigator
 {

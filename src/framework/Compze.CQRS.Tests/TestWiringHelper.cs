@@ -1,13 +1,13 @@
 using System;
-using Composable.DependencyInjection;
-using Composable.Logging;
-using Composable.Messaging.Buses;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.EventStore;
+using Compze.DependencyInjection;
+using Compze.Logging;
+using Compze.Messaging.Buses;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.EventStore;
 using JetBrains.Annotations;
 
-namespace Composable.Tests;
+namespace Compze.Tests;
 
 static class TestWiringHelper
 {

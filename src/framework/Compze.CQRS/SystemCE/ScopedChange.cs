@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 static class ScopedChange
 {

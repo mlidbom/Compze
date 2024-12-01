@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Testing;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Testing;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 public static class TestingHostExtensions
 {

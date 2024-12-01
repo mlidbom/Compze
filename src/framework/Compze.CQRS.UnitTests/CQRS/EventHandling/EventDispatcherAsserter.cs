@@ -1,8 +1,8 @@
-﻿using Composable.Messaging;
-using Composable.Messaging.Events;
+﻿using Compze.Messaging;
+using Compze.Messaging.Events;
 using FluentAssertions;
 
-namespace Composable.Tests.CQRS.EventHandling;
+namespace Compze.Tests.CQRS.EventHandling;
 
 static class EventDispatcherAsserter
 {

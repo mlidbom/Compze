@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable InconsistentNaming
 
-namespace Composable.Functional;
+namespace Compze.Functional;
 
 ///<summary>Provides the ability to chain method calls rather than having to use separate lines and temporary variables.</summary>
 public static class Pipe

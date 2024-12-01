@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-using Composable.Contracts;
-using Composable.DependencyInjection;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.EventStore.Refactoring.Migrations;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
+using Compze.Contracts;
+using Compze.DependencyInjection;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Aggregates;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.EventStore.Refactoring.Migrations;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
 
-namespace Composable.Persistence.Common.DependencyInjection;
+namespace Compze.Persistence.Common.DependencyInjection;
 
 public static class EventStoreRegistrar
 {

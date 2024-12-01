@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.DDD;
-using Composable.DependencyInjection;
-using Composable.DependencyInjection.Testing;
-using Composable.Persistence.DocumentDb;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.DDD;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Testing;
+using Compze.Persistence.DocumentDb;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Composable.Tests.Persistence.DocumentDb;
+namespace Compze.Tests.Persistence.DocumentDb;
 
 class DocumentDbTests([NotNull] string pluggableComponentsCombination) : DocumentDbTestsBase(pluggableComponentsCombination)
 {

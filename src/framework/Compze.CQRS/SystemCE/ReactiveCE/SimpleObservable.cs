@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.Contracts;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Contracts;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.SystemCE.ReactiveCE;
+namespace Compze.SystemCE.ReactiveCE;
 
 ///<summary>Simple implementation of <see cref="IObservable{T}"/> that tracks subscribers and allows for calling OnNext on them all at once.</summary>
 class SimpleObservable<TEvent> : IObservable<TEvent>

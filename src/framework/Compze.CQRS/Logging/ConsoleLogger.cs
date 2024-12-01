@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.Functional;
+using Compze.Functional;
 
-namespace Composable.Logging;
+namespace Compze.Logging;
 
 #pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
 

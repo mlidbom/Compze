@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.Functional;
-using Composable.Messaging.Buses.Http;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Contracts;
+using Compze.Functional;
+using Compze.Messaging.Buses.Http;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient) : ITransport, IDisposable
 {

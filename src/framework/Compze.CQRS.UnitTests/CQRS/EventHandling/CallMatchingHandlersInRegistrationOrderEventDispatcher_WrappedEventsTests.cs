@@ -1,10 +1,10 @@
-﻿using Composable.Messaging;
-using Composable.Messaging.Events;
-using Composable.Persistence.EventStore;
-using Composable.Testing;
+﻿using Compze.Messaging;
+using Compze.Messaging.Events;
+using Compze.Persistence.EventStore;
+using Compze.Testing;
 using NUnit.Framework;
 
-namespace Composable.Tests.CQRS.EventHandling;
+namespace Compze.Tests.CQRS.EventHandling;
 
 [TestFixture]public class CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests : UniversalTestBase
 {

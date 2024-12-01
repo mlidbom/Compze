@@ -1,12 +1,12 @@
 ﻿using System;
-using Composable.DependencyInjection;
-using Composable.Functional;
-using Composable.SystemCE;
-using Composable.Testing;
+using Compze.DependencyInjection;
+using Compze.Functional;
+using Compze.SystemCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
 class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
 {

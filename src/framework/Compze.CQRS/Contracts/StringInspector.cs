@@ -1,7 +1,7 @@
 
 // ReSharper disable UnusedMethodReturnValue.Global
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 ///<summary>Performs inspections on string instances</summary>
 public static class StringInspector

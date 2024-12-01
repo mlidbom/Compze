@@ -1,7 +1,7 @@
 using System;
 using System.Data.Common;
 
-namespace Composable.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE;
 
 static class DbDataReaderCE
 {

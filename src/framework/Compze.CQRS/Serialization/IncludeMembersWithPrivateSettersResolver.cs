@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using Composable.SystemCE;
+using Compze.SystemCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Composable.Serialization;
+namespace Compze.Serialization;
 
 class IncludeMembersWithPrivateSettersResolver : DefaultContractResolver, IStaticInstancePropertySingleton
 {

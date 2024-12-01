@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.DependencyInjection.Microsoft;
-using Composable.DependencyInjection.SimpleInjector;
-using Composable.Messaging.Buses;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
+using Compze.DependencyInjection.Microsoft;
+using Compze.DependencyInjection.SimpleInjector;
+using Compze.Messaging.Buses;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
 using JetBrains.Annotations;
 
-namespace Composable.DependencyInjection;
+namespace Compze.DependencyInjection;
 
 public static class DependencyInjectionContainer
 {

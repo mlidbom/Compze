@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.Tests;
+namespace Compze.Tests;
 
 static class TestGuid
 {

@@ -3,7 +3,7 @@
     <HiddenComponentWarnings />
     <IgnoredTests>
       <FixtureTestSelector>
-        <FixtureName>Composable.Tests.SystemExtensions.ExceptionExtensions</FixtureName>
+        <FixtureName>Compze.Tests.SystemExtensions.ExceptionExtensions</FixtureName>
       </FixtureTestSelector>
     </IgnoredTests>
     <PreviouslyBuiltSuccessfully>True</PreviouslyBuiltSuccessfully>

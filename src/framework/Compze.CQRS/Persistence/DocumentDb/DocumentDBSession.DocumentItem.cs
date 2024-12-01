@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.Contracts;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 partial class DocumentDbSession
 {

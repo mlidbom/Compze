@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.Functional;
+using Compze.Functional;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 // ReSharper disable once InconsistentNaming
 static class GCCE

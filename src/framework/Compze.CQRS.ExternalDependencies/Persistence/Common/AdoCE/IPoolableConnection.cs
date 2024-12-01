@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Composable.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE;
 
 interface IPoolableConnection : IDisposable, IAsyncDisposable
 {

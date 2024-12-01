@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Messaging.Hypermedia;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.DependencyInjection;
+using Compze.Messaging.Hypermedia;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 public static class EndpointRequestExecutor
 {

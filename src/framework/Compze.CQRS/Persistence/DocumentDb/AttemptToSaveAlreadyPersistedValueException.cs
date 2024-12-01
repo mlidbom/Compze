@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 public class AttemptToSaveAlreadyPersistedValueException : Exception
 {

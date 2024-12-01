@@ -1,5 +1,5 @@
 ﻿using AccountManagement.Domain;
-using Composable.Testing;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 

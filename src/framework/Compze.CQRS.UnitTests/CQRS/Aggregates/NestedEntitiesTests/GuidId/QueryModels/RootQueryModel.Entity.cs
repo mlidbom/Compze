@@ -1,9 +1,9 @@
 using System;
-using Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 using JetBrains.Annotations;
 
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
 [UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity,
    Guid,

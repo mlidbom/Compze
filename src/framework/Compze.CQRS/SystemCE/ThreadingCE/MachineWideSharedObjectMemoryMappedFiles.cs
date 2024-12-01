@@ -3,14 +3,14 @@
 // using System.Collections.Generic;
 // using System.IO;
 // using System.IO.MemoryMappedFiles;
-// using Composable.Contracts;
-// using Composable.Persistence;
-// using Composable.Serialization;
-// using Composable.SystemCE.CollectionsCE.GenericCE;
-// using Composable.SystemCE.LinqCE;
-// using Composable.SystemCE.ThreadingCE.ResourceAccess;
+// using Compze.Contracts;
+// using Compze.Persistence;
+// using Compze.Serialization;
+// using Compze.SystemCE.CollectionsCE.GenericCE;
+// using Compze.SystemCE.LinqCE;
+// using Compze.SystemCE.ThreadingCE.ResourceAccess;
 //
-// namespace Composable.SystemCE.ThreadingCE;
+// namespace Compze.SystemCE.ThreadingCE;
 //
 // #pragma warning disable CA1416 // Validate platform compatibility //todo: This needs to go. Probably by switching to a database storage.
 //

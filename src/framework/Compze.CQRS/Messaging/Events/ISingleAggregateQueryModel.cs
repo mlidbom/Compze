@@ -1,7 +1,7 @@
 using System;
-using Composable.DDD;
+using Compze.DDD;
 
-namespace Composable.Messaging.Events;
+namespace Compze.Messaging.Events;
 
 public interface ISingleAggregateQueryModel : IHasPersistentIdentity<Guid>
 {

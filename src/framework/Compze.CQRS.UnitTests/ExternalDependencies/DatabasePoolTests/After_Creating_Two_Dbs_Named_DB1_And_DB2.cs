@@ -1,11 +1,11 @@
 using System;
-using Composable.DependencyInjection;
-using Composable.Testing;
-using Composable.Testing.Databases;
+using Compze.DependencyInjection;
+using Compze.Testing;
+using Compze.Testing.Databases;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
 public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
 {

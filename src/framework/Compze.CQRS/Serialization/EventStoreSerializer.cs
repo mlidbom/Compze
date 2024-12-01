@@ -1,12 +1,12 @@
 using System;
 using System.Text.RegularExpressions;
-using Composable.Messaging;
-using Composable.Persistence.EventStore;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE;
+using Compze.Messaging;
+using Compze.Persistence.EventStore;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE;
 using Newtonsoft.Json;
 
-namespace Composable.Serialization;
+namespace Compze.Serialization;
 
 class RenamingSupportingJsonSerializer : IJsonSerializer
 {

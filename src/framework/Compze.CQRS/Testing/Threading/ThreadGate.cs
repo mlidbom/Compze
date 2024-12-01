@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
-using Composable.Functional;
-using Composable.Logging;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Contracts;
+using Compze.Functional;
+using Compze.Logging;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.Testing.Threading;
+namespace Compze.Testing.Threading;
 
 class ThreadGate : IThreadGate
 {

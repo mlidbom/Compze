@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable LocalizableElement
 

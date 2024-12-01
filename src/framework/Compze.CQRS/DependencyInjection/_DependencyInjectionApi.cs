@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Composable.DependencyInjection;
+namespace Compze.DependencyInjection;
 
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {

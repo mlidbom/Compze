@@ -1,9 +1,9 @@
-﻿using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
-using Document = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
+﻿using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
+using Document = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.MsSql.DocumentDb;
+namespace Compze.Persistence.MsSql.DocumentDb;
 
 partial class MsSqlDocumentDbPersistenceLayer
 {

@@ -1,9 +1,9 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE;
 
 interface IComposableDbConnection
 {

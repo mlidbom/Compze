@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.Tests.Contracts;
+namespace Compze.Tests.Contracts;
 
 static class ReturnValueContractHelper
 {

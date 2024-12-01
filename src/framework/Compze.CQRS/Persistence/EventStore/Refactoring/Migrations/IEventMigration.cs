@@ -1,6 +1,6 @@
 using System;
 
-namespace Composable.Persistence.EventStore.Refactoring.Migrations;
+namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 
 ///<summary>Defines an identity for migration of events into other events. Creates </summary>
 public interface IEventMigration

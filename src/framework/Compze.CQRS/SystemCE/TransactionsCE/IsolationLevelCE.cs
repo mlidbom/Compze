@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Transactions;
 
-namespace Composable.SystemCE.TransactionsCE;
+namespace Compze.SystemCE.TransactionsCE;
 
 static class IsolationLevelCE
 {

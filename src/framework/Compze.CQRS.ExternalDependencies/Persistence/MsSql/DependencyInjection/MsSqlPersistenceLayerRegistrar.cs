@@ -1,17 +1,17 @@
-﻿using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.MsSql.DocumentDb;
-using Composable.Persistence.MsSql.EventStore;
-using Composable.Persistence.MsSql.Messaging.Buses.Implementation;
-using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.Persistence.MsSql.Testing.Databases;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE.ConfigurationCE;
+﻿using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.MsSql.DocumentDb;
+using Compze.Persistence.MsSql.EventStore;
+using Compze.Persistence.MsSql.Messaging.Buses.Implementation;
+using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.MsSql.Testing.Databases;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE.ConfigurationCE;
 
-namespace Composable.Persistence.MsSql.DependencyInjection;
+namespace Compze.Persistence.MsSql.DependencyInjection;
 
 public static class MsSqlPersistenceLayerRegistrar
 {

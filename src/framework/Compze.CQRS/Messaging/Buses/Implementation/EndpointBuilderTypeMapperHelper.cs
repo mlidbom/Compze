@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Composable.Refactoring.Naming;
+using Compze.Refactoring.Naming;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 static class EndpointBuilderTypeMapperHelper
 {

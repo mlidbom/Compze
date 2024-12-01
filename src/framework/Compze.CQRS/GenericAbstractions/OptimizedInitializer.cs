@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.GenericAbstractions;
+namespace Compze.GenericAbstractions;
 
 public class OptimizedInitializer
 {

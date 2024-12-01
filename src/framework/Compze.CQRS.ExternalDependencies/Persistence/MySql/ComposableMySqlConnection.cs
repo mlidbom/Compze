@@ -1,10 +1,10 @@
 using System.Data.Common;
 using System.Threading.Tasks;
-using Composable.Persistence.Common.AdoCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Persistence.Common.AdoCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 
-namespace Composable.Persistence.MySql;
+namespace Compze.Persistence.MySql;
 
 interface IComposableMySqlConnection : IPoolableConnection, IComposableDbConnection<MySqlCommand>
 {

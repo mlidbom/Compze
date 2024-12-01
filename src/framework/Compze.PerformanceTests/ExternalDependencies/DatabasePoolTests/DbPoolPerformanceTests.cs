@@ -1,15 +1,15 @@
 ﻿using System;
-using Composable.DependencyInjection;
-using Composable.Logging;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
+using Compze.DependencyInjection;
+using Compze.Logging;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.SystemCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
 using NUnit.Framework;
 
-namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
 public class DbPoolPerformanceTests : DbPoolTest
 {

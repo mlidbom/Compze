@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Functional;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.DependencyInjection;
+using Compze.Functional;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using NUnit.Framework;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -20,7 +20,7 @@ using NUnit.Framework;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public partial class Fixture(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using T =  Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using T =  Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Composable.Persistence.MySql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.MySql.Messaging.Buses.Implementation;
 
 partial class MySqlInboxPersistenceLayer
 {

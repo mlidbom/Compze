@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.DDD;
+using Compze.DDD;
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 public partial class DocumentDbApi
 {

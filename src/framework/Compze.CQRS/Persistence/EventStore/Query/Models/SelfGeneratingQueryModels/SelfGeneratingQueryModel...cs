@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.Contracts;
-using Composable.DDD;
-using Composable.Messaging.Events;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.DDD;
+using Compze.Messaging.Events;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 
 public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : VersionedEntity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>

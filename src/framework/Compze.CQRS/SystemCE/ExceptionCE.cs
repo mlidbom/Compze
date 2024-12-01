@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 ///<summary>Extensions for working with extensions</summary>
 static class ExceptionCE

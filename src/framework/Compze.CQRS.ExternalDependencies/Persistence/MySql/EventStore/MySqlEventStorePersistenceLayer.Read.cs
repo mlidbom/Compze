@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.MySql.SystemExtensions;
 using MySql.Data.MySqlClient;
-using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
+using Event=Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.EventStore;
+namespace Compze.Persistence.MySql.EventStore;
 
 partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
 {

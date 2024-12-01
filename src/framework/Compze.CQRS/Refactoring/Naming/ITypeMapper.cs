@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Composable.Refactoring.Naming;
+namespace Compze.Refactoring.Naming;
 
 interface ITypeMapper
 {

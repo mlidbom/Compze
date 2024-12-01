@@ -1,9 +1,9 @@
-﻿using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
-using Document = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
+﻿using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
+using Document = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.PgSql.DocumentDb;
+namespace Compze.Persistence.PgSql.DocumentDb;
 
 partial class PgSqlDocumentDbPersistenceLayer
 {

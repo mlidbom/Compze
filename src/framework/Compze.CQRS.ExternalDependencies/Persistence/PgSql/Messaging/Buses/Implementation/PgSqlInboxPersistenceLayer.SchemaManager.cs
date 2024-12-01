@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Message =  Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
+using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Message =  Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Composable.Persistence.PgSql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 
 partial class PgSqlInboxPersistenceLayer
 {

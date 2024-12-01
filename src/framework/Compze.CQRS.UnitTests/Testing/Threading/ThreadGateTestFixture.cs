@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing.Threading;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing.Threading;
 
-namespace Composable.Tests.Testing.Threading;
+namespace Compze.Tests.Testing.Threading;
 
 class ThreadGateTestFixture : IDisposable
 {

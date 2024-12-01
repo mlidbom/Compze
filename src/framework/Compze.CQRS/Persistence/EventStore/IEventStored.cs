@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Composable.GenericAbstractions.Time;
+using Compze.GenericAbstractions.Time;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 public interface IEventStored
 {

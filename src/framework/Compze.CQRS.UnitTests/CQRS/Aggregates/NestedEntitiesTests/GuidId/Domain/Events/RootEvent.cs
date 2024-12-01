@@ -1,10 +1,10 @@
 using System;
-using Composable.Persistence.EventStore;
+using Compze.Persistence.EventStore;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
 static partial class RootEvent
 {

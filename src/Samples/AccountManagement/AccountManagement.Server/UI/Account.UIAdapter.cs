@@ -4,10 +4,10 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
-using Composable.Functional;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
+using Compze.Functional;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
 
 namespace AccountManagement.UI;
 

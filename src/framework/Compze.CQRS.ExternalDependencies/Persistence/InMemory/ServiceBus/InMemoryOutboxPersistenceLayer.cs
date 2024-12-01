@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Transactions;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.TransactionsCE;
-using Message = Composable.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageWithReceivers;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.TransactionsCE;
+using Message = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageWithReceivers;
 // ReSharper disable CollectionNeverQueried.Local
 
-namespace Composable.Persistence.InMemory.ServiceBus;
+namespace Compze.Persistence.InMemory.ServiceBus;
 
 class InMemoryOutboxPersistenceLayer : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {

@@ -1,4 +1,4 @@
-namespace Composable.DDD;
+namespace Compze.DDD;
 
 /// <summary>
 /// Should be implemented by persistent* classes that represents entities in the Domain Driven Design sense of the word.

@@ -1,5 +1,5 @@
 ﻿using System;
-using Composable.Testing;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 // ReSharper disable ImplicitlyCapturedClosure
@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
 
 [TestFixture]
 public class NestedEntitiesTests : UniversalTestBase

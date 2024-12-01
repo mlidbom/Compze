@@ -1,9 +1,9 @@
 using System;
-using Composable.Logging;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.Testing;
-using Composable.Testing.Performance;
+using Compze.Logging;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Testing;
+using Compze.Testing.Performance;
 using NUnit.Framework;
 
 // ReSharper disable UnusedMethodReturnValue.Local
@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 // ReSharper disable InconsistentlySynchronizedField
 
-namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
 public class MonitorCEPerformanceTests : UniversalTestBase
 {

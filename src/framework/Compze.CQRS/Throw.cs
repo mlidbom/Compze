@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.Functional;
+using Compze.Functional;
 
-namespace Composable;
+namespace Compze;
 
 static class Throw<TException> where TException : Exception, new()
 {

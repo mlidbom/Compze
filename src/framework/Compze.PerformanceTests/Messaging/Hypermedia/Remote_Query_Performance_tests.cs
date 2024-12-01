@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Messaging;
-using Composable.Messaging.Hypermedia;
-using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
+using Compze.DependencyInjection;
+using Compze.Messaging;
+using Compze.Messaging.Hypermedia;
+using Compze.SystemCE;
+using Compze.SystemCE.DiagnosticsCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
 using NUnit.Framework;
-using CreatesItsOwnResultQuery = Composable.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Composable.Tests.Messaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
+using CreatesItsOwnResultQuery = Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Messaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
 
-namespace Composable.Tests.Messaging.Hypermedia;
+namespace Compze.Tests.Messaging.Hypermedia;
 
 public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) : PerformanceTestBase(pluggableComponentsCombination)
 {

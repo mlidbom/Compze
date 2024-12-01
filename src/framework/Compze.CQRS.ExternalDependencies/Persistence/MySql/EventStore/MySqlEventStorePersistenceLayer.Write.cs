@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.Common.EventStore;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.SystemCE;
+using Compze.Contracts;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.Common.EventStore;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.SystemCE;
 using MySql.Data.MySqlClient;
-using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
-using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
+using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
+using Event=Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.EventStore;
+namespace Compze.Persistence.MySql.EventStore;
 
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the persistence layer.
 partial class MySqlEventStorePersistenceLayer

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Composable.DDD;
-using Composable.Testing;
+using Compze.DDD;
+using Compze.Testing;
 using NUnit.Framework;
 
-namespace Composable.Tests.DDD;
+namespace Compze.Tests.DDD;
 
 [TestFixture]
 public class ValueObjectsWithCollectionsTests : UniversalTestBase

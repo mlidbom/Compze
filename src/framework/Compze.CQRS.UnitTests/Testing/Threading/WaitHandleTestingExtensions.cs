@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Composable.Tests.Testing.Threading;
+namespace Compze.Tests.Testing.Threading;
 
 public static class WaitHandleTestingExtensions
 {

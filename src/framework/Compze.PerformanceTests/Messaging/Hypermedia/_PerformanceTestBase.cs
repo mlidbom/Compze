@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
+using Compze.DependencyInjection;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
 using NUnit.Framework;
 
 //ncrunch: no coverage start
 
-namespace Composable.Tests.Messaging.Hypermedia;
+namespace Compze.Tests.Messaging.Hypermedia;
 
 public class PerformanceTestBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

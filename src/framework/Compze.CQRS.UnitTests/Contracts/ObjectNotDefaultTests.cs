@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Composable.Contracts;
-using Composable.Testing;
+using Compze.Contracts;
+using Compze.Testing;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
-namespace Composable.Tests.Contracts;
+namespace Compze.Tests.Contracts;
 
 [TestFixture]
 public class ObjectNotDefaultTests : UniversalTestBase

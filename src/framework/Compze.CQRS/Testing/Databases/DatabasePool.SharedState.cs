@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Contracts;
-using Composable.Functional;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.Functional;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Composable.Testing.Databases;
+namespace Compze.Testing.Databases;
 
 partial class DbPool
 {

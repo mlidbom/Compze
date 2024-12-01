@@ -1,15 +1,15 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.Logging;
-using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Contracts;
+using Compze.Logging;
+using Compze.SystemCE;
+using Compze.SystemCE.DiagnosticsCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Composable.Testing.Performance;
+namespace Compze.Testing.Performance;
 
 public static class TimeAsserter
 {

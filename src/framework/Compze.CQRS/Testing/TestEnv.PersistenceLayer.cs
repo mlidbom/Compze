@@ -2,10 +2,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Composable.Contracts;
-using Composable.SystemCE;
+using Compze.Contracts;
+using Compze.SystemCE;
 
-namespace Composable.Testing;
+namespace Compze.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 public static partial class TestEnv

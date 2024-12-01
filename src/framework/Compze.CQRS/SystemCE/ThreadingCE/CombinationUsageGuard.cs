@@ -1,4 +1,4 @@
-﻿namespace Composable.SystemCE.ThreadingCE;
+﻿namespace Compze.SystemCE.ThreadingCE;
 
 class CombinationUsageGuard : ISingleContextUseGuard
 {

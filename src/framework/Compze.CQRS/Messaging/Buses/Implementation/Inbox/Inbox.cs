@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.DependencyInjection;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 [UsedImplicitly]partial class Inbox : IInbox, IAsyncDisposable
 {

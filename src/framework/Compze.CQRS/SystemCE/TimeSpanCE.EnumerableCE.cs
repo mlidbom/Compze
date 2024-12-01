@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 ///<summary>Methods like Sum,Min,Average etc for IEnumerable&lt;TimeSpan&gt;</summary>
 static partial class TimeSpanCE

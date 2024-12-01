@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.DependencyInjection;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 class InternalControllerFeatureProvider : ControllerFeatureProvider
 {

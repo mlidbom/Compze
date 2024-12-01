@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Composable.Persistence.MsSql.Testing.Databases;
+namespace Compze.Persistence.MsSql.Testing.Databases;
 
 static class MsSqlDatabaseHelpers
 {

@@ -1,10 +1,10 @@
 ﻿using System;
-using Composable.Persistence.EventStore;
-using Composable.SystemCE.ReactiveCE;
-using Composable.Testing;
-using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
-using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
-using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
+using Compze.Persistence.EventStore;
+using Compze.SystemCE.ReactiveCE;
+using Compze.Testing;
+using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
+using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 using FluentAssertions;
 using NUnit.Framework;
 // ReSharper disable InconsistentNaming
@@ -15,7 +15,7 @@ using NUnit.Framework;
 #pragma warning disable CA1724 // Type names should not match namespaces
 
 
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId;
 
 [TestFixture]
 public class NestedEntitiesTests : UniversalTestBase

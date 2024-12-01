@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using Composable.Logging;
-using Composable.SystemCE.ConfigurationCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Logging;
+using Compze.SystemCE.ConfigurationCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 static class StrictlyManagedResources
 {

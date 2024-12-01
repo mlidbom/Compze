@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Composable.Tests.Testing.Threading;
+namespace Compze.Tests.Testing.Threading;
 
 [TestFixture] public class Given_a_locked_ThreadGate : UniversalTestBase
 {

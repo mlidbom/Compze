@@ -1,12 +1,12 @@
 ﻿using System;
-using Composable.Functional;
-using Composable.SystemCE;
-using Composable.Testing;
+using Compze.Functional;
+using Compze.SystemCE;
+using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Composable.Tests.SystemCE;
+namespace Compze.Tests.SystemCE;
 
 class StrictlyManagedResourceTests : UniversalTestBase
 {

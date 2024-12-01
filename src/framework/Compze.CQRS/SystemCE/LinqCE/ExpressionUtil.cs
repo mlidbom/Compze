@@ -1,8 +1,8 @@
 using System;
 using System.Linq.Expressions;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE.LinqCE;
+namespace Compze.SystemCE.LinqCE;
 
 ///<summary>Extracts member names from expressions</summary>
 static class ExpressionUtil

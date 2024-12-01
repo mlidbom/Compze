@@ -2,17 +2,17 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Composable.DependencyInjection;
-using Composable.Persistence.EventStore;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.SystemCE.TransactionsCE;
-using Composable.Testing;
+using Compze.DependencyInjection;
+using Compze.Persistence.EventStore;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.TransactionsCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.CQRS;
+namespace Compze.Tests.CQRS;
 
 interface ISomeEvent : IAggregateEvent;
 

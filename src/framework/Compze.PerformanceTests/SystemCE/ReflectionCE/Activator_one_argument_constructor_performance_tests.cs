@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reflection;
-using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
+using Compze.SystemCE;
+using Compze.SystemCE.DiagnosticsCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -12,7 +12,7 @@ using NUnit.Framework;
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
 #pragma warning disable CA1806  // Do not ignore method results
 
-namespace Composable.Tests.SystemCE.ReflectionCE;
+namespace Compze.Tests.SystemCE.ReflectionCE;
 
 [TestFixture]public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
 {

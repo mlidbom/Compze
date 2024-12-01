@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Messaging.Buses;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.Messaging.Buses;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using NUnit.Framework;
 using Assert = Xunit.Assert;
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public class Failure_tests(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {

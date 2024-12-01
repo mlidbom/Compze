@@ -1,10 +1,10 @@
-using Composable.Contracts;
-using Composable.SystemCE;
-using Composable.Testing.Performance;
+using Compze.Contracts;
+using Compze.SystemCE;
+using Compze.Testing.Performance;
 using NUnit.Framework;
-using Composable.Testing;
+using Compze.Testing;
 
-namespace Composable.Tests.Contracts;
+namespace Compze.Tests.Contracts;
 
 [TestFixture] public class LambdaBasedArgumentSpecsPerformanceTests : UniversalTestBase
 {

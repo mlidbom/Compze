@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Composable.Contracts;
-using Composable.SystemCE;
+using Compze.Contracts;
+using Compze.SystemCE;
 
-namespace Composable.Functional;
+namespace Compze.Functional;
 
 public static class Option
 {

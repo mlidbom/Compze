@@ -1,10 +1,10 @@
 using System;
 using Microsoft.Data.SqlClient;
 using System.Transactions;
-using Composable.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.MsSql.SystemExtensions;
 using JetBrains.Annotations;
 
-namespace Composable.Persistence.MsSql.EventStore;
+namespace Compze.Persistence.MsSql.EventStore;
 
 class MsSqlEventStoreConnectionManager
 {

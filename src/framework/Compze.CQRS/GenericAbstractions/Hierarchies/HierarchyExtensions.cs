@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 
 using System.Linq;
-using Composable.Contracts;
-using Composable.GenericAbstractions.Wrappers;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.GenericAbstractions.Wrappers;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.GenericAbstractions.Hierarchies;
+namespace Compze.GenericAbstractions.Hierarchies;
 
 /// <summary>
 /// Represents a hierarchy in which the instances in the hierarchy do not themselves

@@ -1,10 +1,10 @@
 ﻿using System;
-using Composable.Functional;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
+using Compze.Functional;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
 using Newtonsoft.Json;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 public partial class DocumentDbApi
 {

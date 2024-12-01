@@ -1,4 +1,4 @@
-﻿namespace Composable.Messaging.Buses.Implementation.Http;
+﻿namespace Compze.Messaging.Buses.Implementation.Http;
 
 static class HttpConstants
 {

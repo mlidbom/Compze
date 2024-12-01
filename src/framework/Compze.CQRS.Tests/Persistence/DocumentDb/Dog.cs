@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.DDD;
+using Compze.DDD;
 using JetBrains.Annotations;
 
-namespace Composable.Tests.Persistence.DocumentDb;
+namespace Compze.Tests.Persistence.DocumentDb;
 
 class Dog : IPersistentEntity<Guid>
 {

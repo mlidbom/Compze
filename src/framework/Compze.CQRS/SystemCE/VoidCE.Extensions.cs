@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Functional;
+using Compze.Functional;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 static class VoidCEExtensions
 {

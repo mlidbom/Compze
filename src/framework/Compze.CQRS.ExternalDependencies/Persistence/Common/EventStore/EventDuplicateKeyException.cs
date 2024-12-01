@@ -1,6 +1,6 @@
 using System;
 
-namespace Composable.Persistence.Common.EventStore;
+namespace Compze.Persistence.Common.EventStore;
 
 public class EventDuplicateKeyException : Exception
 {

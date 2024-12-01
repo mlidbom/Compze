@@ -1,6 +1,6 @@
 ﻿using System.Transactions;
 
-namespace Composable.SystemCE.ThreadingCE;
+namespace Compze.SystemCE.ThreadingCE;
 
 class SingleTransactionUsageGuard : ISingleContextUseGuard
 {

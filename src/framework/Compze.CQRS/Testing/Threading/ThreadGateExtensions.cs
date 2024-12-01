@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using System.Transactions;
-using Composable.Contracts;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing.Transactions;
+using Compze.Contracts;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing.Transactions;
 
-namespace Composable.Testing.Threading;
+namespace Compze.Testing.Threading;
 
 static class ThreadGateExtensions
 {

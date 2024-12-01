@@ -1,13 +1,13 @@
-﻿using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.InMemory.DocumentDB;
-using Composable.Persistence.InMemory.EventStore;
-using Composable.Persistence.InMemory.ServiceBus;
+﻿using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.InMemory.DocumentDB;
+using Compze.Persistence.InMemory.EventStore;
+using Compze.Persistence.InMemory.ServiceBus;
 
-namespace Composable.Persistence.InMemory.DependencyInjection;
+namespace Compze.Persistence.InMemory.DependencyInjection;
 
 public static class InMemoryPersistenceLayerRegistrar
 {

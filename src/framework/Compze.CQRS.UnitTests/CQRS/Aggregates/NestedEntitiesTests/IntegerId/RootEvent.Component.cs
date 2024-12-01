@@ -1,7 +1,7 @@
  // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
 
 static partial class RootEvent
 {

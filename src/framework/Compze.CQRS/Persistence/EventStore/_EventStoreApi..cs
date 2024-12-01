@@ -2,7 +2,7 @@
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 public partial class EventStoreApi
 {

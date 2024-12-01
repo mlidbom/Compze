@@ -1,5 +1,5 @@
 ﻿using System;
-using Composable.SystemCE.LinqCE;
+using Compze.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using NUnit.Framework;
 

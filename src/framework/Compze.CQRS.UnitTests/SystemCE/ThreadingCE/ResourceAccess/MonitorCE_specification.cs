@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
 using FluentAssertions;
 using NCrunch.Framework;
 using NUnit.Framework;
@@ -13,7 +13,7 @@ using Assert = NUnit.Framework.Assert;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
 [TestFixture] public class MonitorCE_specification : UniversalTestBase
 {

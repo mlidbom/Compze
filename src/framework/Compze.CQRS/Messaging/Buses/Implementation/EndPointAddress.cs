@@ -1,7 +1,7 @@
-﻿using Composable.Contracts;
-using Composable.DDD;
+﻿using Compze.Contracts;
+using Compze.DDD;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 public class EndPointAddress : ValueObject<EndPointAddress>
 {

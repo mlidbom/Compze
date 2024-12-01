@@ -3,12 +3,12 @@
 // ReSharper disable MemberHidesStaticFromOuterClass
 
 using System.Collections.Generic;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Refactoring.Naming;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Refactoring.Naming;
 using Newtonsoft.Json;
 
-namespace Composable.Messaging;
+namespace Compze.Messaging;
 
 public static partial class MessageTypes
 {

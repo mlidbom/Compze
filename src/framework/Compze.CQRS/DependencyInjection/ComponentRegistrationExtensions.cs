@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.DependencyInjection;
+namespace Compze.DependencyInjection;
 
 public static class ComponentRegistrationExtensions
 {

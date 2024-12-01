@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.SystemCE.TransactionsCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.TransactionsCE;
 using JetBrains.Annotations;
 
-namespace Composable.DependencyInjection;
+namespace Compze.DependencyInjection;
 
 static class ServiceLocatorTransactionRunner
 {

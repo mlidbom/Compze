@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Composable.DependencyInjection;
+namespace Compze.DependencyInjection;
 
 static class ComponentRegistrationExtensionsOptionalRegistration
 {

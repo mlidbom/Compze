@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
-using Composable.Messaging;
+using Compze.Messaging;
 using JetBrains.Annotations;
 
 namespace AccountManagement.API;

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.Contracts;
-using Composable.DDD;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging.Events;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReactiveCE;
+using Compze.Contracts;
+using Compze.DDD;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Events;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReactiveCE;
 
-namespace Composable.Persistence.EventStore.Aggregates;
+namespace Compze.Persistence.EventStore.Aggregates;
 
 //Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]
 public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent> : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, AggregateEvent<TAggregateEvent>, IAggregateEvent<TAggregateEvent>>

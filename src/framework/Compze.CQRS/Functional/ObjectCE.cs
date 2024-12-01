@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.Functional;
+namespace Compze.Functional;
 
 ///<summary>
 /// Methods useful for any type when used in a Linq context

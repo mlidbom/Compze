@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Contracts;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Composable.DependencyInjection.Microsoft;
+namespace Compze.DependencyInjection.Microsoft;
 
 public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator, IServiceLocatorKernel
 {

@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.SystemCE;
+using Compze.SystemCE;
 
-namespace Composable.Testing.Threading;
+namespace Compze.Testing.Threading;
 
 class GatedCodeSection : IGatedCodeSection
 {

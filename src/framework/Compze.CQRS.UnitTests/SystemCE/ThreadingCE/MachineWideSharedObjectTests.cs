@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.Testing;
-using Composable.Testing.Threading;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.Testing;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using JetBrains.Annotations;
@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Composable.Tests.SystemCE.ThreadingCE;
+namespace Compze.Tests.SystemCE.ThreadingCE;
 
 [UsedImplicitly] class SharedObject
 {

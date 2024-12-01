@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework.Internal;
 
-namespace Composable.Testing;
+namespace Compze.Testing;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class LongRunningAttribute : Attribute,

@@ -1,8 +1,8 @@
-﻿using Composable.Persistence.DocumentDb;
-using Composable.Persistence.EventStore;
+﻿using Compze.Persistence.DocumentDb;
+using Compze.Persistence.EventStore;
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Composable;
+namespace Compze;
 
 public class ComposableApi
 {

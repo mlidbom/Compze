@@ -1,7 +1,7 @@
 ﻿using System;
-using Composable.Messaging;
+using Compze.Messaging;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 public interface IAggregateEvent<out TEventInterface> : IExactlyOnceWrapperEvent<TEventInterface>
    where TEventInterface : IAggregateEvent;

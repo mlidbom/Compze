@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.DDD;
-using Composable.Messaging;
+using Compze.DDD;
+using Compze.Messaging;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 public abstract class AggregateEvent<TBaseEventInterface>(TBaseEventInterface @event) : MessageTypes.WrapperEvent<TBaseEventInterface>(@event),
                                                                                         IAggregateEvent<TBaseEventInterface>

@@ -1,9 +1,9 @@
-﻿using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.SystemCE.TransactionsCE;
-using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
+﻿using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.SystemCE.TransactionsCE;
+using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
-namespace Composable.Persistence.MySql.EventStore;
+namespace Compze.Persistence.MySql.EventStore;
 
 partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
 {

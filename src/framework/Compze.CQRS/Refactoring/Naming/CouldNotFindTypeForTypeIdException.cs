@@ -1,6 +1,6 @@
 using System;
 
-namespace Composable.Refactoring.Naming;
+namespace Compze.Refactoring.Naming;
 
 public class CouldNotFindTypeForTypeIdException : Exception
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.Messaging;
+namespace Compze.Messaging;
 
 static partial class MessageTypeInspector
 {

@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using Composable.Persistence.Common.AdoCE;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Persistence.Common.AdoCE;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
-namespace Composable.Persistence.PgSql.SystemExtensions;
+namespace Compze.Persistence.PgSql.SystemExtensions;
 
 interface IPgSqlConnectionPool : IDbConnectionPool<IComposableNpgsqlConnection, NpgsqlCommand>
 {

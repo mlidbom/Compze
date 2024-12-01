@@ -1,9 +1,9 @@
 using System.Linq;
-using Composable.Functional;
-using Composable.Testing;
+using Compze.Functional;
+using Compze.Testing;
 using NUnit.Framework;
 
-namespace Composable.Tests;
+namespace Compze.Tests;
 
 [TestFixture]
 public class ObjectExtensionsTest : UniversalTestBase

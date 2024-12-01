@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using Composable.Persistence.DocumentDb;
+using Compze.Persistence.DocumentDb;
 
-namespace Composable.Persistence.EventStore.Query.Models.Generators;
+namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
 interface IVersioningDocumentDbReader : IDocumentDbReader
 {

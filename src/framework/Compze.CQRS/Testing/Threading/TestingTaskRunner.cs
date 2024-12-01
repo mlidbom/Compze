@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Contracts;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Testing.Threading;
+namespace Compze.Testing.Threading;
 
 ///<summary>
 /// Runs and monitors tasks on background threads.

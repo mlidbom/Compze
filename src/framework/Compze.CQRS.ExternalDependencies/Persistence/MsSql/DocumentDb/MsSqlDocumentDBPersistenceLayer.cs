@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.DocumentDb;
-using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.SystemCE;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
-using Schema = Composable.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.DocumentDb;
+using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.SystemCE;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Schema = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Composable.Persistence.MsSql.DocumentDb;
+namespace Compze.Persistence.MsSql.DocumentDb;
 
 partial class MsSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {

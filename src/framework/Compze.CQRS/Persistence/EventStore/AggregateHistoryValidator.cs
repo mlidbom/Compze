@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 // ReSharper disable LoopCanBeConvertedToQuery
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 static class AggregateHistoryValidator
 {

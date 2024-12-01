@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.LinqCE;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.Messaging;
+namespace Compze.Messaging;
 
 static partial class MessageInspector
 {

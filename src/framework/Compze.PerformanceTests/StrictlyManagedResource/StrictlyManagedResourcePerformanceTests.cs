@@ -1,11 +1,11 @@
-﻿using Composable.SystemCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
+﻿using Compze.SystemCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
 using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Composable.Tests.StrictlyManagedResource;
+namespace Compze.Tests.StrictlyManagedResource;
 
 [TestFixture]public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
 {

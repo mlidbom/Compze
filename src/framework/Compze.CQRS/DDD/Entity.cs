@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.DDD;
+namespace Compze.DDD;
 
 /// <summary>
 /// Base class for any class that considers equality to be that the Ids for two instances are the same.

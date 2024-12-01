@@ -1,12 +1,12 @@
-using Composable.Contracts;
-using Composable.DependencyInjection;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging.Buses;
-using Composable.Persistence.DocumentDb;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
+using Compze.Contracts;
+using Compze.DependencyInjection;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Buses;
+using Compze.Persistence.DocumentDb;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
 
-namespace Composable.Persistence.Common.DependencyInjection;
+namespace Compze.Persistence.Common.DependencyInjection;
 
 public static class DocumentDbRegistrar
 {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 
-namespace Composable.SystemCE.ReflectionCE;
+namespace Compze.SystemCE.ReflectionCE;
 
 static class AssemblyCE
 {

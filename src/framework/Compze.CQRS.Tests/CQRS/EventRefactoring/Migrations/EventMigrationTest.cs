@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.DependencyInjection.Testing;
-using Composable.GenericAbstractions.Time;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Refactoring.Migrations;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.SystemCE.TransactionsCE;
-using Composable.Tests.CQRS.EventRefactoring.Migrations.Events;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Testing;
+using Compze.GenericAbstractions.Time;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Refactoring.Migrations;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.SystemCE.TransactionsCE;
+using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -18,7 +18,7 @@ using NUnit.Framework;
 // ReSharper disable AccessToDisposedClosure
 // ReSharper disable AccessToModifiedClosure
 
-namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
 
 //Todo: Write tests that verify that none of the persistence layers lose precision in the persisted ReadOrder when persisting refactorings.
 //[ConfigurationBasedDuplicateByDimensions]

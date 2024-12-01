@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Composable.Persistence.EventStore.Aggregates;
+namespace Compze.Persistence.EventStore.Aggregates;
 
 public interface IReadOnlyEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity>
 {

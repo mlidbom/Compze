@@ -1,4 +1,4 @@
-﻿namespace Composable.Persistence.EventStore.Refactoring.Migrations;
+﻿namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 
 public interface IEventModifier
 {

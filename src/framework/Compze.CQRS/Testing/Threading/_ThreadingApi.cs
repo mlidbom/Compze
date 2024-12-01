@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.Functional;
+using Compze.Functional;
 
-namespace Composable.Testing.Threading;
+namespace Compze.Testing.Threading;
 
 interface IThreadGateVisitor
 {

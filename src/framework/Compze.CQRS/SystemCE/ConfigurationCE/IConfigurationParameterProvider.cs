@@ -1,4 +1,4 @@
-﻿namespace Composable.SystemCE.ConfigurationCE;
+﻿namespace Compze.SystemCE.ConfigurationCE;
 
 ///<summary>Allows for reading configuration parameters from a source such as a configuration file</summary>
 public interface IConfigurationParameterProvider

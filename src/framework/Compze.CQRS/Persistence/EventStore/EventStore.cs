@@ -2,18 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Composable.Contracts;
-using Composable.Logging;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.EventStore.Refactoring.Migrations;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE;
-using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
+using Compze.Contracts;
+using Compze.Logging;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.EventStore.Refactoring.Migrations;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE;
+using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 class EventStore : IEventStore
 {

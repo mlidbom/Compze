@@ -3,9 +3,9 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Composable.Messaging.Buses;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.Persistence.EventStore;
+using Compze.Messaging.Buses;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.Persistence.EventStore;
 
 namespace AccountManagement;
 

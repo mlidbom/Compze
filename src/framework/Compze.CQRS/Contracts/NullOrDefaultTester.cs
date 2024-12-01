@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 static class NullOrDefaultTester<TType>
 {

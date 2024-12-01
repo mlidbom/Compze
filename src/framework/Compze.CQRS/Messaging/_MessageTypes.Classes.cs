@@ -1,14 +1,14 @@
 ﻿using System;
-using Composable.DDD;
-using Composable.Messaging.Buses.Implementation;
-using Composable.Refactoring.Naming;
+using Compze.DDD;
+using Compze.Messaging.Buses.Implementation;
+using Compze.Refactoring.Naming;
 using Newtonsoft.Json;
 
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace Composable.Messaging;
+namespace Compze.Messaging;
 
 public static partial class MessageTypes
 {

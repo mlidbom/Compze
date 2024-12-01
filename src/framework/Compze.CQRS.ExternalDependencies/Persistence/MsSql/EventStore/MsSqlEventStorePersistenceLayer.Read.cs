@@ -4,12 +4,12 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Linq;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Event=Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
-namespace Composable.Persistence.MsSql.EventStore;
+namespace Compze.Persistence.MsSql.EventStore;
 
 partial class MsSqlEventStorePersistenceLayer(MsSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {

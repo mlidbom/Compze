@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Contracts;
-using Composable.GenericAbstractions.Time;
-using Composable.Messaging.Buses.Implementation;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReactiveCE;
-using Composable.SystemCE.ReflectionCE;
-using Composable.SystemCE.ThreadingCE;
+using Compze.Contracts;
+using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Buses.Implementation;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReactiveCE;
+using Compze.SystemCE.ReflectionCE;
+using Compze.SystemCE.ThreadingCE;
 
-namespace Composable.Persistence.EventStore;
+namespace Compze.Persistence.EventStore;
 
 class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 {

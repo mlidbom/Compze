@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Composable.Contracts;
+using Compze.Contracts;
 using FluentAssertions;
 using Assert = NUnit.Framework.Assert;
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Composable.Tests.Contracts;
+namespace Compze.Tests.Contracts;
 
 static class InspectionTestHelper
 {

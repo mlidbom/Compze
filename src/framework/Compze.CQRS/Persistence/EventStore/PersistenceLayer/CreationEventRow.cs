@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.Persistence.EventStore.PersistenceLayer;
+namespace Compze.Persistence.EventStore.PersistenceLayer;
 
 class CreationEventRow
 {

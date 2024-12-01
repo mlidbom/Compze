@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Transactions;
-using Composable.SystemCE.TransactionsCE;
+using Compze.SystemCE.TransactionsCE;
 
-namespace Composable.Testing.Transactions;
+namespace Compze.Testing.Transactions;
 
 static class TransactionInterceptorExtensions
 {

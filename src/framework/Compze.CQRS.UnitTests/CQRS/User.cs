@@ -1,10 +1,10 @@
 ﻿using System;
-using Composable.GenericAbstractions.Time;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
+using Compze.GenericAbstractions.Time;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Aggregates;
 using JetBrains.Annotations;
 
-namespace Composable.Tests.CQRS;
+namespace Compze.Tests.CQRS;
 
 class User : Aggregate<User,UserEvent, IUserEvent>
 {

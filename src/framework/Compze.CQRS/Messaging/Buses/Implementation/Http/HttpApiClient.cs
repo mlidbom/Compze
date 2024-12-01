@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Composable.Messaging.Buses.Http;
-using Composable.Serialization;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Messaging.Buses.Http;
+using Compze.Serialization;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Messaging.Buses.Implementation.Http;
+namespace Compze.Messaging.Buses.Implementation.Http;
 
 class HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer) : IHttpApiClient
 {

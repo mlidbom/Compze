@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.PgSql.SystemExtensions;
 using Npgsql;
 using NpgsqlTypes;
-using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
+using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
-namespace Composable.Persistence.PgSql.EventStore;
+namespace Compze.Persistence.PgSql.EventStore;
 
 partial class PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {

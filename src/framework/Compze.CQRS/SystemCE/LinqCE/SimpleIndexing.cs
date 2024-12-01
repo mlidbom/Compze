@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE.LinqCE;
+namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
 static class SimpleIndexing

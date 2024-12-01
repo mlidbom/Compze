@@ -1,16 +1,16 @@
 ﻿using System;
-using Composable.DependencyInjection;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.MySql.SystemExtensions;
-using Composable.Persistence.MySql.Testing.Databases;
-using Composable.Persistence.MsSql.SystemExtensions;
-using Composable.Persistence.MsSql.Testing.Databases;
-using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.Persistence.PgSql.Testing.Databases;
-using Composable.Testing;
-using Composable.Testing.Databases;
+using Compze.DependencyInjection;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.Testing.Databases;
+using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.MsSql.Testing.Databases;
+using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PgSql.Testing.Databases;
+using Compze.Testing;
+using Compze.Testing.Databases;
 
-namespace Composable.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
 //[ConfigurationBasedDuplicateByDimensions]
 public class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)

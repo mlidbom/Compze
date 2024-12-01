@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using Composable.Contracts;
+using Compze.Contracts;
 
-namespace Composable.SystemCE.ThreadingCE;
+namespace Compze.SystemCE.ThreadingCE;
 
 ///<summary>Thrown if the <see cref="SingleThreadUseGuard"/> detects a thread change.</summary>
 class MultiThreadedUseException : InvalidOperationException

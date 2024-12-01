@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Composable.Messaging.Buses.Implementation.Http;
+namespace Compze.Messaging.Buses.Implementation.Http;
 
 class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : ControllerBase(serializer, typeMapper, handlerExecutionEngine, storage)
 {

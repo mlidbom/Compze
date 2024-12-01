@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Composable.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.SystemCE.ThreadingCE.TasksCE;
 
 static partial class TaskCE
 {

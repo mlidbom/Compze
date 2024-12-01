@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 
-namespace Composable.Testing;
+namespace Compze.Testing;
 
 [TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
 public class DuplicateByPluggableComponentTest : UniversalTestBase

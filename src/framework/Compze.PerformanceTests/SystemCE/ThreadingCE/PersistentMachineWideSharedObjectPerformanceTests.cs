@@ -1,11 +1,11 @@
 ﻿using System;
-using Composable.SystemCE;
-using Composable.SystemCE.ThreadingCE;
-using Composable.Testing;
-using Composable.Testing.Performance;
+using Compze.SystemCE;
+using Compze.SystemCE.ThreadingCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
 using NUnit.Framework;
 
-namespace Composable.Tests.SystemCE.ThreadingCE;
+namespace Compze.Tests.SystemCE.ThreadingCE;
 
 [TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {

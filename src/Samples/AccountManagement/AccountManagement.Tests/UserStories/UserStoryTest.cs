@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using AccountManagement.API;
 using AccountManagement.UserStories.Scenarios;
-using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
+using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
 

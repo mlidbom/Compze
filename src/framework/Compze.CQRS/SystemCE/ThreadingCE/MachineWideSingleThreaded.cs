@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using JetBrains.Annotations;
 
-namespace Composable.SystemCE.ThreadingCE;
+namespace Compze.SystemCE.ThreadingCE;
 
 class MachineWideSingleThreaded
 {

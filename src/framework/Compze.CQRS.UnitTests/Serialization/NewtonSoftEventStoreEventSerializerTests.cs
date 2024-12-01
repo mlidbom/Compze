@@ -1,15 +1,15 @@
 ﻿using System;
-using Composable.Logging;
-using Composable.Persistence.EventStore;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.SystemCE;
-using Composable.Testing;
+using Compze.Logging;
+using Compze.Persistence.EventStore;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.SystemCE;
+using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Composable.Tests.Serialization;
+namespace Compze.Tests.Serialization;
 
 [TestFixture]
 public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase

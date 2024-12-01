@@ -2,11 +2,11 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using Composable.Logging;
-using Composable.SystemCE;
-using Composable.SystemCE.DiagnosticsCE;
+using Compze.Logging;
+using Compze.SystemCE;
+using Compze.SystemCE.DiagnosticsCE;
 
-namespace Composable.Testing;
+namespace Compze.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 public static partial class TestEnv

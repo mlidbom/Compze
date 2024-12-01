@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
-using Composable.SystemCE;
-using Composable.Testing.Threading;
+using Compze.SystemCE;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using Xunit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Composable.Tests.SystemCE.ThreadingCE;
+namespace Compze.Tests.SystemCE.ThreadingCE;
 
 public class MonitorClassApiExploration
 {

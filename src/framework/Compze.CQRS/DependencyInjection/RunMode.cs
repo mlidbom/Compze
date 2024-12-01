@@ -1,4 +1,4 @@
-﻿namespace Composable.DependencyInjection;
+﻿namespace Compze.DependencyInjection;
 
 class RunMode : IRunMode
 {

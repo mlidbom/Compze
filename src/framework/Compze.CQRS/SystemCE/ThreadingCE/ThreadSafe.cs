@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Composable.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.CollectionsCE.GenericCE;
 
-namespace Composable.SystemCE.ThreadingCE;
+namespace Compze.SystemCE.ThreadingCE;
 
 static class ThreadSafe
 {

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Refactoring.Migrations;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Refactoring.Migrations;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReflectionCE;
 
-namespace Composable.Tests.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
 
 class Before<TEvent> : EventMigration<IRootEvent>
 {

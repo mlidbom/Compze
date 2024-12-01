@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace Composable.SystemCE.LinqCE;
+namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
 public static partial class EnumerableCE

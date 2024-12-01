@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Composable.Messaging;
-using Composable.Refactoring.Naming;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Messaging;
+using Compze.Refactoring.Naming;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Composable.Persistence.EventStore.Aggregates;
+namespace Compze.Persistence.EventStore.Aggregates;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 public sealed class AllowPublicSettersAttribute : Attribute;

@@ -1,10 +1,10 @@
 ﻿using System;
-using Composable.Contracts;
+using Compze.Contracts;
 using Newtonsoft.Json;
 
 // ReSharper disable ImpureMethodCallOnReadonlyValueField
 
-namespace Composable;
+namespace Compze;
 
 class TypeId
 {

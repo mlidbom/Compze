@@ -1,12 +1,12 @@
 ﻿using System;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.Testing;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
-using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
+using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
 
-namespace Composable.Tests.Persistence.EventStore;
+namespace Compze.Tests.Persistence.EventStore;
 
 [TestFixture] public class ReadOrderTests : UniversalTestBase
 {

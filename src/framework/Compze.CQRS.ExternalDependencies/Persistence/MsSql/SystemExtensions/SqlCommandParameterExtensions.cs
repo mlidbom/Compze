@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace Composable.Persistence.MsSql.SystemExtensions;
+namespace Compze.Persistence.MsSql.SystemExtensions;
 
 static class SqlCommandParameterExtensions
 {

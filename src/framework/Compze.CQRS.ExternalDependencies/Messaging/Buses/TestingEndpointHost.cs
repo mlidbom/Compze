@@ -1,8 +1,8 @@
 ﻿using System;
-using Composable.DependencyInjection;
-using Composable.Persistence.Common.DependencyInjection;
+using Compze.DependencyInjection;
+using Compze.Persistence.Common.DependencyInjection;
 
-namespace Composable.Messaging.Buses;
+namespace Compze.Messaging.Buses;
 
 public class TestingEndpointHost(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : TestingEndpointHostBase(mode, containerFactory)
 {

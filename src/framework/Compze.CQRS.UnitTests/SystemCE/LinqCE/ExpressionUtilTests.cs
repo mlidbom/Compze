@@ -1,9 +1,9 @@
-﻿using Composable.SystemCE.LinqCE;
-using Composable.Testing;
+﻿using Compze.SystemCE.LinqCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.SystemCE.LinqCE;
+namespace Compze.Tests.SystemCE.LinqCE;
 
 [TestFixture]
 public class ExpressionUtilTests: UniversalTestBase

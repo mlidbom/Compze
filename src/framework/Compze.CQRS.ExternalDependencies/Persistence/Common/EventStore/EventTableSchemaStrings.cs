@@ -1,6 +1,6 @@
-﻿using Event=Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
+﻿using Event=Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
-namespace Composable.Persistence.Common.EventStore;
+namespace Compze.Persistence.Common.EventStore;
 
 static class EventTableSchemaStrings
 {

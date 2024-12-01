@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Composable.Contracts;
-using Composable.Functional;
-using Composable.Persistence;
-using Composable.Serialization;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.Functional;
+using Compze.Persistence;
+using Compze.Serialization;
+using Compze.SystemCE.LinqCE;
 using Newtonsoft.Json;
 
-namespace Composable.SystemCE.ThreadingCE;
+namespace Compze.SystemCE.ThreadingCE;
 
 class MachineWideSharedObject
 {

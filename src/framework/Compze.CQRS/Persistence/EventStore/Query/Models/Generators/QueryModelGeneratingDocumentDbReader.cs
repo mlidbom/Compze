@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Contracts;
-using Composable.DDD;
-using Composable.Functional;
-using Composable.Persistence.DocumentDb;
-using Composable.SystemCE.ThreadingCE;
+using Compze.Contracts;
+using Compze.DDD;
+using Compze.Functional;
+using Compze.Persistence.DocumentDb;
+using Compze.SystemCE.ThreadingCE;
 
-namespace Composable.Persistence.EventStore.Query.Models.Generators;
+namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader

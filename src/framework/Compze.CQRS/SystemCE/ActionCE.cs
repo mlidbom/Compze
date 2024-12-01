@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Composable.SystemCE.LinqCE;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 static class ActionCE
 {

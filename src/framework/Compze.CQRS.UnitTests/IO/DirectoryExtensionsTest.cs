@@ -1,14 +1,14 @@
 using System;
 using System.IO;
 using System.Linq;
-using Composable.Functional;
-using Composable.Logging;
-using Composable.SystemCE.IOCE;
-using Composable.SystemCE.LinqCE;
-using Composable.Testing;
+using Compze.Functional;
+using Compze.Logging;
+using Compze.SystemCE.IOCE;
+using Compze.SystemCE.LinqCE;
+using Compze.Testing;
 using NUnit.Framework;
 
-namespace Composable.Tests.IO;
+namespace Compze.Tests.IO;
 
 [TestFixture]
 public class DirectoryExtensionsTest : UniversalTestBase

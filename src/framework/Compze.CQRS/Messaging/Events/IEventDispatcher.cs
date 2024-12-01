@@ -1,4 +1,4 @@
-namespace Composable.Messaging.Events;
+namespace Compze.Messaging.Events;
 
 interface IEventDispatcher<in TEvent>
 {

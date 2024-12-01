@@ -1,9 +1,9 @@
 using System.IO;
 using System.Linq;
-using Composable.Contracts;
-using Composable.GenericAbstractions.Hierarchies;
+using Compze.Contracts;
+using Compze.GenericAbstractions.Hierarchies;
 
-namespace Composable.SystemCE.IOCE;
+namespace Compze.SystemCE.IOCE;
 
 /// <summary/>
 static class DirectoryCE

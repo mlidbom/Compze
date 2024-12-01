@@ -1,3 +1,3 @@
-﻿namespace Composable.Persistence.EventStore;
+﻿namespace Compze.Persistence.EventStore;
 
 public interface IAggregateDeletedEvent : IAggregateEvent;

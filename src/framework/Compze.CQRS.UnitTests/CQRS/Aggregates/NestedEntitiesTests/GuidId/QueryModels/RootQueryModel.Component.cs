@@ -1,8 +1,8 @@
 using System;
-using Composable.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-namespace Composable.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
+namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
 partial class Component : RootQueryModel.Component<Component, RootEvent.Component.IRoot>
 {

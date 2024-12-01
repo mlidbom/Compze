@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Contracts;
-using Composable.DDD;
-using Composable.Functional;
-using Composable.GenericAbstractions.Time;
-using Composable.Refactoring.Naming;
-using Composable.Serialization;
-using Composable.SystemCE.CollectionsCE.GenericCE;
+using Compze.Contracts;
+using Compze.DDD;
+using Compze.Functional;
+using Compze.GenericAbstractions.Time;
+using Compze.Refactoring.Naming;
+using Compze.Serialization;
+using Compze.SystemCE.CollectionsCE.GenericCE;
 
-namespace Composable.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 class DocumentDb : IDocumentDb
 {

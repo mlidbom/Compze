@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
-using Composable.Persistence.Common.AdoCE;
-using Composable.Persistence.Common.EventStore;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.Persistence.PgSql.SystemExtensions;
-using Composable.SystemCE;
+using Compze.Contracts;
+using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.Common.EventStore;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
-using ReadOrder = Composable.Persistence.EventStore.PersistenceLayer.ReadOrder;
-using Event = Composable.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Composable.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
+using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
+using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
+using Lock = Compze.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Composable.Persistence.PgSql.EventStore;
+namespace Compze.Persistence.PgSql.EventStore;
 
 //Performance: explore PgSql alternatives to commented out MSSql hints throughout the persistence layer.
 partial class PgSqlEventStorePersistenceLayer

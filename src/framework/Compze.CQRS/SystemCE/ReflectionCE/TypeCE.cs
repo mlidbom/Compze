@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Composable.Contracts;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.SystemCE.ReflectionCE;
+namespace Compze.SystemCE.ReflectionCE;
 
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
 static class TypeCE

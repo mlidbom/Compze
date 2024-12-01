@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Composable.Contracts;
+namespace Compze.Contracts;
 
 public interface IInspectedValue<out TValue> : IInspectedValue
 {

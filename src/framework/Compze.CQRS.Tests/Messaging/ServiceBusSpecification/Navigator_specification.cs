@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Composable.DependencyInjection;
-using Composable.Messaging;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.Persistence.Common.DependencyInjection;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing;
+using Compze.DependencyInjection;
+using Compze.Messaging;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.Persistence.Common.DependencyInjection;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification;
+namespace Compze.Tests.Messaging.ServiceBusSpecification;
 
 public class Navigator_specification(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

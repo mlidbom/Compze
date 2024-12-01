@@ -1,5 +1,5 @@
 ﻿using AccountManagement.API;
-using Composable.Messaging.Hypermedia;
+using Compze.Messaging.Hypermedia;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 

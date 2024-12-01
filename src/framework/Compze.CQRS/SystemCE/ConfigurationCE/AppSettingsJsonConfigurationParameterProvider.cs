@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
-namespace Composable.SystemCE.ConfigurationCE;
+namespace Compze.SystemCE.ConfigurationCE;
 
 ///<summary>Fetches configuration variables from the application configuration file.</summary>
 class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton

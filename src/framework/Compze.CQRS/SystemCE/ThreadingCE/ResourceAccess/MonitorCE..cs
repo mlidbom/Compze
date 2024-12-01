@@ -11,9 +11,9 @@ using System.Threading;
                            "CA1001:Types that own disposable fields should be disposable",
                            Justification = "By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible.",
                            Scope = "type",
-                           Target = "~T:Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE")]
+                           Target = "~T:Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE")]
 
-namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 public partial class MonitorCE

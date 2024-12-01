@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using Composable.Persistence.Common.AdoCE;
+using Compze.Persistence.Common.AdoCE;
 
-namespace Composable.Persistence.MySql.SystemExtensions;
+namespace Compze.Persistence.MySql.SystemExtensions;
 
 static class MyMySqlCommandExtensions
 {

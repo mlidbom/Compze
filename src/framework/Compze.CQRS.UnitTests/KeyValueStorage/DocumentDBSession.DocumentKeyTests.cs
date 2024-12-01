@@ -1,9 +1,9 @@
-﻿using Composable.Persistence.DocumentDb;
-using Composable.Testing;
+﻿using Compze.Persistence.DocumentDb;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.KeyValueStorage;
+namespace Compze.Tests.KeyValueStorage;
 
 [TestFixture]
 public class DocumentDBSession_DocumentKeyTests : UniversalTestBase

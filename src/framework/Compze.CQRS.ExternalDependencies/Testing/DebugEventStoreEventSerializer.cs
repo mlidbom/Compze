@@ -8,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 #pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
 #pragma warning disable CA2327
 
-namespace Composable.Testing;
+namespace Compze.Testing;
 
 static class DebugEventStoreEventSerializer
 {

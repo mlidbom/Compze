@@ -1,7 +1,7 @@
-﻿using Composable.DependencyInjection;
-using Composable.SystemCE.ConfigurationCE;
+﻿using Compze.DependencyInjection;
+using Compze.SystemCE.ConfigurationCE;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 public class EndpointConfiguration
 {

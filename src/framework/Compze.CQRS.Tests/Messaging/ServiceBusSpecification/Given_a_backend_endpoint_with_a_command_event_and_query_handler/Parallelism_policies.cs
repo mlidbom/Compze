@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Composable.Messaging.Buses;
-using Composable.SystemCE;
-using Composable.SystemCE.LinqCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
-using Composable.Testing.Threading;
+using Compze.Messaging.Buses;
+using Compze.SystemCE;
+using Compze.SystemCE.LinqCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Composable.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public class Parallelism_policies(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {

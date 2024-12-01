@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Composable.DDD;
+using Compze.DDD;
 using Newtonsoft.Json;
 
 namespace AccountManagement.Domain;

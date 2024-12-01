@@ -1,10 +1,10 @@
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
-using Composable.Persistence.Common.AdoCE;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Persistence.Common.AdoCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.Persistence.MsSql;
+namespace Compze.Persistence.MsSql;
 
 interface IComposableMsSqlConnection : IPoolableConnection, IComposableDbConnection<SqlCommand>
 {

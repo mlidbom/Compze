@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.Testing;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.Testing;
 using NUnit.Framework;
 
-namespace Composable.Tests.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.Tests.SystemCE.CollectionsCE.GenericCE;
 
 public static class DictionaryExtensionsGetOrAddWhenKey
 {

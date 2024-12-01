@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Composable.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class MonitorCE
 {

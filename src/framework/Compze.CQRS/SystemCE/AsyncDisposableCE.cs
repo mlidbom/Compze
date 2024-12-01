@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Composable.Contracts;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
-namespace Composable.SystemCE;
+namespace Compze.SystemCE;
 
 ///<summary>Simple utility class that calls the supplied action when the instance is async disposed. Gets rid of the need to create a ton of small classes to do cleanup.</summary>
 class AsyncDisposableCE : IAsyncDisposable

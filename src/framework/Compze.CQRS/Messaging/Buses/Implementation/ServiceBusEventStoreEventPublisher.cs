@@ -1,7 +1,7 @@
-﻿using Composable.Persistence.EventStore;
+﻿using Compze.Persistence.EventStore;
 using JetBrains.Annotations;
 
-namespace Composable.Messaging.Buses.Implementation;
+namespace Compze.Messaging.Buses.Implementation;
 
 [UsedImplicitly] class ServiceBusEventStoreEventPublisher : IEventStoreEventPublisher
 {

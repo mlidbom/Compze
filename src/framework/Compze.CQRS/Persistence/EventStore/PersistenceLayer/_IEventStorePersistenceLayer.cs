@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Composable.Persistence.EventStore.PersistenceLayer;
+namespace Compze.Persistence.EventStore.PersistenceLayer;
 
 interface IEventStorePersistenceLayer
 {

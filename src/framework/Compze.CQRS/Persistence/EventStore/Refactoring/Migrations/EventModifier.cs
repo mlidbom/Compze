@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
-using Composable.Persistence.EventStore.PersistenceLayer;
-using Composable.SystemCE.CollectionsCE.GenericCE;
-using Composable.SystemCE.LinqCE;
+using Compze.Contracts;
+using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.SystemCE.LinqCE;
 
-namespace Composable.Persistence.EventStore.Refactoring.Migrations;
+namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 
 //Yes this class has quite a bit of code that looks overly complex. Like it could be simplified a lot.
 //What you are seeing is likely optimizations. Please do not change this class for reasons of readability unless you do thorough performance testing and verify that no performance is lost.

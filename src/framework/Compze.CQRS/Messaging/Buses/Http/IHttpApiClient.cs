@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Composable.Messaging.Buses.Implementation;
+using Compze.Messaging.Buses.Implementation;
 
-namespace Composable.Messaging.Buses.Http;
+namespace Compze.Messaging.Buses.Http;
 
 interface IHttpApiClient
 {

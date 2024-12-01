@@ -1,8 +1,8 @@
 ﻿using AccountManagement.API;
-using Composable.DependencyInjection;
-using Composable.Messaging.Buses;
-using Composable.Messaging.Hypermedia;
-using Composable.SystemCE.ThreadingCE.TasksCE;
+using Compze.DependencyInjection;
+using Compze.Messaging.Buses;
+using Compze.Messaging.Hypermedia;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

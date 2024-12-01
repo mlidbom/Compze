@@ -1,5 +1,5 @@
-﻿using Composable.Messaging.Events;
-using Composable.Persistence.EventStore;
+﻿using Compze.Messaging.Events;
+using Compze.Persistence.EventStore;
 using FluentAssertions;
 using Xunit;
 
@@ -7,7 +7,7 @@ using Xunit;
 #pragma warning disable IDE0051 //Review OK: unused private members are intentional in this test.
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
 
-namespace Composable.Tests.CQRS.EventHandling;
+namespace Compze.Tests.CQRS.EventHandling;
 
 public abstract class CallMatchingHandlersInRegistrationOrderEventDispatcherTests
 {

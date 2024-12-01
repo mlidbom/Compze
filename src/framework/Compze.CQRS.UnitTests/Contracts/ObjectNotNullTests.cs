@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Composable.Contracts;
-using Composable.Testing;
+using Compze.Contracts;
+using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
-namespace Composable.Tests.Contracts;
+namespace Compze.Tests.Contracts;
 
 // ReSharper disable ConvertToConstant.Local
 // ReSharper disable ExpressionIsAlwaysNull

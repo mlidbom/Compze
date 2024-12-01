@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Composable.Contracts;
-using Composable.GenericAbstractions.Time;
-using Composable.Persistence.EventStore;
-using Composable.Persistence.EventStore.Aggregates;
-using Composable.SystemCE.ReflectionCE;
+using Compze.Contracts;
+using Compze.GenericAbstractions.Time;
+using Compze.Persistence.EventStore;
+using Compze.Persistence.EventStore.Aggregates;
+using Compze.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace Composable.Tests.CQRS.EventRefactoring.Migrations
+namespace Compze.Tests.CQRS.EventRefactoring.Migrations
 {
     interface IRootEvent : IAggregateEvent;
 

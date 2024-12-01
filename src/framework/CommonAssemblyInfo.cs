@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.5.0.0")]
 
 
-[assembly: InternalsVisibleTo("Composable.HyperBus")]
+[assembly: InternalsVisibleTo("Compze.HyperBus")]
 [assembly: InternalsVisibleTo("NetMqProcess01")]
 [assembly: InternalsVisibleTo("NetMqProcess02")]
 [assembly: InternalsVisibleTo("NSpec.NUnit")]

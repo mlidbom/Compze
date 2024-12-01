@@ -1,10 +1,10 @@
 using System;
 using System.Transactions;
-using Composable.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PgSql.SystemExtensions;
 using JetBrains.Annotations;
 using Npgsql;
 
-namespace Composable.Persistence.PgSql.EventStore;
+namespace Compze.Persistence.PgSql.EventStore;
 
 class PgSqlEventStoreConnectionManager
 {
