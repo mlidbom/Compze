@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : Fixture
+class Retry_policies_AtMostOnceCommand_when_command_handler_fails : Fixture
 {
    [SetUp] public void SendCommandThatFails()
    {

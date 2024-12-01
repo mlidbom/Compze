@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification;
 
-public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+class When_scheduling_commands_to_be_sent_in_the_future(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    IUtcTimeTimeSource _timeSource;
    IThreadGate _receivedCommandGate;

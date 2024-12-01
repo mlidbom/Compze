@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Parallelism_policies(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
+class Parallelism_policies(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {
    [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_QueryAsync()
    {

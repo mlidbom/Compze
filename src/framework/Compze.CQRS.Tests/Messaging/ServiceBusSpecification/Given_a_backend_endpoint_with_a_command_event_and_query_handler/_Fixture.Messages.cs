@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public partial class Fixture
+partial class Fixture
 {
    protected static class MyAggregateEvent
    {

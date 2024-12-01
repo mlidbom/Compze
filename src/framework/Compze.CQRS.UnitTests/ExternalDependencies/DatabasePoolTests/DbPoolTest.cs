@@ -13,7 +13,7 @@ using Compze.Testing.Databases;
 namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
 //[ConfigurationBasedDuplicateByDimensions]
-public class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    internal static DbPool CreatePool() =>
       TestEnv.PersistenceLayer.Current switch

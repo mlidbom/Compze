@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
-public class DbPoolPerformanceTests : DbPoolTest
+class DbPoolPerformanceTests : DbPoolTest
 {
    [OneTimeSetUp]public void WarmUpCache()
    {

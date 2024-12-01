@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Transaction_policies : Fixture
+class Transaction_policies : Fixture
 {
    [Test] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
