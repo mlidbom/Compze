@@ -40,7 +40,7 @@ partial class InMemoryEventStorePersistenceLayer
             var currentTransactionId = Transaction.Current!.TransactionInformation.LocalIdentifier;
             if(currentTransactionId != OwningTransactionLocalId)
             {
-               var @lock = Guard.EnterUpdateLock();
+               var @lock = Guard.TakeUpdateLock();
                Transaction.Current.OnCompleted(() =>
                {
                   OwningTransactionLocalId = string.Empty;

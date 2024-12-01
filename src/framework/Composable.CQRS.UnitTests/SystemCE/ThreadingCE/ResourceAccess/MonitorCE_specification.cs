@@ -21,14 +21,14 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
    {
       var monitor = MonitorCE.WithTimeout(1.Seconds());
 
-      var updateLock = monitor.EnterUpdateLock();
+      var updateLock = monitor.TakeUpdateLock();
 
       using var otherThreadIsWaitingForLock = new ManualResetEventSlim(false);
       using var otherThreadGotLock = new ManualResetEventSlim(false);
       var otherThreadTask = TaskCE.Run(() =>
       {
          otherThreadIsWaitingForLock.Set();
-         using(monitor.EnterUpdateLock())
+         using(monitor.TakeUpdateLock())
          {
             otherThreadGotLock.Set();
          }
@@ -47,16 +47,16 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
    {
       var monitor = MonitorCE.WithTimeout(1.Seconds());
 
-      using(monitor.EnterUpdateLock())
+      using(monitor.TakeUpdateLock())
       {
-         using(monitor.EnterUpdateLock())
+         using(monitor.TakeUpdateLock())
          {
          }
 
-         AssertThrows.Exception<Exception>(() => Task.Run(() => monitor.EnterUpdateLock(timeout:10.Milliseconds())).Wait());
+         AssertThrows.Exception<Exception>(() => Task.Run(() => monitor.TakeUpdateLock(timeout:10.Milliseconds())).Wait());
       }
 
-      Task.Run(() => monitor.EnterUpdateLock(timeout:0.Milliseconds())).Wait();
+      Task.Run(() => monitor.TakeUpdateLock(timeout:0.Milliseconds())).Wait();
    }
 
    [TestFixture] public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
@@ -85,7 +85,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
          TaskCE.Run(() =>
          {
-            var @lock = monitor.EnterUpdateLock();
+            var @lock = monitor.TakeUpdateLock();
             threadOneHasTakenUpdateLock.Set();
             threadTwoIsAboutToTryToEnterUpdateLock.WaitOne();
             Thread.Sleep(ownerThreadBlockTime);
@@ -98,7 +98,7 @@ namespace Composable.Tests.SystemCE.ThreadingCE.ResourceAccess;
                                          () => TaskCE.Run(() =>
                                                       {
                                                          threadTwoIsAboutToTryToEnterUpdateLock.Set();
-                                                         monitor.EnterUpdateLock();
+                                                         monitor.TakeUpdateLock();
                                                       })
                                                      .Wait())
                                      .InnerExceptions.Single();

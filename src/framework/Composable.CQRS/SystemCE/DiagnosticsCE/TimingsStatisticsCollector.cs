@@ -79,7 +79,7 @@ class TimingsStatisticsCollector
    void RegisterCall(TimeSpan time)
    {
       Interlocked.Increment(ref _totalCalls);
-      using(_monitor.EnterUpdateLock()) TotalTime += time;
+      using(_monitor.TakeUpdateLock()) TotalTime += time;
       // ReSharper disable once ForCanBeConvertedToForeach
       for(var i = 0; i < _callStats.Length; ++i)
       {

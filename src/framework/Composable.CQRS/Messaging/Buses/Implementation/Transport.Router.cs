@@ -46,7 +46,7 @@ partial class Transport
             }
          }
 
-         using(_monitor.EnterUpdateLock())
+         using(_monitor.TakeUpdateLock())
          {
             if(eventSubscribers.Count > 0)
             {

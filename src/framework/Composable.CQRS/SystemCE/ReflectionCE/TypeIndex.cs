@@ -21,7 +21,7 @@ class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
       if(_map.TryGetValue(type, out var value))
          return value;
 
-      using(Monitor.EnterUpdateLock())
+      using(Monitor.TakeUpdateLock())
       {
          if(_map.TryGetValue(type, out var value2))
             return value2;

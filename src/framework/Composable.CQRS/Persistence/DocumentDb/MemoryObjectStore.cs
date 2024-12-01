@@ -23,7 +23,7 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
 
    internal bool TryGet<T>(object id, [MaybeNullWhen(false)] out T value)
    {
-      using(_monitor.EnterUpdateLock())
+      using(_monitor.TakeUpdateLock())
       {
          if(TryGet(typeof(T), id, out var found))
          {

@@ -31,7 +31,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
 
       internal long Read_MonitorCE_Using_EnterLock()
       {
-         using(_monitor.EnterLock())
+         using(_monitor.TakeReadLock())
          {
             return Read_Unsafe();
          }
@@ -49,7 +49,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
 
       internal void Increment_MonitorCE_Using_EnterLock()
       {
-         using(_monitor.EnterLock()) Increment_Unsafe();
+         using(_monitor.TakeReadLock()) Increment_Unsafe();
       }
 
       internal void Increment_MonitorCE_Update() => _monitor.Update(Increment_Unsafe);

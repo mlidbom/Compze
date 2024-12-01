@@ -51,7 +51,7 @@ class EventCache : IDisposable
       {
          entry = null;
          if(Transaction.Current == null) return false;
-         using(_monitor.EnterLock())
+         using(_monitor.TakeReadLock())
          {
             return CurrentOverlay.TryGetValue(aggregateId, out entry);
          }
