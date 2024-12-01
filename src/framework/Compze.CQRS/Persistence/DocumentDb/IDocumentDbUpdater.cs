@@ -5,7 +5,7 @@ namespace Compze.Persistence.DocumentDb;
 
 public interface IDocumentDbUpdater
 {
-   /// <summary>Like Get but, if supported by implementing class, eagerly locks the instance in the database.</summary>
+   /// <summary>Like <see cref="IDocumentDbReader.Get{TValue}"/> but, if supported by implementing class, eagerly locks the instance in the database.</summary>
    TValue GetForUpdate<TValue>(object key);
 
    void Save<TValue>(object id, TValue value);

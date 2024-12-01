@@ -2,4 +2,4 @@
 
 namespace Compze.Persistence.DocumentDb;
 
-public class TooManyItemsDeletedException : Exception;
+class TooManyItemsDeletedException : Exception;

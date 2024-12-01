@@ -2,7 +2,7 @@
 
 namespace Compze.Persistence.EventStore;
 
-public class AttemptToSaveAlreadyPersistedAggregateException : Exception
+class AttemptToSaveAlreadyPersistedAggregateException : Exception
 {
    public AttemptToSaveAlreadyPersistedAggregateException(IEventStored aggregate)
       :base(

@@ -29,7 +29,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       static readonly TEventEntityIdGetter IdGetter = Constructor.For<TEventEntityIdGetter>.DefaultConstructor.Instance();
 
       TEntityId _id;
-      public TEntityId Id => Assert.Result.NotNullOrDefault(_id);
+      internal TEntityId Id => Assert.Result.NotNullOrDefault(_id);
 
       protected Entity(TQueryModel queryModel) : this(queryModel.RegisterEventAppliers()) {}
 

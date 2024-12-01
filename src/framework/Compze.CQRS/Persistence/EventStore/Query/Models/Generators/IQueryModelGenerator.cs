@@ -3,7 +3,7 @@ using Compze.Functional;
 
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
-public interface IQueryModelGenerator;
+interface IQueryModelGenerator;
 
 interface IQueryModelGenerator<TDocument> : IQueryModelGenerator
 {

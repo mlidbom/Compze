@@ -4,12 +4,12 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.SystemCE.CollectionsCE.ConcurrentCE;
 
-public static class ConcurrentCircularReader
+static class ConcurrentCircularReader
 {
    public static ConcurrentCircularReader<T> ToConcurrentCircularReader<T>(this IEnumerable<T> source) => new(source);
 }
 
-public class ConcurrentCircularReader<T>
+class ConcurrentCircularReader<T>
 {
    readonly MonitorCE _lock = MonitorCE.WithDefaultTimeout();
    int _current = -1;

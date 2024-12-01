@@ -80,7 +80,7 @@ public partial class EventStoreApi
       QueryApi.GetAggregateHistory<TEvent>.RegisterHandler(registrar);
    }
 
-   public static void MapTypes(ITypeMappingRegistar typeMapper)
+   internal static void MapTypes(ITypeMappingRegistar typeMapper)
    {
       typeMapper
         .MapTypeAndStandardCollectionTypes<AggregateEvent>("E8BA2E11-317C-416B-A68A-393CB6E5551B")
