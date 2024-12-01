@@ -1,6 +1,6 @@
 ﻿namespace Website.docs.messaging;
 
-class basics
+class Basics
 {
    public void DoNothing() {}
 
