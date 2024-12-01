@@ -11,7 +11,7 @@ class PgSqlEventStoreConnectionManager
    readonly IPgSqlConnectionPool _connectionPool;
    public PgSqlEventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool) => _connectionPool = sqlConnectionPool;
 
-   public void UseConnection([InstantHandle] Action<ICompzNpgsqlConnection> action)
+   public void UseConnection([InstantHandle] Action<ICompzeNpgsqlConnection> action)
    {
       AssertTransactionPolicy(false);
       _connectionPool.UseConnection(action);

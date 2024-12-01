@@ -7,32 +7,32 @@ using Npgsql;
 
 namespace Compze.Persistence.PgSql.SystemExtensions;
 
-interface IPgSqlConnectionPool : IDbConnectionPool<ICompzNpgsqlConnection, NpgsqlCommand>
+interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>
 {
    internal static IPgSqlConnectionPool CreateInstance1(Func<string> getConnectionString) => new PgSqlConnectionPool(getConnectionString);
    internal static IPgSqlConnectionPool CreateInstance(string connectionString) => new PgSqlConnectionPool(connectionString);
 
    class PgSqlConnectionPool : IPgSqlConnectionPool
    {
-      readonly OptimizedLazy<IDbConnectionPool<ICompzNpgsqlConnection, NpgsqlCommand>> _pool;
+      readonly OptimizedLazy<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>> _pool;
 
       public PgSqlConnectionPool(string connectionString) : this(() => connectionString) {}
 
       public PgSqlConnectionPool(Func<string> getConnectionString)
       {
-         _pool = new OptimizedLazy<IDbConnectionPool<ICompzNpgsqlConnection, NpgsqlCommand>>(
+         _pool = new OptimizedLazy<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>>(
             () =>
             {
                var connectionString = getConnectionString();
-               return DbConnectionManager<ICompzNpgsqlConnection, NpgsqlCommand>.ForConnectionString(
+               return DbConnectionManager<ICompzeNpgsqlConnection, NpgsqlCommand>.ForConnectionString(
                   connectionString,
                   PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction,
-                  ICompzNpgsqlConnection.Create);
+                  ICompzeNpgsqlConnection.Create);
             });
       }
 
-      public TResult UseConnection<TResult>(Func<ICompzNpgsqlConnection, TResult> func) => _pool.Value.UseConnection(func);
-      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzNpgsqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
+      public TResult UseConnection<TResult>(Func<ICompzeNpgsqlConnection, TResult> func) => _pool.Value.UseConnection(func);
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeNpgsqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
    }

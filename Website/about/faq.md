@@ -1,12 +1,12 @@
-## How stable is Compz?
+## How stable is Compze?
 The event store and the document database have been proven in production for a number of years. The current code has only minor changes. The service bus is new, under development, and untried in production. Of course all the components have test suites. No component has known bugs. We normally prioritize bug fixes over all feature development.
 
-## What type of infrastructure does Compz require?
-Compz uses a relational database for all storage. Currently, supported databases are Sql Server, PostgreSql and MySql. Other than a Sql instance composable components have no special requirements.
+## What type of infrastructure does Compze require?
+Compze uses a relational database for all storage. Currently, supported databases are Sql Server, PostgreSql and MySql. Other than a Sql instance composable components have no special requirements.
 
 ## Performance & scalability
 
-### How well does Compz components perform?
+### How well does Compze components perform?
 Very well and it will only get better. We have spent a ton of effort making sure that both performance and scalability is as high as possible without sacrificing reliability, productivity and maintainability. We have automated performance degradation tests that run continuously as we develop. We continuously look for ways to make things even faster and as we do we adjust the tests to require the new level of performance that we have achieved.
 
 ### What if we need extreme querying scalability?

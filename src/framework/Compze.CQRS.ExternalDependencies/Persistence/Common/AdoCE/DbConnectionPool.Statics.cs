@@ -7,7 +7,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 namespace Compze.Persistence.Common.AdoCE;
 
 abstract partial class DbConnectionManager<TConnection, TCommand>
-   where TConnection : IPoolableConnection, ICompzDbConnection<TCommand>
+   where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {
    static readonly IThreadShared<Dictionary<string, IDbConnectionPool<TConnection, TCommand>>> Pools =

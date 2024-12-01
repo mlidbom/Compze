@@ -11,7 +11,7 @@ class MsSqlEventStoreConnectionManager
    readonly IMsSqlConnectionPool _connectionPool;
    public MsSqlEventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool) => _connectionPool = sqlConnectionPool;
 
-   public void UseConnection([InstantHandle] Action<ICompzMsSqlConnection> action)
+   public void UseConnection([InstantHandle] Action<ICompzeMsSqlConnection> action)
    {
       AssertTransactionPolicy(false);
       _connectionPool.UseConnection(action);
