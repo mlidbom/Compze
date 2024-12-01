@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 namespace Compze.Persistence.EventStore.Aggregates;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-public sealed class AllowPublicSettersAttribute : Attribute;
+sealed class AllowPublicSettersAttribute : Attribute;
 
 static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
 {

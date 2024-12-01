@@ -18,7 +18,7 @@ static class AssemblyBuilderCE
    }
 }
 
-public static class TypeBuilderCE
+static class TypeBuilderCE
 {
    const MethodAttributes PropertyAccessorAttributes = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
