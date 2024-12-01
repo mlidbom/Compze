@@ -1,4 +1,7 @@
-﻿namespace Website.docs.messaging;
+﻿// ReSharper disable All
+#pragma warning disable
+
+namespace Website.docs.messaging;
 
 class Basics
 {
