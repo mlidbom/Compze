@@ -26,13 +26,13 @@ public static class Contract
    public static IInspected<object> Argument(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2, object? p3, [InvokerParameterName] string n3) =>
       new Inspected<object>(InspectionType.Argument, (p1!, n1), (p2!, n2), (p3!, n3));
 
-   public static IInspected<TInspected> Argument<TInspected>([AllowNull]TInspected p1, [InvokerParameterName] string n1) =>
+   public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
       new Inspected<TInspected>(InspectionType.Argument, (p1!, n1));
 
-   public static IInspected<TInspected> Argument<TInspected>([AllowNull]TInspected p1, [InvokerParameterName] string n1, [AllowNull]TInspected p2, [InvokerParameterName] string n2) =>
+   public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2) =>
       new Inspected<TInspected>(InspectionType.Argument, (p1!, n1), (p2!, n2));
 
-   public static IInspected<TInspected> Argument<TInspected>([AllowNull]TInspected p1, [InvokerParameterName] string n1, [AllowNull]TInspected p2, [InvokerParameterName] string n2, [AllowNull]TInspected p3, [InvokerParameterName] string n3) =>
+   public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2, TInspected? p3, [InvokerParameterName] string n3) =>
       new Inspected<TInspected>(InspectionType.Argument, (p1!, n1), (p2!, n2), (p3!, n3));
 
 
@@ -45,13 +45,13 @@ public static class Contract
    public static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2, object? p3, [InvokerParameterName] string n3) =>
       new Inspected<object>(InspectionType.Invariant, (p1!, n1), (p2!, n2), (p3!, n3));
 
-   public static IInspected<TInspected> Invariant<TInspected>([AllowNull]TInspected p1, [InvokerParameterName] string n1) =>
+   public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1));
 
-   public static IInspected<TInspected> Invariant<TInspected>([AllowNull]TInspected p1, [InvokerParameterName] string n1, [AllowNull]TInspected p2, [InvokerParameterName] string n2) =>
+   public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2) =>
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1), (p2!, n2));
 
-   public static IInspected<TInspected> Invariant<TInspected>([AllowNull]TInspected p1, [InvokerParameterName] string n1, [AllowNull]TInspected p2, [InvokerParameterName] string n2, [AllowNull]TInspected p3, [InvokerParameterName] string n3) =>
+   public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2, TInspected? p3, [InvokerParameterName] string n3) =>
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1), (p2!, n2), (p3!, n3));
 
 #pragma warning disable CS8777 //Reviewed OK. We have verified that the parameters are non-null when method exits.
