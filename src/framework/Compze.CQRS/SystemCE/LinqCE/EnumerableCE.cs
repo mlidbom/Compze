@@ -6,7 +6,7 @@ using Compze.Contracts;
 namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
-public static partial class EnumerableCE
+static partial class EnumerableCE
 {
    /// <summary>
    /// Creates an enumerable consisting of the passed parameter values is order.

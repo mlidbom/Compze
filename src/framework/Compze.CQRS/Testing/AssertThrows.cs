@@ -4,7 +4,7 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Testing;
 
-public static class AssertThrows
+static class AssertThrows
 {
    public static async Task<TException> Async<TException>([JetBrains.Annotations.InstantHandle]Func<Task> action) where TException : Exception
    {

@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
-public static partial class EnumerableCE
+public static class Looping
 {
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.

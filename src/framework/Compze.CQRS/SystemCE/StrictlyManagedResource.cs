@@ -150,7 +150,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor>(bool forceStackTra
 }
 
 ///<summary><see cref="IStrictlyManagedResource"/></summary>
-public class StrictlyManagedResourceWasFinalizedException : Exception
+class StrictlyManagedResourceWasFinalizedException : Exception
 {
    public StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : base(FormatMessage(instanceType, reservationCallStack)) {}
 

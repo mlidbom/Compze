@@ -9,7 +9,7 @@ using Compze.SystemCE.DiagnosticsCE;
 namespace Compze.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
-public static partial class TestEnv
+internal static partial class TestEnv
 {
    public static TimeSpan EnvMultiply(this TimeSpan original, double instrumented = 1.0, double unoptimized = 1.0) =>
       original * EnvFactor(instrumented: instrumented, unoptimized: unoptimized);

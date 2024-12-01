@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Compze.CQRS.UnitTests")]
 [assembly: InternalsVisibleTo("Compze.CQRS.ExternalDependencies.Tests")]
 [assembly: InternalsVisibleTo("Compze.PerformanceTests")]
+[assembly: InternalsVisibleTo("AccountManagement.PerformanceTests")]
 
 [assembly: InternalsVisibleTo("ScratchPad")]
 

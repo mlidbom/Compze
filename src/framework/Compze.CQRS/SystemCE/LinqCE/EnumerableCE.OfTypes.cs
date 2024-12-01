@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
-public static partial class EnumerableCE
+static partial class EnumerableCE
 {
    ///<summary>Returns a sequence of types matching the supplied type arguments</summary>
    public static IEnumerable<Type> OfTypes<T1>() => Create(typeof(T1));

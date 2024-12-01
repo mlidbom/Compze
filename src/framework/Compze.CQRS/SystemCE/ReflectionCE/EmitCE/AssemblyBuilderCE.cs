@@ -7,7 +7,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.SystemCE.ReflectionCE.EmitCE;
 
-public static class AssemblyBuilderCE
+static class AssemblyBuilderCE
 {
    internal static readonly IThreadShared<ModuleBuilder> Module;
 

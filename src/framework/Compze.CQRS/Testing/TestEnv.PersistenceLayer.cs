@@ -8,12 +8,12 @@ using Compze.SystemCE;
 namespace Compze.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
-public static partial class TestEnv
+internal static partial class TestEnv
 {
    ///<summary>Persistence layer members</summary>
    public static class PersistenceLayer
    {
-      public static DependencyInjection.PersistenceLayer Current
+      internal static DependencyInjection.PersistenceLayer Current
       {
          get
          {

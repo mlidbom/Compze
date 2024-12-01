@@ -2,7 +2,7 @@
 
 namespace Compze.SystemCE;
 
-public static class NullableCE
+static class NullableCE
 {
    public static T NotNull<T>(this T? @this) where T : struct => @this ?? throw new ArgumentNullException(nameof(@this));
 
