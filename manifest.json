@@ -2462,6 +2462,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Composable.Persistence.InMemory.DependencyInjection.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Composable.Persistence.MsSql.DependencyInjection.MsSqlPersistenceLayerRegistrar.yml",
       "output": {
         ".html": {
@@ -2596,6 +2616,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.IValidatableObjectCE.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.html"
         }
       },
       "version": ""
@@ -2846,6 +2876,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.OutParamFunc-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.html"
         }
       },
       "version": ""

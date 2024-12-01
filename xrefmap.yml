@@ -636,31 +636,31 @@ references:
   nameWithType: Contract.Argument<TParameter>(params (TParameter Value, string Name)[])
   nameWithType.vb: Contract.Argument(Of TParameter)(ParamArray (Value As TParameter, Name As String)())
 - uid: Composable.Contracts.Contract.Argument``1(``0,System.String)
-  name: Argument<TInspected>(TInspected, string)
+  name: Argument<TInspected>(TInspected?, string)
   href: api/Composable.Contracts.Contract.html#Composable_Contracts_Contract_Argument__1___0_System_String_
   commentId: M:Composable.Contracts.Contract.Argument``1(``0,System.String)
   name.vb: Argument(Of TInspected)(TInspected, String)
-  fullName: Composable.Contracts.Contract.Argument<TInspected>(TInspected, string)
+  fullName: Composable.Contracts.Contract.Argument<TInspected>(TInspected?, string)
   fullName.vb: Composable.Contracts.Contract.Argument(Of TInspected)(TInspected, String)
-  nameWithType: Contract.Argument<TInspected>(TInspected, string)
+  nameWithType: Contract.Argument<TInspected>(TInspected?, string)
   nameWithType.vb: Contract.Argument(Of TInspected)(TInspected, String)
 - uid: Composable.Contracts.Contract.Argument``1(``0,System.String,``0,System.String)
-  name: Argument<TInspected>(TInspected, string, TInspected, string)
+  name: Argument<TInspected>(TInspected?, string, TInspected?, string)
   href: api/Composable.Contracts.Contract.html#Composable_Contracts_Contract_Argument__1___0_System_String___0_System_String_
   commentId: M:Composable.Contracts.Contract.Argument``1(``0,System.String,``0,System.String)
   name.vb: Argument(Of TInspected)(TInspected, String, TInspected, String)
-  fullName: Composable.Contracts.Contract.Argument<TInspected>(TInspected, string, TInspected, string)
+  fullName: Composable.Contracts.Contract.Argument<TInspected>(TInspected?, string, TInspected?, string)
   fullName.vb: Composable.Contracts.Contract.Argument(Of TInspected)(TInspected, String, TInspected, String)
-  nameWithType: Contract.Argument<TInspected>(TInspected, string, TInspected, string)
+  nameWithType: Contract.Argument<TInspected>(TInspected?, string, TInspected?, string)
   nameWithType.vb: Contract.Argument(Of TInspected)(TInspected, String, TInspected, String)
 - uid: Composable.Contracts.Contract.Argument``1(``0,System.String,``0,System.String,``0,System.String)
-  name: Argument<TInspected>(TInspected, string, TInspected, string, TInspected, string)
+  name: Argument<TInspected>(TInspected?, string, TInspected?, string, TInspected?, string)
   href: api/Composable.Contracts.Contract.html#Composable_Contracts_Contract_Argument__1___0_System_String___0_System_String___0_System_String_
   commentId: M:Composable.Contracts.Contract.Argument``1(``0,System.String,``0,System.String,``0,System.String)
   name.vb: Argument(Of TInspected)(TInspected, String, TInspected, String, TInspected, String)
-  fullName: Composable.Contracts.Contract.Argument<TInspected>(TInspected, string, TInspected, string, TInspected, string)
+  fullName: Composable.Contracts.Contract.Argument<TInspected>(TInspected?, string, TInspected?, string, TInspected?, string)
   fullName.vb: Composable.Contracts.Contract.Argument(Of TInspected)(TInspected, String, TInspected, String, TInspected, String)
-  nameWithType: Contract.Argument<TInspected>(TInspected, string, TInspected, string, TInspected, string)
+  nameWithType: Contract.Argument<TInspected>(TInspected?, string, TInspected?, string, TInspected?, string)
   nameWithType.vb: Contract.Argument(Of TInspected)(TInspected, String, TInspected, String, TInspected, String)
 - uid: Composable.Contracts.Contract.Invariant(System.Linq.Expressions.Expression{System.Func{System.Object}}[])
   name: Invariant(params Expression<Func<object>>[])
@@ -706,31 +706,31 @@ references:
   fullName: Composable.Contracts.Contract.Invariant
   nameWithType: Contract.Invariant
 - uid: Composable.Contracts.Contract.Invariant``1(``0,System.String)
-  name: Invariant<TInspected>(TInspected, string)
+  name: Invariant<TInspected>(TInspected?, string)
   href: api/Composable.Contracts.Contract.html#Composable_Contracts_Contract_Invariant__1___0_System_String_
   commentId: M:Composable.Contracts.Contract.Invariant``1(``0,System.String)
   name.vb: Invariant(Of TInspected)(TInspected, String)
-  fullName: Composable.Contracts.Contract.Invariant<TInspected>(TInspected, string)
+  fullName: Composable.Contracts.Contract.Invariant<TInspected>(TInspected?, string)
   fullName.vb: Composable.Contracts.Contract.Invariant(Of TInspected)(TInspected, String)
-  nameWithType: Contract.Invariant<TInspected>(TInspected, string)
+  nameWithType: Contract.Invariant<TInspected>(TInspected?, string)
   nameWithType.vb: Contract.Invariant(Of TInspected)(TInspected, String)
 - uid: Composable.Contracts.Contract.Invariant``1(``0,System.String,``0,System.String)
-  name: Invariant<TInspected>(TInspected, string, TInspected, string)
+  name: Invariant<TInspected>(TInspected?, string, TInspected?, string)
   href: api/Composable.Contracts.Contract.html#Composable_Contracts_Contract_Invariant__1___0_System_String___0_System_String_
   commentId: M:Composable.Contracts.Contract.Invariant``1(``0,System.String,``0,System.String)
   name.vb: Invariant(Of TInspected)(TInspected, String, TInspected, String)
-  fullName: Composable.Contracts.Contract.Invariant<TInspected>(TInspected, string, TInspected, string)
+  fullName: Composable.Contracts.Contract.Invariant<TInspected>(TInspected?, string, TInspected?, string)
   fullName.vb: Composable.Contracts.Contract.Invariant(Of TInspected)(TInspected, String, TInspected, String)
-  nameWithType: Contract.Invariant<TInspected>(TInspected, string, TInspected, string)
+  nameWithType: Contract.Invariant<TInspected>(TInspected?, string, TInspected?, string)
   nameWithType.vb: Contract.Invariant(Of TInspected)(TInspected, String, TInspected, String)
 - uid: Composable.Contracts.Contract.Invariant``1(``0,System.String,``0,System.String,``0,System.String)
-  name: Invariant<TInspected>(TInspected, string, TInspected, string, TInspected, string)
+  name: Invariant<TInspected>(TInspected?, string, TInspected?, string, TInspected?, string)
   href: api/Composable.Contracts.Contract.html#Composable_Contracts_Contract_Invariant__1___0_System_String___0_System_String___0_System_String_
   commentId: M:Composable.Contracts.Contract.Invariant``1(``0,System.String,``0,System.String,``0,System.String)
   name.vb: Invariant(Of TInspected)(TInspected, String, TInspected, String, TInspected, String)
-  fullName: Composable.Contracts.Contract.Invariant<TInspected>(TInspected, string, TInspected, string, TInspected, string)
+  fullName: Composable.Contracts.Contract.Invariant<TInspected>(TInspected?, string, TInspected?, string, TInspected?, string)
   fullName.vb: Composable.Contracts.Contract.Invariant(Of TInspected)(TInspected, String, TInspected, String, TInspected, String)
-  nameWithType: Contract.Invariant<TInspected>(TInspected, string, TInspected, string, TInspected, string)
+  nameWithType: Contract.Invariant<TInspected>(TInspected?, string, TInspected?, string, TInspected?, string)
   nameWithType.vb: Contract.Invariant(Of TInspected)(TInspected, String, TInspected, String, TInspected, String)
 - uid: Composable.Contracts.Contract.Return*
   name: Return
@@ -1691,12 +1691,6 @@ references:
   commentId: T:Composable.DependencyInjection.DIContainer
   fullName: Composable.DependencyInjection.DIContainer
   nameWithType: DIContainer
-- uid: Composable.DependencyInjection.DIContainer.Composable
-  name: Composable
-  href: api/Composable.DependencyInjection.DIContainer.html#Composable_DependencyInjection_DIContainer_Composable
-  commentId: F:Composable.DependencyInjection.DIContainer.Composable
-  fullName: Composable.DependencyInjection.DIContainer.Composable
-  nameWithType: DIContainer.Composable
 - uid: Composable.DependencyInjection.DIContainer.Microsoft
   name: Microsoft
   href: api/Composable.DependencyInjection.DIContainer.html#Composable_DependencyInjection_DIContainer_Microsoft
@@ -2000,18 +1994,37 @@ references:
   isSpec: "True"
   fullName: Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.RunMode
   nameWithType: MicrosoftDependencyInjectionContainer.RunMode
+- uid: Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.ServiceLocator
+  name: ServiceLocator
+  href: api/Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.html#Composable_DependencyInjection_Microsoft_MicrosoftDependencyInjectionContainer_ServiceLocator
+  commentId: P:Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.ServiceLocator
+  fullName: Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.ServiceLocator
+  nameWithType: MicrosoftDependencyInjectionContainer.ServiceLocator
+- uid: Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.ServiceLocator*
+  name: ServiceLocator
+  href: api/Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.html#Composable_DependencyInjection_Microsoft_MicrosoftDependencyInjectionContainer_ServiceLocator_
+  commentId: Overload:Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.ServiceLocator
+  isSpec: "True"
+  fullName: Composable.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer.ServiceLocator
+  nameWithType: MicrosoftDependencyInjectionContainer.ServiceLocator
 - uid: Composable.DependencyInjection.PersistenceLayer
   name: PersistenceLayer
   href: api/Composable.DependencyInjection.PersistenceLayer.html
   commentId: T:Composable.DependencyInjection.PersistenceLayer
   fullName: Composable.DependencyInjection.PersistenceLayer
   nameWithType: PersistenceLayer
-- uid: Composable.DependencyInjection.PersistenceLayer.MicrosoftSQLServer
-  name: MicrosoftSQLServer
-  href: api/Composable.DependencyInjection.PersistenceLayer.html#Composable_DependencyInjection_PersistenceLayer_MicrosoftSQLServer
-  commentId: F:Composable.DependencyInjection.PersistenceLayer.MicrosoftSQLServer
-  fullName: Composable.DependencyInjection.PersistenceLayer.MicrosoftSQLServer
-  nameWithType: PersistenceLayer.MicrosoftSQLServer
+- uid: Composable.DependencyInjection.PersistenceLayer.Memory
+  name: Memory
+  href: api/Composable.DependencyInjection.PersistenceLayer.html#Composable_DependencyInjection_PersistenceLayer_Memory
+  commentId: F:Composable.DependencyInjection.PersistenceLayer.Memory
+  fullName: Composable.DependencyInjection.PersistenceLayer.Memory
+  nameWithType: PersistenceLayer.Memory
+- uid: Composable.DependencyInjection.PersistenceLayer.MicrosoftSqlServer
+  name: MicrosoftSqlServer
+  href: api/Composable.DependencyInjection.PersistenceLayer.html#Composable_DependencyInjection_PersistenceLayer_MicrosoftSqlServer
+  commentId: F:Composable.DependencyInjection.PersistenceLayer.MicrosoftSqlServer
+  fullName: Composable.DependencyInjection.PersistenceLayer.MicrosoftSqlServer
+  nameWithType: PersistenceLayer.MicrosoftSqlServer
 - uid: Composable.DependencyInjection.PersistenceLayer.MySql
   name: MySql
   href: api/Composable.DependencyInjection.PersistenceLayer.html#Composable_DependencyInjection_PersistenceLayer_MySql
@@ -9192,6 +9205,40 @@ references:
   commentId: T:Composable.Persistence.EventStore.Refactoring.Migrations.NonIdempotentMigrationDetectedException
   fullName: Composable.Persistence.EventStore.Refactoring.Migrations.NonIdempotentMigrationDetectedException
   nameWithType: NonIdempotentMigrationDetectedException
+- uid: Composable.Persistence.InMemory.DependencyInjection
+  name: Composable.Persistence.InMemory.DependencyInjection
+  href: api/Composable.Persistence.InMemory.DependencyInjection.html
+  commentId: N:Composable.Persistence.InMemory.DependencyInjection
+  fullName: Composable.Persistence.InMemory.DependencyInjection
+  nameWithType: Composable.Persistence.InMemory.DependencyInjection
+- uid: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar
+  name: InMemoryPersistenceLayerRegistrar
+  href: api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.html
+  commentId: T:Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar
+  fullName: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar
+  nameWithType: InMemoryPersistenceLayerRegistrar
+- uid: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(Composable.DependencyInjection.IDependencyInjectionContainer,System.String)
+  name: RegisterInMemoryPersistenceLayer(IDependencyInjectionContainer, string)
+  href: api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.html#Composable_Persistence_InMemory_DependencyInjection_InMemoryPersistenceLayerRegistrar_RegisterInMemoryPersistenceLayer_Composable_DependencyInjection_IDependencyInjectionContainer_System_String_
+  commentId: M:Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(Composable.DependencyInjection.IDependencyInjectionContainer,System.String)
+  name.vb: RegisterInMemoryPersistenceLayer(IDependencyInjectionContainer, String)
+  fullName: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(Composable.DependencyInjection.IDependencyInjectionContainer, string)
+  fullName.vb: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(Composable.DependencyInjection.IDependencyInjectionContainer, String)
+  nameWithType: InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(IDependencyInjectionContainer, string)
+  nameWithType.vb: InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(IDependencyInjectionContainer, String)
+- uid: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(Composable.Messaging.Buses.IEndpointBuilder)
+  name: RegisterInMemoryPersistenceLayer(IEndpointBuilder)
+  href: api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.html#Composable_Persistence_InMemory_DependencyInjection_InMemoryPersistenceLayerRegistrar_RegisterInMemoryPersistenceLayer_Composable_Messaging_Buses_IEndpointBuilder_
+  commentId: M:Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(Composable.Messaging.Buses.IEndpointBuilder)
+  fullName: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(Composable.Messaging.Buses.IEndpointBuilder)
+  nameWithType: InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer(IEndpointBuilder)
+- uid: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer*
+  name: RegisterInMemoryPersistenceLayer
+  href: api/Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.html#Composable_Persistence_InMemory_DependencyInjection_InMemoryPersistenceLayerRegistrar_RegisterInMemoryPersistenceLayer_
+  commentId: Overload:Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer
+  isSpec: "True"
+  fullName: Composable.Persistence.InMemory.DependencyInjection.InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer
+  nameWithType: InMemoryPersistenceLayerRegistrar.RegisterInMemoryPersistenceLayer
 - uid: Composable.Persistence.MsSql.DependencyInjection
   name: Composable.Persistence.MsSql.DependencyInjection
   href: api/Composable.Persistence.MsSql.DependencyInjection.html
@@ -9463,6 +9510,28 @@ references:
   isSpec: "True"
   fullName: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.IValidatableObjectCE.CreateValidationResult
   nameWithType: IValidatableObjectCE.CreateValidationResult
+- uid: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE
+  name: ValidatableObjectCE
+  href: api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.html
+  commentId: T:Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE
+  fullName: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE
+  nameWithType: ValidatableObjectCE
+- uid: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.CreateValidationResult(System.ComponentModel.DataAnnotations.IValidatableObject,System.String,System.Linq.Expressions.Expression{System.Func{System.Object}}[])
+  name: CreateValidationResult(IValidatableObject, string, params Expression<Func<object>>[])
+  href: api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.html#Composable_SystemCE_ComponentModelCE_DataAnnotationsCE_ValidatableObjectCE_CreateValidationResult_System_ComponentModel_DataAnnotations_IValidatableObject_System_String_System_Linq_Expressions_Expression_System_Func_System_Object_____
+  commentId: M:Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.CreateValidationResult(System.ComponentModel.DataAnnotations.IValidatableObject,System.String,System.Linq.Expressions.Expression{System.Func{System.Object}}[])
+  name.vb: CreateValidationResult(IValidatableObject, String, ParamArray Expression(Of Func(Of Object))())
+  fullName: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.CreateValidationResult(System.ComponentModel.DataAnnotations.IValidatableObject, string, params System.Linq.Expressions.Expression<System.Func<object>>[])
+  fullName.vb: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.CreateValidationResult(System.ComponentModel.DataAnnotations.IValidatableObject, String, ParamArray System.Linq.Expressions.Expression(Of System.Func(Of Object))())
+  nameWithType: ValidatableObjectCE.CreateValidationResult(IValidatableObject, string, params Expression<Func<object>>[])
+  nameWithType.vb: ValidatableObjectCE.CreateValidationResult(IValidatableObject, String, ParamArray Expression(Of Func(Of Object))())
+- uid: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.CreateValidationResult*
+  name: CreateValidationResult
+  href: api/Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.html#Composable_SystemCE_ComponentModelCE_DataAnnotationsCE_ValidatableObjectCE_CreateValidationResult_
+  commentId: Overload:Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.CreateValidationResult
+  isSpec: "True"
+  fullName: Composable.SystemCE.ComponentModelCE.DataAnnotationsCE.ValidatableObjectCE.CreateValidationResult
+  nameWithType: ValidatableObjectCE.CreateValidationResult
 - uid: Composable.SystemCE.ConfigurationCE
   name: Composable.SystemCE.ConfigurationCE
   href: api/Composable.SystemCE.ConfigurationCE.html
@@ -10516,19 +10585,6 @@ references:
   commentId: T:Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE
   fullName: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE
   nameWithType: MonitorCE
-- uid: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.EnterUpdateLock
-  name: EnterUpdateLock()
-  href: api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.html#Composable_SystemCE_ThreadingCE_ResourceAccess_MonitorCE_EnterUpdateLock
-  commentId: M:Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.EnterUpdateLock
-  fullName: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.EnterUpdateLock()
-  nameWithType: MonitorCE.EnterUpdateLock()
-- uid: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.EnterUpdateLock*
-  name: EnterUpdateLock
-  href: api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.html#Composable_SystemCE_ThreadingCE_ResourceAccess_MonitorCE_EnterUpdateLock_
-  commentId: Overload:Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.EnterUpdateLock
-  isSpec: "True"
-  fullName: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.EnterUpdateLock
-  nameWithType: MonitorCE.EnterUpdateLock
 - uid: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.NotifyAllLock
   name: MonitorCE.NotifyAllLock
   href: api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.NotifyAllLock.html
@@ -10586,6 +10642,25 @@ references:
   isSpec: "True"
   fullName: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.Update
   nameWithType: MonitorCE.Update
+- uid: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock
+  name: MonitorCE.UpdateLock
+  href: api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.html
+  commentId: T:Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock
+  fullName: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock
+  nameWithType: MonitorCE.UpdateLock
+- uid: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.Dispose
+  name: Dispose()
+  href: api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.html#Composable_SystemCE_ThreadingCE_ResourceAccess_MonitorCE_UpdateLock_Dispose
+  commentId: M:Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.Dispose
+  fullName: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.Dispose()
+  nameWithType: MonitorCE.UpdateLock.Dispose()
+- uid: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.Dispose*
+  name: Dispose
+  href: api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.html#Composable_SystemCE_ThreadingCE_ResourceAccess_MonitorCE_UpdateLock_Dispose_
+  commentId: Overload:Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.Dispose
+  isSpec: "True"
+  fullName: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.UpdateLock.Dispose
+  nameWithType: MonitorCE.UpdateLock.Dispose
 - uid: Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.Update``1(Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.OutParamFunc{``0},``0@)
   name: Update<T>(OutParamFunc<T>, out T)
   href: api/Composable.SystemCE.ThreadingCE.ResourceAccess.MonitorCE.html#Composable_SystemCE_ThreadingCE_ResourceAccess_MonitorCE_Update__1_Composable_SystemCE_ThreadingCE_ResourceAccess_MonitorCE_OutParamFunc___0____0__
