@@ -14,7 +14,7 @@ static class ExceptionCE
    {
       Contract.ArgumentNotNull(exception, nameof(exception));
       var current = exception;
-      while (current != null)
+      while(current != null)
       {
          yield return current;
          current = current.InnerException;
@@ -23,7 +23,6 @@ static class ExceptionCE
 
    ///<summary>Returns the deepest nested inner exception that was the root cause of the current exception.</summary>
    public static Exception GetRootCauseException(this Exception e) => e.GetAllExceptionsInStack().Last();
-
 
    internal static Exception? TryCatch(Action action)
    {
@@ -35,10 +34,11 @@ static class ExceptionCE
       {
          return e;
       }
+
       return null;
    }
 
-   internal static bool TryCatch(Action action, [NotNullWhen(true)]out Exception? exception)
+   internal static bool TryCatch(Action action, [NotNullWhen(true)] out Exception? exception)
    {
       try
       {
@@ -64,5 +64,10 @@ static class ExceptionCE
       {
          onException(caught);
       }
+   }
+
+   internal static void ThrowIf<TException>(bool condition) where TException : Exception, new()
+   {
+      if(condition) throw new TException();
    }
 }

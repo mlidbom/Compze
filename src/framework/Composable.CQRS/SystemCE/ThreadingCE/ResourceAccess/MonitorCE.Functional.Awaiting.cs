@@ -16,13 +16,7 @@ public partial class MonitorCE
 
    internal void Await(Func<bool> condition) => Await(InfiniteTimeout, condition);
 
-   internal void Await(TimeSpan conditionTimeout, Func<bool> condition)
-   {
-      if(!TryAwait(conditionTimeout, condition))
-      {
-         throw new AwaitingConditionTimeoutException();
-      }
-   }
+   internal void Await(TimeSpan conditionTimeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryAwait(conditionTimeout, condition));
 
    internal bool TryAwait(TimeSpan conditionTimeout, Func<bool> condition)
    {
@@ -36,13 +30,7 @@ public partial class MonitorCE
       }
    }
 
-   void EnterWhen(TimeSpan conditionTimeout, Func<bool> condition)
-   {
-      if(!TryEnterWhen(conditionTimeout, condition))
-      {
-         throw new AwaitingConditionTimeoutException();
-      }
-   }
+   void EnterWhen(TimeSpan conditionTimeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryEnterWhen(conditionTimeout, condition));
 
    bool TryEnterWhen(TimeSpan conditionTimeout, Func<bool> condition)
    {
