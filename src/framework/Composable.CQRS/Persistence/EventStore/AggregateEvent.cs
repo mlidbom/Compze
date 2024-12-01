@@ -19,6 +19,7 @@ public abstract class AggregateEvent() : ValueObject<AggregateEvent>, IAggregate
    public Guid MessageId { get; internal set; } = Guid.NewGuid();
    public int AggregateVersion { get; internal set; }
 
+   //Refactor: We should most likely use a custom type for Ids....
    public Guid AggregateId { get; internal set; }
    public DateTime UtcTimeStamp { get; internal set; } = DateTime.UtcNow; //Todo:bug: Should use timesource.
 }
