@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace Composable.DDD;
 
+//review:mlidbo: Maybe this class can be removed now that C# has record types?
 //Review:mlidbo: Consider whether comparing using public properties only would make more sense. Maybe separate class?
 ///<summary>
 /// Base class for value objects that implements value equality based on instance fields.
