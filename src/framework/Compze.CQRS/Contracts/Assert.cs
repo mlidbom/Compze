@@ -109,7 +109,7 @@ public static class Assert
       return new ChainedAssertion(inspectionType, recursionLevel + 1);
    }
 
-   public class AssertionException : Exception
+   class AssertionException : Exception
    {
       public AssertionException(InspectionType inspectionType, int index) : base($"{inspectionType}: {index}") { }
    }

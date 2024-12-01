@@ -43,7 +43,7 @@ class RealEndpointConfiguration
 
    internal string Address { get; }
 
-   internal string Name => _conf.Name;
+   string Name => _conf.Name;
    internal EndpointId Id => _conf.Id;
    internal bool IsPureClientEndpoint => _conf.IsPureClientEndpoint;
 

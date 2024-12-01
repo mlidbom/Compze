@@ -3,7 +3,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.GenericAbstractions;
 
-public class OptimizedInitializer
+class OptimizedInitializer
 {
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
    readonly Action _initialize;
@@ -23,7 +23,7 @@ public class OptimizedInitializer
       }
    }
 
-   public bool IsInitialized { get; private set; }
+   bool IsInitialized { get; set; }
 
    internal OptimizedInitializer(Action initialize) => _initialize = initialize;
 }
