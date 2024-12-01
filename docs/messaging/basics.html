@@ -110,14 +110,14 @@ An object for the purpose of sending data to a receiver.</p>
 The System.Type returned by <code>message.GetType()</code>.</p>
 <p><strong>Message Handler</strong><br>
 In principle just a function that takes a message as a parameter.</p>
-<pre><code>void Handle(RegisterAccountCommand command);
+<pre><code class="lang-csharp">void Handle(RegisterAccountCommand command) {}
 </code></pre>
 <p>In practice most message handlers need to have one or more dependencies injected into them.
 In order to support this handlers are often required to be wrapped inside interfaces.
 That way instances of implementing classes can be resolved from an IOC container easily.</p>
-<pre><code>interface IMessageHandler&lt;RegisterAccountCommand&gt;
+<pre><code class="lang-csharp">class RegisterAccountCommandHandler : IMessageHandler&lt;RegisterAccountCommand&gt;
 {
-    void Handle(RegisterAccountCommand aMessage);
+   public void Handle(RegisterAccountCommand command) {}
 }
 </code></pre>
 <p><strong>Routing</strong><br>
