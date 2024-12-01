@@ -26,10 +26,10 @@ public static class Contract
    public static IInspected<object> Argument(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2, object? p3, [InvokerParameterName] string n3) =>
       new Inspected<object>(InspectionType.Argument, (p1!, n1), (p2!, n2), (p3!, n3));
 
-   public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
+   internal static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
       new Inspected<TInspected>(InspectionType.Argument, (p1!, n1));
 
-   public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2) =>
+   internal static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2) =>
       new Inspected<TInspected>(InspectionType.Argument, (p1!, n1), (p2!, n2));
 
    public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2, TInspected? p3, [InvokerParameterName] string n3) =>
@@ -39,13 +39,13 @@ public static class Contract
    public static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1) =>
       new Inspected<object>(InspectionType.Invariant, (p1!, n1));
 
-   public static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2) =>
+   internal static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2) =>
       new Inspected<object>(InspectionType.Invariant, (p1!, n1), (p2!, n2));
 
    public static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2, object? p3, [InvokerParameterName] string n3) =>
       new Inspected<object>(InspectionType.Invariant, (p1!, n1), (p2!, n2), (p3!, n3));
 
-   public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
+   internal static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1));
 
    public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2) =>
@@ -55,11 +55,12 @@ public static class Contract
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1), (p2!, n2), (p3!, n3));
 
 #pragma warning disable CS8777 //Reviewed OK. We have verified that the parameters are non-null when method exits.
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1) =>
+   internal static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1) =>
       ArgumentNotNull((p1, n1));
    public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2) =>
       ArgumentNotNull((p1, n1), (p2, n2));
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3) =>
+
+   internal static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3) =>
       ArgumentNotNull((p1, n1), (p2, n2), (p3, n3));
    public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4) =>
       ArgumentNotNull((p1, n1), (p2, n2), (p3, n3),(p4, n4));
@@ -88,8 +89,8 @@ public static class Contract
    public static void ArgumentNotNullOrEmpty([NotNull]string? p1, [InvokerParameterName] string n1) => ArgumentNotNullOrEmpty((p1, n1));
    public static void ArgumentNotNullOrEmpty([NotNull]string? p1, [InvokerParameterName] string n1, [NotNull]string? p2, [InvokerParameterName] string n2) => ArgumentNotNullOrEmpty((p1, n1), (p2, n2));
 
-   public static void ArgumentNotNullEmptyOrWhitespace([NotNull]string? p1, [InvokerParameterName] string n1) => ArgumentNotNullEmptyOrWhitespace((p1, n1));
-   public static void ArgumentNotNullEmptyOrWhitespace([NotNull]string? p1, [InvokerParameterName] string n1, [NotNull]string? p2, [InvokerParameterName] string n2) => ArgumentNotNullEmptyOrWhitespace((p1, n1), (p2, n2));
+   internal static void ArgumentNotNullEmptyOrWhitespace([NotNull]string? p1, [InvokerParameterName] string n1) => ArgumentNotNullEmptyOrWhitespace((p1, n1));
+   internal static void ArgumentNotNullEmptyOrWhitespace([NotNull]string? p1, [InvokerParameterName] string n1, [NotNull]string? p2, [InvokerParameterName] string n2) => ArgumentNotNullEmptyOrWhitespace((p1, n1), (p2, n2));
 #pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
    static void ArgumentNotNull(params (object? Argument, string Name)[] arguments)
    {
@@ -140,7 +141,7 @@ public static class Contract
    ///<para>Start inspecting one or more arguments for contract compliance.</para>
    ///<para>Using an expression removes the need for an extra string to specify the name and ensures that  the name is always correct in exceptions.</para>
    ///</summary>
-   public static IInspected<TParameter> Argument<TParameter>(params Expression<Func<TParameter>>[] arguments) => CreateInspected(arguments, InspectionType.Argument);
+   internal static IInspected<TParameter> Argument<TParameter>(params Expression<Func<TParameter>>[] arguments) => CreateInspected(arguments, InspectionType.Argument);
 
    ///<summary>
    ///<para>Start inspecting one or more arguments for contract compliance.</para>
@@ -175,7 +176,7 @@ public static class Contract
    internal static IInspected<TReturnValue> ReturnValue<TReturnValue>(TReturnValue returnValue) => new Inspected<TReturnValue>(new InspectedValue<TReturnValue>(InspectionType.ReturnValue, returnValue, "ReturnValue"));
 
    ///<summary>Inspect a return value by passing in a Lambda that performs the inspections the same way you would for an argument.</summary>
-   public static TReturnValue Return<TReturnValue>(TReturnValue returnValue, Action<IInspected<TReturnValue>> assert)
+   internal static TReturnValue Return<TReturnValue>(TReturnValue returnValue, Action<IInspected<TReturnValue>> assert)
    {
       assert(ReturnValue(returnValue));
       return returnValue;
@@ -217,7 +218,7 @@ public static class Contract
    }
 }
 
-public class ContractAssertThatException(int condition) : Exception($"Condition: {condition} was false");
+class ContractAssertThatException(int condition) : Exception($"Condition: {condition} was false");
 
 interface IContractAssertion
 {

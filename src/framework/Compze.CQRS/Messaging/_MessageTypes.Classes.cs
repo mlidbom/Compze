@@ -92,7 +92,7 @@ public static partial class MessageTypes
             public class EntityLink<TResult> : Remotable.NonTransactional.Queries.Query<TResult> where TResult : IHasPersistentIdentity<Guid>
             {
                public EntityLink() {}
-               public EntityLink(Guid entityId) => EntityId = entityId;
+               EntityLink(Guid entityId) => EntityId = entityId;
                public EntityLink<TResult> WithId(Guid id) => new(id);
                public Guid EntityId { get; private set; }
             }

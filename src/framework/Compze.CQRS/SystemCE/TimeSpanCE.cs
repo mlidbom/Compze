@@ -17,12 +17,12 @@ static partial class TimeSpanCE
    const double TicksPerNanosecond = TicksPerMicroSecond / 1000.0; //0.01
    const double NanosecondsPerTick = 1.0 / TicksPerNanosecond;     //100.0
 
-   public static TimeSpan Ticks(this double ticks) => TimeSpan.FromTicks((long)Math.Round(ticks));
-   public static TimeSpan Ticks(this long ticks) => TimeSpan.FromTicks(ticks);
+   static TimeSpan Ticks(this double ticks) => TimeSpan.FromTicks((long)Math.Round(ticks));
+   static TimeSpan Ticks(this long ticks) => TimeSpan.FromTicks(ticks);
 
-   public static double TotalNanoseconds(this TimeSpan @this) => @this.Ticks * NanosecondsPerTick;
+   static double TotalNanoseconds(this TimeSpan @this) => @this.Ticks * NanosecondsPerTick;
 
-   public static TimeSpan Nanoseconds(this double nanoseconds)
+   static TimeSpan Nanoseconds(this double nanoseconds)
    {
       const double minimumNanosecondsForReasonableConversionAccuracy = 500.0;
       if(nanoseconds < minimumNanosecondsForReasonableConversionAccuracy)
@@ -39,9 +39,9 @@ static partial class TimeSpanCE
 
    public static TimeSpan Nanoseconds(this int nanoseconds) => ((double)nanoseconds).Nanoseconds();
 
-   public static double TotalMicroseconds(this TimeSpan self) => self.Ticks * MicrosecondsPerTick;
+   static double TotalMicroseconds(this TimeSpan self) => self.Ticks * MicrosecondsPerTick;
 
-   public static TimeSpan Microseconds(this int microseconds) => (microseconds * TicksPerMicroSecond).Ticks();
+   static TimeSpan Microseconds(this int microseconds) => (microseconds * TicksPerMicroSecond).Ticks();
 
    /// <summary>Returns a TimeSpan <paramref name="this"/> milliseconds long.</summary>
    public static TimeSpan Milliseconds(this int @this) => TimeSpan.FromMilliseconds(@this);
@@ -92,7 +92,7 @@ static partial class TimeSpanCE
 
    public static TimeSpan DivideBy(this TimeSpan @this, double divideBy) => TimeSpan.FromTicks((long)(@this.Ticks / divideBy));
 
-   internal static string ToStringInvariant(this TimeSpan @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
+   static string ToStringInvariant(this TimeSpan @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
 
    internal static string FormatReadable(this TimeSpan? time) => time == null ? "" : time.Value.FormatReadable();
 

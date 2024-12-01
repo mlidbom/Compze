@@ -28,7 +28,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    where TAggregateEvent : class, IAggregateEvent
    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
-   protected IUtcTimeTimeSource TimeSource { get; private set; }
+   IUtcTimeTimeSource TimeSource { get; set; }
 
    static Aggregate() => AggregateTypeValidator<TAggregate, TAggregateEventImplementation, TAggregateEvent>.AssertStaticStructureIsValid();
 

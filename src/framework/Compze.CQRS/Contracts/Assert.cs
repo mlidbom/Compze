@@ -9,7 +9,7 @@ namespace Compze.Contracts;
 public static class Assert
 {
    ///<summary>Assert conditions about current state of "this". Failures would mean that someone made a call that is illegal given state of "this".</summary>
-   public static BaseAssertion State { get; } = BaseAssertion.StateInstance;
+   internal static BaseAssertion State { get; } = BaseAssertion.StateInstance;
 
    ///<summary>Assert something that must always be true for "this".</summary>
    public static BaseAssertion Invariant { get; } = BaseAssertion.InvariantInstance;
@@ -18,7 +18,7 @@ public static class Assert
    public static BaseAssertion Argument { get; } = BaseAssertion.ArgumentsInstance;
 
    ///<summary>Assert conditions on the result of makeing a method call.</summary>
-   public static BaseAssertion Result { get; } = BaseAssertion.ResultInstance;
+   internal static BaseAssertion Result { get; } = BaseAssertion.ResultInstance;
 
 
 

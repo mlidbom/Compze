@@ -33,7 +33,7 @@ class TimingsStatisticsCollector
    long _totalCalls;
 
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-   public TimeSpan TotalTime { get; private set; }
+   TimeSpan TotalTime { get; set; }
 
    public long TotalCalls => _totalCalls;
    public string Name { get; }

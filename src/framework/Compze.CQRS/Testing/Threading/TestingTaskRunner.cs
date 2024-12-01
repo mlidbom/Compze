@@ -18,13 +18,13 @@ sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable
 
    public static TestingTaskRunner WithTimeout(TimeSpan timeout) => new(timeout);
 
-   public void Monitor(IEnumerable<Task> tasks) => Monitor(tasks.ToArray());
-   public void Monitor(params Task[] task) => _monitoredTasks.AddRange(task);
+   void Monitor(IEnumerable<Task> tasks) => Monitor(tasks.ToArray());
+   void Monitor(params Task[] task) => _monitoredTasks.AddRange(task);
 
    public void StartTimes(int times, Func<Task> task) => Monitor(1.Through(times).Select(selector: _ => task()));
    public void StartTimes(int times, Func<int, Task> task) => Monitor(1.Through(times).Select(task));
 
-   public TestingTaskRunner Start(IEnumerable<Action> tasks) => Start(tasks.ToArray());
+   TestingTaskRunner Start(IEnumerable<Action> tasks) => Start(tasks.ToArray());
    public TestingTaskRunner Start(params Action[] tasks)
    {
       tasks.ForEach(action: task => _monitoredTasks.Add(TaskCE.Run($"{nameof(TestingTaskRunner)}_Task", task)));

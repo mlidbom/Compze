@@ -131,7 +131,7 @@ static class TypeCE
    }
 
    ///<summary>Thrown if there is more than one type that matches the string passed to <see cref="TypeCE.AsType"/></summary>
-   public class MultipleMatchingTypesException : Exception
+   class MultipleMatchingTypesException : Exception
    {
       internal MultipleMatchingTypesException(string typeName): base(typeName)
       {
@@ -139,7 +139,7 @@ static class TypeCE
    }
 
    ///<summary>Thrown if there is no type that matches the string passed to <see cref="TypeCE.AsType"/> is found</summary>
-   public class FailedToFindTypeException : Exception
+   class FailedToFindTypeException : Exception
    {
       internal FailedToFindTypeException(string typeName): base(typeName)
       {

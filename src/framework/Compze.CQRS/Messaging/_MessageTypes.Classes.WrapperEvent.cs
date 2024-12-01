@@ -43,7 +43,7 @@ public static partial class MessageTypes
       public static IWrapperEvent<IEvent> WrapEvent(IEvent theEvent) =>
          WrapperConstructorFor(theEvent.GetType()).Invoke(theEvent);
 
-      public static Func<IEvent, IWrapperEvent<IEvent>> WrapperConstructorFor(Type wrappedEventType)
+      static Func<IEvent, IWrapperEvent<IEvent>> WrapperConstructorFor(Type wrappedEventType)
       {
          if(_wrapperConstructors.TryGetValue(wrappedEventType, out var constructor))
          {

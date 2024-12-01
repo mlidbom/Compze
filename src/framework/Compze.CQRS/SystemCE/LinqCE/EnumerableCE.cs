@@ -23,7 +23,7 @@ static partial class EnumerableCE
    /// <summary>
    /// Adds <paramref name="instances"/> to the end of <paramref name="source"/>
    /// </summary>
-   public static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
+   static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
    {
       Contract.ArgumentNotNull(source, nameof(source), instances, nameof(instances));
       return source.Concat(instances);

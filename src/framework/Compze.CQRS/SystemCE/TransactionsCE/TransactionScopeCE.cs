@@ -12,7 +12,7 @@ static class TransactionScopeCe
 
    internal static void SuppressAmbient(Action action) => Execute(action, TransactionScopeOption.Suppress);
 
-   internal static TResult SuppressAmbient<TResult>([InstantHandle] Func<TResult> action) => Execute(action, TransactionScopeOption.Suppress);
+   static TResult SuppressAmbient<TResult>([InstantHandle] Func<TResult> action) => Execute(action, TransactionScopeOption.Suppress);
 
    internal static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required, IsolationLevel isolationLevel = IsolationLevel.Serializable)
    {

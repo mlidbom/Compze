@@ -12,7 +12,7 @@ public class StrictAggregateDisposable : StrictlyManagedResourceBase<StrictAggre
 
    StrictAggregateDisposable(params IDisposable[] disposables) => Add(disposables);
 
-   internal void Add(params IDisposable[] disposables) => _managedResources.AddRange(disposables);
+   void Add(params IDisposable[] disposables) => _managedResources.AddRange(disposables);
 
    protected override void Dispose(bool disposing)
    {
