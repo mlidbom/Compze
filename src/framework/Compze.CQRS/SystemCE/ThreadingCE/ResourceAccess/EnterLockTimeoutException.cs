@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-public class EnterLockTimeoutException : Exception
+class EnterLockTimeoutException : Exception
 {
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;

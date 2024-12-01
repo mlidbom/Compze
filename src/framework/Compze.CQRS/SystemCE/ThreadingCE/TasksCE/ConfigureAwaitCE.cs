@@ -18,7 +18,7 @@ public static class ConfigureAwaitCE
    /// Ensures that awaits do not capture the synchronization context, avoiding deadlocks and improving performance in environments with a synchronization context (e.g., UI threads).
    /// Must be applied to all awaits in library code to ensure that no deadlocks occur due to a synchronization context.
    ///</summary>
-   public static ConfiguredTaskAwaitable<TResult> CaF<TResult>(this Task<TResult> @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
+   internal static ConfiguredTaskAwaitable<TResult> CaF<TResult>(this Task<TResult> @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
 
    ///<summary>
    /// Abbreviated version of <see cref="TaskAsyncEnumerableExtensions.ConfigureAwait(IAsyncDisposable,bool)"/> with <c>continueOnCapturedContext: false</c>.

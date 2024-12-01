@@ -4,7 +4,7 @@ namespace Compze.Messaging.Buses;
 
 public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand<TCommand>(
+   internal static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommand<TCommand>(
       this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
       Action<TCommand> handler) where TCommand : ICommand
    {

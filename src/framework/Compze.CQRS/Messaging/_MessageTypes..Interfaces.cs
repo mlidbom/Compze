@@ -27,7 +27,7 @@ public interface ICommand<out TResult> : ICommand, IHasReturnValue<TResult>;
 public interface IQuery<out TResult> : IHasReturnValue<TResult>;
 
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the query is sufficient to create the result. For such queries implement this interface. That way no network roundtrip etc is required to perform the query. Greatly enhancing performance</summary>
-public interface ICreateMyOwnResultQuery<out TResult> : IQuery<TResult>
+interface ICreateMyOwnResultQuery<out TResult> : IQuery<TResult>
 {
    TResult CreateResult();
 }
@@ -45,7 +45,7 @@ public interface IRemotableEvent : IRemotableMessage, IEvent;
 public interface IRemotableCommand : ICommand, IRemotableMessage;
 public interface IRemotableCommand<out TResult> : IRemotableCommand, ICommand<TResult>;
 public interface IRemotableQuery<out TResult> : IRemotableMessage, IQuery<TResult>;
-public interface IRemotableCreateMyOwnResultQuery<out TResult> : IRemotableQuery<TResult>, ICreateMyOwnResultQuery<TResult>;
+interface IRemotableCreateMyOwnResultQuery<out TResult> : IRemotableQuery<TResult>, ICreateMyOwnResultQuery<TResult>;
 
 //Todo: Is helping with clicking twice in UIs really core logic worth spending time before 1.0 on or should AtMostOnce simply be removed for now?
 ///<summary>A message that is guaranteed not to be delivered more than once. The <see cref="MessageId"/> is used by infrastructure to maintain this guarantee.
@@ -63,7 +63,7 @@ public interface IAtMostOnceCommand<out TResult> : IAtMostOnceHypermediaCommand,
 //For commands it makes sense that the message-type dictates such things, but for events it seems like the subscriber should get to choose their preferred way of listening and level of delivery guarantee.
 public interface IExactlyOnceMessage : IMustBeSentAndHandledTransactionally, IAtMostOnceMessage;
 public interface IExactlyOnceEvent : IRemotableEvent, IExactlyOnceMessage;
-public interface IExactlyOnceCommand : IRemotableCommand, IExactlyOnceMessage;
+interface IExactlyOnceCommand : IRemotableCommand, IExactlyOnceMessage;
 
 //Todo: Should this exist? Or should the wrapped event alone carry this data and metadata? Isn't having it here as well duplication that might cause conflicts with the declaration of the wrapped events?
 //Urgent: Remove for now.

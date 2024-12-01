@@ -19,7 +19,7 @@ public partial class MonitorCE
       return _updateLock;
    }
 
-   public sealed class UpdateLock : IDisposable
+   internal sealed class UpdateLock : IDisposable
    {
       readonly MonitorCE _monitor;
       internal UpdateLock(MonitorCE monitor) => _monitor = monitor;

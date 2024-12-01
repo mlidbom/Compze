@@ -23,12 +23,12 @@ public static class Looping
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static void ForEach<T>(this IEnumerable<T> source, [InstantHandle] Action<T> action) => source.ForEach(action.AsUnitFunc());
+   internal static void ForEach<T>(this IEnumerable<T> source, [InstantHandle] Action<T> action) => source.ForEach(action.AsUnitFunc());
 
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+   internal static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
    {
       Contract.ArgumentNotNull(source, nameof(source), action, nameof(action));
 

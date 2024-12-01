@@ -3,7 +3,7 @@ using Compze.DDD;
 
 namespace Compze.Persistence.DocumentDb;
 
-public interface IDocumentDbUpdater
+interface IDocumentDbUpdater
 {
    /// <summary>Like <see cref="IDocumentDbReader.Get{TValue}"/> but, if supported by implementing class, eagerly locks the instance in the database.</summary>
    TValue GetForUpdate<TValue>(object key);

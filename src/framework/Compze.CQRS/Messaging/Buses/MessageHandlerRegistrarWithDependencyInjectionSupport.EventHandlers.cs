@@ -4,7 +4,7 @@ namespace Compze.Messaging.Buses;
 
 public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent<TEvent>(
+   internal static MessageHandlerRegistrarWithDependencyInjectionSupport ForEvent<TEvent>(
       this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
       Action<TEvent> handler) where TEvent : IEvent
    {

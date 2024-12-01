@@ -2,13 +2,13 @@
 
 namespace Compze.Persistence.DocumentDb;
 
-public class NoSuchDocumentException : Exception
+class NoSuchDocumentException : Exception
 {
-   public NoSuchDocumentException(object key, Type type):base($"Type: {type.FullName}, Key: {key}")
+   internal NoSuchDocumentException(object key, Type type):base($"Type: {type.FullName}, Key: {key}")
    {
    }
 
-   public NoSuchDocumentException(object key, Guid type) : base($"TypeId.Guid: {type}, Key: {key}")
+   internal NoSuchDocumentException(object key, Guid type) : base($"TypeId.Guid: {type}, Key: {key}")
    {
    }
 }

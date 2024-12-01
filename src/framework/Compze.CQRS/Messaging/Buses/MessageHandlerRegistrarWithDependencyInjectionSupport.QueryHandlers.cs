@@ -4,7 +4,7 @@ namespace Compze.Messaging.Buses;
 
 public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TResult>(
+   internal static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TResult>(
       this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TQuery, TResult> handler) where TQuery : IQuery<TResult>
    {
@@ -31,7 +31,7 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TDependency3, TResult>(
+   internal static MessageHandlerRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TDependency3, TResult>(
       this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TQuery, TDependency1, TDependency2, TDependency3, TResult> handler) where TQuery : IQuery<TResult>
                                                                                where TDependency1 : class

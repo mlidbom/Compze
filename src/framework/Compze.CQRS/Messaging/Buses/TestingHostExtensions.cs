@@ -4,7 +4,7 @@ using Compze.Testing;
 
 namespace Compze.Messaging.Buses;
 
-public static class TestingHostExtensions
+static class TestingHostExtensions
 {
    public static TException AssertThatRunningScenarioThrowsBackendException<TException>(this ITestingEndpointHost @this, Action action) where TException : Exception
    {

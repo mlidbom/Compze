@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Compze.Messaging.Buses;
 
 ///<summary>Dispatches messages between processes.</summary>
-public interface IServiceBusSession
+interface IServiceBusSession
 {
    ///<summary>Sends a command if the current transaction succeeds. The execution of the handler runs is a separate transaction at the receiver.</summary>
    void Send(IExactlyOnceCommand command);
@@ -42,7 +42,7 @@ public interface IEndpoint : IAsyncDisposable
 
 public class EndpointId : ValueObject<EndpointId>
 {
-   public Guid GuidValue { get; }
+   [JsonProperty]internal Guid GuidValue { get; }
    [JsonConstructor]public EndpointId(Guid guidValue)
    {
       Assert.Argument.Assert(guidValue != Guid.Empty);

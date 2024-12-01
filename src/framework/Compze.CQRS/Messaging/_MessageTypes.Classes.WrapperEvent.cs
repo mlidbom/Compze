@@ -18,7 +18,7 @@ namespace Compze.Messaging;
 
 public static partial class MessageTypes
 {
-   public static class WrapperEvent
+   internal static class WrapperEvent
    {
       static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
 
@@ -40,7 +40,8 @@ public static partial class MessageTypes
          WrapperConstructorCache<IWrapperEvent<TWrappedEvent>, TWrappedEvent>.Constructor(theEvent);
 
       static IReadOnlyDictionary<Type, Func<IEvent, IWrapperEvent<IEvent>>> _wrapperConstructors = new Dictionary<Type, Func<IEvent, IWrapperEvent<IEvent>>>();
-      public static IWrapperEvent<IEvent> WrapEvent(IEvent theEvent) =>
+
+      internal static IWrapperEvent<IEvent> WrapEvent(IEvent theEvent) =>
          WrapperConstructorFor(theEvent.GetType()).Invoke(theEvent);
 
       static Func<IEvent, IWrapperEvent<IEvent>> WrapperConstructorFor(Type wrappedEventType)
