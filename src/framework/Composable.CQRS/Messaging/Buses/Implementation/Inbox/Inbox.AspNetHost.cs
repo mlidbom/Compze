@@ -50,8 +50,7 @@ partial class Inbox
       async Task<WebApplication> StartServerAsync()
       {
          var builder = WebApplication.CreateBuilder();
-         builder.Logging.SetMinimumLevel(LogLevel.Information);
-
+         builder.Logging.SetMinimumLevel(LogLevel.Warning);
          builder.Services.AddLogging(something => something.AddSeq(serverUrl: "http://192.168.0.11:5341"));
 
          builder.Services.AddControllers().ConfigureApplicationPartManager(it =>
