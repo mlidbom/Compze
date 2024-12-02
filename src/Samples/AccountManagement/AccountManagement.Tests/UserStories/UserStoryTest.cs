@@ -5,6 +5,7 @@ using Compze.DependencyInjection;
 using Compze.Messaging.Buses;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.Messaging.Buses;
 using JetBrains.Annotations;
 using NUnit.Framework;
 

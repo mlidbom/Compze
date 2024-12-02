@@ -10,6 +10,7 @@ using Compze.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.SystemCE.DiagnosticsCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Performance;
 using FluentAssertions;
 using FluentAssertions.Extensions;

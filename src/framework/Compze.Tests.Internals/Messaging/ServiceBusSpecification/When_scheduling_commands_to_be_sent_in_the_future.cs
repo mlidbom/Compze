@@ -8,6 +8,7 @@ using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;

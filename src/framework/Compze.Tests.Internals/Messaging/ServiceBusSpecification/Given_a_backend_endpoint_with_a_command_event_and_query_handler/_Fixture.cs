@@ -10,6 +10,7 @@ using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Threading;
 using NUnit.Framework;
 

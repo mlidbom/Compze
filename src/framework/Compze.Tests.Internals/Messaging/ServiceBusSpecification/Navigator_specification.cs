@@ -9,6 +9,7 @@ using Compze.Messaging.Hypermedia;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.Messaging.Buses;
 using FluentAssertions;
 using NUnit.Framework;
 

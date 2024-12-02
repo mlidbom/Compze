@@ -6,6 +6,7 @@ using Compze.Messaging.Buses;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.Messaging.Buses;
 using JetBrains.Annotations;
 
 namespace Compze.DependencyInjection;
