@@ -34,7 +34,7 @@
     <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
     <ProjectReference Include="..\Compze.Tests.Internals\Compze.Tests.Internals.csproj" />
     <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
-    <ProjectReference Include="..\Compze\Compze.csproj" />
+    <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
   </ItemGroup>
 
   <ItemGroup>

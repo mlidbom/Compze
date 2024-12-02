@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-    <ProjectReference Include="..\..\..\framework\Compze\Compze.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.Messaging\Compze.Messaging.csproj" />
   </ItemGroup>
   
 

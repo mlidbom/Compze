@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\..\..\framework\Compze\Compze.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.Messaging\Compze.Messaging.csproj" />
     <ProjectReference Include="..\AccountManagement.Server\AccountManagement.Server.csproj" />
   </ItemGroup>
 
