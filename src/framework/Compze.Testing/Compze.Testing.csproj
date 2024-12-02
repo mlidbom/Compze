@@ -44,6 +44,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
     <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
   </ItemGroup>
   
