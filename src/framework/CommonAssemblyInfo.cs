@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("0.5.0.0")]
 
+[assembly: InternalsVisibleTo("Compze.Messaging")]
 [assembly: InternalsVisibleTo("Compze.Testing")]
 [assembly: InternalsVisibleTo("Compze.ExternalDependencies")]
 [assembly: InternalsVisibleTo("Compze.Tests.Internals")]

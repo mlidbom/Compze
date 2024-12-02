@@ -5,15 +5,6 @@ namespace Compze.Logging;
 
 #pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
 
-enum LogLevel
-{
-   None = 0,
-   Error = 1,
-   Warning = 2,
-   Info = 3,
-   Debug = 4
-}
-
 class ConsoleLogger : ILogger
 {
    readonly Type _type;
