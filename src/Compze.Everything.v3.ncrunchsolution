@@ -5,4 +5,18 @@
     <RestrictToString>False</RestrictToString>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
+  <EngineModes>
+    <EngineMode>
+      <Name>Non-performance</Name>
+      <Settings>
+        <TestsToExecuteAutomatically>DoesNotHaveCategory 'Performance'</TestsToExecuteAutomatically>
+      </Settings>
+    </EngineMode>
+    <EngineMode>
+      <Name>Impacted non performance</Name>
+      <Settings>
+        <TestsToExecuteAutomatically>(IsImpacted AND DoesNotHaveCategory 'Performance')</TestsToExecuteAutomatically>
+      </Settings>
+    </EngineMode>
+  </EngineModes>
 </SolutionConfiguration>
