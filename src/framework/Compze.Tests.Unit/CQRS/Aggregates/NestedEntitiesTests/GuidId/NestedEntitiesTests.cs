@@ -20,8 +20,8 @@ namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId;
 [TestFixture]
 public class NestedEntitiesTests : UniversalTestBase
 {
-   Root Ag;
-   RootQueryModel Qm;
+   Root Ag = new("root", Guid.NewGuid()); //initializing only to make compiler happy, will be replaced.
+   RootQueryModel Qm = new();                  //initializing only to make compiler happy, will be replaced.
    Guid AggregateId;
 
    [SetUp]public void Setup()
