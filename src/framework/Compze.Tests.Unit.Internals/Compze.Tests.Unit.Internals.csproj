@@ -45,8 +45,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\Compze.CQRS\Compze.CQRS.csproj" />
+    <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\Compze\Compze.csproj" />
     <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
   </ItemGroup>
   

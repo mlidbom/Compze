@@ -31,10 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\Compze.CQRS.Tests\Compze.CQRS.Tests.csproj" />
-    <ProjectReference Include="..\Compze.CQRS.UnitTests\Compze.CQRS.UnitTests.csproj" />
-    <ProjectReference Include="..\Compze.CQRS\Compze.CQRS.csproj" />
+    <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\Compze.Tests.Internals\Compze.Tests.Internals.csproj" />
+    <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
+    <ProjectReference Include="..\Compze\Compze.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
-    <ProjectReference Include="..\..\..\framework\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
     <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
   </ItemGroup>
 

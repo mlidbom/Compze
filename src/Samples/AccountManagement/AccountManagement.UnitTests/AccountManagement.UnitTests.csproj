@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\framework\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
     <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
     <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
     <ProjectReference Include="..\AccountManagement.Server\AccountManagement.Server.csproj" />

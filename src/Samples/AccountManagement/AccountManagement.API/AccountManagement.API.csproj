@@ -22,8 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\framework\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\..\..\framework\Compze.CQRS\Compze.CQRS.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze\Compze.csproj" />
   </ItemGroup>
 
   

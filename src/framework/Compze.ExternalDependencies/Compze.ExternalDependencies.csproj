@@ -44,7 +44,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Compze.CQRS\Compze.CQRS.csproj" />
+    <ProjectReference Include="..\Compze\Compze.csproj" />
   </ItemGroup>
   
   <ItemGroup>
