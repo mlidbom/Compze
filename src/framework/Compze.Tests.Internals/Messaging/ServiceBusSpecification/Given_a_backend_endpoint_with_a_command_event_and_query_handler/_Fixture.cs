@@ -10,7 +10,9 @@ using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Persistence;
 using Compze.Testing.Threading;
 using NUnit.Framework;
 
@@ -45,7 +47,7 @@ public partial class Fixture(string pluggableComponentsCombination) : DuplicateB
 
    [SetUp] public async Task Setup()
    {
-      Host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
+      Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
 
       Host.RegisterEndpoint(
          "Backend",

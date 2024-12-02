@@ -6,6 +6,7 @@ using AccountManagement.UI.QueryModels;
 using Compze.Messaging.Buses;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.Persistence.EventStore;
+using Compze.Testing.Persistence;
 
 namespace AccountManagement;
 

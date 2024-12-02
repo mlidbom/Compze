@@ -9,7 +9,9 @@ using Compze.Messaging.Hypermedia;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -27,7 +29,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
    {
       var queryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
 
       _host.RegisterEndpoint(
          "Backend",

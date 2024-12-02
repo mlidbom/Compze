@@ -13,12 +13,12 @@ public static partial class TestEnv
    ///<summary>Persistence layer members</summary>
    public static class PersistenceLayer
    {
-      public static DependencyInjection.PersistenceLayer Current
+      public static Compze.DependencyInjection.PersistenceLayer Current
       {
          get
          {
             var storageProviderName = FindDimensions.Match(GetTestName()).Groups[1].Value;
-            if(Enum.TryParse(storageProviderName, out DependencyInjection.PersistenceLayer provider)) return provider;
+            if(Enum.TryParse(storageProviderName, out Compze.DependencyInjection.PersistenceLayer provider)) return provider;
 
 #pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
             throw new Exception($"Failed to parse PersistenceLayerProvider from test environment. Value was: {storageProviderName}");
@@ -30,10 +30,10 @@ public static partial class TestEnv
          =>
             Current switch
             {
-               DependencyInjection.PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-               DependencyInjection.PersistenceLayer.Memory => SelectValue(memory, nameof(memory)),
-               DependencyInjection.PersistenceLayer.MySql => SelectValue(mySql, nameof(mySql)),
-               DependencyInjection.PersistenceLayer.PostgreSql => SelectValue(pgSql, nameof(pgSql)),
+               Compze.DependencyInjection.PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
+               Compze.DependencyInjection.PersistenceLayer.Memory => SelectValue(memory, nameof(memory)),
+               Compze.DependencyInjection.PersistenceLayer.MySql => SelectValue(mySql, nameof(mySql)),
+               Compze.DependencyInjection.PersistenceLayer.PostgreSql => SelectValue(pgSql, nameof(pgSql)),
                _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -62,12 +62,12 @@ public static partial class TestEnv
    static readonly Regex FindDimensions = new(@"\(""(.*)\:(.*)""\)", RegexOptions.Compiled);
    public static class DIContainer
    {
-      public static DependencyInjection.DIContainer Current
+      public static Compze.DependencyInjection.DIContainer Current
       {
          get
          {
             var containerName = FindDimensions.Match(GetTestName()).Groups[2].Value;
-            if(!Enum.TryParse(containerName, out DependencyInjection.DIContainer provider))
+            if(!Enum.TryParse(containerName, out Compze.DependencyInjection.DIContainer provider))
             {
 #pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
                throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");

@@ -3,6 +3,7 @@ using Compze.DependencyInjection;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
 using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +21,7 @@ public class Startup
    public Startup(IConfiguration configuration)
    {
       Configuration = configuration;
-      _host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
+      _host = EndpointHost.Production.Create(TestingContainerFactory.Create);
       _clientEndpoint = _host.RegisterClientEndpoint(AccountApi.RegisterWithClientEndpoint);
 
    }

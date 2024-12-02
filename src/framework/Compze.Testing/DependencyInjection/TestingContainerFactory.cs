@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
 using Compze.Messaging.Buses;
-using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Testing;
 using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Persistence;
 using JetBrains.Annotations;
 
-namespace Compze.DependencyInjection;
+namespace Compze.Testing.DependencyInjection;
 
-public static class DependencyInjectionContainer
+public static class TestingContainerFactory
 {
-   public static IServiceLocator CreateServiceLocatorForTesting([InstantHandle]Action<IEndpointBuilder> setup)
+   public static IServiceLocator CreateServiceLocatorForTesting([InstantHandle] Action<IEndpointBuilder> setup)
    {
       var host = TestingEndpointHost.Create(Create);
       var endpoint = host.RegisterTestingEndpoint(setup: builder =>
@@ -32,8 +32,8 @@ public static class DependencyInjectionContainer
       IDependencyInjectionContainer container = TestEnv.DIContainer.Current switch
       {
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(runMode),
-         DIContainer.Microsoft => new MicrosoftDependencyInjectionContainer(runMode),
-         _ => throw new ArgumentOutOfRangeException()
+         DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(runMode),
+         _                          => throw new ArgumentOutOfRangeException()
       };
 
       container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));

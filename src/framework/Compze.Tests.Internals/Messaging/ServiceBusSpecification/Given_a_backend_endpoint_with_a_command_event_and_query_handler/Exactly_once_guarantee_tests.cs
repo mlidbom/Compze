@@ -3,6 +3,7 @@ using System.Transactions;
 using Compze.Messaging.Buses;
 using Compze.SystemCE;
 using Compze.Testing;
+using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Threading;
 using Compze.Testing.Transactions;
 using FluentAssertions;

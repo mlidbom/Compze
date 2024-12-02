@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Testing;
 using Compze.GenericAbstractions.Time;
 using Compze.Logging;
 using Compze.Persistence.Common.DependencyInjection;
@@ -18,6 +17,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 
 // ReSharper disable AccessToModifiedClosure
@@ -178,7 +178,7 @@ public abstract class EventMigrationTestBase([NotNull] string pluggableComponent
 
    protected static IServiceLocator CreateServiceLocatorForEventStoreType(Func<IReadOnlyList<IEventMigration>> migrationsfactory)
    {
-      var serviceLocator = DependencyInjectionContainer.CreateServiceLocatorForTesting(
+      var serviceLocator = TestingContainerFactory.CreateServiceLocatorForTesting(
          endpointBuilder =>
             endpointBuilder.Container.RegisterEventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsfactory));
 

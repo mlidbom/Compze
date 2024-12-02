@@ -7,7 +7,9 @@ using Compze.Messaging.Hypermedia;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Persistence;
 using NUnit.Framework;
 
 //ncrunch: no coverage start
@@ -25,7 +27,7 @@ public class PerformanceTestBase(string pluggableComponentsCombination) : Duplic
 
    [SetUp] public async Task Setup()
    {
-      Host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
+      Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
       ServerEndpoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),

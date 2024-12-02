@@ -8,7 +8,9 @@ using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Persistence;
 using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;
@@ -24,7 +26,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
 
    [SetUp]public async Task Setup()
    {
-      _host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
 
       _endpoint = _host.RegisterEndpoint(
          "endpoint",

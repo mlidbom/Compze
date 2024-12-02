@@ -10,6 +10,7 @@ using Compze.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.SystemCE.DiagnosticsCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Performance;
 using FluentAssertions;
@@ -27,7 +28,7 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
 
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
-      _host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       _clientEndpoint = _host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);

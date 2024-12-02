@@ -2,6 +2,7 @@
 using Compze.DependencyInjection;
 using Compze.Messaging.Buses;
 using Compze.Persistence.Common.DependencyInjection;
+using Compze.Testing.Persistence;
 
 namespace Compze.Testing.Messaging.Buses;
 

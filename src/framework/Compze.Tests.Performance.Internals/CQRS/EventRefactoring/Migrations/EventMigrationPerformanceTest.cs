@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Testing;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Refactoring.Migrations;
@@ -14,6 +13,7 @@ using Compze.Testing.Performance;
 using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using NUnit.Framework;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.CQRS.EventRefactoring.Migrations;

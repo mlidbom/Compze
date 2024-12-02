@@ -2,6 +2,7 @@
 using System.Transactions;
 using Compze.Messaging.Buses;
 using Compze.SystemCE;
+using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;

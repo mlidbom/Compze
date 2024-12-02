@@ -5,6 +5,7 @@ using Compze.DependencyInjection;
 using Compze.Messaging.Buses;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -19,7 +20,7 @@ public class UserStoryTest([NotNull] string pluggableComponentsCombination) : Du
 
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
-      Host = TestingEndpointHost.Create(DependencyInjectionContainer.Create);
+      Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterTestingEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
       await Host.StartAsync().CaF();

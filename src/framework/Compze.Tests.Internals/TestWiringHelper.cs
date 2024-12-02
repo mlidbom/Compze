@@ -5,6 +5,7 @@ using Compze.Messaging.Buses;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore;
+using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 
 namespace Compze.Tests;
@@ -44,7 +45,7 @@ static class TestWiringHelper
 
    internal static IServiceLocator SetupTestingServiceLocator([InstantHandle] Action<IEndpointBuilder> configureContainer = null) =>
       CompzeLogger.For(typeof(TestWiringHelper)).ExceptionsAndRethrow(() =>
-                                                                   DependencyInjectionContainer.CreateServiceLocatorForTesting(container =>
+                                                                   TestingContainerFactory.CreateServiceLocatorForTesting(container =>
                                                                    {
                                                                       container.Container.RegisterTestingDocumentDb();
                                                                       container.Container.RegisterTestingEventStore();
