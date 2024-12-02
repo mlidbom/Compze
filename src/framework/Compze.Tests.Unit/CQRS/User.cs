@@ -8,8 +8,8 @@ namespace Compze.Tests.CQRS;
 
 class User : Aggregate<User,UserEvent, IUserEvent>
 {
-   public string Email { get; private set; }
-   public string Password { get; private set; }
+   public string Email { get; private set; } = "";
+   public string Password { get; private set; } = "";
 
 
    public User():base(new DateTimeNowTimeSource())
