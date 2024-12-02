@@ -54,8 +54,4 @@
       <ProjectReference Include="..\Compze\Compze.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Refactoring\Naming\" />
-    </ItemGroup>
-
 </Project>
