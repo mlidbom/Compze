@@ -16,13 +16,13 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
       where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
    {
-      internal abstract class RemovableNestedEntity<TEntity,
-                                                    TEntityId,
-                                                    TEntityEventImplementation,
-                                                    TEntityEvent,
-                                                    TEntityCreatedEvent,
-                                                    TEntityRemovedEvent,
-                                                    TEntityEventIdGetterSetter> :
+      public abstract class RemovableNestedEntity<TEntity,
+                                                  TEntityId,
+                                                  TEntityEventImplementation,
+                                                  TEntityEvent,
+                                                  TEntityCreatedEvent,
+                                                  TEntityRemovedEvent,
+                                                  TEntityEventIdGetterSetter> :
          NestedEntity<TEntity,
             TEntityId,
             TEntityEventImplementation,

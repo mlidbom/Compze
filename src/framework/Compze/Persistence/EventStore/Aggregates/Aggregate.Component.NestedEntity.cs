@@ -78,7 +78,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          }
 
          TEntityId _id;
-         internal TEntityId Id => Assert.Result.NotNullOrDefault(_id);
+         public TEntityId Id => Assert.Result.NotNullOrDefault(_id);
 
          // ReSharper disable once UnusedMember.Global todo: coverage
          public  static CollectionManager CreateSelfManagingCollection(TComponent parent)

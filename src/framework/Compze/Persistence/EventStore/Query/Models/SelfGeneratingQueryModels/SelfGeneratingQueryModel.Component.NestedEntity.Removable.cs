@@ -11,12 +11,12 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       where TComponentEvent : class, TAggregateEvent
       where TComponent : Component<TComponent, TComponentEvent>
    {
-      internal abstract class RemovableNestedEntity<TEntity,
-                                                    TEntityId,
-                                                    TEntityEvent,
-                                                    TEntityCreatedEvent,
-                                                    TEntityRemovedEvent,
-                                                    TEventEntityIdGetter> :
+      public abstract class RemovableNestedEntity<TEntity,
+                                                  TEntityId,
+                                                  TEntityEvent,
+                                                  TEntityCreatedEvent,
+                                                  TEntityRemovedEvent,
+                                                  TEventEntityIdGetter> :
          NestedEntity<TEntity,
             TEntityId,
             TEntityEvent,
