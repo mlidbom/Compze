@@ -7,6 +7,7 @@ using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
+
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace Compze.Tests.CQRS.EventRefactoring.Migrations

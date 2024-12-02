@@ -5,7 +5,7 @@ using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.Testing.Persistence;
 
 public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
 {

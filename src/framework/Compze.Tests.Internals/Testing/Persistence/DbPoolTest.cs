@@ -1,9 +1,8 @@
 ﻿using System;
 using Compze.DependencyInjection;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.MsSql.SystemExtensions;
-using Compze.Persistence.MsSql.Testing.Databases;
+using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.Testing;
 using Compze.Testing.Persistence;
@@ -11,7 +10,7 @@ using Compze.Testing.Persistence.MsSql;
 using Compze.Testing.Persistence.MySql;
 using Compze.Testing.Persistence.PgSql;
 
-namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.Testing.Persistence;
 
 public abstract class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

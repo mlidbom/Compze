@@ -7,6 +7,7 @@ using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
+using Compze.Tests.Testing.Persistence;
 using NUnit.Framework;
 
 namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;

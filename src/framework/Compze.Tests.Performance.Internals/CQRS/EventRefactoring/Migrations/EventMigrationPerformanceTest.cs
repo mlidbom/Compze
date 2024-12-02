@@ -10,10 +10,10 @@ using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.Performance;
-using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using NUnit.Framework;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
+using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.CQRS.EventRefactoring.Migrations;

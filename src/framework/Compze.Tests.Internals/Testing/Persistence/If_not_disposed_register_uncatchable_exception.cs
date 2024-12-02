@@ -6,7 +6,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.Testing.Persistence;
 
 class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
 {
