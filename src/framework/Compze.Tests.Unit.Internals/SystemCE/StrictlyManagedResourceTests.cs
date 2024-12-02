@@ -10,7 +10,7 @@ namespace Compze.Tests.SystemCE;
 
 class StrictlyManagedResourceTests : UniversalTestBase
 {
-   [Test] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
+   [Test, NonParallelizable] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {

@@ -10,7 +10,7 @@ namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
 class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
 {
-   [Test] public void Register_uncatchable_exception()
+   [Test, NonParallelizable] public void Register_uncatchable_exception()
    {
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
