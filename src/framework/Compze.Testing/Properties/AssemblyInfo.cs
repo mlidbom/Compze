@@ -1,8 +1,1 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly:NUnit.Framework.NonTestAssembly]
-
-[assembly: InternalsVisibleTo("Compze.Tests.Internals")]
-[assembly: InternalsVisibleTo("Compze.Tests.Unit.Internals")]
-[assembly: InternalsVisibleTo("Compze.Tests.Performance.Internals")]
-[assembly: InternalsVisibleTo("ScratchPad.Internals")]
+﻿[assembly:NUnit.Framework.NonTestAssembly]
