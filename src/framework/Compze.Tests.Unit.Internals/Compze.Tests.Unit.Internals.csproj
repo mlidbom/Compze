@@ -60,7 +60,6 @@
     <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="C:\Dev\Compze\src\framework\Compze.CQRS.UnitTests\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
