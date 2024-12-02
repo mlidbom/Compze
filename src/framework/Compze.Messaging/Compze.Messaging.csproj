@@ -52,6 +52,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
     </ItemGroup>
 

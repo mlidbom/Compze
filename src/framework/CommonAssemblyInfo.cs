@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Compze.Messaging")]
 [assembly: InternalsVisibleTo("Compze.Testing")]
 [assembly: InternalsVisibleTo("Compze.DependencyInjection")]
+[assembly: InternalsVisibleTo("Compze.Serialization")]
 [assembly: InternalsVisibleTo("Compze.ExternalDependencies")]
 [assembly: InternalsVisibleTo("Compze.Tests.Internals")]
 [assembly: InternalsVisibleTo("Compze.Tests.Unit.Internals")]
