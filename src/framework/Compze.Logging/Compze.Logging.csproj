@@ -9,19 +9,19 @@
 
     <PropertyGroup>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <RootNamespace>Compze</RootNamespace>
+        <RootNamespace>Compze.Logging</RootNamespace>
         <NuGetAuditMode>direct</NuGetAuditMode>
         <AnalysisLevel>latest-all</AnalysisLevel>
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     </PropertyGroup>
 
+
     <ItemGroup>
-        <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+        <ProjectReference Include="..\Compze\Compze.csproj"/>
+        <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
-      <ProjectReference Include="..\Compze\Compze.csproj" />
+        <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs"/>
     </ItemGroup>
-
 </Project>
