@@ -44,13 +44,11 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
     <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
     <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
     <ProjectReference Include="..\Compze\Compze.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="DependencyInjection\Microsoft\" />
   </ItemGroup>
 
 </Project>
