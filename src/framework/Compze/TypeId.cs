@@ -7,7 +7,7 @@ namespace Compze;
 
 class TypeId
 {
-   public Guid GuidValue { get; private set; }
+   public readonly Guid GuidValue;
 
    // ReSharper disable once ImpureMethodCallOnReadonlyValueField
    public override string ToString() => GuidValue.ToString();
