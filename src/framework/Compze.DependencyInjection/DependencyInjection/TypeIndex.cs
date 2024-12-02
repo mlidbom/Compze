@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.DependencyInjection;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.SystemCE.ReflectionCE;
+namespace Compze.DependencyInjection;
 
 class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {

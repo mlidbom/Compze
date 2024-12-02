@@ -2,13 +2,14 @@
 using Compze.DependencyInjection;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.SystemExtensions;
-using Compze.Persistence.MySql.Testing.Databases;
 using Compze.Persistence.MsSql.SystemExtensions;
 using Compze.Persistence.MsSql.Testing.Databases;
 using Compze.Persistence.PgSql.SystemExtensions;
-using Compze.Persistence.PgSql.Testing.Databases;
 using Compze.Testing;
 using Compze.Testing.Databases;
+using Compze.Testing.Persistence.MsSql;
+using Compze.Testing.Persistence.MySql;
+using Compze.Testing.Persistence.PgSql;
 
 namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 

@@ -5,7 +5,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Testing.Databases;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql.Testing.Databases;
+namespace Compze.Testing.Persistence.MySql;
 
 sealed class MySqlDbPool : DbPool
 {
