@@ -11,18 +11,8 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       where TComponentEvent : class, TAggregateEvent
       where TComponent : Component<TComponent, TComponentEvent>
    {
-      public class QueryModelEntityCollectionManager<TParent,
-                                                     TEntity,
-                                                     TEntityId,
-                                                     TEntityEvent,
-                                                     TEntityCreatedEvent,
-                                                     TEntityRemovedEvent,
-                                                     TEventEntityIdGetter> : QueryModelEntityCollectionManager<TParent,
-         TEntity,
-         TEntityId,
-         TEntityEvent,
-         TEntityCreatedEvent,
-         TEventEntityIdGetter>
+      public class QueryModelEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEventEntityIdGetter>
+         : QueryModelEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
          where TEntityId : notnull
          where TEntityEvent : class, TAggregateEvent
          where TEntityCreatedEvent : TEntityEvent
@@ -30,7 +20,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
          where TEntity : Component<TEntity, TEntityEvent>
          where TEventEntityIdGetter : IGetAggregateEntityEventEntityId<TEntityEvent, TEntityId>
       {
-         protected QueryModelEntityCollectionManager (TParent parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar)
+         protected QueryModelEntityCollectionManager(TParent parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar)
          {
             appliersRegistrar.For<TEntityRemovedEvent>(
                e =>

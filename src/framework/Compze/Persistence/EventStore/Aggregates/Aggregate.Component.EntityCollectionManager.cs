@@ -16,17 +16,8 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
       where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
    {
-      public class EntityCollectionManager<TParent,
-                                           TEntity,
-                                           TEntityId,
-                                           TEntityEventImplementation,
-                                           TEntityEvent,
-                                           TEntityCreatedEvent,
-                                           TEntityEventIdGetterSetter> : IEntityCollectionManager<TEntity,
-         TEntityId,
-         TEntityEvent,
-         TEntityEventImplementation,
-         TEntityCreatedEvent>
+      public class EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+         : IEntityCollectionManager<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent>
          where TEntityId : notnull
          where TEntityEvent : class, TAggregateEvent
          where TEntityCreatedEvent : TEntityEvent
@@ -38,10 +29,10 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
          protected EntityCollection<TEntity, TEntityId> ManagedEntities { get; }
          readonly Action<TEntityEventImplementation> _raiseEventThroughParent;
-         protected EntityCollectionManager
-         (TParent parent,
-          Action<TEntityEventImplementation> raiseEventThroughParent,
-          IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+
+         protected EntityCollectionManager(TParent parent,
+                                           Action<TEntityEventImplementation> raiseEventThroughParent,
+                                           IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
          {
             ManagedEntities = [];
             _raiseEventThroughParent = raiseEventThroughParent;
@@ -57,8 +48,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
          public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
 
-         public TEntity AddByPublishing<TCreationEvent>(TCreationEvent creationEvent)
-            where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent
+         public TEntity AddByPublishing<TCreationEvent>(TCreationEvent creationEvent) where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent
          {
             _raiseEventThroughParent(creationEvent);
             var result = ManagedEntities.InCreationOrder[^1];

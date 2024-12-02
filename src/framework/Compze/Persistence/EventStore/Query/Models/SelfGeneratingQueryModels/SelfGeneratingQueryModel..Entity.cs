@@ -11,19 +11,11 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
    where TAggregateEvent : class, IAggregateEvent
 {
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-   public abstract class Entity<TEntity,
-                                TEntityId,
-                                TEntityEvent,
-                                TEntityCreatedEvent,
-                                TEventEntityIdGetter> : Component<TEntity, TEntityEvent>
+   public abstract class Entity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter> : Component<TEntity, TEntityEvent>
       where TEntityId : notnull
       where TEntityEvent : class, TAggregateEvent
       where TEntityCreatedEvent : TEntityEvent
-      where TEntity : Entity<TEntity,
-         TEntityId,
-         TEntityEvent,
-         TEntityCreatedEvent,
-         TEventEntityIdGetter>
+      where TEntity : Entity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
       where TEventEntityIdGetter : IGetAggregateEntityEventEntityId<TEntityEvent, TEntityId>
    {
       static readonly TEventEntityIdGetter IdGetter = Constructor.For<TEventEntityIdGetter>.DefaultConstructor.Instance();
@@ -43,16 +35,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
 
       public static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent, parent.RegisterEventAppliers());
 
-      public class CollectionManager : QueryModelEntityCollectionManager<
-         TQueryModel,
-         TEntity,
-         TEntityId,
-         TEntityEvent,
-         TEntityCreatedEvent,
-         TEventEntityIdGetter>
+      public class CollectionManager : QueryModelEntityCollectionManager<TQueryModel,TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
       {
-         internal CollectionManager
-            (TQueryModel parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar) {}
+         internal CollectionManager(TQueryModel parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar) {}
       }
    }
 }

@@ -15,20 +15,8 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
       where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
    {
-      public class EntityCollectionManager<TParent,
-                                           TEntity,
-                                           TEntityId,
-                                           TEntityEventImplementation,
-                                           TEntityEvent,
-                                           TEntityCreatedEvent,
-                                           TEntityRemovedEvent,
-                                           TEntityEventIdGetterSetter> : EntityCollectionManager<TParent,
-         TEntity,
-         TEntityId,
-         TEntityEventImplementation,
-         TEntityEvent,
-         TEntityCreatedEvent,
-         TEntityEventIdGetterSetter>
+      public class EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+         : EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
          where TEntityId : notnull
          where TEntityEvent : class, TAggregateEvent
          where TEntityCreatedEvent : TEntityEvent
@@ -38,10 +26,9 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          where TEntityEventIdGetterSetter :
          IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
       {
-         protected EntityCollectionManager
-         (TParent parent,
-          Action<TEntityEventImplementation> raiseEventThroughParent,
-          IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+         protected EntityCollectionManager(TParent parent,
+                                           Action<TEntityEventImplementation> raiseEventThroughParent,
+                                           IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
             : base(parent, raiseEventThroughParent, appliersRegistrar)
          {
             appliersRegistrar.For<TEntityRemovedEvent>(

@@ -12,12 +12,8 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       where TComponentEvent : class, TAggregateEvent
       where TComponent : Component<TComponent, TComponentEvent>
    {
-      public class QueryModelEntityCollectionManager<TParent,
-                                                     TEntity,
-                                                     TEntityId,
-                                                     TEntityEvent,
-                                                     TEntityCreatedEvent,
-                                                     TEntityEventIdGetterSetter> : IQueryModelEntityCollectionManager<TEntity, TEntityId>
+      public class QueryModelEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+         : IQueryModelEntityCollectionManager<TEntity, TEntityId>
          where TEntityId : notnull
          where TEntityEvent : class, TAggregateEvent
          where TEntityCreatedEvent : TEntityEvent
@@ -27,6 +23,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
          protected static readonly TEntityEventIdGetterSetter IdGetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
 
          protected QueryModelEntityCollection<TEntity, TEntityId> ManagedEntities { get; }
+
          protected QueryModelEntityCollectionManager(TParent parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
          {
             ManagedEntities = [];

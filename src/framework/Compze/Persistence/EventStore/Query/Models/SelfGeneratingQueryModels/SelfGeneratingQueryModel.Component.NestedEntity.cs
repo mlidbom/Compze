@@ -13,20 +13,12 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       where TComponentEvent : class, TAggregateEvent
       where TComponent : Component<TComponent, TComponentEvent>
    {
-      public abstract class NestedEntity<TEntity,
-                                         TEntityId,
-                                         TEntityEvent,
-                                         TEntityCreatedEvent,
-                                         TEventEntityIdGetter> : NestedComponent<TEntity,
-         TEntityEvent>
+      public abstract class NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter> 
+         : NestedComponent<TEntity, TEntityEvent>
          where TEntityId : notnull
          where TEntityEvent : class, TComponentEvent
          where TEntityCreatedEvent : TEntityEvent
-         where TEntity : NestedEntity<TEntity,
-            TEntityId,
-            TEntityEvent,
-            TEntityCreatedEvent,
-            TEventEntityIdGetter>
+         where TEntity : NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
          where TEventEntityIdGetter : IGetAggregateEntityEventEntityId<TEntityEvent, TEntityId>
       {
          static readonly TEventEntityIdGetter IdGetter = Constructor.For<TEventEntityIdGetter>.DefaultConstructor.Instance();
@@ -45,17 +37,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
          public TEntityId Id => Assert.Result.NotNullOrDefault(_id);
 
          public  static CollectionManager CreateSelfManagingCollection(TComponent parent)//todo:tests
-            =>
-               new(
-                  parent: parent,
-                  appliersRegistrar: parent.RegisterEventAppliers());
+            => new(parent: parent, appliersRegistrar: parent.RegisterEventAppliers());
 
-         public class CollectionManager : QueryModelEntityCollectionManager<TComponent,
-            TEntity,
-            TEntityId,
-            TEntityEvent,
-            TEntityCreatedEvent,
-            TEventEntityIdGetter>
+         public class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
          {
             internal CollectionManager(TComponent parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar)
             { }

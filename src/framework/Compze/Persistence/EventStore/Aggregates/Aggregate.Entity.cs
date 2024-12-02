@@ -15,22 +15,13 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-   public abstract class Entity<TEntity,
-                                TEntityId,
-                                TEntityEventImplementation,
-                                TEntityEvent,
-                                TEntityCreatedEvent,
-                                TEntityEventIdGetterSetter> : Component<TEntity, TEntityEventImplementation, TEntityEvent>
+   public abstract class Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+      : Component<TEntity, TEntityEventImplementation, TEntityEvent>
       where TEntityId : notnull
       where TEntityEvent : class, TAggregateEvent
       where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
       where TEntityCreatedEvent : TEntityEvent
-      where TEntity : Entity<TEntity,
-         TEntityId,
-         TEntityEventImplementation,
-         TEntityEvent,
-         TEntityCreatedEvent,
-         TEntityEventIdGetterSetter>
+      where TEntity : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
    {
       static Entity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
@@ -58,36 +49,25 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       protected override void Publish(TEntityEventImplementation @event)
       {
          var id = IdGetterSetter.GetId(@event);
-         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
          if(Equals(id, default(TEntityId)!))
-            // ReSharper disable HeuristicUnreachableCode
          {
             IdGetterSetter.SetEntityId(@event, Id);
          }
-         // ReSharper restore HeuristicUnreachableCode
          else if(!Equals(id, Id))
          {
             throw new Exception($"Attempted to raise event with EntityId: {id} frow within entity with EntityId: {Id}");
          }
+
          base.Publish(@event);
       }
 
       // ReSharper disable once UnusedMember.Global todo: write tests.
       public static CollectionManager CreateSelfManagingCollection(TAggregate parent) => new(parent, @event => parent.Publish(@event), parent.RegisterEventAppliers());
 
-      public class CollectionManager : EntityCollectionManager<
-         TAggregate,
-         TEntity,
-         TEntityId,
-         TEntityEventImplementation,
-         TEntityEvent,
-         TEntityCreatedEvent,
-         TEntityEventIdGetterSetter>
+      public class CollectionManager : EntityCollectionManager<TAggregate, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       {
-         internal CollectionManager
-         (TAggregate parent,
-          Action<TEntityEventImplementation> raiseEventThroughParent,
-          IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, raiseEventThroughParent, appliersRegistrar) {}
+         internal CollectionManager(TAggregate parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+            : base(parent, raiseEventThroughParent, appliersRegistrar) {}
       }
    }
 }
