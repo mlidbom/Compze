@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-
 
 [assembly: AssemblyDescription("Compze")]
 [assembly: AssemblyConfiguration("")]

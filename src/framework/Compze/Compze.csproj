@@ -17,7 +17,6 @@
 
     <ItemGroup>
         <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-        <Compile Include="..\ShareInternals.cs" Link="Properties\ShareInternals.cs" />
     </ItemGroup>
 
     <ItemGroup>
