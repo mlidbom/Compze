@@ -9,7 +9,7 @@ namespace Compze.Tests.CQRS.EventHandling;
 [TestFixture]public class CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests : UniversalTestBase
 {
    interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent;
-   class UserWrapperEvent<TEvent> : MessageTypes.WrapperEvent<TEvent>, IUserWrapperEvent<TEvent> where TEvent : IUserEvent
+   class UserWrapperEvent<TEvent> : WrapperEvent<TEvent>, IUserWrapperEvent<TEvent> where TEvent : IUserEvent
    {
       public UserWrapperEvent(TEvent @event) : base(@event) {}
    }
@@ -55,7 +55,7 @@ namespace Compze.Tests.CQRS.EventHandling;
 
    public class Publishing_WrapperEvent_of_UserCreatedEvent : CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests
    {
-      EventDispatcherAsserter.RouteAssertion<IEvent> AssertUserCreatedEvent() => _dispatcher.Assert().Event(new MessageTypes.WrapperEvent<UserCreatedEvent>(new UserCreatedEvent()));
+      EventDispatcherAsserter.RouteAssertion<IEvent> AssertUserCreatedEvent() => _dispatcher.Assert().Event(new WrapperEvent<UserCreatedEvent>(new UserCreatedEvent()));
 
       public class Dispatches_to_handler_for : Publishing_WrapperEvent_of_UserCreatedEvent
       {

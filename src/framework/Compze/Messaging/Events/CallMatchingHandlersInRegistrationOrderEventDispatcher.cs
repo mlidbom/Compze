@@ -192,7 +192,7 @@ public class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IM
    {
       //Urgent: Wrapping here seems arguable at best.
       var wrapped = evt as IWrapperEvent<IEvent>
-                 ?? MessageTypes.WrapperEvent.WrapEvent((IEvent)evt);
+                 ?? WrapperEvent.WrapEvent((IEvent)evt);
 
       var handlers = GetHandlers(wrapped.GetType());
       for(var i = 0; i < handlers.Length; i++)
