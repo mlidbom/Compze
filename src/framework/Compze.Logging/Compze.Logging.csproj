@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
     </ItemGroup>
 
