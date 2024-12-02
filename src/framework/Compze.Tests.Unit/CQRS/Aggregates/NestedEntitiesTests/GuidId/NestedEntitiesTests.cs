@@ -29,7 +29,7 @@ public class NestedEntitiesTests : UniversalTestBase
       AggregateId = Guid.NewGuid();
       Ag = new Root("root", AggregateId);
       Qm = new RootQueryModel();
-      var eventStored = (IEventStored)Ag;
+      IEventStored eventStored = Ag;
       eventStored.EventStream.Subscribe(@event => Qm.ApplyEvent((RootEvent.IRoot)@event));
       eventStored.Commit(Qm.LoadFromHistory);
    }

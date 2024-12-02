@@ -22,7 +22,7 @@ public class ObjectNotNullTests : UniversalTestBase
          goodValues: new List<object> {new(), "", Guid.NewGuid()});
 
 
-      var nullString = (string)null;
+      string nullString = null;
       var anObject = new object();
 
       Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullString).NotNull());

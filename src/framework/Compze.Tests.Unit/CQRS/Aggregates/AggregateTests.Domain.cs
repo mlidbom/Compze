@@ -4,7 +4,7 @@ using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using JetBrains.Annotations;
 
-namespace Compze.Tests.CQRS;
+namespace Compze.Tests.CQRS.Aggregates;
 
 class User : Aggregate<User,UserEvent, IUserEvent>
 {

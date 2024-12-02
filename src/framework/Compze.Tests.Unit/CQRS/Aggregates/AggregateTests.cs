@@ -8,7 +8,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.CQRS;
+namespace Compze.Tests.CQRS.Aggregates;
 
 [TestFixture]
 public class AggregateTests : UniversalTestBase
@@ -34,7 +34,7 @@ public class AggregateTests : UniversalTestBase
    public void ResetEmptiesOutListOfUncommittedEvents()
    {
       var user = new User();
-      var userAseventStored = (IEventStored)user;
+      IEventStored userAseventStored = user;
       Assert.That(user.Version, Is.EqualTo(0));
 
       user.Register("email", "password", Guid.NewGuid());
