@@ -60,6 +60,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Logging", "framework
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Serialization", "framework\Compze.Serialization\Compze.Serialization.csproj", "{EDB5D1BA-8F67-4676-AD48-DB19579AF314}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.DocumentDb", "framework\Compze.DocumentDb\Compze.DocumentDb.csproj", "{B872D758-7883-420D-9FB9-FC8BD4D5F19F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.EventStore", "framework\Compze.EventStore\Compze.EventStore.csproj", "{1BA23D17-86C9-4D7E-9CB7-56A016F5C423}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +197,18 @@ Global
 		{EDB5D1BA-8F67-4676-AD48-DB19579AF314}.docs|Any CPU.Build.0 = Debug|Any CPU
 		{EDB5D1BA-8F67-4676-AD48-DB19579AF314}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDB5D1BA-8F67-4676-AD48-DB19579AF314}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B872D758-7883-420D-9FB9-FC8BD4D5F19F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B872D758-7883-420D-9FB9-FC8BD4D5F19F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B872D758-7883-420D-9FB9-FC8BD4D5F19F}.docs|Any CPU.ActiveCfg = Debug|Any CPU
+		{B872D758-7883-420D-9FB9-FC8BD4D5F19F}.docs|Any CPU.Build.0 = Debug|Any CPU
+		{B872D758-7883-420D-9FB9-FC8BD4D5F19F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B872D758-7883-420D-9FB9-FC8BD4D5F19F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BA23D17-86C9-4D7E-9CB7-56A016F5C423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA23D17-86C9-4D7E-9CB7-56A016F5C423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA23D17-86C9-4D7E-9CB7-56A016F5C423}.docs|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA23D17-86C9-4D7E-9CB7-56A016F5C423}.docs|Any CPU.Build.0 = Debug|Any CPU
+		{1BA23D17-86C9-4D7E-9CB7-56A016F5C423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA23D17-86C9-4D7E-9CB7-56A016F5C423}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -218,6 +234,8 @@ Global
 		{CF56ABFC-3187-4EE6-B7F5-A14882E29F57} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 		{3D2F2F75-24D1-4D85-BDEB-91EBBAE955A2} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 		{EDB5D1BA-8F67-4676-AD48-DB19579AF314} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
+		{B872D758-7883-420D-9FB9-FC8BD4D5F19F} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
+		{1BA23D17-86C9-4D7E-9CB7-56A016F5C423} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {275B298E-4082-4323-8E00-FB580CDC1E06}

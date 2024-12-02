@@ -44,6 +44,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
     <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
     <ProjectReference Include="..\Compze\Compze.csproj" />
   </ItemGroup>
