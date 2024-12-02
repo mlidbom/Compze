@@ -13,7 +13,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       where TComponentEvent : class, TAggregateEvent
       where TComponent : Component<TComponent, TComponentEvent>
    {
-      public abstract class NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter> 
+      public abstract class NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
          : NestedComponent<TEntity, TEntityEvent>
          where TEntityId : notnull
          where TEntityEvent : class, TComponentEvent
@@ -23,7 +23,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       {
          static readonly TEventEntityIdGetter IdGetter = Constructor.For<TEventEntityIdGetter>.DefaultConstructor.Instance();
 
-         protected NestedEntity(TComponent parent): this(parent.RegisterEventAppliers()) { }
+         protected NestedEntity(TComponent parent) : this(parent.RegisterEventAppliers()) {}
 
 #pragma warning disable CS8618 //Review OK-ish: We guarantee that we never deliver out a null or default value from the public property.
          protected NestedEntity(IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(appliersRegistrar, registerEventAppliers: false)
@@ -36,13 +36,12 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
          TEntityId _id;
          public TEntityId Id => Assert.Result.NotNullOrDefault(_id);
 
-         public  static CollectionManager CreateSelfManagingCollection(TComponent parent)//todo:tests
+         public static CollectionManager CreateSelfManagingCollection(TComponent parent) //todo:tests
             => new(parent: parent, appliersRegistrar: parent.RegisterEventAppliers());
 
          public class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
          {
-            internal CollectionManager(TComponent parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar)
-            { }
+            internal CollectionManager(TComponent parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar) {}
          }
       }
    }
