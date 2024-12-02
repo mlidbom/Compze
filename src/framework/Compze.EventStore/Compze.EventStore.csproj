@@ -20,6 +20,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
+      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
     </ItemGroup>
 
@@ -29,6 +31,10 @@
 
     <ItemGroup>
       <Folder Include="Persistence\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
     </ItemGroup>
 
 </Project>

@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Messaging.Events;
-using Compze.Persistence.EventStore;
 
 namespace Compze.Messaging.Buses.Implementation;
-
-interface IEventStoreEventPublisher
-{
-   void Publish(IAggregateEvent anEvent);
-}
 
 interface IInbox
 {
