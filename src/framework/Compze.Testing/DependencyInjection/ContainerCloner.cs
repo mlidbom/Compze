@@ -8,7 +8,7 @@ using Compze.SystemCE.LinqCE;
 
 namespace Compze.Testing.DependencyInjection;
 
-static class TestingExtensions
+static class ContainerCloner
 {
    static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer>()
                                                                                         .ToList();
