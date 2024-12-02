@@ -19,5 +19,6 @@ public class SetupTest([NotNull] string pluggableComponentsCombination) : Duplic
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
       host.RegisterTestingEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       await host.StartAsync().CaF();
+      await host.DisposeAsync().CaF();
    }
 }
