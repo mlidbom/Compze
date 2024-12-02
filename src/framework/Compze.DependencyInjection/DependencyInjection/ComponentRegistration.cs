@@ -1,4 +1,7 @@
-﻿using Compze.Contracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Compze.Contracts;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
 

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Builder;
+
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
                                            {
                                               WebRootPath = "_site"
