@@ -34,9 +34,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
          RegisterEventAppliers()
            .IgnoreUnhandled<TEntityRemovedEvent>();
       }
-      internal new static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent: parent, appliersRegistrar: parent.RegisterEventAppliers());
+      public new static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent: parent, appliersRegistrar: parent.RegisterEventAppliers());
 
-      internal new class CollectionManager : QueryModelEntityCollectionManager<TQueryModel,
+      public new class CollectionManager : QueryModelEntityCollectionManager<TQueryModel,
          TEntity,
          TEntityId,
          TEntityEvent,

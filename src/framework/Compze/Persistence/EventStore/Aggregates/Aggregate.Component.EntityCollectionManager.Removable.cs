@@ -15,14 +15,14 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
       where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
    {
-      internal class EntityCollectionManager<TParent,
-                                             TEntity,
-                                             TEntityId,
-                                             TEntityEventImplementation,
-                                             TEntityEvent,
-                                             TEntityCreatedEvent,
-                                             TEntityRemovedEvent,
-                                             TEntityEventIdGetterSetter> : EntityCollectionManager<TParent,
+      public class EntityCollectionManager<TParent,
+                                           TEntity,
+                                           TEntityId,
+                                           TEntityEventImplementation,
+                                           TEntityEvent,
+                                           TEntityCreatedEvent,
+                                           TEntityRemovedEvent,
+                                           TEntityEventIdGetterSetter> : EntityCollectionManager<TParent,
          TEntity,
          TEntityId,
          TEntityEventImplementation,

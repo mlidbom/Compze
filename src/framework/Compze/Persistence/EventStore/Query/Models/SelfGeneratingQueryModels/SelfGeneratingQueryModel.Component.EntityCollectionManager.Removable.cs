@@ -11,13 +11,13 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       where TComponentEvent : class, TAggregateEvent
       where TComponent : Component<TComponent, TComponentEvent>
    {
-      internal class QueryModelEntityCollectionManager<TParent,
-                                                       TEntity,
-                                                       TEntityId,
-                                                       TEntityEvent,
-                                                       TEntityCreatedEvent,
-                                                       TEntityRemovedEvent,
-                                                       TEventEntityIdGetter> : QueryModelEntityCollectionManager<TParent,
+      public class QueryModelEntityCollectionManager<TParent,
+                                                     TEntity,
+                                                     TEntityId,
+                                                     TEntityEvent,
+                                                     TEntityCreatedEvent,
+                                                     TEntityRemovedEvent,
+                                                     TEventEntityIdGetter> : QueryModelEntityCollectionManager<TParent,
          TEntity,
          TEntityId,
          TEntityEvent,

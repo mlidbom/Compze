@@ -43,14 +43,14 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          RegisterEventAppliers()
            .IgnoreUnhandled<TEntityRemovedEvent>();
       }
-      internal new static CollectionManager CreateSelfManagingCollection(TAggregate parent)
+      public new static CollectionManager CreateSelfManagingCollection(TAggregate parent)
          =>
             new(
                parent: parent,
                raiseEventThroughParent: @event => parent.Publish(@event),
                appliersRegistrar: parent.RegisterEventAppliers());
 
-      internal new class CollectionManager : EntityCollectionManager<TAggregate,
+      public new class CollectionManager : EntityCollectionManager<TAggregate,
          TEntity,
          TEntityId,
          TEntityEventImplementation,
