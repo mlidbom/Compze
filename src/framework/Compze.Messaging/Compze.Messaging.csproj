@@ -50,4 +50,8 @@
         <PackageReference Include="System.Threading.AccessControl" Version="9.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Compze\Compze.csproj" />
+    </ItemGroup>
+
 </Project>

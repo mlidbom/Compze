@@ -45,6 +45,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
+    <ProjectReference Include="..\Compze\Compze.csproj" />
   </ItemGroup>
   
   <ItemGroup>
