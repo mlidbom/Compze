@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Compze.Serialization;
 using Compze.SystemCE.ReflectionCE;
-using Newtonsoft.Json;
 
 namespace Compze.DDD;
 
@@ -116,18 +114,4 @@ public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
 
    ///<summary>Compares the objects for inequality using value semantics</summary>
    public static bool operator !=(ValueObject<T> lhs, ValueObject<T> rhs) => !(lhs == rhs);
-
-   ///<returns>A JSON serialized version of the instance.</returns>
-   public override string ToString()
-   {
-      try
-      {
-         return GetType().FullName + ":" + JsonConvert.SerializeObject(this, JsonSettings.JsonSerializerSettings);
-      }
-      catch (Exception)
-      {
-         // ReSharper disable once AssignNullToNotNullAttribute
-         return GetType().FullNameNotNull();
-      }
-   }
 }
