@@ -3,7 +3,7 @@ using Compze.Contracts;
 using Compze.SystemCE;
 using JetBrains.Annotations;
 
-namespace Compze.Testing.Databases;
+namespace Compze.Testing.Persistence;
 
 partial class DbPool
 {

@@ -3,7 +3,6 @@ using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.Testing.Databases;
 using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase

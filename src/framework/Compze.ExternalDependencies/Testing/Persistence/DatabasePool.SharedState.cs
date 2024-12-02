@@ -9,7 +9,7 @@ using Compze.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Compze.Testing.Databases;
+namespace Compze.Testing.Persistence;
 
 partial class DbPool
 {

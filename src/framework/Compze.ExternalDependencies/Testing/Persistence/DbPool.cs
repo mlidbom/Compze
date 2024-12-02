@@ -10,7 +10,7 @@ using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.SystemCE.TransactionsCE;
 
-namespace Compze.Testing.Databases;
+namespace Compze.Testing.Persistence;
 
 abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {

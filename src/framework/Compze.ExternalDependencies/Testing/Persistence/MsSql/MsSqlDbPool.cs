@@ -1,7 +1,6 @@
 ﻿using System;
 using Compze.Persistence.MsSql.SystemExtensions;
 using Compze.Persistence.MsSql.Testing.Databases;
-using Compze.Testing.Databases;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Testing.Persistence.MsSql;

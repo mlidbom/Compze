@@ -1,7 +1,7 @@
 using System;
 using Compze.DependencyInjection;
 using Compze.Testing;
-using Compze.Testing.Databases;
+using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
 
