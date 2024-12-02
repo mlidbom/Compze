@@ -42,7 +42,7 @@ public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) 
       RunScenario(threaded: true, requests: 10, queriesPerRequest: 200, maxTotal: 3.Milliseconds().EnvMultiply(instrumented:2.2), query: new CreatesItsOwnResultQuery());
 
    [Test] public async Task Async_Runs_100_local_requests_making_one_async_remote_query_each_in_10_milliseconds() =>
-      await RunAsyncScenario(requests: 100, queriesPerRequest: 1, maxTotal: 10.Milliseconds().EnvMultiply(instrumented:2.4), query: new MyRemoteQuery()).CaF();
+      await RunAsyncScenario(requests: 100, queriesPerRequest: 1, maxTotal: 10.Milliseconds().EnvMultiply(instrumented:2.4, unoptimized:1.5), query: new MyRemoteQuery()).CaF();
 
    [Test] public async Task Async_Runs_10_local_requests_making_10_async_remote_queries_each_in_7_milliseconds() =>
       await RunAsyncScenario(requests: 10, queriesPerRequest: 10, maxTotal: 7.Milliseconds().EnvMultiply(instrumented:3, unoptimized:2.0), query: new MyRemoteQuery()).CaF();
