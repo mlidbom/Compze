@@ -14,8 +14,6 @@ csharp_style_expression_bodied_operators = when_on_single_line
 csharp_style_expression_bodied_local_functions = when_on_single_line
 
 
-dotnet_diagnostic.CA1859.severity = none # I million times NO. Code to interfaces. Don't use concrete types for as a nano-optimization.
-
 dotnet_diagnostic.CA1064.severity = none # We create a lot of specific exceptions to help debugging, they are not for public consumption. We decide which to make part of our public API
 dotnet_diagnostic.CA1707.severity = none # We use underscores in test names.
 dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for this.
@@ -29,30 +27,30 @@ dotnet_diagnostic.IDE0046.severity = none # Not using the ternary operator in ev
 dotnet_diagnostic.IDE0007.severity = none #I like war, but not using it is valid in many cases. It's not a warning level offence.
 dotnet_diagnostic.IDE0011.severity = none # Sometimes braces are not needed for simple if statements. This is not a warning level thing to me.
 
-dotnet_diagnostic.CA1859.severity = silent #CA1859: Use concrete types when possible for improved performance || I want the proper types, not whatever makes the code most efficient at the cost of exposing something I SHOULD NOT
-dotnet_diagnostic.CA1860.severity = silent #Prefer comparing Count to 0 over using Any() || Well I think Any() is more readable and shorter and unless a profiler tells me I have an issue with this ridiculous nano optimization I don't care.
-dotnet_diagnostic.CA1805.severity = silent #I do initialize members to their default values || It makes it clear that I have not forgotten, that this is the indended value.
+dotnet_diagnostic.CA1859.severity = none #CA1859: Use concrete types when possible for improved performance || I want the proper types, not whatever makes the code most efficient at the cost of exposing something I SHOULD NOT
+dotnet_diagnostic.CA1860.severity = none #Prefer comparing Count to 0 over using Any() || Well I think Any() is more readable and shorter and unless a profiler tells me I have an issue with this ridiculous nano optimization I don't care.
+dotnet_diagnostic.CA1805.severity = none #I do initialize members to their default values || It makes it clear that I have not forgotten, that this is the indended value.
 
 #Todo: These should probably be fixed rather than ignored
-dotnet_diagnostic.CA2201.severity = silent # Yes, In principle I should create a new specific Exception type for every place where I throw one. In practice it is just too much effort for very little gain. 
+dotnet_diagnostic.CA2201.severity = none # Yes, In principle I should create a new specific Exception type for every place where I throw one. In practice it is just too much effort for very little gain. 
 
 
 
 #Todo: review these below and add comments on why they are there if they should stay
-dotnet_diagnostic.CA1032.severity = silent #Implement standard exception constructors
-dotnet_diagnostic.CA1034.severity = silent #Do not nest type AggregateLink. Alternatively, change its accessibility so that it is not externally visible.
-dotnet_diagnostic.CA1040.severity = silent #Avoid empty interfaces
-dotnet_diagnostic.CA1000.severity = silent #Do not declare static members on generic types
-dotnet_diagnostic.CA1062.severity = silent #In externally visible method 'ComponentRegistration<TService> ComponentRegistrationExtensions.CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9>(ComponentRegistrationWithoutInstantiationSpec<TService> @this, Func<TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TImplementation> factoryMethod)', validate parameter 'this' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-dotnet_diagnostic.CA1716.severity = silent #In virtual/interface member IGetSetAggregateEntityEventEntityId<TEntityId, TEventImplementation, TEvent>.SetEntityId(TEventImplementation, TEntityId), rename parameter event so that it no longer conflicts with the reserved language keyword 'event'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.
-dotnet_diagnostic.CA1822.severity = silent #Member 'Commands' does not access instance data and can be marked as static
-dotnet_diagnostic.CA1303.severity = silent #Method 'double TimeAsserter.DetectEnvironmentPerformanceAdjustment()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "Environment variable har invalid value: COMPOSABLE_MACHINE_SLOWNESS. It should be parsable as a double.".
-dotnet_diagnostic.CA1031.severity = silent #Modify 'TryCatch' to catch a more specific allowed exception type, or rethrow the exception.
-dotnet_diagnostic.CA2208.severity = silent #Call the ArgumentOutOfRangeException constructor that contains a message and/or paramName parameter.
-dotnet_diagnostic.CA1051.severity = suggestion # CA1051: Do not declare visible instance fields
-dotnet_diagnostic.IDE1006.severity = silent # IDE1006: Naming Styles
-dotnet_diagnostic.CA2100.severity = silent # CA2100: Review SQL queries for security vulnerabilities
-dotnet_diagnostic.CA2000.severity = silent # CA2000: Dispose objects before losing scope
-dotnet_diagnostic.CA1801.severity = suggestion # CA1801: Review unused parameters
-dotnet_diagnostic.CA1724.severity = suggestion # CA1724: The type name Commands conflicts in whole or in part with the namespace name 'NUnit.Framework.Internal.Commands'. Change either name to eliminate the conflict.
-dotnet_diagnostic.CA1810.severity = silent # CA1810: Initialize reference type static fields inline
+dotnet_diagnostic.CA1032.severity = none #Implement standard exception constructors
+dotnet_diagnostic.CA1034.severity = none #Do not nest type AggregateLink. Alternatively, change its accessibility so that it is not externally visible.
+dotnet_diagnostic.CA1040.severity = none #Avoid empty interfaces
+dotnet_diagnostic.CA1000.severity = none #Do not declare static members on generic types
+dotnet_diagnostic.CA1062.severity = none #In externally visible method 'ComponentRegistration<TService> ComponentRegistrationExtensions.CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9>(ComponentRegistrationWithoutInstantiationSpec<TService> @this, Func<TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TImplementation> factoryMethod)', validate parameter 'this' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+dotnet_diagnostic.CA1716.severity = none #In virtual/interface member IGetSetAggregateEntityEventEntityId<TEntityId, TEventImplementation, TEvent>.SetEntityId(TEventImplementation, TEntityId), rename parameter event so that it no longer conflicts with the reserved language keyword 'event'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.
+dotnet_diagnostic.CA1822.severity = none #Member 'Commands' does not access instance data and can be marked as static
+dotnet_diagnostic.CA1303.severity = none #Method 'double TimeAsserter.DetectEnvironmentPerformanceAdjustment()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "Environment variable har invalid value: COMPOSABLE_MACHINE_SLOWNESS. It should be parsable as a double.".
+dotnet_diagnostic.CA1031.severity = none #Modify 'TryCatch' to catch a more specific allowed exception type, or rethrow the exception.
+dotnet_diagnostic.CA2208.severity = none #Call the ArgumentOutOfRangeException constructor that contains a message and/or paramName parameter.
+dotnet_diagnostic.CA1051.severity = none # CA1051: Do not declare visible instance fields
+dotnet_diagnostic.IDE1006.severity = none # IDE1006: Naming Styles
+dotnet_diagnostic.CA2100.severity = none # CA2100: Review SQL queries for security vulnerabilities
+dotnet_diagnostic.CA2000.severity = none # CA2000: Dispose objects before losing scope
+dotnet_diagnostic.CA1801.severity = none # CA1801: Review unused parameters
+dotnet_diagnostic.CA1724.severity = none # CA1724: The type name Commands conflicts in whole or in part with the namespace name 'NUnit.Framework.Internal.Commands'. Change either name to eliminate the conflict.
+dotnet_diagnostic.CA1810.severity = none # CA1810: Initialize reference type static fields inline
