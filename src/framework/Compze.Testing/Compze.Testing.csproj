@@ -48,4 +48,8 @@
     <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="Databases\" />
+  </ItemGroup>
+  
 </Project>

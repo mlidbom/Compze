@@ -59,4 +59,8 @@
       <ProjectReference Include="..\Compze\Compze.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Testing\" />
+    </ItemGroup>
+
 </Project>
