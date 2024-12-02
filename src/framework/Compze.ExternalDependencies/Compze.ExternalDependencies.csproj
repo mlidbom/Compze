@@ -50,10 +50,5 @@
     <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
     <ProjectReference Include="..\Compze\Compze.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="DependencyInjection\" />
-    <Folder Include="Messaging\Buses\" />
-  </ItemGroup>
 
 </Project>

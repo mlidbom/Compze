@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <RootNamespace>Compze</RootNamespace>
         <NuGetAuditMode>direct</NuGetAuditMode>
         <AnalysisLevel>latest-all</AnalysisLevel>
@@ -23,10 +22,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     </ItemGroup>
 
     <ItemGroup>
