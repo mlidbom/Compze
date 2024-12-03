@@ -115,7 +115,7 @@ public static partial class MessageTypes
 
       public static class ExactlyOnce
       {
-         public class Command : ValueObject<Command>, IExactlyOnceCommand
+         public class Command : IExactlyOnceCommand
          {
             public Guid MessageId { get; private set; }
 
