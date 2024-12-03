@@ -80,5 +80,5 @@ static partial class EnumerableCE
    /// <summary>
    /// Returns as sequence that will yield all values to but excluding <paramref name="guard"/>
    /// </summary>
-   static IEnumerable<int> Until(this IterationSpecification me, int guard) => me.Through(guard - Math.Sign(me.StepSize));
+   internal static IEnumerable<int> Until(this IterationSpecification me, int guard) => me.Through(guard - Math.Sign(me.StepSize));
 }
