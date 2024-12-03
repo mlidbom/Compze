@@ -30,8 +30,8 @@ namespace Compze.Tests.CQRS.EventHandling;
    class AdminUserCreatedEvent : AggregateEvent, IAdminUserCreatedEvent;
 
 
-   CallMatchingHandlersInRegistrationOrderEventDispatcher<IEvent> _dispatcher;
-   [SetUp] public void SetupTask() => _dispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<IEvent>();
+   IMutableEventDispatcher<IEvent> _dispatcher;
+   [SetUp] public void SetupTask() => _dispatcher = IMutableEventDispatcher<IEvent>.Create();
 
    public class Publishing_UserCreatedEvent : MutableEventDispatcher_WrappedEventsTests
    {

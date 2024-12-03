@@ -13,7 +13,7 @@ public abstract class MutableEventDispatcherTests
 {
    public class Given_an_instance
    {
-      readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<IUserEvent> _dispatcher = new();
+      readonly IMutableEventDispatcher<IUserEvent> _dispatcher = IMutableEventDispatcher<IUserEvent>.Create();
 
       public class with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_event_type : Given_an_instance
       {
