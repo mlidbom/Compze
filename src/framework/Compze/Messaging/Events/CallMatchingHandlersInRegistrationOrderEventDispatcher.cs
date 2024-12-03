@@ -25,7 +25,7 @@ public partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEve
    int _cachedTotalHandlers;
    // ReSharper disable once StaticMemberInGenericType
    static readonly Action<IEvent>[] NullHandlerList = [];
-   
+
    public IEventHandlerRegistrar<TEvent> Register() => new RegistrationBuilder(this);
 
 
