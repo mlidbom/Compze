@@ -6,5 +6,5 @@ public interface IMutableEventDispatcher<in TEvent> : IEventDispatcher<TEvent>
    ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>
    IEventHandlerRegistrar<TEvent> Register();
 
-   static IMutableEventDispatcher<TEvent> Create() => new CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent>();
+   static IMutableEventDispatcher<TEvent> New() => new CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent>();
 }

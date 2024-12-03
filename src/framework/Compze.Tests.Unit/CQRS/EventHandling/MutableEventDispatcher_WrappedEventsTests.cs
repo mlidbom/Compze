@@ -31,7 +31,7 @@ namespace Compze.Tests.CQRS.EventHandling;
 
 
    IMutableEventDispatcher<IEvent> _dispatcher;
-   [SetUp] public void SetupTask() => _dispatcher = IMutableEventDispatcher<IEvent>.Create();
+   [SetUp] public void SetupTask() => _dispatcher = IMutableEventDispatcher<IEvent>.New();
 
    public class Publishing_UserCreatedEvent : MutableEventDispatcher_WrappedEventsTests
    {
