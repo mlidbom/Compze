@@ -20,10 +20,10 @@ public class TestingTimeSource : IUtcTimeTimeSource
                                                      };
 
    ///<summary>Returns a timesource that will forever return <param name="utcTime"> as the current time.</param></summary>
-   internal static TestingTimeSource FrozenAtUtcTime(DateTime utcTime) => new()
-                                                                          {
-                                                                             _freezeAt = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc)
-                                                                          };
+   public static TestingTimeSource FrozenAtUtcTime(DateTime utcTime) => new()
+                                                                        {
+                                                                           _freezeAt = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc)
+                                                                        };
 
    public void FreezeAtUtcTime(DateTime time) => _freezeAt = time.ToUniversalTimeSafely();
 
