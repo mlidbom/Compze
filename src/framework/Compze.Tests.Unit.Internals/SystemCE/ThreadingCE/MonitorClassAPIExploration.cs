@@ -32,7 +32,7 @@ public class MonitorClassApiExploration
 
       var waitSucceeded = false;
       using var taskRunner = TestingTaskRunner.WithTimeout(1.Seconds());
-      taskRunner.Start(() =>
+      taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
          threadOneWaitsOnLockSection.Execute(() => waitSucceeded = Monitor.Wait(guarded, waitTimeout));
@@ -40,7 +40,7 @@ public class MonitorClassApiExploration
 
       threadOneWaitsOnLockSection.EntranceGate.AwaitPassedThroughCountEqualTo(1);
 
-      taskRunner.Start(() =>
+      taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
          threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitPassThrough();
@@ -71,7 +71,7 @@ public class MonitorClassApiExploration
 
       var waitSucceeded = false;
       using var taskRunner = TestingTaskRunner.WithTimeout(1.Seconds());
-      taskRunner.Start(() =>
+      taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
          threadOneWaitsOnLockSection.Execute(() => waitSucceeded = Monitor.Wait(guarded, waitTimeout));
@@ -79,7 +79,7 @@ public class MonitorClassApiExploration
 
       threadOneWaitsOnLockSection.EntranceGate.AwaitPassedThroughCountEqualTo(1);
 
-      taskRunner.Start(() =>
+      taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
          threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitPassThrough();
