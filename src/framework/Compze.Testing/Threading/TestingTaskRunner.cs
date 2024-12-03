@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Contracts;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 
@@ -11,7 +10,7 @@ namespace Compze.Testing.Threading;
 ///<summary>
 /// Runs and monitors tasks on background threads.
 /// Throws <see cref="AggregateException"/> on dispose if any throw exceptions or do not complete within timeout. </summary>
-public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable
+sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDisposable
 {
    readonly List<Task> _monitoredTasks = [];
    readonly TimeSpan _timeout = timeout;
@@ -29,19 +28,8 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable
       return this;
    }
 
-   public void Dispose() => WaitForTasksToComplete();
+   public void Dispose() => DisposeAsync().WaitUnwrappingException();
+   public async ValueTask DisposeAsync() => await WaitForTasksToCompleteAsync().CaF();
 
-   public void WaitForTasksToComplete()
-   {
-      if(!Task.WaitAll(_monitoredTasks.ToArray(), _timeout))
-      {
-         var exceptions = _monitoredTasks.Where(predicate: it => it.IsFaulted)
-                                         .Select(selector: it => Contract.ReturnNotNull(it.Exception))
-                                         .ToList();
-
-         if(exceptions.Any()) throw new AggregateException($"Tasks failed to complete within timeout {_timeout} and there were exceptions in tasks", exceptions);
-
-         throw new AggregateException($"Tasks failed to completed within timeout: {_timeout}");
-      }
-   }
+   async Task WaitForTasksToCompleteAsync() => await Task.WhenAll(_monitoredTasks.ToArray()).WaitAsync(_timeout).CaF();
 }

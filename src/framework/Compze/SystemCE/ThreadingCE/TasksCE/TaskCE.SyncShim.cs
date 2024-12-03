@@ -29,6 +29,8 @@ static partial class TaskCE
       throw new Exception("Impossible!");
    }
 
+   internal static void WaitUnwrappingException(this ValueTask task) => task.AsTask().WaitUnwrappingException();
+
    internal static void WaitUnwrappingException(this Task task)
    {
       try
