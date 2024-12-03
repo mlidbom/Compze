@@ -24,10 +24,8 @@ public interface IEventHandlerRegistrar<in TEvent>
    IEventHandlerRegistrar<TEvent> IgnoreAllUnhandled() => IgnoreUnhandled<TEvent>();
 }
 
-static class EventHandlerRegistrar
+public static class EventHandlerRegistrar
 {
-
    public static IEventHandlerRegistrar<TEvent> BeforeHandlers<TEvent>(this IEventHandlerRegistrar<TEvent> @this, Action<TEvent> handler) where TEvent : class, IEvent => @this.BeforeHandlers(handler);
-
    public static IEventHandlerRegistrar<TEvent> AfterHandlers<TEvent>(this IEventHandlerRegistrar<TEvent> @this, Action<TEvent> handler) where TEvent : class, IEvent => @this.AfterHandlers(handler);
 }
