@@ -123,12 +123,6 @@ Current state of gate:
 
    public override string ToString() => $"{nameof(ThreadGate)} {{ {nameof(Name)}: {Name} {nameof(IsOpen)} : {IsOpen}, {nameof(Queued)}: {Queued}, {nameof(Passed)}: {Passed}, {nameof(Requested)}: {Requested} }}";
 
-   static readonly List<string> GlobalLog = [];
-   readonly List<string> _log = [];
-
-   public IReadOnlyList<string> GetGlobalLog() => new List<string>(GlobalLog);
-   public IReadOnlyList<string> GetLog() => new List<string>(_log);
-
    IDisposable LogMethodEntryExit(string method) => _monitor.Update(() =>
    {
       Log($"Entering {method}");
@@ -140,14 +134,11 @@ Current state of gate:
 
          var message = $"{@event} {this}";
          this.Log().Info(message);
-         _log.Add(message);
-         GlobalLogMonitor.Update(() => GlobalLog.Add(message));
       }
    });
 
    string Name { get; }
    readonly MonitorCE _monitor;
-   static readonly MonitorCE GlobalLogMonitor = MonitorCE.WithTimeout(1.Seconds());
    bool _lockOnNextPass;
    bool _enableLogging = false;
    Action<ThreadSnapshot> _passThroughAction = _ => {};
