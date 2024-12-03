@@ -5,7 +5,8 @@
         <LangVersion>default</LangVersion>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
+        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+        <AnalysisLevel>latest-all</AnalysisLevel>
         <RootNamespace>Compze.Tests</RootNamespace>
     </PropertyGroup>
 
