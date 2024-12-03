@@ -1,5 +1,4 @@
 ﻿using System;
-using Compze.DDD;
 using Compze.Messaging;
 
 namespace Compze.Persistence.EventStore;

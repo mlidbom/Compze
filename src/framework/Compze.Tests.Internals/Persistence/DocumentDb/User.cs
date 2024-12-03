@@ -22,7 +22,7 @@ class User : Person
    public HashSet<User> People { get; set; }
 }
 
-class Address : ValueObject<Address>
+record Address
 {
    public string Street { [UsedImplicitly] get; set; } = "SomeStreet";
    public int Streetnumber { [UsedImplicitly] get; set; } = 12;
