@@ -43,7 +43,7 @@ class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRu
    bool HasPassedSendTime(ScheduledCommand message) => _timeSource.UtcNow >= message.SendAt;
 
    const string SendTaskName = $"{nameof(CommandScheduler)}_Send";
-   void Send(ScheduledCommand scheduledCommand) => _taskRunner.RunAndSurfaceExceptions(SendTaskName, () => TransactionScopeCe.Execute(() => _transport.SendTransactionally(scheduledCommand.Command)));
+   void Send(ScheduledCommand scheduledCommand) => _taskRunner.RunSwallowAndLogExceptions(SendTaskName, () => TransactionScopeCe.Execute(() => _transport.SendTransactionally(scheduledCommand.Command)));
 
    public void Dispose() => Stop();
 

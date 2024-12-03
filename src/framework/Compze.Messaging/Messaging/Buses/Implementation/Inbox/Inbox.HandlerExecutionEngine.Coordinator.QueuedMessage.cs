@@ -34,7 +34,7 @@ partial class Inbox
             public void Execute()
             {
                var message = TransportMessage.DeserializeMessageAndCacheForNextCall();
-               _taskRunner.RunAndSurfaceExceptions(ExecuteTaskName, () =>
+               _taskRunner.RunSwallowAndLogExceptions(ExecuteTaskName, () =>
                {
                   var retryPolicy = new DefaultRetryPolicy(message);
 
