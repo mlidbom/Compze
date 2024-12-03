@@ -6,6 +6,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Testing;
 using Compze.Testing.Threading;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using NUnit.Framework;
 
 // ReSharper disable AccessToDisposedClosure

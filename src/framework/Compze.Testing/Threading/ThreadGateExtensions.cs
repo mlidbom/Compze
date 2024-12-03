@@ -7,7 +7,7 @@ using Compze.Testing.Transactions;
 
 namespace Compze.Testing.Threading;
 
-static class ThreadGateExtensions
+public static class ThreadGateExtensions
 {
    public static TResult AwaitPassthroughAndReturn<TResult>(this IThreadGate @this, TResult returnValue)
    {
