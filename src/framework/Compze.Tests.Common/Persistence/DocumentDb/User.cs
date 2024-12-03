@@ -20,7 +20,7 @@ class User : Person
 
    public Address Address { get; set; } = new();
 
-   public HashSet<User> People { get; set; }
+   public HashSet<User> People { get; set; } = [];
 }
 
 record Address
