@@ -13,6 +13,7 @@ using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Persistence;
 using Compze.Testing.Threading;
+using FluentAssertions.Extensions;
 using NUnit.Framework;
 
 // ReSharper disable ClassNeverInstantiated.Global

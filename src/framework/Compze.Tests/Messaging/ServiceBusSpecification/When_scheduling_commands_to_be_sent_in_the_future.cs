@@ -11,6 +11,7 @@ using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Persistence;
 using Compze.Testing.Threading;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification;

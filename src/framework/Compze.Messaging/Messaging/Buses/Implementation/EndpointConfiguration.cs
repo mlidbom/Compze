@@ -9,7 +9,7 @@ public class EndpointConfiguration
 
    internal string Name { get; }
    internal EndpointId Id { get; }
-   internal string ConnectionStringName { get; }
+   public string ConnectionStringName { get; }
    internal bool IsPureClientEndpoint { get; }
 
 
