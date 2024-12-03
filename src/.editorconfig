@@ -14,6 +14,9 @@ csharp_style_expression_bodied_operators = when_on_single_line
 csharp_style_expression_bodied_local_functions = when_on_single_line
 
 
+#Todo: When NUnit fixes their analyzer so that it understands IAsyncDisposable this should absolutely be removed.
+dotnet_diagnostic.NUnit1032.severity = none
+
 dotnet_diagnostic.CA1064.severity = none # We create a lot of specific exceptions to help debugging, they are not for public consumption. We decide which to make part of our public API
 dotnet_diagnostic.CA1707.severity = none # We use underscores in test names.
 dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for this.
