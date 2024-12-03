@@ -87,10 +87,10 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       return theEvent;
    }
 
-   protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventAppliersDispatcher.RegisterHandlers();
+   protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventAppliersDispatcher.Register();
 
    // ReSharper disable once UnusedMember.Global todo: coverage
-   protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventHandlers() => _eventHandlersDispatcher.RegisterHandlers();
+   protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventHandlers() => _eventHandlersDispatcher.Register();
 
    void ApplyEvent(TAggregateEvent theEvent)
    {

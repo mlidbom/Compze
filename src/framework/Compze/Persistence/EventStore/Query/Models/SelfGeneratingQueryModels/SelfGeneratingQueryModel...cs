@@ -16,7 +16,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
 
    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventDispatcher = new();
 
-   protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventDispatcher.RegisterHandlers();
+   protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventDispatcher.Register();
 
    public void ApplyEvent(TAggregateEvent theEvent)
    {

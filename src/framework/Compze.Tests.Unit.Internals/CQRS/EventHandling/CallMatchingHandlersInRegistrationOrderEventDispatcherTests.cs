@@ -71,7 +71,7 @@ public abstract class CallMatchingHandlersInRegistrationOrderEventDispatcherTest
             var handler1CallOrder = 0;
             var handler2CallOrder = 0;
 
-            _dispatcher.RegisterHandlers()
+            _dispatcher.Register()
                        .For<IUserRegistered>(_ => handler1CallOrder = ++calls)
                        .For<IUserRegistered>(_ => handler2CallOrder = ++calls);
 

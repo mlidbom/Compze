@@ -24,13 +24,13 @@ public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewMode
    protected SingleAggregateQueryModelGenerator(TSession session)
    {
       _session = session;
-      _eventDispatcher.RegisterHandlers()
+      _eventDispatcher.Register()
                       .ForGenericEvent<IAggregateCreatedEvent>(e => Model!.SetId(e.AggregateId))
                       .ForGenericEvent<IAggregateDeletedEvent>(_ => Model = null);
    }
 
    ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>
-   protected IEventHandlerRegistrar<TEvent> RegisterHandlers() => _eventDispatcher.RegisterHandlers();
+   protected IEventHandlerRegistrar<TEvent> RegisterHandlers() => _eventDispatcher.Register();
 
    public Option<TViewModel> TryGenerate(Guid id) => TryGenerate(id, int.MaxValue);
 

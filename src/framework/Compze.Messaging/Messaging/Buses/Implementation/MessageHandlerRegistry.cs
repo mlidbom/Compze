@@ -107,7 +107,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
    IEventDispatcher<IEvent> IMessageHandlerRegistry.CreateEventDispatcher()
    {
       var dispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<IEvent>();
-      var registrar = dispatcher.RegisterHandlers()
+      var registrar = dispatcher.Register()
                                 .IgnoreUnhandled<IEvent>();
 
       _eventHandlerRegistrations.ForEach(handlerRegistration => handlerRegistration.RegisterHandlerWithRegistrar(registrar));

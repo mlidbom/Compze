@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Persistence.EventStore;
-using Compze.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType
 
@@ -22,17 +21,29 @@ public partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEve
    readonly List<Action<object>> _runAfterHandlers = [];
    readonly HashSet<Type> _ignoredEvents = [];
    int _totalHandlers;
-
-   ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>
-   internal IEventHandlerRegistrar<TEvent> RegisterHandlers() => new RegistrationBuilder(this);
-
-   public IEventHandlerRegistrar<TEvent> Register() => new RegistrationBuilder(this);
-
    Dictionary<Type, Action<IEvent>[]> _typeToHandlerCache = new();
    int _cachedTotalHandlers;
-
    // ReSharper disable once StaticMemberInGenericType
    static readonly Action<IEvent>[] NullHandlerList = [];
+   
+   public IEventHandlerRegistrar<TEvent> Register() => new RegistrationBuilder(this);
+
+
+   public void Dispatch(TEvent evt)
+   {
+      //Urgent: Wrapping here seems arguable at best.
+      var wrapped = evt as IWrapperEvent<IEvent>
+                 ?? WrapperEvent.WrapEvent((IEvent)evt);
+
+      var handlers = GetHandlers(wrapped.GetType());
+      for(var i = 0; i < handlers.Length; i++)
+      {
+         handlers[i](wrapped);
+      }
+   }
+
+   public bool HandlesEvent<THandled>() => GetHandlers(typeof(THandled), validateHandlerExists: false).Any();
+   public bool Handles(IAggregateEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
 
    Action<IEvent>[] GetHandlers(Type type, bool validateHandlerExists = true)
    {
@@ -81,20 +92,4 @@ public partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEve
 
       return _typeToHandlerCache[type] = result.ToArray();
    }
-
-   public void Dispatch(TEvent evt)
-   {
-      //Urgent: Wrapping here seems arguable at best.
-      var wrapped = evt as IWrapperEvent<IEvent>
-                 ?? WrapperEvent.WrapEvent((IEvent)evt);
-
-      var handlers = GetHandlers(wrapped.GetType());
-      for(var i = 0; i < handlers.Length; i++)
-      {
-         handlers[i](wrapped);
-      }
-   }
-
-   public bool HandlesEvent<THandled>() => GetHandlers(typeof(THandled), validateHandlerExists: false).Any();
-   public bool Handles(IAggregateEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
 }
