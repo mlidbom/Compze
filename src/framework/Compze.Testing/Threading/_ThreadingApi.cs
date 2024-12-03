@@ -7,6 +7,11 @@ namespace Compze.Testing.Threading;
 public interface IThreadGateVisitor
 {
    Unit AwaitPassThrough();
+
+   ///<summary>Blocks until the gate is in a state which satisfies <see cref="condition"/> and then while owning the lock executes <see cref="action"/></summary>
+   IThreadGate ExecuteWithExclusiveLockWhen(TimeSpan timeout, Func<bool> condition, Action action);
+
+   bool TryAwait(TimeSpan timeout, Func<bool> condition);
 }
 
 public interface IThreadGate : IThreadGateVisitor
@@ -25,11 +30,6 @@ public interface IThreadGate : IThreadGateVisitor
    IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action);
 
    Action<ThreadSnapshot> PassThroughAction { get; }
-
-   ///<summary>Blocks until the gate is in a state which satisfies <see cref="condition"/> and then while owning the lock executes <see cref="action"/></summary>
-   IThreadGate ExecuteWithExclusiveLockWhen(TimeSpan timeout, Func<bool> condition, Action action);
-
-   bool TryAwait(TimeSpan timeout, Func<bool> condition);
 
    bool IsOpen { get; }
    long Queued { get; }
