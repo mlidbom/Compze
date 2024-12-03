@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Compze.Persistence.EventStore;
 
-interface IEventStore : IDisposable
+public interface IEventStore : IDisposable
 {
    IReadOnlyList<IAggregateEvent> GetAggregateHistoryForUpdate(Guid id);
    IReadOnlyList<IAggregateEvent> GetAggregateHistory(Guid id);

@@ -3,7 +3,7 @@ using Compze.Contracts;
 
 namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 
-abstract class EventMigration<TMigratedAggregateEventHierarchyRootInterface> : IEventMigration
+public abstract class EventMigration<TMigratedAggregateEventHierarchyRootInterface> : IEventMigration
    where TMigratedAggregateEventHierarchyRootInterface : IAggregateEvent
 {
    protected EventMigration(Guid id, string name, string description)

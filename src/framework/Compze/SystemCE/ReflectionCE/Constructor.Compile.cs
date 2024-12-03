@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace Compze.SystemCE.ReflectionCE;
 
-static partial class Constructor
+public static partial class Constructor
 {
    internal static class Compile
    {
