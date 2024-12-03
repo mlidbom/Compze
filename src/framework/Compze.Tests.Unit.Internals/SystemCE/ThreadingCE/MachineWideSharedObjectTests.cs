@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.Threading;
 using FluentAssertions;
@@ -110,7 +112,7 @@ namespace Compze.Tests.SystemCE.ThreadingCE;
       }
    }
 
-   [Test] public void Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
+   [Test] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = 1.Seconds();
       var updateGate = ThreadGate.CreateClosedWithTimeout(timeout);
@@ -129,13 +131,13 @@ namespace Compze.Tests.SystemCE.ThreadingCE;
       var name = Guid.NewGuid().ToString();
       using var shared1 = MachineWideSharedObject<SharedObject>.For(name);
       using var shared2 = MachineWideSharedObject<SharedObject>.For(name);
-      using var taskRunner = new TestingTaskRunner(timeout);
       // ReSharper disable AccessToDisposedClosure
-      taskRunner.Start(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); }));
-      taskRunner.Start(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {})));
-      taskRunner.Start(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.GetCopy()));
-      taskRunner.Start(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {})));
-      taskRunner.Start(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.GetCopy()));
+      var tasks = Task.WhenAll(
+         Task.Run(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),
+         Task.Run(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {}))),
+         Task.Run(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.GetCopy())),
+         Task.Run(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {}))),
+         Task.Run(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.GetCopy())));
 
       updateGate.AwaitQueueLengthEqualTo(1);
       conflictingSections.ForEach(section =>
@@ -150,7 +152,7 @@ namespace Compze.Tests.SystemCE.ThreadingCE;
       updateGate.Open();
       conflictingSections.ForEach(gate => gate.ExitGate.AwaitPassedThroughCountEqualTo(1));
 
-      taskRunner.WaitForTasksToComplete();
+      await tasks.CaF();
       // ReSharper restore AccessToDisposedClosure
    }
 }

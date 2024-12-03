@@ -40,7 +40,6 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
 
    internal IReadOnlyList<IThreadGate> AllGates = [];
 
-   protected TestingTaskRunner TaskRunner { get; } = TestingTaskRunner.WithTimeout(_timeout);
    protected IEndpoint ClientEndpoint { get; set; }
    protected IEndpoint RemoteEndpoint { get; set; }
    protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
@@ -117,7 +116,6 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
    [TearDown] public virtual async Task TearDownAsync()
    {
       OpenGates();
-      TaskRunner.Dispose();
       await Host.DisposeAsync().CaF();
    }
 

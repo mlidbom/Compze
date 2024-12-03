@@ -29,7 +29,6 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 {
    ITestingEndpointHost _host;
 
-   readonly TestingTaskRunner _taskRunner = TestingTaskRunner.WithTimeout(1.Seconds());
    IServiceLocator _userDomainServiceLocator;
    IEndpoint _clientEndpoint;
 
@@ -92,11 +91,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
    }
 
 
-   [TearDown]public async Task TeardownAsync()
-   {
-      _taskRunner.Dispose();
-      await _host.DisposeAsync().CaF();
-   }
+   [TearDown]public async Task TeardownAsync() => await _host.DisposeAsync().CaF();
 
    public static class UserEvent
    {

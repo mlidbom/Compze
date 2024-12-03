@@ -25,12 +25,14 @@ public class Parallelism_policies(string pluggableComponentsCombination) : Fixtu
       await tasks.CaF();
    }
 
-   [Test] public void Five_query_handlers_can_execute_in_parallel_when_using_Query()
+   [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_Query()
    {
-      CloseGates();
-      TaskRunner.StartTimes(5, () => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())));
+      QueryHandlerThreadGate.Close();
+      var tasks = 1.Through(5).Select(_ => Task.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())))).ToList();
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      QueryHandlerThreadGate.Open();
+      await Task.WhenAll(tasks).CaF();
    }
 
    [Test] public void Two_event_handlers_cannot_execute_in_parallel()
