@@ -4,7 +4,6 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
 using Compze.Messaging.Buses;
-using Compze.Messaging.Buses.Implementation;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.Persistence.EventStore.PersistenceLayer;

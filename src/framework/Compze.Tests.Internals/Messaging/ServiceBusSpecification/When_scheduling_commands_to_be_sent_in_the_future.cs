@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
 using Compze.Messaging;
 using Compze.Messaging.Buses;
-using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;

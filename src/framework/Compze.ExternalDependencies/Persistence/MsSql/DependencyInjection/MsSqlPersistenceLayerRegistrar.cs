@@ -7,7 +7,6 @@ using Compze.Persistence.MsSql.DocumentDb;
 using Compze.Persistence.MsSql.EventStore;
 using Compze.Persistence.MsSql.Messaging.Buses.Implementation;
 using Compze.Persistence.MsSql.SystemExtensions;
-using Compze.Persistence.MsSql.Testing.Databases;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE.ConfigurationCE;
 using Compze.Testing.Persistence.MsSql;

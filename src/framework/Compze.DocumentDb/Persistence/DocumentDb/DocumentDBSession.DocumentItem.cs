@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Compze.Contracts;
 using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
 
 namespace Compze.Persistence.DocumentDb;
 

@@ -1,9 +1,6 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Compze.Persistence.EventStore;
 using Compze.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType

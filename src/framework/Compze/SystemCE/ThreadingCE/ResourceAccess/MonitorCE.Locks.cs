@@ -12,8 +12,8 @@ public partial class MonitorCE
       return _readLock;
    }
 
-   internal UpdateLock TakeUpdateLock() => TakeUpdateLock(_timeout);
-   internal UpdateLock TakeUpdateLock(TimeSpan timeout)
+   public UpdateLock TakeUpdateLock() => TakeUpdateLock(_timeout);
+   public UpdateLock TakeUpdateLock(TimeSpan timeout)
    {
       Enter(timeout);
       return _updateLock;

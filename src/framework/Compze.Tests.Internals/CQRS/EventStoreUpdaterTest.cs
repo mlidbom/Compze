@@ -559,7 +559,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
       var changeEmailSection = GatedCodeSection.WithTimeout(2.Seconds());
 
       var threads = 2;
-      var tasks = 1.Through(threads).Select(_ => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => Task.Run(UpdateEmail)).ToArray();
 
       getHistorySection.LetOneThreadPass();
       changeEmailSection.LetOneThreadEnterAndReachExit();
@@ -613,7 +613,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
 
       var threads = 2;
 
-      var tasks = 1.Through(threads).Select(_ => TaskCE.Run(nameof(UpdateEmail), UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => Task.Run(UpdateEmail)).ToArray();
 
       changeEmailSection.EntranceGate.Open();
       changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualTo(2);

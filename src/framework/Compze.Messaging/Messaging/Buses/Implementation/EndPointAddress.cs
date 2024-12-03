@@ -1,5 +1,4 @@
 ﻿using Compze.Contracts;
-using Compze.DDD;
 
 namespace Compze.Messaging.Buses.Implementation;
 

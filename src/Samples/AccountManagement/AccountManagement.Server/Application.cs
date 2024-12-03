@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.DependencyInjection;
 using Compze.Messaging.Buses;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.DependencyInjection;

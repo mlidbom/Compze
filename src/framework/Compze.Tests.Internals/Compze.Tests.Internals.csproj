@@ -11,7 +11,6 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 
-
   <ItemGroup>
     <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

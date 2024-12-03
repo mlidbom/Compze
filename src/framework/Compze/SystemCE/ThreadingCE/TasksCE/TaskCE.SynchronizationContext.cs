@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Compze.SystemCE.ThreadingCE.TasksCE;
 
-static partial class TaskCE
+public static class ConfigureAwaitCE
 {
    ///<summary>
    /// Abbreviated version of <see cref="Task.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.

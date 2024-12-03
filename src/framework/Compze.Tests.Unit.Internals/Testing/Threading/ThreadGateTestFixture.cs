@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.Threading;
 
 namespace Compze.Tests.Testing.Threading;
@@ -51,7 +50,7 @@ class ThreadGateTestFixture : IDisposable
                        .ToList();
 
       _tasksPassingGate = EntrantEvents.Select(
-                                           entrantEvent => TaskCE.RunOnDedicatedThread(
+                                           entrantEvent => Task.Run(
                                               () =>
                                               {
                                                  entrantEvent.HasStarted.Set();

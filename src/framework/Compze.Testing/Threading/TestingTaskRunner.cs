@@ -24,7 +24,7 @@ sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDisposable
 
    public TestingTaskRunner Run(params Action[] tasks)
    {
-      tasks.ForEach(action: task => _monitoredTasks.Add(TaskCE.Run($"{nameof(TestingTaskRunner)}_Task", task)));
+      tasks.ForEach(action: task => _monitoredTasks.Add(Task.Run(task)));
       return this;
    }
 

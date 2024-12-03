@@ -1,5 +1,4 @@
 ﻿using AccountManagement.API;
-using Compze.DependencyInjection;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
 using Compze.SystemCE.ThreadingCE.TasksCE;

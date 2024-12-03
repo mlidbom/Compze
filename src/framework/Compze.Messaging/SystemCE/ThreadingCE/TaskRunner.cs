@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Compze.Logging;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.SystemCE.ThreadingCE;
@@ -17,19 +17,17 @@ interface ITaskRunner
 {
    public void RunSwallowAndLogExceptions(string taskName, Action task)
    {
-      TaskCE.Run(taskName,
-                 () =>
-                 {
-                    try
-                    {
-                       task();
-                    }
-                    catch(Exception exception)
-                    {
-                       this.Log().Error(exception, "Exception thrown on background thread. ");
-                    }
-                 },
-                 _cancellationTokenSource.Token);
+      Task.Run(() =>
+      {
+         try
+         {
+            task();
+         }
+         catch(Exception exception)
+         {
+            this.Log().Error(exception, "Exception thrown on background thread. ");
+         }
+      });
    }
 
    readonly CancellationTokenSource _cancellationTokenSource = new();

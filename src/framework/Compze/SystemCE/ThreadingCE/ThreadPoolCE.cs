@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.SystemCE.ThreadingCE;
 
@@ -14,7 +13,7 @@ static class ThreadPoolCE
       for(var tries = 1; Idle <= threadCount && tries < 5; tries++)
       {
          var waitForAllThreadsToStart = new CountdownEvent(threadCount);
-         Task.WaitAll(1.Through(threadCount).Select(_ => TaskCE.Run(FakeTaskName, () =>
+         Task.WaitAll(1.Through(threadCount).Select(_ => Task.Run(() =>
          {
             waitForAllThreadsToStart.Signal(1);
             waitForAllThreadsToStart.Wait();

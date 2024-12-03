@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AccountManagement.API;
 using AccountManagement.UserStories.Scenarios;
-using Compze.DependencyInjection;
 using Compze.Messaging.Buses;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;

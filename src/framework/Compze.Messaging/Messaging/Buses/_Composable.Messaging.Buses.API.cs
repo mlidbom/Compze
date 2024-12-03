@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Contracts;
-using Compze.DDD;
 using Compze.DependencyInjection;
 using Compze.Messaging.Buses.Implementation;
 using Compze.Refactoring.Naming;

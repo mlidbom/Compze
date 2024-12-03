@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.DependencyInjection;
 using Compze.Functional;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
