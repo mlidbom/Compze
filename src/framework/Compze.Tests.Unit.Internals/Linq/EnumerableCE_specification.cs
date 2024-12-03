@@ -53,12 +53,12 @@ public class EnumerableCE_specification : UniversalTestBase
    [Test]
    public void StepSizeShouldStepByStepsize()
    {
-      Assert.That(12.By(2).Through(int.MaxValue).Second(), Is.EqualTo(14));
-      Assert.That(12.By(3).Through(int.MaxValue).Second(), Is.EqualTo(15));
-      Assert.That(12.By(3).Through(int.MaxValue).Third(), Is.EqualTo(18));
+      Assert.That(12.By(2).Through(int.MaxValue).ElementAt(1), Is.EqualTo(14));
+      Assert.That(12.By(3).Through(int.MaxValue).ElementAt(1), Is.EqualTo(15));
+      Assert.That(12.By(3).Through(int.MaxValue).ElementAt(2), Is.EqualTo(18));
 
-      Assert.That((-12).By(-2).Through(-int.MaxValue).Second(), Is.EqualTo(-14));
-      Assert.That((-12).By(-3).Through(-int.MaxValue).Second(), Is.EqualTo(-15));
-      Assert.That((-12).By(-3).Through(-int.MaxValue).Third(), Is.EqualTo(-18));
+      Assert.That((-12).By(-2).Through(-int.MaxValue).ElementAt(1), Is.EqualTo(-14));
+      Assert.That((-12).By(-3).Through(-int.MaxValue).ElementAt(1), Is.EqualTo(-15));
+      Assert.That((-12).By(-3).Through(-int.MaxValue).ElementAt(2), Is.EqualTo(-18));
    }
 }
