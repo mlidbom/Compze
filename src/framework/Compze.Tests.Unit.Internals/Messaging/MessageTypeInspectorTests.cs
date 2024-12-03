@@ -9,13 +9,12 @@ namespace Compze.Tests.Messaging;
 interface INonGenericWrapperEvent : IWrapperEvent<IEvent>;
 interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
 
-[TestFixture]public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
+[TestFixture] public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
 {
    static void AssertInvalidForSending<TMessage>() => Assert.Throws<MessageTypeInspector.MessageTypeDesignViolationException>(MessageInspector.AssertValid<TMessage>);
    static void AssertInvalidForSubscription<TMessage>() => Assert.Throws<MessageTypeInspector.MessageTypeDesignViolationException>(MessageInspector.AssertValidForSubscription<TMessage>);
 
-
-   [TestFixture]public class Inspecting_type_for_subscription_ : UniversalTestBase
+   [TestFixture] public class Inspecting_type_for_subscription_ : UniversalTestBase
    {
       public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
@@ -25,8 +24,7 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
       }
    }
 
-
-   [TestFixture]public class Inspecting_type_for_sending_and_ : UniversalTestBase
+   [TestFixture] public class Inspecting_type_for_sending_and_ : UniversalTestBase
    {
       public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
@@ -50,13 +48,11 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
       interface IForbidAndRequireTransactionalSender : IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction;
       [Test] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
 
-      [UsedImplicitly]class AtMostOnceCommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaCommand
+      [UsedImplicitly] class AtMostOnceCommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaCommand
       {
          public Guid MessageId { get; } = Guid.NewGuid();
       }
 
       [Test] public void Is_at_most_once_command_and_sets_MessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceCommandSettingMessageIdInDefaultConstructor>();
-
-
    }
 }

@@ -14,7 +14,7 @@ public static partial class EnumerableCE
    /// <typeparam name="T"></typeparam>
    /// <param name="values"></param>
    /// <returns></returns>
-   public static IEnumerable<T> Create<T>(params T[] values)
+   internal static IEnumerable<T> Create<T>(params T[] values)
    {
       Contract.ArgumentNotNull(values, nameof(values));
       return values;
@@ -23,7 +23,7 @@ public static partial class EnumerableCE
    /// <summary>
    /// Adds <paramref name="instances"/> to the end of <paramref name="source"/>
    /// </summary>
-   public static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
+   static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
    {
       Contract.ArgumentNotNull(source, nameof(source), instances, nameof(instances));
       return source.Concat(instances);
@@ -34,7 +34,7 @@ public static partial class EnumerableCE
    /// <para>Returns true if <paramref name="me"/> contains no elements.</para>
    /// </summary>
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
-   public static bool None<T>(this IEnumerable<T> me)
+   internal static bool None<T>(this IEnumerable<T> me)
    {
       Contract.ArgumentNotNull(me, nameof(me));
 
@@ -42,17 +42,17 @@ public static partial class EnumerableCE
    }
 
    //Add these so that we don't waste effort enumerating these types to check if any entries exist.
-   public static bool None<T>(this List<T> me) => me.Count == 0;
+   internal static bool None<T>(this List<T> me) => me.Count == 0;
    public static bool None<T>(this IList<T> me) => me.Count == 0;
-   public static bool None<T>(this IReadOnlyList<T> me) => me.Count == 0;
-   public static bool None<T>(this T[] me) => me.Length == 0;
+   internal static bool None<T>(this IReadOnlyList<T> me) => me.Count == 0;
+   internal static bool None<T>(this T[] me) => me.Length == 0;
 
    /// <summary>
    /// <para>The inversion of Enumerable.Any() .</para>
    /// <para>Returns true if <paramref name="me"/> contains no elements.</para>
    /// </summary>
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
-   public static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
+   internal static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
    {
       Contract.ArgumentNotNull(me, nameof(me), condition, nameof(condition));
 
@@ -62,7 +62,7 @@ public static partial class EnumerableCE
    /// <summary>
    /// Chops an IEnumerable up into <paramref name="size"/> sized chunks.
    /// </summary>
-   public static IEnumerable<IEnumerable<T>> ChopIntoSizesOf<T>(this IEnumerable<T> me, int size)
+   internal static IEnumerable<IEnumerable<T>> ChopIntoSizesOf<T>(this IEnumerable<T> me, int size)
    {
       Contract.ArgumentNotNull(me, nameof(me));
 
@@ -99,7 +99,7 @@ public static partial class EnumerableCE
    /// <typeparam name="TChild">The type contained in the nested enumerables.</typeparam>
    /// <param name="me">the collection to act upon</param>
    /// <returns>All the objects in all the nested collections </returns>
-   public static IEnumerable<TChild> Flatten<T, TChild>(this IEnumerable<T> me) where T : IEnumerable<TChild>
+   internal static IEnumerable<TChild> Flatten<T, TChild>(this IEnumerable<T> me) where T : IEnumerable<TChild>
    {
       Contract.ArgumentNotNull(me, nameof(me));
 
