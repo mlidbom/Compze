@@ -19,7 +19,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
+      <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\TestUsingPluggableComponentCombinations">
+        <Link>TestUsingPluggableComponentCombinations</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

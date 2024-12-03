@@ -7,7 +7,6 @@ namespace Compze.SystemCE.ThreadingCE;
 
 static class ThreadPoolCE
 {
-   const string FakeTaskName = $"{nameof(ThreadPoolCE)}_{nameof(TryToEnsureSufficientIdleThreadsToRunTasksConcurrently)}";
    internal static void TryToEnsureSufficientIdleThreadsToRunTasksConcurrently(int threadCount)
    {
       for(var tries = 1; Idle <= threadCount && tries < 5; tries++)

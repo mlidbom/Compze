@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace Compze.DependencyInjection;
 
-static class ServiceLocatorTransactionRunner
+public static class ServiceLocatorTransactionRunner
 {
    internal static TResult ExecuteTransactionInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<TResult> function)
    {
@@ -16,7 +16,7 @@ static class ServiceLocatorTransactionRunner
       }
    }
 
-   internal static void ExecuteTransactionInIsolatedScope(this IServiceLocator me, [InstantHandle]Action action)
+   public static void ExecuteTransactionInIsolatedScope(this IServiceLocator me, [InstantHandle]Action action)
    {
       using (me.BeginScope())
       {

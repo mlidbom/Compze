@@ -79,7 +79,7 @@ partial class DocumentDbSession : IDocumentDbSession
    public IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IHasPersistentIdentity<Guid>
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
-      var idSet = ids.ToSet(); //Avoid multiple enumerations.
+      var idSet = ids.ToHashSet(); //Avoid multiple enumerations.
 
       var stored = _backingStore.GetAll<TValue>(idSet);
 

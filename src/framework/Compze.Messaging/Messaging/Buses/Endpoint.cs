@@ -72,7 +72,7 @@ class Endpoint : IEndpoint
 
    public async Task ConnectAsync()
    {
-      var serverEndpoints = _endpointRegistry.ServerEndpoints.ToSet();
+      var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
       if (_serverComponents != null)
       {
          serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...

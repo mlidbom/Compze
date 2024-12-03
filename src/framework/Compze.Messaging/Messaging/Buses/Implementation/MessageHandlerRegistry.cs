@@ -123,7 +123,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
                                          .Concat(_eventHandlerRegistrations.Select(reg => reg.Type))
                                          .Where(messageType => messageType.Implements<IRemotableMessage>())
                                          .Where(messageType => !messageType.Implements<MessageTypes.Internal.IMessage>())
-                                         .ToSet();
+                                         .ToHashSet();
 
       var remoteResultTypes = _commandHandlersReturningResults
                              .Where(handler => handler.Key.Implements<IRemotableMessage>())
@@ -135,7 +135,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
       _typeMapper.AssertMappingsExistFor(typesNeedingMappings);
 
       return handledTypes.Select(_typeMapper.GetId)
-                         .ToSet();
+                         .ToHashSet();
    }
 
    class EventHandlerRegistration(Type type, Action<IEventHandlerRegistrar<IEvent>> registerHandlerWithRegistrar)

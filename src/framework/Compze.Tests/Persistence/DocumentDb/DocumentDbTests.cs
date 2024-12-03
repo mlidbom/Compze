@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Compze.DDD;
 using Compze.DependencyInjection;
 using Compze.Persistence.DocumentDb;
+using Compze.SystemCE;
 using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
@@ -304,19 +305,19 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
          user = reader.Get<User>(user.Id);
          updater.Delete(user);
 
-         reader.TryGet(user.Id, out User _)
+         reader.TryGet(user.Id, out User? _)
                .Should()
                .Be(false);
          updater.Save(user);
-         reader.TryGet(user.Id, out User _)
+         reader.TryGet(user.Id, out User? _)
                .Should()
                .Be(true);
          updater.Delete(user);
-         reader.TryGet(user.Id, out User _)
+         reader.TryGet(user.Id, out User? _)
                .Should()
                .Be(false);
          updater.Save(user);
-         reader.TryGet(user.Id, out User _)
+         reader.TryGet(user.Id, out User? _)
                .Should()
                .Be(true);
       });
@@ -542,14 +543,16 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void ThrowsIfUsedByMultipleThreads()
    {
-      IDocumentDbSession session = null;
+      IDocumentDbSession? session = null;
       using var wait = new ManualResetEventSlim();
-      ThreadPool.QueueUserWorkItem(_ =>
+      var task = Task.Run(() =>
       {
          ServiceLocator.ExecuteInIsolatedScope(() => session = ServiceLocator.DocumentDbSession());
          wait.Set();
       });
       wait.Wait();
+      task.Wait();
+      session = session.NotNull();
 
       var user = new User();
 
@@ -654,7 +657,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
       {
          var ids = ServiceLocator.DocumentDbBulkReader()
                                  .GetAllIds<User>()
-                                 .ToSet();
+                                 .ToHashSet();
 
          ids.Count.Should()
             .Be(2);
@@ -683,7 +686,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
 
          var ids = ServiceLocator.DocumentDbBulkReader()
                                  .GetAllIds<User>()
-                                 .ToSet();
+                                 .ToHashSet();
 
          ids.Count.Should()
             .Be(2);

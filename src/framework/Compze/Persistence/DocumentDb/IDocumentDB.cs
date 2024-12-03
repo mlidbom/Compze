@@ -5,7 +5,7 @@ using Compze.DDD;
 
 namespace Compze.Persistence.DocumentDb;
 
-interface IDocumentDb
+public interface IDocumentDb
 {
    bool TryGet<TDocument>(object id, [MaybeNullWhen(false)]out TDocument value, Dictionary<Type,Dictionary<string,string>> persistentValues, bool useUpdateLock);
    void Add<TDocument>(object id, TDocument value, Dictionary<Type, Dictionary<string, string>> persistentValues);

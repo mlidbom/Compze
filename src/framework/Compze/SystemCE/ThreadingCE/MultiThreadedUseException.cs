@@ -5,7 +5,7 @@ using Compze.Contracts;
 namespace Compze.SystemCE.ThreadingCE;
 
 ///<summary>Thrown if the <see cref="SingleThreadUseGuard"/> detects a thread change.</summary>
-class MultiThreadedUseException : InvalidOperationException
+public class MultiThreadedUseException : InvalidOperationException
 {
    ///<summary>Constructs an instance using the supplied arguments to create an informative queuedMessageInformation.</summary>
    internal MultiThreadedUseException(object guarded, Thread owningThread, Thread currentThread)

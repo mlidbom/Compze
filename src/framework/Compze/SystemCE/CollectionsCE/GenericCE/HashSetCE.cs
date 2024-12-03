@@ -7,13 +7,6 @@ namespace Compze.SystemCE.CollectionsCE.GenericCE;
 /// <summary>A collection of extensions to work with <see cref="HashSet{T}"/></summary>
 static class HashSetCE
 {
-   /// <returns>A set containing all the items in <paramref name="me"/></returns>
-   public static HashSet<T> ToSet<T>(this IEnumerable<T> me)
-   {
-      Contract.ArgumentNotNull(me, nameof(me));
-      return [..me];
-   }
-
    ///<summary>
    /// Removes all of the items in the supplied enumerable from the set.
    /// Simply forwards to ExceptWith but providing a name that is not utterly unreadable </summary>
