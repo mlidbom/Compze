@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Compze.Tests.Linq;
 
 [TestFixture]
-public class NumberTests : UniversalTestBase
+public class EnumerableCE_specification : UniversalTestBase
 {
    [Test]
    public void UntilShouldHaveLastElementEqualToArgumentMinusStepSizeWhenSteppingByOneOreMinusOne()
