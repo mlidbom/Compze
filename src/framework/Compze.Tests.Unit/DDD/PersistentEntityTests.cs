@@ -5,6 +5,8 @@ using NUnit.Framework;
 
 namespace Compze.Tests.DDD;
 
+
+#pragma warning disable NUnit2010 //I'm testing the methods and operators you want me not to use ;)
 #pragma warning disable CA1508 //Avoid dead conditional code
 
 [TestFixture]
@@ -74,8 +76,8 @@ public class PersistentEntityTests : UniversalTestBase
    [Test]
    public void ComparisonWithLhsNullAndRhsNullReturnsTrue()
    {
-      Person rhs = null;
-      Person lhs = null;
+      Person? rhs = null;
+      Person? lhs = null;
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
       Assert.That(rhs == lhs, Is.True);
    }
