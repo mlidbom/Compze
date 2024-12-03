@@ -288,7 +288,7 @@ public class EventMigrationTest([NotNull] string pluggableComponentsCombination)
 
          AssertStreamsAreIdentical(initialHistory, firstSavedHistory, "first saved history");
 
-         migrations = EnumerableCE.Create(Replace<E1>.With<E5>()).ToList();
+         migrations = [Replace<E1>.With<E5>()];
          ClearCache(serviceLocator);
 
          var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestAggregate>(id).History);
@@ -308,7 +308,7 @@ public class EventMigrationTest([NotNull] string pluggableComponentsCombination)
          var historyAfterPersistingAndReloading = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestAggregate>(id).History);
          AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
 
-         migrations = EnumerableCE.Create(Replace<E2>.With<E6>()).ToList();
+         migrations = [Replace<E2>.With<E6>()];
 
          toDispose.Add(serviceLocator = serviceLocator.Clone());
 
@@ -366,7 +366,7 @@ public class EventMigrationTest([NotNull] string pluggableComponentsCombination)
 
          AssertStreamsAreIdentical(initialHistory, firstSavedHistory, "first saved history");
 
-         migrations = EnumerableCE.Create(Replace<E1>.With<E5>()).ToList();
+         migrations = [Replace<E1>.With<E5>()];
          ClearCache(serviceLocator);
 
          var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestAggregate>(id).History);
@@ -388,7 +388,7 @@ public class EventMigrationTest([NotNull] string pluggableComponentsCombination)
 
          serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestAggregate>(id).Publish(new E6(), new E7()));
 
-         migrations = EnumerableCE.Create(Replace<E2>.With<E6>()).ToList();
+         migrations = [Replace<E2>.With<E6>()];
          toDispose.Add(serviceLocator = serviceLocator.Clone());
 
          migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestAggregate>(id).History);
@@ -442,7 +442,7 @@ public class EventMigrationTest([NotNull] string pluggableComponentsCombination)
 
          serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Save(initialAggregate));
 
-         migrations = EnumerableCE.Create(Replace<E1>.With<E5>()).ToList();
+         migrations = [Replace<E1>.With<E5>()];
 
          serviceLocator.ExecuteInIsolatedScope(() => EventStore().PersistMigrations());
 

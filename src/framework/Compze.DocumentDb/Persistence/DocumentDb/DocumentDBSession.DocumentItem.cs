@@ -71,7 +71,7 @@ partial class DocumentDbSession
             }
             else if(ScheduledForUpdate)
             {
-               _backingStore.Update(EnumerableCE.Create(new KeyValuePair<string, object>(Key.Id, Document!)), _persistentValues);
+               _backingStore.Update([new KeyValuePair<string, object>(Key.Id, Document!)], _persistentValues);
             }
          }
       }

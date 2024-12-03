@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Compze.SystemCE.LinqCE;
@@ -118,10 +119,12 @@ namespace Compze.Tests.SystemCE.ThreadingCE;
       var conflictingGetCopySectionSameInstance = GatedCodeSection.WithTimeout(timeout);
       var conflictingGetCopySectionOtherInstance = GatedCodeSection.WithTimeout(timeout);
 
-      var conflictingSections = EnumerableCE.Create(conflictingUpdateSectionSameInstance,
-                                                    conflictingUpdateSectionOtherInstance,
-                                                    conflictingGetCopySectionSameInstance,
-                                                    conflictingGetCopySectionOtherInstance).ToList();
+      IList<IGatedCodeSection> conflictingSections = [
+                                                        conflictingUpdateSectionSameInstance,
+                                                        conflictingUpdateSectionOtherInstance,
+                                                        conflictingGetCopySectionSameInstance,
+                                                        conflictingGetCopySectionOtherInstance
+                                                     ];
 
       var name = Guid.NewGuid().ToString();
       using var shared1 = MachineWideSharedObject<SharedObject>.For(name);

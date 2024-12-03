@@ -75,7 +75,7 @@ static class DbCommandCE
       return result;
    }
 
-   static readonly IReadOnlyList<string> ParameterPrefixes = EnumerableCE.Create("@", ":").ToArray();
+   static readonly IReadOnlyList<string> ParameterPrefixes = ["@", ":"];
    public static TCommand LogCommand<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       ConsoleCE.WriteLine("####################################### Logging command###############################################");

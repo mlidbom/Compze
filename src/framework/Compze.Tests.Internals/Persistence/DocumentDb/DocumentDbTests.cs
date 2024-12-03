@@ -773,7 +773,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
 
       await InsertUsersInOtherDocumentDb(userId).CaF();
 
-      UseInScope(reader => reader.GetAll<User>(EnumerableCE.Create(userId))
+      UseInScope(reader => reader.GetAll<User>([userId])
                                  .Count()
                                  .Should()
                                  .Be(1));
