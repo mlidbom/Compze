@@ -91,8 +91,7 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistar
       fixMessage.AppendLine(CultureInfo.InvariantCulture,
                             $@"
 In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
-Some such required type mappings are missing. 
-You should map them in your endpoint configuration");
+Some such required type mappings are missing. For convenience you can simply paste in the code below:");
 
       typesWithMissingMappings.ForEach(type => fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}   .{MapMethodCallforType(type)}"));
 
@@ -129,5 +128,5 @@ You should map them in your endpoint configuration");
       public void IncludeMappingsFrom(State otherState) => otherState.TypeToTypeIdMap.ForEach(pair => Map(pair.Key, pair.Value));
    }
 
-   static string MapMethodCallforType(Type type) => $@"{nameof(ITypeMappingRegistar.Map)}<{type.GetFullNameCompilable()}>(""{Guid.NewGuid()}"")";
+   static string MapMethodCallforType(Type type) => $"""{nameof(ITypeMappingRegistar.Map)}<{type.GetFullNameCompilable()}>("{Guid.NewGuid()}")""";
 }
