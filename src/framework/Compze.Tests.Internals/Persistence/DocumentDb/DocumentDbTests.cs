@@ -26,7 +26,6 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    {
       var user = new User
                  {
-                    Id = Guid.NewGuid(),
                     Email = "email@email.se",
                     Password = "password",
                     Address = new Address
@@ -56,7 +55,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    {
       var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
 
-      var users = ids.Select(id => new User { Id = id }).ToArray();
+      var users = ids.Select(id => new User(id)).ToArray();
 
       UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
@@ -72,7 +71,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
                  .Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))
                  .ToArray();
 
-      var users = ids.Select(id => new User {Id = id})
+      var users = ids.Select(id => new User(id))
                      .ToArray();
 
       UseInTransactionalScope((_,updater) => users.ForEach(user => updater.Save(user)));
@@ -91,7 +90,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    {
       var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
 
-      var users = ids.Select(id => new User { Id = id }).ToArray();
+      var users = ids.Select(id => new User(id)).ToArray();
 
       UseInTransactionalScope((_,updater) => users.ForEach(user => updater.Save(user)));
 
@@ -113,7 +112,6 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    {
       var user = new User
                  {
-                    Id = Guid.NewGuid(),
                     Email = "email@email.se",
                     Password = "password",
                     Address = new Address
@@ -141,8 +139,8 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void CallingSaveWithAnInteraceAsTypeParameterDoesNotExplode()
    {
-      IPersistentEntity<Guid> user1 = new User { Id = Guid.NewGuid(), Email = "user1" };
-      IPersistentEntity<Guid> user2 = new User { Id = Guid.NewGuid(), Email = "user2" };
+      IPersistentEntity<Guid> user1 = new User { Email = "user1" };
+      IPersistentEntity<Guid> user2 = new User { Email = "user2" };
 
       UseInTransactionalScope((reader, updater) =>
       {
@@ -170,7 +168,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void AddingAndRemovingObjectResultsInNoObjectBeingSaved()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_,updater) =>
       {
@@ -187,7 +185,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void AddingRemovingAndAddingObjectInTransactionResultsInNoObjectBeingSaved()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_,updater) =>
       {
@@ -267,7 +265,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void TryingToFetchNonExistentItemDoesNotCauseSessionToTryAndAddItWithANullInstance()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInScope(reader => reader.TryGet(user.Id, out user)
                                  .Should()
@@ -277,7 +275,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void RepeatedlyAddingAndRemovingObjectResultsInNoObjectBeingSaved()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) =>
       {
@@ -297,7 +295,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void LoadingRemovingAndAddingObjectInTransactionResultsInObjectBeingSaved()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
@@ -332,7 +330,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void ReturnsSameInstanceOnRepeatedLoads()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
@@ -347,7 +345,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void ReturnsSameInstanceOnLoadAfterSave()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((reader, updater) =>
       {
@@ -363,7 +361,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void HandlesHashSets()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
       var userSet = new HashSet<User> { user };
 
       UseInTransactionalScope((_, updater) => updater.Save(user.Id, userSet));
@@ -380,13 +378,11 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    {
       var userInSet = new User
                       {
-                         Id = Guid.NewGuid(),
                          Email = "Email"
                       };
 
       var user = new User
                  {
-                    Id = Guid.NewGuid(),
                     People = [userInSet]
                  };
 
@@ -418,7 +414,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void HandlesDeletesOfInstancesAlreadyLoaded()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) => updater.Save(user));
 
@@ -438,7 +434,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void HandlesDeletesOfInstancesNotYetLoaded()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) => updater.Save(user));
 
@@ -454,7 +450,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void HandlesAValueBeingAddedAndDeletedDuringTheSameSession()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) =>
       {
@@ -469,7 +465,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void TracksAndUpdatesLoadedAggregates()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
@@ -489,7 +485,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void ThrowsWhenAttemptingToSaveExistingAggregate()
    {
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
@@ -501,7 +497,6 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    {
       var user = new User
                  {
-                    Id = Guid.NewGuid(),
                     Email = "email"
                  };
 
@@ -531,8 +526,8 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    {
       UseInTransactionalScope((_, updater) =>
       {
-         updater.Save(new User {Id = Guid.NewGuid()});
-         updater.Save(new User {Id = Guid.NewGuid()});
+         updater.Save(new User());
+         updater.Save(new User());
          updater.Save(new Dog {Id = Guid.NewGuid()});
          updater.Save(new Dog {Id = Guid.NewGuid()});
       });
@@ -556,7 +551,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
       });
       wait.Wait();
 
-      var user = new User { Id = Guid.NewGuid() };
+      var user = new User();
 
       Assert.Throws<MultiThreadedUseException>(() => session.Get<User>(Guid.NewGuid()));
       Assert.Throws<MultiThreadedUseException>(() => session.GetAll<User>());
@@ -572,8 +567,8 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void GetHandlesSubTyping()
    {
-      var user1 = new User { Id = Guid.NewGuid() };
-      var person1 = new Person { Id = Guid.NewGuid() };
+      var user1 = new User();
+      var person1 = new Person();
 
       UseInTransactionalScope((_, updater) =>
       {
@@ -591,8 +586,8 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void GetAllHandlesSubTyping()
    {
-      var user1 = new User { Id = Guid.NewGuid() };
-      var person1 = new Person { Id = Guid.NewGuid() };
+      var user1 = new User();
+      var person1 = new Person();
 
       UseInTransactionalScope((_, updater) =>
       {
@@ -613,7 +608,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void ThrowsExceptionIfYouTryToSaveAnIHasPersistentIdentityWithNoId()
    {
-      var user1 = new User { Id = Guid.Empty };
+      var user1 = new User(Guid.Empty);
 
       UseInTransactionalScope((_, updater) => updater.Invoking(it => it.Save(user1))
                                                      .Should().Throw<Exception>());
@@ -622,8 +617,8 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
    [Test]
    public void GetByIdsShouldReturnOnlyMatchingResultEvenWhenMoreResultsAreInTheCache()
    {
-      var user1 = new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000001") };
-      var user2 = new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000002") };
+      var user1 = new User(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+      var user2 = new User(Guid.Parse("00000000-0000-0000-0000-000000000002"));
 
       UseInTransactionalScope((reader, updater) =>
       {
@@ -644,8 +639,8 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
       var userid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
       var userid2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
 
-      var user1 = new User {Id = userid1 };
-      var user2 = new User { Id = userid2 };
+      var user1 = new User(userid1);
+      var user2 = new User(userid2);
       var dog = new Dog {Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
 
       UseInTransactionalScope((_, updater) =>
@@ -676,8 +671,8 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
       var userid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
       var userid2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
 
-      var user1 = new User { Id = userid1 };
-      var user2 = new User { Id = userid2 };
+      var user1 = new User(userid1);
+      var user2 = new User(userid2);
       var dog = new Dog { Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
 
       UseInTransactionalScope((_, updater) =>
@@ -711,13 +706,13 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
 
          1.Through(4).ForEach(_ =>
          {
-            var user = new User {Id = Guid.NewGuid()};
+            var user = new User();
             store.Add(user.Id, user, dictionary);
          });
 
          1.Through(4).ForEach(_ =>
          {
-            var person = new Person {Id = Guid.NewGuid()};
+            var person = new Person();
             store.Add(person.Id, person, dictionary);
          });
       }
@@ -742,7 +737,7 @@ class DocumentDbTests([NotNull] string pluggableComponentsCombination) : Documen
       var cloneServiceLocator = ServiceLocator.Clone();
       await using var serviceLocator = cloneServiceLocator.CaF();
       cloneServiceLocator.ExecuteTransactionInIsolatedScope(() => cloneServiceLocator.DocumentDbUpdater()
-                                                                                     .Save(new User {Id = userId}));
+                                                                                     .Save(new User(userId)));
    }
 
    [Test]

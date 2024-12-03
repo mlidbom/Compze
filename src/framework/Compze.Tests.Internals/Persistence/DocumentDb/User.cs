@@ -5,15 +5,16 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Persistence.DocumentDb;
 
-class Person : ValueObject<Person>, IPersistentEntity<Guid>
+class Person : Entity<Person>
 {
-   public Guid Id { get; internal set;  }
+   public Person() {}
+   public Person(Guid id): base(id) {}
 }
 
 class User : Person
 {
-   public User() => Id = Guid.NewGuid();
-
+   public User(){}
+   public User(Guid id): base(id) {}
    public string Email { get; set; } = "some.email@nodomain.not";
    public string Password { get; set; } = "default";
 
