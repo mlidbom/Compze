@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Persistence.DocumentDb;
 
-abstract class DocumentDbTestsBase([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+abstract class DocumentDbTestsBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
    protected IServiceLocator ServiceLocator { get; private set; }
