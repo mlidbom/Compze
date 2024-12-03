@@ -7,7 +7,7 @@ namespace Compze.Persistence.EventStore;
 public abstract class AggregateEvent<TBaseEventInterface>(TBaseEventInterface @event) : WrapperEvent<TBaseEventInterface>(@event), IAggregateEvent<TBaseEventInterface>
    where TBaseEventInterface : IAggregateEvent;
 
-public abstract class AggregateEvent() : ValueObject<AggregateEvent>, IAggregateEvent
+public abstract class AggregateEvent() : IAggregateEvent
 {
    protected AggregateEvent(Guid aggregateId) : this() => AggregateId = aggregateId;
 
