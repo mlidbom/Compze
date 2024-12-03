@@ -30,8 +30,7 @@ record Address
    public string City { [UsedImplicitly] get; set; } = "SomeCity";
 }
 
-class Email : ValueObject<Email>
+record Email(string TheEmail)
 {
-   public Email(string email) => TheEmail = email;
-   public string TheEmail { get; private set; }
+   public string TheEmail { get; private set; } = TheEmail;
 }

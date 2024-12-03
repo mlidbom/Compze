@@ -10,7 +10,7 @@ namespace AccountManagement.Domain;
 /// This frees all users of the class from ever having to validated an email.
 /// As long as it is not null it is guaranteed to be valid.
 /// </summary>
-public class Email : ValueObject<Email>
+public record Email
 {
    static readonly Regex BasicEmailValidationRegex = new(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$");
    [JsonProperty] public string StringValue { get; }

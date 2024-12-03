@@ -40,7 +40,7 @@ public interface IEndpoint : IAsyncDisposable
    void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride);
 }
 
-public class EndpointId : ValueObject<EndpointId>
+public record EndpointId
 {
    public Guid GuidValue { get; }
    [JsonConstructor]public EndpointId(Guid guidValue)

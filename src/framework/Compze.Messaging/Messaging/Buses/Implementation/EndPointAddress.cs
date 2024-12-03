@@ -3,7 +3,7 @@ using Compze.DDD;
 
 namespace Compze.Messaging.Buses.Implementation;
 
-public class EndPointAddress : ValueObject<EndPointAddress>
+public record EndPointAddress
 {
    public string AspNetAddress { get; }
    internal EndPointAddress(string aspNetAddress)
