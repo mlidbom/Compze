@@ -17,45 +17,7 @@ namespace Compze.Messaging.Events;
 public partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IMutableEventDispatcher<TEvent>
    where TEvent : class, IEvent
 {
-   abstract class RegisteredHandler
-   {
-      internal abstract Action<IEvent>? TryCreateHandlerFor(Type eventType);
-   }
-
-   class RegisteredHandler<THandledEvent>(Action<THandledEvent> handler) : RegisteredHandler
-      where THandledEvent : IEvent
-   {
-      //Since handler has specified no preference for wrapper type the most generic of all will do and any wrapped event containing a matching event should be dispatched to this handler.
-      readonly Action<THandledEvent> _handler = handler;
-
-      internal override Action<IEvent>? TryCreateHandlerFor(Type eventType)
-      {
-         if(typeof(THandledEvent).IsAssignableFrom(eventType))
-         {
-            return @event => _handler((THandledEvent)@event);
-         } else if(eventType.Is<IWrapperEvent<THandledEvent>>())
-         {
-            return @event => _handler(((IWrapperEvent<THandledEvent>)@event).Event);
-         } else
-         {
-            return null;
-         }
-      }
-   }
-
-   class RegisteredWrappedHandler<THandledWrapperEvent>(Action<THandledWrapperEvent> handler) : RegisteredHandler
-      where THandledWrapperEvent : IWrapperEvent<IEvent>
-   {
-      readonly Action<THandledWrapperEvent> _handler = handler;
-
-      internal override Action<IEvent>? TryCreateHandlerFor(Type eventType) =>
-         typeof(THandledWrapperEvent).IsAssignableFrom(eventType)
-            ? @event => _handler((THandledWrapperEvent)@event)
-            : null;
-   }
-
    readonly List<RegisteredHandler> _handlers = [];
-
    readonly List<Action<object>> _runBeforeHandlers = [];
    readonly List<Action<object>> _runAfterHandlers = [];
    readonly HashSet<Type> _ignoredEvents = [];
@@ -68,6 +30,7 @@ public partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEve
 
    Dictionary<Type, Action<IEvent>[]> _typeToHandlerCache = new();
    int _cachedTotalHandlers;
+
    // ReSharper disable once StaticMemberInGenericType
    static readonly Action<IEvent>[] NullHandlerList = [];
 
@@ -135,5 +98,3 @@ public partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEve
    public bool HandlesEvent<THandled>() => GetHandlers(typeof(THandled), validateHandlerExists: false).Any();
    public bool Handles(IAggregateEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
 }
-
-public class EventUnhandledException(Type handlerType, Type eventType) : Exception($"{handlerType} does not handle nor ignore incoming event {eventType}");
