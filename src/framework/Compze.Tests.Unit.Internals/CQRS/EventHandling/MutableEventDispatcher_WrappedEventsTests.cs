@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.CQRS.EventHandling;
 
-[TestFixture]public class CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests : UniversalTestBase
+[TestFixture]public class MutableEventDispatcher_WrappedEventsTests : UniversalTestBase
 {
    interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent;
    class UserWrapperEvent<TEvent> : WrapperEvent<TEvent>, IUserWrapperEvent<TEvent> where TEvent : IUserEvent
@@ -33,7 +33,7 @@ namespace Compze.Tests.CQRS.EventHandling;
    CallMatchingHandlersInRegistrationOrderEventDispatcher<IEvent> _dispatcher;
    [SetUp] public void SetupTask() => _dispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<IEvent>();
 
-   public class Publishing_UserCreatedEvent : CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests
+   public class Publishing_UserCreatedEvent : MutableEventDispatcher_WrappedEventsTests
    {
       EventDispatcherAsserter.RouteAssertion<IEvent> AssertUserCreatedEvent() => _dispatcher.Assert().Event(new UserCreatedEvent());
 
@@ -53,7 +53,7 @@ namespace Compze.Tests.CQRS.EventHandling;
       }
    }
 
-   public class Publishing_WrapperEvent_of_UserCreatedEvent : CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests
+   public class Publishing_WrapperEvent_of_UserCreatedEvent : MutableEventDispatcher_WrappedEventsTests
    {
       EventDispatcherAsserter.RouteAssertion<IEvent> AssertUserCreatedEvent() => _dispatcher.Assert().Event(new WrapperEvent<UserCreatedEvent>(new UserCreatedEvent()));
 
@@ -74,7 +74,7 @@ namespace Compze.Tests.CQRS.EventHandling;
       }
    }
 
-   public class Publishing_UserWrapperEvent_of_UserCreatedEvent : CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests
+   public class Publishing_UserWrapperEvent_of_UserCreatedEvent : MutableEventDispatcher_WrappedEventsTests
    {
       EventDispatcherAsserter.RouteAssertion<IEvent> AssertUserWrapperEvent_of_UserCreatedEvent() => _dispatcher.Assert().Event(new UserWrapperEvent<UserCreatedEvent>(new UserCreatedEvent()));
 
@@ -96,7 +96,7 @@ namespace Compze.Tests.CQRS.EventHandling;
       }
    }
 
-   public class Publishing_AdminUserWrapperEvent_of_UserCreatedEvent : CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests
+   public class Publishing_AdminUserWrapperEvent_of_UserCreatedEvent : MutableEventDispatcher_WrappedEventsTests
    {
       EventDispatcherAsserter.RouteAssertion<IEvent> AssertAdminUserWrapperEvent_of_UserCreatedEvent() => _dispatcher.Assert().Event(new AdminUserWrapperEvent<UserCreatedEvent>(new UserCreatedEvent()));
 
@@ -115,7 +115,7 @@ namespace Compze.Tests.CQRS.EventHandling;
       }
    }
 
-   public class Publishing_AdminUserWrapperEvent_of_AdminUserCreatedEvent : CallMatchingHandlersInRegistrationOrderEventDispatcher_WrappedEventsTests
+   public class Publishing_AdminUserWrapperEvent_of_AdminUserCreatedEvent : MutableEventDispatcher_WrappedEventsTests
    {
       EventDispatcherAsserter.RouteAssertion<IEvent> AssertAdminUserWrapperEvent_of_AdminUserCreatedEvent() => _dispatcher.Assert().Event(new AdminUserWrapperEvent<AdminUserCreatedEvent>(new AdminUserCreatedEvent()));
 

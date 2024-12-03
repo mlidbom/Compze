@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Compze.Tests.CQRS.EventHandling;
 
-public abstract class CallMatchingHandlersInRegistrationOrderEventDispatcherTests
+public abstract class MutableEventDispatcherTests
 {
    public class Given_an_instance
    {
