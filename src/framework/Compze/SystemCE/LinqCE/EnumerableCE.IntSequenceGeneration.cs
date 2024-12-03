@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Compze.SystemCE.LinqCE;
 
 /// <summary/>
-public static partial class EnumerableCE
+static partial class EnumerableCE
 {
    /// <summary>
    /// Represents a sequence first yielding <see cref="StartValue"/> and then infinitely yielding the last value plus <see cref="StepSize"/>
@@ -33,13 +33,13 @@ public static partial class EnumerableCE
    /// generates a sequence of integers beginning with <paramref name="me"/> where each element is
    /// <paramref name="stepSize"/> larger than the previous
    /// </summary>
-   public static IterationSpecification By(this int me, int stepSize) => new(me, stepSize);
+   internal static IterationSpecification By(this int me, int stepSize) => new(me, stepSize);
 
    /// <summary>
    /// generates a sequence of integers beginning with <paramref name="me"/> where each element is
    /// the previous element plus one that includes the upper bound <paramref name="guard"/> cref="guard"/>
    /// </summary>
-   public static IEnumerable<int> Through(this int me, int guard)
+   internal static IEnumerable<int> Through(this int me, int guard)
    {
       while(me <= guard)
       {
@@ -51,12 +51,12 @@ public static partial class EnumerableCE
    /// generates a sequence of integers beginning with <paramref name="me"/> where each element is
    /// the previous element plus one that excludes the upper bound <paramref name="guard"/>
    /// </summary>
-   public static IEnumerable<int> Until(this int me, int guard) => me.Through(guard - 1);
+   internal static IEnumerable<int> Until(this int me, int guard) => me.Through(guard - 1);
 
    /// <summary>
    /// Returns as sequence that will yield all values to and including <paramref name="guard"/>
    /// </summary>
-   public static IEnumerable<int> Through(this IterationSpecification me, int guard)
+   internal static IEnumerable<int> Through(this IterationSpecification me, int guard)
    {
       var current = me.StartValue;
       if(me.StepSize > 0)
@@ -80,5 +80,5 @@ public static partial class EnumerableCE
    /// <summary>
    /// Returns as sequence that will yield all values to but excluding <paramref name="guard"/>
    /// </summary>
-   public static IEnumerable<int> Until(this IterationSpecification me, int guard) => me.Through(guard - Math.Sign(me.StepSize));
+   static IEnumerable<int> Until(this IterationSpecification me, int guard) => me.Through(guard - Math.Sign(me.StepSize));
 }
