@@ -84,7 +84,7 @@ Current state of gate:
       return this;
    }
 
-   public Unit AwaitPassThrough()
+   public void AwaitPassThrough()
    {
       using var _ = LogMethodEntryExit(nameof(AwaitPassThrough));
 
@@ -110,8 +110,6 @@ Current state of gate:
          _passThroughAction.Invoke(currentThread);
          _postPassThroughAction.Invoke(currentThread);
       }
-
-      return Unit.Instance;
    }
 
    ThreadGate(TimeSpan defaultTimeout, string? name = null)
