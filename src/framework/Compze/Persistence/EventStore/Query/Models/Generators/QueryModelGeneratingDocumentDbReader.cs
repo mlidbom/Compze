@@ -11,7 +11,7 @@ using Compze.SystemCE.ThreadingCE;
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
+public class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
 {
    readonly ISingleContextUseGuard _usageGuard;
    readonly IEnumerable<IQueryModelGenerator> _documentGenerators;
@@ -20,10 +20,6 @@ class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
    {
       _usageGuard = new SingleThreadUseGuard();
       _documentGenerators = documentGenerators;
-   }
-
-   public void Dispose()
-   {
    }
 
    public virtual TValue Get<TValue>(object key)
@@ -114,4 +110,14 @@ class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
    IEnumerable<IVersioningQueryModelGenerator<TDocument>> VersionedGeneratorsForDocumentType<TDocument>() => _documentGenerators.OfType<IVersioningQueryModelGenerator<TDocument>>().ToList();
 
    IEnumerable<IQueryModelGenerator<TDocument>> GetGeneratorsForDocumentType<TDocument>() => _documentGenerators.OfType<IQueryModelGenerator<TDocument>>().ToList();
+
+   protected virtual void Dispose(bool disposing)
+   {
+   }
+
+   public void Dispose()
+   {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+   }
 }
