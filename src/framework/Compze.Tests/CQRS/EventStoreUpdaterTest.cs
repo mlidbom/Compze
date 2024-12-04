@@ -85,7 +85,9 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
          () => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
 
    [Test]
-   public void WhenFetchingAggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown() => UseInTransactionalScope(session => Assert.Throws<AggregateNotFoundException>(() => session.Get<User>(Guid.NewGuid())));
+   public void WhenFetchingAggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown() =>
+      UseInTransactionalScope(session => FluentActions.Invoking(() => session.Get<User>(Guid.NewGuid()))
+                                                      .Should().Throw<ArgumentOutOfRangeException>());
 
    [Test]
    public void CanSaveAndLoadAggregate()
