@@ -20,8 +20,8 @@ class SomeEvent : AggregateEvent, ISomeEvent
 {
    public SomeEvent(Guid aggregateId, int version) : base(aggregateId)
    {
-      AggregateVersion = version;
-      UtcTimeStamp = new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc);
+      ((IMutableAggregateEvent)this).SetAggregateVersion(version);
+      ((IMutableAggregateEvent)this).SetUtcTimeStamp(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
    }
 }
 

@@ -44,7 +44,7 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
          return SingleEventSequence(@event);
       }
 
-      @event.AggregateVersion = _aggregateVersion;
+      ((IMutableAggregateEvent)@event).SetAggregateVersion(_aggregateVersion);
       _eventModifier.Reset(@event);
 
       for(var index = 0; index < _eventMigrators.Length; index++)
@@ -126,5 +126,5 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
 }
 
 sealed class EndOfAggregateHistoryEventPlaceHolder : AggregateEvent {
-   public EndOfAggregateHistoryEventPlaceHolder(Guid aggregateId, int i):base(aggregateId) => AggregateVersion = i;
+   public EndOfAggregateHistoryEventPlaceHolder(Guid aggregateId, int i):base(aggregateId) => ((IMutableAggregateEvent)this).SetAggregateVersion(i);
 }

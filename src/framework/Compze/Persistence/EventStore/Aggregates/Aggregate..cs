@@ -58,17 +58,17 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
       using(ScopedChange.Enter(onEnter:() => _reentrancyLevel++, onDispose: () => _reentrancyLevel--))
       {
-         theEvent.AggregateVersion = Version + 1;
-         theEvent.UtcTimeStamp = TimeSource.UtcNow;
+         ((IMutableAggregateEvent)theEvent).SetAggregateVersion(Version + 1);
+         ((IMutableAggregateEvent)theEvent).SetUtcTimeStamp(TimeSource.UtcNow);
          if(Version == 0)
          {
             if(theEvent is not IAggregateCreatedEvent) throw new Exception($"The first published event {theEvent.GetType()} did not implement {nameof(IAggregateCreatedEvent)}. The first event an aggregate publishes must always implement {nameof(IAggregateCreatedEvent)}.");
             if(theEvent.AggregateId == Guid.Empty) throw new Exception($"{nameof(IAggregateEvent.AggregateId)} was empty in {nameof(IAggregateCreatedEvent)}");
-            theEvent.AggregateVersion = 1;
+            ((IMutableAggregateEvent)theEvent).SetAggregateVersion(1);
          } else
          {
             if(theEvent.AggregateId != Guid.Empty && theEvent.AggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise event for Aggregated: {theEvent.AggregateId} from Aggregate with Id: {Id}.");
-            theEvent.AggregateId = Id;
+            ((IMutableAggregateEvent)theEvent).SetAggregateId(Id);
          }
 
          ApplyEvent(theEvent);
@@ -114,7 +114,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Aggregates.
    IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
 
-   public void Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents)
+   void IEventStored.Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents)
    {
       commitEvents(_unCommittedEvents);
       _unCommittedEvents.Clear();

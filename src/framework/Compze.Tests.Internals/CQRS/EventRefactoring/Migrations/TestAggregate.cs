@@ -46,7 +46,7 @@ namespace Compze.Tests.CQRS.EventRefactoring.Migrations
             if (GetIdBypassContractValidation() == Guid.Empty && events.First().AggregateId == Guid.Empty)
             {
                 SetIdBeVerySureYouKnowWhatYouAreDoing(Guid.NewGuid());
-                events.Cast<AggregateEvent>().First().AggregateId = Id;
+                events.Cast<IMutableAggregateEvent>().First().SetAggregateId(Id);
 #pragma warning restore 618
             }
 
@@ -78,7 +78,7 @@ namespace Compze.Tests.CQRS.EventRefactoring.Migrations
         public static TestAggregate FromEvents(IUtcTimeTimeSource timeSource, Guid? id, IEnumerable<Type> events)
         {
             var rootEvents = events.ToEvents();
-            rootEvents.Cast<AggregateEvent>().First().AggregateId = id ?? Guid.NewGuid();
+            rootEvents.Cast<IMutableAggregateEvent>().First().SetAggregateId(id ?? Guid.NewGuid());
             return new TestAggregate(timeSource, rootEvents);
         }
 

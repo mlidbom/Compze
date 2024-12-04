@@ -98,10 +98,10 @@ class EventStore : IEventStore
    AggregateEvent HydrateEvent(EventDataRow eventDataRowRow)
    {
       var @event = (AggregateEvent)_serializer.Deserialize(eventType: _typeMapper.GetType(new TypeId(eventDataRowRow.EventType)), json: eventDataRowRow.EventJson);
-      @event.AggregateId = eventDataRowRow.AggregateId;
-      @event.AggregateVersion = eventDataRowRow.AggregateVersion;
-      @event.MessageId = eventDataRowRow.EventId;
-      @event.UtcTimeStamp = eventDataRowRow.UtcTimeStamp;
+      ((IMutableAggregateEvent)@event).SetAggregateId(eventDataRowRow.AggregateId);
+      ((IMutableAggregateEvent)@event).SetAggregateVersion(eventDataRowRow.AggregateVersion);
+      ((IMutableAggregateEvent)@event).SetMessageId(eventDataRowRow.EventId);
+      ((IMutableAggregateEvent)@event).SetUtcTimeStamp(eventDataRowRow.UtcTimeStamp);
       return @event;
    }
 

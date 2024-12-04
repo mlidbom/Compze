@@ -16,17 +16,10 @@ namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 //Performance: Consider whether using the new stackalloc and Range types might allow us to improve performance of migrations.
 class EventModifier : IEventModifier
 {
-   internal class RefactoredEvent
+   internal class RefactoredEvent(AggregateEvent newEvent, AggregateEventStorageInformation storageInformation)
    {
-      public RefactoredEvent(AggregateEvent newEvent, AggregateEventStorageInformation storageInformation)
-      {
-         NewEvent = newEvent;
-         StorageInformation = storageInformation;
-      }
-
-      public AggregateEvent NewEvent { get; private set; }
-      public AggregateEventStorageInformation StorageInformation { get; private set; }
-
+      public AggregateEvent NewEvent { get; private set; } = newEvent;
+      public AggregateEventStorageInformation StorageInformation { get; private set; } = storageInformation;
    }
 
    readonly Action<IReadOnlyList<RefactoredEvent>> _eventsAddedCallback;
@@ -82,13 +75,13 @@ class EventModifier : IEventModifier
       _replacementEvents.ForEach(
          (e, index) =>
          {
-            e.NewEvent.AggregateVersion = _inspectedEvent!.AggregateVersion + index;
+            ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersion(_inspectedEvent!.AggregateVersion + index);
 
             e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.Replaces(_inspectedEvent.MessageId);
             e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
-            e.NewEvent.AggregateId = _inspectedEvent.AggregateId;
-            e.NewEvent.UtcTimeStamp = _inspectedEvent.UtcTimeStamp;
+            ((IMutableAggregateEvent)e.NewEvent).SetAggregateId(_inspectedEvent.AggregateId);
+            ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStamp(_inspectedEvent.UtcTimeStamp);
          });
 
       CurrentNode = CurrentNode.Replace(replacementEvents);
@@ -130,13 +123,13 @@ class EventModifier : IEventModifier
          _insertedEvents.ForEach(
             (e, index) =>
             {
-               e.NewEvent.AggregateVersion = _inspectedEvent.AggregateVersion + index;
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersion(_inspectedEvent.AggregateVersion + index);
 
                e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertAfter(_lastEventInActualStream!.MessageId);
                e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
-               e.NewEvent.AggregateId = _inspectedEvent.AggregateId;
-               e.NewEvent.UtcTimeStamp = _lastEventInActualStream.UtcTimeStamp;
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateId(_inspectedEvent.AggregateId);
+               ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStamp(_lastEventInActualStream.UtcTimeStamp);
             });
       }
       else
@@ -144,17 +137,17 @@ class EventModifier : IEventModifier
          _insertedEvents.ForEach(
             (e, index) =>
             {
-               e.NewEvent.AggregateVersion = _inspectedEvent!.AggregateVersion + index;
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersion(_inspectedEvent!.AggregateVersion + index);
 
-               e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertBefore(_inspectedEvent!.MessageId);
+               e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertBefore(_inspectedEvent.MessageId);
                e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
-               e.NewEvent.AggregateId = _inspectedEvent.AggregateId;
-               e.NewEvent.UtcTimeStamp = _inspectedEvent.UtcTimeStamp;
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateId(_inspectedEvent.AggregateId);
+               ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStamp(_inspectedEvent.UtcTimeStamp);
             });
       }
 
-      CurrentNode.ValuesFrom().ForEach((@event, _) => @event.AggregateVersion += _insertedEvents.Length);
+      CurrentNode.ValuesFrom().ForEach((@event, _) => ((IMutableAggregateEvent)@event).SetAggregateVersion(@event.AggregateVersion + _insertedEvents.Length));
 
       CurrentNode.AddBefore(insert);
       _eventsAddedCallback.Invoke(_insertedEvents);

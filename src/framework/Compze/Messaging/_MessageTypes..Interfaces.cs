@@ -52,6 +52,7 @@ public interface IRemotableCreateMyOwnResultQuery<out TResult> : IRemotableQuery
 /// The <see cref="MessageId"/> must be maintained when binding a command to a UI or the guarantee will be lost.</summary>
 public interface IAtMostOnceMessage : IRemotableMessage, IMustBeHandledTransactionally
 {
+   //Refactor: We should use a custom type for MessageIds. Likely a record struct.
    ///<summary>Used by the infrastructure to guarantee that the same message is never delivered more than once. Must be generated when the message is created and then NEVER modified. Must be maintained when binding a command in a UI etc.</summary>
    Guid MessageId { get; }
 }

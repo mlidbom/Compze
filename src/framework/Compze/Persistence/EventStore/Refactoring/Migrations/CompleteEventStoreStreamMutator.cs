@@ -21,7 +21,7 @@ abstract class CompleteEventStoreStreamMutator
          {
             var version = _aggregateVersions.GetOrAddDefault(@event.AggregateId) + 1;
             _aggregateVersions[@event.AggregateId] = version;
-            @event.AggregateVersion = version;
+            ((IMutableAggregateEvent)@event).SetAggregateVersion(version);
             yield return @event;
          }
       }

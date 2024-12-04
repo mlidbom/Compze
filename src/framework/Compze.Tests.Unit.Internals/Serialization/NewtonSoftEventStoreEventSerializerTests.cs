@@ -39,8 +39,8 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
          Test1 = test1;
          Test2 = test2;
 
-         AggregateVersion = aggregateVersion;
-         UtcTimeStamp = utcTimeStamp;
+         ((IMutableAggregateEvent)this).SetAggregateVersion(aggregateVersion);
+         ((IMutableAggregateEvent)this).SetUtcTimeStamp(utcTimeStamp);
       }
 
       // ReSharper disable once MemberCanBePrivate.Local
@@ -60,10 +60,8 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
          aggregateVersion:  2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
-      var eventWithOnlySubclassValues = new TestEvent("Test1", "Test2")
-                                        {
-                                           UtcTimeStamp = DateTime.MinValue
-                                        };
+      var eventWithOnlySubclassValues = new TestEvent("Test1", "Test2");
+      ((IMutableAggregateEvent)eventWithOnlySubclassValues).SetUtcTimeStamp(DateTime.MinValue);
 
       var eventWithAllValuesJson = _eventSerializer.Serialize(eventWithAllValuesSet);
       var eventWithOnlySubclassValuesJson = _eventSerializer.Serialize(eventWithOnlySubclassValues);
