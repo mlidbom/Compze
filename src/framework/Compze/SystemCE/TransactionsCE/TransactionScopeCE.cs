@@ -10,26 +10,26 @@ static class TransactionScopeCe
 
    public static void SuppressAmbient(Action action) => Execute(action, TransactionScopeOption.Suppress);
 
-   public static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required, IsolationLevel isolationLevel = IsolationLevel.Serializable)
+   public static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
-      using var transaction = CreateScope(option, isolationLevel);
+      using var transaction = CreateScope(option);
       var result = action();
       transaction.Complete();
       return result;
    }
 
-   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required, IsolationLevel isolationLevel = IsolationLevel.Serializable)
+   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
-      using var transaction = CreateScope(option, isolationLevel);
+      using var transaction = CreateScope(option);
       action();
       transaction.Complete();
    }
 
-   static TransactionScope CreateScope(TransactionScopeOption options, IsolationLevel isolationLevel) =>
+   static TransactionScope CreateScope(TransactionScopeOption options) =>
       new(options,
           new TransactionOptions
           {
-             IsolationLevel = isolationLevel
+             IsolationLevel = IsolationLevel.Serializable
           },
           TransactionScopeAsyncFlowOption.Enabled);
 }
