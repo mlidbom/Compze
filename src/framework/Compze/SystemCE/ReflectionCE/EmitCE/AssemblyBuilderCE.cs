@@ -7,7 +7,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.SystemCE.ReflectionCE.EmitCE;
 
-public static class AssemblyBuilderCE
+static class AssemblyBuilderCE
 {
    internal static readonly IThreadShared<ModuleBuilder> Module;
 
@@ -18,7 +18,7 @@ public static class AssemblyBuilderCE
    }
 }
 
-public static class TypeBuilderCE
+static class TypeBuilderCE
 {
    const MethodAttributes PropertyAccessorAttributes = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
