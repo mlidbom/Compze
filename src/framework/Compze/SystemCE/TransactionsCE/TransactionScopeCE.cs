@@ -8,11 +8,7 @@ public static class TransactionScopeCe
 {
    public static void SuppressAmbientAndExecuteInNewTransaction(Action action) => SuppressAmbient(() => Execute(action));
 
-   public static TResult SuppressAmbientAndExecuteInNewTransaction<TResult>([InstantHandle] Func<TResult> action) => SuppressAmbient(() => Execute(action));
-
    public static void SuppressAmbient(Action action) => Execute(action, TransactionScopeOption.Suppress);
-
-   public static TResult SuppressAmbient<TResult>([InstantHandle] Func<TResult> action) => Execute(action, TransactionScopeOption.Suppress);
 
    public static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required, IsolationLevel isolationLevel = IsolationLevel.Serializable)
    {
