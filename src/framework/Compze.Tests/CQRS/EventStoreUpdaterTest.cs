@@ -20,6 +20,7 @@ using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Performance;
 using Compze.Testing.SystemCE;
+using Compze.Testing.SystemCE.TransactionsCE;
 using Compze.Testing.Threading;
 using Compze.Testing.Transactions;
 using FluentAssertions;

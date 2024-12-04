@@ -2,14 +2,10 @@
 using System.Transactions;
 using JetBrains.Annotations;
 
-namespace Compze.SystemCE.TransactionsCE;
+namespace Compze.Testing.SystemCE.TransactionsCE;
 
 static class TransactionScopeCe
 {
-   public static void SuppressAmbientAndExecuteInNewTransaction(Action action) => SuppressAmbient(() => Execute(action));
-
-   public static void SuppressAmbient(Action action) => Execute(action, TransactionScopeOption.Suppress);
-
    public static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required, IsolationLevel isolationLevel = IsolationLevel.Serializable)
    {
       using var transaction = CreateScope(option, isolationLevel);
