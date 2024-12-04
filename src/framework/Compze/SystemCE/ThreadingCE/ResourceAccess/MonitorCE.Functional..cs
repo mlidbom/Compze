@@ -3,7 +3,7 @@ using Compze.Functional;
 
 namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial class MonitorCE
+partial class MonitorCE
 {
    public delegate T OutParamFunc<T>(out T outParam);
 

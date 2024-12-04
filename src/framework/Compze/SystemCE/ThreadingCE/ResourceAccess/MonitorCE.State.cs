@@ -2,7 +2,7 @@
 
 namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial class MonitorCE
+partial class MonitorCE
 {
    public static MonitorCE WithDefaultTimeout() => new(DefaultTimeout);
    public static MonitorCE WithInfiniteTimeout() => new(InfiniteTimeout);

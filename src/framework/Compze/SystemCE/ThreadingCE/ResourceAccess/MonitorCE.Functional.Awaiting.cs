@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial class MonitorCE
+partial class MonitorCE
 {
    internal UpdateLock EnterUpdateLockWhen(Func<bool> condition) =>
       EnterUpdateLockWhen(InfiniteTimeout, condition);
