@@ -17,12 +17,12 @@ public interface IEventStore : IDisposable
    IEnumerable<Guid> StreamAggregateIdsInCreationOrder(Type? eventType = null);
 }
 
-static class EventStoreExtensions
+public static class EventStoreExtensions
 {
    public static IEnumerable<Guid> StreamAggregateIdsInCreationOrder<TAggregateEvent>(this IEventStore @this) => @this.StreamAggregateIdsInCreationOrder(typeof(TAggregateEvent));
 }
 
-static class EventStoreTestingExtensions
+public static class EventStoreTestingExtensions
 {
    public static IReadOnlyList<IAggregateEvent> ListAllEventsForTestingPurposesAbsolutelyNotUsableForARealEventStoreOfAnySize(this IEventStore @this, int batchSize = 10000)
    {

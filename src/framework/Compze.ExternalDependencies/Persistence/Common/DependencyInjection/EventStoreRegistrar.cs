@@ -32,9 +32,9 @@ public static class EventStoreRegistrar
                                          IReadOnlyList<IEventMigration> migrations) =>
       @this.RegisterEventStoreForFlexibleTesting(connectionName, () => migrations);
 
-   internal static void RegisterEventStoreForFlexibleTesting(this IDependencyInjectionContainer @this,
-                                                             string connectionName,
-                                                             Func<IReadOnlyList<IEventMigration>> migrations)
+   public static void RegisterEventStoreForFlexibleTesting(this IDependencyInjectionContainer @this,
+                                                           string connectionName,
+                                                           Func<IReadOnlyList<IEventMigration>> migrations)
    {
       Contract.ArgumentNotNullEmptyOrWhitespace(connectionName, nameof(connectionName));
 
@@ -43,7 +43,7 @@ public static class EventStoreRegistrar
                   .CreatedBy((ITypeMapper typeMapper) => new AggregateTypeValidator(typeMapper)),
          Singleton.For<IEventStoreSerializer>()
                   .CreatedBy((ITypeMapper typeMapper) => new EventStoreSerializer(typeMapper)),
-         Singleton.For<EventCache>()
+         Singleton.For<EventCache, IEventCache>()
                   .CreatedBy(() => new EventCache()),
          Scoped.For<IEventStore>()
                .CreatedBy((IEventStorePersistenceLayer persistenceLayer, ITypeMapper typeMapper, IEventStoreSerializer serializer, EventCache cache) =>

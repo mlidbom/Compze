@@ -6,9 +6,9 @@ using JetBrains.Annotations;
 
 namespace Compze.Contracts;
 
-static class ContractAssertion
+public static class ContractAssertion
 {
-   [AssertionMethod] internal static Unit That(this IContractAssertion @this,
+   [AssertionMethod] public static Unit That(this IContractAssertion @this,
                                                [AssertionCondition(AssertionConditionType.IS_TRUE)] [DoesNotReturnIf(false)]
                                                bool assertion,
                                                string message) => Unit.From(() =>

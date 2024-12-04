@@ -7,7 +7,7 @@ using Compze.Contracts;
 namespace Compze.SystemCE;
 
 ///<summary>Extensions for working with extensions</summary>
-static class ExceptionCE
+public static class ExceptionCE
 {
    ///<summary>Flattens the exception.InnerException hierarchy into a sequence.</summary>
    public static IEnumerable<Exception> GetAllExceptionsInStack(this Exception exception)
@@ -24,7 +24,7 @@ static class ExceptionCE
    ///<summary>Returns the deepest nested inner exception that was the root cause of the current exception.</summary>
    public static Exception GetRootCauseException(this Exception e) => e.GetAllExceptionsInStack().Last();
 
-   internal static Exception? TryCatch(Action action)
+   public static Exception? TryCatch(Action action)
    {
       try
       {
@@ -38,7 +38,7 @@ static class ExceptionCE
       return null;
    }
 
-   internal static bool TryCatch(Action action, [NotNullWhen(true)] out Exception? exception)
+   public static bool TryCatch(Action action, [NotNullWhen(true)] out Exception? exception)
    {
       try
       {
@@ -54,7 +54,7 @@ static class ExceptionCE
       return false;
    }
 
-   internal static void TryCatch(Action action, Action<Exception> onException)
+   public static void TryCatch(Action action, Action<Exception> onException)
    {
       try
       {
@@ -66,7 +66,7 @@ static class ExceptionCE
       }
    }
 
-   internal static void ThrowIf<TException>(bool condition) where TException : Exception, new()
+   public static void ThrowIf<TException>(bool condition) where TException : Exception, new()
    {
       if(condition) throw new TException();
    }

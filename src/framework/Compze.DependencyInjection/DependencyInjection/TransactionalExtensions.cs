@@ -8,7 +8,7 @@ namespace Compze.DependencyInjection;
 
 public static class ServiceLocatorTransactionRunner
 {
-   internal static TResult ExecuteTransactionInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<TResult> function)
+   public static TResult ExecuteTransactionInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<TResult> function)
    {
       using (me.BeginScope())
       {
@@ -48,7 +48,7 @@ public static class ServiceLocatorTransactionRunner
       }
    }
 
-   internal static async Task ExecuteInIsolatedScopeAsync(this IServiceLocator me, [InstantHandle]Func<Task> action)
+   public static async Task ExecuteInIsolatedScopeAsync(this IServiceLocator me, [InstantHandle]Func<Task> action)
    {
       using (me.BeginScope())
       {

@@ -14,7 +14,7 @@ public static partial class EnumerableCE
    /// <typeparam name="T"></typeparam>
    /// <param name="values"></param>
    /// <returns></returns>
-   internal static IEnumerable<T> Create<T>(params T[] values)
+   public static IEnumerable<T> Create<T>(params T[] values)
    {
       Contract.ArgumentNotNull(values, nameof(values));
       return values;

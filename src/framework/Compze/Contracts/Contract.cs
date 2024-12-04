@@ -197,7 +197,7 @@ public static class Contract
       return new Inspected<TParameter>(inspected);
    }
 
-   internal static readonly IContractAssertion Assert = new ContractAssertionImplementation(InspectionType.Assertion);
+   public static readonly IContractAssertion Assert = new ContractAssertionImplementation(InspectionType.Assertion);
    internal static readonly IContractAssertion Arguments = new ContractAssertionImplementation(InspectionType.Argument);
 
    internal static void AssertThat(params bool[] conditions)
@@ -219,7 +219,7 @@ public static class Contract
 
 public class ContractAssertThatException(int condition) : Exception($"Condition: {condition} was false");
 
-interface IContractAssertion
+public interface IContractAssertion
 {
    InspectionType InspectionType { get; }
 }

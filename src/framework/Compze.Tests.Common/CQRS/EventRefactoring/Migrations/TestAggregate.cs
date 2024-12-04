@@ -37,7 +37,6 @@ namespace Compze.Tests.CQRS.EventRefactoring.Migrations
         // ReSharper restore ClassNeverInstantiated.Global
     }
 
-
     class TestAggregate : Aggregate<TestAggregate, RootEvent, IRootEvent>
     {
         public void Publish(params RootEvent[] events)

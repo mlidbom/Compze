@@ -11,7 +11,12 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Compze.Persistence.EventStore;
 
-class EventCache : IDisposable
+public interface IEventCache
+{
+   void Clear();
+}
+
+class EventCache : IDisposable, IEventCache
 {
    class TransactionalOverlay(EventCache eventCache)
    {
