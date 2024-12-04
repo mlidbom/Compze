@@ -67,7 +67,7 @@ namespace Compze.Tests.Testing.Threading;
       [SetUp] public void SetupTask()
       {
          _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
-         1.Through(5).ForEach(_ => _fixture.Gate.AwaitLetOneThreadPassThrough().AwaitClosed());
+         1.Through(5).ForEach(_ => _fixture.Gate.AwaitLetOneThreadPassThrough());
       }
 
       [TearDown] public void TearDownTask() => _fixture.Dispose();
@@ -99,7 +99,7 @@ namespace Compze.Tests.Testing.Threading;
       [SetUp] public void SetupTask()
       {
          _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(_threads).WaitForAllThreadsToQueueUpAtPassThrough();
-         1.Through(_timesToCallLetOneThreadPassThrough).ForEach(_ => _fixture.Gate.AwaitLetOneThreadPassThrough().AwaitClosed());
+         1.Through(_timesToCallLetOneThreadPassThrough).ForEach(_ => _fixture.Gate.AwaitLetOneThreadPassThrough());
       }
 
       [TearDown] public void TearDownTask() => _fixture.Dispose();

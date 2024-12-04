@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Contracts;
-using Compze.Functional;
 using Compze.SystemCE;
 using Compze.Testing.Transactions;
 
@@ -25,9 +24,6 @@ public static class ThreadGateExtensions
    public static IThreadGate AwaitPassedThroughCountEqualTo(this IThreadGate @this, int length, TimeSpan timeout) => @this.Await(timeout, () => @this.Passed == length);
    public static bool TryAwaitPassededThroughCountEqualTo(this IThreadGate @this, int count, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Passed == count);
 
-   public static IThreadGate AwaitEmptyQueue(this IThreadGate @this) => @this.Await(() => @this.Queued == 0);
-   public static bool TryAwaitEmptyQueue(this IThreadGate @this, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Queued == 0);
-
    public static IThreadGate ThrowPostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ => throw exception);
    public static IThreadGate ThrowPrePassThrough(this IThreadGate @this, Exception exception) => @this.SetPrePassThroughAction(_ => throw exception);
 
@@ -36,7 +32,6 @@ public static class ThreadGateExtensions
       Assert.State.NotNull(Transaction.Current);
       Transaction.Current.FailOnPrepare(exception);
    });
-
 
    public static Task<IThreadGate> ThrowOnNextPassThroughAsync(this IThreadGate @this, Func<ThreadSnapshot, Exception> exceptionFactory)
    {
