@@ -1,6 +1,7 @@
 ﻿using System;
 using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
+using CommunityToolkit.Diagnostics;
 using Compze;
 using Compze.Contracts;
 using Compze.Functional;
@@ -30,10 +31,10 @@ static class InternalApi
 
       internal class TryGetByEmailQuery : IStrictlyLocalQuery<TryGetByEmailQuery, Option<Account>>
       {
-         public TryGetByEmailQuery(Email accountId)
+         public TryGetByEmailQuery(Email email)
          {
-            Contract.ArgumentNotNullOrDefault(accountId, nameof(Account));
-            Email = accountId;
+            Guard.IsNotNull(email);
+            Email = email;
          }
 
          internal Email Email { get; private set; }

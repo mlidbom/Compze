@@ -1,4 +1,5 @@
 ﻿using AccountManagement.API;
+using CommunityToolkit.Diagnostics;
 using Compze.Contracts;
 using Compze.Functional;
 using Compze.Messaging.Buses;
@@ -27,7 +28,7 @@ class ChangePasswordScenario : ScenarioBase<AccountResource>
 
    public ChangePasswordScenario(IEndpoint clientEndpoint, AccountResource account, string oldPassword, string newPassword)
    {
-      Assert.Argument.NotNull(account);
+      Guard.IsNotNull(account);
       _clientEndpoint = clientEndpoint;
       Account = account;
       OldPassword = oldPassword;

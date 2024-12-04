@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 namespace Compze.SystemCE.DiagnosticsCE;
 
 ///<summary>Extensions to the Stopwatch class and related functionality.</summary>
-public static class StopwatchCE
+static class StopwatchCE
 {
    internal static TimingsStatisticsCollector CreateCollector(string name, params TimeSpan[] rangesToCollect) => new(name, rangesToCollect);
 

@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Testing.Performance;
 
-public static class TimeAsserter
+static class TimeAsserter
 {
    const int MaxTriesLimit = 40;
    const int MaxTriesDefault = 10;
