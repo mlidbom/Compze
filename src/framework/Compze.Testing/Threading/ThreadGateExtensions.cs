@@ -7,7 +7,7 @@ using Compze.Testing.Transactions;
 
 namespace Compze.Testing.Threading;
 
-public static class ThreadGateExtensions
+static class ThreadGateExtensions
 {
    public static IThreadGate Await(this IThreadGate @this, Func<bool> condition) => @this.Await(@this.DefaultTimeout, condition);
    public static IThreadGate Await(this IThreadGate @this, TimeSpan timeout, Func<bool> condition) => @this.ExecuteWithExclusiveLockWhen(timeout, condition, () => {});

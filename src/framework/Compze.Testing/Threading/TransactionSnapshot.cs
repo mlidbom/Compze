@@ -3,7 +3,7 @@ using System.Transactions;
 
 namespace Compze.Testing.Threading;
 
-public class TransactionSnapshot(Transaction transaction)
+class TransactionSnapshot(Transaction transaction)
 {
    public class TransactionInformationSnapshot(TransactionInformation information)
    {

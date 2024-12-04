@@ -4,12 +4,12 @@ using Compze.Functional;
 
 namespace Compze.Testing.Threading;
 
-public interface IThreadGateVisitor
+interface IThreadGateVisitor
 {
    Unit AwaitPassThrough();
 }
 
-public interface IThreadGate : IThreadGateVisitor
+interface IThreadGate : IThreadGateVisitor
 {
    ///<summary>Opens the gate and lets all threads through.</summary>
    IThreadGate Open();
