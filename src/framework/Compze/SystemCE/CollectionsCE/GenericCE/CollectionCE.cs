@@ -7,7 +7,7 @@ using Compze.SystemCE.LinqCE;
 namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Extensions on <see cref="ICollection{T}"/></summary>
-public static class CollectionCE
+static class CollectionCE
 {
    ///<summary>Remove entries matching the condition from the collection.</summary>
    public static IReadOnlyList<T> RemoveWhere<T>(this ICollection<T> me, Func<T, bool> condition)

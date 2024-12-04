@@ -82,7 +82,7 @@ public abstract class EventMigrationTestBase([NotNull] string pluggableComponent
 
       serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<IEventStoreUpdater>()
                                                                            .Save(initialAggregate));
-      migrations.AddRange(startingMigrations);
+      startingMigrations.ForEach(migrations.Add);
       ClearCache(serviceLocator);
 
       var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<IEventStoreUpdater>()
