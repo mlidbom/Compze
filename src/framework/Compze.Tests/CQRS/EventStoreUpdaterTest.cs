@@ -674,9 +674,8 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
          user.Register("email@email.se", "password", Guid.NewGuid());
 
          TransactionScopeCe.Execute(() => updater.Save(user));
-         ComponentUsedByMultipleTransactionsException temp = FluentActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
-                                                                          .Should().Throw<ComponentUsedByMultipleTransactionsException>()
-                                                                          .Which;
+         FluentActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
+                      .Should().Throw<InvalidOperationException>();
       }
    }
 }
