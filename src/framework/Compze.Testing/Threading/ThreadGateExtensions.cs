@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Contracts;
+using Compze.Functional;
 using Compze.SystemCE;
 using Compze.Testing.Transactions;
 
@@ -9,24 +10,6 @@ namespace Compze.Testing.Threading;
 
 public static class ThreadGateExtensions
 {
-   public static TResult AwaitPassthroughAndReturn<TResult>(this IThreadGate @this, TResult returnValue)
-   {
-      @this.AwaitPassThrough();
-      return returnValue;
-   }
-
-   public static TResult AwaitPassthroughAndExecute<TResult>(this IThreadGate @this, Func<TResult> func)
-   {
-      @this.AwaitPassThrough();
-      return func();
-   }
-
-   public static void AwaitPassthroughAndExecute(this IThreadGate @this, Action action)
-   {
-      @this.AwaitPassThrough();
-      action();
-   }
-
    public static IThreadGate Await(this IThreadGate @this, Func<bool> condition) => @this.Await(@this.DefaultTimeout, condition);
    public static IThreadGate Await(this IThreadGate @this, TimeSpan timeout, Func<bool> condition) => @this.ExecuteWithExclusiveLockWhen(timeout, condition, () => {});
 
