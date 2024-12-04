@@ -3,7 +3,6 @@ using System.Linq;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.SystemCE;
-using Compze.SystemCE.DiagnosticsCE;
 using Compze.SystemCE.LinqCE;
 using Compze.Testing;
 using Compze.Testing.Performance;

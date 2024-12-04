@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Compze.SystemCE;
-using Compze.SystemCE.DiagnosticsCE;
 using Compze.SystemCE.ReflectionCE;
 using Compze.Testing;
 using Compze.Testing.Performance;

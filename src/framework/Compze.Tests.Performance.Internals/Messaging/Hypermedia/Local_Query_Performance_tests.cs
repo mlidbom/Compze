@@ -1,7 +1,6 @@
 ﻿using System;
 using Compze.DependencyInjection;
 using Compze.SystemCE;
-using Compze.SystemCE.DiagnosticsCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
 using NUnit.Framework;

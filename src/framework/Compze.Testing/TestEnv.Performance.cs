@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Reflection;
 using Compze.Logging;
 using Compze.SystemCE;
-using Compze.SystemCE.DiagnosticsCE;
+using Compze.Testing.Performance;
 
 namespace Compze.Testing;
 

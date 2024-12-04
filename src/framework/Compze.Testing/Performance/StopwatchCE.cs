@@ -4,17 +4,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Compze.SystemCE.DiagnosticsCE;
+namespace Compze.Testing.Performance;
 
 ///<summary>Extensions to the Stopwatch class and related functionality.</summary>
 static class StopwatchCE
 {
-   internal static TimingsStatisticsCollector CreateCollector(string name, params TimeSpan[] rangesToCollect) => new(name, rangesToCollect);
-
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    internal static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
 

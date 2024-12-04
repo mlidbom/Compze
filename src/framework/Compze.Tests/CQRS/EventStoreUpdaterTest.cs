@@ -11,7 +11,6 @@ using Compze.Messaging.Buses;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE;
-using Compze.SystemCE.DiagnosticsCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;

@@ -6,7 +6,6 @@ using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Messaging.Buses;
 using Compze.SystemCE.CollectionsCE.ConcurrentCE;
-using Compze.SystemCE.DiagnosticsCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
