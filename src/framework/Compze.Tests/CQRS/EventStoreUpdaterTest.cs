@@ -532,7 +532,9 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
 
       UseInTransactionalScope(session => session.Save(user));
 
-      AssertThrows.Exception<Exception>(() => ChangeUserEmail(failOnPrepare: true));
+      Exception temp = FluentActions.Invoking(() => ChangeUserEmail(failOnPrepare: true))
+                                    .Should().Throw<Exception>()
+                                    .Which;
 
       ChangeUserEmail(failOnPrepare: false);
       return;
@@ -669,7 +671,9 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
          user.Register("email@email.se", "password", Guid.NewGuid());
 
          TransactionScopeCe.Execute(() => updater.Save(user));
-         AssertThrows.Exception<ComponentUsedByMultipleTransactionsException>(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)));
+         ComponentUsedByMultipleTransactionsException temp = FluentActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
+                                                                          .Should().Throw<ComponentUsedByMultipleTransactionsException>()
+                                                                          .Which;
       }
    }
 }

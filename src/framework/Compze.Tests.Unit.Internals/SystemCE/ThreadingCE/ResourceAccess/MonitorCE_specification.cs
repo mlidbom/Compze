@@ -50,7 +50,9 @@ namespace Compze.Tests.SystemCE.ThreadingCE.ResourceAccess;
       {
          using(monitor.TakeUpdateLock()) {}
 
-         AssertThrows.Exception<Exception>(() => Task.Run(() => monitor.TakeUpdateLock(timeout: 10.Milliseconds())).Wait());
+         Exception temp = FluentActions.Invoking(() => Task.Run(() => monitor.TakeUpdateLock(timeout: 10.Milliseconds())).Wait())
+                                       .Should().Throw<Exception>()
+                                       .Which;
       }
 
       Task.Run(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();

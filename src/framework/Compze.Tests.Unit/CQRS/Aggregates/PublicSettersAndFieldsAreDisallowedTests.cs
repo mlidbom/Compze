@@ -89,48 +89,58 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    [Test]public void Trying_to_create_instance_of_aggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
    {
-      AssertThrows.Exception<Exception>(() => new Root(null!)).InnerException!
-                  .Message
-                  .Should().Contain(typeof(Root).FullName)
-                  .And.Contain(typeof(RootEvent.IRoot).FullName)
-                  .And.Contain(typeof(RootEvent.Root).FullName)
-                  .And.NotContain(typeof(RootEvent.Ignored).FullName);
+      FluentActions.Invoking(() => new Root(null!))
+                   .Should().Throw<Exception>()
+                   .Which.InnerException!
+                   .Message
+                   .Should().Contain(typeof(Root).FullName)
+                   .And.Contain(typeof(RootEvent.IRoot).FullName)
+                   .And.Contain(typeof(RootEvent.Root).FullName)
+                   .And.NotContain(typeof(RootEvent.Ignored).FullName);
    }
 
    [Test] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
    {
-      AssertThrows.Exception<Exception>(() => new Root.AggComponent(null!)).InnerException!
-                  .Message
-                  .Should().Contain(typeof(Root.AggComponent).FullName).And
-                  .Contain(typeof(RootEvent.Component.IRoot).FullName)
-                  .And.Contain(typeof(RootEvent.Component.Root).FullName);
+      FluentActions.Invoking(() => new Root.AggComponent(null!))
+                   .Should().Throw<Exception>()
+                   .Which.InnerException!
+                   .Message
+                   .Should().Contain(typeof(Root.AggComponent).FullName).And
+                   .Contain(typeof(RootEvent.Component.IRoot).FullName)
+                   .And.Contain(typeof(RootEvent.Component.Root).FullName);
    }
 
 
    [Test] public void Trying_to_create_instance_of_nested_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
-      AssertThrows.Exception<Exception>(() => new Root.AggComponent.NestedAggComponent(null!)).InnerException!
-                  .Message
-                  .Should().Contain(typeof(Root.AggComponent.NestedAggComponent).FullName).And
-                  .Contain(typeof(RootEvent.Component.NestedComponent.IRoot).FullName)
-                  .And.Contain(typeof(RootEvent.Component.NestedComponent.Root).FullName);
+      FluentActions.Invoking(() => new Root.AggComponent.NestedAggComponent(null!))
+                   .Should().Throw<Exception>()
+                   .Which.InnerException!
+                   .Message
+                   .Should().Contain(typeof(Root.AggComponent.NestedAggComponent).FullName).And
+                   .Contain(typeof(RootEvent.Component.NestedComponent.IRoot).FullName)
+                   .And.Contain(typeof(RootEvent.Component.NestedComponent.Root).FullName);
    }
 
    [Test] public void Trying_to_create_instance_of_entity_throws_and_lists_all_broken_types_in_exception()
    {
-      AssertThrows.Exception<Exception>(() => new Root.AggEntity(null!)).InnerException!
-                  .Message
-                  .Should().Contain(typeof(Root.AggEntity).FullName).And
-                  .Contain(typeof(RootEvent.Entity.IRoot).FullName)
-                  .And.Contain(typeof(RootEvent.Entity.Root).FullName);
+      FluentActions.Invoking(() => new Root.AggEntity(null!))
+                   .Should().Throw<Exception>()
+                   .Which.InnerException!
+                   .Message
+                   .Should().Contain(typeof(Root.AggEntity).FullName).And
+                   .Contain(typeof(RootEvent.Entity.IRoot).FullName)
+                   .And.Contain(typeof(RootEvent.Entity.Root).FullName);
    }
 
    [Test] public void Trying_to_create_instance_of_entity_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
-      AssertThrows.Exception<Exception>(() => new Root.AggEntity.EntNestedComp(null!)).InnerException!
-                  .Message
-                  .Should().Contain(typeof(Root.AggEntity.EntNestedComp).FullName).And
-                  .Contain(typeof(RootEvent.Entity.Component.IRoot).FullName)
-                  .And.Contain(typeof(RootEvent.Entity.Component.Root).FullName);
+      FluentActions.Invoking(() => new Root.AggEntity.EntNestedComp(null!))
+                   .Should().Throw<Exception>()
+                   .Which.InnerException!
+                   .Message
+                   .Should().Contain(typeof(Root.AggEntity.EntNestedComp).FullName).And
+                   .Contain(typeof(RootEvent.Entity.Component.IRoot).FullName)
+                   .And.Contain(typeof(RootEvent.Entity.Component.Root).FullName);
    }
 }
