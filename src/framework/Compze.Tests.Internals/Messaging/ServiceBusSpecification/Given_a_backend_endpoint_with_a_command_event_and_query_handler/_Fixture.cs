@@ -20,7 +20,7 @@ namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoin
 
 public abstract class Fixture(string pluggableComponentsCombination) : FixtureBase(pluggableComponentsCombination)
 {
-   protected virtual void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   protected override void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
       base.RegisterHandlers(registrar);
 
@@ -30,8 +30,6 @@ public abstract class Fixture(string pluggableComponentsCombination) : FixtureBa
    protected override void BuildEndpoint(IEndpointBuilder builder)
    {
       base.BuildEndpoint(builder);
-
-      RegisterHandlers(builder.RegisterHandlers);
 
       MapBackendEndpointTypes(builder);
    }

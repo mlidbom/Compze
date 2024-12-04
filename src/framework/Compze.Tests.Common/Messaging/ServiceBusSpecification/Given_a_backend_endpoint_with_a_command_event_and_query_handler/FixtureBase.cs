@@ -60,6 +60,8 @@ public abstract class FixtureBase(string pluggableComponentsCombination) : Dupli
       builder.RegisterCurrentTestsConfiguredPersistenceLayer();
       builder.RegisterEventStore()
              .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
+      
+      RegisterHandlers(builder.RegisterHandlers);
    }
 
    protected virtual void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => 
