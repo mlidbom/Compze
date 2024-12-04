@@ -15,8 +15,9 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-
-   public static class MyAggregateEvent
+public partial class Fixture
+{
+   protected static class MyAggregateEvent
    {
       public interface IRoot : IAggregateEvent;
       public interface Created : IRoot, IAggregateCreatedEvent;
@@ -37,7 +38,7 @@ namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoin
       }
    }
 
-   public class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.Implementation.Root, MyAggregateEvent.IRoot>
+   protected class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.Implementation.Root, MyAggregateEvent.IRoot>
    {
       public MyAggregate() : base(new DateTimeNowTimeSource())
       {
@@ -55,7 +56,7 @@ namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoin
       }
    }
 
-   public class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+   protected class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
    {
       MyCreateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
 
@@ -68,28 +69,29 @@ namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoin
       public Guid AggregateId { get; set; }
    }
 
-   public class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+   protected class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
    {
       [UsedImplicitly] MyUpdateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
       public MyUpdateAggregateCommand(Guid aggregateId) : base(DeduplicationIdHandling.Create) => AggregateId = aggregateId;
       public Guid AggregateId { get; private set; }
    }
 
-   public class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
+   protected class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 
-   public interface IMyExactlyOnceEvent : IAggregateEvent;
-   public class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
-   public class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
-   public class MyQueryResult;
-   public class MyAtMostOnceCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
+   protected interface IMyExactlyOnceEvent : IAggregateEvent;
+   protected class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
+   protected class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
+   protected class MyQueryResult;
+   protected class MyAtMostOnceCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
    {
       protected MyAtMostOnceCommand() : base(DeduplicationIdHandling.Reuse) {}
       internal static MyAtMostOnceCommand Create() => new() {MessageId = Guid.NewGuid()};
    }
 
-   public class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
+   protected class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
    {
       MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
       internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.NewGuid()};
    }
-   public class MyCommandResult;
+   protected class MyCommandResult;
+}
