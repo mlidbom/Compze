@@ -7,7 +7,7 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 namespace Compze.Functional;
 
 ///<summary>Provides the ability to chain method calls rather than having to use separate lines and temporary variables.</summary>
-public static class Pipe
+static class Pipe
 {
    ///<summary>Takes the first value, applies <see cref="transform"/> and return the resulting value.</summary>
    public static TResult select<TValue, TResult>(this TValue it, Func<TValue, TResult> transform) => transform(it);

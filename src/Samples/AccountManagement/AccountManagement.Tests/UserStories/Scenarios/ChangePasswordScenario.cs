@@ -15,8 +15,17 @@ class ChangePasswordScenario : ScenarioBase<AccountResource>
    public string NewPassword;
    public AccountResource Account { get; private set; }
 
-   public ChangePasswordScenario WithNewPassword(string newPassword) => this.mutate(it => it.NewPassword = newPassword);
-   public ChangePasswordScenario WithOldPassword(string oldPassword) => this.mutate(it => it.OldPassword = oldPassword);
+   public ChangePasswordScenario WithNewPassword(string newPassword)
+   {
+      NewPassword = newPassword;
+      return this;
+   }
+
+   public ChangePasswordScenario WithOldPassword(string oldPassword)
+   {
+      OldPassword = oldPassword;
+      return this;
+   }
 
    public static ChangePasswordScenario Create(IEndpoint domainEndpoint)
    {

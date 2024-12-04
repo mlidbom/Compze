@@ -25,7 +25,7 @@ class ThreadGate : IThreadGate
    public IReadOnlyList<ThreadSnapshot> RequestedThreads => _monitor.Read(() => _requestsThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> QueuedThreads => _monitor.Read(() => _queuedThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> PassedThrough => _monitor.Read(() => _passedThreads.ToList());
-   public Unit Enablelogging(bool enable = true) => Unit.From(_enableLogging = enable);
+   public Unit Enablelogging(bool enable = true) => Unit.Ignore(_enableLogging = enable);
    public Action<ThreadSnapshot> PassThroughAction => _monitor.Read(() => _passThroughAction);
 
    public IThreadGate Open()

@@ -16,11 +16,9 @@ public class RegisterAccountUICommandTests : UniversalTestBase
    [SetUp]
    public void CreateValidCommand()
    {
-      _registerAccountUiCommand = AccountResource.Command.Register.Create().mutate(it =>
-      {
-         it.Email = "valid.email@google.com";
-         it.Password = "AComplex!1Password";
-      });
+      _registerAccountUiCommand = AccountResource.Command.Register.Create();
+      _registerAccountUiCommand.Email = "valid.email@google.com";
+      _registerAccountUiCommand.Password = "AComplex!1Password";
 
       CommandValidator.ValidationFailures(_registerAccountUiCommand).Should().BeEmpty();
    }

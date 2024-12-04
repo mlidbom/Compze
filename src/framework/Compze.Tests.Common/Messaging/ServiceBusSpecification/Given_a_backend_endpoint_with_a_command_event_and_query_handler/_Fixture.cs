@@ -60,12 +60,28 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
 
             builder.RegisterHandlers
                    .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
-                   .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => MyAggregate.Create(command.AggregateId, navigator)))
-                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => navigator.Execute(new CompzeApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update()))
+                   .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) =>
+                    {
+                       MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough();
+                       MyAggregate.Create(command.AggregateId, navigator);
+                    })
+                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) =>
+                    {
+                       MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough();
+                       navigator.Execute(new CompzeApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update();
+                    })
                    .ForEvent((IMyExactlyOnceEvent _) => EventHandlerThreadGate.AwaitPassThrough())
                    .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
-                   .ForQuery((MyQuery _) => QueryHandlerThreadGate.AwaitPassThrough().then(new MyQueryResult()))
-                   .ForCommandWithResult((MyAtMostOnceCommandWithResult _) => CommandHandlerWithResultThreadGate.AwaitPassThrough().then(() => new MyCommandResult()));
+                   .ForQuery((MyQuery _) =>
+                    {
+                       QueryHandlerThreadGate.AwaitPassThrough();
+                       return new MyQueryResult();
+                    })
+                   .ForCommandWithResult((MyAtMostOnceCommandWithResult _) =>
+                    {
+                       CommandHandlerWithResultThreadGate.AwaitPassThrough();
+                       return new MyCommandResult();
+                    });
 
             MapBackendEndpointTypes(builder);
          });

@@ -10,8 +10,17 @@ class LoginScenario(IEndpoint clientEndpoint, string email, string password) : S
    public string Password { get; set; } = password;
    public string Email { get; set; } = email;
 
-   public LoginScenario WithEmail(string email) => this.mutate(it => it.Email = email);
-   public LoginScenario WithPassword(string password) => this.mutate(it => it.Password = password);
+   public LoginScenario WithEmail(string email)
+   {
+      Email = email;
+      return this;
+   }
+
+   public LoginScenario WithPassword(string password)
+   {
+      Password = password;
+      return this;
+   }
 
    public static LoginScenario Create(IEndpoint clientEndpoint)
    {
