@@ -12,24 +12,13 @@ static class TransactionScopeCe
 
    public static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
-      using var transaction = CreateScope(option);
+      using var transactionScope = new TransactionScope(option,
+                                                        new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },
+                                                        TransactionScopeAsyncFlowOption.Enabled);
       var result = action();
-      transaction.Complete();
+      transactionScope.Complete();
       return result;
    }
 
-   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required)
-   {
-      using var transaction = CreateScope(option);
-      action();
-      transaction.Complete();
-   }
-
-   static TransactionScope CreateScope(TransactionScopeOption options) =>
-      new(options,
-          new TransactionOptions
-          {
-             IsolationLevel = IsolationLevel.Serializable
-          },
-          TransactionScopeAsyncFlowOption.Enabled);
+   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required) => Execute(action.AsUnitFunc(), option);
 }
