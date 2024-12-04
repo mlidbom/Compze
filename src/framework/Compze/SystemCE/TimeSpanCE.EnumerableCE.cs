@@ -5,7 +5,7 @@ using System.Linq;
 namespace Compze.SystemCE;
 
 ///<summary>Methods like Sum,Min,Average etc for IEnumerable&lt;TimeSpan&gt;</summary>
-public static partial class TimeSpanCE
+static partial class TimeSpanCE
 {
    ///<summary>Returns the smallest timespans</summary>
    public static TimeSpan Min(this IEnumerable<TimeSpan> @this) => @this.Min(currentTimeSpan => currentTimeSpan.TotalMilliseconds).Milliseconds();

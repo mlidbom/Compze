@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
+using FluentAssertions.Extensions;
 using JetBrains.Annotations;
 
 // ReSharper disable AccessToModifiedClosure

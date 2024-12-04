@@ -22,6 +22,7 @@ using Compze.Testing.Performance;
 using Compze.Testing.Threading;
 using Compze.Testing.Transactions;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 // ReSharper disable AccessToDisposedClosure
@@ -443,7 +444,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
          maxDegreeOfParallelism: 5,
          description: $"If access is serialized the time will be approximately {singleThreadedExecutionTime} milliseconds. If parallelized it should be far below this value.");
 
-      timingsSummary.IndividualExecutionTimes.Sum().Should().BeGreaterThan(timingsSummary.Total, "If the sum elapsed time of the parts that run in parallel is not greater than the clock time passed parallelism is not taking place.");
+      timingsSummary.IndividualExecutionTimes.Aggregate(TimeSpan.Zero, (t1, t2) => t1 + t2).Should().BeGreaterThan(timingsSummary.Total, "If the sum elapsed time of the parts that run in parallel is not greater than the clock time passed parallelism is not taking place.");
       return;
 
       void ReadUserHistory() =>
