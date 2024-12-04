@@ -6,7 +6,7 @@ namespace Compze.Functional;
 ///<summary>
 /// Methods useful for any type when used in a Linq context
 ///</summary>
-public static class ObjectCE
+static class ObjectCE
 {
    /// <summary>
    /// Returns <paramref name="me"/> repeated <paramref name="times"/> times.
