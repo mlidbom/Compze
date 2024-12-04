@@ -24,25 +24,8 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public abstract class Fixture(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class Fixture(string pluggableComponentsCombination) : FixtureBase(pluggableComponentsCombination)
 {
-   static readonly TimeSpan _timeout = TimeSpan.FromSeconds(10);
-   internal ITestingEndpointHost Host;
-   internal IThreadGate CommandHandlerThreadGate;
-   internal IThreadGate CommandHandlerWithResultThreadGate;
-   internal IThreadGate MyCreateAggregateCommandHandlerThreadGate;
-   internal IThreadGate MyUpdateAggregateCommandHandlerThreadGate;
-   internal IThreadGate MyRemoteAggregateEventHandlerThreadGate;
-   internal IThreadGate MyLocalAggregateEventHandlerThreadGate;
-   internal IThreadGate EventHandlerThreadGate;
-   internal IThreadGate QueryHandlerThreadGate;
-
-   internal IReadOnlyList<IThreadGate> AllGates = [];
-
-   protected IEndpoint ClientEndpoint { get; set; }
-   protected IEndpoint RemoteEndpoint { get; set; }
-   protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
-
    [SetUp] public async Task Setup()
    {
       Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
