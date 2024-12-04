@@ -94,14 +94,4 @@ public abstract class Fixture(string pluggableComponentsCombination) : FixtureBa
                 .Map<MyCommandResult>("4b2f17d2-2997-4532-9296-689495ed6958")
                 .Map<MyQueryResult>("9f3c69f0-0886-483c-a726-b79fb1c56120");
    }
-
-   [TearDown] public virtual async Task TearDownAsync()
-   {
-      OpenGates();
-      await Host.DisposeAsync().CaF();
-   }
-
-   protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
-
-   protected void OpenGates() => AllGates.ForEach(gate => gate.Open());
 }
