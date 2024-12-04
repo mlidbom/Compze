@@ -259,7 +259,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
       UseInTransactionalScope(session => session.Save(user));
 
       UseInTransactionalScope(
-         session => Assert.Throws<AttemptToSaveAlreadyPersistedAggregateException>(
+         session => Assert.Throws<InvalidOperationException>(
             () => session.Save(user)));
    }
 
