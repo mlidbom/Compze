@@ -13,7 +13,6 @@ using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Persistence;
 using Compze.Testing.Threading;
-using FluentAssertions.Extensions;
 using NUnit.Framework;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -25,9 +24,9 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public abstract partial class Fixture(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class Fixture(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
-   static readonly TimeSpan _timeout = 10.Seconds();
+   static readonly TimeSpan _timeout = TimeSpan.FromSeconds(10);
    internal ITestingEndpointHost Host;
    internal IThreadGate CommandHandlerThreadGate;
    internal IThreadGate CommandHandlerWithResultThreadGate;

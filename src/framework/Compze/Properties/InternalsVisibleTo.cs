@@ -1,5 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 
+//bug: Remove!!!
+//[assembly: InternalsVisibleTo("Compze.Tests.Common")]
 
 [assembly: InternalsVisibleTo("Compze.Messaging")]
 [assembly: InternalsVisibleTo("Compze.Testing")]
