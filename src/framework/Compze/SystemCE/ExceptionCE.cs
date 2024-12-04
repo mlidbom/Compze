@@ -22,18 +22,4 @@ static class ExceptionCE
 
    ///<summary>Returns the deepest nested inner exception that was the root cause of the current exception.</summary>
    public static Exception GetRootCauseException(this Exception e) => e.GetAllExceptionsInStack().Last();
-
-   public static Exception? TryCatch(Action action)
-   {
-      try
-      {
-         action();
-      }
-      catch(Exception e)
-      {
-         return e;
-      }
-
-      return null;
-   }
 }
