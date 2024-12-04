@@ -2,7 +2,7 @@
 
 namespace Compze.Persistence.DocumentDb;
 
-public class NoSuchDocumentException : Exception
+class NoSuchDocumentException : ArgumentOutOfRangeException
 {
    public NoSuchDocumentException(object key, Type type):base($"Type: {type.FullName}, Key: {key}")
    {

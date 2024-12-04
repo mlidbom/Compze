@@ -15,6 +15,7 @@ using Compze.Testing.DependencyInjection;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -77,12 +78,12 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
       UseInTransactionalScope((_,updater) => users.ForEach(user => updater.Save(user)));
 
-      UseInScope(reader => Assert.Throws<NoSuchDocumentException>(
+      UseInScope(reader => Invoking(
                     () => reader.GetAll<User>(ids.Take(5)
                                                  .Append(Guid.Parse("00000000-0000-0000-0000-000000000099"))
                                                  .ToArray())
                                  // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                                .ToArray()));
+                                .ToArray()).Should().Throw<ArgumentOutOfRangeException>());
    }
 
 
@@ -226,8 +227,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
                .Be(reader.Get<Email>(upperCase.TheEmail));
 
          updater.Delete<Email>(upperCase.TheEmail);
-         Assert.Throws<NoSuchDocumentException>(() => updater.Delete<Email>(upperCase.TheEmail));
-         Assert.Throws<NoSuchDocumentException>(() => updater.Delete<Email>(lowerCase.TheEmail));
+         Invoking(() => updater.Delete<Email>(upperCase.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
+         Invoking(() => updater.Delete<Email>(lowerCase.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
       });
    }
 
@@ -258,8 +259,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
                .Be(reader.Get<Email>(withWhitespace.TheEmail));
 
          updater.Delete<Email>(withWhitespace.TheEmail);
-         Assert.Throws<NoSuchDocumentException>(() => updater.Delete<Email>(withWhitespace.TheEmail));
-         Assert.Throws<NoSuchDocumentException>(() => updater.Delete<Email>(noWhitespace.TheEmail));
+         Invoking(() => updater.Delete<Email>(withWhitespace.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
+         Invoking(() => updater.Delete<Email>(noWhitespace.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
       });
    }
 
@@ -409,7 +410,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
       });
 
       var buster = new Dog { Id = Guid.NewGuid() };
-      UseInTransactionalScope((_, updater) => Assert.Throws<NoSuchDocumentException>(() => updater.Delete(buster)));
+      UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Should().Throw<ArgumentOutOfRangeException>());
    }
 
    [Test]
@@ -426,10 +427,10 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
                    .NotBeNull();
          updater.Delete(user);
 
-         Assert.Throws<NoSuchDocumentException>(() => reader.Get<User>(user.Id));
+         Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>();
       });
 
-      UseInScope(reader => Assert.Throws<NoSuchDocumentException>(() => reader.Get<User>(user.Id)));
+      UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
    }
 
    [Test]
@@ -442,10 +443,10 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
       UseInTransactionalScope((_, updater) =>
       {
          updater.Delete(user);
-         Assert.Throws<NoSuchDocumentException>(() => updater.GetForUpdate<User>(user.Id));
+         Invoking(() => updater.GetForUpdate<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>();
       });
 
-      UseInScope(reader => Assert.Throws<NoSuchDocumentException>(() => reader.Get<User>(user.Id)));
+      UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
    }
 
    [Test]
@@ -457,10 +458,10 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
       {
          updater.Save(user);
          updater.Delete(user);
-         Assert.Throws<NoSuchDocumentException>(() => updater.GetForUpdate<User>(user.Id));
+         Invoking(() => updater.GetForUpdate<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>();
       });
 
-      UseInScope(reader => Assert.Throws<NoSuchDocumentException>(() => reader.Get<User>(user.Id)));
+      UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
    }
 
    [Test]
