@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Compze.Messaging;
 using Compze.Messaging.Buses;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE.TransactionsCE;
 using Compze.Testing;
 using FluentAssertions;
@@ -10,26 +12,23 @@ namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoin
 
 public class Transaction_policies_internal : Fixture
 {
-   [Test] public void Calling_PostRemoteAsync_within_a_transaction_with_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
-      AssertThrows.Async<MessageInspector.TransactionPolicyViolationException>(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())))).Wait();
+   [Test] public async Task Calling_PostRemoteAsync_within_a_transaction_with_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
+      await AssertThrows.Async<MessageInspector.TransactionPolicyViolationException>(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())))).CaF();
 
    [Test] public void Calling_PostRemoteAsync_within_a_transaction_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
-      _ = FluentActions.Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Post(MyAtMostOnceCommandWithResult.Create()))))
-                       .Should().Throw<MessageInspector.TransactionPolicyViolationException>()
-                       .Which;
+      FluentActions.Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Post(MyAtMostOnceCommandWithResult.Create()))))
+                       .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
 
    [Test] public void Calling_PostRemoteAsync_without_a_transaction_with_ExactlyOnceCommand_throws_TransactionPolicyViolationException() =>
-      _ = FluentActions.Invoking(() => RemoteEndpoint.ExecuteServerRequest(session => session.Send(new MyExactlyOnceCommand())))
-                       .Should().Throw<MessageInspector.TransactionPolicyViolationException>()
-                       .Which;
+      FluentActions.Invoking(() => RemoteEndpoint.ExecuteServerRequest(session => session.Send(new MyExactlyOnceCommand())))
+                       .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
 
-   [Test] public void Calling_GetRemoteAsync_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
-      AssertThrows.Async<MessageInspector.TransactionPolicyViolationException>(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery())))).Wait();
+   [Test] public async Task Calling_GetRemoteAsync_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
+      await AssertThrows.Async<MessageInspector.TransactionPolicyViolationException>(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery())))).CaF();
 
    [Test] public void Calling_GetRemote_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
-      _ = FluentActions.Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery()))))
-                       .Should().Throw<MessageInspector.TransactionPolicyViolationException>()
-                       .Which;
+      FluentActions.Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery()))))
+                       .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
 
    public Transaction_policies_internal(string _) : base(_) {}
 }
