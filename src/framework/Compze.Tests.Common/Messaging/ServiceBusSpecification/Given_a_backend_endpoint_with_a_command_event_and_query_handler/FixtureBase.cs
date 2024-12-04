@@ -55,13 +55,15 @@ public abstract class FixtureBase(string pluggableComponentsCombination) : Dupli
                  };
    }
 
-   protected virtual void BuildEndpoint(IEndpointBuilder builder)
+   protected void BuildEndpoint(IEndpointBuilder builder)
    {
       builder.RegisterCurrentTestsConfiguredPersistenceLayer();
       builder.RegisterEventStore()
              .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
       
       RegisterHandlers(builder.RegisterHandlers);
+      
+      MapBackendEndpointTypes(builder);
    }
 
    protected virtual void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => 

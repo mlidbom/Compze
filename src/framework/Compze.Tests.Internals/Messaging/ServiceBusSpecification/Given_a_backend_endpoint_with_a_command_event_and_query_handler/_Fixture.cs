@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Compze.Functional;
+﻿using Compze.Functional;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Testing.Persistence;
-using Compze.Testing.Threading;
-using NUnit.Framework;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
@@ -25,20 +18,5 @@ public abstract class Fixture(string pluggableComponentsCombination) : FixtureBa
       base.RegisterHandlers(registrar);
 
       registrar.ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) => MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough().then(() => MyAggregate.Create(command.AggregateId, navigator)));
-   }
-
-   protected override void BuildEndpoint(IEndpointBuilder builder)
-   {
-      base.BuildEndpoint(builder);
-
-      MapBackendEndpointTypes(builder);
-   }
-
-   [SetUp] public override async Task Setup()
-   {
-      await base.Setup().CaF();
-
-
-      return;
    }
 }
