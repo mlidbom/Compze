@@ -4,6 +4,7 @@ using Compze.Messaging.Buses;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.Threading;
+using FluentAssertions;
 using NUnit.Framework;
 using Assert = Xunit.Assert;
 
@@ -14,13 +15,15 @@ public class Failure_tests(string pluggableComponentsCombination) : Fixture(plug
    [Test] public async Task If_command_handler_with_result_throws_awaiting_SendAsync_throws()
    {
       CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<Exception>(async () => await ClientEndpoint.ExecuteClientRequestAsync(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create())).CaF()).CaF();
+      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequestAsync(async session => await session.PostAsync(MyAtMostOnceCommandWithResult.Create())))
+                   .Should().ThrowAsync<Exception>();
    }
 
    [Test] public async Task If_query_handler_throws_awaiting_QueryAsync_throws()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await AssertThrows.Async<Exception>(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyQuery()))).CaF();
+      await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyQuery())))
+                         .Should().ThrowAsync<Exception>();
    }
 
    [Test] public void If_query_handler_throws_Query_throws()
@@ -31,8 +34,8 @@ public class Failure_tests(string pluggableComponentsCombination) : Fixture(plug
 
    public override async Task TearDownAsync()
    {
-      await Assert.ThrowsAnyAsync<Exception>(async Task() => await Host.DisposeAsync().CaF()).CaF();
-      await base.TearDownAsync().CaF();
+      await Assert.ThrowsAnyAsync<Exception>(async Task() => await Host.DisposeAsync());
+      await base.TearDownAsync();
    }
 
    readonly IntentionalException _thrownException = new();
