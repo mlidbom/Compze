@@ -9,7 +9,7 @@ using NotNull = global::System.Diagnostics.CodeAnalysis.NotNullAttribute;
 namespace Compze.Contracts;
 
 /// <summary>Ensures that a class's contract is followed.</summary>
-public static class Contract
+static class Contract
 {
    ///<summary>
    ///<para>Start inspecting one or more arguments for contract compliance.</para>
@@ -217,9 +217,9 @@ public static class Contract
    }
 }
 
-public class ContractAssertThatException(int condition) : Exception($"Condition: {condition} was false");
+class ContractAssertThatException(int condition) : Exception($"Condition: {condition} was false");
 
-public interface IContractAssertion
+interface IContractAssertion
 {
    InspectionType InspectionType { get; }
 }

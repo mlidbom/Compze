@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Contracts;
 
-public static class ContractAssertion
+static class ContractAssertion
 {
    [AssertionMethod] public static Unit That(this IContractAssertion @this,
                                                [AssertionCondition(AssertionConditionType.IS_TRUE)] [DoesNotReturnIf(false)]

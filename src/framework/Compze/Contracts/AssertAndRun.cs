@@ -4,7 +4,7 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Contracts;
 
-public class AssertAndRun(Action assertion)
+class AssertAndRun(Action assertion)
 {
    readonly Action _assertion = assertion;
 

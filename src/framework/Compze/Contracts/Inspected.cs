@@ -2,7 +2,7 @@
 
 namespace Compze.Contracts;
 
-public interface IInspected<TValue> {
+interface IInspected<TValue> {
    /// <summary>
    /// Performs the supplied inspection against each <see cref="InspectedValue"/> in the instance.
    /// </summary>

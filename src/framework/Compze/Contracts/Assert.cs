@@ -6,7 +6,7 @@ using NotNull = System.Diagnostics.CodeAnalysis.NotNullAttribute;
 
 namespace Compze.Contracts;
 
-public static class Assert
+static class Assert
 {
    ///<summary>Assert conditions about current state of "this". Failures would mean that someone made a call that is illegal given state of "this".</summary>
    public static BaseAssertion State { get; } = BaseAssertion.StateInstance;

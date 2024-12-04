@@ -4,7 +4,7 @@
 namespace Compze.Contracts;
 
 ///<summary>Performs inspections on string instances</summary>
-public static class StringInspector
+static class StringInspector
 {
    ///<summary>
    /// <para>Throws <see cref="ObjectIsNullContractViolationException"/> if any expected value is null.</para>

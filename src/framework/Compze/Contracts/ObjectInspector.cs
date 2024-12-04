@@ -6,7 +6,7 @@
 namespace Compze.Contracts;
 
 ///<summary>Performs inspections on objects</summary>
-public static class ObjectInspector
+static class ObjectInspector
 {
    /// <summary>
    /// <para>Throws <see cref="ObjectIsNullContractViolationException"/> if any inspected value is null</para>

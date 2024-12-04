@@ -69,7 +69,7 @@ namespace Compze.Tests.CQRS.EventRefactoring.Migrations
 
         public TestAggregate(IUtcTimeTimeSource timeSource, params RootEvent[] events):this(timeSource)
         {
-            Contract.Assert.That(events.First() is IAggregateCreatedEvent, "events.First() is IAggregateCreatedEvent");
+           if(events.First() is not IAggregateCreatedEvent) throw new Exception($"First event must be {nameof(IAggregateCreatedEvent)}");
 
             Publish(events);
         }

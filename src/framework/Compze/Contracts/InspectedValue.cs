@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Contracts;
 
-public interface IInspectedValue<out TValue> : IInspectedValue
+interface IInspectedValue<out TValue> : IInspectedValue
 {
    TValue Value { get; }
 }
@@ -17,7 +17,7 @@ class InspectedValue<TValue> : InspectedValue, IInspectedValue<TValue>
 }
 
 
-public interface IInspectedValue
+interface IInspectedValue
 {
    ///<summary> The <see cref="InspectionType"/> of the inspection: <see cref="InspectionType.Argument"/>, <see cref="InspectionType.Invariant"/> or <see cref="InspectionType.ReturnValue"/> </summary>
    InspectionType Type { get; }

@@ -5,7 +5,7 @@ namespace Compze.Contracts;
 /// <summary>
 /// Exceptions raise by the inspectors should inherit this exception type.
 /// </summary>
-public class ContractViolationException : Exception
+class ContractViolationException : Exception
 {
    ///<summary>Standard constructor that will construct a queuedMessageInformation based on the name and value of the failing member. </summary>
    public ContractViolationException(IInspectedValue badValue) => BadValue = badValue;
