@@ -49,4 +49,8 @@
     <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="SystemCE\CollectionsCE\" />
+  </ItemGroup>
+  
 </Project>
