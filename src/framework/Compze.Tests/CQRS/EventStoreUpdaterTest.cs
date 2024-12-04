@@ -259,8 +259,8 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
       UseInTransactionalScope(session => session.Save(user));
 
       UseInTransactionalScope(
-         session => Assert.Throws<InvalidOperationException>(
-            () => session.Save(user)));
+         session => FluentActions.Invoking(() => session.Save(user))
+                                 .Should().Throw<InvalidOperationException>());
    }
 
    [Test]
