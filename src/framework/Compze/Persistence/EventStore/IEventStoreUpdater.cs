@@ -32,7 +32,7 @@ public interface IEventStoreUpdater : IDisposable
    /// <summary>
    /// Tries to get the specified instance. Returns false and sets the result to null if the aggregate did not exist.
    /// </summary>
-   bool TryGet<TAggregate>(Guid aggregateId, [MaybeNullWhen(false)] out TAggregate result) where TAggregate : class, IEventStored;
+   bool TryGet<TAggregate>(Guid aggregateId, out TAggregate? result) where TAggregate : class, IEventStored;
 
    /// <summary>
    /// Deletes all traces of an aggregate from the store.

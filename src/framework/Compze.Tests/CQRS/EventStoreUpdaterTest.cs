@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,6 +74,10 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
       => _serviceLocator.ExecuteTransactionInIsolatedScope(
          () => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
 
+   protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<IEventStoreUpdater, TResult> useSession)
+      => _serviceLocator.ExecuteTransactionInIsolatedScope(
+         () => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
+
    protected void UseInScope([InstantHandle]Action<IEventStoreUpdater> useSession)
       => _serviceLocator.ExecuteInIsolatedScope(
          () => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
@@ -104,10 +109,10 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
    [Test]
    public void ThrowsIfUsedByMultipleThreads()
    {
-      IEventStoreUpdater updater = null;
-      IEventStoreReader reader = null;
+      IEventStoreUpdater? updater = null;
+      IEventStoreReader? reader = null;
       using var wait = new ManualResetEventSlim();
-      ThreadPool.QueueUserWorkItem(_ =>
+      Task.Run(() =>
       {
          _serviceLocator.ExecuteInIsolatedScope(() =>
          {
@@ -117,12 +122,14 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
          wait.Set();
       });
       wait.Wait();
+      updater = updater.NotNull();
+      reader = reader.NotNull();
 
       Assert.Throws<MultiThreadedUseException>(() => updater.Get<User>(Guid.NewGuid()));
       Assert.Throws<MultiThreadedUseException>(() => updater.Dispose());
       Assert.Throws<MultiThreadedUseException>(() => reader.GetReadonlyCopyOfVersion<User>(Guid.NewGuid(), 1));
       Assert.Throws<MultiThreadedUseException>(() => updater.Save(new User()));
-      Assert.Throws<MultiThreadedUseException>(() => updater.TryGet(Guid.NewGuid(), out User _));
+      Assert.Throws<MultiThreadedUseException>(() => updater.TryGet(Guid.NewGuid(), out User? _));
 
    }
 
@@ -289,7 +296,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
          Assert.That(loadedUser2.Password, Is.EqualTo(user2.Password));
       });
 
-      UseInTransactionalScope(session => Assert.That(session.TryGet(user1.Id, out User _), Is.False));
+      UseInTransactionalScope(session => Assert.That(session.TryGet(user1.Id, out User? _), Is.False));
    }
 
    [Test]
@@ -490,30 +497,29 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
    [Test]
    public async Task InsertNewEventType_should_not_throw_exception_if_the_event_type_has_been_inserted_by_something_else()
    {
-      User otherUser = null;
-      User user = null;
 
-      UseInTransactionalScope(session => user = User.Register(session, "email@email.se", "password", Guid.NewGuid()));
+      var user = UseInTransactionalScope(session => User.Register(session, "email@email.se", "password", Guid.NewGuid()));
+      var otherUser = await ChangeAnotherUsersEmailInOtherInstance().CaF();
 
-      await ChangeAnotherUsersEmailInOtherInstance().CaF();
       UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
 
       UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));
       return;
 
-      async Task ChangeAnotherUsersEmailInOtherInstance()
+      async Task<User> ChangeAnotherUsersEmailInOtherInstance()
       {
          var clonedServiceLocator = _serviceLocator.Clone();
          await using var serviceLocator = clonedServiceLocator.CaF();
-         clonedServiceLocator.ExecuteTransactionInIsolatedScope(() =>
+         return clonedServiceLocator.ExecuteTransactionInIsolatedScope(() =>
          {
             // ReSharper disable once AccessToDisposedClosure
             var session = clonedServiceLocator.Resolve<IEventStoreUpdater>();
-            otherUser = User.Register(session,
+            var another = User.Register(session,
                                       "email@email.se",
                                       "password",
                                       Guid.NewGuid());
-            otherUser.ChangeEmail("otheruser@email.new");
+            another.ChangeEmail("otheruser@email.new");
+            return another;
          });
       }
    }
@@ -628,7 +634,8 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
 
       var taskException = ExceptionCE.TryCatch(() => Task.WaitAll(tasks)) as AggregateException;//Sql duplicate key (AggregateId, Version) Exception would be thrown here if history was not serialized. Or a deadlock will be thrown if the locking is not done correctly.
 
-      if(bothTasksCompletedException != null || taskException != null || bothTasksReadUserException != null)throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException.InnerExceptions).Where(it => it != null));
+      if(bothTasksCompletedException != null || taskException != null || bothTasksReadUserException != null)
+         throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException?.InnerExceptions ?? new ReadOnlyCollection<Exception>([])).Where(it => it != null).Cast<Exception>());
 
       UseInScope(
          session =>

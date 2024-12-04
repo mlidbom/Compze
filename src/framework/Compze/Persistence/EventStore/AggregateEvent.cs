@@ -23,8 +23,10 @@ public abstract class AggregateEvent() : IMutableAggregateEvent
    public Guid AggregateId { get; private set; }
    public DateTime UtcTimeStamp { get; private set; } = DateTime.UtcNow; //Todo:bug: Should use timesource.
 
+#pragma warning disable CA1033 // We do not want these methods as part of the public interface of AggregateEvent.
    void IMutableAggregateEvent.SetAggregateId(Guid aggregateId) => AggregateId = aggregateId;
    void IMutableAggregateEvent.SetAggregateVersion(int aggregateVersion) => AggregateVersion = aggregateVersion;
    void IMutableAggregateEvent.SetUtcTimeStamp(DateTime utcTimeStamp) => UtcTimeStamp = utcTimeStamp;
    void IMutableAggregateEvent.SetMessageId(Guid messageId) => MessageId = messageId;
+#pragma warning restore CA1033
 }

@@ -22,7 +22,7 @@ class Before<TEvent> : EventMigration<IRootEvent>
    class Inspector : ISingleAggregateInstanceHandlingEventMigrator
    {
       readonly IEnumerable<Type> _insert;
-      Type _lastSeenEventType;
+      Type? _lastSeenEventType;
 
       public Inspector(IEnumerable<Type> insert) => _insert = insert;
 
