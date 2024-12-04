@@ -4,11 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Compze.Messaging.Buses.Implementation;
 
-public class CommandValidationFailureException : Exception
+class CommandValidationFailureException(IEnumerable<ValidationResult> failures) : Exception(CreateMessage(failures))
 {
-   public IEnumerable<ValidationResult> Failures { get; }
-
-   public CommandValidationFailureException(IEnumerable<ValidationResult> failures) : base(CreateMessage(failures)) => Failures = failures;
+   public IEnumerable<ValidationResult> Failures { get; } = failures;
 
    static string CreateMessage(IEnumerable<ValidationResult> failures) => string.Join(Environment.NewLine, failures);
 }

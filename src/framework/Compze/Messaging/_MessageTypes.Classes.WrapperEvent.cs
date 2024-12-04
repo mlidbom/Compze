@@ -16,7 +16,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Messaging;
 
-public static class WrapperEvent
+static class WrapperEvent
 {
    static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
 

@@ -11,8 +11,7 @@ namespace Compze.Messaging.Events;
 /// Calls all matching handlers in the order they were registered when an event is Dispatched.
 /// Handlers should be registered using the RegisterHandlers method in the constructor of the inheritor.
 /// </summary>
-public partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IMutableEventDispatcher<TEvent>
-   where TEvent : class, IEvent
+partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> where TEvent : class, IEvent
 {
    class RegistrationBuilder(CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> owner) : IEventHandlerRegistrar<TEvent>
    {
