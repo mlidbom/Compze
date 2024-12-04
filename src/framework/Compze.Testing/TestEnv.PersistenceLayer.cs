@@ -8,7 +8,7 @@ using Compze.SystemCE;
 namespace Compze.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
-public static partial class TestEnv
+static partial class TestEnv
 {
    ///<summary>Persistence layer members</summary>
    public static class PersistenceLayer

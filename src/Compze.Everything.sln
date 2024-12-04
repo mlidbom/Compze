@@ -42,7 +42,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountManagement.UnitTests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Tests.Performance.Internals", "framework\Compze.Tests.Performance.Internals\Compze.Tests.Performance.Internals.csproj", "{344011D3-F89F-492D-8B7D-E0370B43FE73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountManagement.PerformanceTests", "Samples\AccountManagement\AccountManagement.PerformanceTests\AccountManagement.PerformanceTests.csproj", "{93A102B8-E522-4994-B40B-F827FF7D92EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountManagement.PerformanceTests.Internals", "Samples\AccountManagement\AccountManagement.PerformanceTests.Internals\AccountManagement.PerformanceTests.Internals.csproj", "{93A102B8-E522-4994-B40B-F827FF7D92EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "..\Website\Website.csproj", "{53880B39-1F89-44BB-BD35-B273AB47EBAC}"
 EndProject
