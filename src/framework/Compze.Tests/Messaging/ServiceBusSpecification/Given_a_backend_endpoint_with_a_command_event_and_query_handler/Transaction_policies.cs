@@ -19,7 +19,7 @@ public class Transaction_policies : Fixture
       var transaction = CommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                 .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
-      transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
+      transaction!.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
    [Test] public void Command_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
@@ -31,7 +31,7 @@ public class Transaction_policies : Fixture
       var transaction = CommandHandlerWithResultThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                           .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
-      transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
+      transaction!.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
    [Test] public void Event_handler_runs_in_transaction_with_isolation_level_Serializable()
@@ -41,7 +41,7 @@ public class Transaction_policies : Fixture
       var transaction = MyRemoteAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                                .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
-      transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
+      transaction!.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
    [Test] public void Query_handler_does_not_run_in_transaction()

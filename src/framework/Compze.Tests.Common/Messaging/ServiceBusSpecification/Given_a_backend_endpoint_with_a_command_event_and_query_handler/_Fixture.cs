@@ -5,7 +5,6 @@ using Compze.Functional;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
 using Compze.Persistence.Common.DependencyInjection;
-using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
@@ -29,6 +28,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
 {
    static readonly TimeSpan _timeout = 10.Seconds();
    internal ITestingEndpointHost Host;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
    internal IThreadGate CommandHandlerThreadGate;
    internal IThreadGate CommandHandlerWithResultThreadGate;
    internal IThreadGate MyCreateAggregateCommandHandlerThreadGate;
@@ -37,6 +37,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
    internal IThreadGate MyLocalAggregateEventHandlerThreadGate;
    internal IThreadGate EventHandlerThreadGate;
    internal IThreadGate QueryHandlerThreadGate;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
    internal IReadOnlyList<IThreadGate> AllGates = [];
 
@@ -81,17 +82,16 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
 
       await Host.StartAsync().CaF();
-      AllGates = new List<IThreadGate>
-                 {
-                    (CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate))),
-                    (CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate))),
-                    (MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate))),
-                    (MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate))),
-                    (MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate))),
-                    (MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate))),
-                    (EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate))),
-                    (QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(QueryHandlerThreadGate)))
-                 };
+      AllGates = [
+                    CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate)),
+                    CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate)),
+                    MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate)),
+                    MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate)),
+                    MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate)),
+                    MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate)),
+                    EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate)),
+                    QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(QueryHandlerThreadGate))
+                 ];
       return;
 
       static void MapBackendEndpointTypes(IEndpointBuilder builder) =>

@@ -34,7 +34,7 @@ public class Exactly_once_guarantee_tests : Fixture
 
       var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));
 
-      backendException.InnerException.Message.Should().Contain(exceptionMessage);
+      backendException.InnerException!.Message.Should().Contain(exceptionMessage);
       frontEndException.Message.Should().Contain(exceptionMessage);
 
       MyLocalAggregateEventHandlerThreadGate.Passed.Should().BeGreaterOrEqualTo(1);

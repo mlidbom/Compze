@@ -110,7 +110,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
                                                                   MessageId = Guid.NewGuid()
                                                                };
 
-      public string Name { get; private set; }
+      public string Name { get; private set; } = "";
    }
 
    protected class UserRegisteredConfirmationResource(string name)

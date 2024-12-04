@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Compze.GenericAbstractions.Time;
 using Compze.Messaging;
 using Compze.Messaging.Buses;
-using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
@@ -23,7 +22,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
    ITestingEndpointHost _host;
    IEndpoint _endpoint;
 
-   [SetUp]public async Task Setup()
+   [SetUp] public async Task Setup()
    {
       _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
 
@@ -33,8 +32,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
          builder =>
          {
             builder.RegisterCurrentTestsConfiguredPersistenceLayer();
-            builder.RegisterHandlers.ForCommand<ScheduledCommand>(
-               _ => _receivedCommandGate.AwaitPassThrough());
+            builder.RegisterHandlers.ForCommand<ScheduledCommand>(_ => _receivedCommandGate.AwaitPassThrough());
 
             builder.TypeMapper.Map<ScheduledCommand>("6bc9abe2-8861-4108-98dd-8aa1b50c0c42");
          });
@@ -66,7 +64,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
                           .Should().Be(false);
    }
 
-   [TearDown]public async Task TearDown() => await _host.DisposeAsync().CaF();
+   [TearDown] public async Task TearDown() => await _host.DisposeAsync().CaF();
 
    class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 }
