@@ -1,59 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using Compze.Contracts.Deprecated;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Contracts;
-
-[TestFixture]
-public class NotNullOrEmptyOrWhitespaceTests : UniversalTestBase
+// ReSharper disable ExpressionIsAlwaysNull
+[TestFixture] public class NotNullOrEmptyOrWhitespaceTests : UniversalTestBase
 {
-   [Test]
-   public void ThrowsArgumentNullForNullArguments()
+   [Test] public void ThrowsArgumentNullForNullArguments()
    {
       string aNullString = null;
-      // ReSharper disable ExpressionIsAlwaysNull
-      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(aNullString, nameof(aNullString)).NotNullEmptyOrWhiteSpace());
-      // ReSharper restore ExpressionIsAlwaysNull
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(aNullString!))
+        .Should().Throw<ArgumentNullException>()
+        .Which.Message.Should().Contain(nameof(aNullString));
    }
 
-   [Test]
-   public void ThrowsStringIsEmptyArgumentExceptionForEmptyStrings() => Assert.Throws<StringIsEmptyContractViolationException>(() => Contract.Argument(string.Empty, nameof(string.Empty)).NotNullEmptyOrWhiteSpace());
+   [Test] public void ThrowsStringIsEmptyArgumentExceptionForEmptyStrings() =>
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(string.Empty))
+        .Should().Throw<ArgumentException>()
+        .Which.Message.Should().Contain(nameof(string.Empty));
 
-   [Test]
-   public void ThrowsStringIsWhiteSpaceExceptionForStringConsistingOfTabsSpacesOrLineBreaks()
+   [Test] public void ThrowsArgumentExceptionForStringConsistingOfTabsSpacesOrLineBreaks()
    {
-      var space = " ";
-      var tab = "\t";
-      var lineBreak = "\n";
-      var newLine = "\r\n";
-      var environmentNewLine = Environment.NewLine;
-      Assert.Throws<StringIsWhitespaceContractViolationException>(() => Contract.Argument(space, nameof(space)).NotNullEmptyOrWhiteSpace());
-      Assert.Throws<StringIsWhitespaceContractViolationException>(() => Contract.Argument(tab, nameof(tab)).NotNullEmptyOrWhiteSpace());
-      Assert.Throws<StringIsWhitespaceContractViolationException>(() => Contract.Argument(lineBreak, nameof(lineBreak)).NotNullEmptyOrWhiteSpace());
-      Assert.Throws<StringIsWhitespaceContractViolationException>(() => Contract.Argument(newLine, nameof(newLine)).NotNullEmptyOrWhiteSpace());
-      Assert.Throws<StringIsWhitespaceContractViolationException>(() => Contract.Argument(environmentNewLine, nameof(environmentNewLine)).NotNullEmptyOrWhiteSpace());
+      const string spaceString = " ";
+      var tabString = "\t";
+      var lineBreakString = "\n";
+      var newLineString = "\r\n";
+      var environmentNewLineString = Environment.NewLine;
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(spaceString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(spaceString));
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(tabString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(tabString));
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(lineBreakString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(lineBreakString));
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(newLineString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(newLineString));
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(environmentNewLineString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(environmentNewLineString));
 
-      Assert.Throws<StringIsWhitespaceContractViolationException>(() => Contract.Argument(environmentNewLine, nameof(environmentNewLine), space, nameof(space)).NotNullEmptyOrWhiteSpace());
-
-
-      var badValues = new List<string> {space, tab, lineBreak, newLine, environmentNewLine};
-      var goodValues = new List<string> {"good1", "good2"};
-
-      InspectionTestHelper.BatchTestInspection<StringIsWhitespaceContractViolationException, string>(
-         assert: inspected => inspected.NotNullEmptyOrWhiteSpace(),
-         badValues: badValues,
-         goodValues: goodValues);
-   }
-
-   [Test]
-   public void ShouldUseArgumentNameForException()
-   {
-      var newLine = Environment.NewLine;
-      Assert.Throws<StringIsWhitespaceContractViolationException>(() => Contract.Argument(newLine, nameof(newLine)).NotNullEmptyOrWhiteSpace())
-            .Message.Should().Contain("newLine");
+      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(environmentNewLineString).NotNullEmptyOrWhitespace(spaceString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(environmentNewLineString));
    }
 }
