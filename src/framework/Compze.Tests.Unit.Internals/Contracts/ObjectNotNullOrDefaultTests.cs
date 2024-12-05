@@ -1,48 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using Compze.Contracts.Deprecated;
+﻿using Compze.Contracts;
 using Compze.Testing;
+using FluentAssertions;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
+using static FluentAssertions.FluentActions;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Tests.Contracts;
 
 // ReSharper disable ConvertToConstant.Local
 // ReSharper disable ExpressionIsAlwaysNull
-[TestFixture]
-public class ObjectNotNullOrDefaultTests : UniversalTestBase
+[TestFixture] public class ObjectNotNullOrDefaultTests : UniversalTestBase
 {
-   [Test]
-   public void ThrowsArgumentNullExceptionIfAnyValueIsNull()
+   [Test] public void ThrowsArgumentNullExceptionIfAnyValueIsNull()
    {
       var anObject = new object();
       object nullObject = null;
-      var emptyString = "";
+      string? nullString = null;
 
-      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => nullObject).NotNullOrDefault());
-      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => anObject, () => nullObject).NotNullOrDefault());
-      Assert.Throws<ObjectIsNullContractViolationException>(() => Contract.Argument(() => emptyString, () => nullObject, () => anObject).NotNullOrDefault());
+      Invoking(() => Invariant.NotNullOrDefault(nullObject)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullObject));
+      Invoking(() => Invariant.NotNullOrDefault(nullString)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullString));
+      Invariant.NotNullOrDefault(anObject);
    }
 
-   [Test]
-   public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()
+   [Test] public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()
    {
-      var anObject = new object();
       var emptyString = "";
       var zero = 0;
       var defaultMyStructure = new MyStructure();
-      var aMyStructure = new MyStructure(1);
 
-      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => zero).NotNullOrDefault());
-      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => anObject, () => zero).NotNullOrDefault());
-      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => emptyString, () => anObject, () => defaultMyStructure).NotNullOrDefault());
-      Contract.Argument(() => emptyString, () => anObject, () => aMyStructure).NotNullOrDefault();
-
-
-      InspectionTestHelper.BatchTestInspection<ObjectIsDefaultContractViolationException, object>(
-         inspected => inspected.NotNullOrDefault(),
-         badValues: new List<object> {zero, defaultMyStructure},
-         goodValues: new List<object> {new(), "", Guid.NewGuid()});
+      Invoking(() => Invariant.NotNullOrDefault(zero)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(zero));
+      Invoking(() => Invariant.NotNullOrDefault(defaultMyStructure)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(defaultMyStructure));
    }
 
    struct MyStructure
@@ -52,8 +39,6 @@ public class ObjectNotNullOrDefaultTests : UniversalTestBase
       readonly int _value;
 #pragma warning restore IDE0052 // Remove unread private members
       // ReSharper restore NotAccessedField.Local
-
-      public MyStructure(int value) => _value = value;
    }
 }
 
