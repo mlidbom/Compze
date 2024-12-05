@@ -7,21 +7,17 @@ namespace Compze.Contracts;
 
 partial class ContractAsserter
 {
-   public ContractAsserter Is([DoesNotReturnIf(false)] bool value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value ? this : throw _createException(valueString);
-
    public ContractAsserter NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value != null ? this : throw _createException(valueString);
-
-
-
-   //////////////////////////////////////////////////////////////////////////
-   //Specialized methods that return the value rather than `this` below here:
-   //////////////////////////////////////////////////////////////////////////
 
    public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))
                                  .then(this);
+
+   //////////////////////////////////////////////////////////////////////////
+   ////Specialized methods that return the value rather than `this` below here:
+   ////The allow for single line returns from methods while retaining the static not-null guarantee.
+   //////////////////////////////////////////////////////////////////////////
 
    [return: NotNull] public TValue ReturnNotNull<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value ?? throw _createException(valueString);
