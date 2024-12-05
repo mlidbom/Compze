@@ -16,8 +16,8 @@ partial class ContractAsserter
                                  .then(this);
 
    public ContractAsserter NotDefault<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
-      where TValue : struct, IEquatable<TValue>
-      => !value.Equals(default) ? this : throw _createException(valueString);
+      where TValue : struct
+      => !value.Equals(default(TValue)) ? this : throw _createException(valueString);
 
    //////////////////////////////////////////////////////////////////////////
    ////Specialized methods that return the value rather than `this` below here:

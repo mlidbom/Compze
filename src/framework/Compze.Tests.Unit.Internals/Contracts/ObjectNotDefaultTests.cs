@@ -1,42 +1,28 @@
-﻿using System.Collections.Generic;
-using Compze.Contracts.Deprecated;
+﻿using System;
 using Compze.Testing;
+using FluentAssertions;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
+using static FluentAssertions.FluentActions;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Tests.Contracts;
 
-[TestFixture]
-public class ObjectNotDefaultTests : UniversalTestBase
+[TestFixture] public class ObjectNotDefaultTests : UniversalTestBase
 {
-   [Test]
-   public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()
+   [Test] public void ThrowsArgumentExceptionIfAnyValueIsDefault()
    {
       var myDefaultStructure = new MyStructure();
-      // ReSharper disable ConvertToConstant.Local
-      var zero = 0;
-      // ReSharper restore ConvertToConstant.Local
+      const int zero = 0;
 
-      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => zero).NotDefault());
-      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => zero).NotDefault());
-      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => myDefaultStructure).NotDefault());
-      Assert.Throws<ObjectIsDefaultContractViolationException>(() => Contract.Argument(() => myDefaultStructure).NotDefault());
+      Invoking(() => Argument.NotDefault(zero)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(zero));
+      Invoking(() => Argument.NotDefault(myDefaultStructure)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(myDefaultStructure));
 
       var myNonDefaultStructure = new MyStructure
                                   {
                                      Value = 2
                                   };
 
-      Contract.Argument(() => myNonDefaultStructure).NotDefault();
-
-      InspectionTestHelper.InspectBadValue<ObjectIsDefaultContractViolationException, MyStructure>(
-         inspected => inspected.NotDefault(),
-         new MyStructure());
-
-      InspectionTestHelper.BatchTestInspection<ObjectIsDefaultContractViolationException, int>(
-         inspected => inspected.NotDefault(),
-         badValues: new List<int> {0},
-         goodValues: new List<int> {1, 2, 3});
+      Argument.NotDefault(myNonDefaultStructure);
    }
 
    struct MyStructure
