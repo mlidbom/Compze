@@ -3,7 +3,6 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <PlatformTarget>AnyCPU</PlatformTarget>
-      <Configurations>Debug;Release</Configurations>
       <Nullable>enable</Nullable>
       <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
       <NuGetAuditMode>direct</NuGetAuditMode>
@@ -12,15 +11,6 @@
       <LangVersion>default</LangVersion>
       <RootNamespace>ScratchPad</RootNamespace>
    </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-   </PropertyGroup>
-
 
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="7.0.0" />

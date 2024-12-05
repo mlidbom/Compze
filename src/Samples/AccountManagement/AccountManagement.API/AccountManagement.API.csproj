@@ -3,7 +3,6 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <PlatformTarget>AnyCPU</PlatformTarget>
-      <Configurations>Debug;Release</Configurations>
       <Nullable>enable</Nullable>
       <RootNamespace>AccountManagement</RootNamespace>
       <NeutralLanguage>en</NeutralLanguage>
@@ -11,14 +10,6 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <LangVersion>default</LangVersion>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
    </PropertyGroup>
 
    <ItemGroup>

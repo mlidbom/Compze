@@ -7,7 +7,6 @@
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
       <PlatformTarget>AnyCPU</PlatformTarget>
-      <Configurations>Debug;Release</Configurations>
       <LangVersion>default</LangVersion>
    </PropertyGroup>
 
@@ -21,15 +20,6 @@
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-      <DocumentationFile>bin\Release\Compze.CQRS.xml</DocumentationFile>
    </PropertyGroup>
 
    <ItemGroup>

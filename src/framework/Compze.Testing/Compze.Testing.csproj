@@ -3,7 +3,6 @@
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
       <PlatformTarget>AnyCPU</PlatformTarget>
-      <Configurations>Debug;Release</Configurations>
       <LangVersion>default</LangVersion>
    </PropertyGroup>
 
@@ -17,16 +16,6 @@
       <NuGetAuditMode>direct</NuGetAuditMode>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
       <AnalysisLevel>latest-all</AnalysisLevel>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DefineConstants></DefineConstants>
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-      <DocumentationFile>bin\Release\Compze.Testing.xml</DocumentationFile>
    </PropertyGroup>
 
    <ItemGroup>

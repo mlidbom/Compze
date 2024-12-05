@@ -7,7 +7,6 @@
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
       <PlatformTarget>AnyCPU</PlatformTarget>
-      <Configurations>Debug;Release</Configurations>
       <Nullable>enable</Nullable>
       <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
       <RootNamespace>Compze</RootNamespace>
@@ -15,15 +14,6 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <LangVersion>default</LangVersion>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-   </PropertyGroup>
-
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-      <DocumentationFile>bin\Release\Compze.CQRS.ExternalDependencies.xml</DocumentationFile>
    </PropertyGroup>
 
    <ItemGroup>
@@ -45,8 +35,7 @@
 
    <ItemGroup>
       <ProjectReference Include="..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
-      <ProjectReference
-         Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
