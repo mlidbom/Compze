@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.DDD;
 using Compze.SystemCE.LinqCE;
@@ -99,7 +100,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGet(key, out TValue? value)) return Contracts.Assert.Result.ReturnNotNull(value);
+      if(TryGet(key, out TValue? value)) return Assert.Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
@@ -108,7 +109,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Contracts.Assert.Result.ReturnNotNull(value);
+      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Assert.Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
