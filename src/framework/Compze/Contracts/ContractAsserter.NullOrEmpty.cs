@@ -9,7 +9,7 @@ namespace Compze.Contracts;
 partial class ContractAsserter
 {
    public ContractAsserter NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value != null ? this : throw new ArgumentNullException(valueString);
+      value != null ? this : throw _createException(valueString);
 
    public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))

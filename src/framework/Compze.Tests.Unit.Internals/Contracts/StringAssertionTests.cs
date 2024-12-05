@@ -19,11 +19,11 @@ namespace Compze.Tests.Contracts;
       const string tabsString = "   ";
 
       Invoking(() => Compze.Contracts.Assert.Argument.NotNull(nullString))
-        .Should().Throw<ArgumentNullException>()
+        .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(nullString));
 
       Invoking(() => Compze.Contracts.Assert.Argument.NotNull(okString).NotNull(nullString).NotNull(notNullObject))
-        .Should().Throw<ArgumentNullException>()
+        .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(nullString));
 
       Invoking(() => Compze.Contracts.Assert.Argument.NotNullOrEmpty(okString).NotNullOrEmpty(emptyString))
