@@ -8,10 +8,7 @@ public abstract class EventMigration<TMigratedAggregateEventHierarchyRootInterfa
 {
    protected EventMigration(Guid id, string name, string description)
    {
-      Contract.ArgumentNotNullOrDefault(id, nameof(id));
-      Contract.ArgumentNotNullEmptyOrWhitespace(description, nameof(description), name, nameof(name));
-
-      Contract.Assert.That(typeof(TMigratedAggregateEventHierarchyRootInterface).IsInterface, "typeof(TMigratedAggregateEventHierarchyRootInterface).IsInterface");
+      Assert.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Is(typeof(TMigratedAggregateEventHierarchyRootInterface).IsInterface);
 
       Id = id;
       Name = name;

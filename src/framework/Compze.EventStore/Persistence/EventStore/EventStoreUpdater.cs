@@ -23,7 +23,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
    public EventStoreUpdater(IEventStoreEventPublisher eventStoreEventPublisher, IEventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)
    {
-      Contract.ArgumentNotNull(eventStoreEventPublisher, nameof(eventStoreEventPublisher), store, nameof(store), timeSource, nameof(timeSource));
+      Contracts.Assert.Argument.NotNull(eventStoreEventPublisher).NotNull(store).NotNull(timeSource);
 
       _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(), new SingleTransactionUsageGuard());
       _eventStoreEventPublisher = eventStoreEventPublisher;
@@ -58,7 +58,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    TAggregate LoadSpecificVersionInternal<TAggregate>(Guid aggregateId, int version, bool verifyVersion = true) where TAggregate : IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      Contract.Assert.That(version > 0, "version > 0");
+      Assert.Argument.IsGreaterThan(version, 0);
 
       _usageGuard.AssertNoContextChangeOccurred(this);
 

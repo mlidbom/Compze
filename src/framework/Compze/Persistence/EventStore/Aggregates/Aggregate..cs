@@ -38,8 +38,8 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    //Yes empty. Id should be assigned by an action and it should be obvious that the aggregate in invalid until that happens
    protected Aggregate(IUtcTimeTimeSource timeSource) : base(Guid.Empty)
    {
-      Assert.Argument.NotNull(timeSource);
-      Contract.Assert.That(typeof(TAggregateEvent).IsInterface, "typeof(TAggregateEvent).IsInterface");
+      Assert.Argument.NotNull(timeSource)
+            .Is(typeof(TAggregateEvent).IsInterface);
       TimeSource = timeSource;
       _eventHandlersDispatcher.Register().IgnoreUnhandled<TAggregateEvent>();
    }
@@ -54,7 +54,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = [];
    protected TEvent Publish<TEvent>(TEvent theEvent) where TEvent : TAggregateEventImplementation
    {
-      Contract.Assert.That(!_applyingEvents, "You cannot raise events from within event appliers");
+      Assert.State.Is(!_applyingEvents, () => "You cannot raise events from within event appliers");
 
       using(ScopedChange.Enter(onEnter:() => _reentrancyLevel++, onDispose: () => _reentrancyLevel--))
       {

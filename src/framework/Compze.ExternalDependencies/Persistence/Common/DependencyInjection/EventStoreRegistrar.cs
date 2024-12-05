@@ -36,7 +36,7 @@ public static class EventStoreRegistrar
                                                            string connectionName,
                                                            Func<IReadOnlyList<IEventMigration>> migrations)
    {
-      Contract.ArgumentNotNullEmptyOrWhitespace(connectionName, nameof(connectionName));
+      Assert.Argument.NotNullEmptyOrWhitespace(connectionName);
 
       @this.Register(
          Singleton.For<IAggregateTypeValidator>()

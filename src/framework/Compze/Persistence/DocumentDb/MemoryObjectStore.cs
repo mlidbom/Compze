@@ -50,7 +50,7 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
       return true;
    }
 
-   static string GetIdString(object id) => Contract.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
+   static string GetIdString(object id) => Contracts.Assert.Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
 
    public virtual void Add<T>(object id, T value) => _monitor.Update(() =>
    {

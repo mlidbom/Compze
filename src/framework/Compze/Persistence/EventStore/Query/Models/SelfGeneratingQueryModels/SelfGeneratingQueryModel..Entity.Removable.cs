@@ -9,7 +9,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
 {
    public abstract class Entity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEventEntityIdGetter> :
       Entity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
-      where TEntityId : notnull
+      where TEntityId : struct
       where TEntityEvent : class, TAggregateEvent
       where TEntityCreatedEvent : TEntityEvent
       where TEntityRemovedEvent : TEntityEvent

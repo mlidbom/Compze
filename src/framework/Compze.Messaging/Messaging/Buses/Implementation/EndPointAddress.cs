@@ -7,7 +7,7 @@ public record EndPointAddress
    internal string AspNetAddress { get; }
    internal EndPointAddress(string aspNetAddress)
    {
-      Contract.ArgumentNotNullEmptyOrWhitespace(aspNetAddress, nameof(aspNetAddress));
+      Assert.Argument.NotNullEmptyOrWhitespace(aspNetAddress);
       AspNetAddress = aspNetAddress;
    }
 }

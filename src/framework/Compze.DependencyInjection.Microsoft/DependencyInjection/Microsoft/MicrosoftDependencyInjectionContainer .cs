@@ -42,7 +42,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
          if(componentRegistration.InstantiationSpec.SingletonInstance != null)
          {
-            Contract.Assert.That(lifetime == ServiceLifetime.Singleton, "Instance can only be used with singletons.");
+            Assert.Argument.Is(lifetime == ServiceLifetime.Singleton, () => $"{componentRegistration.ServiceTypes.First().FullName} tried to register using an Instance and lifestyle: {lifetime}. Instance can only be used with {nameof(Lifestyle.Singleton)}");
             foreach(var serviceType in componentRegistration.ServiceTypes)
             {
                _services.AddSingleton(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
@@ -99,14 +99,14 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    IDisposable IServiceLocator.BeginScope()
    {
-      Assert.State.Is(!_isDisposed);
-      Assert.State.Assert(_scopeCache.Value == null, "Scope already exists. Nested scopes are not supported.");
+      Assert.State.Is(!_isDisposed)
+            .Is(_scopeCache.Value == null, () => "Scope already exists. Nested scopes are not supported.");
 
       _scopeCache.Value = CurrentProvider().CreateAsyncScope();
 
       return DisposableCE.Create(() =>
       {
-         Contract.Assert.That(_scopeCache.Value != null, "Attempt to dispose scope from a context that is not within the scope.");
+         Assert.State.Is(_scopeCache.Value != null, () => "Attempt to dispose scope from a context that is not within the scope.");
          _scopeCache.Value.Dispose();
          _scopeCache.Value = null;
       });
@@ -114,7 +114,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    public void Dispose()
    {
-      Contract.Assert.That(_scopeCache.Value == null, "Scopes must be disposed before the container");
+      Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(_isDisposed) return;
       _isDisposed = true;
       _serviceProvider?.Dispose();
@@ -123,7 +123,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    public async ValueTask DisposeAsync()
    {
-      Contract.Assert.That(_scopeCache.Value == null, "Scopes must be disposed before the container");
+      Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(!_isDisposed)
       {
          _isDisposed = true;

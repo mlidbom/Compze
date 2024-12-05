@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
 using Compze.Contracts;
+using Compze.Functional;
 using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
@@ -35,7 +36,7 @@ class EventCache : IDisposable, IEventCache
 
             if(_overlays.Update(it => it.TryGetValue(transactionId, out overlay)))
             {
-               return Assert.Result.NotNull(overlay);
+               return Assert.Result.NotNull(overlay).then(overlay);
             }
 
             overlay = [];

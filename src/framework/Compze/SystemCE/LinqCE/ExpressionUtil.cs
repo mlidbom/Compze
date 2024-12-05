@@ -1,6 +1,5 @@
 using System;
 using System.Linq.Expressions;
-using Compze.Contracts;
 
 namespace Compze.SystemCE.LinqCE;
 
@@ -9,42 +8,42 @@ static class ExpressionUtil
 {
    public static string ExtractMethodName(Expression<Action> func)
    {
-      Contract.ArgumentNotNull(func, nameof(func));
+      Contracts.Assert.Argument.NotNull(func);
       return ((MethodCallExpression)func.Body).Method.Name;
    }
 
    ///<summary>Extracts the name of the member that the supplied func expression returns.</summary>
    public static string ExtractMethodName<T>(Expression<Func<T>> func)
    {
-      Contract.ArgumentNotNull(func, nameof(func));
+      Contracts.Assert.Argument.NotNull(func);
       return ((MethodCallExpression)func.Body).Method.Name;
    }
 
    ///<summary>Extracts the name of the member that the supplied func expression returns.</summary>
    public static string ExtractMemberName<TValue>(Expression<Func<TValue>> func)
    {
-      Contract.ArgumentNotNull(func, nameof(func));
+      Contracts.Assert.Argument.NotNull(func);
       return ExtractMemberName((LambdaExpression)func);
    }
 
    ///<summary>Extracts the name of the member that the supplied func expression returns.</summary>
    public static string ExtractMemberName<TParam, TValue>(Expression<Func<TParam, TValue>> func)
    {
-      Contract.ArgumentNotNull(func, nameof(func));
+      Contracts.Assert.Argument.NotNull(func);
       return ExtractMemberName((LambdaExpression)func);
    }
 
    ///<summary>Extracts the name of the member that the supplied func expression returns.</summary>
    public static string ExtractMemberName<TParam, TParam2, TValue>(Expression<Func<TParam, TParam2, TValue>> func)
    {
-      Contract.ArgumentNotNull(func, nameof(func));
+      Contracts.Assert.Argument.NotNull(func);
       return ExtractMemberName((LambdaExpression)func);
    }
 
    ///<summary>Extracts the name of the member that the supplied lambda expression returns.</summary>
    static string ExtractMemberName(LambdaExpression lambda)
    {
-      Contract.ArgumentNotNull(lambda, nameof(lambda));
+      Contracts.Assert.Argument.NotNull(lambda);
 
       var memberExpression = lambda.Body is UnaryExpression unaryExpression
                                 ? (MemberExpression)unaryExpression.Operand
@@ -55,13 +54,13 @@ static class ExpressionUtil
 
    public static string ExtractMemberPath<TValue>(Expression<Func<TValue>> func)
    {
-      Contract.ArgumentNotNull(func, nameof(func));
+      Contracts.Assert.Argument.NotNull(func);
       return ExtractMemberPath((LambdaExpression)func);
    }
 
    static string ExtractMemberPath(LambdaExpression lambda)
    {
-      Contract.ArgumentNotNull(lambda, nameof(lambda));
+      Contracts.Assert.Argument.NotNull(lambda);
       var memberExpression = lambda.Body is UnaryExpression unaryExpression
                                 ? (MemberExpression)unaryExpression.Operand
                                 : (MemberExpression)lambda.Body;

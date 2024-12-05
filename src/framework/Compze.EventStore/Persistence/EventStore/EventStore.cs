@@ -179,7 +179,7 @@ class EventStore : IEventStore
 
    public void PersistMigrations()
    {
-      Assert.State.Assert(Transaction.Current == null, $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
+      Assert.State.Is(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
       Log.Warning("Starting to persist migrations");
 
       long migratedAggregates = 0;
@@ -308,12 +308,13 @@ AggregateIds:
       {
          var inMemory = inMemoryMigratedHistory[index];
          var loaded = loadedAggregateHistory[index];
-         Assert.Result.Is(inMemory.AggregateId == loaded.AggregateId);
-         Assert.Result.Is(inMemory.MessageId == loaded.MessageId);
-         Assert.Result.Is(inMemory.AggregateVersion == loaded.AggregateVersion);
-         Assert.Result.Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp);
-         Assert.Result.Is(inMemory.GetType() == loaded.GetType());
-         Assert.Result.Is(_serializer.Serialize(inMemory) == _serializer.Serialize((AggregateEvent)loaded));
+         Assert.Result
+               .Is(inMemory.AggregateId == loaded.AggregateId)
+               .Is(inMemory.MessageId == loaded.MessageId)
+               .Is(inMemory.AggregateVersion == loaded.AggregateVersion)
+               .Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp)
+               .Is(inMemory.GetType() == loaded.GetType())
+               .Is(_serializer.Serialize(inMemory) == _serializer.Serialize((AggregateEvent)loaded));
       }
    }
 
@@ -392,8 +393,7 @@ AggregateIds:
 
    public IEnumerable<Guid> StreamAggregateIdsInCreationOrder(Type? eventBaseType = null)
    {
-      Contract.Assert.That(eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventBaseType),
-                           "eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventType)");
+      Assert.Argument.Is(eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventBaseType));
       _usageGuard.AssertNoContextChangeOccurred(this);
 
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();

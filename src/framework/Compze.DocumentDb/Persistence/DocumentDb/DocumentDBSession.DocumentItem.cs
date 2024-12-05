@@ -32,15 +32,13 @@ partial class DocumentDbSession
 
       public void Save(object document)
       {
-         Contract.ArgumentNotNull(document,nameof(document));
-         Document = document;
+         Document = Assert.Argument.ReturnNotNull(document);
          IsDeleted = false;
       }
 
       public void DocumentLoadedFromBackingStore(object document)
       {
-         Contract.ArgumentNotNull(document, nameof(Document));
-         Document = document;
+         Document = Document = Assert.Argument.ReturnNotNull(document);
          IsInBackingStore = true;
       }
 

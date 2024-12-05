@@ -99,7 +99,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGet(key, out TValue? value)) return Contract.ReturnNotNull(value);
+      if(TryGet(key, out TValue? value)) return Assert.Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
@@ -108,14 +108,14 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Contract.ReturnNotNull(value);
+      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Assert.Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
    public virtual void Save<TValue>(object id, TValue value)
    {
-      Contract.ArgumentNotNull(value, nameof(value));
+      Contracts.Assert.Argument.NotNull(value);
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 

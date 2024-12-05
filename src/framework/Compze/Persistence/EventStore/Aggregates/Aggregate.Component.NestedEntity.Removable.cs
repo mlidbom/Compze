@@ -18,7 +18,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    {
       public abstract class RemovableNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
          : NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-         where TEntityId : notnull
+         where TEntityId : struct
          where TEntityEvent : class, TComponentEvent
          where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
          where TEntityCreatedEvent : TEntityEvent

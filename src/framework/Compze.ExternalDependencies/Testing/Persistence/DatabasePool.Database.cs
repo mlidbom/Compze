@@ -33,7 +33,7 @@ partial class DbPool
 
       internal Database Release()
       {
-         Contract.Assert.That(IsReserved, "IsReserved");
+         Assert.State.Is(IsReserved);
          IsReserved = false;
          IsClean = false;
          ReservationName = string.Empty;
@@ -43,15 +43,14 @@ partial class DbPool
 
       internal Database Clean()
       {
-         Contract.Assert.That(!IsClean, "!IsClean");
+         Assert.State.Is(!IsClean);
          IsClean = true;
          return this;
       }
 
       internal Database Reserve(string reservationName, Guid poolId, TimeSpan reservationLength)
       {
-         Contract.Assert.That(!IsReserved, "!IsReserved");
-         Contract.Assert.That(poolId != Guid.Empty, "poolId != Guid.Empty");
+         Assert.State.Is(!IsReserved).Is(poolId != Guid.Empty);
 
          IsReserved = true;
          ReservationName = reservationName;

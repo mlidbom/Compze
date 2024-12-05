@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
 
 namespace Compze.SystemCE;
 
@@ -11,7 +10,7 @@ static class ExceptionCE
    ///<summary>Flattens the exception.InnerException hierarchy into a sequence.</summary>
    public static IEnumerable<Exception> GetAllExceptionsInStack(this Exception exception)
    {
-      Contract.ArgumentNotNull(exception, nameof(exception));
+      Contracts.Assert.Argument.NotNull(exception);
       var current = exception;
       while(current != null)
       {

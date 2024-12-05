@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
@@ -27,7 +26,7 @@ partial class Inbox
          {
             HandlerExecutionTask? handlerExecutionTask = null;
             _implementation.Await(implementation => implementation.TryGetDispatchableMessage(dispatchingRules, out handlerExecutionTask));
-            return Contract.ReturnNotNull(handlerExecutionTask);
+            return Contracts.Assert.Result.ReturnNotNull(handlerExecutionTask);
          }
 
          public Task<object?> EnqueueMessageTask(TransportMessage.InComing message) => _implementation.Update(implementation =>

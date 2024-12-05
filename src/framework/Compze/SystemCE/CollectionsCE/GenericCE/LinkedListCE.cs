@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Contracts;
+using Compze.Functional;
 
 namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
@@ -56,6 +57,6 @@ static class LinkedListCE
          current = @this.List!.AddAfter(@this, newItem);
       }
       @this.List!.Remove(@this);
-      return Assert.Result.NotNull(current);
+      return Assert.Result.NotNull(current).then(current);
    }
 }

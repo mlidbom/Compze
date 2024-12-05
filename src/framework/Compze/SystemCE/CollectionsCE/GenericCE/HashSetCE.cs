@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Compze.Contracts;
 using Compze.SystemCE.LinqCE;
 
 namespace Compze.SystemCE.CollectionsCE.GenericCE;
@@ -12,14 +11,14 @@ static class HashSetCE
    /// Simply forwards to ExceptWith but providing a name that is not utterly unreadable </summary>
    public static void RemoveRange<T>(this ISet<T> me, IEnumerable<T> toRemove)
    {
-      Contract.ArgumentNotNull(me, nameof(me), toRemove, nameof(toRemove));
+      Contracts.Assert.Argument.NotNull(me).NotNull(toRemove);
       me.ExceptWith(toRemove);
    }
 
    ///<summary>Adds all the supplied <paramref name="toAdd"/> instances to the set.</summary>
    public static void AddRange<T>(this ISet<T> me, IEnumerable<T> toAdd)
    {
-      Contract.ArgumentNotNull(me, nameof(me),toAdd, nameof(toAdd));
+      Contracts.Assert.Argument.NotNull(me).NotNull(toAdd);
       toAdd.ForEach(me.Add);
    }
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
 
 namespace Compze.SystemCE.LinqCE;
 
@@ -16,7 +15,7 @@ public static partial class EnumerableCE
    /// <returns></returns>
    public static IEnumerable<T> Create<T>(params T[] values)
    {
-      Contract.ArgumentNotNull(values, nameof(values));
+      Contracts.Assert.Argument.NotNull(values);
       return values;
    }
 
@@ -25,7 +24,7 @@ public static partial class EnumerableCE
    /// </summary>
    static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
    {
-      Contract.ArgumentNotNull(source, nameof(source), instances, nameof(instances));
+      Contracts.Assert.Argument.NotNull(source).NotNull(instances);
       return source.Concat(instances);
    }
 
@@ -36,7 +35,7 @@ public static partial class EnumerableCE
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
    internal static bool None<T>(this IEnumerable<T> me)
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
 
       return !me.Any();
    }
@@ -54,7 +53,7 @@ public static partial class EnumerableCE
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
    internal static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
    {
-      Contract.ArgumentNotNull(me, nameof(me), condition, nameof(condition));
+      Contracts.Assert.Argument.NotNull(me).NotNull(condition);
 
       return !me.Any(condition);
    }
@@ -64,7 +63,7 @@ public static partial class EnumerableCE
    /// </summary>
    internal static IEnumerable<IEnumerable<T>> ChopIntoSizesOf<T>(this IEnumerable<T> me, int size)
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
 
       // ReSharper disable once GenericEnumeratorNotDisposed ReSharper is plain wrong again.
       using var enumerator = me.GetEnumerator();
@@ -101,7 +100,7 @@ public static partial class EnumerableCE
    /// <returns>All the objects in all the nested collections </returns>
    internal static IEnumerable<TChild> Flatten<T, TChild>(this IEnumerable<T> me) where T : IEnumerable<TChild>
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
 
       return me.SelectMany(obj => obj);
    }

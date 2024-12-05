@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.Contracts;
 using Compze.SystemCE.LinqCE;
 
 namespace Compze.SystemCE.ReflectionCE;
@@ -10,13 +9,13 @@ namespace Compze.SystemCE.ReflectionCE;
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
 static class TypeCE
 {
-   public static string FullNameNotNull(this Type @this) => Contract.ReturnNotNull(@this.FullName);
-   public static Type DeclaringTypeNotNull(this Type @this) => Contract.ReturnNotNull(@this.DeclaringType);
+   public static string FullNameNotNull(this Type @this) => Contracts.Assert.Result.ReturnNotNull(@this.FullName);
+   public static Type DeclaringTypeNotNull(this Type @this) => Contracts.Assert.Result.ReturnNotNull(@this.DeclaringType);
 
    /// ///<returns>true if <paramref name="me"/> implements the interface: <typeparamref name="TImplemented"/>. By definition true if <paramref name="me"/> == <typeparamref name="TImplemented"/>.</returns>
    public static bool Implements<TImplemented>(this Type me)
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
 
       if (!typeof(TImplemented).IsInterface)
       {
@@ -29,7 +28,7 @@ static class TypeCE
    ///<returns>true if <paramref name="me"/> implements the interface: <paramref name="implemented"/>. By definition true if <paramref name="me"/> == <paramref name="implemented"/>.</returns>
    public static bool Implements(this Type me, Type implemented)
    {
-      Contract.ArgumentNotNull(me, nameof(me), implemented, nameof(implemented));
+      Contracts.Assert.Argument.NotNull(me).NotNull(implemented);
 
       if(!implemented.IsInterface)
       {
@@ -50,13 +49,6 @@ static class TypeCE
       }
 
       return me.GetInterfaces().Contains(implemented);
-   }
-
-   internal static Type GetGenericInterface(this Type me, Type implemented)
-   {
-      Assert.Argument.Is(me != null, implemented != null).And(implemented.IsGenericTypeDefinition);
-
-      return me.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == implemented);
    }
 
    static readonly Dictionary<string, Type> TypeMap = new();

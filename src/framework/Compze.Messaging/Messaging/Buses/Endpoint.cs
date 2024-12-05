@@ -34,7 +34,7 @@ class Endpoint : IEndpoint
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
-      Contract.ArgumentNotNull(serviceLocator, nameof(serviceLocator), configuration, nameof(configuration));
+      Contracts.Assert.Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
       _transport = transport;

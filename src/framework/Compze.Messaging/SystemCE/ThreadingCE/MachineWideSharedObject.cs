@@ -57,15 +57,15 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
 
    internal TObject Update(Action<TObject> action) => _synchronizer.Execute(() =>
    {
-      Contract.Assert.That(!_disposed, "Attempt to use disposed object.");
+      Assert.State.IsNotDisposed(_disposed);
       var wrapper = Load();
       action(wrapper.Object);
       Save(wrapper);
       return wrapper.Object;
    });
 
-   internal TObject GetCopy() => Contract.Assert.That(!_disposed, "Attempt to use disposed object.")
-                                         .then(() => _synchronizer.Execute(() => Load().Object));
+   internal TObject GetCopy() => Assert.State.IsNotDisposed(_disposed)
+                                       .then(() => _synchronizer.Execute(() => Load().Object));
 
    void Save(ReferenceCountingWrapper wrapper)
    {

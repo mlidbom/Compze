@@ -15,7 +15,7 @@ public static class DocumentDbRegistrar
 
    public static DocumentDbRegistrationBuilder RegisterDocumentDb(this IDependencyInjectionContainer @this, string connectionName)
    {
-      Contract.ArgumentNotNullEmptyOrWhitespace(connectionName, nameof(connectionName));
+      Assert.Argument.NotNullEmptyOrWhitespace(connectionName);
 
       @this.Register(Singleton.For<IDocumentDbSerializer>()
                               .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));

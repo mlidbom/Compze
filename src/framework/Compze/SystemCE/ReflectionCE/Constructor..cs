@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Compze.Contracts;
 
 namespace Compze.SystemCE.ReflectionCE;
 
@@ -56,5 +55,5 @@ public static partial class Constructor
 
    internal static bool HasDefaultConstructor(Type type) => type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
 
-   public static object CreateInstance(Type type) => Contract.ReturnNotNull(Activator.CreateInstance(type, nonPublic: true)); //This is highly optimized nowadays. Compiling a constructor wins only when we don't need to do even a lookup by type.
+   public static object CreateInstance(Type type) => Contracts.Assert.Result.ReturnNotNull(Activator.CreateInstance(type, nonPublic: true)); //This is highly optimized nowadays. Compiling a constructor wins only when we don't need to do even a lookup by type.
 }

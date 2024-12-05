@@ -49,8 +49,8 @@ static class HierarchyExtensions
    /// </summary>
    public static IAutoHierarchy<T> AsHierarchy<T>(this T me, Func<T, IEnumerable<T>> childGetter)
    {
-      Contract.ArgumentNotNull(me, nameof(me), childGetter, nameof(childGetter));
-      return Contract.ReturnNotNull(new Hierarchy<T>(me, childGetter));
+      Contracts.Assert.Argument.NotNull(me).NotNull(childGetter);
+      return Contracts.Assert.Result.ReturnNotNull(new Hierarchy<T>(me, childGetter));
    }
 
    /// <summary>
@@ -59,7 +59,7 @@ static class HierarchyExtensions
    /// </summary>
    public static IEnumerable<T> Flatten<T>(this T root) where T : IHierarchy<T>
    {
-      Contract.ArgumentNotNull(root, nameof(root));
+      Contracts.Assert.Argument.NotNull(root);
       return EnumerableCE.Create(root).FlattenHierarchy(me => me.Children);
    }
 
@@ -69,7 +69,7 @@ static class HierarchyExtensions
    /// </summary>
    public static IEnumerable<T> Unwrap<T>(this IEnumerable<IAutoHierarchy<T>> root)
    {
-      Contract.ArgumentNotNull(root, nameof(root));
+      Contracts.Assert.Argument.NotNull(root);
       return root.Select(me => me.Wrapped);
    }
 }

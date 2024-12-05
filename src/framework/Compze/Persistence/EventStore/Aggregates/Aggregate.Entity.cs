@@ -17,7 +17,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
    public abstract class Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       : Component<TEntity, TEntityEventImplementation, TEntityEvent>
-      where TEntityId : notnull
+      where TEntityId : struct
       where TEntityEvent : class, TAggregateEvent
       where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
       where TEntityCreatedEvent : TEntityEvent
@@ -29,7 +29,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       static readonly TEntityEventIdGetterSetter IdGetterSetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
 
       TEntityId _id;
-      public TEntityId Id => Assert.Result.NotNullOrDefault(_id);
+      public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
       protected Entity(TAggregate aggregate)
          : this(aggregate.TimeSource, @event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}

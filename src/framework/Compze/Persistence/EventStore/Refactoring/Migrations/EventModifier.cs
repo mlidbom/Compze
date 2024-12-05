@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Contracts;
+using Compze.Functional;
 using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.SystemCE.LinqCE;
@@ -153,5 +154,5 @@ class EventModifier : IEventModifier
       _eventsAddedCallback.Invoke(_insertedEvents);
    }
 
-   internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? [Assert.Result.NotNull(_inspectedEvent)];
+   internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? [Assert.Result.NotNull(_inspectedEvent).then(_inspectedEvent)];
 }

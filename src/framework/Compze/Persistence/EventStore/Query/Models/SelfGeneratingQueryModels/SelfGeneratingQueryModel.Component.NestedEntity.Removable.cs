@@ -13,7 +13,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
    {
       public abstract class RemovableNestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEventEntityIdGetter>
          : NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
-         where TEntityId : notnull
+         where TEntityId : struct
          where TEntityEvent : class, TComponentEvent
          where TEntityCreatedEvent : TEntityEvent
          where TEntityRemovedEvent : TEntityEvent

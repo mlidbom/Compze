@@ -83,5 +83,5 @@ partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMappe
       }
    }
 
-   Unit AssertRunning() => Contract.Assert.That(_running, "not running");
+   Unit AssertRunning() => Assert.State.Is(_running, () => "not running").then(Unit.Instance);
 }

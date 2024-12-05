@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Compze.Contracts;
 
 namespace Compze.DDD;
@@ -17,6 +16,7 @@ namespace Compze.DDD;
 [DebuggerDisplay("{" + nameof(ToString) + "()}")]
 public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity<TKey>
    where TEntity : Entity<TEntity, TKey>
+   where TKey: struct
 {
    ///<summary>Construct an instance with <param name="id"> as the <see cref="Id"/></param>.</summary>
    protected Entity(TKey id) => _id = id;
@@ -24,10 +24,10 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    TKey _id;
 
    /// <inheritdoc />
-   [NotNull]public virtual TKey Id
+   public virtual TKey Id
    {
-      get => Assert.Result.NotNullOrDefault(_id);
-      private set => _id = Assert.Argument.NotNullOrDefault(value);
+      get => Assert.Result.ReturnNotDefault(_id);
+      private set => _id = Assert.Argument.ReturnNotDefault(value);
    }
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>

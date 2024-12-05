@@ -12,7 +12,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
 {
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
    public abstract class Entity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter> : Component<TEntity, TEntityEvent>
-      where TEntityId : notnull
+      where TEntityId : struct
       where TEntityEvent : class, TAggregateEvent
       where TEntityCreatedEvent : TEntityEvent
       where TEntity : Entity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
@@ -21,7 +21,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
       static readonly TEventEntityIdGetter IdGetter = Constructor.For<TEventEntityIdGetter>.DefaultConstructor.Instance();
 
       TEntityId _id;
-      public TEntityId Id => Assert.Result.NotNullOrDefault(_id);
+      public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
       protected Entity(TQueryModel queryModel) : this(queryModel.RegisterEventAppliers()) {}
 

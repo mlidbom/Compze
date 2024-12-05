@@ -15,7 +15,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
    {
       public abstract class NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
          : NestedComponent<TEntity, TEntityEvent>
-         where TEntityId : notnull
+         where TEntityId : struct
          where TEntityEvent : class, TComponentEvent
          where TEntityCreatedEvent : TEntityEvent
          where TEntity : NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
@@ -34,7 +34,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
          }
 
          TEntityId _id;
-         public TEntityId Id => Assert.Result.NotNullOrDefault(_id);
+         public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
          public static CollectionManager CreateSelfManagingCollection(TComponent parent) //todo:tests
             => new(parent: parent, appliersRegistrar: parent.RegisterEventAppliers());

@@ -3,36 +3,30 @@ using Compze.Contracts;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Contracts;
 
-[TestFixture]
-public class GuidNotEmptyTests : UniversalTestBase
+[TestFixture] public class GuidNotEmptyTests : UniversalTestBase
 {
-   [Test]
-   public void NotEmptyThrowsArgumentExceptionForEmptyGuid()
+   [Test] public void NotEmptyThrowsArgumentExceptionForEmptyGuid()
    {
       var emptyGuid = Guid.Empty;
-      var aGuid = Guid.NewGuid();
 
-      Assert.Throws<GuidIsEmptyContractViolationException>(() => Contract.ReturnValue(emptyGuid).NotEmpty())
-            .Message.Should().Contain("ReturnValue");
+      Invoking(() => Compze.Contracts.Assert.Result.NotDefault(emptyGuid))
+        .Should().Throw<InvalidResultException>()
+        .Which.Message.Should().Contain(nameof(emptyGuid));
 
-      Assert.Throws<GuidIsEmptyContractViolationException>(() => Contract.Argument(emptyGuid, nameof(emptyGuid)).NotEmpty());
-      Assert.Throws<GuidIsEmptyContractViolationException>(() => Contract.Argument(emptyGuid, nameof(emptyGuid)).NotEmpty())
-            .Message.Should().Contain("emptyGuid");
+      Invoking(() => Compze.Contracts.Assert.Argument.NotDefault(emptyGuid))
+        .Should().Throw<ArgumentException>()
+        .Which.Message.Should().Contain(nameof(emptyGuid));
 
-      Assert.Throws<GuidIsEmptyContractViolationException>(() => Contract.Argument(aGuid, nameof(aGuid),emptyGuid, nameof(emptyGuid)).NotEmpty())
-            .Message.Should().Contain("emptyGuid");
-   }
+      Invoking(() => Compze.Contracts.Assert.State.NotDefault(emptyGuid))
+        .Should().Throw<InvalidOperationException>()
+        .Which.Message.Should().Contain(nameof(emptyGuid));
 
-   [Test]
-   public void NotEmptyThrowsArgumentExceptionForEmptyGuidAlternative()
-   {
-      InspectionTestHelper.BatchTestInspection<GuidIsEmptyContractViolationException, Guid>(
-         assert: inspected => inspected.NotEmpty(),
-         badValues: [Guid.Empty, new Guid()],
-         goodValues: [Guid.NewGuid(), Guid.NewGuid()]);
+      Invoking(() => Compze.Contracts.Assert.Invariant.NotDefault(emptyGuid))
+        .Should().Throw<InvariantViolatedException>()
+        .Which.Message.Should().Contain(nameof(emptyGuid));
    }
 }

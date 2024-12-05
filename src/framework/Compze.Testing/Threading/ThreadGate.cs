@@ -44,7 +44,7 @@ class ThreadGate : IThreadGate
       using var _ = LogMethodEntryExit(nameof(AwaitLetOneThreadPassThrough));
       _monitor.Update(() =>
       {
-         Contract.Assert.That(!IsOpen, "Gate must be closed to call this method.");
+         Assert.State.Is(!IsOpen);
          IsOpen = true;
          _lockOnNextPass = true;
       });
