@@ -52,13 +52,6 @@ static class TypeCE
       return me.GetInterfaces().Contains(implemented);
    }
 
-   internal static Type GetGenericInterface(this Type me, Type implemented)
-   {
-      Assert.Argument.Is(me != null, implemented != null).And(implemented.IsGenericTypeDefinition);
-
-      return me.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == implemented);
-   }
-
    static readonly Dictionary<string, Type> TypeMap = new();
 
    ///<summary>Finds the class that the string represents within any loaded assembly. Calling with "MyNameSpace.MyObject" would return the same type as typeof(MyNameSpace.MyObject) etc.</summary>

@@ -57,7 +57,7 @@ public class EndpointHost : IEndpointHost
    {
       try
       {
-         Assert.State.Is(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
+         Assert.State.Is(!_isStarted).Is(Endpoints.None(endpoint => endpoint.IsRunning));
          _isStarted = true;
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).WithAggregateExceptions().CaF();
