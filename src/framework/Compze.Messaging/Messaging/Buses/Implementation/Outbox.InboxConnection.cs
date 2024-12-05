@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.Functional;
 using Compze.Messaging.Buses.Http;
@@ -17,7 +18,7 @@ partial class Outbox
       readonly IRpcClient _rpcClient = new RpcClient(httpApiClient, remoteAddress, typeMapper, serializer, globalBusStateTracker);
       readonly IMessageSender _messageSender = new MessageSender(httpApiClient, remoteAddress, typeMapper, serializer, globalBusStateTracker);
 
-      public MessageTypes.Internal.EndpointInformation EndpointInformation => Contract.Assert.That(_endpointInformation != null, $"{nameof(Init)} must be called before {nameof(EndpointInformation)} can be accessed")
+      public MessageTypes.Internal.EndpointInformation EndpointInformation => Assert.State.Is(_endpointInformation != null, () => $"{nameof(Init)} must be called before {nameof(EndpointInformation)} can be accessed")
                                                                                       .then(_endpointInformation!);
 
       public async Task SendAsync(IExactlyOnceEvent @event) => await _messageSender.SendAsync(@event).CaF();

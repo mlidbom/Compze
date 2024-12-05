@@ -1,4 +1,5 @@
 ﻿using System;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 
 namespace Compze.Testing.Threading;
@@ -53,7 +54,7 @@ static class GatedCodeSectionExtensions
 
    public static IGatedCodeSection AssertIsEmpty(this IGatedCodeSection @this)
    {
-      Contract.Assert.That(@this.IsEmpty(), "Code section should be empty");
+      Assert.State.Is(@this.IsEmpty(), () => $"{nameof(IGatedCodeSection)} must be empty when calling this method");
       return @this;
    }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.Functional;
 using Compze.Messaging.Buses.Http;
@@ -83,5 +84,5 @@ partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMappe
       }
    }
 
-   Unit AssertRunning() => Contract.Assert.That(_running, "not running");
+   Unit AssertRunning() => Assert.State.Is(_running, () => "not running").then(Unit.Instance);
 }
