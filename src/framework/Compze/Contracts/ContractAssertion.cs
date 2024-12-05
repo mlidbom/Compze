@@ -6,14 +6,14 @@ using Compze.Functional;
 
 namespace Compze.Contracts;
 
-class ContractAssertion(Func<string, Exception> createException)
+class ContractAsserter(Func<string, Exception> createException)
 {
    readonly Func<string, Exception> _createException = createException;
 
-   public ContractAssertion Is([DoesNotReturnIf(false)] bool value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+   public ContractAsserter Is([DoesNotReturnIf(false)] bool value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value ? this : throw _createException(valueString);
 
-   public ContractAssertion NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+   public ContractAsserter NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value != null ? this : throw _createException(valueString);
 
 
@@ -22,7 +22,7 @@ class ContractAssertion(Func<string, Exception> createException)
    //Specialized methods that return the value rather than `this` below here:
    //////////////////////////////////////////////////////////////////////////
 
-   public ContractAssertion NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+   public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))
                                  .then(this);
 
