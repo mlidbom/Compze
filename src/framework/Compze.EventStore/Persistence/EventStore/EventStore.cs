@@ -304,17 +304,17 @@ AggregateIds:
 
    void AssertHistoriesAreIdentical(AggregateEvent[] inMemoryMigratedHistory, IReadOnlyList<IAggregateEvent> loadedAggregateHistory)
    {
-      Assert.Result.Is(inMemoryMigratedHistory.Length == loadedAggregateHistory.Count);
+      Assert.Return.Is(inMemoryMigratedHistory.Length == loadedAggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];
          var loaded = loadedAggregateHistory[index];
-         Assert.Result.Is(inMemory.AggregateId == loaded.AggregateId);
-         Assert.Result.Is(inMemory.MessageId == loaded.MessageId);
-         Assert.Result.Is(inMemory.AggregateVersion == loaded.AggregateVersion);
-         Assert.Result.Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp);
-         Assert.Result.Is(inMemory.GetType() == loaded.GetType());
-         Assert.Result.Is(_serializer.Serialize(inMemory) == _serializer.Serialize((AggregateEvent)loaded));
+         Assert.Return.Is(inMemory.AggregateId == loaded.AggregateId);
+         Assert.Return.Is(inMemory.MessageId == loaded.MessageId);
+         Assert.Return.Is(inMemory.AggregateVersion == loaded.AggregateVersion);
+         Assert.Return.Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp);
+         Assert.Return.Is(inMemory.GetType() == loaded.GetType());
+         Assert.Return.Is(_serializer.Serialize(inMemory) == _serializer.Serialize((AggregateEvent)loaded));
       }
    }
 

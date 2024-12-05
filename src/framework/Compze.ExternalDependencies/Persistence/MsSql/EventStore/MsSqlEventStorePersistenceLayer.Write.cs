@@ -102,7 +102,7 @@ where {Event.EventId} = @{Event.EventId}";
                                                  nextEventReadOrder: nextEventReadOrder.IsNull ? null : new ReadOrder?(ReadOrder.FromSqlDecimal(nextEventReadOrder)));
          });
 
-      return Assert.Result.NotNull(neighborhood);
+      return Assert.Return.NotNull(neighborhood);
    }
 
    public void DeleteAggregate(Guid aggregateId)

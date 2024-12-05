@@ -15,4 +15,7 @@ static class Assert
 
    ///<summary>Assert conditions on the result of making a method call.</summary>
    public static ContractAssertion Result { get; } = new ResultAssertion();
+
+   ///<summary>Assert conditions on the result of making a method call.</summary>
+   public static ReturnAssertion Return { get; } = new ReturnAssertion();
 }

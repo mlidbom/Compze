@@ -30,7 +30,7 @@ partial class Outbox
       {
          var endpointIdGuidValue = receiverId.GuidValue;
          var affectedRows = _persistenceLayer.MarkAsReceived(messageId, endpointIdGuidValue);
-         Assert.Result.Is(affectedRows == 1);
+         Assert.Return.Is(affectedRows == 1);
       }
 
       public async Task StartAsync() => await _persistenceLayer.InitAsync().CaF();

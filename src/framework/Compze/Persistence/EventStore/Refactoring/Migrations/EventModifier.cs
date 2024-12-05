@@ -153,5 +153,5 @@ class EventModifier : IEventModifier
       _eventsAddedCallback.Invoke(_insertedEvents);
    }
 
-   internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? [Assert.Result.NotNull(_inspectedEvent)];
+   internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? [Assert.Return.NotNull(_inspectedEvent)];
 }

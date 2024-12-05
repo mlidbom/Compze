@@ -49,7 +49,7 @@ WHERE {Schema.MessageId} = @{Schema.MessageId}
                               .AddParameter(Schema.MessageId, messageId)
                               .ExecuteNonQuery();
 
-            Assert.Result.Is(affectedRows == 1);
+            Assert.Return.Is(affectedRows == 1);
             return affectedRows;
          });
    }

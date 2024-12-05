@@ -56,6 +56,6 @@ static class LinkedListCE
          current = @this.List!.AddAfter(@this, newItem);
       }
       @this.List!.Remove(@this);
-      return Assert.Result.NotNull(current);
+      return Assert.Return.NotNull(current);
    }
 }

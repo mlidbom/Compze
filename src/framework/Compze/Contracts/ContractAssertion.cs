@@ -12,11 +12,13 @@ abstract class ContractAssertion
    public ContractAssertion Is([DoesNotReturnIf(false)] bool value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value ? this : throw CreateException(valueString);
 
-   public TValue NotNull<TValue>(TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value ?? throw CreateException(valueString);
+   public ContractAssertion NotNull(object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+      value != null ? this : throw CreateException(valueString);
 
-   public TValue NotNullOrDefault<TValue>(TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
-      => !NullOrDefaultTester<TValue>.IsNullOrDefault(value) ? value! : throw CreateException(valueString);
+   public ContractAssertion NotNullOrDefault<TValue>(TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+      => !NullOrDefaultTester<TValue>.IsNullOrDefault(value) ? this : throw CreateException(valueString);
+
+
 }
 
 class ArgumentAssertion : ContractAssertion
@@ -37,6 +39,17 @@ class StateAssertion : ContractAssertion
 class ResultAssertion : ContractAssertion
 {
    protected override Exception CreateException(string message) => new AssertionException(message);
+}
+
+class ReturnAssertion
+{
+   protected Exception CreateException(string message) => new AssertionException(message);
+
+   public TValue NotNull<TValue>(TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+      value ?? throw CreateException(valueString);
+
+   public TValue NotNullOrDefault<TValue>(TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+      => !NullOrDefaultTester<TValue>.IsNullOrDefault(value) ? value! : throw CreateException(valueString);
 }
 
 class InvariantException(string message) : Exception(message);

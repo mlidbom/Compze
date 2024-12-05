@@ -51,7 +51,7 @@ WHERE {Schema.MessageId} = @{Schema.MessageId}
                               .PrepareStatement()
                               .ExecuteNonQuery();
 
-            Assert.Result.Is(affectedRows == 1);
+            Assert.Return.Is(affectedRows == 1);
             return affectedRows;
          });
    }
