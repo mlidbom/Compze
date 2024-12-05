@@ -1,0 +1,21 @@
+using Compze.SystemCE;
+using Compze.Testing;
+using Compze.Testing.Performance;
+using NUnit.Framework;
+using Assert = Compze.Contracts.Assert;
+
+namespace Compze.Tests.Contracts;
+
+[TestFixture] public class NotNullOrDefaultPerformanceTests : UniversalTestBase
+{
+   [Test] public void Should_run_10_000_tests_in_1_Millisecond()
+   {
+      var notNullOrDefault = new object();
+
+      TimeAsserter.Execute(
+         action: () => Assert.Argument.NotNullOrDefault(notNullOrDefault),
+         iterations: 10_000,
+         maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 6.0)
+      );
+   }
+}

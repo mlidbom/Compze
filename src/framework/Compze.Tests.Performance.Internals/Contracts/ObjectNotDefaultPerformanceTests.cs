@@ -2,33 +2,19 @@ using Compze.SystemCE;
 using Compze.Testing.Performance;
 using NUnit.Framework;
 using Compze.Testing;
-using Compze.Contracts.Deprecated;
+using Assert = Compze.Contracts.Assert;
 
 namespace Compze.Tests.Contracts;
 
 [TestFixture] public class ObjectNotDefaultPerformanceTests : UniversalTestBase
 {
-   [Test] public void ShouldRun300TestsIn1Milliseconds()
+   [Test] public void Should_run_10_000_tests_in_1_Millisecond()
    {
       var one = 1;
 
       TimeAsserter.Execute(
-         action: () => Contract.Argument(() => one).NotDefault(),
-         iterations: 300,
-         maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 2));
-   }
-
-   [Test] public void ShouldRun300TestsIn1Millisecond()
-   {
-      var one = 1;
-
-      TimeAsserter.Execute(
-         action: () =>
-         {
-            var inspected = Contract.Argument(() => one);
-            inspected.NotNullOrDefault();
-         },
-         iterations: 300,
-         maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 3));
+         action: () => Assert.Argument.NotDefault(one),
+         iterations: 10_000,
+         maxTotal: 1.Milliseconds().EnvMultiply(instrumented: 6));
    }
 }
