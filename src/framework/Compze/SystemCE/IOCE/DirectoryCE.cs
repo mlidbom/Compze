@@ -25,7 +25,7 @@ static class DirectoryCE
    /// </summary>
    public static long Size(this DirectoryInfo me)
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
       return me.FullName
                .AsHierarchy(Directory.GetDirectories).Flatten().Unwrap()
                .SelectMany(Directory.GetFiles)
@@ -41,7 +41,7 @@ static class DirectoryCE
    /// <param name="me"></param>
    public static void DeleteRecursive(this DirectoryInfo me)
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
       me.Delete(true);
    }
 }

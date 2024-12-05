@@ -15,7 +15,7 @@ static class MemberAccessorHelper
 
    static Func<object, object> BuildFieldGetter(FieldInfo field)
    {
-      Contract.ArgumentNotNull(field, nameof(field));
+      Contracts.Assert.Argument.NotNull(field);
 
       Contract.Assert.That(field.DeclaringType != null, "field.DeclaringType != null");
 
@@ -34,7 +34,7 @@ static class MemberAccessorHelper
    ///<summary>Returns functions that when invoked will return the values of the fields an properties in an instance of the supplied type.</summary>
    public static Func<object, object>[] GetFieldGetters(Type type)
    {
-      Contract.ArgumentNotNull(type, nameof(type));
+      Contracts.Assert.Argument.NotNull(type);
 
       return InnerGetFields(type);
    }
@@ -71,7 +71,7 @@ static class MemberAccessorHelper<T>
    ///<summary>Returns functions that when invoked will return the values of the fields an properties in an instance of the supplied type.</summary>
    public static Func<object, object?>[] GetFieldGetters(Type type)
    {
-      Contract.ArgumentNotNull(type, nameof(type));
+      Contracts.Assert.Argument.NotNull(type);
 
       return type == typeof(T) ? Fields : MemberAccessorHelper.GetFieldGetters(type);
    }

@@ -60,7 +60,7 @@ static class HierarchyExtensions
    /// </summary>
    public static IEnumerable<T> Flatten<T>(this T root) where T : IHierarchy<T>
    {
-      Contract.ArgumentNotNull(root, nameof(root));
+      Contracts.Assert.Argument.NotNull(root);
       return EnumerableCE.Create(root).FlattenHierarchy(me => me.Children);
    }
 
@@ -70,7 +70,7 @@ static class HierarchyExtensions
    /// </summary>
    public static IEnumerable<T> Unwrap<T>(this IEnumerable<IAutoHierarchy<T>> root)
    {
-      Contract.ArgumentNotNull(root, nameof(root));
+      Contracts.Assert.Argument.NotNull(root);
       return root.Select(me => me.Wrapped);
    }
 }

@@ -116,7 +116,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual void Save<TValue>(object id, TValue value)
    {
-      Contract.ArgumentNotNull(value, nameof(value));
+      Contracts.Assert.Argument.NotNull(value);
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 

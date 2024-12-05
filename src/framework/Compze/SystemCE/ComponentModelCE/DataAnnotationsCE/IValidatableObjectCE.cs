@@ -12,7 +12,7 @@ public static class ValidatableObjectCE
 {
    static string ExtractMemberName(Expression<Func<object>> accessor)
    {
-      Contract.ArgumentNotNull(accessor, nameof(accessor));
+      Contracts.Assert.Argument.NotNull(accessor);
 
       var expr = accessor.Body;
       while (expr.NodeType is ExpressionType.Convert or ExpressionType.ConvertChecked)

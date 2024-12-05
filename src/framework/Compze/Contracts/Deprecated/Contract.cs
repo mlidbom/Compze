@@ -24,8 +24,7 @@ static class Contract
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1));
 
 #pragma warning disable CS8777 //Reviewed OK. We have verified that the parameters are non-null when method exits.
-   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1) =>
-      ArgumentNotNull((p1, n1));
+
    public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2) =>
       ArgumentNotNull((p1, n1), (p2, n2));
    public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3) =>

@@ -16,7 +16,7 @@ public static partial class EnumerableCE
    /// <returns></returns>
    public static IEnumerable<T> Create<T>(params T[] values)
    {
-      Contract.ArgumentNotNull(values, nameof(values));
+      Contracts.Assert.Argument.NotNull(values);
       return values;
    }
 
@@ -36,7 +36,7 @@ public static partial class EnumerableCE
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
    internal static bool None<T>(this IEnumerable<T> me)
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
 
       return !me.Any();
    }
@@ -64,7 +64,7 @@ public static partial class EnumerableCE
    /// </summary>
    internal static IEnumerable<IEnumerable<T>> ChopIntoSizesOf<T>(this IEnumerable<T> me, int size)
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
 
       // ReSharper disable once GenericEnumeratorNotDisposed ReSharper is plain wrong again.
       using var enumerator = me.GetEnumerator();
@@ -101,7 +101,7 @@ public static partial class EnumerableCE
    /// <returns>All the objects in all the nested collections </returns>
    internal static IEnumerable<TChild> Flatten<T, TChild>(this IEnumerable<T> me) where T : IEnumerable<TChild>
    {
-      Contract.ArgumentNotNull(me, nameof(me));
+      Contracts.Assert.Argument.NotNull(me);
 
       return me.SelectMany(obj => obj);
    }
