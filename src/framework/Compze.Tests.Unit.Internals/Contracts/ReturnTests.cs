@@ -4,6 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 using static Compze.Contracts.Assert;
+// ReSharper disable ExpressionIsAlwaysNull
 
 namespace Compze.Tests.Contracts;
 
