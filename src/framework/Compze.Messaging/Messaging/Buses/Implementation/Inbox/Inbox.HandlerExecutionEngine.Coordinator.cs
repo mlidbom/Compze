@@ -27,7 +27,7 @@ partial class Inbox
          {
             HandlerExecutionTask? handlerExecutionTask = null;
             _implementation.Await(implementation => implementation.TryGetDispatchableMessage(dispatchingRules, out handlerExecutionTask));
-            return Contract.ReturnNotNull(handlerExecutionTask);
+            return Contracts.Assert.Result.ReturnNotNull(handlerExecutionTask);
          }
 
          public Task<object?> EnqueueMessageTask(TransportMessage.InComing message) => _implementation.Update(implementation =>

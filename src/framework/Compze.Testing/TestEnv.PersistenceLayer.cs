@@ -39,7 +39,7 @@ static partial class TestEnv
 
       [return:NotNull]static TValue SelectValue<TValue>(TValue value, string provider)
       {
-         if(!Equals(value, default(TValue))) return Contract.ReturnNotNull(value);
+         if(!Equals(value, default(TValue))) return Contracts.Assert.Result.ReturnNotNull(value);
 
          throw new Exception($"Value missing for {provider}");
       }

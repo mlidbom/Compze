@@ -99,7 +99,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGet(key, out TValue? value)) return Contract.ReturnNotNull(value);
+      if(TryGet(key, out TValue? value)) return Contracts.Assert.Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
@@ -108,7 +108,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Contract.ReturnNotNull(value);
+      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Contracts.Assert.Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }

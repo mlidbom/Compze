@@ -10,8 +10,8 @@ namespace Compze.SystemCE.ReflectionCE;
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
 static class TypeCE
 {
-   public static string FullNameNotNull(this Type @this) => Contract.ReturnNotNull(@this.FullName);
-   public static Type DeclaringTypeNotNull(this Type @this) => Contract.ReturnNotNull(@this.DeclaringType);
+   public static string FullNameNotNull(this Type @this) => Contracts.Assert.Result.ReturnNotNull(@this.FullName);
+   public static Type DeclaringTypeNotNull(this Type @this) => Contracts.Assert.Result.ReturnNotNull(@this.DeclaringType);
 
    /// ///<returns>true if <paramref name="me"/> implements the interface: <typeparamref name="TImplemented"/>. By definition true if <paramref name="me"/> == <typeparamref name="TImplemented"/>.</returns>
    public static bool Implements<TImplemented>(this Type me)

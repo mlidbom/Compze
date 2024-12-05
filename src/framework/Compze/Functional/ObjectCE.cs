@@ -19,5 +19,5 @@ static class ObjectCE
       }
    }
 
-   public static string ToStringNotNull(this object @this) => Contract.ReturnNotNull(@this.ToString());
+   public static string ToStringNotNull(this object @this) => Contracts.Assert.Result.ReturnNotNull(@this.ToString());
 }

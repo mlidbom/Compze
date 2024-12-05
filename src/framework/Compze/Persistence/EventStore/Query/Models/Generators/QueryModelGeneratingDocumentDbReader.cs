@@ -27,7 +27,7 @@ public class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
       _usageGuard.AssertNoContextChangeOccurred(this);
       if (TryGet(key, out TValue? value))
       {
-         return Contract.ReturnNotNull(value);
+         return Contracts.Assert.Result.ReturnNotNull(value);
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
@@ -38,7 +38,7 @@ public class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
       _usageGuard.AssertNoContextChangeOccurred(this);
       if (TryGetVersion(key, out TValue? value, version))
       {
-         return Contract.ReturnNotNull(value);
+         return Contracts.Assert.Result.ReturnNotNull(value);
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
