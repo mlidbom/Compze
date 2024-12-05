@@ -1,6 +1,6 @@
 using System;
 using System.Linq.Expressions;
-using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 
 namespace Compze.SystemCE.LinqCE;
 

@@ -1,4 +1,4 @@
-﻿using Compze.Contracts;
+﻿using Compze.Contracts.Deprecated;
 
 namespace Compze.Messaging.Buses.Implementation;
 

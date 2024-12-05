@@ -1,4 +1,3 @@
-using Compze.Contracts;
 using Compze.SystemCE;
 using Compze.Testing.Performance;
 using NUnit.Framework;

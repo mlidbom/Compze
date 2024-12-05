@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.GenericAbstractions.Hierarchies;
 
 namespace Compze.SystemCE.IOCE;

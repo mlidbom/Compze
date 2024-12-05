@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
 using Compze.Messaging.Buses;

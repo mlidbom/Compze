@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.SystemCE.LinqCE;
 
 namespace Compze.SystemCE.CollectionsCE.GenericCE;

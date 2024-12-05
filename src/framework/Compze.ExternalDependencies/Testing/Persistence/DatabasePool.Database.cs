@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.SystemCE;
 using JetBrains.Annotations;
 

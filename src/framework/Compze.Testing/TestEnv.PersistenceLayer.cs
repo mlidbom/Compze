@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.SystemCE;
 
 namespace Compze.Testing;

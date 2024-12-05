@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.DependencyInjection;
 using Compze.Messaging.Buses.Implementation;
 using Compze.SystemCE.ThreadingCE.TasksCE;

@@ -1,5 +1,5 @@
 using System;
-using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 
 namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 

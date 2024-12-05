@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Compze.Contracts.Deprecated;
 using Compze.SystemCE;
 using JetBrains.Annotations;
 // ReSharper disable UnusedParameter.Global
-using NotNull = global::System.Diagnostics.CodeAnalysis.NotNullAttribute;
+using NotNull = System.Diagnostics.CodeAnalysis.NotNullAttribute;
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
 /// <summary>Ensures that a class's contract is followed.</summary>
 static class Contract
@@ -56,47 +55,47 @@ static class Contract
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1), (p2!, n2), (p3!, n3));
 
 #pragma warning disable CS8777 //Reviewed OK. We have verified that the parameters are non-null when method exits.
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1) =>
+   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1) =>
       ArgumentNotNull((p1, n1));
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2) =>
+   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2) =>
       ArgumentNotNull((p1, n1), (p2, n2));
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3) =>
+   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3) =>
       ArgumentNotNull((p1, n1), (p2, n2), (p3, n3));
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3),(p4, n4));
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4, [NotNull]object? p5, [InvokerParameterName] string n5) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3),(p4, n4),(p5, n5));
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4, [NotNull]object? p5, [InvokerParameterName] string n5, [NotNull]object? p6, [InvokerParameterName] string n6) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3),(p4, n4),(p5, n5),(p6, n6));
-   public static void ArgumentNotNull([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4, [NotNull]object? p5, [InvokerParameterName] string n5, [NotNull]object? p6, [InvokerParameterName] string n6, [NotNull]object? p7, [InvokerParameterName] string n7) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3),(p4, n4),(p5, n5),(p6, n6), (p7, n7));
+   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4) =>
+      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4));
+   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5) =>
+      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5));
+   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6) =>
+      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6));
+   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6, [NotNull] object? p7, [InvokerParameterName] string n7) =>
+      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6), (p7, n7));
 
-   public static void ArgumentNotNullOrDefault([NotNull]object? p1, [InvokerParameterName] string n1) =>
+   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1) =>
       ArgumentNotNullOrDefault((p1, n1));
-   public static void ArgumentNotNullOrDefault([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2) =>
+   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2) =>
       ArgumentNotNullOrDefault((p1, n1), (p2, n2));
-   public static void ArgumentNotNullOrDefault([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3) =>
+   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3) =>
       ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3));
-   public static void ArgumentNotNullOrDefault([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3),(p4, n4));
-   public static void ArgumentNotNullOrDefault([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4, [NotNull]object? p5, [InvokerParameterName] string n5) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3),(p4, n4),(p5, n5));
-   public static void ArgumentNotNullOrDefault([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4, [NotNull]object? p5, [InvokerParameterName] string n5, [NotNull]object? p6, [InvokerParameterName] string n6) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3),(p4, n4),(p5, n5),(p6, n6));
-   public static void ArgumentNotNullOrDefault([NotNull]object? p1, [InvokerParameterName] string n1, [NotNull]object? p2, [InvokerParameterName] string n2, [NotNull]object? p3, [InvokerParameterName] string n3, [NotNull]object? p4, [InvokerParameterName] string n4, [NotNull]object? p5, [InvokerParameterName] string n5, [NotNull]object? p6, [InvokerParameterName] string n6, [NotNull]object? p7, [InvokerParameterName] string n7) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3),(p4, n4),(p5, n5),(p6, n6), (p7, n7));
+   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4) =>
+      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4));
+   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5) =>
+      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5));
+   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6) =>
+      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6));
+   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6, [NotNull] object? p7, [InvokerParameterName] string n7) =>
+      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6), (p7, n7));
 
-   public static void ArgumentNotNullOrEmpty([NotNull]string? p1, [InvokerParameterName] string n1) => ArgumentNotNullOrEmpty((p1, n1));
-   public static void ArgumentNotNullOrEmpty([NotNull]string? p1, [InvokerParameterName] string n1, [NotNull]string? p2, [InvokerParameterName] string n2) => ArgumentNotNullOrEmpty((p1, n1), (p2, n2));
+   public static void ArgumentNotNullOrEmpty([NotNull] string? p1, [InvokerParameterName] string n1) => ArgumentNotNullOrEmpty((p1, n1));
+   public static void ArgumentNotNullOrEmpty([NotNull] string? p1, [InvokerParameterName] string n1, [NotNull] string? p2, [InvokerParameterName] string n2) => ArgumentNotNullOrEmpty((p1, n1), (p2, n2));
 
-   public static void ArgumentNotNullEmptyOrWhitespace([NotNull]string? p1, [InvokerParameterName] string n1) => ArgumentNotNullEmptyOrWhitespace((p1, n1));
-   public static void ArgumentNotNullEmptyOrWhitespace([NotNull]string? p1, [InvokerParameterName] string n1, [NotNull]string? p2, [InvokerParameterName] string n2) => ArgumentNotNullEmptyOrWhitespace((p1, n1), (p2, n2));
+   public static void ArgumentNotNullEmptyOrWhitespace([NotNull] string? p1, [InvokerParameterName] string n1) => ArgumentNotNullEmptyOrWhitespace((p1, n1));
+   public static void ArgumentNotNullEmptyOrWhitespace([NotNull] string? p1, [InvokerParameterName] string n1, [NotNull] string? p2, [InvokerParameterName] string n2) => ArgumentNotNullEmptyOrWhitespace((p1, n1), (p2, n2));
 #pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
    static void ArgumentNotNull(params (object? Argument, string Name)[] arguments)
    {
-      for(var i = 0; i < arguments.Length; i++)
+      for (var i = 0; i < arguments.Length; i++)
       {
-         if(arguments[i].Argument is null)
+         if (arguments[i].Argument is null)
          {
             throw new ArgumentNullException(arguments[i].Name);
          }
@@ -105,9 +104,9 @@ static class Contract
 
    static void ArgumentNotNullOrDefault(params (object? Value, string Name)[] arguments)
    {
-      for(var i = 0; i < arguments.Length; i++)
+      for (var i = 0; i < arguments.Length; i++)
       {
-         if(NullOrDefaultTester<object>.IsNullOrDefault(arguments[i].Value))
+         if (NullOrDefaultTester<object>.IsNullOrDefault(arguments[i].Value))
          {
             throw new ArgumentNullException(arguments[i].Name);
          }
@@ -116,9 +115,9 @@ static class Contract
 
    static void ArgumentNotNullOrEmpty(params (string? Value, string Name)[] arguments)
    {
-      for(var i = 0; i < arguments.Length; i++)
+      for (var i = 0; i < arguments.Length; i++)
       {
-         if(string.IsNullOrEmpty(arguments[i].Value))
+         if (string.IsNullOrEmpty(arguments[i].Value))
          {
             throw new ArgumentException($"Parameter {arguments[i].Name} was either null or empty", arguments[i].Name);
          }
@@ -127,9 +126,9 @@ static class Contract
 
    static void ArgumentNotNullEmptyOrWhitespace(params (string? Value, string Name)[] arguments)
    {
-      for(var i = 0; i < arguments.Length; i++)
+      for (var i = 0; i < arguments.Length; i++)
       {
-         if(arguments[i].Value.IsNullEmptyOrWhiteSpace())
+         if (arguments[i].Value.IsNullEmptyOrWhiteSpace())
          {
             throw new ArgumentException($"Parameter {arguments[i].Name} was either null, empty or whitespace", arguments[i].Name);
          }
@@ -182,12 +181,12 @@ static class Contract
       return returnValue;
    }
 
-   [return:NotNull]internal static TReturnValue ReturnNotNull<TReturnValue>(TReturnValue returnValue) => returnValue ?? throw new NullReferenceException("The contract of this method does not allow for a null return value but the return value was null");
+   [return: NotNull] internal static TReturnValue ReturnNotNull<TReturnValue>(TReturnValue returnValue) => returnValue ?? throw new NullReferenceException("The contract of this method does not allow for a null return value but the return value was null");
 
    static IInspected<TParameter> CreateInspected<TParameter>(Expression<Func<TParameter>>[] arguments, InspectionType inspectionType)
    { //Yes the loop is not as pretty as a linq expression but this is performance critical code that might run in tight loops. If it was not I would be using linq.
       var inspected = new IInspectedValue<TParameter>[arguments.Length];
-      for(var i = 0; i < arguments.Length; i++)
+      for (var i = 0; i < arguments.Length; i++)
       {
          inspected[i] = new InspectedValue<TParameter>(type: inspectionType,
 #pragma warning disable CS8604 // Possible null reference argument.
@@ -203,9 +202,9 @@ static class Contract
 
    internal static void AssertThat(params bool[] conditions)
    {
-      for(var condition = 0; condition < conditions.Length; condition++)
+      for (var condition = 0; condition < conditions.Length; condition++)
       {
-         if(!conditions[condition])
+         if (!conditions[condition])
          {
             throw new ContractAssertThatException(condition);
          }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using FluentAssertions;
 using Assert = NUnit.Framework.Assert;
