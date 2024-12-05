@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using Compze.Contracts.Deprecated;
+using Compze.Contracts;
 using Compze.GenericAbstractions.Hierarchies;
 
 namespace Compze.SystemCE.IOCE;
@@ -16,7 +16,7 @@ static class DirectoryCE
    /// <returns></returns>
    public static DirectoryInfo AsDirectory(this string path)
    {
-      Contract.ArgumentNotNullEmptyOrWhitespace(path, nameof(path));
+      Assert.Argument.NotNullEmptyOrWhitespace(path);
       return new DirectoryInfo(path);
    }
 
