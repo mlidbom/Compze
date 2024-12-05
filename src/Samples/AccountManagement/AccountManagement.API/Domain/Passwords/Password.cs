@@ -17,11 +17,11 @@ public partial class Password
 
 #pragma warning disable IDE0051 // Remove unused private members
    [JsonConstructor]Password(byte[] hash, byte[] salt)
-#pragma warning restore IDE0051 // Remove unused private members
    {
       _hash = hash;
       _salt = salt;
    }
+#pragma warning restore IDE0051 // Remove unused private members
 
    public Password(string password)
    {
