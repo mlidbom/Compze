@@ -1,2 +1,2 @@
 ﻿[*.cs]
-dotnet_diagnostic.CA1812.severity = none # Test classes are instantiated by the nunit and the analyzer does not realize this
+dotnet_diagnostic.CA1812.severity = none # Test classes are instantiated by nunit and the analyzer does not realize this

@@ -2,12 +2,14 @@
 
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-      <IsPackable>false</IsPackable>
+      <Nullable>disable</Nullable>
+   </PropertyGroup>
+
+   <PropertyGroup>
+      <RootNamespace>AccountManagement</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
       <AnalysisLevel>latest-all</AnalysisLevel>
-      <LangVersion>default</LangVersion>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
 
    <ItemGroup>

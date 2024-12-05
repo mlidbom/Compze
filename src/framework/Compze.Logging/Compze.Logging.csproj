@@ -2,18 +2,15 @@
 
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-      <ImplicitUsings>disable</ImplicitUsings>
       <Nullable>enable</Nullable>
-      <LangVersion>default</LangVersion>
    </PropertyGroup>
 
    <PropertyGroup>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
       <RootNamespace>Compze.Logging</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    </PropertyGroup>
 
 

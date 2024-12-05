@@ -2,14 +2,15 @@
 
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
-      <PlatformTarget>AnyCPU</PlatformTarget>
       <Nullable>enable</Nullable>
-      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+   </PropertyGroup>
+
+   <PropertyGroup>
+      <RootNamespace>AccountManagement.Domain.Events</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
       <AnalysisLevel>latest-all</AnalysisLevel>
-      <LangVersion>default</LangVersion>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    </PropertyGroup>
 
    <ItemGroup>

@@ -2,11 +2,14 @@
 
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-      <LangVersion>default</LangVersion>
-      <ImplicitUsings>disable</ImplicitUsings>
       <Nullable>enable</Nullable>
-      <IsPackable>false</IsPackable>
+   </PropertyGroup>
+
+   <PropertyGroup>
+      <RootNamespace>Compze.Tests</RootNamespace>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
 
    <ItemGroup>
@@ -31,10 +34,6 @@
          <Link>TestUsingPluggableComponentCombinations</Link>
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-   </ItemGroup>
-
-   <ItemGroup>
-      <EditorConfigFiles Remove=".editorconfig" />
    </ItemGroup>
 
 </Project>

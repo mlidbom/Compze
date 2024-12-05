@@ -2,20 +2,15 @@
 
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-      <LangVersion>default</LangVersion>
-   </PropertyGroup>
-
-   <PropertyGroup>
       <Nullable>enable</Nullable>
-      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
    </PropertyGroup>
 
    <PropertyGroup>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <RootNamespace>Compze.Testing</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
       <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    </PropertyGroup>
 
    <ItemGroup>

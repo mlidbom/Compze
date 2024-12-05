@@ -1,20 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+
+   <PropertyGroup>
+      <RootNamespace>Compze</RootNamespace>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+   </PropertyGroup>
+
    <ItemGroup>
       <FrameworkReference Include="Microsoft.AspNetCore.App" />
    </ItemGroup>
-
-   <PropertyGroup>
-      <TargetFramework>net8.0</TargetFramework>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-      <Nullable>enable</Nullable>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-      <RootNamespace>Compze</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <LangVersion>default</LangVersion>
-   </PropertyGroup>
 
    <ItemGroup>
       <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
@@ -35,7 +36,8 @@
 
    <ItemGroup>
       <ProjectReference Include="..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
-      <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference
+         Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />

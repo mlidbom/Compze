@@ -1,29 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-   <ItemGroup>
-      <FrameworkReference Include="Microsoft.AspNetCore.App" />
-   </ItemGroup>
-
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-      <LangVersion>default</LangVersion>
-   </PropertyGroup>
-
-   <PropertyGroup>
       <Nullable>enable</Nullable>
    </PropertyGroup>
 
    <PropertyGroup>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
       <RootNamespace>Compze</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    </PropertyGroup>
 
    <ItemGroup>
-      <None Remove="Compze.Core.v3.ncrunchproject" />
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
    </ItemGroup>
 
    <ItemGroup>
@@ -33,7 +24,6 @@
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
-      <!-- ReSharper disable once VulnerablePackage -->
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
       <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
