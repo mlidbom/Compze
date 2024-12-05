@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.DDD;
 using Compze.Messaging.Events;
 using Compze.SystemCE.LinqCE;
@@ -12,8 +11,8 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
    where TAggregateEvent : class, IAggregateEvent
 {
-   //Yes empty. Id should be assigned by an action and it should be obvious that the aggregate in invalid until that happens
-   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Contract.Assert.That(typeof(TAggregateEvent).IsInterface, "typeof(TAggregateEvent).IsInterface");
+   //Yes empty. Id should be assigned by an action, and it should be obvious that the aggregate in invalid until that happens
+   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TAggregateEvent).IsInterface);
 
    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventDispatcher = new();
 
