@@ -12,7 +12,7 @@ namespace Compze.Tests.Contracts;
    {
       string aNullString = null;
       Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(aNullString!))
-        .Should().Throw<ArgumentNullException>()
+        .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(aNullString));
    }
 
