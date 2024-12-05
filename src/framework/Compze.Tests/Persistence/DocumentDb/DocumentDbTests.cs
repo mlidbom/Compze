@@ -7,13 +7,10 @@ using Compze.DDD;
 using Compze.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.SystemCE;
-using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.DependencyInjection;
 using FluentAssertions;
-using JetBrains.Annotations;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 

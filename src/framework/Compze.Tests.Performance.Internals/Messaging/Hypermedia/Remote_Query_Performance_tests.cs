@@ -6,7 +6,6 @@ using Compze.Messaging;
 using Compze.Messaging.Hypermedia;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
 using NUnit.Framework;

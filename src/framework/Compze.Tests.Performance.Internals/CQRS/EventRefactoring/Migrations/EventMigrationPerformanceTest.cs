@@ -8,7 +8,6 @@ using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Refactoring.Migrations;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.Performance;
 using NUnit.Framework;
 using Compze.Testing;

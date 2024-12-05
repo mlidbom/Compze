@@ -4,7 +4,6 @@ using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using CommunityToolkit.Diagnostics;
-using Compze.Contracts;
 using Compze.Functional;
 using Compze.GenericAbstractions.Time;
 using Compze.Messaging.Hypermedia;

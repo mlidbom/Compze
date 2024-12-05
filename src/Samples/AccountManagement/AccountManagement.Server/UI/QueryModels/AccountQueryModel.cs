@@ -5,7 +5,6 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
-using Compze.Contracts;
 using Compze.Messaging;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Functional;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.Messaging.Buses.Implementation;
-using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Messaging.Buses;

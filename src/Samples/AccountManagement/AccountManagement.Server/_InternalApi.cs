@@ -3,7 +3,6 @@ using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;
 using Compze;
-using Compze.Contracts;
 using Compze.Functional;
 using Compze.Messaging;
 using Compze.Persistence.EventStore;

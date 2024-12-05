@@ -7,7 +7,6 @@ using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace AccountManagement.UI.QueryModels;
 

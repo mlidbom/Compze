@@ -10,7 +10,6 @@ using Compze.Messaging.Hypermedia;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;

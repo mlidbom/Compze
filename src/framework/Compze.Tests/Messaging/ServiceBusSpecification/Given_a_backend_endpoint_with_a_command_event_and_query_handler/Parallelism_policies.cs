@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Compze.Messaging.Buses;
-using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;

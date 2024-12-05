@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Compze.Messaging;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;

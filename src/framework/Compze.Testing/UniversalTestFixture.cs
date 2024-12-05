@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Compze.Logging;
 using Compze.Logging.Serilog;
 using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.Logging.Serilog;
 using NUnit.Framework;
 using Serilog;

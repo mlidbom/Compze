@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Compze.Messaging;
 using Compze.Messaging.Buses;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE.TransactionsCE;
 using FluentAssertions;
 using NUnit.Framework;

@@ -1,9 +1,6 @@
 ﻿using System.Linq;
 using System.Transactions;
-using Compze.Messaging;
 using Compze.Messaging.Buses;
-using Compze.SystemCE.TransactionsCE;
-using Compze.Testing;
 using Compze.Testing.Threading;
 using FluentAssertions;
 using NUnit.Framework;

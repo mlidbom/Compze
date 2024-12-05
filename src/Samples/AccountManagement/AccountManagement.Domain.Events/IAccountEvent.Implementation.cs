@@ -1,7 +1,6 @@
 ﻿using System;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
-using Compze.Contracts;
 using Compze.Persistence.EventStore;
 using Newtonsoft.Json;
 

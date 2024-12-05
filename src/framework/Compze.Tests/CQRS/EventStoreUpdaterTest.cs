@@ -13,8 +13,6 @@ using Compze.Refactoring.Naming;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Performance;

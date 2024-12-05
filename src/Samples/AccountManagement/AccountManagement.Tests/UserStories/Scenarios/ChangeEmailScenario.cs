@@ -1,6 +1,5 @@
 ﻿using AccountManagement.API;
 using AccountManagement.Domain;
-using Compze.Functional;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
 

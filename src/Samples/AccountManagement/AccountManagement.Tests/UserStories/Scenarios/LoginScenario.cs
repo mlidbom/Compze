@@ -1,5 +1,4 @@
 ﻿using AccountManagement.API;
-using Compze.Functional;
 using Compze.Messaging.Buses;
 
 namespace AccountManagement.UserStories.Scenarios;

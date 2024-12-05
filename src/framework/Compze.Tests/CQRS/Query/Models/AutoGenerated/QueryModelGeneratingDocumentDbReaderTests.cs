@@ -9,8 +9,6 @@ using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.Persistence.EventStore.Query.Models.Generators;
 using Compze.Refactoring.Naming;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.SystemCE.TransactionsCE;

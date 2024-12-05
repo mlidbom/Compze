@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Compze.Messaging.Buses;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing.Threading;
 using NUnit.Framework;
 

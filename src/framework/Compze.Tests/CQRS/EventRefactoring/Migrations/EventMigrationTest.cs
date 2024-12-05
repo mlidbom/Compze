@@ -7,8 +7,6 @@ using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Refactoring.Migrations;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.SystemCE.TransactionsCE;
 using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;

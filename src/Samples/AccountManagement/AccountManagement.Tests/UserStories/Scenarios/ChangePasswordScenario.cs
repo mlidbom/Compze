@@ -1,7 +1,5 @@
 ﻿using AccountManagement.API;
 using CommunityToolkit.Diagnostics;
-using Compze.Contracts;
-using Compze.Functional;
 using Compze.Messaging.Buses;
 using Compze.Messaging.Hypermedia;
 

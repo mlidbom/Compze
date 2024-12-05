@@ -6,8 +6,6 @@ using Compze.DependencyInjection;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
 using Compze.Testing;
 using Compze.Testing.SystemCE.TransactionsCE;
 using FluentAssertions;

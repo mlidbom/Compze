@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using CommunityToolkit.Diagnostics;
-using Compze.Contracts;
 
 namespace AccountManagement.Domain.Passwords;
 
