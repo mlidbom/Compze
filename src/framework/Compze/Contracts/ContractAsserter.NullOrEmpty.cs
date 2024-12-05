@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Compze.Contracts.Deprecated;
 using Compze.Functional;
 
 namespace Compze.Contracts;

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Compze.Contracts.Deprecated;
 using Compze.SystemCE.LinqCE;
 
 namespace Compze.SystemCE.CollectionsCE.GenericCE;

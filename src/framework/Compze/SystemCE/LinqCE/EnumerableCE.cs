@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts.Deprecated;
 
 namespace Compze.SystemCE.LinqCE;
 

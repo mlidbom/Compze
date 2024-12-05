@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.Functional;
 
 namespace Compze.SystemCE;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;

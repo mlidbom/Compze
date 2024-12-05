@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Compze.Contracts.Deprecated;
 using Compze.Functional;
 using JetBrains.Annotations;
 

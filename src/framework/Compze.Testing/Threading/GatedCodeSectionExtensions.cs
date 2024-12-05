@@ -1,6 +1,5 @@
 ﻿using System;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 
 namespace Compze.Testing.Threading;
 

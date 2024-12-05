@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;

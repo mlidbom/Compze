@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.Functional;
 using Compze.Messaging.Buses.Http;
 using Compze.Refactoring.Naming;

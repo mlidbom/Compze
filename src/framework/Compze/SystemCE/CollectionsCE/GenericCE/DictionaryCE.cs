@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Compze.Contracts.Deprecated;
 
 namespace Compze.SystemCE.CollectionsCE.GenericCE;
 

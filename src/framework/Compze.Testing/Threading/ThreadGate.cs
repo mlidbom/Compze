@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.Functional;
 using Compze.Logging;
 using Compze.SystemCE;

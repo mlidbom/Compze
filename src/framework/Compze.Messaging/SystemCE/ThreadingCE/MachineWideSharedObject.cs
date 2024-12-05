@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.Functional;
 using Compze.Persistence;
 using Compze.Serialization;

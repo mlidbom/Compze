@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Compze.Contracts.Deprecated;
 using JetBrains.Annotations;
 
 namespace Compze.SystemCE.LinqCE;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.SystemCE;
 
 namespace Compze.Persistence.DocumentDb;

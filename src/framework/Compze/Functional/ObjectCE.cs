@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Compze.Contracts.Deprecated;
 
 namespace Compze.Functional;
 
