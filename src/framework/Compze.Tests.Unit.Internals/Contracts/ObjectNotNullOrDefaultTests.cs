@@ -1,4 +1,5 @@
-﻿using Compze.Contracts;
+﻿using System;
+using Compze.Contracts;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
@@ -23,19 +24,10 @@ namespace Compze.Tests.Contracts;
    [Test] public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()
    {
       int? zero = 0;
-      MyStructure? defaultMyStructure = new MyStructure();
+      DateTime? defaultMyStructure = new DateTime();
 
       Invoking(() => Invariant.NotNullOrDefault(zero)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(zero));
       Invoking(() => Invariant.NotNullOrDefault(defaultMyStructure)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(defaultMyStructure));
-   }
-
-   struct MyStructure
-   {
-      // ReSharper disable NotAccessedField.Local
-#pragma warning disable IDE0052 //Review OK: This member is used through reflection.
-      readonly int _value;
-#pragma warning restore IDE0052 // Remove unread private members
-      // ReSharper restore NotAccessedField.Local
    }
 }
 
