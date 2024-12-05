@@ -1,15 +1,12 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Compze.Contracts.Deprecated;
 using Compze.Functional;
 
 namespace Compze.Contracts;
 
-class ContractAsserter(Func<string, Exception> createException)
+partial class ContractAsserter
 {
-   readonly Func<string, Exception> _createException = createException;
-
    public ContractAsserter Is([DoesNotReturnIf(false)] bool value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value ? this : throw _createException(valueString);
 
