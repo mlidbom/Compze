@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Contracts;
+using Compze.Functional;
 
 namespace Compze.DDD;
 
@@ -27,7 +28,7 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    [NotNull]public virtual TKey Id
    {
       get => Assert.Return.NotNullOrDefault(_id);
-      private set => _id = Assert.Argument.NotNullOrDefault(value);
+      private set => _id = Assert.Argument.NotNullOrDefault(value).then(value);
    }
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>
