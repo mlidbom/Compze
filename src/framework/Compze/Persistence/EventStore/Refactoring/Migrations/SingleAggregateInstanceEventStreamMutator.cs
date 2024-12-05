@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.SystemCE.LinqCE;
 
@@ -38,7 +39,7 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
    static IEnumerable<AggregateEvent> SingleEventSequence(AggregateEvent @event) { yield return @event; }
    public IEnumerable<AggregateEvent> Mutate(AggregateEvent @event)
    {
-      Contract.Assert.That(_aggregateId == @event.AggregateId, "_aggregateId == @event.AggregateId");
+      Assert.Argument.Is(_aggregateId == @event.AggregateId);
       if (_eventMigrators.Length == 0)
       {
          return SingleEventSequence(@event);

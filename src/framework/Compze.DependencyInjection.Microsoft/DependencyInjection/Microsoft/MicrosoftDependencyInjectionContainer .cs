@@ -100,8 +100,8 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    IDisposable IServiceLocator.BeginScope()
    {
-      Assert.State.Is(!_isDisposed);
-      Assert.State.Assert(_scopeCache.Value == null, "Scope already exists. Nested scopes are not supported.");
+      Assert.State.Is(!_isDisposed)
+            .Is(_scopeCache.Value == null, () => "Scope already exists. Nested scopes are not supported.");
 
       _scopeCache.Value = CurrentProvider().CreateAsyncScope();
 

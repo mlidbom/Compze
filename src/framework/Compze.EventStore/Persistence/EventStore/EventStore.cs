@@ -180,7 +180,7 @@ class EventStore : IEventStore
 
    public void PersistMigrations()
    {
-      Assert.State.Assert(Transaction.Current == null, $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
+      Assert.State.Is(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
       Log.Warning("Starting to persist migrations");
 
       long migratedAggregates = 0;

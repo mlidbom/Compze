@@ -25,9 +25,6 @@ static class Contract
 
 #pragma warning disable CS8777 //Reviewed OK. We have verified that the parameters are non-null when method exits.
 
-   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1) =>
-      ArgumentNotNullOrDefault((p1, n1));
-
    public static void ArgumentNotNullEmptyOrWhitespace([NotNull] string? p1, [InvokerParameterName] string n1) => ArgumentNotNullEmptyOrWhitespace((p1, n1));
    public static void ArgumentNotNullEmptyOrWhitespace([NotNull] string? p1, [InvokerParameterName] string n1, [NotNull] string? p2, [InvokerParameterName] string n2) => ArgumentNotNullEmptyOrWhitespace((p1, n1), (p2, n2));
 #pragma warning restore CS8777 // Parameter must have a non-null value when exiting.

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Compze.Contracts.Deprecated;
 using Compze.Functional;
@@ -13,6 +14,10 @@ partial class ContractAsserter
    public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))
                                  .then(this);
+
+   public ContractAsserter NotDefault<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+      where TValue : struct, IEquatable<TValue>
+      => !value.Equals(default) ? this : throw _createException(valueString);
 
    //////////////////////////////////////////////////////////////////////////
    ////Specialized methods that return the value rather than `this` below here:

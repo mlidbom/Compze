@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Compze.Contracts.Deprecated;
+using Compze.Contracts;
 
 namespace Compze.SystemCE.ReflectionCE;
 
@@ -15,9 +15,7 @@ static class MemberAccessorHelper
 
    static Func<object, object> BuildFieldGetter(FieldInfo field)
    {
-      Contracts.Assert.Argument.NotNull(field);
-
-      Contract.Assert.That(field.DeclaringType != null, "field.DeclaringType != null");
+      Assert.Argument.NotNull(field).Is(field.DeclaringType != null);
 
       var obj = Expression.Parameter(typeof(object), "obj");
 

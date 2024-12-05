@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
+using Compze.Functional;
 
 namespace Compze.SystemCE;
 
@@ -12,10 +14,10 @@ static class DateTimeCE
    internal static DateTime ToUniversalTimeSafely(this DateTime @this) => @this.AssertHasKind().ToUniversalTime();
 
    ///<summary>Ensures that a DateTime instance has a Kind specified so that it can be accurately stored, restored, and passed between systems with different time zones without losing information</summary>
-   static DateTime AssertHasKind(this DateTime @this) => @this.Assert(@this.Kind != DateTimeKind.Unspecified,
+   static DateTime AssertHasKind(this DateTime @this) => Assert.Argument.Is(@this.Kind != DateTimeKind.Unspecified, () =>
                                                                       @"This DateTime instance does not have a Kind specified. 
 This means that it is impossible to accurately persist and restore, or serialize between systems, because it is impossible to know if it refers to the current TimeZone or to UTC timezone. 
-Please make sure that all DateTime instances passed to methods which will result in them being persisted or serialized contains a Kind");
+Please make sure that all DateTime instances passed to methods which will result in them being persisted or serialized contains a Kind").then(@this);
 
    internal static string ToStringInvariant(this DateTime @this) => @this.ToString(CultureInfo.InvariantCulture);
    internal static string ToStringInvariant(this DateTime @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
