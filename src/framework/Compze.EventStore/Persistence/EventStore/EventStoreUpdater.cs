@@ -23,7 +23,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
    public EventStoreUpdater(IEventStoreEventPublisher eventStoreEventPublisher, IEventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)
    {
-      Contract.ArgumentNotNull(eventStoreEventPublisher, nameof(eventStoreEventPublisher), store, nameof(store), timeSource, nameof(timeSource));
+      Contracts.Assert.Argument.NotNull(eventStoreEventPublisher).NotNull(store).NotNull(timeSource);
 
       _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(), new SingleTransactionUsageGuard());
       _eventStoreEventPublisher = eventStoreEventPublisher;

@@ -14,7 +14,7 @@ static class DictionaryCE
    /// </summary>
    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> me, TKey key, Func<TValue> constructor) where TKey : notnull
    {
-      Contract.ArgumentNotNull(me, nameof(me), key, nameof(key), constructor, nameof(constructor));
+      Contracts.Assert.Argument.NotNull(me).NotNull(key).NotNull(constructor);
 
       if (me.TryGetValue(key, out var value))
       {

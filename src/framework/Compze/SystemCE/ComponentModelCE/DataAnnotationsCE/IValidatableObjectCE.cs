@@ -26,14 +26,14 @@ public static class ValidatableObjectCE
    ///<summary>Creates an <see cref="ValidationResult"/> by extracting the invalid member(s) name from the supplied expression(s)</summary>///<summary>Enumerates the lines in a streamreader.</summary>
    static ValidationResult CreateValidationResult(this IValidatableObject me, string message, IEnumerable<Expression<Func<object>>> members)
    {
-      Contract.ArgumentNotNull(me, nameof(me), message, nameof(message), members, nameof(members));
+      Contracts.Assert.Argument.NotNull(me).NotNull(message).NotNull(members);
       return new ValidationResult(message, members.Select(ExtractMemberName).ToList());
    }
 
    ///<summary>Creates an <see cref="ValidationResult"/> by extracting the invalid member(s) name from the supplied expression(s)</summary>///<summary>Enumerates the lines in a streamreader.</summary>
    public static ValidationResult CreateValidationResult(this IValidatableObject me, string message, params Expression<Func<object>>[] members)
    {
-      Contract.ArgumentNotNull(me, nameof(me), message, nameof(message), members, nameof(members));
+      Contracts.Assert.Argument.NotNull(me).NotNull(message).NotNull(members);
       return me.CreateValidationResult(message, (IEnumerable<Expression<Func<object>>>)members);
    }
 }
