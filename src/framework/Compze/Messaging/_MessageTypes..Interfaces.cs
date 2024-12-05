@@ -27,7 +27,7 @@ public interface ICommand<out TResult> : ICommand, IHasReturnValue<TResult>;
 public interface IQuery<out TResult> : IHasReturnValue<TResult>;
 
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the query is sufficient to create the result. For such queries implement this interface. That way no network roundtrip etc is required to perform the query. Greatly enhancing performance</summary>
-public interface ICreateMyOwnResultQuery<out TResult> : IQuery<TResult>
+interface ICreateMyOwnResultQuery<out TResult> : IQuery<TResult>
 {
    TResult CreateResult();
 }
