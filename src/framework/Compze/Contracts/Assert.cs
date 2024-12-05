@@ -1,16 +1,18 @@
-﻿namespace Compze.Contracts;
+﻿using System;
+
+namespace Compze.Contracts;
 
 static class Assert
 {
-   ///<summary>Assert conditions about current state of "this". Failures would mean that someone made a call that is illegal given state of "this".</summary>
-   public static ContractAsserter State { get; } = new(message => new StateAssertionException(message));
+   ///<summary>Assert conditions about current state of "this". Failures throw <see cref="InvalidOperationException"/>.</summary>
+   public static ContractAsserter State { get; } = new(message => new InvalidOperationException(message));
 
-   ///<summary>Assert something that must always be true for "this".</summary>
-   public static ContractAsserter Invariant { get; } = new(message => new InvariantAssertionException(message));
+   ///<summary>Assert something that must always be true for "this". Failures throw <see cref="InvariantViolatedException"/></summary>
+   public static ContractAsserter Invariant { get; } = new(message => new InvariantViolatedException(message));
 
-   ///<summary>Assert conditions on arguments to current method.</summary>
-   public static ContractAsserter Argument { get; } = new(message => new ArgumentAssertionException(message));
+   ///<summary>Assert conditions on arguments to the current method. Failures throw <see cref="ArgumentException"/></summary>
+   public static ContractAsserter Argument { get; } = new(message => new ArgumentException(message));
 
-   ///<summary>Assert conditions on the result of making a method call.</summary>
-   public static ContractAsserter Result { get; } = new(message => new ResultAssertionException(message));
+   ///<summary>Assert conditions on the results of a method before returning them. Failures throw <see cref="InvalidResultException"/> </summary>
+   public static ContractAsserter Result { get; } = new(message => new InvalidResultException(message));
 }

@@ -16,9 +16,9 @@ namespace Compze.Tests.Contracts;
       string nullString = null;
       var anObject = new object();
 
-      Invoking(() => Invariant.NotNull(nullString)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullString));
-      Invoking(() => Invariant.NotNull(anObject).NotNull(nullString)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullString));
-      Invoking(() => Invariant.NotNull(nullString)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullString));
+      Invoking(() => Invariant.NotNull(nullString)).Should().Throw<InvariantViolatedException>().Which.Message.Should().Contain(nameof(nullString));
+      Invoking(() => Invariant.NotNull(anObject).NotNull(nullString)).Should().Throw<InvariantViolatedException>().Which.Message.Should().Contain(nameof(nullString));
+      Invoking(() => Invariant.NotNull(nullString)).Should().Throw<InvariantViolatedException>().Which.Message.Should().Contain(nameof(nullString));
 
       Invoking(() => Argument.NotNull(nullString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(nullString));
       Invoking(() => Argument.NotNull(anObject).NotNull(nullString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(nullString));

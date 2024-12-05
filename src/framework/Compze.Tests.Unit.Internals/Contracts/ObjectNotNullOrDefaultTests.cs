@@ -16,7 +16,7 @@ namespace Compze.Tests.Contracts;
       int? anObject = 1;
       int? nullObject = null;
 
-      Invoking(() => Invariant.NotNullOrDefault(nullObject)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullObject));
+      Invoking(() => Invariant.NotNullOrDefault(nullObject)).Should().Throw<InvariantViolatedException>().Which.Message.Should().Contain(nameof(nullObject));
       Invariant.NotNullOrDefault(anObject);
    }
 
@@ -25,7 +25,7 @@ namespace Compze.Tests.Contracts;
       int? zero = 0;
       DateTime? defaultMyStructure = new DateTime();
 
-      Invoking(() => Invariant.NotNullOrDefault(zero)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(zero));
-      Invoking(() => Invariant.NotNullOrDefault(defaultMyStructure)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(defaultMyStructure));
+      Invoking(() => Invariant.NotNullOrDefault(zero)).Should().Throw<InvariantViolatedException>().Which.Message.Should().Contain(nameof(zero));
+      Invoking(() => Invariant.NotNullOrDefault(defaultMyStructure)).Should().Throw<InvariantViolatedException>().Which.Message.Should().Contain(nameof(defaultMyStructure));
    }
 }

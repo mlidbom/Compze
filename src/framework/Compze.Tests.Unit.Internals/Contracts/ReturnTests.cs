@@ -14,7 +14,7 @@ namespace Compze.Tests.Contracts;
    {
       int? nullObject = null;
       int? emptyObject = 0;
-      Invoking(() => Result.ReturnNotNull(nullObject)).Should().Throw<ResultAssertionException>().Which.Message.Should().Contain(nameof(nullObject));
-      Invoking(() => Result.ReturnNotNullOrDefault(emptyObject)).Should().Throw<ResultAssertionException>().Which.Message.Should().Contain(nameof(emptyObject));
+      Invoking(() => Result.ReturnNotNull(nullObject)).Should().Throw<InvalidResultException>().Which.Message.Should().Contain(nameof(nullObject));
+      Invoking(() => Result.ReturnNotNullOrDefault(emptyObject)).Should().Throw<InvalidResultException>().Which.Message.Should().Contain(nameof(emptyObject));
    }
 }

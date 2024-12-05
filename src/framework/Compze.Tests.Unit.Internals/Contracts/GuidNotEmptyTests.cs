@@ -14,11 +14,11 @@ namespace Compze.Tests.Contracts;
       var emptyGuid = Guid.Empty;
 
       Invoking(() => Compze.Contracts.Assert.Result.NotDefault(emptyGuid))
-        .Should().Throw<ResultAssertionException>()
+        .Should().Throw<InvalidResultException>()
         .Which.Message.Should().Contain(nameof(emptyGuid));
 
       Invoking(() => Compze.Contracts.Assert.Argument.NotDefault(emptyGuid))
-        .Should().Throw<ArgumentAssertionException>()
+        .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(emptyGuid));
 
       Invoking(() => Compze.Contracts.Assert.State.NotDefault(emptyGuid))
@@ -26,7 +26,7 @@ namespace Compze.Tests.Contracts;
         .Which.Message.Should().Contain(nameof(emptyGuid));
 
       Invoking(() => Compze.Contracts.Assert.Invariant.NotDefault(emptyGuid))
-        .Should().Throw<InvariantAssertionException>()
+        .Should().Throw<InvariantViolatedException>()
         .Which.Message.Should().Contain(nameof(emptyGuid));
    }
 }
