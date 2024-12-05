@@ -10,7 +10,7 @@ namespace Compze.Tests.Contracts;
 {
    [Test] public void Should_run_10_000_tests_in_1_Millisecond()
    {
-      var notNullOrDefault = new object();
+      int? notNullOrDefault = 1;
 
       TimeAsserter.Execute(
          action: () => Assert.Argument.NotNullOrDefault(notNullOrDefault),

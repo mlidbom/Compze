@@ -18,6 +18,7 @@ namespace Compze.DDD;
 [DebuggerDisplay("{" + nameof(ToString) + "()}")]
 public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity<TKey>
    where TEntity : Entity<TEntity, TKey>
+   where TKey: struct
 {
    ///<summary>Construct an instance with <param name="id"> as the <see cref="Id"/></param>.</summary>
    protected Entity(TKey id) => _id = id;
@@ -28,7 +29,7 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    [NotNull]public virtual TKey Id
    {
       get => Assert.Result.ReturnNotNullOrDefault(_id);
-      private set => _id = Assert.Argument.NotNullOrDefault(value).then(value);
+      private set => _id = Assert.Argument.ReturnNotDefault(value);
    }
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>

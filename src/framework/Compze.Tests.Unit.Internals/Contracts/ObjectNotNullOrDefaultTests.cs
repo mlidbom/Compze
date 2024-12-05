@@ -13,20 +13,17 @@ namespace Compze.Tests.Contracts;
 {
    [Test] public void ThrowsArgumentNullExceptionIfAnyValueIsNull()
    {
-      var anObject = new object();
-      object nullObject = null;
-      string? nullString = null;
+      int? anObject = 1;
+      int? nullObject = null;
 
       Invoking(() => Invariant.NotNullOrDefault(nullObject)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullObject));
-      Invoking(() => Invariant.NotNullOrDefault(nullString)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(nullString));
       Invariant.NotNullOrDefault(anObject);
    }
 
    [Test] public void ThrowsObjectIsDefaultExceptionIfAnyValueIsDefault()
    {
-      var emptyString = "";
-      var zero = 0;
-      var defaultMyStructure = new MyStructure();
+      int? zero = 0;
+      MyStructure? defaultMyStructure = new MyStructure();
 
       Invoking(() => Invariant.NotNullOrDefault(zero)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(zero));
       Invoking(() => Invariant.NotNullOrDefault(defaultMyStructure)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(defaultMyStructure));

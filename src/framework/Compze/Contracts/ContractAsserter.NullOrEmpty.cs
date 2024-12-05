@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Compze.Functional;
 
 namespace Compze.Contracts;
 
@@ -10,9 +8,11 @@ partial class ContractAsserter
    public ContractAsserter NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value != null ? this : throw _createException(valueString);
 
-   public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))
-                                 .then(this);
+   public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct
+   {
+      if(value == null || Equals(value, default(TValue))) throw _createException(valueString);
+      return this;
+   }
 
    public ContractAsserter NotDefault<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
       where TValue : struct
@@ -28,4 +28,8 @@ partial class ContractAsserter
 
    [return: NotNull] public TValue ReturnNotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString));
+
+   public TValue ReturnNotDefault<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+      where TValue : struct
+      => !value.Equals(default(TValue)) ? value : throw _createException(valueString);
 }
