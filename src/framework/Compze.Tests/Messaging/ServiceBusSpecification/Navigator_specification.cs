@@ -55,10 +55,10 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await _host.StartAsync().CaF();
+      await _host.StartAsync();
    }
 
-   [TearDown] public async Task TearDown() => await _host.DisposeAsync().CaF();
+   [TearDown] public async Task TearDown() => await _host.DisposeAsync();
 
    [Test] public void Can_get_command_result()
    {
@@ -81,7 +81,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                     .Get(registerUserResult => registerUserResult.User));
 
-      (await userResource.CaF()).Name.Should().Be("new-user-name");
+      (await userResource).Name.Should().Be("new-user-name");
    }
 
    class UserApiStartPage

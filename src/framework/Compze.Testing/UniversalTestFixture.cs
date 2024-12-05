@@ -31,7 +31,7 @@ namespace Compze.Testing;
          throw new AggregateException(UncatchableExceptionsGatherer.Exceptions);
       }
 
-      await Log.CloseAndFlushAsync().CaF();
+      await Log.CloseAndFlushAsync();
    }
 
    static void SetupSerilog()

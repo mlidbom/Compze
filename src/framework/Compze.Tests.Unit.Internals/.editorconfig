@@ -1,6 +1,5 @@
 [*.cs]
-configure_await_analysis_mode = library
-
-dotnet_diagnostic.CA1707.severity = none
-dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1812.severity = none # Test classes are instantiated by nunit and the analyzer does not realize this
+dotnet_diagnostic.NUnit1032.severity = none #Todo: This suppresses warnings about disposables not disposed by tests. When NUnit fixes their analyzer so that it understands IAsyncDisposable this should absolutely be removed.
+configure_await_analysis_mode = ui #This does not seem to work in Visual Studio, only Rider, and therefore we have the next line: 
+dotnet_diagnostic.CA2007.severity = none #We don't need ConfigureAwait(false) for every async call in a test assembly...

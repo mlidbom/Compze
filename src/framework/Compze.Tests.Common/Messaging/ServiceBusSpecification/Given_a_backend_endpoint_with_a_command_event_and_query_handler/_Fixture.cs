@@ -97,7 +97,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await Host.StartAsync().CaF();
+      await Host.StartAsync();
       AllGates = [
                     CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate)),
                     CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate)),
@@ -132,7 +132,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
    [TearDown] public virtual async Task TearDownAsync()
    {
       OpenGates();
-      await Host.DisposeAsync().CaF();
+      await Host.DisposeAsync();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

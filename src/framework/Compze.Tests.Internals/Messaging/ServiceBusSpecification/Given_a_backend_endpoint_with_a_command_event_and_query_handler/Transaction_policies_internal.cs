@@ -13,11 +13,11 @@ public class Transaction_policies_internal : Fixture
 {
    [Test] public async Task Calling_PostRemoteAsync_within_a_transaction_with_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
       await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create()))))
-           .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>().CaF();
+           .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>();
 
    [Test] public async Task Calling_GetRemoteAsync_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
       await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery()))))
-           .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>().CaF();
+           .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>();
 
    [Test] public void Calling_PostRemoteAsync_within_a_transaction_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
       Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Post(MyAtMostOnceCommandWithResult.Create()))))

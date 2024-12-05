@@ -37,7 +37,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
             builder.TypeMapper.Map<ScheduledCommand>("6bc9abe2-8861-4108-98dd-8aa1b50c0c42");
          });
 
-      await _host.StartAsync().CaF();
+      await _host.StartAsync();
 
       var serviceLocator = _endpoint.ServiceLocator;
       _receivedCommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
@@ -64,7 +64,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
                           .Should().Be(false);
    }
 
-   [TearDown] public async Task TearDown() => await _host.DisposeAsync().CaF();
+   [TearDown] public async Task TearDown() => await _host.DisposeAsync();
 
    class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 }

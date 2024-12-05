@@ -29,7 +29,7 @@ sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDisposable
    }
 
    public void Dispose() => DisposeAsync().WaitUnwrappingException();
-   public async ValueTask DisposeAsync() => await WaitForTasksToCompleteAsync().CaF();
+   public async ValueTask DisposeAsync() => await WaitForTasksToCompleteAsync();
 
-   async Task WaitForTasksToCompleteAsync() => await Task.WhenAll(_monitoredTasks.ToArray()).WaitAsync(_timeout).CaF();
+   async Task WaitForTasksToCompleteAsync() => await Task.WhenAll(_monitoredTasks.ToArray()).WaitAsync(_timeout);
 }

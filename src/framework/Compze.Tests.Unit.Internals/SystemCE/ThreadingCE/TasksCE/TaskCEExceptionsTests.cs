@@ -13,12 +13,12 @@ public class TaskCEExceptionsTests : UniversalTestBase
 {
    static async Task FailingMethod()
    {
-      await Task.CompletedTask.CaF();
+      await Task.CompletedTask;
       throw new Exception("I broke");
    }
 
    [Test] public async Task WithAggregateExceptions_throws_aggregate_exception_containing_all_exceptions() =>
-      (await Invoking(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions().CaF())
-            .Should().ThrowAsync<AggregateException>().CaF())
+      (await Invoking(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions())
+            .Should().ThrowAsync<AggregateException>())
      .Which.InnerExceptions.Should().HaveCount(10);
 }

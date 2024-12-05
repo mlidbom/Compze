@@ -22,6 +22,6 @@ public class Query_policies(string pluggableComponentsCombination) : Fixture(plu
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 5);
       QueryHandlerThreadGate.Open();
 
-      await queriesResults.CaF();
+      await queriesResults;
    }
 }

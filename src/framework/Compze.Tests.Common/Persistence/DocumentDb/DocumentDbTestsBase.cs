@@ -26,7 +26,7 @@ abstract class DocumentDbTestsBase(string pluggableComponentsCombination) : Dupl
 
    [TearDown] public async Task TearDownTask()
    {
-      if(ServiceLocator != null) await ServiceLocator.DisposeAsync().CaF();
+      if(ServiceLocator != null) await ServiceLocator.DisposeAsync();
    }
 
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) => ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));

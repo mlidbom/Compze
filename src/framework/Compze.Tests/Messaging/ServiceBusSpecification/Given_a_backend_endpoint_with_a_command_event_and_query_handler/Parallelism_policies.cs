@@ -23,7 +23,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : Fixtu
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       OpenGates();
-      await tasks.CaF();
+      await tasks;
    }
 
    [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_Query()
@@ -33,7 +33,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : Fixtu
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       QueryHandlerThreadGate.Open();
-      await Task.WhenAll(tasks).CaF();
+      await Task.WhenAll(tasks);
    }
 
    [Test] public void Two_event_handlers_cannot_execute_in_parallel()

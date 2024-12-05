@@ -15,6 +15,6 @@ public class Async_behavior_test(string pluggableComponentsCombination) : Fixtur
       var session = ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
       var query = session.GetAsync(new MyQuery());
       QueryHandlerThreadGate.Open();
-      await query.CaF();
+      await query;
    }
 }

@@ -56,7 +56,7 @@ static class TimeAsserter
                                                                             [InstantHandle] Action? setup = null,
                                                                             [InstantHandle] Action? tearDown = null,
                                                                             [InstantHandle] Func<Task>? tearDownAsync = null) =>
-      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync).CaF();
+      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync);
 
    static TReturnValue InternalExecute<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                      int iterations,
@@ -93,7 +93,7 @@ static class TimeAsserter
 
          try
          {
-            var executionSummary = await runScenario().CaF();
+            var executionSummary = await runScenario();
 
             var failureMessage = GetFailureMessage(executionSummary, maxAverage, maxTotal);
             if(failureMessage.Length > 0)
@@ -114,7 +114,7 @@ static class TimeAsserter
          {
             if(tearDownAsync != null)
             {
-               await tearDownAsync().CaF();
+               await tearDownAsync();
             }else if(tearDown != null)
             {
                tearDown();

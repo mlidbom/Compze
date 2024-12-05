@@ -71,7 +71,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
 
-      await _host.StartAsync().CaF();
+      await _host.StartAsync();
 
       _userDomainServiceLocator = userManagementDomainEndpoint.ServiceLocator;
 
@@ -89,7 +89,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
    }
 
 
-   [TearDown]public async Task TeardownAsync() => await _host.DisposeAsync().CaF();
+   [TearDown]public async Task TeardownAsync() => await _host.DisposeAsync();
 
    public static class UserEvent
    {

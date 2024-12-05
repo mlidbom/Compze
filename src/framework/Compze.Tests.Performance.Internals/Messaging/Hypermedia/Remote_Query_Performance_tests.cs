@@ -41,13 +41,13 @@ public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) 
       RunScenario(threaded: true, requests: 10, queriesPerRequest: 200, maxTotal: 3.Milliseconds().EnvMultiply(instrumented:2.2), query: new CreatesItsOwnResultQuery());
 
    [Test] public async Task Async_Runs_100_local_requests_making_one_async_remote_query_each_in_10_milliseconds() =>
-      await RunAsyncScenario(requests: 100, queriesPerRequest: 1, maxTotal: 10.Milliseconds().EnvMultiply(instrumented:2.4, unoptimized:1.5), query: new MyRemoteQuery()).CaF();
+      await RunAsyncScenario(requests: 100, queriesPerRequest: 1, maxTotal: 10.Milliseconds().EnvMultiply(instrumented:2.4, unoptimized:1.5), query: new MyRemoteQuery());
 
    [Test] public async Task Async_Runs_10_local_requests_making_10_async_remote_queries_each_in_7_milliseconds() =>
-      await RunAsyncScenario(requests: 10, queriesPerRequest: 10, maxTotal: 7.Milliseconds().EnvMultiply(instrumented:3, unoptimized:2.0), query: new MyRemoteQuery()).CaF();
+      await RunAsyncScenario(requests: 10, queriesPerRequest: 10, maxTotal: 7.Milliseconds().EnvMultiply(instrumented:3, unoptimized:2.0), query: new MyRemoteQuery());
 
    [Test] public async Task Async_Runs_10_local_request_making_200_ICreateMyOwnResult_query_each_in_9_milliseconds() =>
-      await RunAsyncScenario(requests: 10, queriesPerRequest: 200, maxTotal: 9.Milliseconds().EnvMultiply(instrumented:3.4), query: new CreatesItsOwnResultQuery()).CaF();
+      await RunAsyncScenario(requests: 10, queriesPerRequest: 200, maxTotal: 9.Milliseconds().EnvMultiply(instrumented:3.4), query: new CreatesItsOwnResultQuery());
 
 
    void RunScenario(bool threaded, int requests, int queriesPerRequest, TimeSpan maxTotal, IRemotableQuery<MyQueryResult> query)
@@ -86,9 +86,9 @@ public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) 
       //ncrunch: no coverage end
 
       //Warmup
-      await RunScenarioAsync().CaF();
+      await RunScenarioAsync();
 
-      await TimeAsserter.ExecuteAsync(RunScenarioAsync, maxTotal: maxTotal).CaF();
+      await TimeAsserter.ExecuteAsync(RunScenarioAsync, maxTotal: maxTotal);
       return;
 
       //ncrunch: no coverage start
@@ -96,8 +96,8 @@ public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) 
          await ClientEndpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(
             async () => await Task.WhenAll(1.Through(queriesPerRequest)
                                             .Select(_ => RemoteNavigator.NavigateAsync(navigationSpecification))
-                                            .ToArray()).CaF()).CaF();
+                                            .ToArray()));
 
-      async Task RunScenarioAsync() => await Task.WhenAll(1.Through(requests).Select(_ => RunRequestAsync()).ToArray()).CaF();
+      async Task RunScenarioAsync() => await Task.WhenAll(1.Through(requests).Select(_ => RunRequestAsync()).ToArray());
    }
 }

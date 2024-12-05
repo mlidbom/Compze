@@ -739,7 +739,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
    async Task InsertUsersInOtherDocumentDb(Guid userId)
    {
       var cloneServiceLocator = ServiceLocator.Clone();
-      await using var serviceLocator = cloneServiceLocator.CaF();
+      await using var serviceLocator = cloneServiceLocator;
       cloneServiceLocator.ExecuteTransactionInIsolatedScope(() => cloneServiceLocator.DocumentDbUpdater()
                                                                                      .Save(new User(userId)));
    }
@@ -749,7 +749,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      await InsertUsersInOtherDocumentDb(userId).CaF();
+      await InsertUsersInOtherDocumentDb(userId);
 
       using(ServiceLocator.BeginScope())
       {
@@ -762,7 +762,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      await InsertUsersInOtherDocumentDb(userId).CaF();
+      await InsertUsersInOtherDocumentDb(userId);
 
       using (ServiceLocator.BeginScope())
       {
@@ -775,7 +775,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
    {
       var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-      await InsertUsersInOtherDocumentDb(userId).CaF();
+      await InsertUsersInOtherDocumentDb(userId);
 
       UseInScope(reader => reader.GetAll<User>([userId])
                                  .Count()

@@ -43,10 +43,10 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
          });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
-      await Host.StartAsync().CaF();
+      await Host.StartAsync();
    }
 
-   [TearDown] public async Task TearDown() => await Host.DisposeAsync().CaF();
+   [TearDown] public async Task TearDown() => await Host.DisposeAsync();
 
    protected class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
    protected class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult>;

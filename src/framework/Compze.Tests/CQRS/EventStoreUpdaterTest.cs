@@ -70,7 +70,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
                      .Map<Compze.Tests.CQRS.IUserRegistered>("6a9b3276-cedc-4dae-a15c-4d386c935a48");
    }
 
-   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync().CaF();
+   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IEventStoreUpdater> useSession)
       => _serviceLocator.ExecuteTransactionInIsolatedScope(
@@ -503,7 +503,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
    {
 
       var user = UseInTransactionalScope(session => User.Register(session, "email@email.se", "password", Guid.NewGuid()));
-      var otherUser = await ChangeAnotherUsersEmailInOtherInstance().CaF();
+      var otherUser = await ChangeAnotherUsersEmailInOtherInstance();
 
       UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
 
@@ -513,7 +513,7 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
       async Task<User> ChangeAnotherUsersEmailInOtherInstance()
       {
          var clonedServiceLocator = _serviceLocator.Clone();
-         await using var serviceLocator = clonedServiceLocator.CaF();
+         await using var serviceLocator = clonedServiceLocator;
          return clonedServiceLocator.ExecuteTransactionInIsolatedScope(() =>
          {
             // ReSharper disable once AccessToDisposedClosure

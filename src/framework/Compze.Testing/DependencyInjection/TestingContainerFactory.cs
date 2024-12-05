@@ -43,6 +43,6 @@ public static class TestingContainerFactory
    class TestingEndpointHostDisposer(ITestingEndpointHost host) : IAsyncDisposable
    {
       readonly ITestingEndpointHost _host = host;
-      public async ValueTask DisposeAsync() => await _host.DisposeAsync().CaF();
+      public async ValueTask DisposeAsync() => await _host.DisposeAsync();
    }
 }

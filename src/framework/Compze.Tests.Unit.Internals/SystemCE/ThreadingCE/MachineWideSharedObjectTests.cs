@@ -151,7 +151,7 @@ namespace Compze.Tests.SystemCE.ThreadingCE;
       updateGate.Open();
       conflictingSections.ForEach(gate => gate.ExitGate.AwaitPassedThroughCountEqualTo(1));
 
-      await tasks.CaF();
+      await tasks;
       // ReSharper restore AccessToDisposedClosure
    }
 }
