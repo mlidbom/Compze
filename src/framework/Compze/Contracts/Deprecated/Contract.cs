@@ -11,48 +11,17 @@ namespace Compze.Contracts.Deprecated;
 /// <summary>Ensures that a class's contract is followed.</summary>
 static class Contract
 {
-   ///<summary>
-   ///<para>Start inspecting one or more arguments for contract compliance.</para>
-   ///</summary>
-   public static IInspected<TParameter> Argument<TParameter>(params (TParameter Value, string Name)[] arguments) => new Inspected<TParameter>(InspectionType.Argument, arguments);
-
-
-   public static IInspected<object> Argument(object? p1, [InvokerParameterName] string n1) =>
-      new Inspected<object>(InspectionType.Argument, (p1!, n1));
-
-   public static IInspected<object> Argument(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2) =>
-      new Inspected<object>(InspectionType.Argument, (p1!, n1), (p2!, n2));
-
-   public static IInspected<object> Argument(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2, object? p3, [InvokerParameterName] string n3) =>
-      new Inspected<object>(InspectionType.Argument, (p1!, n1), (p2!, n2), (p3!, n3));
-
    public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
       new Inspected<TInspected>(InspectionType.Argument, (p1!, n1));
 
    public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2) =>
       new Inspected<TInspected>(InspectionType.Argument, (p1!, n1), (p2!, n2));
 
-   public static IInspected<TInspected> Argument<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2, TInspected? p3, [InvokerParameterName] string n3) =>
-      new Inspected<TInspected>(InspectionType.Argument, (p1!, n1), (p2!, n2), (p3!, n3));
-
-
-   public static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1) =>
-      new Inspected<object>(InspectionType.Invariant, (p1!, n1));
-
    public static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2) =>
       new Inspected<object>(InspectionType.Invariant, (p1!, n1), (p2!, n2));
 
-   public static IInspected<object> Invariant(object? p1, [InvokerParameterName] string n1, object? p2, [InvokerParameterName] string n2, object? p3, [InvokerParameterName] string n3) =>
-      new Inspected<object>(InspectionType.Invariant, (p1!, n1), (p2!, n2), (p3!, n3));
-
    public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1) =>
       new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1));
-
-   public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2) =>
-      new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1), (p2!, n2));
-
-   public static IInspected<TInspected> Invariant<TInspected>(TInspected? p1, [InvokerParameterName] string n1, TInspected? p2, [InvokerParameterName] string n2, TInspected? p3, [InvokerParameterName] string n3) =>
-      new Inspected<TInspected>(InspectionType.Invariant, (p1!, n1), (p2!, n2), (p3!, n3));
 
 #pragma warning disable CS8777 //Reviewed OK. We have verified that the parameters are non-null when method exits.
    public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1) =>
@@ -61,32 +30,9 @@ static class Contract
       ArgumentNotNull((p1, n1), (p2, n2));
    public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3) =>
       ArgumentNotNull((p1, n1), (p2, n2), (p3, n3));
-   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4));
-   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5));
-   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6));
-   public static void ArgumentNotNull([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6, [NotNull] object? p7, [InvokerParameterName] string n7) =>
-      ArgumentNotNull((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6), (p7, n7));
 
    public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1) =>
       ArgumentNotNullOrDefault((p1, n1));
-   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2));
-   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3));
-   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4));
-   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5));
-   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6));
-   public static void ArgumentNotNullOrDefault([NotNull] object? p1, [InvokerParameterName] string n1, [NotNull] object? p2, [InvokerParameterName] string n2, [NotNull] object? p3, [InvokerParameterName] string n3, [NotNull] object? p4, [InvokerParameterName] string n4, [NotNull] object? p5, [InvokerParameterName] string n5, [NotNull] object? p6, [InvokerParameterName] string n6, [NotNull] object? p7, [InvokerParameterName] string n7) =>
-      ArgumentNotNullOrDefault((p1, n1), (p2, n2), (p3, n3), (p4, n4), (p5, n5), (p6, n6), (p7, n7));
-
-   public static void ArgumentNotNullOrEmpty([NotNull] string? p1, [InvokerParameterName] string n1) => ArgumentNotNullOrEmpty((p1, n1));
-   public static void ArgumentNotNullOrEmpty([NotNull] string? p1, [InvokerParameterName] string n1, [NotNull] string? p2, [InvokerParameterName] string n2) => ArgumentNotNullOrEmpty((p1, n1), (p2, n2));
 
    public static void ArgumentNotNullEmptyOrWhitespace([NotNull] string? p1, [InvokerParameterName] string n1) => ArgumentNotNullEmptyOrWhitespace((p1, n1));
    public static void ArgumentNotNullEmptyOrWhitespace([NotNull] string? p1, [InvokerParameterName] string n1, [NotNull] string? p2, [InvokerParameterName] string n2) => ArgumentNotNullEmptyOrWhitespace((p1, n1), (p2, n2));
@@ -109,17 +55,6 @@ static class Contract
          if (NullOrDefaultTester<object>.IsNullOrDefault(arguments[i].Value))
          {
             throw new ArgumentNullException(arguments[i].Name);
-         }
-      }
-   }
-
-   static void ArgumentNotNullOrEmpty(params (string? Value, string Name)[] arguments)
-   {
-      for (var i = 0; i < arguments.Length; i++)
-      {
-         if (string.IsNullOrEmpty(arguments[i].Value))
-         {
-            throw new ArgumentException($"Parameter {arguments[i].Name} was either null or empty", arguments[i].Name);
          }
       }
    }
