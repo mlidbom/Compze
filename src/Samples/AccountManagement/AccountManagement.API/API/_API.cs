@@ -12,7 +12,7 @@ namespace AccountManagement.API;
 /// <summary>
 /// This class provides the ability to use type safe API navigation from a type that does not run on .Net. For instance via Typescript in browser.
 /// We generate typescript interfaces for each of the resources exposed via the Queries and commands ultimately reachable through the Start Query.
-/// A generic browser type can the be used to navigate the whole API remotely.
+/// A generic browser type can then be used to navigate the whole API remotely.
 /// For .Net clients the next class in this file is a far more convenient way to consume the API.
 /// </summary>
 public static class AccountWebClientApi
@@ -22,7 +22,7 @@ public static class AccountWebClientApi
 
 
 /// <summary>
-/// This is the entry point to the API for all .Net clients. It provides a simple intuitive fluent API for accessing all of the functionality in the AccountManagement application.
+/// This is the entry point to the API for all .Net clients. It provides a simple intuitive fluent API for accessing all the functionality in the AccountManagement application.
 /// </summary>
 public class AccountApi : IStaticInstancePropertySingleton
 {

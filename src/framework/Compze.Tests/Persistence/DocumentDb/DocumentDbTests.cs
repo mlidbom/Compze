@@ -208,7 +208,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
       UseInTransactionalScope((reader, updater) =>
       {
          updater.Save(lowerCase.TheEmail, lowerCase);
-         Assert.Throws<AttemptToSaveAlreadyPersistedValueException>(() => updater.Save(upperCase.TheEmail, upperCase));
+         Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Should().Throw<ArgumentException>();
 
          reader.Get<Email>(lowerCase.TheEmail)
                .Should()
@@ -218,7 +218,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
       UseInTransactionalScope((reader, updater) =>
       {
 
-         Assert.Throws<AttemptToSaveAlreadyPersistedValueException>(() => updater.Save(upperCase.TheEmail, upperCase));
+         Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Should().Throw<ArgumentException>();
          reader.Get<Email>(upperCase.TheEmail)
                .TheEmail.Should()
                .Be(lowerCase.TheEmail);
@@ -241,7 +241,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
       UseInTransactionalScope((reader, updater) =>
       {
          updater.Save(noWhitespace.TheEmail, noWhitespace);
-         Assert.Throws<AttemptToSaveAlreadyPersistedValueException>(() => updater.Save(withWhitespace.TheEmail, withWhitespace));
+         Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Should().Throw<ArgumentException>();
 
          reader.Get<Email>(noWhitespace.TheEmail)
                .Should()
@@ -250,7 +250,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
       UseInTransactionalScope((reader, updater) =>
       {
-         Assert.Throws<AttemptToSaveAlreadyPersistedValueException>(() => updater.Save(withWhitespace.TheEmail, withWhitespace));
+         Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Should().Throw<ArgumentException>();
          reader.Get<Email>(withWhitespace.TheEmail)
                .TheEmail.Should()
                .Be(noWhitespace.TheEmail);
@@ -491,7 +491,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
       UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
-      Assert.Throws<AttemptToSaveAlreadyPersistedValueException>(() => UseInTransactionalScope((_, updater) => updater.Save(user.Id, user)));
+      Invoking(() => UseInTransactionalScope((_, updater) => updater.Save(user.Id, user))).Should().Throw<ArgumentException>();
    }
 
    [Test]
