@@ -16,6 +16,12 @@ class ContractAssertion(Func<string, Exception> createException)
    public ContractAssertion NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value != null ? this : throw _createException(valueString);
 
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //Specialized methods that return the value rather than `this` below here:
+   //////////////////////////////////////////////////////////////////////////
+
    public ContractAssertion NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))
                                  .then(this);
@@ -26,8 +32,3 @@ class ContractAssertion(Func<string, Exception> createException)
    [return: NotNull] public TValue ReturnNotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString));
 }
-
-class StateAssertionException(string message) : InvalidOperationException(message);
-class ArgumentAssertionException(string message) : ArgumentException(message);
-class InvariantAssertionException(string message) : Exception(message);
-class ResultAssertionException(string message) : Exception(message);
