@@ -26,9 +26,9 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    TKey _id;
 
    /// <inheritdoc />
-   [NotNull]public virtual TKey Id
+   public virtual TKey Id
    {
-      get => Assert.Result.ReturnNotNullOrDefault(_id);
+      get => Assert.Result.ReturnNotDefault(_id);
       private set => _id = Assert.Argument.ReturnNotDefault(value);
    }
 

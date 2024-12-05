@@ -20,7 +20,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    {
       public abstract class NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
          : NestedComponent<TEntity, TEntityEventImplementation, TEntityEvent>
-         where TEntityId : notnull
+         where TEntityId : struct
          where TEntityEvent : class, TComponentEvent
          where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
          where TEntityCreatedEvent : TEntityEvent
@@ -58,7 +58,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          }
 
          TEntityId _id;
-         public TEntityId Id => Assert.Result.ReturnNotNullOrDefault(_id);
+         public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
          // ReSharper disable once UnusedMember.Global todo: coverage
          public static CollectionManager CreateSelfManagingCollection(TComponent parent)

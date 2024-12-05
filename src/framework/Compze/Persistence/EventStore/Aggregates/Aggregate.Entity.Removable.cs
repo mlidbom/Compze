@@ -12,7 +12,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 {
    public abstract class RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
       : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-      where TEntityId : notnull
+      where TEntityId : struct
       where TEntityEvent : class, TAggregateEvent
       where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
       where TEntityCreatedEvent : TEntityEvent
