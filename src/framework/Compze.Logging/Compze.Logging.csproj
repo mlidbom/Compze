@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <LangVersion>default</LangVersion>
-    </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <ImplicitUsings>disable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+      <LangVersion>default</LangVersion>
+   </PropertyGroup>
 
-    <PropertyGroup>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <RootNamespace>Compze.Logging</RootNamespace>
-        <NuGetAuditMode>direct</NuGetAuditMode>
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    </PropertyGroup>
+   <PropertyGroup>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <RootNamespace>Compze.Logging</RootNamespace>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
 
 
-    <ItemGroup>
-        <ProjectReference Include="..\Compze\Compze.csproj"/>
-        <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj"/>
-    </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze\Compze.csproj" />
+      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
+   </ItemGroup>
 
-    <ItemGroup>
-        <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs"/>
-    </ItemGroup>
+   <ItemGroup>
+      <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+   </ItemGroup>
 </Project>

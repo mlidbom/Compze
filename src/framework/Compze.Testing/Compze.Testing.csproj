@@ -1,57 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Configurations>Debug;Release</Configurations>
-    <LangVersion>default</LangVersion>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <Configurations>Debug;Release</Configurations>
+      <LangVersion>default</LangVersion>
+   </PropertyGroup>
 
-  <PropertyGroup>
-    <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+   <PropertyGroup>
+      <Nullable>enable</Nullable>
+      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+   </PropertyGroup>
 
-  <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-  </PropertyGroup>
+   <PropertyGroup>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants></DefineConstants>
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DefineConstants></DefineConstants>
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\Compze.Testing.xml</DocumentationFile>
-  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+      <DocumentationFile>bin\Release\Compze.Testing.xml</DocumentationFile>
+   </PropertyGroup>
 
-  <ItemGroup>
+   <ItemGroup>
       <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="7.0.0" />
-    <PackageReference Include="NUnit" Version="4.2.2" />
-    <PackageReference Include="Serilog" Version="4.1.0" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-    <PackageReference Include="xunit" Version="2.9.2" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
-    <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="SystemCE\CollectionsCE\" />
-  </ItemGroup>
-  
+   </ItemGroup>
+
+   <ItemGroup>
+      <PackageReference Include="FluentAssertions" Version="7.0.0" />
+      <PackageReference Include="NUnit" Version="4.2.2" />
+      <PackageReference Include="Serilog" Version="4.1.0" />
+      <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+      <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+      <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
+      <PackageReference Include="xunit" Version="2.9.2" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+      <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <Folder Include="SystemCE\CollectionsCE\" />
+   </ItemGroup>
+
 </Project>

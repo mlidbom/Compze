@@ -1,40 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <LangVersion>default</LangVersion>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <LangVersion>default</LangVersion>
+      <ImplicitUsings>disable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+      <IsPackable>false</IsPackable>
+   </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-        <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
-        <PackageReference Include="NUnit" Version="4.2.2"/>
-        <PackageReference Include="NUnit.Analyzers" Version="4.4.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
-    </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+      <PackageReference Include="NUnit" Version="4.2.2" />
+      <PackageReference Include="NUnit.Analyzers" Version="4.4.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+   </ItemGroup>
 
-    <ItemGroup>
+   <ItemGroup>
       <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
       <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
-    </ItemGroup>
+   </ItemGroup>
 
-    <ItemGroup>
+   <ItemGroup>
       <Content Include="..\..\TestUsingPluggableComponentCombinations">
-        <Link>TestUsingPluggableComponentCombinations</Link>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+         <Link>TestUsingPluggableComponentCombinations</Link>
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-    </ItemGroup>
+   </ItemGroup>
 
-    <ItemGroup>
+   <ItemGroup>
       <EditorConfigFiles Remove=".editorconfig" />
-    </ItemGroup>
+   </ItemGroup>
 
 </Project>

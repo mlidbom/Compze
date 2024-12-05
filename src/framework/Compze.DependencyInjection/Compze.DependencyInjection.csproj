@@ -1,34 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-       <PlatformTarget>AnyCPU</PlatformTarget>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <LangVersion>default</LangVersion>
-    </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <ImplicitUsings>disable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+      <LangVersion>default</LangVersion>
+   </PropertyGroup>
 
-    <PropertyGroup>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <RootNamespace>Compze</RootNamespace>
-        <NuGetAuditMode>direct</NuGetAuditMode>
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    </PropertyGroup>
+   <PropertyGroup>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <RootNamespace>Compze</RootNamespace>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
 
-    <ItemGroup>
+   <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
-        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0">
+         <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+   </ItemGroup>
 
-    <ItemGroup>
+   <ItemGroup>
       <ProjectReference Include="..\Compze\Compze.csproj" />
-    </ItemGroup>
+   </ItemGroup>
 
-    <ItemGroup>
-        <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-    </ItemGroup>
+   <ItemGroup>
+      <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+   </ItemGroup>
 
 </Project>

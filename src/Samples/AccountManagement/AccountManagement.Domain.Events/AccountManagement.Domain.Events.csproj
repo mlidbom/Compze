@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Configurations>Debug;Release</Configurations>
-    <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <LangVersion>default</LangVersion>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <Configurations>Debug;Release</Configurations>
+      <Nullable>enable</Nullable>
+      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <LangVersion>default</LangVersion>
+   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-    <ProjectReference Include="..\..\..\framework\Compze.Messaging\Compze.Messaging.csproj" />
-  </ItemGroup>
-  
+   <ItemGroup>
+      <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.Messaging\Compze.Messaging.csproj" />
+   </ItemGroup>
+
 
 </Project>

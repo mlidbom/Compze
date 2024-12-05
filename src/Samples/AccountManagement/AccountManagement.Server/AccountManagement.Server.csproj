@@ -1,45 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Configurations>Debug;Release</Configurations>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <RootNamespace>AccountManagement</RootNamespace>
-    <OutputType>Exe</OutputType>
-    <StartupObject />
-    <ApplicationIcon />
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <LangVersion>default</LangVersion>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <Configurations>Debug;Release</Configurations>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <RootNamespace>AccountManagement</RootNamespace>
+      <OutputType>Exe</OutputType>
+      <StartupObject />
+      <ApplicationIcon />
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <LangVersion>default</LangVersion>
+   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-  </PropertyGroup>
-    
-  <ItemGroup>
-    <None Remove="AccountManagement.Domain.Shared.v3.ncrunchproject" />
-    <None Remove="AccountManagement.Server.v3.ncrunchproject" />
-  </ItemGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
-    <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
-    <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-  </ItemGroup>
+   <ItemGroup>
+      <None Remove="AccountManagement.Domain.Shared.v3.ncrunchproject" />
+      <None Remove="AccountManagement.Server.v3.ncrunchproject" />
+   </ItemGroup>
 
-  
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
+      <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+      <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
+   </ItemGroup>
+
+
+   <ItemGroup>
+      <None Update="appsettings.json">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+   </ItemGroup>
 
 </Project>
