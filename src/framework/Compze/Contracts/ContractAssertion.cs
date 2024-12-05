@@ -4,54 +4,27 @@ using System.Runtime.CompilerServices;
 using Compze.Contracts.Deprecated;
 using Compze.Functional;
 
-// ReSharper disable MemberCanBeMadeStatic.Global : Statics and fluent interfaces do not mix.
-
 namespace Compze.Contracts;
 
-abstract class ContractAssertion
+class ContractAssertion(Func<string, Exception> createException)
 {
-   protected abstract Exception CreateException(string message);
+   readonly Func<string, Exception> _createException = createException;
 
    public ContractAssertion Is([DoesNotReturnIf(false)] bool value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value ? this : throw CreateException(valueString);
+      value ? this : throw _createException(valueString);
 
    public ContractAssertion NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value != null ? this : throw CreateException(valueString);
+      value != null ? this : throw _createException(valueString);
 
    public ContractAssertion NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw CreateException(valueString))
+      NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))
                                  .then(this);
-}
 
-class ArgumentAssertion : ContractAssertion
-{
-   protected override Exception CreateException(string message) => new ArgumentAssertionException(message);
-}
+   [return: NotNull] public TValue ReturnNotNull<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+      value ?? throw _createException(valueString);
 
-class InvariantAssertion : ContractAssertion
-{
-   protected override Exception CreateException(string message) => new InvariantAssertionException(message);
-}
-
-class StateAssertion : ContractAssertion
-{
-   protected override Exception CreateException(string message) => new InvalidOperationException(message);
-}
-
-class ResultAssertion : ContractAssertion
-{
-   protected override Exception CreateException(string message) => new ResultAssertionException(message);
-}
-
-class ReturnAssertion
-{
-   static Exception CreateException(string message) => new ResultAssertionException(message);
-
-   [return: NotNull] public TValue NotNull<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value ?? throw CreateException(valueString);
-
-   [return: NotNull] public TValue NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw CreateException(valueString));
+   [return: NotNull] public TValue ReturnNotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+      NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString));
 }
 
 class StateAssertionException(string message) : InvalidOperationException(message);

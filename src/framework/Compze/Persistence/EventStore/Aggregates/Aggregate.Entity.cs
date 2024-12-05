@@ -29,7 +29,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       static readonly TEntityEventIdGetterSetter IdGetterSetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
 
       TEntityId _id;
-      public TEntityId Id => Assert.Return.NotNullOrDefault(_id);
+      public TEntityId Id => Assert.Result.ReturnNotNullOrDefault(_id);
 
       protected Entity(TAggregate aggregate)
          : this(aggregate.TimeSource, @event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}

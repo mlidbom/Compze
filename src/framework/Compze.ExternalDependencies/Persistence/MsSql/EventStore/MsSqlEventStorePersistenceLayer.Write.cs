@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Linq;
 using Compze.Contracts;
+using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.Common.EventStore;
 using Compze.Persistence.EventStore.PersistenceLayer;
@@ -102,7 +103,7 @@ where {Event.EventId} = @{Event.EventId}";
                                                  nextEventReadOrder: nextEventReadOrder.IsNull ? null : new ReadOrder?(ReadOrder.FromSqlDecimal(nextEventReadOrder)));
          });
 
-      return Assert.Return.NotNull(neighborhood);
+      return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
    public void DeleteAggregate(Guid aggregateId)

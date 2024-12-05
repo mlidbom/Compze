@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Contracts;
+using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.Common.EventStore;
 using Compze.Persistence.EventStore.PersistenceLayer;
@@ -98,7 +99,7 @@ where {Event.EventId} = @{Event.EventId}";
                                                  nextEventReadOrder: nextEventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextEventReadOrder)));
          });
 
-      return Assert.Return.NotNull(neighborhood);
+      return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
    public void DeleteAggregate(Guid aggregateId)
