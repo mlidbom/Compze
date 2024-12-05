@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.GenericAbstractions.Time;
 using Compze.SystemCE.LinqCE;
@@ -58,7 +59,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    TAggregate LoadSpecificVersionInternal<TAggregate>(Guid aggregateId, int version, bool verifyVersion = true) where TAggregate : IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      Contract.Assert.That(version > 0, "version > 0");
+      Assert.Argument.IsGreaterThan(version, 0);
 
       _usageGuard.AssertNoContextChangeOccurred(this);
 

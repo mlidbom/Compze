@@ -394,8 +394,7 @@ AggregateIds:
 
    public IEnumerable<Guid> StreamAggregateIdsInCreationOrder(Type? eventBaseType = null)
    {
-      Contract.Assert.That(eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventBaseType),
-                           "eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventType)");
+      Assert.Argument.Is(eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventBaseType));
       _usageGuard.AssertNoContextChangeOccurred(this);
 
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();
