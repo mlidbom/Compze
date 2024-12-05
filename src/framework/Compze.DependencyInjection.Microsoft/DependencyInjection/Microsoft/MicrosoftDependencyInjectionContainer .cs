@@ -43,7 +43,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
          if(componentRegistration.InstantiationSpec.SingletonInstance != null)
          {
-            Contract.Assert.That(lifetime == ServiceLifetime.Singleton, "Instance can only be used with singletons.");
+            Assert.Argument.Is(lifetime == ServiceLifetime.Singleton, "Instance can only be used with singletons.");
             foreach(var serviceType in componentRegistration.ServiceTypes)
             {
                _services.AddSingleton(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
