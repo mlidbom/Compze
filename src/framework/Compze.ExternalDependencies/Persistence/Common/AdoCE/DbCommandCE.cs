@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.Functional;
 using Compze.Logging;
@@ -55,13 +56,13 @@ static class DbCommandCE
 
    public static TCommand PrepareStatement<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
-      Contract.Arguments.Assert(@this.CommandText.Length > 0, "Cannot prepare statement with empty CommandText");
+      Assert.State.Is(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
       return @this.mutate(me => me.Prepare());
    }
 
    public static async Task<TCommand> PrepareStatementAsync<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
-      Contract.Arguments.Assert(@this.CommandText.Length > 0, "Cannot prepare statement with empty CommandText");
+      Assert.State.Is(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
       return await @this.mutateAsync(async me => await me.PrepareAsync().CaF()).CaF();
    }
 
