@@ -3,6 +3,7 @@ using Compze.SystemCE;
 using Compze.Testing.Performance;
 using NUnit.Framework;
 using Compze.Testing;
+using Compze.Contracts.Deprecated;
 
 namespace Compze.Tests.Contracts;
 

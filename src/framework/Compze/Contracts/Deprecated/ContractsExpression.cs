@@ -2,7 +2,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
 ///<summary>Extracts values and names from the parts of a lambda expression</summary>
 static class ContractsExpression
@@ -14,12 +14,12 @@ static class ContractsExpression
    {
       var body = lambda.Body;
 
-      if((body as UnaryExpression)?.Operand is MemberExpression innerMemberExpression)
+      if ((body as UnaryExpression)?.Operand is MemberExpression innerMemberExpression)
       {
          return innerMemberExpression.Member.Name;
       }
 
-      if(body is MemberExpression memberExpression)
+      if (body is MemberExpression memberExpression)
       {
          return memberExpression.Member.Name;
       }
@@ -43,27 +43,27 @@ static class ContractsExpression
          case ExpressionType.Constant:
             return ((ConstantExpression)expression).Value;
          case ExpressionType.MemberAccess:
-         {
-            var me = (MemberExpression)expression;
-            var obj = me.Expression != null ? GetExpressionValue(me.Expression) : null;
-            var fieldInfo = me.Member as FieldInfo;
-            if (fieldInfo != null)
-               return fieldInfo.GetValue(obj);
-            var propertyInfo = me.Member as PropertyInfo;
-            if (propertyInfo != null)
-               return propertyInfo.GetValue(obj, null);
-            throw new InvalidAccessorLambdaException();
-         }
-         case ExpressionType.Convert:
-         {
-            var ue = (UnaryExpression)expression;
-            var operand = GetExpressionValue(ue.Operand);
-            if(ue.Type.IsInstanceOfType(operand))
             {
-               return operand;
+               var me = (MemberExpression)expression;
+               var obj = me.Expression != null ? GetExpressionValue(me.Expression) : null;
+               var fieldInfo = me.Member as FieldInfo;
+               if (fieldInfo != null)
+                  return fieldInfo.GetValue(obj);
+               var propertyInfo = me.Member as PropertyInfo;
+               if (propertyInfo != null)
+                  return propertyInfo.GetValue(obj, null);
+               throw new InvalidAccessorLambdaException();
             }
-            throw new InvalidAccessorLambdaException();
-         }
+         case ExpressionType.Convert:
+            {
+               var ue = (UnaryExpression)expression;
+               var operand = GetExpressionValue(ue.Operand);
+               if (ue.Type.IsInstanceOfType(operand))
+               {
+                  return operand;
+               }
+               throw new InvalidAccessorLambdaException();
+            }
          default:
             throw new InvalidAccessorLambdaException();
       }

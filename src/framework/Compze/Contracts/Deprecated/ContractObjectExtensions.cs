@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
 static class ContractObjectExtensions
 {

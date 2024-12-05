@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using Compze.Contracts.Deprecated;
 using Compze.SystemCE;
 using JetBrains.Annotations;
 // ReSharper disable UnusedParameter.Global

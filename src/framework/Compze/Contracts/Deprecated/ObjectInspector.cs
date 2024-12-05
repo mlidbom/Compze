@@ -1,9 +1,7 @@
-﻿
-
-// ReSharper disable UnusedMethodReturnValue.Global
+﻿// ReSharper disable UnusedMethodReturnValue.Global
 // ReSharper disable UnusedMember.Global
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
 ///<summary>Performs inspections on objects</summary>
 static class ObjectInspector

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.Testing;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;

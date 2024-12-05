@@ -1,6 +1,6 @@
-﻿namespace Compze.Contracts;
+﻿namespace Compze.Contracts.Deprecated;
 
-///<summary> <see cref="InspectionType.Argument"/>, <see cref="InspectionType.Invariant"/> or <see cref="InspectionType.ReturnValue"/> </summary>
+///<summary> <see cref="Argument"/>, <see cref="Invariant"/> or <see cref="ReturnValue"/> </summary>
 enum InspectionType
 {
    ///<summary>The inspected value is an argument to a method</summary>

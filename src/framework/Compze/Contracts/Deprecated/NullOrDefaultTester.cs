@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
 static class NullOrDefaultTester<TType>
 {
@@ -9,17 +9,17 @@ static class NullOrDefaultTester<TType>
    {
       var type = typeof(TType);
 
-      if(type.IsInterface || type == typeof(object))
+      if (type.IsInterface || type == typeof(object))
       {
-         return obj => obj is null || (obj.GetType().IsValueType && Equals(obj, Activator.CreateInstance(obj.GetType())));
+         return obj => obj is null || obj.GetType().IsValueType && Equals(obj, Activator.CreateInstance(obj.GetType()));
       }
 
-      if(type.IsClass)
+      if (type.IsClass)
       {
          return obj => obj is null;
       }
 
-      if(type.IsValueType)
+      if (type.IsValueType)
       {
          var defaultValue = Activator.CreateInstance(type);
          return obj => Equals(obj, defaultValue);

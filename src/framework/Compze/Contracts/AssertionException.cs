@@ -1,3 +1,4 @@
+using Compze.Contracts.Deprecated;
 using System;
 
 namespace Compze.Contracts;

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
 /// <summary>
 /// Exceptions raise by the inspectors should inherit this exception type.

@@ -1,8 +1,9 @@
 ﻿using System;
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
-interface IInspected<TValue> {
+interface IInspected<TValue>
+{
    /// <summary>
    /// Performs the supplied inspection against each <see cref="InspectedValue"/> in the instance.
    /// </summary>
@@ -29,9 +30,9 @@ class Inspected<TValue> : IInspected<TValue>
       buildException ??= badValue => new ContractViolationException(badValue);
 
       //Yes the loop is not as pretty as a linq expression but this is performance critical code that might run in tight loops. If it was not I would be using linq.
-      foreach(var inspected in _inspectedValues)
+      foreach (var inspected in _inspectedValues)
       {
-         if(!isValueValid(inspected.Value))
+         if (!isValueValid(inspected.Value))
          {
             throw buildException(inspected);
          }
@@ -45,7 +46,7 @@ class Inspected<TValue> : IInspected<TValue>
    internal Inspected(InspectionType inspectionType, params (TValue Value, string Name)[] inspectedValues)
    {
       _inspectedValues = new IInspectedValue<TValue>[inspectedValues.Length];
-      for(var i = 0; i < inspectedValues.Length; i++)
+      for (var i = 0; i < inspectedValues.Length; i++)
       {
          var (value, name) = inspectedValues[i];
          _inspectedValues[i] = new InspectedValue<TValue>(inspectionType, value, name);

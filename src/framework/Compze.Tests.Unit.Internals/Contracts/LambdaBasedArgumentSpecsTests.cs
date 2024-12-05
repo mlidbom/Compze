@@ -1,4 +1,5 @@
 ﻿using Compze.Contracts;
+using Compze.Contracts.Deprecated;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;

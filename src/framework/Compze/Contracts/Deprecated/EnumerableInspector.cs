@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 // ReSharper disable UnusedMethodReturnValue.Global
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Deprecated;
 
 ///<summary>Performs inspections on <see cref="IEnumerable{T}"/> instances</summary>
 static class EnumerableInspector
@@ -31,5 +31,5 @@ static class EnumerableInspector
 class EnumerableIsEmptyContractViolationException : ContractViolationException
 {
    ///<summary>Standard constructor.</summary>
-   public EnumerableIsEmptyContractViolationException(IInspectedValue badValue) : base(badValue) {}
+   public EnumerableIsEmptyContractViolationException(IInspectedValue badValue) : base(badValue) { }
 }

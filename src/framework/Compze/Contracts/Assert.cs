@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using Compze.Contracts.Deprecated;
 using JetBrains.Annotations;
 using NotNull = System.Diagnostics.CodeAnalysis.NotNullAttribute;
 #pragma warning disable CA1815 // Override equals and operator equals on value types
