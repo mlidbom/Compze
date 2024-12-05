@@ -75,19 +75,19 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    IServiceProvider CurrentProvider()
    {
-      Assert.State.Assert(!_isDisposed);
+      Assert.State.Is(!_isDisposed);
       return _scopeCache.Value != null ? _scopeCache.Value.ServiceProvider : _serviceProvider.NotNull();
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class
    {
-      Assert.State.Assert(!_isDisposed);
+      Assert.State.Is(!_isDisposed);
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
    public TComponent[] ResolveAll<TComponent>() where TComponent : class
    {
-      Assert.State.Assert(!_isDisposed);
+      Assert.State.Is(!_isDisposed);
       return CurrentProvider().GetServices<TComponent>().ToArray();
    }
 
@@ -99,7 +99,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    IDisposable IServiceLocator.BeginScope()
    {
-      Assert.State.Assert(!_isDisposed);
+      Assert.State.Is(!_isDisposed);
       Assert.State.Assert(_scopeCache.Value == null, "Scope already exists. Nested scopes are not supported.");
 
       _scopeCache.Value = CurrentProvider().CreateAsyncScope();

@@ -22,13 +22,13 @@ class InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer per
                                                            exception.Message,
                                                            exception.GetType().GetFullNameCompilable());
 
-      Assert.Result.Assert(affectedRows == 1);
+      Assert.Result.Is(affectedRows == 1);
    }
 
    public void MarkAsFailed(TransportMessage.InComing message)
    {
       var affectedRows = _persistenceLayer.MarkAsFailed(message.MessageId);
-      Assert.Result.Assert(affectedRows == 1);
+      Assert.Result.Is(affectedRows == 1);
    }
 
    public Task StartAsync() => _persistenceLayer.InitAsync();

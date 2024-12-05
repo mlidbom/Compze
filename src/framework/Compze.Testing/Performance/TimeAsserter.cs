@@ -77,7 +77,7 @@ static class TimeAsserter
                                                                       uint maxTries = MaxTriesDefault,
                                                                       [InstantHandle] Func<Task>? tearDownAsync = null) where TReturnValue : StopwatchCE.TimedExecutionSummary
    {
-      Assert.Argument.Assert(maxTries > 0);
+      Assert.Argument.Is(maxTries > 0);
       maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
       maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
       TestEnv.Performance.LogMachineSlownessAdjustment();

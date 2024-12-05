@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using Compze.SystemCE;
 using JetBrains.Annotations;
-using NotNull = global::System.Diagnostics.CodeAnalysis.NotNullAttribute;
 // ReSharper disable UnusedParameter.Global
+using NotNull = global::System.Diagnostics.CodeAnalysis.NotNullAttribute;
 
 namespace Compze.Contracts;
 

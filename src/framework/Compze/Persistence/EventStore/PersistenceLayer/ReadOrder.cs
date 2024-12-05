@@ -37,7 +37,7 @@ readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    public static ReadOrder Parse(string value, bool bypassScaleTest = false)
    {
       var parts = value.Split(".");
-      Assert.Argument.Assert(parts.Length == 2);
+      Assert.Argument.Is(parts.Length == 2);
       var order = parts[0];
       var offset = parts[1];
       if(order[0] == '-') throw new ArgumentException("We do not use negative numbers");
@@ -84,9 +84,9 @@ readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
          }
       }).ToArray();
 
-      Assert.Result.Assert(result.All(order => order > rangeStart));     //We are staying within the specified range
-      Assert.Result.Assert(result.All(order => order < rangeEnd));       //We are staying within the specified range
-      Assert.Result.Assert(result.Distinct().Count() == numberOfEvents); //Each ReadOrder is unique
+      Assert.Result.Is(result.All(order => order > rangeStart));     //We are staying within the specified range
+      Assert.Result.Is(result.All(order => order < rangeEnd));       //We are staying within the specified range
+      Assert.Result.Is(result.Distinct().Count() == numberOfEvents); //Each ReadOrder is unique
 
       return result;
    }

@@ -17,7 +17,7 @@ static class Assert
    ///<summary>Assert conditions on arguments to current method.</summary>
    public static BaseAssertion Argument { get; } = BaseAssertion.ArgumentsInstance;
 
-   ///<summary>Assert conditions on the result of makeing a method call.</summary>
+   ///<summary>Assert conditions on the result of making a method call.</summary>
    public static BaseAssertion Result { get; } = BaseAssertion.ResultInstance;
 
 
@@ -32,10 +32,8 @@ static class Assert
       readonly InspectionType _inspectionType;
       BaseAssertion(InspectionType inspectionType) => _inspectionType = inspectionType;
 
-      [ContractAnnotation("c1:false => halt")] public ChainedAssertion Assert([DoesNotReturnIf(false)]bool c1) => RunAssertions(0, _inspectionType, c1);
-      [ContractAnnotation("c1:false => halt; c2:false => halt")] public ChainedAssertion Assert([DoesNotReturnIf(false)]bool c1, [DoesNotReturnIf(false)]bool c2) => RunAssertions(0, _inspectionType, c1, c2);
-      [ContractAnnotation("c1:false => halt; c2:false => halt; c3:false => halt")] public ChainedAssertion Assert([DoesNotReturnIf(false)]bool c1, [DoesNotReturnIf(false)]bool c2, [DoesNotReturnIf(false)]bool c3) => RunAssertions(0, _inspectionType, c1, c2, c3);
-      [ContractAnnotation("c1:false => halt; c2:false => halt; c3:false => halt; c4:false => halt")] public ChainedAssertion Assert([DoesNotReturnIf(false)]bool c1, [DoesNotReturnIf(false)]bool c2, [DoesNotReturnIf(false)]bool c3, [DoesNotReturnIf(false)]bool c4) => RunAssertions(0, _inspectionType, c1, c2, c3, c4);
+      [ContractAnnotation("c1:false => halt")] public ChainedAssertion Is([DoesNotReturnIf(false)]bool c1) => RunAssertions(0, _inspectionType, c1);
+      [ContractAnnotation("c1:false => halt; c2:false => halt")] public ChainedAssertion Is([DoesNotReturnIf(false)]bool c1, [DoesNotReturnIf(false)]bool c2) => RunAssertions(0, _inspectionType, c1, c2);
 
 
       [return: NotNull] [ContractAnnotation("obj:null => halt")]

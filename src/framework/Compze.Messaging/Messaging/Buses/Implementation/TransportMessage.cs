@@ -34,7 +34,7 @@ static class TransportMessage
          {
             _message = _serializer.DeserializeMessage(_messageType, Body);
 
-            Assert.State.Assert(_message is not IExactlyOnceMessage actualMessage || MessageId == actualMessage.MessageId);
+            Assert.State.Is(_message is not IExactlyOnceMessage actualMessage || MessageId == actualMessage.MessageId);
          }
 
          return _message;

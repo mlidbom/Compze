@@ -12,7 +12,7 @@ static class SyncOrAsyncCE
    internal static TResult SyncResult<TResult>(this Task<TResult> @this)
    {
       //Should only ever be called when in the sync mode, so assert that the task is done.
-      Assert.Argument.Assert(@this.IsCompleted);
+      Assert.Argument.Is(@this.IsCompleted);
       return @this.GetAwaiter().GetResult();
    }
 }

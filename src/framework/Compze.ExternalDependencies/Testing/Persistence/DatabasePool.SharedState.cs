@@ -58,7 +58,7 @@ partial class DbPool
       internal void ReleaseClean(string reservationName)
       {
          var existing = _databases.Single(it => it.ReservationName == reservationName);
-         Assert.Argument.Assert(existing.IsReserved);
+         Assert.Argument.Is(existing.IsReserved);
          existing.Release();
          existing.Clean();
       }

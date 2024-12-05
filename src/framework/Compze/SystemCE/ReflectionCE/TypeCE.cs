@@ -54,7 +54,7 @@ static class TypeCE
 
    internal static Type GetGenericInterface(this Type me, Type implemented)
    {
-      Assert.Argument.Assert(me != null, implemented != null).And(implemented.IsGenericTypeDefinition);
+      Assert.Argument.Is(me != null, implemented != null).And(implemented.IsGenericTypeDefinition);
 
       return me.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == implemented);
    }

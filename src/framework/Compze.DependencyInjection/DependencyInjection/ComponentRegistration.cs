@@ -150,7 +150,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec);
       }
 
-      Assert.State.Assert(Lifestyle == Lifestyle.Singleton);
+      Assert.State.Is(Lifestyle == Lifestyle.Singleton);
       //We must use singleton instance registrations when delegating because otherwise the containers will both attempt to dispose the service.
       //Instance registrations are not disposed.
       return new ComponentRegistration<TService>(

@@ -45,7 +45,7 @@ public record EndpointId
    public Guid GuidValue { get; }
    [JsonConstructor]public EndpointId(Guid guidValue)
    {
-      Assert.Argument.Assert(guidValue != Guid.Empty);
+      Assert.Argument.Is(guidValue != Guid.Empty);
       GuidValue = guidValue;
    }
 }

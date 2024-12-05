@@ -36,7 +36,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
 
    public void LoadFromHistory(IEnumerable<IAggregateEvent> history)
    {
-      Assert.State.Assert(Version == 0);
+      Assert.State.Is(Version == 0);
       history.ForEach(theEvent => ApplyEvent((TAggregateEvent)theEvent));
       AssertInvariantsAreMet();
    }

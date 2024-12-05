@@ -53,7 +53,7 @@ class Endpoint : IEndpoint
 
    public async Task InitAsync()
    {
-      Assert.State.Assert(!IsRunning);
+      Assert.State.Is(!IsRunning);
 
       RunSanityChecks();
 
@@ -88,7 +88,7 @@ class Endpoint : IEndpoint
 
    public async Task StopAsync()
    {
-      Assert.State.Assert(IsRunning);
+      Assert.State.Is(IsRunning);
       IsRunning = false;
       _transport.Stop();
       if(_serverComponents != null )
