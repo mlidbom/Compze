@@ -28,7 +28,7 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    [NotNull]public virtual TKey Id
    {
       get => Assert.Result.ReturnNotNullOrDefault(_id);
-      private set => _id = Assert.Argument.NotNullOrDefault(value).then(value);
+      private set => _id = Assert.Argument.NotNullOrDefault(value).value(value);
    }
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>

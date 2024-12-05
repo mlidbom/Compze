@@ -5,6 +5,7 @@ using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using static Compze.Contracts.Assert;
 
 // ReSharper disable UnusedMember.Global
 
@@ -97,7 +98,6 @@ class InstantiationSpec
 
    InstantiationSpec(object singletonInstance)
    {
-      Assert.Argument.NotNull(singletonInstance);
       SingletonInstance = singletonInstance;
       FactoryMethod = _ => singletonInstance;
       FactoryMethodReturnType = singletonInstance.GetType();

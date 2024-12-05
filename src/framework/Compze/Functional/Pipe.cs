@@ -12,11 +12,11 @@ static class Pipe
    ///<summary>Takes the first value, applies <see cref="transform"/> and return the resulting value.</summary>
    public static TResult select<TValue, TResult>(this TValue it, Func<TValue, TResult> transform) => transform(it);
 
+   ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
+   public static TResult value<TValue, TResult>(this TValue _, TResult value) => value;
+
    ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
    public static TResult then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
-
-   ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
-   public static TResult then<TValue, TResult>(this TValue _, TResult value) => value;
 
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="Unit"/>.  Useful for chaining statements that return void.</summary>
    public static Unit then<TValue>(this TValue _, Action action) => Unit.From(action);

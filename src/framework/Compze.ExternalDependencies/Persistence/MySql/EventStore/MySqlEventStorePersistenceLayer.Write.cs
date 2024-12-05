@@ -99,7 +99,7 @@ where {Event.EventId} = @{Event.EventId}";
                                                  nextEventReadOrder: nextEventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextEventReadOrder)));
          });
 
-      return Assert.Result.NotNull(neighborhood).then(neighborhood);
+      return Assert.Result.NotNull(neighborhood).value(neighborhood);
    }
 
    public void DeleteAggregate(Guid aggregateId)

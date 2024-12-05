@@ -12,7 +12,7 @@ partial class ContractAsserter
 
    public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       NullOrDefaultTester<TValue>.AssertNotNullOrDefault(value, () => throw _createException(valueString))
-                                 .then(this);
+                                 .value(this);
 
    //////////////////////////////////////////////////////////////////////////
    ////Specialized methods that return the value rather than `this` below here:

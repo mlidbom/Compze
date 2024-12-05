@@ -36,7 +36,7 @@ class EventCache : IDisposable, IEventCache
 
             if(_overlays.Update(it => it.TryGetValue(transactionId, out overlay)))
             {
-               return Assert.Result.NotNull(overlay).then(overlay);
+               return Assert.Result.NotNull(overlay).value(overlay);
             }
 
             overlay = [];
