@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Compze.Contracts;
-using Compze.Contracts.Deprecated;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
@@ -16,11 +14,6 @@ namespace Compze.Tests.Contracts;
 {
    [Test] public void ThrowsObjectNullExceptionForNullValues()
    {
-      InspectionTestHelper.BatchTestInspection<ObjectIsNullContractViolationException, object>(
-         inspected => inspected.NotNull(),
-         badValues: new List<object> { null, null },
-         goodValues: new List<object> { new(), "", Guid.NewGuid() });
-
       string nullString = null;
       var anObject = new object();
 
