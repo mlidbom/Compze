@@ -31,7 +31,7 @@ static class DictionaryCE
    /// </summary>
    public static TValue GetOrAddDefault<TKey, TValue>(this IDictionary<TKey, TValue> me, TKey key) where TValue : new() where TKey : notnull
    {
-      Contract.ArgumentNotNull(me, nameof(me), key, nameof(key));
+      Contracts.Assert.Argument.NotNull(me).NotNull(key);
       //Originally written to delegate to the above method. Believe it or not this causes a performance decrease that is actually significant in tight loops.
       if (me.TryGetValue(key, out var value))
       {

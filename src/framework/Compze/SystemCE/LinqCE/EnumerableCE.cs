@@ -25,7 +25,7 @@ public static partial class EnumerableCE
    /// </summary>
    static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
    {
-      Contract.ArgumentNotNull(source, nameof(source), instances, nameof(instances));
+      Contracts.Assert.Argument.NotNull(source).NotNull(instances);
       return source.Concat(instances);
    }
 
@@ -54,7 +54,7 @@ public static partial class EnumerableCE
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
    internal static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
    {
-      Contract.ArgumentNotNull(me, nameof(me), condition, nameof(condition));
+      Contracts.Assert.Argument.NotNull(me).NotNull(condition);
 
       return !me.Any(condition);
    }

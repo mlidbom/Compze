@@ -29,7 +29,7 @@ static class TypeCE
    ///<returns>true if <paramref name="me"/> implements the interface: <paramref name="implemented"/>. By definition true if <paramref name="me"/> == <paramref name="implemented"/>.</returns>
    public static bool Implements(this Type me, Type implemented)
    {
-      Contract.ArgumentNotNull(me, nameof(me), implemented, nameof(implemented));
+      Contracts.Assert.Argument.NotNull(me).NotNull(implemented);
 
       if(!implemented.IsInterface)
       {

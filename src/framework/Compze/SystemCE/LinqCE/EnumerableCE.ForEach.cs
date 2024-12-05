@@ -13,7 +13,7 @@ public static partial class EnumerableCE
    /// </summary>
    public static void ForEach<TSource, TReturn>(this IEnumerable<TSource> source, Func<TSource, TReturn> action)
    {
-      Contract.ArgumentNotNull(source, nameof(source), action, nameof(action));
+      Contracts.Assert.Argument.NotNull(source).NotNull(action);
       foreach(var item in source)
       {
          action(item);
@@ -25,7 +25,7 @@ public static partial class EnumerableCE
    /// </summary>
    public static void ForEach<T>(this IEnumerable<T> source, [InstantHandle]Action<T> action)
    {
-      Contract.ArgumentNotNull(source, nameof(source), action, nameof(action));
+      Contracts.Assert.Argument.NotNull(source).NotNull(action);
 
       foreach (var item in source)
       {
@@ -38,7 +38,7 @@ public static partial class EnumerableCE
    /// </summary>
    public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
    {
-      Contract.ArgumentNotNull(source, nameof(source), action, nameof(action));
+      Contracts.Assert.Argument.NotNull(source).NotNull(action);
 
       var index = 0;
       foreach(var item in source)

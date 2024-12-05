@@ -50,7 +50,7 @@ static class HierarchyExtensions
    /// </summary>
    public static IAutoHierarchy<T> AsHierarchy<T>(this T me, Func<T, IEnumerable<T>> childGetter)
    {
-      Contract.ArgumentNotNull(me, nameof(me), childGetter, nameof(childGetter));
+      Contracts.Assert.Argument.NotNull(me).NotNull(childGetter);
       return Contracts.Assert.Result.ReturnNotNull(new Hierarchy<T>(me, childGetter));
    }
 
