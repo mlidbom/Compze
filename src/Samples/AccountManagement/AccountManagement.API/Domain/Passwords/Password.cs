@@ -7,9 +7,7 @@ using Newtonsoft.Json;
 
 namespace AccountManagement.Domain.Passwords;
 
-/// <summary>
-/// Note how all the business logic of a secure password is encapsulated and the instance is immutable after being created.
-/// </summary>
+/// <summary>Note how all the business logic of a password is encapsulated and the instance is immutable after being created.</summary>
 public partial class Password
 {
    readonly byte[] _hash;
@@ -32,10 +30,6 @@ public partial class Password
       _hash = PasswordHasher.HashPassword(salt: GetSalt(), password: password);
    }
 
-   /// <summary>
-   /// Returns true if the supplied password parameter is the same string that was used to create this password.
-   /// In other words if the user should succeed in logging in using that password.
-   /// </summary>
    public bool IsCorrectPassword(string password) => GetHash().SequenceEqual(PasswordHasher.HashPassword(GetSalt(), password));
 
    public void AssertIsCorrectPassword(string attemptedPassword)

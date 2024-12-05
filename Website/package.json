@@ -3,6 +3,7 @@
     "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
     "watch": "npm-watch build",
     "build": "docfx build",
+    "build-full": "docfx",
     "watch-site-only": "npm-watch build-site-only",
     "build-site-only": "docfx build docfx-site-only.json"
   },
