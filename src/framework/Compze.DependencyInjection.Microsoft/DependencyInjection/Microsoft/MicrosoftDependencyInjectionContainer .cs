@@ -107,7 +107,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
       return DisposableCE.Create(() =>
       {
-         Contract.Assert.That(_scopeCache.Value != null, "Attempt to dispose scope from a context that is not within the scope.");
+         Assert.State.Is(_scopeCache.Value != null, () => "Attempt to dispose scope from a context that is not within the scope.");
          _scopeCache.Value.Dispose();
          _scopeCache.Value = null;
       });
@@ -115,7 +115,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    public void Dispose()
    {
-      Contract.Assert.That(_scopeCache.Value == null, "Scopes must be disposed before the container");
+      Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(_isDisposed) return;
       _isDisposed = true;
       _serviceProvider?.Dispose();
@@ -124,7 +124,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    public async ValueTask DisposeAsync()
    {
-      Contract.Assert.That(_scopeCache.Value == null, "Scopes must be disposed before the container");
+      Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(!_isDisposed)
       {
          _isDisposed = true;

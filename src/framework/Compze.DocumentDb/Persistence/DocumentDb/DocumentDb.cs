@@ -114,7 +114,7 @@ class DocumentDb : IDocumentDb
 
 
    [return:NotNull]TDocument Deserialize<TDocument>(IDocumentDbPersistenceLayer.ReadRow stored) =>
-      (TDocument)Contract.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));
+      (TDocument)Assert.Result.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));
 
    IReadonlySetCEx<Guid> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
    IReadonlySetCEx<Guid> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type).Select(typeId => typeId.GuidValue).ToSetCE();

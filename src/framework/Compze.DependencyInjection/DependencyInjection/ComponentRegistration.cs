@@ -5,7 +5,6 @@ using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Contracts.Assert;
 
 // ReSharper disable UnusedMember.Global
 
@@ -120,7 +119,7 @@ public abstract class ComponentRegistration
       serviceTypes = serviceTypes.ToList();
 
       ServiceTypeIndexes = serviceTypes.Select(ServiceTypeIndex.For).ToArray();
-      Contract.Arguments.That(lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null, $"{nameof(InstantiationSpec.SingletonInstance)} registrations must be {nameof(Lifestyle.Singleton)}s");
+      Assert.Argument.Is(lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null, () => $"{nameof(InstantiationSpec.SingletonInstance)} registrations must be {nameof(Lifestyle.Singleton)}s");
 
       ServiceTypes = serviceTypes;
       InstantiationSpec = instantiationSpec;
@@ -138,7 +137,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
 
    internal ComponentRegistration<TService> DelegateToParentServiceLocatorWhenCloning()
    {
-      Contract.Assert.That(Lifestyle == Lifestyle.Singleton, "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
+      Assert.State.Is(Lifestyle == Lifestyle.Singleton, () => "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
       ShouldDelegateToParentWhenCloning = true;
       return this;
    }
