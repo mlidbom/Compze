@@ -8,7 +8,6 @@ using static Compze.Contracts.Assert;
 
 namespace Compze.Tests.Contracts;
 
-// ReSharper disable ConvertToConstant.Local
 // ReSharper disable ExpressionIsAlwaysNull
 [TestFixture] public class ObjectNotNullOrDefaultTests : UniversalTestBase
 {
@@ -30,6 +29,3 @@ namespace Compze.Tests.Contracts;
       Invoking(() => Invariant.NotNullOrDefault(defaultMyStructure)).Should().Throw<InvariantAssertionException>().Which.Message.Should().Contain(nameof(defaultMyStructure));
    }
 }
-
-// ReSharper restore ConvertToConstant.Local
-// ReSharper restore ExpressionIsAlwaysNull

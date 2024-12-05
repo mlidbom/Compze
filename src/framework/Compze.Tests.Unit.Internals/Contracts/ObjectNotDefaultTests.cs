@@ -11,23 +11,14 @@ namespace Compze.Tests.Contracts;
 {
    [Test] public void ThrowsArgumentExceptionIfAnyValueIsDefault()
    {
-      var myDefaultStructure = new MyStructure();
+      var myDefaultStructure = new DateTime();
       const int zero = 0;
 
       Invoking(() => Argument.NotDefault(zero)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(zero));
       Invoking(() => Argument.NotDefault(myDefaultStructure)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(myDefaultStructure));
 
-      var myNonDefaultStructure = new MyStructure
-                                  {
-                                     Value = 2
-                                  };
+      var myNonDefaultStructure = DateTime.Now;
 
       Argument.NotDefault(myNonDefaultStructure);
-   }
-
-   struct MyStructure
-   {
-      // ReSharper disable once UnusedAutoPropertyAccessor.Local
-      public int Value { get; set; }
    }
 }
