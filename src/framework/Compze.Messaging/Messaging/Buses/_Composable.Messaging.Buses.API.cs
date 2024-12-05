@@ -41,6 +41,7 @@ public interface IEndpoint : IAsyncDisposable
 
 public record EndpointId
 {
+   // ReSharper disable once MemberCanBeInternal : It cannot serialization will fail.
    public Guid GuidValue { get; }
    [JsonConstructor]public EndpointId(Guid guidValue)
    {

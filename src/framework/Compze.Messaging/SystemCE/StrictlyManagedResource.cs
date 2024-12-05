@@ -150,10 +150,8 @@ public abstract class StrictlyManagedResourceBase<TInheritor>(bool forceStackTra
 }
 
 ///<summary><see cref="IStrictlyManagedResource"/></summary>
-public class StrictlyManagedResourceWasFinalizedException : Exception
+class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatMessage(instanceType, reservationCallStack))
 {
-   public StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : base(FormatMessage(instanceType, reservationCallStack)) {}
-
    static string FormatMessage(Type instanceType, string? reservationCallStack)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()
             ? $@"User code failed to Dispose this instance of {instanceType.GetFullNameCompilable()}

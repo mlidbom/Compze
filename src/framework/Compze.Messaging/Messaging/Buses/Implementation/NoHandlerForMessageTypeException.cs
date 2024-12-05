@@ -2,7 +2,4 @@
 
 namespace Compze.Messaging.Buses.Implementation;
 
-public class NoHandlerForMessageTypeException : Exception
-{
-   public NoHandlerForMessageTypeException(Type commandType) : base(commandType.FullName) {}
-}
+class NoHandlerForMessageTypeException(Type commandType) : Exception(commandType.FullName);

@@ -2,7 +2,4 @@
 
 namespace Compze.Messaging.Buses.Implementation;
 
-public class NoHandlerException : Exception
-{
-   public NoHandlerException(Type messageType) : base($"No handler registered for queuedMessageInformation type: {messageType.FullName}") { }
-}
+class NoHandlerException(Type messageType) : Exception($"No handler registered for queuedMessageInformation type: {messageType.FullName}");
