@@ -13,7 +13,7 @@ static class Pipe
    public static TResult select<TValue, TResult>(this TValue it, Func<TValue, TResult> transform) => transform(it);
 
    ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
-   public static TResult value<TValue, TResult>(this TValue _, TResult value) => value;
+   public static TResult then<TValue, TResult>(this TValue _, TResult value) => value;
 
    ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
    public static TResult then<TValue, TResult>(this TValue _, Func<TResult> func) => func();

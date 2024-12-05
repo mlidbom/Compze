@@ -18,7 +18,7 @@ partial class Outbox
       readonly IMessageSender _messageSender = new MessageSender(httpApiClient, remoteAddress, typeMapper, serializer, globalBusStateTracker);
 
       public MessageTypes.Internal.EndpointInformation EndpointInformation => Contract.Assert.That(_endpointInformation != null, $"{nameof(Init)} must be called before {nameof(EndpointInformation)} can be accessed")
-                                                                                      .value(_endpointInformation!);
+                                                                                      .then(_endpointInformation!);
 
       public async Task SendAsync(IExactlyOnceEvent @event) => await _messageSender.SendAsync(@event).CaF();
       public async Task SendAsync(IExactlyOnceCommand command) => await _messageSender.SendAsync(command).CaF();
