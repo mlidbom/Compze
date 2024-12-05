@@ -1,5 +1,6 @@
 ﻿using System;
 using AccountManagement.Domain.Passwords;
+using CommunityToolkit.Diagnostics;
 using Compze.Contracts;
 using Compze.Persistence.EventStore;
 using Newtonsoft.Json;
@@ -39,7 +40,8 @@ public static partial class AccountEvent
          /// </summary>
          public UserRegistered(Guid accountId, Email email, Password password) : base(accountId)
          {
-            Contract.ArgumentNotNull(email, nameof(email), password, nameof(password));
+            Guard.IsNotNull(email);
+            Guard.IsNotNull(password);
 
             Email = email;
             Password = password;

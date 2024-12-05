@@ -1,0 +1,5 @@
+﻿[*.cs]
+dotnet_diagnostic.CA1812.severity = none # Test classes are instantiated by the nunit and the analyzer does not realize this
+
+#Todo: When NUnit fixes their analyzer so that it understands IAsyncDisposable this should absolutely be removed.
+dotnet_diagnostic.NUnit1032.severity = none

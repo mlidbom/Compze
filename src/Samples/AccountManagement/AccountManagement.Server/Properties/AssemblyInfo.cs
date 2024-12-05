@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Compze.CQRS.Sample.AccountManagement.Domain")]
+[assembly: AssemblyTitle("Compze.Sample.AccountManagement.Domain")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Compze.CQRS.Sample.AccountManagement.Domain")]
+[assembly: AssemblyProduct("Compze.Sample.AccountManagement.Domain")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

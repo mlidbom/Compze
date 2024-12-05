@@ -13,8 +13,11 @@ class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
    public string NewEmail = TestData.Emails.CreateUnusedEmail();
    public readonly Email OldEmail;
 
-   public ChangeAccountEmailScenario WithNewEmail(string newEmail) => this.mutate(it => it.NewEmail = newEmail);
-
+   public ChangeAccountEmailScenario WithNewEmail(string newEmail)
+   {
+      NewEmail = newEmail;
+      return this;
+   }
 
    public AccountResource Account { get; private set; }
 

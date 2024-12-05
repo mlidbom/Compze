@@ -1,4 +1,5 @@
-﻿using AccountManagement.Domain.Registration;
+﻿using System.ComponentModel;
+using AccountManagement.Domain.Registration;
 using Compze.Contracts;
 using Newtonsoft.Json;
 
@@ -16,7 +17,7 @@ public partial class AccountResource
          {
             [JsonConstructor]internal RegistrationAttemptResult(RegistrationAttemptStatus status, AccountResource? registeredAccount)
             {
-               Assert.Argument.Assert(status != RegistrationAttemptStatus.Successful || registeredAccount is not null);
+               if(status == RegistrationAttemptStatus.Successful && registeredAccount is null) throw new InvalidEnumArgumentException("Status cannot be successful and registered account null");
                Status = status;
                RegisteredAccount = registeredAccount;
             }

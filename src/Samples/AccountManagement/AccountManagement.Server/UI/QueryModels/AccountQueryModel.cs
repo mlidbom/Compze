@@ -4,6 +4,7 @@ using AccountManagement.API;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
+using CommunityToolkit.Diagnostics;
 using Compze.Contracts;
 using Compze.Messaging;
 using Compze.Messaging.Buses;
@@ -28,7 +29,11 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountEve
       LoadFromHistory(events);
    }
 
-   protected override void AssertInvariantsAreMet() => Contract.Invariant(() => Email, () => Password, () => Id).NotNullOrDefault();
+   protected override void AssertInvariantsAreMet()
+   {
+      Guard.IsNotNull(Email);
+      Guard.IsNotNull(Password);
+   }
 
    // ReSharper disable MemberCanBeMadeStatic.Global fluent composable APIs and statics do not mix
    internal class Api

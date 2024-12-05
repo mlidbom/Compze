@@ -15,9 +15,23 @@ class RegisterAccountScenario(IEndpoint clientEndpoint, string email = null, str
    public string Password = password;
 
 
-   public RegisterAccountScenario WithAccountId(Guid acountId) => this.mutate(it => it.AccountId = acountId);
-   public RegisterAccountScenario WithEmail(string email) => this.mutate(it => it.Email = email);
-   public RegisterAccountScenario WithPassword(string password) => this.mutate(it => it.Password = password);
+   public RegisterAccountScenario WithAccountId(Guid acountId)
+   {
+      AccountId = acountId;
+      return this;
+   }
+
+   public RegisterAccountScenario WithEmail(string email)
+   {
+      Email = email;
+      return this;
+   }
+
+   public RegisterAccountScenario WithPassword(string password)
+   {
+      Password = password;
+      return this;
+   }
 
    public override (AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource Account) Execute()
    {

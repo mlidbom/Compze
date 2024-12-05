@@ -22,8 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\framework\Compze.CQRS.ExternalDependencies\Compze.CQRS.ExternalDependencies.csproj" />
-    <ProjectReference Include="..\..\..\framework\Compze.CQRS\Compze.CQRS.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\..\..\framework\Compze.Messaging\Compze.Messaging.csproj" />
   </ItemGroup>
 
   
@@ -41,6 +41,11 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RegisterAccountCommandResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.3.2" />
   </ItemGroup>
 
 </Project>

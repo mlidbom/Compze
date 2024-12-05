@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using CommunityToolkit.Diagnostics;
 using Compze.Contracts;
 
 namespace AccountManagement.Domain.Passwords;
@@ -12,7 +13,9 @@ public partial class Password
    {
       public static byte[] HashPassword(byte[] salt, string password) //Extract to a private nested PasswordHasher class if this class gets uncomfortably long.
       {
-         Contract.Argument(() => salt, () => password).NotNullOrDefault();
+         Guard.IsNotNull(salt);
+         Guard.IsNotEmpty(salt);
+         Guard.IsNotNullOrWhiteSpace(password);
 
          var encodedPassword = Encoding.Unicode.GetBytes(password);
          var saltedPassword = salt.Concat(encodedPassword).ToArray();

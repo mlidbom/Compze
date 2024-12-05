@@ -3,6 +3,7 @@ using AccountManagement.API;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
+using CommunityToolkit.Diagnostics;
 using Compze.Contracts;
 using Compze.Functional;
 using Compze.GenericAbstractions.Time;
@@ -32,7 +33,12 @@ class Account : Aggregate<Account, AccountEvent.Implementation.Root, AccountEven
 
    //Ensure that the state of the instance is sane. If not throw an exception.
    //Called after every call to Publish.
-   protected override void AssertInvariantsAreMet() => Contract.Invariant(() => Email, () => Password, () => Id).NotNullOrDefault();
+   protected override void AssertInvariantsAreMet()
+   {
+      Guard.IsNotNull(Email);
+      Guard.IsNotNull(Password);
+      Guard.IsNotDefault(Id);
+   }
 
    /// <summary><para>Used when a user manually creates an account themselves.</para>
    /// <para>Note how this design with a named static creation method: </para>
@@ -44,7 +50,7 @@ class Account : Aggregate<Account, AccountEvent.Implementation.Root, AccountEven
    {
       //Ensure that it is impossible to call with invalid arguments.
       //Since all domain types should ensure that it is impossible to create a non-default value that is invalid we only have to disallow default values.
-      Contract.Argument(() => accountId, () => email, () => password, () => navigator).NotNullOrDefault();
+      Guard.IsNotDefault(accountId);Guard.IsNotNull(email);Guard.IsNotNull(password);
 
       //The email is the unique identifier for logging into the account so duplicates are forbidden.
       if(navigator.Execute(InternalApi.Queries.TryGetByEmail(email)) is Some<Account>)
@@ -62,7 +68,7 @@ class Account : Aggregate<Account, AccountEvent.Implementation.Root, AccountEven
 
    internal void ChangePassword(string oldPassword, Password newPassword)
    {
-      Contract.Argument(() => oldPassword, () => newPassword).NotNullOrDefault();
+      Guard.IsNotNull(oldPassword); Guard.IsNotNull(newPassword);
 
       Password.AssertIsCorrectPassword(oldPassword);
 
@@ -71,7 +77,7 @@ class Account : Aggregate<Account, AccountEvent.Implementation.Root, AccountEven
 
    internal void ChangeEmail(Email email)
    {
-      Contract.ArgumentNotNullOrDefault(email, nameof(email));
+      Guard.IsNotNull(email);
 
       Publish(new AccountEvent.Implementation.UserChangedEmail(email));
    }

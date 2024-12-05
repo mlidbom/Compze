@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using AccountManagement.Domain.Events;
 using Compze.DependencyInjection;
 using Compze.Functional;
@@ -57,19 +58,22 @@ static class AccountStatistics
 
    class StatisticsSingletonInitializer
    {
-      readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+      readonly Lock _lock = new Lock();
       bool _isInitialized;
       readonly DocumentDbApi _documentDbApi = new();
-      public void EnsureInitialized(ILocalHypermediaNavigator navigator) => _monitor.Update(() =>
+      public void EnsureInitialized(ILocalHypermediaNavigator navigator)
       {
-         if(!_isInitialized)
+         lock(_lock)
          {
-            _isInitialized = true;
-            if(navigator.Execute(_documentDbApi.Queries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is None<SingletonStatisticsQueryModel>)
+            if(!_isInitialized)
             {
-               navigator.Execute(_documentDbApi.Commands.Save(new SingletonStatisticsQueryModel()));
+               _isInitialized = true;
+               if(navigator.Execute(_documentDbApi.Queries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is None<SingletonStatisticsQueryModel>)
+               {
+                  navigator.Execute(_documentDbApi.Commands.Save(new SingletonStatisticsQueryModel()));
+               }
             }
          }
-      });
+      }
    }
 }
