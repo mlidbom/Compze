@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Compze.Contracts;
 using Compze.Contracts.Deprecated;
 using Compze.Logging;
 using Compze.SystemCE;
@@ -38,8 +39,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 
    public string ConnectionStringFor(string reservationName) => _guard.Update(() =>
    {
-      // ReSharper disable once InconsistentlySynchronizedField
-      Contract.Assert.That(!_disposed, "!_disposed");
+      Assert.State.IsNotDisposed(_disposed);
 
       var reservedDatabase = _transientCache.SingleOrDefault(db => db.ReservationName == reservationName);
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
