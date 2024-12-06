@@ -20,18 +20,6 @@ static class TransactionCE
 
    internal static void OnCompleted(this Transaction @this, Action action) => @this.TransactionCompleted += (_, _) => action();
 
-   internal static void OnAbort(this Transaction @this, Action action)
-   {
-      @this.TransactionCompleted += (_, args) =>
-      {
-         Assert.Argument.NotNull(args.Transaction);
-         if(args.Transaction.TransactionInformation.Status == TransactionStatus.Aborted)
-         {
-            action();
-         }
-      };
-   }
-
    internal static IDisposable NoTransactionEscalationScope(string scopeDescription)
    {
       var transactionInformationDistributedIdentifierBefore = Transaction.Current?.TransactionInformation.DistributedIdentifier ?? Guid.Empty;

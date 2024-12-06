@@ -45,13 +45,9 @@ class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable wh
 
       _synchronizer.Execute(() =>
       {
-         if(!File.Exists(_filePath))
-         {
-            Save(new ReferenceCountingWrapper());
-         } else
-         {
-            Save(Load().mutate(it => it.References++));
-         }
+         Save(File.Exists(_filePath)
+                 ? Load().mutate(it => it.References++)
+                 : new ReferenceCountingWrapper());
       });
    }
 

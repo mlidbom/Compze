@@ -11,7 +11,6 @@ static class VolatileLambdaTransactionParticipantExtensions
    static readonly IThreadShared<Dictionary<string, VolatileLambdaTransactionParticipant>> Participants = ThreadShared.WithDefaultTimeout<Dictionary<string, VolatileLambdaTransactionParticipant>>();
 
    public static Transaction AddCommitTasks(this Transaction @this, params Action[] actions) => UseParticipant(@this, part => part.AddCommitTasks(actions));
-   public static Transaction AddRollbackTasks(this Transaction @this, params Action[] actions) => UseParticipant(@this, part => part.AddRollbackTasks(actions));
    public static Transaction AddPrepareTasks(this Transaction @this, params Action[] actions) => UseParticipant(@this, part => part.AddPrepareTasks(actions));
 
    static Transaction UseParticipant(Transaction @this, Action<VolatileLambdaTransactionParticipant> action)

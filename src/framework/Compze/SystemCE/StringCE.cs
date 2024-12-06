@@ -31,8 +31,6 @@ static class StringCE
 
    public static bool StartsWithInvariant(this string @this, string ending) => @this.StartsWith(ending, StringComparison.InvariantCulture);
 
-   public static bool EndsWithInvariant(this string @this, string ending) => @this.EndsWith(ending, StringComparison.InvariantCulture);
-
    [StringFormatMethod(formatParameterName:"message")]
    public static string FormatInvariant(string message, params object[] arguments) =>
       string.Format(CultureInfo.InvariantCulture,  message, arguments);

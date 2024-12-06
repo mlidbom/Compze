@@ -10,7 +10,6 @@ namespace Compze.SystemCE.ReflectionCE;
 static class TypeCE
 {
    public static string FullNameNotNull(this Type @this) => Contracts.Assert.Result.ReturnNotNull(@this.FullName);
-   public static Type DeclaringTypeNotNull(this Type @this) => Contracts.Assert.Result.ReturnNotNull(@this.DeclaringType);
 
    /// ///<returns>true if <paramref name="me"/> implements the interface: <typeparamref name="TImplemented"/>. By definition true if <paramref name="me"/> == <typeparamref name="TImplemented"/>.</returns>
    public static bool Implements<TImplemented>(this Type me)
@@ -107,7 +106,6 @@ static class TypeCE
 
 
    public static bool Is<TOther>(this Type @this) => typeof(TOther).IsAssignableFrom(@this);
-   public static bool Is(this Type @this, Type other) => other.IsAssignableFrom(@this);
 
    public static string GetFullNameCompilable(this Type @this)
    {

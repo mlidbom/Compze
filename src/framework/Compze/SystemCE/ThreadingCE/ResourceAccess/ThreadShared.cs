@@ -19,20 +19,7 @@ static class ThreadShared
 
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>(TShared shared) =>
       new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithDefaultTimeout());
-
-   public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan timeout) where TShared : new() =>
-      new MonitorCEThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithTimeout(timeout));
-
-   public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan timeOut, TShared shared) =>
-      new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithTimeout(timeOut));
-
-   public static IThreadShared<TShared> WithInfiniteTimeout<TShared>() where TShared : new() =>
-      new MonitorCEThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithInfiniteTimeout());
-
-   public static IThreadShared<TShared> WithInfiniteTimeout<TShared>(TShared shared) =>
-      new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithInfiniteTimeout());
-
-
+   
    class MonitorCEThreadShared<TShared> : IThreadShared<TShared>
    {
       readonly MonitorCE _monitor;

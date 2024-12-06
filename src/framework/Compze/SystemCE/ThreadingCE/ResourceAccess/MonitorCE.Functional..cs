@@ -18,9 +18,4 @@ partial class MonitorCE
    {
       using(TakeUpdateLock()) return func();
    }
-
-   public T Update<T>(OutParamFunc<T> func, out T outParam)
-   {
-      using(TakeUpdateLock()) return func(out outParam);
-   }
 }
