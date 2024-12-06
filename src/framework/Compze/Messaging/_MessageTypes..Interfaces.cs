@@ -65,3 +65,8 @@ public interface IAtMostOnceCommand<out TResult> : IAtMostOnceHypermediaCommand,
 public interface IExactlyOnceMessage : IMustBeSentAndHandledTransactionally, IAtMostOnceMessage;
 public interface IExactlyOnceEvent : IRemotableEvent, IExactlyOnceMessage;
 public interface IExactlyOnceCommand : IRemotableCommand, IExactlyOnceMessage;
+
+public interface IExactlyOnceWrapperEvent<out TEventInterface> : IWrapperEvent<TEventInterface>
+   where TEventInterface : IExactlyOnceEvent
+{
+}
