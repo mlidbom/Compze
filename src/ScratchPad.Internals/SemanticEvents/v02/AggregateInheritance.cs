@@ -74,7 +74,7 @@ public class ReUsableAggregateComponentsInInheritableAggregates
       IManagerEvent<IManagerAddressEvent<IMovedEvent>> managerMovedEvent = null!;
 
       //Semantic relationships are maintained.
-      userAddressEvent = userAddressUpdatedEvent = userMovedEvent;
+      userAddressEvent = userAddressUpdatedEvent = userMovedEvent = managerMovedEvent;
       managerAddressEvent = managerAddressUpdatedEvent = managerMovedEvent;
 
       userAddressEvent = managerAddressEvent = managerAddressUpdatedEvent = managerMovedEvent;
