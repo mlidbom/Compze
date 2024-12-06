@@ -58,6 +58,7 @@ interface IAddressEvent {}
 interface IAddressUpdatedEvent : IAddressEvent {}
 interface IMovedEvent : IAddressUpdatedEvent {}
 
+//Should it be a specific IUserAddressEvent<T> or IUserComponent<T> for all component events? Or should IUserAddressEvent<T> inherit IUserComponent<T>  
 interface IUserAddressEvent<out TAddressEventInterface> : IEvent<TAddressEventInterface>, IUserEvent {}
 interface IManagerAddressEvent<out TAddressEventInterface> : IUserAddressEvent<TAddressEventInterface> {}
 
