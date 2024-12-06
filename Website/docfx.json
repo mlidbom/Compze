@@ -9,7 +9,8 @@
             "**/*.csproj"
           ],
           "exclude": [
-            "**/*tests*.csproj"
+            "**/*tests*.csproj",
+            "**/nCrunchTemp_*.csproj"
           ]
         }
       ],
