@@ -2,6 +2,9 @@
 
 namespace Compze.Logging;
 
+// ReSharper disable UnusedMember.Global : These functions are very useful for debugging but only used occasionally. Let's keep them around for now.
+// ReSharper disable UnusedType.Global
+
 interface ILevelLogger
 {
    Unit Log(string message);
