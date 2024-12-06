@@ -20,16 +20,16 @@ interface IAggregateEvent : IExactlyOnceEvent
    Guid AggregateId { get; }
 }
 
-interface IWrapperEvent<out TWrappedEvent>
+interface IEvent<out TEventInterface>
 {
-   TWrappedEvent Event { get; }
+   TEventInterface Event { get; }
 }
 
-interface IExactlyOnceWrapperEvent<out TEventInterface> : IWrapperEvent<TEventInterface> where TEventInterface : IExactlyOnceEvent {}
-interface IAggregateWrapperEvent<out TInheritorEvent> : IExactlyOnceWrapperEvent<TInheritorEvent> where TInheritorEvent : IAggregateEvent {}
+interface IExactlyOnceEvent<out TEventInterface> : IEvent<TEventInterface> where TEventInterface : IExactlyOnceEvent {}
+interface IAggregateEvent<out TAggregateEventInterface> : IExactlyOnceEvent<TAggregateEventInterface> where TAggregateEventInterface : IAggregateEvent {}
 
-interface IAnimalEvent<out TInheritorEvent> : IAggregateWrapperEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
-interface IBirdEvent<out TInheritorEvent> : IAnimalEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
+interface IAnimalEvent<out TAnimalEventInterface> : IAggregateEvent<TAnimalEventInterface> where TAnimalEventInterface : IAnimalEvent {}
+interface IBirdEvent<out TIBirdEventInterface> : IAnimalEvent<TIBirdEventInterface> where TIBirdEventInterface : IAnimalEvent {}
 
 interface IAnimalEvent : IAggregateEvent {}
 interface IAnimalBorn : IAnimalEvent {}
@@ -61,7 +61,7 @@ public class AggregateInheritance
    }
 }
 
-interface IAnimalComponentEvent<out TComponentEvent> : IWrapperEvent<TComponentEvent>, IAnimalEvent {}
+interface IAnimalComponentEvent<out TComponentEvent> : IEvent<TComponentEvent>, IAnimalEvent {}
 interface IBirdComponentEvent<out TComponentEvent> : IAnimalComponentEvent<TComponentEvent> {}
 
 public class ReUsableAggregateComponentsInInheritableAggregates
