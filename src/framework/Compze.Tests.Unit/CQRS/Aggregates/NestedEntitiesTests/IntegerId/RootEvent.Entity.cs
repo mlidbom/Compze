@@ -15,9 +15,9 @@ static partial class RootEvent
          int EntityId { get; }
       }
 
-      internal interface Created : IRoot, PropertyUpdated.Name;
+      internal interface Created : PropertyUpdated.Name;
 
-      interface Renamed : IRoot, PropertyUpdated.Name;
+      interface Renamed : PropertyUpdated.Name;
 
       internal interface Removed : IRoot;
 

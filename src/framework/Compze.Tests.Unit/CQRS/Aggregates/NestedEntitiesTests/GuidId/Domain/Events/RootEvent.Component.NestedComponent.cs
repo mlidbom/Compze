@@ -12,7 +12,7 @@ static partial class RootEvent
       internal static class NestedComponent
       {
          internal interface IRoot : Component.IRoot;
-         internal interface Renamed : IRoot, PropertyUpdated.Name;
+         internal interface Renamed : PropertyUpdated.Name;
 
          internal static class PropertyUpdated
          {

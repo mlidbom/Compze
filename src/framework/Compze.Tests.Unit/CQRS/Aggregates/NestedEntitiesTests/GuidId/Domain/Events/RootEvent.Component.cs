@@ -9,7 +9,7 @@ static partial class RootEvent
    {
       public interface IRoot : RootEvent.IRoot;
 
-      interface Renamed : IRoot, PropertyUpdated.Name;
+      interface Renamed : PropertyUpdated.Name;
 
       public static class PropertyUpdated
       {

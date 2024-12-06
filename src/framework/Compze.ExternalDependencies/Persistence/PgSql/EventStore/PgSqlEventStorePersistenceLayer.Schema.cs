@@ -6,7 +6,7 @@ using Lock = Compze.Persistence.Common.EventStore.AggregateLockTableSchemaString
 
 namespace Compze.Persistence.PgSql.EventStore;
 
-partial class PgSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+partial class PgSqlEventStorePersistenceLayer
 {
    const string PgSqlGuidType = "CHAR(36)";
    bool _initialized;

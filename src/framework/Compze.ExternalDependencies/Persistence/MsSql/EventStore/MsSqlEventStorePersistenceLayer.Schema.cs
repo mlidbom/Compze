@@ -5,7 +5,7 @@ using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Persistence.MsSql.EventStore;
 
-partial class MsSqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+partial class MsSqlEventStorePersistenceLayer
 {
    bool _initialized;
 

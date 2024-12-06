@@ -1,16 +1,14 @@
 ﻿using System.Reflection;
 using Compze.Persistence.EventStore;
-using Compze.SystemCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Compze.Serialization;
 
-class IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
+class IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IncludeMembersWithPrivateSettersResolver
 {
    public new static readonly IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql Instance = new();
-   IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql() {
-   }
+   IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql() {}
 
    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
    {

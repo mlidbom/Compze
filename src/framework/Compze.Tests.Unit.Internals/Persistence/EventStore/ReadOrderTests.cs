@@ -46,13 +46,12 @@ namespace Compze.Tests.Persistence.EventStore;
       {
          var stringValue = value.ToString();
          var sql = value.ToSqlDecimal();
-         var order = value;
          ReadOrder.FromSqlDecimal(sql).Should().Be(value);
 
          sql.ToString().Should().Be(stringValue);
-         order.ToString().Should().Be(stringValue);
+         value.ToString().Should().Be(stringValue);
 
-         order.ToSqlDecimal().Should().Be(sql);
+         value.ToSqlDecimal().Should().Be(sql);
 
          ReadOrder.FromSqlDecimal(sql).ToString().Should().Be(stringValue);
       }

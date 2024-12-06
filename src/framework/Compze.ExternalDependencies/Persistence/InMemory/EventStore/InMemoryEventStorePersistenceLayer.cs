@@ -149,7 +149,7 @@ partial class InMemoryEventStorePersistenceLayer : IEventStorePersistenceLayer
                                                onTransactionCompleted: _ => _state.Update(state => state._overlays.Remove(transactionId)))
                                            .EnsureEnlistedInAnyAmbientTransaction();
 
-                                         return new List<EventDataRow>();
+                                         return [];
                                       });
          }
       }

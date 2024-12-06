@@ -116,9 +116,9 @@ static class TimeAsserter
             if(tearDownAsync != null)
             {
                await tearDownAsync();
-            }else if(tearDown != null)
+            } else
             {
-               tearDown();
+               tearDown?.Invoke();
             }
          }
       }

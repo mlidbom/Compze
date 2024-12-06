@@ -100,7 +100,7 @@ static class ExceptionMessageBuilder
 #pragma warning restore CA2326
 #pragma warning restore CA2327
 
-   class IgnoreStackTraces : IncludeMembersWithPrivateSettersResolver, IStaticInstancePropertySingleton
+   class IgnoreStackTraces : IncludeMembersWithPrivateSettersResolver
    {
       public new static readonly IgnoreStackTraces Instance = new();
 

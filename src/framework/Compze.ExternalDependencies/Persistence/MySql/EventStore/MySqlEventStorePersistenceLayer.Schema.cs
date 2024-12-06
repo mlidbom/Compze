@@ -5,7 +5,7 @@ using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Persistence.MySql.EventStore;
 
-partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+partial class MySqlEventStorePersistenceLayer
 {
    const string MySqlGuidType = "CHAR(36)";
    bool _initialized;

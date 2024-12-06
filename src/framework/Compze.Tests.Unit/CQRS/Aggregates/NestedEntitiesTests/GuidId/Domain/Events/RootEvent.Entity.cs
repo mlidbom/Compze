@@ -16,9 +16,9 @@ static partial class RootEvent
          Guid EntityId { get; }
       }
 
-      public interface Created : IRoot, PropertyUpdated.Name;
+      public interface Created : PropertyUpdated.Name;
 
-      interface Renamed : IRoot, PropertyUpdated.Name;
+      interface Renamed : PropertyUpdated.Name;
 
       public interface Removed : IRoot;
 

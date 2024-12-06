@@ -17,9 +17,9 @@ static partial class RootEvent
             int NestedEntityId { get; }
          }
 
-         public interface Created : IRoot, PropertyUpdated.Name;
+         public interface Created : PropertyUpdated.Name;
 
-         interface Renamed : IRoot, PropertyUpdated.Name;
+         interface Renamed : PropertyUpdated.Name;
          public interface Removed : IRoot;
 
          public static class PropertyUpdated
