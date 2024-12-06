@@ -32,7 +32,6 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
    }
 
    public bool HandlesEvent(TAggregateEvent @event) => _eventDispatcher.Handles(@event);
-   public bool HandlesEvent<THandled>() => _eventDispatcher.HandlesEvent<THandled>();
 
    public void LoadFromHistory(IEnumerable<IAggregateEvent> history)
    {

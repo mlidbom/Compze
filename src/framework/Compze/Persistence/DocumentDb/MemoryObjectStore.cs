@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Contracts;
-using Compze.DDD;
 using Compze.Functional;
 using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.SystemCE.LinqCE;
@@ -86,26 +85,4 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
                .GetEnumerator());
 
    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-   public void Update(IEnumerable<KeyValuePair<string, object>> values, Dictionary<Type, Dictionary<string, string>> _) => _monitor.Update(
-      () => values.ForEach(pair => Update(pair.Key, pair.Value)));
-
-   protected virtual void Update(object key, object value) => _monitor.Update(() =>
-   {
-      if(!TryGet(value.GetType(), key, out var existing))
-      {
-         throw new NoSuchDocumentException(key, value.GetType());
-      }
-
-      if(!ReferenceEquals(existing, value))
-      {
-         Remove(key, value.GetType());
-         Add(key, value);
-      }
-   });
-
-   public IEnumerable<T> GetAll<T>() where T : IHasPersistentIdentity<Guid> => _monitor.Read(
-      () => this.Where(pair => pair.Value is T)
-                .Select(pair => (T)pair.Value)
-                .ToList());
 }

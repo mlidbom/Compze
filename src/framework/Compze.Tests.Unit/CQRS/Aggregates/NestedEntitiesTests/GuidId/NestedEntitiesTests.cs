@@ -47,6 +47,7 @@ public class NestedEntitiesTests : UniversalTestBase
    {
       var agEntity1 = Ag.AddEntity("entity1");
       var qmEntity1 = Qm.Entities.InCreationOrder[0];
+      Entity? qmEntityFetched = null;
       qmEntity1.Id.Should().Be(agEntity1.Id);
       agEntity1.Name.Should().Be("entity1");
       qmEntity1.Name.Should().Be("entity1");
@@ -54,6 +55,8 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Entities.InCreationOrder.Count.Should().Be(1);
       Ag.Entities.Exists(agEntity1.Id).Should().Be(true);
       Qm.Entities.Exists(qmEntity1.Id).Should().Be(true);
+      Qm.Entities.TryGet(qmEntity1.Id, out qmEntityFetched).Should().Be(true);
+      qmEntityFetched!.Id.Should().Be(qmEntity1.Id);
       Ag.Entities.Get(agEntity1.Id).Should().Be(agEntity1);
       Qm.Entities.Get(qmEntity1.Id).Should().Be(qmEntity1);
       Ag.Entities[agEntity1.Id].Should().Be(agEntity1);

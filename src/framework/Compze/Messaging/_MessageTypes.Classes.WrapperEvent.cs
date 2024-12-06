@@ -109,7 +109,7 @@ static class WrapperEvent
       var genericWrapperEventType = AssemblyBuilderCE.Module.Update(module =>
       {
          var wrapperEventBuilder = module.DefineType(
-            name: $"{wrapperEventType}_ilgen_impl",
+            name: $"{wrapperEventType}_compze_generated_implementation",
             attr: TypeAttributes.Public,
             parent: null,
             interfaces: [wrapperEventType]);
