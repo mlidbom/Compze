@@ -13,9 +13,9 @@
    </PropertyGroup>
 
    <ItemGroup>
+       <ProjectReference Include="..\Compze\Compze.csproj" />
       <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
       <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
-      <ProjectReference Include="..\Compze\Compze.csproj" />
    </ItemGroup>
 
    <ItemGroup>

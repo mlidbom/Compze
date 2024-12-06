@@ -13,15 +13,10 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <None Remove="AccountManagement.Domain.Shared.v3.ncrunchproject" />
-      <None Remove="AccountManagement.Server.v3.ncrunchproject" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
-      <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
       <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
+      <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
    </ItemGroup>
 
 

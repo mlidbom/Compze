@@ -17,6 +17,15 @@
    </ItemGroup>
 
    <ItemGroup>
+      <ProjectReference Include="..\Compze\Compze.csproj" />
+      <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
+      <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
+      <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
+      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
+   </ItemGroup>
+
+   <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -24,15 +33,6 @@
       <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
       <PackageReference Include="System.Threading.AccessControl" Version="9.0.0" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
-      <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
-      <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
-      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
-      <ProjectReference Include="..\Compze\Compze.csproj" />
    </ItemGroup>
 
 </Project>

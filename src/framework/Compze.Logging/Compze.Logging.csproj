@@ -12,10 +12,10 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
 
-
    <ItemGroup>
       <ProjectReference Include="..\Compze\Compze.csproj" />
       <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
    </ItemGroup>
+
 
 </Project>

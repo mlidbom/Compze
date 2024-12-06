@@ -13,6 +13,12 @@
    </PropertyGroup>
 
    <ItemGroup>
+      <ProjectReference Include="..\Compze\Compze.csproj" />
+      <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
+      <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
+   </ItemGroup>
+
+   <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
       <PackageReference Include="NUnit" Version="4.2.2" />
@@ -21,12 +27,6 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
-      <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
-      <ProjectReference Include="..\Compze\Compze.csproj" />
    </ItemGroup>
 
    <ItemGroup>

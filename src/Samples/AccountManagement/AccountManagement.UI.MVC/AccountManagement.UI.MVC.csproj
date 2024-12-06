@@ -12,9 +12,6 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
 
-   <ItemGroup>
-      <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
-   </ItemGroup>
 
    <ItemGroup>
       <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
@@ -24,6 +21,10 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
    </ItemGroup>
 
 </Project>

@@ -12,11 +12,13 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
 
-
    <ItemGroup>
-      <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
-         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+      <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
+      <ProjectReference Include="..\AccountManagement.Server\AccountManagement.Server.csproj" />
+      <ProjectReference Include="..\AccountManagement.Tests\AccountManagement.Tests.csproj" />
+      <ProjectReference Include="..\AccountManagement.UnitTests\AccountManagement.UnitTests.csproj" />
    </ItemGroup>
 
    <ItemGroup>
@@ -31,12 +33,9 @@
    </ItemGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
-      <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
-      <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\AccountManagement.Server\AccountManagement.Server.csproj" />
-      <ProjectReference Include="..\AccountManagement.Tests\AccountManagement.Tests.csproj" />
-      <ProjectReference Include="..\AccountManagement.UnitTests\AccountManagement.UnitTests.csproj" />
+      <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
    </ItemGroup>
 
    <ItemGroup>
