@@ -25,7 +25,7 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       }
    }
 
-   public bool TryGet(string idString, IReadonlySetCEx<Guid> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbPersistenceLayer.ReadRow? value)
+   public bool TryGet(string idString, IReadOnlySet<Guid> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbPersistenceLayer.ReadRow? value)
    {
       lock (_lockObject)
       {
@@ -54,17 +54,17 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       {
          foreach(var row in toUpdate)
          {
-            if (!TryGet(row.Id, new []{ row.TypeId }.ToSetCE(), useUpdateLock: false, out var existing)) throw new NoSuchDocumentException(row.Id, row.TypeId);
+            if (!TryGet(row.Id, new []{ row.TypeId }.ToHashSet(), useUpdateLock: false, out var existing)) throw new NoSuchDocumentException(row.Id, row.TypeId);
             if (existing.SerializedDocument != row.SerializedDocument)
             {
-               Remove(row.Id, new []{ row.TypeId }.ToSetCE());
+               Remove(row.Id, new []{ row.TypeId }.ToHashSet());
                Add(row);
             }
          }
       }
    }
 
-   public int Remove(string idstring, IReadonlySetCEx<Guid> acceptableTypes)
+   public int Remove(string idstring, IReadOnlySet<Guid> acceptableTypes)
    {
       lock (_lockObject)
       {
@@ -76,7 +76,7 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       }
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadonlySetCEx<Guid> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<Guid> acceptableTypes)
    {
       var typeIds = new HashSet<Guid>(acceptableTypes);
       lock (_lockObject)
@@ -96,7 +96,7 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       }
    }
 
-   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadonlySetCEx<Guid> acceptableTypes)
+   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<Guid> acceptableTypes)
    {
       lock (_lockObject)
       {
@@ -108,7 +108,7 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       }
    }
 
-   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IReadonlySetCEx<Guid> acceptableTypes)
+   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IReadOnlySet<Guid> acceptableTypes)
    {
       var typeIds = new HashSet<Guid>(acceptableTypes);
       lock (_lockObject)
@@ -121,5 +121,5 @@ class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       }
    }
 
-   bool Contains(Guid type, string id) => TryGet(id, new[]{ type }.ToSetCE(), false, out _);
+   bool Contains(Guid type, string id) => TryGet(id, new[]{ type }.ToHashSet(), false, out _);
 }

@@ -28,21 +28,8 @@ public static partial class EnumerableCE
       return source.Concat(instances);
    }
 
-   /// <summary>
-   /// <para>The inversion of Enumerable.Any() .</para>
-   /// <para>Returns true if <paramref name="me"/> contains no elements.</para>
-   /// </summary>
-   /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
-   internal static bool None<T>(this IEnumerable<T> me)
-   {
-      Contracts.Assert.Argument.NotNull(me);
-
-      return !me.Any();
-   }
-
    //Add these so that we don't waste effort enumerating these types to check if any entries exist.
    internal static bool None<T>(this List<T> me) => me.Count == 0;
-   public static bool None<T>(this IList<T> me) => me.Count == 0;
    internal static bool None<T>(this IReadOnlyList<T> me) => me.Count == 0;
    internal static bool None<T>(this T[] me) => me.Length == 0;
 

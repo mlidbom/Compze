@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.SystemCE.CollectionsCE.GenericCE;
@@ -25,7 +26,7 @@ partial class MessageTypeInspector
 
    static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
 
-   static IReadonlySetCEx<Type> _successfullyInspectedSubscribableTypes = new HashSetCEx<Type>();
+   static IReadOnlySet<Type> _successfullyInspectedSubscribableTypes = new HashSet<Type>();
    internal static void AssertValidForSubscription(Type type)
    {
       if(_successfullyInspectedSubscribableTypes.Contains(type)) return;
@@ -39,7 +40,7 @@ partial class MessageTypeInspector
       });
    }
 
-   static IReadonlySetCEx<Type> _successfullyInspectedTypes = new HashSetCEx<Type>();
+   static IReadOnlySet<Type> _successfullyInspectedTypes = new HashSet<Type>();
    internal static void AssertValid(Type type)
    {
       if(_successfullyInspectedTypes.Contains(type)) return;

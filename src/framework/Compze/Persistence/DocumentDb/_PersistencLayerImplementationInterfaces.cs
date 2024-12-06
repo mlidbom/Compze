@@ -8,13 +8,13 @@ namespace Compze.Persistence.DocumentDb;
 interface IDocumentDbPersistenceLayer
 {
    void Update(IReadOnlyList<WriteRow> toUpdate);
-   bool TryGet(string idString, IReadonlySetCEx<Guid> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out ReadRow? document);
+   bool TryGet(string idString, IReadOnlySet<Guid> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out ReadRow? document);
    void Add(WriteRow row);
-   int Remove(string idString, IReadonlySetCEx<Guid> acceptableTypes);
+   int Remove(string idString, IReadOnlySet<Guid> acceptableTypes);
    //Urgent: This whole Guid vs string thing must be fixed.
-   IEnumerable<Guid> GetAllIds(IReadonlySetCEx<Guid> acceptableTypes);
-   IReadOnlyList<ReadRow> GetAll(IEnumerable<Guid> ids, IReadonlySetCEx<Guid> acceptableTypes);
-   IReadOnlyList<ReadRow> GetAll(IReadonlySetCEx<Guid> acceptableTypes);
+   IEnumerable<Guid> GetAllIds(IReadOnlySet<Guid> acceptableTypes);
+   IReadOnlyList<ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<Guid> acceptableTypes);
+   IReadOnlyList<ReadRow> GetAll(IReadOnlySet<Guid> acceptableTypes);
 
    class ReadRow(Guid typeId, string serializedDocument)
    {

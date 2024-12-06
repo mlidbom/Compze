@@ -19,7 +19,7 @@ static class ThreadSafe
 
 
    ///<summary>Must be called from synchronized code that guarantees that this is the only thread modifying <paramref name="original"/>. It's purpose is to allow readers free access to <paramref name="original"/> even though <paramref name="original"/> is only thread safe for concurrent readers.</summary>
-   internal static void AddToCopyAndReplace<T>(ref IReadonlySetCEx<T> original, T item) =>
+   internal static void AddToCopyAndReplace<T>(ref IReadOnlySet<T> original, T item) =>
       original = original.AddToCopy(item);
 
 

@@ -43,7 +43,7 @@ partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       });
    }
 
-   public bool TryGet(string idString, IReadonlySetCEx<Guid> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbPersistenceLayer.ReadRow? document)
+   public bool TryGet(string idString, IReadOnlySet<Guid> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbPersistenceLayer.ReadRow? document)
    {
       EnsureInitialized();
 
@@ -89,7 +89,7 @@ partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       }
    }
 
-   public int Remove(string idString, IReadonlySetCEx<Guid> acceptableTypes)
+   public int Remove(string idString, IReadOnlySet<Guid> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -99,7 +99,7 @@ partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
                    .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadonlySetCEx<Guid> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<Guid> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -107,7 +107,7 @@ partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
                            .ExecuteReaderAndSelect(reader => Guid.Parse(reader.GetString(0))));
    }
 
-   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadonlySetCEx<Guid> acceptableTypes)
+   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<Guid> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -118,7 +118,7 @@ partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
                            .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IReadonlySetCEx<Guid> acceptableTypes)
+   public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IReadOnlySet<Guid> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(

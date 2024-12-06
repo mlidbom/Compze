@@ -13,7 +13,7 @@ static class ReadonlyCollectionsCE
 
    public static List<T> AddToCopy<T>(this IReadOnlyList<T> @this, T item) => [..@this, item];
 
-   public static HashSetCEx<T> AddToCopy<T>(this IReadonlySetCEx<T> @this, T item) => new(@this) {item};
+   public static HashSet<T> AddToCopy<T>(this IReadOnlySet<T> @this, T item) => [..@this, item];
 
    public static List<T> AddRangeToCopy<T>(this IReadOnlyList<T> @this, IEnumerable<T> items) =>
       new List<T>(@this).mutate(me => me.AddRange(items));
