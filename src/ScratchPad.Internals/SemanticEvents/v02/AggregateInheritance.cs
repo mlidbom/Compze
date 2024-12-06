@@ -25,9 +25,12 @@ interface IWrapperEvent<out TWrappedEvent>
    TWrappedEvent Event { get; }
 }
 
-interface IInheritableAggregateEvent<out TInheritorEvent> : IWrapperEvent<TInheritorEvent> where TInheritorEvent : IAggregateEvent {}
-interface IAnimalWrapperEvent<out TInheritorEvent> : IInheritableAggregateEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
-interface IBirdWrapperEvent<out TInheritorEvent> : IAnimalWrapperEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
+interface IExactlyOnceWrapperEvent<out TEventInterface> : IWrapperEvent<TEventInterface> where TEventInterface : IExactlyOnceEvent {}
+interface IAggregateWrapperEvent<out TInheritorEvent> : IExactlyOnceWrapperEvent<TInheritorEvent> where TInheritorEvent : IAggregateEvent {}
+
+interface IAnimalEvent<out TInheritorEvent> : IAggregateWrapperEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
+interface IBirdEvent<out TInheritorEvent> : IAnimalEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
+
 interface IAnimalEvent : IAggregateEvent {}
 interface IAnimalBorn : IAnimalEvent {}
 interface IBirdEvent : IAnimalEvent {}
@@ -37,12 +40,12 @@ public class AggregateInheritance
 {
    public void DemonstrateSemanticRelationships()
    {
-      IAnimalWrapperEvent<IAnimalEvent> animalEventAnimalWrapped = null!;
-      IAnimalWrapperEvent<IAnimalBorn> animalBornEventAnimalWrapped = null!;
+      IAnimalEvent<IAnimalEvent> animalEventAnimalWrapped = null!;
+      IAnimalEvent<IAnimalBorn> animalBornEventAnimalWrapped = null!;
 
-      IBirdWrapperEvent<IAnimalEvent> animalEventBirdWrapped = null!;
-      IBirdWrapperEvent<IAnimalBorn> animalBornEventBirdWrapped = null!;
-      IBirdWrapperEvent<IBirdChirpsEvent> birdChirpsEventBirdWrapped = null!;
+      IBirdEvent<IAnimalEvent> animalEventBirdWrapped = null!;
+      IBirdEvent<IAnimalBorn> animalBornEventBirdWrapped = null!;
+      IBirdEvent<IBirdChirpsEvent> birdChirpsEventBirdWrapped = null!;
 
       //Semantic relationships and unique type identity for events is maintained without having to recreate the inheritance hierarchy for each inheritor.
       //An inheritable aggregate would publish the inner event just like now, it would be automatically wrapped by the framework.
@@ -58,20 +61,20 @@ public class AggregateInheritance
    }
 }
 
-interface IAnimalComponentEvent<out TComponentEvent> : IAnimalEvent {}
+interface IAnimalComponentEvent<out TComponentEvent> : IWrapperEvent<TComponentEvent>, IAnimalEvent {}
 interface IBirdComponentEvent<out TComponentEvent> : IAnimalComponentEvent<TComponentEvent> {}
 
 public class ReUsableAggregateComponentsInInheritableAggregates
 {
    static void DemonstrateSemanticRelationships()
    {
-      IAnimalWrapperEvent<IAnimalComponentEvent<IComponentEventBase>> componentEventBaseAnimalWrapped = null!;
-      IAnimalWrapperEvent<IAnimalComponentEvent<IComponentEvent1>> componentEvent1AnimalWrapped = null!;
-      IAnimalWrapperEvent<IAnimalComponentEvent<IComponentEvent2>> componentEvent2AnimalWrapped = null!;
+      IAnimalEvent<IAnimalComponentEvent<IComponentEventBase>> componentEventBaseAnimalWrapped = null!;
+      IAnimalEvent<IAnimalComponentEvent<IComponentEvent1>> componentEvent1AnimalWrapped = null!;
+      IAnimalEvent<IAnimalComponentEvent<IComponentEvent2>> componentEvent2AnimalWrapped = null!;
 
-      IBirdWrapperEvent<IBirdComponentEvent<IComponentEventBase>> componentEventBaseBirdWrapped = null!;
-      IBirdWrapperEvent<IBirdComponentEvent<IComponentEvent1>> componentEvent1BirdWrapped = null!;
-      IBirdWrapperEvent<IBirdComponentEvent<IComponentEvent2>> componentEvent2BirdWrapped = null!;
+      IBirdEvent<IBirdComponentEvent<IComponentEventBase>> componentEventBaseBirdWrapped = null!;
+      IBirdEvent<IBirdComponentEvent<IComponentEvent1>> componentEvent1BirdWrapped = null!;
+      IBirdEvent<IBirdComponentEvent<IComponentEvent2>> componentEvent2BirdWrapped = null!;
 
       //Semantic relationships are maintained.
       componentEventBaseAnimalWrapped = componentEvent1AnimalWrapped = componentEvent2AnimalWrapped;
