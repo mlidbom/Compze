@@ -28,14 +28,11 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    where TAggregateEvent : class, IAggregateEvent
    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
-   protected IUtcTimeTimeSource TimeSource { get; private set; }
+   IUtcTimeTimeSource TimeSource { get; set; }
 
    static Aggregate() => AggregateTypeValidator<TAggregate, TAggregateEventImplementation, TAggregateEvent>.AssertStaticStructureIsValid();
 
-   [Obsolete("Only for infrastructure", true)]
-   protected Aggregate() : this(DateTimeNowTimeSource.Instance) {}
-
-   //Yes empty. Id should be assigned by an action and it should be obvious that the aggregate in invalid until that happens
+   //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the aggregate in invalid until that happens
    protected Aggregate(IUtcTimeTimeSource timeSource) : base(Guid.Empty)
    {
       Assert.Argument.NotNull(timeSource)

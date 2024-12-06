@@ -21,15 +21,6 @@ static class Pipe
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="Unit"/>.  Useful for chaining statements that return void.</summary>
    public static Unit then<TValue>(this TValue _, Action action) => Unit.From(action);
 
-   ///<summary> Disposes <paramref name="it"/> after applying <paramref name="transform"/> and returning the resulting value.</summary>
-   internal static TResult use<TIDisposableValue, TResult>(this TIDisposableValue it, Func<TIDisposableValue, TResult> transform) where TIDisposableValue : IDisposable
-   {
-      using(it)
-      {
-         return transform(it);
-      }
-   }
-
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
    public static T mutate<T>(this T it, Action<T> mutate)
    {
