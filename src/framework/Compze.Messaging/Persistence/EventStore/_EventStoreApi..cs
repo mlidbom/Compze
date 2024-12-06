@@ -7,7 +7,7 @@ namespace Compze.Persistence.EventStore;
 public partial class EventStoreApi
 {
    public QueryApi Queries => new();
-   public Command Commands => new();
+   public CommandApi Commands => new();
 
    public partial class QueryApi
    {
@@ -20,7 +20,7 @@ public partial class EventStoreApi
       public GetAggregateHistory<TEvent> GetHistory<TEvent>(Guid id) where TEvent : IAggregateEvent => new(id);
    }
 
-   public partial class Command
+   public partial class CommandApi
    {
       public SaveAggregate<TAggregate> Save<TAggregate>(TAggregate account) where TAggregate : class, IEventStored => new(account);
    }

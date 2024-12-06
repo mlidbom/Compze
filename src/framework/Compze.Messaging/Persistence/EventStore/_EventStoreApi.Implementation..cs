@@ -56,7 +56,7 @@ public partial class EventStoreApi
       }
    }
 
-   public partial class Command
+   public partial class CommandApi
    {
       public class SaveAggregate<TAggregate> : MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand
          where TAggregate : class, IEventStored
@@ -73,7 +73,7 @@ public partial class EventStoreApi
       where TAggregate : class, IEventStored<TEvent>
       where TEvent : IAggregateEvent
    {
-      Command.SaveAggregate<TAggregate>.RegisterHandler(registrar);
+      CommandApi.SaveAggregate<TAggregate>.RegisterHandler(registrar);
       QueryApi.AggregateLink<TAggregate>.RegisterHandler(registrar);
       QueryApi.GetReadonlyCopyOfAggregate<TAggregate>.RegisterHandler(registrar);
       QueryApi.GetReadonlyCopyOfAggregateVersion<TAggregate>.RegisterHandler(registrar);
