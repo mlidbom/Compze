@@ -47,7 +47,7 @@ public class NestedEntitiesTests : UniversalTestBase
    {
       var agEntity1 = Ag.AddEntity("entity1");
       var qmEntity1 = Qm.Entities.InCreationOrder[0];
-      Entity? qmEntityFetched = null;
+      Entity? qmEntityFetched;
       qmEntity1.Id.Should().Be(agEntity1.Id);
       agEntity1.Name.Should().Be("entity1");
       qmEntity1.Name.Should().Be("entity1");
