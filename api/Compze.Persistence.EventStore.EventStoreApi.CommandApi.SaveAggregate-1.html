@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class EventStoreApi | Compze </title>
+      <title>Class EventStoreApi.CommandApi.SaveAggregate&lt;TAggregate&gt; | Compze </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class EventStoreApi | Compze ">
+      <meta name="title" content="Class EventStoreApi.CommandApi.SaveAggregate&lt;TAggregate&gt; | Compze ">
       
       
       <link rel="icon" href="../favicon.ico">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/semantic-events-design/apiSpec/new?filename=Compze_Persistence_EventStore_EventStoreApi.md&amp;value=---%0Auid%3A%20Compze.Persistence.EventStore.EventStoreApi%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/semantic-events-design/apiSpec/new?filename=Compze_Persistence_EventStore_EventStoreApi_CommandApi_SaveAggregate_1.md&amp;value=---%0Auid%3A%20Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,12 +84,12 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Compze.Persistence.EventStore.EventStoreApi">
+        <article data-uid="Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate`1">
 
 
 
-  <h1 id="Compze_Persistence_EventStore_EventStoreApi" data-uid="Compze.Persistence.EventStore.EventStoreApi" class="text-break">
-Class EventStoreApi  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Persistence/EventStore/_EventStoreApi.Implementation..cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Compze_Persistence_EventStore_EventStoreApi_CommandApi_SaveAggregate_1" data-uid="Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate`1" class="text-break">
+Class EventStoreApi.CommandApi.SaveAggregate&lt;TAggregate&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Persistence/EventStore/_EventStoreApi.Implementation..cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -101,20 +101,36 @@ Class EventStoreApi  <a class="header-action link-secondary" title="View source"
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class EventStoreApi</code></pre>
+    <pre><code class="lang-csharp hljs">public class EventStoreApi.CommandApi.SaveAggregate&lt;TAggregate&gt; : MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand, IStrictlyLocalCommand, ICommand, IMustBeSentTransactionally, IMessage, IStrictlyLocalMessage where TAggregate : class, IEventStored</code></pre>
   </div>
 
 
 
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TAggregate</code></dt>
+    <dd></dd>
+  </dl>
 
   <dl class="typelist inheritance">
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><span class="xref">EventStoreApi</span></div>
+      <div><a class="xref" href="Compze.Messaging.MessageTypes.html">MessageTypes</a>.<a class="xref" href="Compze.Messaging.MessageTypes.StrictlyLocal.html">StrictlyLocal</a>.<a class="xref" href="Compze.Messaging.MessageTypes.StrictlyLocal.Commands.html">Commands</a>.<a class="xref" href="Compze.Messaging.MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand.html">StrictlyLocalCommand</a></div>
+      <div><span class="xref">EventStoreApi.CommandApi.SaveAggregate&lt;TAggregate&gt;</span></div>
     </dd>
   </dl>
 
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Compze.Messaging.IStrictlyLocalCommand.html">IStrictlyLocalCommand</a></div>
+      <div><a class="xref" href="Compze.Messaging.ICommand.html">ICommand</a></div>
+      <div><a class="xref" href="Compze.Messaging.IMustBeSentTransactionally.html">IMustBeSentTransactionally</a></div>
+      <div><a class="xref" href="Compze.Messaging.IMessage.html">IMessage</a></div>
+      <div><a class="xref" href="Compze.Messaging.IStrictlyLocalMessage.html">IStrictlyLocalMessage</a></div>
+    </dd>
+  </dl>
 
 
   <dl class="typelist inheritedMembers">
@@ -158,77 +174,11 @@ Class EventStoreApi  <a class="header-action link-secondary" title="View source"
 
 
 
-  <h2 class="section" id="properties">Properties
-</h2>
-
-
-  <a id="Compze_Persistence_EventStore_EventStoreApi_Commands_" data-uid="Compze.Persistence.EventStore.EventStoreApi.Commands*"></a>
-
-  <h3 id="Compze_Persistence_EventStore_EventStoreApi_Commands" data-uid="Compze.Persistence.EventStore.EventStoreApi.Commands">
-  Commands
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Persistence/EventStore/_EventStoreApi..cs/#L10"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EventStoreApi.CommandApi Commands { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Compze.Persistence.EventStore.EventStoreApi.html">EventStoreApi</a>.<a class="xref" href="Compze.Persistence.EventStore.EventStoreApi.CommandApi.html">CommandApi</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Compze_Persistence_EventStore_EventStoreApi_Queries_" data-uid="Compze.Persistence.EventStore.EventStoreApi.Queries*"></a>
-
-  <h3 id="Compze_Persistence_EventStore_EventStoreApi_Queries" data-uid="Compze.Persistence.EventStore.EventStoreApi.Queries">
-  Queries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Persistence/EventStore/_EventStoreApi..cs/#L9"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EventStoreApi.QueryApi Queries { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Compze.Persistence.EventStore.EventStoreApi.html">EventStoreApi</a>.<a class="xref" href="Compze.Persistence.EventStore.EventStoreApi.QueryApi.html">QueryApi</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Persistence/EventStore/_EventStoreApi.Implementation..cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Persistence/EventStore/_EventStoreApi.Implementation..cs/#L61" class="edit-link">Edit this page</a>
         </div>
 
 

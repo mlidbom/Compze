@@ -8201,6 +8201,37 @@ references:
   fullName.vb: Compze.Persistence.EventStore.EventStoreApi.Command.Save(Of TAggregate)(TAggregate)
   nameWithType: EventStoreApi.Command.Save<TAggregate>(TAggregate)
   nameWithType.vb: EventStoreApi.Command.Save(Of TAggregate)(TAggregate)
+- uid: Compze.Persistence.EventStore.EventStoreApi.CommandApi
+  name: EventStoreApi.CommandApi
+  href: api/Compze.Persistence.EventStore.EventStoreApi.CommandApi.html
+  commentId: T:Compze.Persistence.EventStore.EventStoreApi.CommandApi
+  fullName: Compze.Persistence.EventStore.EventStoreApi.CommandApi
+  nameWithType: EventStoreApi.CommandApi
+- uid: Compze.Persistence.EventStore.EventStoreApi.CommandApi.Save*
+  name: Save
+  href: api/Compze.Persistence.EventStore.EventStoreApi.CommandApi.html#Compze_Persistence_EventStore_EventStoreApi_CommandApi_Save_
+  commentId: Overload:Compze.Persistence.EventStore.EventStoreApi.CommandApi.Save
+  isSpec: "True"
+  fullName: Compze.Persistence.EventStore.EventStoreApi.CommandApi.Save
+  nameWithType: EventStoreApi.CommandApi.Save
+- uid: Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate`1
+  name: EventStoreApi.CommandApi.SaveAggregate<TAggregate>
+  href: api/Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate-1.html
+  commentId: T:Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate`1
+  name.vb: EventStoreApi.CommandApi.SaveAggregate(Of TAggregate)
+  fullName: Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate<TAggregate>
+  fullName.vb: Compze.Persistence.EventStore.EventStoreApi.CommandApi.SaveAggregate(Of TAggregate)
+  nameWithType: EventStoreApi.CommandApi.SaveAggregate<TAggregate>
+  nameWithType.vb: EventStoreApi.CommandApi.SaveAggregate(Of TAggregate)
+- uid: Compze.Persistence.EventStore.EventStoreApi.CommandApi.Save``1(``0)
+  name: Save<TAggregate>(TAggregate)
+  href: api/Compze.Persistence.EventStore.EventStoreApi.CommandApi.html#Compze_Persistence_EventStore_EventStoreApi_CommandApi_Save__1___0_
+  commentId: M:Compze.Persistence.EventStore.EventStoreApi.CommandApi.Save``1(``0)
+  name.vb: Save(Of TAggregate)(TAggregate)
+  fullName: Compze.Persistence.EventStore.EventStoreApi.CommandApi.Save<TAggregate>(TAggregate)
+  fullName.vb: Compze.Persistence.EventStore.EventStoreApi.CommandApi.Save(Of TAggregate)(TAggregate)
+  nameWithType: EventStoreApi.CommandApi.Save<TAggregate>(TAggregate)
+  nameWithType.vb: EventStoreApi.CommandApi.Save(Of TAggregate)(TAggregate)
 - uid: Compze.Persistence.EventStore.EventStoreApi.Commands
   name: Commands
   href: api/Compze.Persistence.EventStore.EventStoreApi.html#Compze_Persistence_EventStore_EventStoreApi_Commands
