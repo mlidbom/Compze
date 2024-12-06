@@ -77,7 +77,7 @@ public class ReUsableAggregateComponentsInInheritableAggregates
       userAddressEvent = userAddressUpdatedEvent = userMovedEvent;
       managerAddressEvent = managerAddressUpdatedEvent = managerMovedEvent;
 
-      userAddressEvent = managerAddressEvent;
+      userAddressEvent = managerAddressEvent = managerAddressUpdatedEvent = managerMovedEvent;
       userAddressUpdatedEvent = managerAddressUpdatedEvent;
    }
 }
