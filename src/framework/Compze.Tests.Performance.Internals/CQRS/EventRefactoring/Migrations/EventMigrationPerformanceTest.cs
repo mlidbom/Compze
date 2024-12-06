@@ -66,7 +66,7 @@ public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsC
             return Task.CompletedTask;
          });
 
-      await using((clonedLocator = _container.Clone()))
+      await using(clonedLocator = _container.Clone())
       {
          LoadWithCloneLocator(clonedLocator); //Warm up cache
 

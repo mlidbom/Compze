@@ -18,7 +18,7 @@ static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
 {
    public static void AssertStaticStructureIsValid()
    {
-      List<Type> typesToInspect = EnumerableCE.OfTypes<TDomainClass, TEventImplementation, TEvent>().ToList();
+      var typesToInspect = EnumerableCE.OfTypes<TDomainClass, TEventImplementation, TEvent>().ToList();
 
       typesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(typeof(TDomainClass)));
       typesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(typeof(TEventImplementation)));
