@@ -5,6 +5,7 @@ using Compze.SystemCE;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Testing.Persistence;
 
@@ -20,8 +21,9 @@ class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(plugg
             _ = CreatePool();
          });
 
-         Assert.Throws<AggregateException>(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
-               .InnerExceptions.Should().HaveCount(1);
+         Invoking(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
+           .Should().Throw<AggregateException>().Which
+           .InnerExceptions.Should().HaveCount(1);
       });
    }
 }

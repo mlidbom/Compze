@@ -9,6 +9,7 @@ using FluentAssertions.Extensions;
 using NCrunch.Framework;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
+using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -92,14 +93,15 @@ namespace Compze.Tests.SystemCE.ThreadingCE.ResourceAccess;
 
          threadOneHasTakenUpdateLock.WaitOne();
 
-         var thrownException = Assert.Throws<AggregateException>(
+         var thrownException = Invoking(
                                          () => Task.Run(() =>
                                                     {
                                                        threadTwoIsAboutToTryToEnterUpdateLock.Set();
                                                        monitor.TakeUpdateLock();
                                                     })
                                                    .Wait())
-                                     .InnerExceptions.Single();
+                              .Should().Throw<AggregateException>()
+                              .Which.InnerExceptions.Single();
 
          return thrownException;
       }

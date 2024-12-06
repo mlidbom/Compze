@@ -5,6 +5,7 @@ using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.SystemCE;
 
@@ -19,12 +20,13 @@ class StrictlyManagedResourceTests : UniversalTestBase
             _ = new StrictlyManagedResource<MyClass>();
          });
 
-         Assert.Throws<AggregateException>(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
-               .InnerExceptions.Should().HaveCount(1);
+         Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
+           .Should().Throw<AggregateException>()
+           .Which.InnerExceptions.Should().HaveCount(1);
       });
    }
 
-   [UsedImplicitly]class MyClass : IStrictlyManagedResource
+   [UsedImplicitly] class MyClass : IStrictlyManagedResource
    {
       public void Dispose() => throw new NotImplementedException();
    }

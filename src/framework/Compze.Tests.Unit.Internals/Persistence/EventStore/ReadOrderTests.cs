@@ -5,6 +5,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Persistence.EventStore;
 
@@ -20,21 +21,23 @@ namespace Compze.Tests.Persistence.EventStore;
 
    [Test] public void Parse_throws_on_negative_numbers()
    {
-      Assert.Throws<ArgumentException>(() => ReadOrder.Parse(CreateString(0, -1)))
-            .Message.Should().Contain("negative");
+      Invoking(() => ReadOrder.Parse(CreateString(0, -1)))
+        .Should().Throw<ArgumentException>().Which.Message.Should().Contain("negative");
    }
 
    [Test] public void Parse_requires_exactly_19_decimal_point_numbers()
    {
       1.Through(18).ForEach(
-         num => Assert.Throws<ArgumentException>(
-            () => ReadOrder.Parse($"1.{new string('1', num)}")).Message.Should().Contain("decimal numbers"));
+         num => Invoking(() => ReadOrder.Parse($"1.{new string('1', num)}"))
+               .Should().Throw<ArgumentException>().Which
+               .Message.Should().Contain("decimal numbers"));
 
       ReadOrder.Parse($"1.{new string('1', 19)}");
 
       20.Through(40).ForEach(
-         num => Assert.Throws<ArgumentException>(
-            () => ReadOrder.Parse($"1.{new string('1', num)}")).Message.Should().Contain("decimal numbers"));
+         num => Invoking(() => ReadOrder.Parse($"1.{new string('1', num)}"))
+               .Should().Throw<ArgumentException>().Which
+               .Message.Should().Contain("decimal numbers"));
    }
 
    [Test] public void RoundTripping_SqlDecimal_results_in_same_value()
@@ -62,7 +65,6 @@ namespace Compze.Tests.Persistence.EventStore;
       ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 0), Create(2, 0))
                .ForEach(it => Console.WriteLine(it));
 
-
       ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 10), Create(1, 3000))
                .ForEach(it => Console.WriteLine(it));
    }
@@ -70,7 +72,7 @@ namespace Compze.Tests.Persistence.EventStore;
    [Test] public void CreateOrdersForEventsBetween_Fills_Small_Gap_Around_Integer_Limit()
    {
       var rangeStart = ReadOrder.Parse("1.9999999999999999997");
-      var rangeEnd =   ReadOrder.Parse("2.0000000000000000003");
+      var rangeEnd = ReadOrder.Parse("2.0000000000000000003");
 
       var orders = ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 5, rangeStart: rangeStart, rangeEnd: rangeEnd);
 
@@ -84,7 +86,7 @@ namespace Compze.Tests.Persistence.EventStore;
    [Test] public void CreateOrdersForEventsBetween_Fills_Minimum_Gap_Around_Integer_Limit()
    {
       var rangeStart = ReadOrder.Parse("1.9999999999999999999");
-      var rangeEnd =   ReadOrder.Parse("2.0000000000000000001");
+      var rangeEnd = ReadOrder.Parse("2.0000000000000000001");
 
       var orders = ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 1, rangeStart: rangeStart, rangeEnd: rangeEnd);
 
@@ -94,7 +96,7 @@ namespace Compze.Tests.Persistence.EventStore;
    [Test] public void CreateOrdersForEventsBetween_Fills_Small_Gap_in_middle_of_offset()
    {
       var rangeStart = ReadOrder.Parse("1.5999999999999999993");
-      var rangeEnd =   ReadOrder.Parse("1.5999999999999999999");
+      var rangeEnd = ReadOrder.Parse("1.5999999999999999999");
 
       var orders = ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 5, rangeStart: rangeStart, rangeEnd: rangeEnd);
 
@@ -108,7 +110,7 @@ namespace Compze.Tests.Persistence.EventStore;
    [Test] public void CreateOrdersForEventsBetween_Fills_Minimum_Gap_in_middle_of_offset()
    {
       var rangeStart = ReadOrder.Parse("1.5999999999999999993");
-      var rangeEnd =   ReadOrder.Parse("1.5999999999999999995");
+      var rangeEnd = ReadOrder.Parse("1.5999999999999999995");
 
       var orders = ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 1, rangeStart: rangeStart, rangeEnd: rangeEnd);
 
@@ -118,7 +120,7 @@ namespace Compze.Tests.Persistence.EventStore;
    [Test] public void CreateOrdersForEventsBetween_Throws_InvalidOperationException_if_gap_is_too_small()
    {
       var rangeStart = ReadOrder.Parse("1.9999999999999999997");
-      var rangeEnd =   ReadOrder.Parse("2.0000000000000000003");
+      var rangeEnd = ReadOrder.Parse("2.0000000000000000003");
 
       Assert.Throws<ArgumentException>(() => ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 6, rangeStart: rangeStart, rangeEnd: rangeEnd));
    }

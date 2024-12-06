@@ -2,6 +2,7 @@
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
+using static FluentAssertions.FluentActions;
 
 namespace AccountManagement.UnitTests.Passwords;
 
@@ -17,5 +18,7 @@ public class A_password_is_invalid_if_it : UniversalTestBase
 
    static void AssertCreatingPasswordThrowsExceptionContainingFailure(string password, Password.Policy.Failures expectedFailure)
       // ReSharper disable once ObjectCreationAsStatement
-      => Assert.Throws<PasswordDoesNotMatchPolicyException>(() => new Password(password)).Failures.Should().Contain(expectedFailure);
+      => Invoking(() => new Password(password))
+        .Should().Throw<PasswordDoesNotMatchPolicyException>().Which
+        .Failures.Should().Contain(expectedFailure);
 }

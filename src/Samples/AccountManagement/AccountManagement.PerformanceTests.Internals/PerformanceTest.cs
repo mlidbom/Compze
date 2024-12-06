@@ -89,7 +89,7 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
             var registerAccountScenario = _scenarioApi.Register;
             var result = registerAccountScenario.Execute().Result;
             result.Status.Should().Be(RegistrationAttemptStatus.Successful);
-            _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(result.RegisteredAccount.Id)).Id.Should().Be(result.RegisteredAccount.Id);
+            _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(result.RegisteredAccount!.Id)).Id.Should().Be(result.RegisteredAccount.Id);
             created.Add((registerAccountScenario.Email, registerAccountScenario.Password, registerAccountScenario.AccountId));
          },
          iterations: accountCount);
