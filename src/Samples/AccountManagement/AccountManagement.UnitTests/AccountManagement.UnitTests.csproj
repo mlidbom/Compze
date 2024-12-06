@@ -6,7 +6,7 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>AccountManagement</RootNamespace>
+      <RootNamespace>AccountManagement.UnitTests</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>

@@ -31,7 +31,7 @@ class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersiste
    {
       readonly List<Row> _rows = [];
 
-      public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage) => _rows.Add(new Row(messageId, typeId, serializedMessage));
+      public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage) => _rows.Add(new Row(messageId));
 
       public void MarkAsSucceeded(Guid messageId) => _rows.Single(it => it.MessageId == messageId).Status = Inbox.MessageStatus.Succeeded;
 
@@ -53,11 +53,9 @@ class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersiste
 
       public Task InitAsync() => Task.CompletedTask;
 
-      class Row(Guid messageId, Guid typeId, string serializedMessage)
+      class Row(Guid messageId)
       {
          public Guid MessageId { get; } = messageId;
-         public Guid TypeId { get; } = typeId;
-         public string SerializedMessage { get; } = serializedMessage;
 
          public Inbox.MessageStatus Status { get; set; } = Inbox.MessageStatus.UnHandled;
 

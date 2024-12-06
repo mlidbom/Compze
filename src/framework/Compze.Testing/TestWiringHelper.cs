@@ -8,7 +8,7 @@ using Compze.Persistence.EventStore;
 using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 
-namespace Compze.Tests;
+namespace Compze.Testing;
 
 static class TestWiringHelper
 {

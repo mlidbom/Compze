@@ -9,6 +9,7 @@ using Compze.Persistence.DocumentDb;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
+using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using FluentAssertions;
 using NUnit.Framework;
