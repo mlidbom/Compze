@@ -97,7 +97,7 @@ Classes
     <dl class="jumplist">
       <dt><a class="xref" href="Compze.DDD.Entity-1.html">Entity&lt;TEntity&gt;</a></dt>
       <dd><p>Simple base class for Entities that ensures a correct identity based <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">Equals(object)</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">GetHashCode()</a>, and <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>.</p>
-<p>This class uses <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>s as Ids because it is the only built in .Net type the developers are
+<p>This class uses <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>s as Ids because it is the only built-in .Net type the developers are
 aware of which can, in practice, guarantee for a system that an PersistentEntity will have a globally unique immutable identity
 from the moment of instantiation and through any number of persisting-loading cycles. That in turn is an
 absolute requirement for a correct implementation of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">Equals(object)</a>,
@@ -113,12 +113,6 @@ the operators simply uses Equals.
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Compze.DDD.ValueObject-1.html">ValueObject&lt;T&gt;</a></dt>
-      <dd><p>Base class for value objects that implements value equality based on instance fields.
-Properties are ignored when comparing. Only fields are used.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="Compze.DDD.VersionedEntity-1.html">VersionedEntity&lt;T&gt;</a></dt>
       <dd><p>Base class for persistent entities with versioning information</p>
 </dd>
@@ -128,7 +122,17 @@ Interfaces
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Compze.DDD.IHasPersistentIdentity-1.html">IHasPersistentIdentity&lt;TKeyType&gt;</a></dt>
-      <dd><p>Anything that can be uniquely identified using it's id over any number of persist/load cycles.</p>
+      <dd><p>Anything that can be uniquely identified using its id over any number of persist/load cycles.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Compze.DDD.IPersistentEntity-1.html">IPersistentEntity&lt;TKeyType&gt;</a></dt>
+      <dd><p>Should be implemented by persistent* classes that represents entities in the Domain Driven Design sense of the word.</p>
+<p>The vital distinction about Persistent Entities is that equality is defined by Identity,
+and as such they must guarantee that they have a non-default identity at all times.</p>
+<ul>
+<li>Classes that have a lifecycle longer than an application run. Often persisted in databases.</li>
+</ul>
 </dd>
     </dl>
 

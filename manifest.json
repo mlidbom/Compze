@@ -272,6 +272,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.DDD.IPersistentEntity-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.DDD.IPersistentEntity-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.DDD.ValueObject-1.yml",
       "output": {
         ".html": {
@@ -426,6 +436,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.DependencyInjection.Scoped.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.DependencyInjection.ServiceLocatorTransactionRunner.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.DependencyInjection.ServiceLocatorTransactionRunner.html"
         }
       },
       "version": ""
@@ -636,6 +656,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.GenericAbstractions.Time.IUtcTimeTimeSource.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.GenericAbstractions.Time.TestingTimeSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.GenericAbstractions.Time.TestingTimeSource.html"
         }
       },
       "version": ""
@@ -912,6 +942,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Messaging.Events.EventHandlerRegistrar.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Messaging.Events.EventHandlerRegistrar.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Messaging.Events.EventUnhandledException.yml",
       "output": {
         ".html": {
@@ -922,10 +962,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Messaging.Events.IEventDispatcher-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Messaging.Events.IEventDispatcher-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Messaging.Events.IEventHandlerRegistrar-1.yml",
       "output": {
         ".html": {
           "relative_path": "api/Compze.Messaging.Events.IEventHandlerRegistrar-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Messaging.Events.IMutableEventDispatcher-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Messaging.Events.IMutableEventDispatcher-1.html"
         }
       },
       "version": ""
@@ -1562,6 +1622,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Messaging.WrapperEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Messaging.WrapperEvent-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Messaging.yml",
       "output": {
         ".html": {
@@ -1762,6 +1832,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDb.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDb.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbBulkReader.yml",
       "output": {
         ".html": {
@@ -1776,6 +1856,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbReader.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbSession.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.DocumentDb.IDocumentDbSession.html"
         }
       },
       "version": ""
@@ -1852,6 +1942,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.AggregateWrapperEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.AggregateWrapperEvent-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-3.yml",
       "output": {
         ".html": {
@@ -1866,6 +1966,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.EntityCollectionManager-7.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.EntityCollectionManager-8.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.EntityCollectionManager-8.html"
         }
       },
       "version": ""
@@ -1896,6 +2006,26 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.NestedEntity-6.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.RemovableNestedEntity-7.CollectionManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.RemovableNestedEntity-7.CollectionManager.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.RemovableNestedEntity-7.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Component-3.RemovableNestedEntity-7.html"
         }
       },
       "version": ""
@@ -1946,6 +2076,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.Entity-6.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.RemovableEntity-7.CollectionManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Aggregates.Aggregate-5.RemovableEntity-7.CollectionManager.html"
         }
       },
       "version": ""
@@ -2132,6 +2272,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.EventStoreTestingExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.EventStoreTestingExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Persistence.EventStore.IAggregateCreatedEvent.yml",
       "output": {
         ".html": {
@@ -2166,6 +2326,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Persistence.EventStore.IAggregateEvent.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IAggregateWrapperEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.IAggregateWrapperEvent-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IEventCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.IEventCache.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IEventStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.IEventStore.html"
         }
       },
       "version": ""
@@ -2212,6 +2402,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.IMutableAggregateEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.IMutableAggregateEvent.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Persistence.EventStore.InvalidHistoryException.yml",
       "output": {
         ".html": {
@@ -2226,6 +2426,26 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.IQueryModelGenerator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.IVersioningDocumentDbReader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.IVersioningDocumentDbReader.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.QueryModelGeneratingDocumentDbReader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.Generators.QueryModelGeneratingDocumentDbReader.html"
         }
       },
       "version": ""
@@ -2312,6 +2532,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.QueryModelEntityCollectionManager-7.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.QueryModelEntityCollectionManager-7.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.RemovableNestedEntity-6.CollectionManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.RemovableNestedEntity-6.CollectionManager.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.RemovableNestedEntity-6.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.RemovableNestedEntity-6.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Component-2.SlavedNestedEntity-4.EntityCollectionManagerBase.yml",
       "output": {
         ".html": {
@@ -2362,6 +2612,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-6.CollectionManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-6.CollectionManager.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.SelfGeneratingQueryModel-2.Entity-6.yml",
       "output": {
         ".html": {
@@ -2396,6 +2656,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Persistence.EventStore.Query.Models.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.EventMigration-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Persistence.EventStore.Refactoring.Migrations.EventMigration-1.html"
         }
       },
       "version": ""
@@ -2742,6 +3012,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.SystemCE.ReactiveCE.ObservableCE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.SystemCE.ReactiveCE.ObservableCE.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.SystemCE.ReactiveCE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.SystemCE.ReactiveCE.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.SystemCE.ReflectionCE.Constructor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.SystemCE.ReflectionCE.Constructor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.AssemblyBuilderCE.yml",
       "output": {
         ".html": {
@@ -2766,6 +3066,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.SystemCE.ReflectionCE.EmitCE.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.SystemCE.ReflectionCE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.SystemCE.ReflectionCE.html"
         }
       },
       "version": ""
@@ -2832,6 +3142,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.MultiThreadedUseException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.MultiThreadedUseException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.AwaitingConditionTimeoutException.yml",
       "output": {
         ".html": {
@@ -2886,6 +3206,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.SystemCE.ThreadingCE.ResourceAccess.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.SystemCE.ThreadingCE.TasksCE.ConfigureAwaitCE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.SystemCE.ThreadingCE.TasksCE.ConfigureAwaitCE.html"
         }
       },
       "version": ""
@@ -2952,10 +3282,40 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.AggregateEventDebugSerializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.AggregateEventDebugSerializer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Testing.AssertThrows.yml",
       "output": {
         ".html": {
           "relative_path": "api/Compze.Testing.AssertThrows.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.DependencyInjection.TestingContainerFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.DependencyInjection.TestingContainerFactory.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.DependencyInjection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.DependencyInjection.html"
         }
       },
       "version": ""
@@ -2992,6 +3352,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.Messaging.Buses.TestingEndpointHost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.Messaging.Buses.TestingEndpointHost.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.Messaging.Buses.TestingHostExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.Messaging.Buses.TestingHostExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.Messaging.Buses.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.Messaging.Buses.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Testing.Performance.TimeAsserter.TimeOutException.yml",
       "output": {
         ".html": {
@@ -3016,6 +3406,26 @@
       "output": {
         ".html": {
           "relative_path": "api/Compze.Testing.Performance.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.Persistence.TestingPersistenceLayerRegistrar.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.Persistence.TestingPersistenceLayerRegistrar.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.Persistence.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.Persistence.html"
         }
       },
       "version": ""

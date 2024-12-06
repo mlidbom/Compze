@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/compze/apiSpec/new?filename=Compze_Persistence_EventStore_Aggregates_Aggregate_5.md&amp;value=---%0Auid%3A%20Compze.Persistence.EventStore.Aggregates.Aggregate%605%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/semantic-events-design/apiSpec/new?filename=Compze_Persistence_EventStore_Aggregates_Aggregate_5.md&amp;value=---%0Auid%3A%20Compze.Persistence.EventStore.Aggregates.Aggregate%605%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -89,19 +89,19 @@
 
 
   <h1 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5" class="text-break">
-Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate.Entity.Removable.cs/#L6"><i class="bi bi-code-slash"></i></a>
+Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze/Persistence/EventStore/Aggregates/Aggregate.Entity.Removable.cs/#L6"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="Compze.html">Compze</a>.<a class="xref" href="Compze.Persistence.html">Persistence</a>.<a class="xref" href="Compze.Persistence.EventStore.html">EventStore</a>.<a class="xref" href="Compze.Persistence.EventStore.Aggregates.html">Aggregates</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>Compze.CQRS.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>Compze.dll</dd></dl>
   </div>
 
   <div class="markdown summary"></div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt; : VersionedEntity&lt;TAggregate&gt;, IHasPersistentIdentity&lt;Guid&gt;, IEquatable&lt;TAggregate&gt;, IEventStored&lt;TAggregateEvent&gt;, IEventStored where TAggregate : Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt; where TAggregateEventImplementation : AggregateEvent, TAggregateEvent where TAggregateEvent : class, IAggregateEvent where TWrapperEventImplementation : TWrapperEventInterface where TWrapperEventInterface : IAggregateEvent&lt;TAggregateEvent&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt; : VersionedEntity&lt;TAggregate&gt;, IPersistentEntity&lt;Guid&gt;, IHasPersistentIdentity&lt;Guid&gt;, IEquatable&lt;TAggregate&gt;, IEventStored&lt;TAggregateEvent&gt;, IEventStored where TAggregate : Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface&gt; where TAggregateEventImplementation : AggregateEvent, TAggregateEvent where TAggregateEvent : class, IAggregateEvent where TWrapperEventImplementation : TWrapperEventInterface where TWrapperEventInterface : IAggregateWrapperEvent&lt;TAggregateEvent&gt;</code></pre>
   </div>
 
 
@@ -134,6 +134,7 @@ Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, T
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
+      <div><a class="xref" href="Compze.DDD.IPersistentEntity-1.html">IPersistentEntity</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</div>
       <div><a class="xref" href="Compze.DDD.IHasPersistentIdentity-1.html">IHasPersistentIdentity</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;TAggregate&gt;</div>
       <div><a class="xref" href="Compze.Persistence.EventStore.IEventStored-1.html">IEventStored</a>&lt;TAggregateEvent&gt;</div>
@@ -205,25 +206,10 @@ Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, T
     <dt>Extension Methods</dt>
     <dd>
   <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_mutateAsync__1___0_System_Func___0_System_Threading_Tasks_Task__">Pipe.mutateAsync&lt;T&gt;(T, Func&lt;T, Task&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_mutate__1___0_System_Action___0__">Pipe.mutate&lt;T&gt;(T, Action&lt;T&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_select__2___0_System_Func___0___1__">Pipe.select&lt;TValue, TResult&gt;(TValue, Func&lt;TValue, TResult&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_then__2___0_System_Func___1__">Pipe.then&lt;TValue, TResult&gt;(TValue, Func&lt;TResult&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_then__2___0___1_">Pipe.then&lt;TValue, TResult&gt;(TValue, TResult)</a>
-  </div>
-  <div>
       <a class="xref" href="Compze.SystemCE.NullableCE.html#Compze_SystemCE_NullableCE_NotNull__1___0_">NullableCE.NotNull&lt;T&gt;(T?)</a>
   </div>
   <div>
-      <a class="xref" href="Compze.Functional.ObjectCE.html#Compze_Functional_ObjectCE_ToStringNotNull_System_Object_">ObjectCE.ToStringNotNull(object)</a>
+      <a class="xref" href="Compze.Testing.AggregateEventDebugSerializer.html#Compze_Testing_AggregateEventDebugSerializer_ToNewtonSoftDebugString_System_Object_Newtonsoft_Json_Formatting_">AggregateEventDebugSerializer.ToNewtonSoftDebugString(object, Formatting)</a>
   </div>
   </dd></dl>
 
@@ -237,36 +223,9 @@ Class Aggregate&lt;TAggregate, TAggregateEventImplementation, TAggregateEvent, T
 
   <a id="Compze_Persistence_EventStore_Aggregates_Aggregate_5__ctor_" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.#ctor*"></a>
 
-  <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5__ctor" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.#ctor">
-  Aggregate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L35"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Only for infrastructure&quot;, true)]
-protected Aggregate()</code></pre>
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Compze_Persistence_EventStore_Aggregates_Aggregate_5__ctor_" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.#ctor*"></a>
-
   <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5__ctor_Compze_GenericAbstractions_Time_IUtcTimeTimeSource_" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.#ctor(Compze.GenericAbstractions.Time.IUtcTimeTimeSource)">
   Aggregate(IUtcTimeTimeSource)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze/Persistence/EventStore/Aggregates/Aggregate..cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -293,41 +252,6 @@ protected Aggregate()</code></pre>
 
 
 
-  <h2 class="section" id="properties">Properties
-</h2>
-
-
-  <a id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_TimeSource_" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.TimeSource*"></a>
-
-  <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_TimeSource" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.TimeSource">
-  TimeSource
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L31"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected IUtcTimeTimeSource TimeSource { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Compze.GenericAbstractions.Time.IUtcTimeTimeSource.html">IUtcTimeTimeSource</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -336,7 +260,7 @@ protected Aggregate()</code></pre>
 
   <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_AssertInvariantsAreMet" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.AssertInvariantsAreMet">
   AssertInvariantsAreMet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze/Persistence/EventStore/Aggregates/Aggregate..cs/#L108"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -358,42 +282,11 @@ protected Aggregate()</code></pre>
 
 
 
-  <a id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_Commit_" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.Commit*"></a>
-
-  <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_Commit_System_Action_System_Collections_Generic_IReadOnlyList_Compze_Persistence_EventStore_IAggregateEvent___" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.Commit(System.Action{System.Collections.Generic.IReadOnlyList{Compze.Persistence.EventStore.IAggregateEvent}})">
-  Commit(Action&lt;IReadOnlyList&lt;IAggregateEvent&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L117"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Commit(Action&lt;IReadOnlyList&lt;IAggregateEvent&gt;&gt; commitEvents)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>commitEvents</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Compze.Persistence.EventStore.IAggregateEvent.html">IAggregateEvent</a>&gt;&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-
   <a id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_Publish_" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.Publish*"></a>
 
   <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_Publish__1___0_" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.Publish``1(``0)">
   Publish&lt;TEvent&gt;(TEvent)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze/Persistence/EventStore/Aggregates/Aggregate..cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -434,7 +327,7 @@ protected Aggregate()</code></pre>
 
   <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_RegisterEventAppliers" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.RegisterEventAppliers">
   RegisterEventAppliers()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L90"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze/Persistence/EventStore/Aggregates/Aggregate..cs/#L87"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -465,7 +358,7 @@ protected Aggregate()</code></pre>
 
   <h3 id="Compze_Persistence_EventStore_Aggregates_Aggregate_5_RegisterEventHandlers" data-uid="Compze.Persistence.EventStore.Aggregates.Aggregate`5.RegisterEventHandlers">
   RegisterEventHandlers()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate..cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze/Persistence/EventStore/Aggregates/Aggregate..cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -496,7 +389,7 @@ protected Aggregate()</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/Aggregates/Aggregate.Entity.Removable.cs/#L6" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze/Persistence/EventStore/Aggregates/Aggregate.Entity.Removable.cs/#L6" class="edit-link">Edit this page</a>
         </div>
 
 

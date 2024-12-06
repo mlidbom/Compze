@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/compze/apiSpec/new?filename=Compze_Messaging_MessageTypes_Remotable_NonTransactional_Queries_FuncResultQuery_1.md&amp;value=---%0Auid%3A%20Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/semantic-events-design/apiSpec/new?filename=Compze_Messaging_MessageTypes_Remotable_NonTransactional_Queries_FuncResultQuery_1.md&amp;value=---%0Auid%3A%20Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -89,12 +89,12 @@
 
 
   <h1 id="Compze_Messaging_MessageTypes_Remotable_NonTransactional_Queries_FuncResultQuery_1" data-uid="Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery`1" class="text-break">
-Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/_MessageTypes.Classes.cs/#L101"><i class="bi bi-code-slash"></i></a>
+Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Messaging/_MessageTypes.Classes.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="Compze.html">Compze</a>.<a class="xref" href="Compze.Messaging.html">Messaging</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>Compze.CQRS.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>Compze.Messaging.dll</dd></dl>
   </div>
 
   <div class="markdown summary"><p>Implement <a class="xref" href="Compze.Messaging.IRemotableCreateMyOwnResultQuery-1.html">IRemotableCreateMyOwnResultQuery&lt;TResult&gt;</a> by passing a func to this base class.</p>
@@ -102,7 +102,7 @@ Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult&gt; : MessageTypes.Remotable.NonTransactional.Queries.Query&lt;TResult&gt;, IRemotableCreateMyOwnResultQuery&lt;TResult&gt;, IRemotableQuery&lt;TResult&gt;, IRemotableMessage, ICreateMyOwnResultQuery&lt;TResult&gt;, IQuery&lt;TResult&gt;, IHasReturnValue&lt;TResult&gt;, IHypermediaMessage, IRequireAResponse, ICannotBeSentRemotelyFromWithinTransaction, IMessage</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult&gt; : MessageTypes.Remotable.NonTransactional.Queries.Query&lt;TResult&gt;, IRemotableQuery&lt;TResult&gt;, IRemotableMessage, IQuery&lt;TResult&gt;, IHasReturnValue&lt;TResult&gt;, IHypermediaMessage, IRequireAResponse, ICannotBeSentRemotelyFromWithinTransaction, IMessage</code></pre>
   </div>
 
 
@@ -125,10 +125,8 @@ Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
-      <div><a class="xref" href="Compze.Messaging.IRemotableCreateMyOwnResultQuery-1.html">IRemotableCreateMyOwnResultQuery</a>&lt;TResult&gt;</div>
       <div><a class="xref" href="Compze.Messaging.IRemotableQuery-1.html">IRemotableQuery</a>&lt;TResult&gt;</div>
       <div><a class="xref" href="Compze.Messaging.IRemotableMessage.html">IRemotableMessage</a></div>
-      <div><a class="xref" href="Compze.Messaging.ICreateMyOwnResultQuery-1.html">ICreateMyOwnResultQuery</a>&lt;TResult&gt;</div>
       <div><a class="xref" href="Compze.Messaging.IQuery-1.html">IQuery</a>&lt;TResult&gt;</div>
       <div><a class="xref" href="Compze.Messaging.IHasReturnValue-1.html">IHasReturnValue</a>&lt;TResult&gt;</div>
       <div><a class="xref" href="Compze.Messaging.IHypermediaMessage.html">IHypermediaMessage</a></div>
@@ -175,25 +173,10 @@ Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult
       <a class="xref" href="Compze.Messaging.Hypermedia.NavigationSpecificationMessageExtensions.html#Compze_Messaging_Hypermedia_NavigationSpecificationMessageExtensions_Get__1_Compze_Messaging_IRemotableQuery___0__">NavigationSpecificationMessageExtensions.Get&lt;TResult&gt;(IRemotableQuery&lt;TResult&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_mutateAsync__1___0_System_Func___0_System_Threading_Tasks_Task__">Pipe.mutateAsync&lt;T&gt;(T, Func&lt;T, Task&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_mutate__1___0_System_Action___0__">Pipe.mutate&lt;T&gt;(T, Action&lt;T&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_select__2___0_System_Func___0___1__">Pipe.select&lt;TValue, TResult&gt;(TValue, Func&lt;TValue, TResult&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_then__2___0_System_Func___1__">Pipe.then&lt;TValue, TResult&gt;(TValue, Func&lt;TResult&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_then__2___0___1_">Pipe.then&lt;TValue, TResult&gt;(TValue, TResult)</a>
-  </div>
-  <div>
       <a class="xref" href="Compze.SystemCE.NullableCE.html#Compze_SystemCE_NullableCE_NotNull__1___0_">NullableCE.NotNull&lt;T&gt;(T?)</a>
   </div>
   <div>
-      <a class="xref" href="Compze.Functional.ObjectCE.html#Compze_Functional_ObjectCE_ToStringNotNull_System_Object_">ObjectCE.ToStringNotNull(object)</a>
+      <a class="xref" href="Compze.Testing.AggregateEventDebugSerializer.html#Compze_Testing_AggregateEventDebugSerializer_ToNewtonSoftDebugString_System_Object_Newtonsoft_Json_Formatting_">AggregateEventDebugSerializer.ToNewtonSoftDebugString(object, Formatting)</a>
   </div>
   </dd></dl>
 
@@ -209,7 +192,7 @@ Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult
 
   <h3 id="Compze_Messaging_MessageTypes_Remotable_NonTransactional_Queries_FuncResultQuery_1__ctor_System_Func__0__" data-uid="Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery`1.#ctor(System.Func{`0})">
   FuncResultQuery(Func&lt;TResult&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/_MessageTypes.Classes.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Messaging/_MessageTypes.Classes.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Implement <a class="xref" href="Compze.Messaging.IRemotableCreateMyOwnResultQuery-1.html">IRemotableCreateMyOwnResultQuery&lt;TResult&gt;</a> by passing a func to this base class.</p>
@@ -245,7 +228,7 @@ Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult
 
   <h3 id="Compze_Messaging_MessageTypes_Remotable_NonTransactional_Queries_FuncResultQuery_1_CreateResult" data-uid="Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery`1.CreateResult">
   CreateResult()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/_MessageTypes.Classes.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Messaging/_MessageTypes.Classes.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -276,7 +259,7 @@ Class MessageTypes.Remotable.NonTransactional.Queries.FuncResultQuery&lt;TResult
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Messaging/_MessageTypes.Classes.cs/#L101" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mlidbom/Compze/blob/semantic-events-design/src/framework/Compze.Messaging/Messaging/_MessageTypes.Classes.cs/#L101" class="edit-link">Edit this page</a>
         </div>
 
 

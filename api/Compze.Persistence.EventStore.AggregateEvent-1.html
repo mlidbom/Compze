@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/compze/apiSpec/new?filename=Compze_Persistence_EventStore_AggregateEvent_1.md&amp;value=---%0Auid%3A%20Compze.Persistence.EventStore.AggregateEvent%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/new/project-reorganizing/apiSpec/new?filename=Compze_Persistence_EventStore_AggregateEvent_1.md&amp;value=---%0Auid%3A%20Compze.Persistence.EventStore.AggregateEvent%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -89,19 +89,19 @@
 
 
   <h1 id="Compze_Persistence_EventStore_AggregateEvent_1" data-uid="Compze.Persistence.EventStore.AggregateEvent`1" class="text-break">
-Class AggregateEvent&lt;TBaseEventInterface&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/AggregateEvent.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class AggregateEvent&lt;TBaseEventInterface&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/project-reorganizing/src/framework/Compze/Persistence/EventStore/AggregateEvent.cs/#L6"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="Compze.html">Compze</a>.<a class="xref" href="Compze.Persistence.html">Persistence</a>.<a class="xref" href="Compze.Persistence.EventStore.html">EventStore</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>Compze.CQRS.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>Compze.dll</dd></dl>
   </div>
 
   <div class="markdown summary"></div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class AggregateEvent&lt;TBaseEventInterface&gt; : MessageTypes.WrapperEvent&lt;TBaseEventInterface&gt;, IAggregateEvent&lt;TBaseEventInterface&gt;, IExactlyOnceWrapperEvent&lt;TBaseEventInterface&gt;, IWrapperEvent&lt;TBaseEventInterface&gt;, IExactlyOnceEvent, IRemotableEvent, IEvent, IExactlyOnceMessage, IMustBeSentAndHandledTransactionally, IMustBeSentTransactionally, IAtMostOnceMessage, IRemotableMessage, IMustBeHandledTransactionally, IMessage where TBaseEventInterface : IAggregateEvent</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class AggregateEvent&lt;TBaseEventInterface&gt; : WrapperEvent&lt;TBaseEventInterface&gt;, IAggregateEvent&lt;TBaseEventInterface&gt;, IExactlyOnceWrapperEvent&lt;TBaseEventInterface&gt;, IWrapperEvent&lt;TBaseEventInterface&gt;, IExactlyOnceEvent, IRemotableEvent, IEvent, IExactlyOnceMessage, IMustBeSentAndHandledTransactionally, IMustBeSentTransactionally, IAtMostOnceMessage, IRemotableMessage, IMustBeHandledTransactionally, IMessage where TBaseEventInterface : IAggregateEvent</code></pre>
   </div>
 
 
@@ -116,7 +116,7 @@ Class AggregateEvent&lt;TBaseEventInterface&gt;  <a class="header-action link-se
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><a class="xref" href="Compze.Messaging.MessageTypes.html">MessageTypes</a>.<a class="xref" href="Compze.Messaging.MessageTypes.WrapperEvent-1.html">WrapperEvent</a>&lt;TBaseEventInterface&gt;</div>
+      <div><a class="xref" href="Compze.Messaging.WrapperEvent-1.html">WrapperEvent</a>&lt;TBaseEventInterface&gt;</div>
       <div><span class="xref">AggregateEvent&lt;TBaseEventInterface&gt;</span></div>
     </dd>
   </dl>
@@ -145,7 +145,7 @@ Class AggregateEvent&lt;TBaseEventInterface&gt;  <a class="header-action link-se
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="Compze.Messaging.MessageTypes.WrapperEvent-1.html#Compze_Messaging_MessageTypes_WrapperEvent_1_Event">MessageTypes.WrapperEvent&lt;TBaseEventInterface&gt;.Event</a>
+      <a class="xref" href="Compze.Messaging.WrapperEvent-1.html#Compze_Messaging_WrapperEvent_1_Event">WrapperEvent&lt;TBaseEventInterface&gt;.Event</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -174,25 +174,10 @@ Class AggregateEvent&lt;TBaseEventInterface&gt;  <a class="header-action link-se
     <dt>Extension Methods</dt>
     <dd>
   <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_mutateAsync__1___0_System_Func___0_System_Threading_Tasks_Task__">Pipe.mutateAsync&lt;T&gt;(T, Func&lt;T, Task&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_mutate__1___0_System_Action___0__">Pipe.mutate&lt;T&gt;(T, Action&lt;T&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_select__2___0_System_Func___0___1__">Pipe.select&lt;TValue, TResult&gt;(TValue, Func&lt;TValue, TResult&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_then__2___0_System_Func___1__">Pipe.then&lt;TValue, TResult&gt;(TValue, Func&lt;TResult&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Compze.Functional.Pipe.html#Compze_Functional_Pipe_then__2___0___1_">Pipe.then&lt;TValue, TResult&gt;(TValue, TResult)</a>
-  </div>
-  <div>
       <a class="xref" href="Compze.SystemCE.NullableCE.html#Compze_SystemCE_NullableCE_NotNull__1___0_">NullableCE.NotNull&lt;T&gt;(T?)</a>
   </div>
   <div>
-      <a class="xref" href="Compze.Functional.ObjectCE.html#Compze_Functional_ObjectCE_ToStringNotNull_System_Object_">ObjectCE.ToStringNotNull(object)</a>
+      <a class="xref" href="Compze.Testing.AggregateEventDebugSerializer.html#Compze_Testing_AggregateEventDebugSerializer_ToNewtonSoftDebugString_System_Object_Newtonsoft_Json_Formatting_">AggregateEventDebugSerializer.ToNewtonSoftDebugString(object, Formatting)</a>
   </div>
   </dd></dl>
 
@@ -208,7 +193,7 @@ Class AggregateEvent&lt;TBaseEventInterface&gt;  <a class="header-action link-se
 
   <h3 id="Compze_Persistence_EventStore_AggregateEvent_1__ctor__0_" data-uid="Compze.Persistence.EventStore.AggregateEvent`1.#ctor(`0)">
   AggregateEvent(TBaseEventInterface)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/AggregateEvent.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mlidbom/Compze/blob/project-reorganizing/src/framework/Compze/Persistence/EventStore/AggregateEvent.cs/#L6"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -239,7 +224,7 @@ Class AggregateEvent&lt;TBaseEventInterface&gt;  <a class="header-action link-se
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/compze/src/framework/Compze.CQRS/Persistence/EventStore/AggregateEvent.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mlidbom/Compze/blob/project-reorganizing/src/framework/Compze/Persistence/EventStore/AggregateEvent.cs/#L6" class="edit-link">Edit this page</a>
         </div>
 
 
