@@ -53,10 +53,9 @@ static partial class RootEvent
             public string Name { get; }
          }
 
-         public class Renamed : Root, Entity.Renamed
+         public class Renamed(string name) : Root, Entity.Renamed
          {
-            public Renamed(string name) => Name = name;
-            public string Name { get; }
+            public string Name { get; } = name;
          }
 
          public class Removed : Root, Entity.Removed;

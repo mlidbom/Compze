@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AccountManagement.UI.MVC.Views.Register;
 
-public class RegisterController : ControllerBase
+public class RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) : ControllerBase
 {
-   readonly IRemoteHypermediaNavigator _bus;
-   public RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) => _bus = remoteApiNavigator;
+   readonly IRemoteHypermediaNavigator _bus = remoteApiNavigator;
 
    public IActionResult Register(AccountResource.Command.Register registrationCommand)
    {

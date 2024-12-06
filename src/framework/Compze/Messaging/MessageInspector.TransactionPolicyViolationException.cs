@@ -4,10 +4,8 @@ namespace Compze.Messaging;
 
 static partial class MessageInspector
 {
-   public class TransactionPolicyViolationException : Exception
+   public class TransactionPolicyViolationException(string message) : Exception(message + TransactionPolicyRationale)
    {
-      public TransactionPolicyViolationException(string message) : base(message + TransactionPolicyRationale) {}
-
       static readonly string TransactionPolicyRationale = $@"
 
 Rationale: 

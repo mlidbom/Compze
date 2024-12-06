@@ -5,18 +5,11 @@ using JetBrains.Annotations;
 
 namespace Compze.Messaging.Buses;
 
-[UsedImplicitly] class ServiceBusSession : IServiceBusSession
+[UsedImplicitly] class ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler) : IServiceBusSession
 {
-   readonly IOutbox _transport;
-   readonly CommandScheduler _commandScheduler;
-   readonly ISingleContextUseGuard _contextGuard;
-
-   public ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler)
-   {
-      _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
-      _transport = transport;
-      _commandScheduler = commandScheduler;
-   }
+   readonly IOutbox _transport = transport;
+   readonly CommandScheduler _commandScheduler = commandScheduler;
+   readonly ISingleContextUseGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
 
    public void Send(IExactlyOnceCommand command)
    {

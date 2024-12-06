@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : Fixture
+public class Retry_policies_AtMostOnceCommand_when_command_handler_fails(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {
    [SetUp] public void SendCommandThatFails()
    {
@@ -29,6 +29,4 @@ public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : Fixtu
    [Test] public void Command_handler_is_tried_5_times() => MyCreateAggregateCommandHandlerThreadGate.Passed.Should().Be(expected: 5);
 
    [Test] public void ExactlyOnce_Event_raised_in_handler_reaches_local_handler_5_times() => MyLocalAggregateEventHandlerThreadGate.Passed.Should().Be(expected: 5);
-
-   public Retry_policies_AtMostOnceCommand_when_command_handler_fails(string _) : base(_) {}
 }

@@ -25,10 +25,9 @@ static partial class RootEvent
          internal static class Implementation
          {
             public abstract class Root : Component.Implementation.Root, NestedComponent.IRoot;
-            public class Renamed : Root, NestedComponent.Renamed
+            public class Renamed(string name) : Root, NestedComponent.Renamed
             {
-               public Renamed(string name) => Name = name;
-               public string Name { get; }
+               public string Name { get; } = name;
             }
          }
       }

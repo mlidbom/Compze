@@ -27,12 +27,10 @@ abstract class CompleteEventStoreStreamMutator
       }
    }
 
-   class RealMutator : ICompleteEventStreamMutator
+   class RealMutator(IReadOnlyList<IEventMigration> eventMigrationFactories) : ICompleteEventStreamMutator
    {
-      readonly IReadOnlyList<IEventMigration> _eventMigrationFactories;
+      readonly IReadOnlyList<IEventMigration> _eventMigrationFactories = eventMigrationFactories;
       readonly Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator> _aggregateMutatorsCache = new();
-
-      public RealMutator(IReadOnlyList<IEventMigration> eventMigrationFactories) => _eventMigrationFactories = eventMigrationFactories;
 
       public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
       {

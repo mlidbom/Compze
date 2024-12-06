@@ -3,16 +3,10 @@ using Compze.SystemCE.ThreadingCE;
 
 namespace Compze.Messaging.Hypermedia;
 
-class LocalHypermediaNavigator : ILocalHypermediaNavigator
+class LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry) : ILocalHypermediaNavigator
 {
-   readonly IMessageHandlerRegistry _handlerRegistry;
-   readonly ISingleContextUseGuard _contextGuard;
-
-   public LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry)
-   {
-      _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
-      _handlerRegistry = handlerRegistry;
-   }
+   readonly IMessageHandlerRegistry _handlerRegistry = handlerRegistry;
+   readonly ISingleContextUseGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
 
    public TResult Execute<TResult>(IStrictlyLocalCommand<TResult> command)
    {

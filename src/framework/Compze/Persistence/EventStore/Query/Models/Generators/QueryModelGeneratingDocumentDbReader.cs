@@ -10,16 +10,11 @@ using Compze.SystemCE.ThreadingCE;
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class QueryModelGeneratingDocumentDbReader : IVersioningDocumentDbReader
+public class QueryModelGeneratingDocumentDbReader(IEnumerable<IQueryModelGenerator> documentGenerators) : IVersioningDocumentDbReader
 {
-   readonly ISingleContextUseGuard _usageGuard;
-   readonly IEnumerable<IQueryModelGenerator> _documentGenerators;
+   readonly ISingleContextUseGuard _usageGuard = new SingleThreadUseGuard();
+   readonly IEnumerable<IQueryModelGenerator> _documentGenerators = documentGenerators;
    readonly MemoryObjectStore _idMap = new();
-   public QueryModelGeneratingDocumentDbReader(IEnumerable<IQueryModelGenerator> documentGenerators )
-   {
-      _usageGuard = new SingleThreadUseGuard();
-      _documentGenerators = documentGenerators;
-   }
 
    public virtual TValue Get<TValue>(object key)
    {

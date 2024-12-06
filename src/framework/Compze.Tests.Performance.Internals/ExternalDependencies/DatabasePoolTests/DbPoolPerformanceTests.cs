@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
 
-public class DbPoolPerformanceTests : DbPoolTest
+public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
 {
    [OneTimeSetUp]public void WarmUpCache()
    {
@@ -148,6 +148,4 @@ public class DbPoolPerformanceTests : DbPoolTest
          iterations : iterations
       );
    }
-
-   public DbPoolPerformanceTests(string _) : base(_) {}
 }

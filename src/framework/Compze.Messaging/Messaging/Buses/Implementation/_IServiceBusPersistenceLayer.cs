@@ -24,20 +24,12 @@ interface IServiceBusPersistenceLayer
       Task InitAsync();
    }
 
-   class OutboxMessageWithReceivers
+   class OutboxMessageWithReceivers(string serializedMessage, Guid typeIdGuidValue, Guid messageId, IEnumerable<Guid> receiverEndpointIds)
    {
-      public OutboxMessageWithReceivers(string serializedMessage, Guid typeIdGuidValue, Guid messageId, IEnumerable<Guid> receiverEndpointIds)
-      {
-         SerializedMessage = serializedMessage;
-         TypeIdGuidValue = typeIdGuidValue;
-         MessageId = messageId;
-         ReceiverEndpointIds = receiverEndpointIds.ToList();
-      }
-
-      public string SerializedMessage { get; }
-      public Guid TypeIdGuidValue { get; }
-      public Guid MessageId { get; }
-      public IEnumerable<Guid> ReceiverEndpointIds { get; }
+      public string SerializedMessage { get; } = serializedMessage;
+      public Guid TypeIdGuidValue { get; } = typeIdGuidValue;
+      public Guid MessageId { get; } = messageId;
+      public IEnumerable<Guid> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
    static class InboxMessageDatabaseSchemaStrings

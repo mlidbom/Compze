@@ -9,10 +9,9 @@ using DispatchingTable = Compze.Messaging.Buses.Implementation.IServiceBusPersis
 
 namespace Compze.Persistence.MsSql.Messaging.Buses.Implementation;
 
-partial class MsSqlOutboxPersistenceLayer : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
+partial class MsSqlOutboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {
-   readonly IMsSqlConnectionPool _connectionFactory;
-   public MsSqlOutboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) => _connectionFactory = connectionFactory;
+   readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
 
    public void SaveMessage(IServiceBusPersistenceLayer.OutboxMessageWithReceivers messageWithReceivers)
    {

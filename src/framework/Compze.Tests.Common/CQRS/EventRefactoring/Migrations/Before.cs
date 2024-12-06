@@ -19,12 +19,10 @@ class Before<TEvent> : EventMigration<IRootEvent>
 
    public override ISingleAggregateInstanceHandlingEventMigrator CreateSingleAggregateInstanceHandlingMigrator() => new Inspector(_insert);
 
-   class Inspector : ISingleAggregateInstanceHandlingEventMigrator
+   class Inspector(IEnumerable<Type> insert) : ISingleAggregateInstanceHandlingEventMigrator
    {
-      readonly IEnumerable<Type> _insert;
+      readonly IEnumerable<Type> _insert = insert;
       Type? _lastSeenEventType;
-
-      public Inspector(IEnumerable<Type> insert) => _insert = insert;
 
       public void MigrateEvent(IAggregateEvent @event, IEventModifier modifier)
       {

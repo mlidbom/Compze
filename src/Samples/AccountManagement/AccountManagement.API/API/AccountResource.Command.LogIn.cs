@@ -11,10 +11,8 @@ public partial class AccountResource
 {
    public static partial class Command
    {
-      public partial class LogIn : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<LogIn.LoginAttemptResult>
+      public partial class LogIn() : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
       {
-         public LogIn() : base(DeduplicationIdHandling.Reuse) {}
-
          public static LogIn Create() => new() {MessageId = Guid.NewGuid()};
 
          [Required] [Email] public string Email { get; set; } = string.Empty;

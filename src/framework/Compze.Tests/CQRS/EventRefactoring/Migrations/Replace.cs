@@ -19,11 +19,9 @@ class Replace<TEvent> : EventMigration<IRootEvent>
 
    public override ISingleAggregateInstanceHandlingEventMigrator CreateSingleAggregateInstanceHandlingMigrator() => _migratorSingleton;
 
-   class Migrator : ISingleAggregateInstanceHandlingEventMigrator
+   class Migrator(IEnumerable<Type> replaceWith) : ISingleAggregateInstanceHandlingEventMigrator
    {
-      readonly IEnumerable<Type> _replaceWith;
-
-      public Migrator(IEnumerable<Type> replaceWith) => _replaceWith = replaceWith;
+      readonly IEnumerable<Type> _replaceWith = replaceWith;
 
       public void MigrateEvent(IAggregateEvent @event, IEventModifier modifier)
       {

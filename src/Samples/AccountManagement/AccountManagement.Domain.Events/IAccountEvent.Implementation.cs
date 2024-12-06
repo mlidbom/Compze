@@ -50,25 +50,19 @@ public static partial class AccountEvent
          public Password Password { get; private set; }
       }
 
-      public class UserChangedEmail : Root, AccountEvent.UserChangedEmail
+      public class UserChangedEmail(Email email) : Root, AccountEvent.UserChangedEmail
       {
-         public UserChangedEmail(Email email) => Email = email;
-
-         public Email Email { get; private set; }
+         public Email Email { get; private set; } = email;
       }
 
-      public class UserChangedPassword : Root, AccountEvent.UserChangedPassword
+      public class UserChangedPassword(Password password) : Root, AccountEvent.UserChangedPassword
       {
-         public UserChangedPassword(Password password) => Password = password;
-
-         public Password Password { get; private set; }
+         public Password Password { get; private set; } = password;
       }
 
-      public class LoggedIn : Root, AccountEvent.LoggedIn
+      public class LoggedIn(string token) : Root, AccountEvent.LoggedIn
       {
-         public string AuthenticationToken { get; }
-
-         public LoggedIn(string token) => AuthenticationToken = token;
+         public string AuthenticationToken { get; } = token;
       }
 
       public class LoginFailed : Root, AccountEvent.LoginFailed;

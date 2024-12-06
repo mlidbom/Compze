@@ -1,9 +1,9 @@
 ﻿namespace Compze.SystemCE.ThreadingCE;
 
-class CombinationUsageGuard : ISingleContextUseGuard
+class CombinationUsageGuard(params ISingleContextUseGuard[] usageGuards) : ISingleContextUseGuard
 {
-   readonly ISingleContextUseGuard[] _usageGuards;
-   public CombinationUsageGuard(params ISingleContextUseGuard[] usageGuards) => _usageGuards = usageGuards;
+   readonly ISingleContextUseGuard[] _usageGuards = usageGuards;
+
    public void AssertNoContextChangeOccurred(object guarded)
    {
       foreach(var guard in _usageGuards)

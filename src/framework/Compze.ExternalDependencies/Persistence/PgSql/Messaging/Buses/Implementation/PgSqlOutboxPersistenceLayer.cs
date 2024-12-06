@@ -10,10 +10,9 @@ using DispatchingTable = Compze.Messaging.Buses.Implementation.IServiceBusPersis
 
 namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 
-partial class PgSqlOutboxPersistenceLayer : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
+partial class PgSqlOutboxPersistenceLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {
-   readonly IPgSqlConnectionPool _connectionFactory;
-   public PgSqlOutboxPersistenceLayer(IPgSqlConnectionPool connectionFactory) => _connectionFactory = connectionFactory;
+   readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
 
    public void SaveMessage(IServiceBusPersistenceLayer.OutboxMessageWithReceivers messageWithReceivers)
    {

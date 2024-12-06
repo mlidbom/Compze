@@ -4,10 +4,8 @@ namespace Compze.Messaging;
 
 static partial class MessageInspector
 {
-   public class AttemptToSendStrictlyLocalMessageRemotelyException : Exception
+   public class AttemptToSendStrictlyLocalMessageRemotelyException(IStrictlyLocalMessage message) : Exception(RemoteSendOfStrictlyLocalMessageMessage(message))
    {
-      public AttemptToSendStrictlyLocalMessageRemotelyException(IStrictlyLocalMessage message) : base(RemoteSendOfStrictlyLocalMessageMessage(message)) {}
-
       static string RemoteSendOfStrictlyLocalMessageMessage(IStrictlyLocalMessage message) => $@"
 
 {message.GetType().FullName} cannot be sent remotely because it implements {typeof(IStrictlyLocalMessage)}.

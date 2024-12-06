@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class _041_After_a_user_changes_their_email : UserStoryTest
+public class _041_After_a_user_changes_their_email([NotNull] string pluggableComponentsCombination) : UserStoryTest(pluggableComponentsCombination)
 {
    ChangeAccountEmailScenario _changeEmailScenario;
    RegisterAccountScenario _registerAccountScenario;
@@ -31,6 +31,4 @@ public class _041_After_a_user_changes_their_email : UserStoryTest
       Scenario.Register.WithEmail(_changeEmailScenario.NewEmail).Execute()
               .Result.Status
               .Should().Be(RegistrationAttemptStatus.EmailAlreadyRegistered);
-
-   public _041_After_a_user_changes_their_email([NotNull] string _) : base(_) {}
 }

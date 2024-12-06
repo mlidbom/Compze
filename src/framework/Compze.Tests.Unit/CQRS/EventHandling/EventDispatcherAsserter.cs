@@ -6,23 +6,19 @@ namespace Compze.Tests.CQRS.EventHandling;
 
 static class EventDispatcherAsserter
 {
-   internal class DispatcherAssertion<TDispatcherRootEvent> where TDispatcherRootEvent : class, IEvent
+   internal class DispatcherAssertion<TDispatcherRootEvent>(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher)
+      where TDispatcherRootEvent : class, IEvent
    {
-      readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher;
-      public DispatcherAssertion(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher) => _dispatcher = dispatcher;
+      readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher = dispatcher;
 
       public RouteAssertion<TDispatcherRootEvent> Event<TPublishedEvent>(TPublishedEvent @event) where TPublishedEvent : TDispatcherRootEvent => new(_dispatcher, @event);
    }
 
-   internal class RouteAssertion<TDispatcherRootEvent> where TDispatcherRootEvent : class, IEvent
+   internal class RouteAssertion<TDispatcherRootEvent>(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher, TDispatcherRootEvent @event)
+      where TDispatcherRootEvent : class, IEvent
    {
-      readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher;
-      readonly TDispatcherRootEvent _event;
-      public RouteAssertion(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher, TDispatcherRootEvent @event)
-      {
-         _dispatcher = dispatcher;
-         _event = @event;
-      }
+      readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher = dispatcher;
+      readonly TDispatcherRootEvent _event = @event;
 
       public void DispatchesTo<THandlerEvent>()
          where THandlerEvent : TDispatcherRootEvent

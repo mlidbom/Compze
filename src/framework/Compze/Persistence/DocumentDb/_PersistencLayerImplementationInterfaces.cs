@@ -16,33 +16,19 @@ interface IDocumentDbPersistenceLayer
    IReadOnlyList<ReadRow> GetAll(IEnumerable<Guid> ids, IReadonlySetCEx<Guid> acceptableTypes);
    IReadOnlyList<ReadRow> GetAll(IReadonlySetCEx<Guid> acceptableTypes);
 
-   class ReadRow
+   class ReadRow(Guid typeId, string serializedDocument)
    {
-      public ReadRow(Guid typeId, string serializedDocument)
-      {
-         TypeId = typeId;
-         SerializedDocument = serializedDocument;
-      }
+      public Guid TypeId { get; } = typeId;
 
-      public Guid TypeId { get; }
-
-      public string SerializedDocument { get; }
+      public string SerializedDocument { get; } = serializedDocument;
    }
 
-   class WriteRow
+   class WriteRow(string id, string serializedDocument, DateTime updateTime, Guid typeId)
    {
-      public WriteRow(string id, string serializedDocument, DateTime updateTime, Guid typeId)
-      {
-         Id = id;
-         SerializedDocument = serializedDocument;
-         UpdateTime = updateTime;
-         TypeId = typeId;
-      }
-
-      public string Id { get; }
-      public string SerializedDocument { get; }
-      public DateTime UpdateTime { get; }
-      public Guid TypeId { get; }
+      public string Id { get; } = id;
+      public string SerializedDocument { get; } = serializedDocument;
+      public DateTime UpdateTime { get; } = updateTime;
+      public Guid TypeId { get; } = typeId;
    }
 
    internal static class DocumentTableSchemaStrings

@@ -4,10 +4,8 @@ namespace Compze.Messaging;
 
 static partial class MessageTypeInspector
 {
-   public class MessageTypeDesignViolationException : Exception
+   public class MessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
    {
-      public MessageTypeDesignViolationException(string message) : base(message + TypeDesignRationale) {}
-
       const string TypeDesignRationale = @"
 
 Rationale: 

@@ -53,18 +53,11 @@ class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersiste
 
       public Task InitAsync() => Task.CompletedTask;
 
-      class Row
+      class Row(Guid messageId, Guid typeId, string serializedMessage)
       {
-         public Row(Guid messageId, Guid typeId, string serializedMessage)
-         {
-            MessageId = messageId;
-            TypeId = typeId;
-            SerializedMessage = serializedMessage;
-         }
-
-         public Guid MessageId { get; }
-         public Guid TypeId { get; }
-         public string SerializedMessage { get; }
+         public Guid MessageId { get; } = messageId;
+         public Guid TypeId { get; } = typeId;
+         public string SerializedMessage { get; } = serializedMessage;
 
          public Inbox.MessageStatus Status { get; set; } = Inbox.MessageStatus.UnHandled;
 

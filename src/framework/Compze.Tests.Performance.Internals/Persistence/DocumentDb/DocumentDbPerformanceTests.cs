@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Compze.Tests.Persistence.DocumentDb;
 
 [LongRunning]
-class DocumentDbPerformanceTests : DocumentDbTestsBase
+class DocumentDbPerformanceTests([NotNull] string pluggableComponentsCombination) : DocumentDbTestsBase(pluggableComponentsCombination)
 {
    [Test] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()
    {
@@ -36,6 +36,4 @@ class DocumentDbPerformanceTests : DocumentDbTestsBase
          }
       });
    }
-
-   public DocumentDbPerformanceTests([NotNull] string _) : base(_) {}
 }

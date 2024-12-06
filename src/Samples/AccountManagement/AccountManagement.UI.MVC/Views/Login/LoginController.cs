@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AccountManagement.UI.MVC.Views.Login;
 
-public class LoginController : ControllerBase
+public class LoginController(IRemoteHypermediaNavigator remoteApiNavigator) : ControllerBase
 {
-   readonly IRemoteHypermediaNavigator _bus;
-   public LoginController(IRemoteHypermediaNavigator remoteApiNavigator) => _bus = remoteApiNavigator;
+   readonly IRemoteHypermediaNavigator _bus = remoteApiNavigator;
 
    public IActionResult Login(AccountResource.Command.LogIn loginCommand)
    {

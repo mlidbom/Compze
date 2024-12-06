@@ -58,9 +58,6 @@ partial class DocumentDbSession
 
    }
 
-   internal class DocumentKey<TDocument> : DocumentKey
-   {
-      public DocumentKey(object id) : base(id, typeof(TDocument)) { }
-   }
+   internal class DocumentKey<TDocument>(object id) : DocumentKey(id, typeof(TDocument));
 
 }

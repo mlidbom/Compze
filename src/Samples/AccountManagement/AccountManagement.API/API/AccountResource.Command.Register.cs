@@ -12,10 +12,8 @@ public partial class AccountResource
 {
    public static partial class Command
    {
-      public partial class Register : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<Register.RegistrationAttemptResult>, IValidatableObject
+      public partial class Register() : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<Register.RegistrationAttemptResult>(DeduplicationIdHandling.Reuse), IValidatableObject
       {
-         public Register():base(DeduplicationIdHandling.Reuse) {}
-
          public static Register Create() => new()
                                             {
                                                AccountId = Guid.NewGuid(),

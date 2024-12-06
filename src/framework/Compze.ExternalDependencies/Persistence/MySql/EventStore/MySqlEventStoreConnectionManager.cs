@@ -6,10 +6,9 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Persistence.MySql.EventStore;
 
-class MySqlEventStoreConnectionManager
+class MySqlEventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
 {
-   readonly IMySqlConnectionPool _connectionPool;
-   public MySqlEventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool) => _connectionPool = sqlConnectionPool;
+   readonly IMySqlConnectionPool _connectionPool = sqlConnectionPool;
 
    public void UseConnection([InstantHandle] Action<ICompzeMySqlConnection> action)
    {

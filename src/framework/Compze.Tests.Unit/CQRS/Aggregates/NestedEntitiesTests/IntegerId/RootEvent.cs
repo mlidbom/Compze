@@ -28,10 +28,9 @@ static partial class RootEvent
          protected Root(Guid aggregateId) : base(aggregateId) { }
       }
 
-      public class Created : Root, RootEvent.Created
+      public class Created(Guid id, string name) : Root(id), RootEvent.Created
       {
-         public Created(Guid id, string name) : base(id) => Name = name;
-         public string Name { get; }
+         public string Name { get; } = name;
       }
    }
 }

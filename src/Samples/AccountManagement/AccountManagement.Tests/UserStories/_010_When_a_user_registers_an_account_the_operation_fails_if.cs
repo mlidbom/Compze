@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class _010_When_a_user_registers_an_account_the_operation_fails_if : UserStoryTest
+public class _010_When_a_user_registers_an_account_the_operation_fails_if([NotNull] string pluggableComponentsCombination) : UserStoryTest(pluggableComponentsCombination)
 {
    [Test] public void Password_is_invalid() =>
       TestData.Passwords.Invalid.All.ForEach(invalidPassword => Scenario.Register
@@ -19,6 +19,4 @@ public class _010_When_a_user_registers_an_account_the_operation_fails_if : User
 
    [Test] public void AccountId_is_empty()
       => Scenario.Register.WithAccountId(Guid.Empty).ExecutingShouldThrow<Exception>();
-
-   public _010_When_a_user_registers_an_account_the_operation_fails_if([NotNull] string _) : base(_) {}
 }

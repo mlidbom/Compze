@@ -3,16 +3,10 @@ using JetBrains.Annotations;
 
 namespace Compze.Messaging.Buses.Implementation;
 
-[UsedImplicitly] class ServiceBusEventStoreEventPublisher : IEventStoreEventPublisher
+[UsedImplicitly] class ServiceBusEventStoreEventPublisher(IOutbox transport, IMessageHandlerRegistry handlerRegistry) : IEventStoreEventPublisher
 {
-   readonly IOutbox _transport;
-   readonly IMessageHandlerRegistry _handlerRegistry;
-
-   public ServiceBusEventStoreEventPublisher(IOutbox transport, IMessageHandlerRegistry handlerRegistry)
-   {
-      _transport = transport;
-      _handlerRegistry = handlerRegistry;
-   }
+   readonly IOutbox _transport = transport;
+   readonly IMessageHandlerRegistry _handlerRegistry = handlerRegistry;
 
    void IEventStoreEventPublisher.Publish(IAggregateEvent @event)
    {

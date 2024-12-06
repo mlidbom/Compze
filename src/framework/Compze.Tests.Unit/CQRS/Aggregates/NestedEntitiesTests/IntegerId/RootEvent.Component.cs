@@ -23,10 +23,9 @@ static partial class RootEvent
       {
          public abstract class Root : RootEvent.Implementation.Root, Component.IRoot;
 
-         public class Renamed : Root, Component.Renamed
+         public class Renamed(string name) : Root, Component.Renamed
          {
-            public Renamed(string name) => Name = name;
-            public string Name { get; }
+            public string Name { get; } = name;
          }
       }
    }

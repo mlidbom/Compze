@@ -9,10 +9,8 @@ namespace Compze.Tests.CQRS.EventHandling;
 [TestFixture]public class MutableEventDispatcher_WrappedEventsTests : UniversalTestBase
 {
    interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent;
-   class UserWrapperEvent<TEvent> : WrapperEvent<TEvent>, IUserWrapperEvent<TEvent> where TEvent : IUserEvent
-   {
-      public UserWrapperEvent(TEvent @event) : base(@event) {}
-   }
+   class UserWrapperEvent<TEvent>(TEvent @event) : WrapperEvent<TEvent>(@event), IUserWrapperEvent<TEvent>
+      where TEvent : IUserEvent;
 
    interface IUserEvent : IAggregateEvent;
    interface IUserCreatedEvent : IUserEvent;
@@ -20,10 +18,8 @@ namespace Compze.Tests.CQRS.EventHandling;
 
 
    interface IAdminUserWrapperEvent<out TEvent> : IUserWrapperEvent<TEvent> where TEvent : IUserEvent;
-   class AdminUserWrapperEvent<TEvent> : UserWrapperEvent<TEvent>, IAdminUserWrapperEvent<TEvent> where TEvent : IUserEvent
-   {
-      public AdminUserWrapperEvent(TEvent @event) : base(@event) {}
-   }
+   class AdminUserWrapperEvent<TEvent>(TEvent @event) : UserWrapperEvent<TEvent>(@event), IAdminUserWrapperEvent<TEvent>
+      where TEvent : IUserEvent;
 
    interface IAdminUserEvent : IUserEvent;
    interface IAdminUserCreatedEvent : IAdminUserEvent, IUserCreatedEvent;

@@ -7,12 +7,11 @@ namespace Compze.Persistence.PgSql.DocumentDb;
 
 partial class PgSqlDocumentDbPersistenceLayer
 {
-   class SchemaManager
+   class SchemaManager(IPgSqlConnectionPool connectionPool)
    {
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
       bool _initialized = false;
-      readonly IPgSqlConnectionPool _connectionPool;
-      public SchemaManager(IPgSqlConnectionPool connectionPool) => _connectionPool = connectionPool;
+      readonly IPgSqlConnectionPool _connectionPool = connectionPool;
 
       internal void EnsureInitialized() => _monitor.Update(() =>
       {

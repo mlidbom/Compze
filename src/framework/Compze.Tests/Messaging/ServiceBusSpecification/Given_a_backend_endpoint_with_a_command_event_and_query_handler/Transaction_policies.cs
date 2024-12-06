@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Transaction_policies : Fixture
+public class Transaction_policies(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {
    [Test] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
@@ -48,6 +48,4 @@ public class Transaction_policies : Fixture
       QueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                             .PassedThrough.Single().Transaction.Should().Be(null);
    }
-
-   public Transaction_policies(string _) : base(_) {}
 }

@@ -9,17 +9,15 @@ namespace Compze.Messaging.Buses.Implementation;
 
 partial class Transport
 {
-   class Router
+   class Router(ITypeMapper typeMapper)
    {
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-      readonly ITypeMapper _typeMapper;
+      readonly ITypeMapper _typeMapper = typeMapper;
 
       IReadOnlyDictionary<Type, IInboxConnection> _commandHandlerRoutes = new Dictionary<Type, IInboxConnection>();
       IReadOnlyDictionary<Type, IInboxConnection> _queryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
       IReadOnlyList<(Type EventType, IInboxConnection Connection)> _eventSubscriberRoutes = new List<(Type EventType, IInboxConnection Connection)>();
       IReadOnlyDictionary<Type, IReadOnlyList<IInboxConnection>> _eventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
-
-      public Router(ITypeMapper typeMapper) => _typeMapper = typeMapper;
 
       internal void RegisterRoutes(IInboxConnection inboxConnection, ISet<TypeId> handledTypeIds)
       {

@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class _031_After_a_user_changes_their_password : UserStoryTest
+public class _031_After_a_user_changes_their_password([NotNull] string pluggableComponentsCombination) : UserStoryTest(pluggableComponentsCombination)
 {
    ChangePasswordScenario _changePasswordScenario;
 
@@ -20,6 +20,4 @@ public class _031_After_a_user_changes_their_password : UserStoryTest
 
    [Test] public void Logging_in_with_the_old_password_fails() =>
       Scenario.Login(_changePasswordScenario.Account.Email, _changePasswordScenario.OldPassword).Execute().Succeeded.Should().Be(false);
-
-   public _031_After_a_user_changes_their_password([NotNull] string _) : base(_) {}
 }

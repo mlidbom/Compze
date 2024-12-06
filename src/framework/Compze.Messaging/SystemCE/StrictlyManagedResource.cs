@@ -162,10 +162,8 @@ Set configuration value: {StrictlyManagedResources.CollectStackTracesForAllStric
 Please note that this will decrease performance and should only be set while debugging resource leaks.";
 }
 
-public class StrictlyManagedResourceLifespanWasExceededException : Exception
+public class StrictlyManagedResourceLifespanWasExceededException(Type instanceType, string reservationCallStack, TimeSpan maxTimeSpan) : Exception(FormatMessage(instanceType, reservationCallStack, maxTimeSpan))
 {
-   public StrictlyManagedResourceLifespanWasExceededException(Type instanceType, string reservationCallStack, TimeSpan maxTimeSpan) : base(FormatMessage(instanceType, reservationCallStack, maxTimeSpan)) {}
-
    static string FormatMessage(Type instanceType, string reservationCallStack, TimeSpan maxTimeSpan)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()
             ? $@"User code failed to Dispose this instance of {instanceType.FullName} within the maximum lifetime: {maxTimeSpan}

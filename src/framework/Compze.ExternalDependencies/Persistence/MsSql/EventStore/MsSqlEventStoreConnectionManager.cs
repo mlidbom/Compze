@@ -6,10 +6,9 @@ using JetBrains.Annotations;
 
 namespace Compze.Persistence.MsSql.EventStore;
 
-class MsSqlEventStoreConnectionManager
+class MsSqlEventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
 {
-   readonly IMsSqlConnectionPool _connectionPool;
-   public MsSqlEventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool) => _connectionPool = sqlConnectionPool;
+   readonly IMsSqlConnectionPool _connectionPool = sqlConnectionPool;
 
    public void UseConnection([InstantHandle] Action<ICompzeMsSqlConnection> action)
    {

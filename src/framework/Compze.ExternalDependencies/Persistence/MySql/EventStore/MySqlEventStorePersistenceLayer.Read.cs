@@ -9,11 +9,9 @@ using Event=Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Persistence.MySql.EventStore;
 
-partial class MySqlEventStorePersistenceLayer : IEventStorePersistenceLayer
+partial class MySqlEventStorePersistenceLayer(MySqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {
-   readonly MySqlEventStoreConnectionManager _connectionManager;
-
-   public MySqlEventStorePersistenceLayer(MySqlEventStoreConnectionManager connectionManager) => _connectionManager = connectionManager;
+   readonly MySqlEventStoreConnectionManager _connectionManager = connectionManager;
 
    static string CreateSelectClause() => InternalSelect();
 

@@ -15,7 +15,7 @@ namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 //This is one of those central classes for which optimization is actually vitally important.
 //Each of the optimizations were done with the help of a profiler and running benchmarks on the tested performance improvements time and time again.
 //Performance: Consider whether using the new stackalloc and Range types might allow us to improve performance of migrations.
-class EventModifier : IEventModifier
+class EventModifier(Action<IReadOnlyList<EventModifier.RefactoredEvent>> eventsAddedCallback) : IEventModifier
 {
    internal class RefactoredEvent(AggregateEvent newEvent, AggregateEventStorageInformation storageInformation)
    {
@@ -23,12 +23,10 @@ class EventModifier : IEventModifier
       public AggregateEventStorageInformation StorageInformation { get; private set; } = storageInformation;
    }
 
-   readonly Action<IReadOnlyList<RefactoredEvent>> _eventsAddedCallback;
+   readonly Action<IReadOnlyList<RefactoredEvent>> _eventsAddedCallback = eventsAddedCallback;
    internal LinkedList<AggregateEvent>? Events;
    RefactoredEvent[]? _replacementEvents;
    RefactoredEvent[]? _insertedEvents;
-
-   public EventModifier(Action<IReadOnlyList<RefactoredEvent>> eventsAddedCallback) => _eventsAddedCallback = eventsAddedCallback;
 
    AggregateEvent? _inspectedEvent;
 

@@ -6,10 +6,9 @@ using Npgsql;
 
 namespace Compze.Persistence.PgSql.EventStore;
 
-class PgSqlEventStoreConnectionManager
+class PgSqlEventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
 {
-   readonly IPgSqlConnectionPool _connectionPool;
-   public PgSqlEventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool) => _connectionPool = sqlConnectionPool;
+   readonly IPgSqlConnectionPool _connectionPool = sqlConnectionPool;
 
    public void UseConnection([InstantHandle] Action<ICompzeNpgsqlConnection> action)
    {

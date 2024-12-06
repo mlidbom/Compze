@@ -7,12 +7,11 @@ namespace Compze.Persistence.MsSql.DocumentDb;
 
 partial class MsSqlDocumentDbPersistenceLayer
 {
-   class SchemaManager
+   class SchemaManager(IMsSqlConnectionPool connectionPool)
    {
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
       bool _initialized = false;
-      readonly IMsSqlConnectionPool _connectionPool;
-      public SchemaManager(IMsSqlConnectionPool connectionPool) => _connectionPool = connectionPool;
+      readonly IMsSqlConnectionPool _connectionPool = connectionPool;
 
       internal void EnsureInitialized() => _monitor.Update(() =>
       {

@@ -2,14 +2,8 @@
 
 namespace Compze.Persistence.EventStore.PersistenceLayer;
 
-class VersionSpecification
+class VersionSpecification(Guid eventId, int version)
 {
-   public VersionSpecification(Guid eventId, int version)
-   {
-      EventId = eventId;
-      EffectiveVersion = version;
-   }
-
-   public Guid EventId { get; }
-   public int EffectiveVersion { get; }
+   public Guid EventId { get; } = eventId;
+   public int EffectiveVersion { get; } = version;
 }
