@@ -24,10 +24,12 @@ partial class PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager c
    {
       var topClause = top.HasValue ? $"TOP {top.Value} " : "";
 
-      return $@"
-SELECT {topClause} 
-{Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, cast({Event.ReadOrder} as varchar) as CharEffectiveOrder --The as is required, or Postgre sorts by this column when we ask it to sort by EffectiveOrder.
-FROM {Event.TableName}";
+      return $"""
+
+              SELECT {topClause} 
+              {Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, cast({Event.ReadOrder} as varchar) as CharEffectiveOrder --The as is required, or Postgre sorts by this column when we ask it to sort by EffectiveOrder.
+              FROM {Event.TableName}
+              """;
    }
 
    static EventDataRow ReadDataRow(NpgsqlDataReader eventReader)
@@ -61,14 +63,16 @@ FROM {Event.TableName}";
    {
       IReadOnlyList<EventDataRow> GetHistory() =>
          _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                       command => command.SetCommandText($@"
+                                       command => command.SetCommandText($"""
 
-{CreateSelectClause()} 
-WHERE {Event.AggregateId} = @{Event.AggregateId}
-    AND {Event.InsertedVersion} >= @CachedVersion
-    AND {Event.EffectiveVersion} > 0
-ORDER BY {Event.ReadOrder} ASC;
-")
+
+                                                                          {CreateSelectClause()} 
+                                                                          WHERE {Event.AggregateId} = @{Event.AggregateId}
+                                                                              AND {Event.InsertedVersion} >= @CachedVersion
+                                                                              AND {Event.EffectiveVersion} > 0
+                                                                          ORDER BY {Event.ReadOrder} ASC;
+
+                                                                          """)
                                                          .AddParameter(Event.AggregateId, aggregateId)
                                                          .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                          .PrepareStatement()
@@ -105,12 +109,14 @@ ORDER BY {Event.ReadOrder} ASC;
          var historyData = _connectionManager.UseCommand(suppressTransactionWarning: true,
                                                          command =>
                                                          {
-                                                            var commandText = $@"
-{CreateSelectClause()} 
-WHERE {Event.ReadOrder}  > CAST(@{Event.ReadOrder} AS {Event.ReadOrderType})
-    AND {Event.EffectiveVersion} > 0
-ORDER BY {Event.ReadOrder} ASC
-LIMIT {batchSize}";
+                                                            var commandText = $"""
+
+                                                                               {CreateSelectClause()} 
+                                                                               WHERE {Event.ReadOrder}  > CAST(@{Event.ReadOrder} AS {Event.ReadOrderType})
+                                                                                   AND {Event.EffectiveVersion} > 0
+                                                                               ORDER BY {Event.ReadOrder} ASC
+                                                                               LIMIT {batchSize}
+                                                                               """;
                                                             return command.SetCommandText(commandText)
                                                                           .AddParameter(Event.ReadOrder, NpgsqlDbType.Varchar, lastReadEventReadOrder.ToString())
                                                                           .PrepareStatement()
@@ -135,11 +141,13 @@ LIMIT {batchSize}";
    public IReadOnlyList<CreationEventRow> ListAggregateIdsInCreationOrder()
    {
       return _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                           action: command => command.SetCommandText($@"
-SELECT {Event.AggregateId}, {Event.EventType} 
-FROM {Event.TableName} 
-WHERE {Event.EffectiveVersion} = 1 
-ORDER BY {Event.ReadOrder} ASC")
+                                           action: command => command.SetCommandText($"""
+
+                                                                                      SELECT {Event.AggregateId}, {Event.EventType} 
+                                                                                      FROM {Event.TableName} 
+                                                                                      WHERE {Event.EffectiveVersion} = 1 
+                                                                                      ORDER BY {Event.ReadOrder} ASC
+                                                                                      """)
                                                                      .PrepareStatement()
                                                                      .ExecuteReaderAndSelect(reader => new CreationEventRow(aggregateId: Guid.Parse(reader.GetString(0)), typeId: Guid.Parse(reader.GetString(1)))));
    }

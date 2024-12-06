@@ -23,10 +23,12 @@ partial class MySqlEventStorePersistenceLayer(MySqlEventStoreConnectionManager c
       //var lockHint = takeWriteLock ? "With(UPDLOCK, READCOMMITTED, ROWLOCK)" : "With(READCOMMITTED, ROWLOCK)";
       var lockHint = "";
 
-      return $@"
-SELECT {topClause} 
-{Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, cast({Event.ReadOrder} as char(39))
-FROM {Event.TableName} {lockHint} ";
+      return $"""
+
+              SELECT {topClause} 
+              {Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, cast({Event.ReadOrder} as char(39))
+              FROM {Event.TableName} {lockHint} 
+              """;
    }
 
    static EventDataRow ReadDataRow(MySqlDataReader eventReader)
@@ -58,13 +60,15 @@ FROM {Event.TableName} {lockHint} ";
 
    public IReadOnlyList<EventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
       _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
-                                    command => command.SetCommandText($@"
-{CreateSelectClause()} 
-WHERE {Event.AggregateId} = @{Event.AggregateId}
-    AND {Event.InsertedVersion} >= @CachedVersion
-    AND {Event.EffectiveVersion} > 0
-ORDER BY {Event.ReadOrder} ASC
-{CreateLockHint(takeWriteLock)}")
+                                    command => command.SetCommandText($"""
+
+                                                                       {CreateSelectClause()} 
+                                                                       WHERE {Event.AggregateId} = @{Event.AggregateId}
+                                                                           AND {Event.InsertedVersion} >= @CachedVersion
+                                                                           AND {Event.EffectiveVersion} > 0
+                                                                       ORDER BY {Event.ReadOrder} ASC
+                                                                       {CreateLockHint(takeWriteLock)}
+                                                                       """)
                                                       .AddParameter(Event.AggregateId, aggregateId)
                                                       .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                       .ExecuteReaderAndSelect(ReadDataRow)
@@ -80,12 +84,14 @@ ORDER BY {Event.ReadOrder} ASC
          var historyData = _connectionManager.UseCommand(suppressTransactionWarning: true,
                                                          command =>
                                                          {
-                                                            var commandText = $@"
-{CreateSelectClause()} 
-WHERE {Event.ReadOrder}  > CAST(@{Event.ReadOrder} AS {Event.ReadOrderType})
-    AND {Event.EffectiveVersion} > 0
-ORDER BY {Event.ReadOrder} ASC
-LIMIT {batchSize}";
+                                                            var commandText = $"""
+
+                                                                               {CreateSelectClause()} 
+                                                                               WHERE {Event.ReadOrder}  > CAST(@{Event.ReadOrder} AS {Event.ReadOrderType})
+                                                                                   AND {Event.EffectiveVersion} > 0
+                                                                               ORDER BY {Event.ReadOrder} ASC
+                                                                               LIMIT {batchSize}
+                                                                               """;
                                                             return command.SetCommandText(commandText)
                                                                           .AddParameter(Event.ReadOrder, MySqlDbType.String, lastReadEventReadOrder.ToString())
                                                                           .ExecuteReaderAndSelect(ReadDataRow)
@@ -109,11 +115,13 @@ LIMIT {batchSize}";
    public IReadOnlyList<CreationEventRow> ListAggregateIdsInCreationOrder()
    {
       return _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                           action: command => command.SetCommandText($@"
-SELECT {Event.AggregateId}, {Event.EventType} 
-FROM {Event.TableName} 
-WHERE {Event.EffectiveVersion} = 1 
-ORDER BY {Event.ReadOrder} ASC")
+                                           action: command => command.SetCommandText($"""
+
+                                                                                      SELECT {Event.AggregateId}, {Event.EventType} 
+                                                                                      FROM {Event.TableName} 
+                                                                                      WHERE {Event.EffectiveVersion} = 1 
+                                                                                      ORDER BY {Event.ReadOrder} ASC
+                                                                                      """)
                                                                      .ExecuteReaderAndSelect(reader => new CreationEventRow(aggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
    }
 }

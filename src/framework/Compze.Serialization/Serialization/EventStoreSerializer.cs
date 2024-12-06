@@ -36,7 +36,9 @@ class RenamingDecorator(ITypeMapper typeMapper)
 {
    readonly ITypeMapper _typeMapper = typeMapper;
 
-   static readonly OptimizedLazy<Regex> FindTypeNames = new(() => new Regex(@"""\$type""\: ""([^""]*)""", RegexOptions.Compiled));
+   static readonly OptimizedLazy<Regex> FindTypeNames = new(() => new Regex("""
+                                                                            "\$type"\: "([^"]*)"
+                                                                            """, RegexOptions.Compiled));
 
    public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
 
@@ -44,7 +46,9 @@ class RenamingDecorator(ITypeMapper typeMapper)
    {
       var type = Type.GetType(match.Groups[1].Value);
       var typeId = _typeMapper.GetId(type!);
-      return $@"""$type"": ""{typeId.GuidValue}""";
+      return $"""
+              "$type": "{typeId.GuidValue}"
+              """;
    }
 
    public string RestoreTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeIdsWithTypeNames);
@@ -53,7 +57,9 @@ class RenamingDecorator(ITypeMapper typeMapper)
    {
       var typeId = new TypeId(Guid.Parse(match.Groups[1].Value));
       var type = _typeMapper.GetType(typeId);
-      return $@"""$type"": ""{type.AssemblyQualifiedName}""";
+      return $"""
+              "$type": "{type.AssemblyQualifiedName}"
+              """;
    }
 }
 

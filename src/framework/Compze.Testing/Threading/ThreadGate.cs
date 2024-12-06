@@ -69,9 +69,11 @@ class ThreadGate : IThreadGate
       catch(AwaitingConditionTimeoutException parentException)
       {
          throw new AwaitingConditionTimeoutException(parentException,
-                                                     $@"
-Current state of gate: 
-{this}");
+                                                     $"""
+
+                                                      Current state of gate: 
+                                                      {this}
+                                                      """);
       }
 
       return this;

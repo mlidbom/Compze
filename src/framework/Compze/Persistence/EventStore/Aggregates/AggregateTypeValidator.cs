@@ -32,9 +32,11 @@ static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
       {
          // ReSharper disable once PossibleNullReferenceException
          var brokenMembers = illegalMembers.Select(illegal => $"{illegal.DeclaringType?.FullName ?? "No declaring type or unnamed declaring type"}.{illegal.Name}").Distinct().OrderBy(me => me).Join(Environment.NewLine);
-         var message = $@"Types used by aggregate contains types that have public setters or public  fields. This is a dangerous design. 
-If you ever mutate an event or an aggregate except by raising events your state is likely to become currupt in our caches etc. 
-List of problem members:{Environment.NewLine}{brokenMembers}{Environment.NewLine}{Environment.NewLine}";
+         var message = $"""
+                        Types used by aggregate contains types that have public setters or public  fields. This is a dangerous design. 
+                        If you ever mutate an event or an aggregate except by raising events your state is likely to become currupt in our caches etc. 
+                        List of problem members:{Environment.NewLine}{brokenMembers}{Environment.NewLine}{Environment.NewLine}
+                        """;
 
          Console.WriteLine(message);
 

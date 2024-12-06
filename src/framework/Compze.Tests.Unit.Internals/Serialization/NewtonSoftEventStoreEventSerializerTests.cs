@@ -69,10 +69,12 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
 
       ConsoleCE.WriteLine(eventWithAllValuesJson);
 
-      eventWithAllValuesJson.Should().Be(@"{
-  ""Test1"": ""Test1"",
-  ""Test2"": ""Test2""
-}");
+      eventWithAllValuesJson.Should().Be("""
+                                         {
+                                           "Test1": "Test1",
+                                           "Test2": "Test2"
+                                         }
+                                         """);
       eventWithAllValuesJson.Should().Be(eventWithOnlySubclassValuesJson);
 
       roundTripped.Should().BeEquivalentTo(eventWithOnlySubclassValues,

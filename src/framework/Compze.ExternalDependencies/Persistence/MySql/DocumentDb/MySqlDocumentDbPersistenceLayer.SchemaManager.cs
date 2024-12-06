@@ -19,21 +19,23 @@ partial class MySqlDocumentDbPersistenceLayer
          {
             TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
             {
-               _connectionPool.ExecuteNonQuery($@"
-CREATE TABLE IF NOT EXISTS {Document.TableName} 
-(
-  {Document.Id}          VARCHAR(500) NOT NULL,
-  {Document.ValueTypeId} CHAR(38)     NOT NULL,
-  {Document.Created}     DATETIME     NOT NULL,
-  {Document.Updated}     DATETIME     NOT NULL,
-  {Document.Value}       MEDIUMTEXT   NOT NULL,
+               _connectionPool.ExecuteNonQuery($"""
 
-  PRIMARY KEY ({Document.Id}, {Document.ValueTypeId})
-)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+                                                CREATE TABLE IF NOT EXISTS {Document.TableName} 
+                                                (
+                                                  {Document.Id}          VARCHAR(500) NOT NULL,
+                                                  {Document.ValueTypeId} CHAR(38)     NOT NULL,
+                                                  {Document.Created}     DATETIME     NOT NULL,
+                                                  {Document.Updated}     DATETIME     NOT NULL,
+                                                  {Document.Value}       MEDIUMTEXT   NOT NULL,
+                                                
+                                                  PRIMARY KEY ({Document.Id}, {Document.ValueTypeId})
+                                                )
+                                                ENGINE = InnoDB
+                                                DEFAULT CHARACTER SET = utf8mb4;
 
-");
+
+                                                """);
             });
          }
 

@@ -79,22 +79,26 @@ static class DbCommandCE
    public static TCommand LogCommand<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       ConsoleCE.WriteLine("####################################### Logging command###############################################");
-      ConsoleCE.WriteLine($@"{nameof(@this.CommandText)}:
-{@this.CommandText}");
+      ConsoleCE.WriteLine($"""
+                           {nameof(@this.CommandText)}:
+                           {@this.CommandText}
+                           """);
 
       var parameters = @this.Parameters.Cast<DbParameter>().ToList();
 
       if(parameters.Any())
       {
          parameters.ForEach(
-            parameter => Console.WriteLine($@"
-    {nameof(parameter.ParameterName)}: {parameter.ParameterName}, 
-{nameof(parameter.DbType)}: {parameter.DbType},
-{nameof(parameter.Value)}: {parameter.Value},
-{nameof(parameter.Size)}: {parameter.Size},
-{nameof(parameter.Precision)}: {parameter.Precision},
-{nameof(parameter.Direction)}: {parameter.Direction},
-{nameof(parameter.IsNullable)}: {parameter.IsNullable}".ReplaceInvariant(Environment.NewLine, "")));
+            parameter => Console.WriteLine($"""
+                                            
+                                                {nameof(parameter.ParameterName)}: {parameter.ParameterName}, 
+                                            {nameof(parameter.DbType)}: {parameter.DbType},
+                                            {nameof(parameter.Value)}: {parameter.Value},
+                                            {nameof(parameter.Size)}: {parameter.Size},
+                                            {nameof(parameter.Precision)}: {parameter.Precision},
+                                            {nameof(parameter.Direction)}: {parameter.Direction},
+                                            {nameof(parameter.IsNullable)}: {parameter.IsNullable}
+                                            """.ReplaceInvariant(Environment.NewLine, "")));
 
          ConsoleCE.WriteLine("####################################### Hacking values into parameter positions #######################################");
          var commandTextWithParameterValues = @this.CommandText;

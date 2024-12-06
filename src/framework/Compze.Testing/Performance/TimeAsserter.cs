@@ -84,7 +84,9 @@ static class TimeAsserter
       maxTries = Math.Min(MaxTriesLimit, maxTries);
 
       ConsoleCE.WriteLine();
-      ConsoleCE.WriteImportantLine($@"""{description}"" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting");
+      ConsoleCE.WriteImportantLine($"""
+                                    "{description}" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting
+                                    """);
 
       for(var tries = 1; tries <= maxTries; tries++)
       {
@@ -150,9 +152,11 @@ static class TimeAsserter
 
       if(iterations > 1)
       {
-         ConsoleCE.WriteLine($@"
-Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
-Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}"
+         ConsoleCE.WriteLine($"""
+
+                                 Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
+                                 Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
+                                 """
                                .RemoveLeadingLineBreak());
       } else
       {
@@ -161,13 +165,15 @@ Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}"
 
       if(executionSummary is StopwatchCE.TimedThreadedExecutionSummary threadedSummary)
       {
-         ConsoleCE.WriteLine($@"  
-Individual execution times    
-    Average: {threadedSummary.IndividualExecutionTimes.Average().FormatReadable()}
-    Min:     {threadedSummary.IndividualExecutionTimes.Min().FormatReadable()}
-    Max:     {threadedSummary.IndividualExecutionTimes.Max().FormatReadable()}
-    Sum:     {threadedSummary.IndividualExecutionTimes.Sum().FormatReadable()}
-");
+         ConsoleCE.WriteLine($"""
+                                
+                              Individual execution times    
+                                  Average: {threadedSummary.IndividualExecutionTimes.Average().FormatReadable()}
+                                  Min:     {threadedSummary.IndividualExecutionTimes.Min().FormatReadable()}
+                                  Max:     {threadedSummary.IndividualExecutionTimes.Max().FormatReadable()}
+                                  Sum:     {threadedSummary.IndividualExecutionTimes.Sum().FormatReadable()}
+
+                              """);
       }
    }
 

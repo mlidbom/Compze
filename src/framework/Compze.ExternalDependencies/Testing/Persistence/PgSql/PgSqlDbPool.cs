@@ -50,24 +50,26 @@ sealed class PgSqlDbPool : DbPool
 
    protected override void ResetDatabase(Database db) =>
       IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(
-         command => command.SetCommandText(@"
-DO $$
-DECLARE
-        dbRecord RECORD;
-BEGIN
-	FOR dbRecord IN (SELECT nspname
-			FROM pg_catalog.pg_namespace
-			WHERE nspname NOT IN ('information_schema', 'pg_catalog', 'pg_toast')) 
-	LOOP
-			EXECUTE format('DROP SCHEMA %I CASCADE;', dbRecord.nspname);
-	END LOOP;
+         command => command.SetCommandText("""
 
-	CREATE SCHEMA public AUTHORIZATION postgres;
-	COMMENT ON SCHEMA public IS 'standard public schema';
-	GRANT ALL ON SCHEMA public TO PUBLIC;
-	GRANT ALL ON SCHEMA public TO postgres;
+                                           DO $$
+                                           DECLARE
+                                                   dbRecord RECORD;
+                                           BEGIN
+                                           	FOR dbRecord IN (SELECT nspname
+                                           			FROM pg_catalog.pg_namespace
+                                           			WHERE nspname NOT IN ('information_schema', 'pg_catalog', 'pg_toast')) 
+                                           	LOOP
+                                           			EXECUTE format('DROP SCHEMA %I CASCADE;', dbRecord.nspname);
+                                           	END LOOP;
+                                           
+                                           	CREATE SCHEMA public AUTHORIZATION postgres;
+                                           	COMMENT ON SCHEMA public IS 'standard public schema';
+                                           	GRANT ALL ON SCHEMA public TO PUBLIC;
+                                           	GRANT ALL ON SCHEMA public TO postgres;
 
-END; $$;")
+                                           END; $$;
+                                           """)
                            .PrepareStatement()
                            .ExecuteNonQuery());
 

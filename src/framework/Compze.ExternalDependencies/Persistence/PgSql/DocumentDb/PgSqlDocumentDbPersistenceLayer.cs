@@ -49,9 +49,11 @@ partial class PgSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       EnsureInitialized();
 
       var documents = _connectionPool.UseCommand(
-         command => command.SetCommandText($@"
-SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName}  {UseUpdateLock(useUpdateLock)} 
-WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableTypeIds)}")
+         command => command.SetCommandText($"""
+
+                                            SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName}  {UseUpdateLock(useUpdateLock)} 
+                                            WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableTypeIds)}
+                                            """)
                            .AddVarcharParameter(Schema.Id, 500, idString)
                            .PrepareStatement()
                             //Todo: There is a GetGuid method. But it cannot read the text value. How do I use it? Same for all other Guid usages in PgSql
@@ -115,8 +117,10 @@ WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptable
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
-         command => command.SetCommandText($@"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)} 
-                                   AND {Schema.Id} IN('" + ids.Select(id => id.ToString()).Join("','") + "')")
+         command => command.SetCommandText($"""
+                                            SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)} 
+                                                                               AND {Schema.Id} IN('
+                                            """ + ids.Select(id => id.ToString()).Join("','") + "')")
                            .PrepareStatement() //Performance: Does this work in Npgsql when there are no parameters? Should we have parameters?
                            .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
    }

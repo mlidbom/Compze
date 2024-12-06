@@ -27,16 +27,18 @@ partial class MySqlEventStorePersistenceLayer
             {
                connection.UseCommand(
                   command => command.SetCommandText(
-                                        $@"
-INSERT {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-(       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
-VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrder}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
+                                        $"""
 
-UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
-WHERE {Event.EventId} = @{Event.EventId} 
-AND @{Event.ReadOrder} = '0.0000000000000000000';
-")
+                                         INSERT {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+                                         (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
+                                         VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrder}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
+
+                                         UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+                                         SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
+                                         WHERE {Event.EventId} = @{Event.EventId} 
+                                         AND @{Event.ReadOrder} = '0.0000000000000000000';
+
+                                         """)
                                     .AddParameter(Event.AggregateId, data.AggregateId)
                                     .AddParameter(Event.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Event.EventType, data.EventType)
@@ -73,12 +75,14 @@ AND @{Event.ReadOrder} = '0.0000000000000000000';
       //var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
       var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
-      var selectStatement = $@"
-SELECT  CAST({Event.ReadOrder} AS char(39)),        
-        (select cast({Event.ReadOrder} as char(39)) from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc limit 1) PreviousReadOrder,
-        (select cast({Event.ReadOrder} as char(39)) from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} limit 1) NextReadOrder
-FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
-where {Event.EventId} = @{Event.EventId}";
+      var selectStatement = $"""
+
+                             SELECT  CAST({Event.ReadOrder} AS char(39)),        
+                                     (select cast({Event.ReadOrder} as char(39)) from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc limit 1) PreviousReadOrder,
+                                     (select cast({Event.ReadOrder} as char(39)) from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} limit 1) NextReadOrder
+                             FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
+                             where {Event.EventId} = @{Event.EventId}
+                             """;
 
       EventNeighborhood? neighborhood = null;
 

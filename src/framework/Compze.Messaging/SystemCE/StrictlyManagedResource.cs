@@ -154,22 +154,30 @@ class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? re
 {
    static string FormatMessage(Type instanceType, string? reservationCallStack)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()
-            ? $@"User code failed to Dispose this instance of {instanceType.GetFullNameCompilable()}
-Construction call stack: {reservationCallStack}"
-            : $@"No allocation stack trace collected. 
-Set configuration value: {StrictlyManagedResources.ConfigurationParamaterNameFor(instanceType)} to ""true"" to collect allocation stack traces for this type.
-Set configuration value: {StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName} to ""true"" to collect allocation stack traces for all types.
-Please note that this will decrease performance and should only be set while debugging resource leaks.";
+            ? $"""
+               User code failed to Dispose this instance of {instanceType.GetFullNameCompilable()}
+               Construction call stack: {reservationCallStack}
+               """
+            : $"""
+               No allocation stack trace collected. 
+               Set configuration value: {StrictlyManagedResources.ConfigurationParamaterNameFor(instanceType)} to "true" to collect allocation stack traces for this type.
+               Set configuration value: {StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName} to "true" to collect allocation stack traces for all types.
+               Please note that this will decrease performance and should only be set while debugging resource leaks.
+               """;
 }
 
 public class StrictlyManagedResourceLifespanWasExceededException(Type instanceType, string reservationCallStack, TimeSpan maxTimeSpan) : Exception(FormatMessage(instanceType, reservationCallStack, maxTimeSpan))
 {
    static string FormatMessage(Type instanceType, string reservationCallStack, TimeSpan maxTimeSpan)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()
-            ? $@"User code failed to Dispose this instance of {instanceType.FullName} within the maximum lifetime: {maxTimeSpan}
-Construction call stack: {reservationCallStack}"
-            : $@"No allocation stack trace collected. 
-Set configuration value: {StrictlyManagedResources.ConfigurationParamaterNameFor(instanceType)} to ""true"" to collect allocation stack traces for this type.
-Set configuration value: {StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName} to ""true"" to collect allocation stack traces for all types.
-Please note that this will decrease performance and should only be set while debugging resource leaks.";
+            ? $"""
+               User code failed to Dispose this instance of {instanceType.FullName} within the maximum lifetime: {maxTimeSpan}
+               Construction call stack: {reservationCallStack}
+               """
+            : $"""
+               No allocation stack trace collected. 
+               Set configuration value: {StrictlyManagedResources.ConfigurationParamaterNameFor(instanceType)} to "true" to collect allocation stack traces for this type.
+               Set configuration value: {StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName} to "true" to collect allocation stack traces for all types.
+               Please note that this will decrease performance and should only be set while debugging resource leaks.
+               """;
 }

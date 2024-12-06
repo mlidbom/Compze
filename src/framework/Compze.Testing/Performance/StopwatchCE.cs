@@ -128,16 +128,18 @@ static class StopwatchCE
 
       public IReadOnlyList<TimeSpan> IndividualExecutionTimes { get; } = individualExecutionTimes;
 
-      public override string ToString() => $@"
-{_description}
-Total: {Total.FormatReadable()}
-Average: {Total.FormatReadable()}
+      public override string ToString() => $"""
 
-Individual execution times    
-    Average: {IndividualExecutionTimes.Average().FormatReadable()}
-    Min:     {IndividualExecutionTimes.Min().FormatReadable()}
-    Max:     {IndividualExecutionTimes.Max().FormatReadable()}
-    Sum:     {IndividualExecutionTimes.Sum().FormatReadable()}
-";
+                                            {_description}
+                                            Total: {Total.FormatReadable()}
+                                            Average: {Total.FormatReadable()}
+
+                                            Individual execution times    
+                                                Average: {IndividualExecutionTimes.Average().FormatReadable()}
+                                                Min:     {IndividualExecutionTimes.Min().FormatReadable()}
+                                                Max:     {IndividualExecutionTimes.Max().FormatReadable()}
+                                                Sum:     {IndividualExecutionTimes.Sum().FormatReadable()}
+
+                                            """;
    }
 }

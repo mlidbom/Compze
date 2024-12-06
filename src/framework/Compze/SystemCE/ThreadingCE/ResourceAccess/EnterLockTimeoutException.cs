@@ -21,10 +21,12 @@ class EnterLockTimeoutException : Exception
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }
-         return $@"{base.Message}
------ Blocking thread lock disposal stack trace-----
-{_blockingThreadStacktrace}
-";
+         return $"""
+                 {base.Message}
+                 ----- Blocking thread lock disposal stack trace-----
+                 {_blockingThreadStacktrace}
+
+                 """;
       }
    }
 

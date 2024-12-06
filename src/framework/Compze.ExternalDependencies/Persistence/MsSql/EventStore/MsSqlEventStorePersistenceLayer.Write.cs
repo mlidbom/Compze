@@ -28,19 +28,21 @@ partial class MsSqlEventStorePersistenceLayer
             {
                connection.UseCommand(
                   command => command.SetCommandText(
-                                        $@"
-INSERT {Event.TableName} With(READCOMMITTED, ROWLOCK) --We are inserting append-only data so using READCOMMITTED to lessen the risk of lock problems should be perfectly safe.
-(       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
-VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrder}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType})
+                                        $"""
+
+                                         INSERT {Event.TableName} With(READCOMMITTED, ROWLOCK) --We are inserting append-only data so using READCOMMITTED to lessen the risk of lock problems should be perfectly safe.
+                                         (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
+                                         VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrder}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType})
 
 
-IF(@{Event.ReadOrder} = 0)
-BEGIN
-    UPDATE {Event.TableName} With(READCOMMITTED, ROWLOCK)
-    SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
-    WHERE {Event.EventId} = @{Event.EventId}
-END
-")
+                                         IF(@{Event.ReadOrder} = 0)
+                                         BEGIN
+                                             UPDATE {Event.TableName} With(READCOMMITTED, ROWLOCK)
+                                             SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
+                                             WHERE {Event.EventId} = @{Event.EventId}
+                                         END
+
+                                         """)
                                     .AddParameter(Event.AggregateId, SqlDbType.UniqueIdentifier, data.AggregateId)
                                     .AddParameter(Event.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Event.EventType, data.EventType)
@@ -78,12 +80,14 @@ END
 
       var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
 
-      var selectStatement = $@"
-SELECT  {Event.ReadOrder},        
-        (select top 1 {Event.ReadOrder} from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc) PreviousReadOrder,
-        (select top 1 {Event.ReadOrder} from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder}) NextReadOrder
-FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
-where {Event.EventId} = @{Event.EventId}";
+      var selectStatement = $"""
+
+                             SELECT  {Event.ReadOrder},        
+                                     (select top 1 {Event.ReadOrder} from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc) PreviousReadOrder,
+                                     (select top 1 {Event.ReadOrder} from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder}) NextReadOrder
+                             FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
+                             where {Event.EventId} = @{Event.EventId}
+                             """;
 
       EventNeighborhood? neighborhood = null;
 

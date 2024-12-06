@@ -29,20 +29,24 @@ partial class PgSqlEventStorePersistenceLayer
             {
                connection.UseCommand(
                   command => command.SetCommandText(
-                                        $@"
-{(data.AggregateVersion > 1 ? "" : $"insert into {Lock.TableName}({Lock.AggregateId}) values(@{Lock.AggregateId});")}
+                                        $"""
 
-INSERT INTO {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-(       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},       {Event.ReadOrder},                            {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
-VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, cast(@{Event.ReadOrder} as {Event.ReadOrderType}), @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
+                                         {(data.AggregateVersion > 1 ? "" : $"insert into {Lock.TableName}({Lock.AggregateId}) values(@{Lock.AggregateId});")}
 
-{(data.StorageInformation.ReadOrder != null ? "" : $@"
-UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-        SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
-        WHERE {Event.EventId} = @{Event.EventId};
-")}
+                                         INSERT INTO {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+                                         (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},       {Event.ReadOrder},                            {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
+                                         VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, cast(@{Event.ReadOrder} as {Event.ReadOrderType}), @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
 
-")
+                                         {(data.StorageInformation.ReadOrder != null ? "" : $"""
+
+                                                                                             UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+                                                                                                     SET {Event.ReadOrder} = cast({Event.InsertionOrder} as {Event.ReadOrderType})
+                                                                                                     WHERE {Event.EventId} = @{Event.EventId};
+
+                                                                                             """)}
+
+
+                                         """)
                                     .AddParameter(Event.AggregateId, data.AggregateId)
                                     .AddParameter(Event.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Event.EventType, data.EventType)
@@ -78,13 +82,15 @@ UPDATE {Event.TableName} /*With(READCOMMITTED, ROWLOCK)*/
    {
       var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
-      var selectStatement = $@"
-SELECT  cast({Event.ReadOrder} as varchar) as CharEffectiveOrder,        
-        (select cast({Event.ReadOrder} as varchar) as CharEffectiveOrder from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc limit 1) PreviousReadOrder,
-        (select cast({Event.ReadOrder} as varchar) as CharEffectiveOrder from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} limit 1) NextReadOrder
-FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
-where {Event.EventId} = @{Event.EventId}
-{CreateLockHint(takeWriteLock: true)}";
+      var selectStatement = $"""
+
+                             SELECT  cast({Event.ReadOrder} as varchar) as CharEffectiveOrder,        
+                                     (select cast({Event.ReadOrder} as varchar) as CharEffectiveOrder from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc limit 1) PreviousReadOrder,
+                                     (select cast({Event.ReadOrder} as varchar) as CharEffectiveOrder from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} limit 1) NextReadOrder
+                             FROM    {Event.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
+                             where {Event.EventId} = @{Event.EventId}
+                             {CreateLockHint(takeWriteLock: true)}
+                             """;
 
       EventNeighborhood? neighborhood = null;
 

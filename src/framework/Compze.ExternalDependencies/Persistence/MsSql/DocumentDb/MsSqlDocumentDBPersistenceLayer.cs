@@ -48,9 +48,11 @@ partial class MsSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       EnsureInitialized();
 
       var documents = _connectionPool.UseCommand(
-         command => command.SetCommandText($@"
-SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} {UseUpdateLock(useUpdateLock)} 
-WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId}  {TypeInClause(acceptableTypeIds)}")
+         command => command.SetCommandText($"""
+
+                                            SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} {UseUpdateLock(useUpdateLock)} 
+                                            WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId}  {TypeInClause(acceptableTypeIds)}
+                                            """)
                            .AddNVarcharParameter(Schema.Id, 500, idString)
                            .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(1), reader.GetString(0))));
       if(documents.Count < 1)
@@ -109,8 +111,10 @@ WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId}  {TypeInClause(acceptabl
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
-         command => command.SetCommandText($@"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)} 
-                                   AND {Schema.Id} IN('" + ids.Select(id => id.ToString()).Join("','") + "')")
+         command => command.SetCommandText($"""
+                                            SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)} 
+                                                                               AND {Schema.Id} IN('
+                                            """ + ids.Select(id => id.ToString()).Join("','") + "')")
                            .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 

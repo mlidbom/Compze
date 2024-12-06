@@ -277,11 +277,13 @@ class EventStore : IEventStore
       Log.Info($"Inspected: {migratedAggregates} , Updated: {updatedAggregates}, New Events: {newEventCount}");
       if(exceptions.Any())
       {
-         throw new AggregateException($@"
-Failed to persist {exceptions.Count} migrations. 
+         throw new AggregateException($"""
 
-AggregateIds: 
-{exceptions.Select(it => it.AggregateId.ToString()).Join($",{Environment.NewLine}")}", exceptions.Select(it => it.Exception));
+                                       Failed to persist {exceptions.Count} migrations. 
+
+                                       AggregateIds: 
+                                       {exceptions.Select(it => it.AggregateId.ToString()).Join($",{Environment.NewLine}")}
+                                       """, exceptions.Select(it => it.Exception));
       }
 
    }
