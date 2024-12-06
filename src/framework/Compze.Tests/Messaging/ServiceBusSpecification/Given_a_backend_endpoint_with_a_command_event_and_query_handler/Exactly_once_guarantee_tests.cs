@@ -14,13 +14,12 @@ public class Exactly_once_guarantee_tests : Fixture
 {
    [Test] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
    {
-      TransactionAbortedException temp = FluentActions.Invoking(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
-                                                       {
-                                                          Transaction.Current!.FailOnPrepare();
-                                                          session.Send(new MyExactlyOnceCommand());
-                                                       }))
-                                                      .Should().Throw<TransactionAbortedException>()
-                                                      .Which;
+      FluentActions.Invoking(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
+                    {
+                       Transaction.Current!.FailOnPrepare();
+                       session.Send(new MyExactlyOnceCommand());
+                    }))
+                   .Should().Throw<TransactionAbortedException>();
 
       CommandHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
                               .Should()

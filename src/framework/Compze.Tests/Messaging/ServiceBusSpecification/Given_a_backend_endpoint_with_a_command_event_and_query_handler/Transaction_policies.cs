@@ -48,6 +48,6 @@ public class Transaction_policies : Fixture
       QueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                             .PassedThrough.Single().Transaction.Should().Be(null);
    }
-   
+
    public Transaction_policies(string _) : base(_) {}
 }

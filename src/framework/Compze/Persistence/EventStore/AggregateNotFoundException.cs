@@ -2,5 +2,5 @@
 
 namespace Compze.Persistence.EventStore;
 
-class AggregateNotFoundException(Guid aggregateId) : 
+class AggregateNotFoundException(Guid aggregateId) :
    ArgumentOutOfRangeException($"Aggregate root with Id: {aggregateId} not found");

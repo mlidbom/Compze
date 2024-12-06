@@ -49,7 +49,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       protected override void Publish(TEntityEventImplementation @event)
       {
          var id = IdGetterSetter.GetId(@event);
-         if(Equals(id, default(TEntityId)!))
+         if(Equals(id, default(TEntityId)))
          {
             IdGetterSetter.SetEntityId(@event, Id);
          }

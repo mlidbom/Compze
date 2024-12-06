@@ -23,10 +23,7 @@ abstract class DocumentDbTestsBase(string pluggableComponentsCombination) : Dupl
 
    [SetUp] public void Setup() => ServiceLocator = CreateServiceLocator();
 
-   [TearDown] public async Task TearDownTask()
-   {
-      if(ServiceLocator != null) await ServiceLocator.DisposeAsync();
-   }
+   [TearDown] public async Task TearDownTask() => await ServiceLocator.DisposeAsync();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) => ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));
    internal void UseInScope([InstantHandle] Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader()));

@@ -28,7 +28,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.CQRS;
 
-public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class EventStoreUpdaterTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    class EventSpy
    {
@@ -534,9 +534,8 @@ public class EventStoreUpdaterTest([NotNull] string pluggableComponentsCombinati
 
       UseInTransactionalScope(session => session.Save(user));
 
-      Exception temp = FluentActions.Invoking(() => ChangeUserEmail(failOnPrepare: true))
-                                    .Should().Throw<Exception>()
-                                    .Which;
+      FluentActions.Invoking(() => ChangeUserEmail(failOnPrepare: true))
+                   .Should().Throw<Exception>();
 
       ChangeUserEmail(failOnPrepare: false);
       return;

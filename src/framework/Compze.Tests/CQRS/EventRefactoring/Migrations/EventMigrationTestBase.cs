@@ -22,7 +22,7 @@ using JetBrains.Annotations;
 namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
 
 //refactor: this test. It is too monolithic and hard to read and extend.
-public abstract class EventMigrationTestBase([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class EventMigrationTestBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    internal async Task RunMigrationTest(params MigrationScenario[] scenarios)
    {

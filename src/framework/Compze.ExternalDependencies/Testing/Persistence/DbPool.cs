@@ -38,7 +38,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 
    public string ConnectionStringFor(string reservationName) => _guard.Update(() =>
    {
-      Assert.State.IsNotDisposed(_disposed);
+      Assert.State.IsNotDisposed(_disposed, this);
 
       var reservedDatabase = _transientCache.SingleOrDefault(db => db.ReservationName == reservationName);
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse

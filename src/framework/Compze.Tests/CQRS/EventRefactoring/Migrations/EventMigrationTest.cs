@@ -20,7 +20,7 @@ using NUnit.Framework;
 namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
 
 //Todo: Write tests that verify that none of the persistence layers lose precision in the persisted ReadOrder when persisting refactorings.
-public class EventMigrationTest([NotNull] string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
+public class EventMigrationTest(string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
 {
    [Test]
    public async Task Base_class_method_should_detect_incorrect_type_order()

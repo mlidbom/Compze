@@ -11,6 +11,6 @@ partial class ContractAsserter(Func<string, Exception> createException)
    public ContractAsserter Is([DoesNotReturnIf(false)] bool value, Func<string>? createMessage = null,  [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value ? this : throw _createException( createMessage?.Invoke() ?? valueString);
 
-   public ContractAsserter IsNotDisposed([DoesNotReturnIf(true)] bool isDisposed) =>
-      !isDisposed ? this : throw new ObjectDisposedException("");
+   public ContractAsserter IsNotDisposed([DoesNotReturnIf(true)] bool isDisposed, object theInstance) =>
+      !isDisposed ? this : throw new ObjectDisposedException(theInstance.GetType().FullName);
 }
