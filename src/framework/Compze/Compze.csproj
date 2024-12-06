@@ -10,12 +10,7 @@
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    </PropertyGroup>
-
-   <ItemGroup>
-      <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-   </ItemGroup>
 
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0">

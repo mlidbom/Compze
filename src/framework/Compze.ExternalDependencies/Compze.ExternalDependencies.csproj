@@ -10,15 +10,10 @@
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    </PropertyGroup>
 
    <ItemGroup>
       <FrameworkReference Include="Microsoft.AspNetCore.App" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
    </ItemGroup>
 
    <ItemGroup>

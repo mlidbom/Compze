@@ -10,7 +10,6 @@
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    </PropertyGroup>
 
 
@@ -19,7 +18,4 @@
       <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
    </ItemGroup>
 
-   <ItemGroup>
-      <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-   </ItemGroup>
 </Project>

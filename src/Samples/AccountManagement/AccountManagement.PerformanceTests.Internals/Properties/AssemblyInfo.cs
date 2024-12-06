@@ -1,6 +1,4 @@
-﻿[assembly: System.Reflection.AssemblyVersion("1.0.0.0")]
-
-#if !NCRUNCH
+﻿#if !NCRUNCH
 [assembly: NUnit.Framework.Parallelizable(NUnit.Framework.ParallelScope.None)]
 #endif
 
