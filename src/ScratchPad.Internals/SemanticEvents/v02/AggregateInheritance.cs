@@ -28,7 +28,6 @@ interface IEvent<out TEventInterface> : IEvent
 interface IExactlyOnceEvent<out TEventInterface> : IEvent<TEventInterface> where TEventInterface : IExactlyOnceEvent {}
 interface IAggregateEvent<out TAggregateEventInterface> : IExactlyOnceEvent<TAggregateEventInterface> where TAggregateEventInterface : IAggregateEvent {}
 
-//Urgent: Removing the rule that the inner event be an IUserEvent feels a bit icky, but is there any way around it? 
 interface IUserEvent<out TUserEventInterface> : IAggregateEvent<TUserEventInterface> where TUserEventInterface : IUserEvent {}
 interface IManagerEvent<out TIBirdEventInterface> : IUserEvent<TIBirdEventInterface> where TIBirdEventInterface : IUserEvent {}
 
