@@ -5,7 +5,6 @@ namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 partial class MonitorCE
 {
    public static MonitorCE WithDefaultTimeout() => new(DefaultTimeout);
-   public static MonitorCE WithInfiniteTimeout() => new(InfiniteTimeout);
    public static MonitorCE WithTimeout(TimeSpan timeout) => new(timeout);
 
    readonly object _lockObject = new();

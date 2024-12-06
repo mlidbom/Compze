@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
@@ -42,14 +41,4 @@ static class DictionaryCE
       me.Add(key, value);
       return value;
    }
-
-   public static TValue GetAndRemove<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key) where TKey : notnull
-   {
-      var value = @this[key];
-      @this.Remove(key);
-      return value;
-   }
-
-   public static bool TryGetAndRemove<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, [MaybeNullWhen(false)] out TValue value) where TKey : notnull =>
-      @this.Remove(key, out value);
 }
