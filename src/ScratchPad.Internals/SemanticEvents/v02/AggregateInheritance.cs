@@ -1,30 +1,37 @@
-﻿using Compze.Persistence.EventStore;
-// ReSharper disable All
+﻿// ReSharper disable All
+
+using System;
+
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 #pragma warning disable IDE0051 // Remove unused private members
 
+//When persisting event we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage and maybe one could even move events between clases in the hierarchy?
 namespace ScratchPad.SemanticEvents.v02;
 
-//todo: Try implementing inheritable aggregate and see how it goes.
-//When persisting event we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage.
-interface IInheritableAggregateEvent<out TInheritorEvent> where TInheritorEvent : IAggregateEvent
+//todo: There can only be one EventId per event. So nested entities will NOT raise IExactlyOnceEvents directly.
+//But then, what about publishing non-aggregate events on the bus? Is there a real issue or am I just imagining things?
+interface IExactlyOnceEvent
 {
-   TInheritorEvent Event { get; }
+   Guid EventId { get; }
 }
 
-interface IAnimalWrapperEvent<out TInheritorEvent> : IInheritableAggregateEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent
-{}
+interface IAggregateEvent : IExactlyOnceEvent
+{
+   Guid AggregateId { get; }
+}
 
-interface IBirdWrapperEvent<out TInheritorEvent> : IAnimalWrapperEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent
-{}
+interface IWrapperEvent<out TWrappedEvent>
+{
+   TWrappedEvent Event { get; }
+}
 
-interface IAnimalEvent : IAggregateEvent{}
-
-interface IAnimalBorn : IAnimalEvent{}
-
-interface IBirdEvent : IAnimalEvent{}
-
-interface IBirdChirpsEvent : IBirdEvent{}
+interface IInheritableAggregateEvent<out TInheritorEvent> : IWrapperEvent<TInheritorEvent> where TInheritorEvent : IAggregateEvent {}
+interface IAnimalWrapperEvent<out TInheritorEvent> : IInheritableAggregateEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
+interface IBirdWrapperEvent<out TInheritorEvent> : IAnimalWrapperEvent<TInheritorEvent> where TInheritorEvent : IAnimalEvent {}
+interface IAnimalEvent : IAggregateEvent {}
+interface IAnimalBorn : IAnimalEvent {}
+interface IBirdEvent : IAnimalEvent {}
+interface IBirdChirpsEvent : IBirdEvent {}
 
 public class AggregateInheritance
 {
@@ -51,15 +58,13 @@ public class AggregateInheritance
    }
 }
 
-interface IAnimalComponentEvent<out TComponentEvent> : IAnimalEvent{}
-
-interface IBirdComponentEvent<out TComponentEvent> : IAnimalComponentEvent<TComponentEvent>{}
+interface IAnimalComponentEvent<out TComponentEvent> : IAnimalEvent {}
+interface IBirdComponentEvent<out TComponentEvent> : IAnimalComponentEvent<TComponentEvent> {}
 
 public class ReUsableAggregateComponentsInInheritableAggregates
 {
    static void DemonstrateSemanticRelationships()
    {
-
       IAnimalWrapperEvent<IAnimalComponentEvent<IComponentEventBase>> componentEventBaseAnimalWrapped = null!;
       IAnimalWrapperEvent<IAnimalComponentEvent<IComponentEvent1>> componentEvent1AnimalWrapped = null!;
       IAnimalWrapperEvent<IAnimalComponentEvent<IComponentEvent2>> componentEvent2AnimalWrapped = null!;
