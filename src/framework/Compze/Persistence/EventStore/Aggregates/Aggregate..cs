@@ -121,7 +121,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
    void IEventStored.LoadFromHistory(IEnumerable<IAggregateEvent> history)
    {
-      if(Version != 0) throw new InvalidOperationException($"You can only call {nameof(IEventStored.LoadFromHistory)} on an empty Aggregate with {nameof(Version)} == 0");
+      Assert.State.Is(Version == 0, () => $"You can only call {nameof(IEventStored.LoadFromHistory)} on an empty Aggregate with {nameof(Version)} == 0");
       history.ForEach(theEvent => ApplyEvent((TAggregateEvent)theEvent));
       AssertInvariantsAreMet();
    }
