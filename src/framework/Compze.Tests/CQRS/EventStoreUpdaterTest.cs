@@ -433,7 +433,7 @@ public class EventStoreUpdaterTest(string pluggableComponentsCombination) : Dupl
 
       UseInTransactionalScope(session => session.Save(user));
 
-      var threadedIterations = 20;
+      const int threadedIterations = 20;
       var delayEachTransactionBy = 1.Milliseconds();
 
       var singleThreadedExecutionTime = StopwatchCE.TimeExecution(ReadUserHistory, iterations: threadedIterations).Total;
@@ -566,7 +566,7 @@ public class EventStoreUpdaterTest(string pluggableComponentsCombination) : Dupl
       var getHistorySection = GatedCodeSection.WithTimeout(2.Seconds());
       var changeEmailSection = GatedCodeSection.WithTimeout(2.Seconds());
 
-      var threads = 2;
+      const int threads = 2;
       var tasks = 1.Through(threads).Select(_ => Task.Run(UpdateEmail)).ToArray();
 
       getHistorySection.LetOneThreadPass();
@@ -619,7 +619,7 @@ public class EventStoreUpdaterTest(string pluggableComponentsCombination) : Dupl
       var changeEmailSection = GatedCodeSection.WithTimeout(20.Seconds());
       var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(20.Seconds());
 
-      var threads = 2;
+      const int threads = 2;
 
       var tasks = 1.Through(threads).Select(_ => Task.Run(UpdateEmail)).ToArray();
 

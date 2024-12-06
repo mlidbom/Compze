@@ -21,7 +21,7 @@ partial class MySqlEventStorePersistenceLayer(MySqlEventStoreConnectionManager c
    {
       var topClause = top.HasValue ? $"TOP {top.Value} " : "";
       //var lockHint = takeWriteLock ? "With(UPDLOCK, READCOMMITTED, ROWLOCK)" : "With(READCOMMITTED, ROWLOCK)";
-      var lockHint = "";
+      const string lockHint = "";
 
       return $"""
 

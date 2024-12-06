@@ -13,7 +13,7 @@ public class Retry_policies_AtMostOnceCommand_when_command_handler_fails(string 
 {
    [SetUp] public void SendCommandThatFails()
    {
-      var exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
+      const string exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
 
       Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(action: () => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));

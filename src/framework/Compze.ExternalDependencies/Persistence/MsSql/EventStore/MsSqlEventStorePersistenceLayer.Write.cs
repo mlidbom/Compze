@@ -78,7 +78,7 @@ partial class MsSqlEventStorePersistenceLayer
    {
 
 
-      var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
+      const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
 
       var selectStatement = $"""
 

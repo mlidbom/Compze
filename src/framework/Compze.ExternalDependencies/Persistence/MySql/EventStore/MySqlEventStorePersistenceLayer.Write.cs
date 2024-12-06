@@ -73,7 +73,7 @@ partial class MySqlEventStorePersistenceLayer
    public EventNeighborhood LoadEventNeighborHood(Guid eventId)
    {
       //var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
-      var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
+      const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
       var selectStatement = $"""
 

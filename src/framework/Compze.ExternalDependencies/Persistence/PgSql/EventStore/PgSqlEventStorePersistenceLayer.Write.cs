@@ -80,7 +80,7 @@ partial class PgSqlEventStorePersistenceLayer
 
    public EventNeighborhood LoadEventNeighborHood(Guid eventId)
    {
-      var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
+      const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
       var selectStatement = $"""
 

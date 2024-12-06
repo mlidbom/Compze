@@ -16,7 +16,7 @@ public class DirectoryExtensionsTest : UniversalTestBase
    [Test]
    public void AsDirectoryShouldReturnDirectoryInfoWithFullNameBeingTheOriginalString()
    {
-      var dir = @"C:\";
+      const string dir = @"C:\";
       Assert.That(dir.AsDirectory().FullName, Is.EqualTo(dir));
    }
 

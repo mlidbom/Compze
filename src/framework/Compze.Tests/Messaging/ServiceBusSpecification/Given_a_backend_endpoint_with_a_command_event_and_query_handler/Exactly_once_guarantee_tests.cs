@@ -28,7 +28,7 @@ public class Exactly_once_guarantee_tests(string pluggableComponentsCombination)
 
    [Test] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceEvent_event_never_reaches_remote_handler_but_does_reach_local_handler()
    {
-      var exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
+      const string exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
 
       var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));

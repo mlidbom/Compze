@@ -24,9 +24,9 @@ namespace Compze.Tests.Contracts;
    [Test] public void ThrowsArgumentExceptionForStringConsistingOfTabsSpacesOrLineBreaks()
    {
       const string spaceString = " ";
-      var tabString = "\t";
-      var lineBreakString = "\n";
-      var newLineString = "\r\n";
+      const string tabString = "\t";
+      const string lineBreakString = "\n";
+      const string newLineString = "\r\n";
       var environmentNewLineString = Environment.NewLine;
       Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(spaceString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(spaceString));
       Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(tabString)).Should().Throw<ArgumentException>().Which.Message.Should().Contain(nameof(tabString));

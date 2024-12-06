@@ -12,7 +12,7 @@ class SerilogParserExperiments
 {
    [Test] public void DoStuff()
    {
-      string messageTemplate = "{Name} is {Age} years old.";
+      const string messageTemplate = "{Name} is {Age} years old.";
       var parser = new MessageTemplateParser();
       var template = parser.Parse(messageTemplate);
 

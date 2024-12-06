@@ -27,7 +27,7 @@ static partial class TimeSpanCE
       const double minimumNanosecondsForReasonableConversionAccuracy = 500.0;
       if(nanoseconds < minimumNanosecondsForReasonableConversionAccuracy)
       {
-         var accuracyLossPercentage = (int)((1.0 - (minimumNanosecondsForReasonableConversionAccuracy - 50) / minimumNanosecondsForReasonableConversionAccuracy) * 100.0);
+         const int accuracyLossPercentage = (int)((1.0 - (minimumNanosecondsForReasonableConversionAccuracy - 50) / minimumNanosecondsForReasonableConversionAccuracy) * 100.0);
 
          throw new ArgumentException($"{nameof(nanoseconds)} parameter must be no less than {minimumNanosecondsForReasonableConversionAccuracy} or accuracy loss might exceed {accuracyLossPercentage}% due to the accuracy of TimeSpan.");
       }

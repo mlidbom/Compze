@@ -91,7 +91,7 @@ namespace Compze.Tests.SystemCE.ThreadingCE;
 
    [Test] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
-      var name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
+      const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
       MachineWideSharedObject<SharedObject> shared2;
       using(var shared = MachineWideSharedObject<SharedObject>.For(name, usePersistentFile:true))
