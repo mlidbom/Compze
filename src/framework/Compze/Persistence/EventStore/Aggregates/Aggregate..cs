@@ -11,7 +11,7 @@ using Compze.SystemCE.ReactiveCE;
 namespace Compze.Persistence.EventStore.Aggregates;
 
 //Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]
-public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent> : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, AggregateEvent<TAggregateEvent>, IAggregateEvent<TAggregateEvent>>
+public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent> : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, AggregateWrapperEvent<TAggregateEvent>, IAggregateWrapperEvent<TAggregateEvent>>
    where TAggregate : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent>
    where TAggregateEvent : class, IAggregateEvent
    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
@@ -23,7 +23,7 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
 
 public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface> : VersionedEntity<TAggregate>, IEventStored<TAggregateEvent>
    where TWrapperEventImplementation : TWrapperEventInterface
-   where TWrapperEventInterface : IAggregateEvent<TAggregateEvent>
+   where TWrapperEventInterface : IAggregateWrapperEvent<TAggregateEvent>
    where TAggregate : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
    where TAggregateEvent : class, IAggregateEvent
    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
