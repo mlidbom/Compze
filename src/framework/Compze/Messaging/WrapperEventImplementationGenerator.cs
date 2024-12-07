@@ -43,8 +43,8 @@ static class WrapperEventImplementationGenerator
    // the types for the inner event that it listens to, not the types in which it is wrapped. Just a heads up so we don't remove this strange code when we implement aggregates more cleanly. This still has great potential...
    public static Func<IEvent, IWrapperEvent<IEvent>> ConstructorFor(Type wrappedEventType) =>
       Monitor.DoubleCheckedLocking(
-         tryGetValue: () => _wrapperConstructors.GetValueOrDefault(wrappedEventType),
-         setValue: () => ThreadSafe.AddToCopyAndReplace(ref _wrapperConstructors, wrappedEventType, CreateConstructorFor(wrappedEventType))
+         unlockedTryGetValue: () => _wrapperConstructors.GetValueOrDefault(wrappedEventType),
+         lockedSetValue: () => ThreadSafe.AddToCopyAndReplace(ref _wrapperConstructors, wrappedEventType, CreateConstructorFor(wrappedEventType))
       );
 
    static Func<IEvent, IWrapperEvent<IEvent>> CreateConstructorFor(Type wrappedEventType)
