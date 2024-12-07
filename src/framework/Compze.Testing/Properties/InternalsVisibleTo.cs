@@ -5,6 +5,7 @@
 
 
 [assembly: InternalsVisibleTo("Compze.Tests.Internals")]
+[assembly: InternalsVisibleTo("Compze.Tests.Unit")]
 [assembly: InternalsVisibleTo("Compze.Tests.Unit.Internals")]
 [assembly: InternalsVisibleTo("Compze.Tests.Performance.Internals")]
 
