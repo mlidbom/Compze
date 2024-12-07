@@ -8,7 +8,7 @@ using Xunit.Sdk;
 namespace ScratchPad.NestedTests;
 
 [XunitTestCaseDiscoverer("ScratchPad.NestedTests.XFactDiscoverer", "ScratchPad.Internals")]
-public class XFactAttribute : FactAttribute;
+public class XFactAttribute : FactAttribute {}
 
 public class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
 {
@@ -19,15 +19,14 @@ public class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCas
       var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
       var currentType = testMethod.TestClass.Class.ToRuntimeType();
 
-      if(declaringType != currentType)
-         return [];
+      if(declaringType != currentType) // Skip tests declared in base classes
+         return Array.Empty<IXunitTestCase>();
 
-#pragma warning disable CS0618 // Type or member is obsolete
-      return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod)];
-#pragma warning restore CS0618 // Type or member is obsolete
+      return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
    }
 }
 
+// Example usage
 public class Outer_scenario_duplicates
 {
    readonly Guid _guid = Guid.NewGuid();
