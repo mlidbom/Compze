@@ -1,6 +1,6 @@
 ﻿using Compze.Messaging.Events;
 using Compze.Persistence.EventStore;
-using Compze.Testing.XUnit;
+using Compze.Testing.TestFrameworkExtensions.XUnit;
 using FluentAssertions;
 using Xunit;
 

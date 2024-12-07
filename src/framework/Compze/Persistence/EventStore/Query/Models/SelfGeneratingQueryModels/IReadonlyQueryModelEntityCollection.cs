@@ -7,7 +7,7 @@ public interface IReadonlyQueryModelEntityCollection<TEntity, in TEntityId> : IE
 {
    IReadOnlyList<TEntity> InCreationOrder { get; }
    bool TryGet(TEntityId id, [MaybeNullWhen(false)]out TEntity component);
-   bool Exists(TEntityId id);
+   bool Contains(TEntityId id);
    TEntity Get(TEntityId id);
    TEntity this[TEntityId id] { get; }
 }
