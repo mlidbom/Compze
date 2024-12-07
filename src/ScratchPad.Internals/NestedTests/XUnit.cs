@@ -8,11 +8,10 @@ using Xunit.v3;
 
 namespace ScratchPad.NestedTests;
 
-// Register the discoverer using typeof
+///<summary>This attribute will run the test ONLY for the class that declares the test. It will not be executed when inheriting classes run their tests.</summary>
 [XunitTestCaseDiscoverer(typeof(XFactDiscoverer))]
 public sealed class XFactAttribute : FactAttribute {}
 
-// Custom Test Case Discoverer
 public class XFactDiscoverer : IXunitTestCaseDiscoverer
 {
    public ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, IFactAttribute factAttribute)
@@ -27,8 +26,8 @@ public class XFactDiscoverer : IXunitTestCaseDiscoverer
                                   [
                                      new XunitTestCase(
                                         testMethod: testMethod,
-                                        testCaseDisplayName:"Nonsense",
-                                        uniqueID: testMethod.UniqueID,
+                                        testCaseDisplayName: testMethod.Method.Name,
+                                        uniqueID: $"{testMethod.UniqueID}.{testMethod.Method.Name}",
                                         @explicit: factAttribute.Explicit)
                                   ]);
    }
