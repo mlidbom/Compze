@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Tests;
+namespace Compze.Tests.Integration.Internals;
 
 static class TestGuid
 {

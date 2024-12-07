@@ -2,11 +2,12 @@
 using Compze.Messaging;
 using Compze.Messaging.Buses;
 using Compze.SystemCE.TransactionsCE;
+using Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 
-namespace Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Integration.Internals.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public class Transaction_policies_internal(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
 {

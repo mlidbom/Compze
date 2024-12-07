@@ -10,7 +10,7 @@ using Compze.Testing.Persistence.MsSql;
 using Compze.Testing.Persistence.MySql;
 using Compze.Testing.Persistence.PgSql;
 
-namespace Compze.Tests.Testing.Persistence;
+namespace Compze.Tests.Integration.Internals.Testing.Persistence;
 
 public abstract class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
