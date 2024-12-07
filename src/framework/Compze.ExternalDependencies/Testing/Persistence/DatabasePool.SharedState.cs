@@ -12,15 +12,12 @@ partial class DbPool
 {
    [UsedImplicitly] protected class SharedState
    {
-      const int CleanDatabaseNumberTarget = 10;
       [JsonProperty]
       List<Database> _databases = [];
 
       IEnumerable<Database> UnReserved => _databases.Where(db => !db.IsReserved)
                                                      //Reusing recently used databases helps performance in a pretty big way, disk cache, connection pool etc.
                                                     .OrderByDescending(db => db.ReservationExpirationTime);
-
-      IEnumerable<Database> DirtyUnReserved => UnReserved.Where(db => !db.IsClean);
 
       IEnumerable<Database> CleanUnReserved => UnReserved.Where(db => db.IsClean);
 
