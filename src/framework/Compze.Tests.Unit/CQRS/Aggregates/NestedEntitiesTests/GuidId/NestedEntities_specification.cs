@@ -20,7 +20,7 @@ using FluentAssertions;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId;
 
-public class NestedEntities_specification : UniversalTestBase
+public static class NestedEntities_specification
 {
    public class After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events
    {
