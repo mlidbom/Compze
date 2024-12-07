@@ -3,7 +3,7 @@ using Compze.Messaging;
 
 namespace Compze.Persistence.EventStore;
 
-public abstract class AggregateEvent<TBaseEventInterface>(TBaseEventInterface @event) : WrapperEvent<TBaseEventInterface>(@event), IAggregateEvent<TBaseEventInterface>
+public abstract class AggregateWrapperEvent<TBaseEventInterface>(TBaseEventInterface @event) : WrapperEvent<TBaseEventInterface>(@event), IAggregateWrapperEvent<TBaseEventInterface>
    where TBaseEventInterface : IAggregateEvent;
 
 public interface IMutableAggregateEvent : IAggregateEvent

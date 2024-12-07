@@ -19,7 +19,7 @@ static class ThreadShared
 
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>(TShared shared) =>
       new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithDefaultTimeout());
-   
+
    class MonitorCEThreadShared<TShared> : IThreadShared<TShared>
    {
       readonly MonitorCE _monitor;

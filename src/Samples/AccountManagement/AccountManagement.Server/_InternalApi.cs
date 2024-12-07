@@ -42,6 +42,6 @@ static class InternalApi
 
    internal class Command
    {
-      internal EventStoreApi.Command.SaveAggregate<Account> Save(Account account) => CompzeApi.EventStore.Commands.Save(account);
+      internal EventStoreApi.CommandApi.SaveAggregate<Account> Save(Account account) => CompzeApi.EventStore.Commands.Save(account);
    }
 }

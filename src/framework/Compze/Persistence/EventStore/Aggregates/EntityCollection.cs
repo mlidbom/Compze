@@ -13,7 +13,7 @@ public class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TE
    public IReadOnlyList<TEntity> InCreationOrder => _entitiesInCreationOrder;
 
    public bool TryGet(TEntityId id, [MaybeNullWhen(false)]out TEntity component) => _entities.TryGetValue(id, out component);
-   public bool Exists(TEntityId id) => _entities.ContainsKey(id);
+   public bool Contains(TEntityId id) => _entities.ContainsKey(id);
    public TEntity Get(TEntityId id) => _entities[id];
    public TEntity this[TEntityId id] => _entities[id];
 

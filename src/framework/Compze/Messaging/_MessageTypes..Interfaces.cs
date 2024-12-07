@@ -66,12 +66,7 @@ public interface IExactlyOnceMessage : IMustBeSentAndHandledTransactionally, IAt
 public interface IExactlyOnceEvent : IRemotableEvent, IExactlyOnceMessage;
 public interface IExactlyOnceCommand : IRemotableCommand, IExactlyOnceMessage;
 
-//Todo: Should this exist? Or should the wrapped event alone carry this data and metadata? Isn't having it here as well duplication that might cause conflicts with the declaration of the wrapped events?
-//Urgent: Remove for now.
-public interface IExactlyOnceWrapperEvent<out TEventInterface> : IWrapperEvent<TEventInterface>, IExactlyOnceEvent
+public interface IExactlyOnceWrapperEvent<out TEventInterface> : IWrapperEvent<TEventInterface>
    where TEventInterface : IExactlyOnceEvent
 {
-#pragma warning disable CA1033
-   Guid IAtMostOnceMessage.MessageId => Event.MessageId;
-#pragma warning restore CA1033
 }

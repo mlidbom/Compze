@@ -26,14 +26,14 @@ public class NestedEntitiesTests : UniversalTestBase
       var entity1 = root.AddEntity("entity1");
       entity1.Name.Should().Be("entity1");
       root.Entities.InCreationOrder.Count.Should().Be(1);
-      root.Entities.Exists(entity1.Id).Should().Be(true);
+      root.Entities.Contains(entity1.Id).Should().Be(true);
       root.Entities.Get(entity1.Id).Should().Be(entity1);
       root.Entities[entity1.Id].Should().Be(entity1);
 
       var entity2 = root.AddEntity("entity2");
       entity2.Name.Should().Be("entity2");
       root.Entities.InCreationOrder.Count.Should().Be(2);
-      root.Entities.Exists(entity2.Id).Should().Be(true);
+      root.Entities.Contains(entity2.Id).Should().Be(true);
       root.Entities[entity2.Id].Should().Be(entity2);
 
       entity1.Rename("newName");
@@ -47,13 +47,13 @@ public class NestedEntitiesTests : UniversalTestBase
       root.Entities.InCreationOrder.Count.Should().Be(2);
 
       entity2.Remove();
-      root.Entities.Exists(entity2.Id).Should().Be(false);
+      root.Entities.Contains(entity2.Id).Should().Be(false);
       root.Entities.InCreationOrder.Count.Should().Be(1);
       root.Invoking(_ => root.Entities.Get(entity2.Id)).Should().Throw<Exception>();
       root.Invoking(_ => { var __ = root.Entities[entity2.Id]; }).Should().Throw<Exception>();
 
       entity1.Remove();
-      root.Entities.Exists(entity1.Id).Should().Be(false);
+      root.Entities.Contains(entity1.Id).Should().Be(false);
       root.Entities.InCreationOrder.Count.Should().Be(0);
       root.Invoking(_ => root.Entities.Get(entity1.Id)).Should().Throw<Exception>();
       root.Invoking(_ => { var __ = root.Entities[entity1.Id]; }).Should().Throw<Exception>();
@@ -78,14 +78,14 @@ public class NestedEntitiesTests : UniversalTestBase
       var entity1 = root.AddEntity("entity1");
       entity1.Name.Should().Be("entity1");
       root.Entities.InCreationOrder.Count.Should().Be(1);
-      root.Entities.Exists(entity1.Id).Should().Be(true);
+      root.Entities.Contains(entity1.Id).Should().Be(true);
       root.Entities.Get(entity1.Id).Should().Be(entity1);
       root.Entities[entity1.Id].Should().Be(entity1);
 
       var entity2 = root.AddEntity("entity2");
       entity2.Name.Should().Be("entity2");
       root.Entities.InCreationOrder.Count.Should().Be(2);
-      root.Entities.Exists(entity2.Id).Should().Be(true);
+      root.Entities.Contains(entity2.Id).Should().Be(true);
       root.Entities[entity2.Id].Should().Be(entity2);
 
       entity1.Rename("newName");
@@ -99,13 +99,13 @@ public class NestedEntitiesTests : UniversalTestBase
       root.Entities.InCreationOrder.Count.Should().Be(2);
 
       entity2.Remove();
-      root.Entities.Exists(entity2.Id).Should().Be(false);
+      root.Entities.Contains(entity2.Id).Should().Be(false);
       root.Entities.InCreationOrder.Count.Should().Be(1);
       root.Invoking(_ => root.Entities.Get(entity2.Id)).Should().Throw<Exception>();
       root.Invoking(_ => { var __ = root.Entities[entity2.Id]; }).Should().Throw<Exception>();
 
       entity1.Remove();
-      root.Entities.Exists(entity1.Id).Should().Be(false);
+      root.Entities.Contains(entity1.Id).Should().Be(false);
       root.Entities.InCreationOrder.Count.Should().Be(0);
       root.Invoking(_ => root.Entities.Get(entity1.Id)).Should().Throw<Exception>();
       root.Invoking(_ => { var __ = root.Entities[entity1.Id]; }).Should().Throw<Exception>();
@@ -120,14 +120,14 @@ public class NestedEntitiesTests : UniversalTestBase
       var entity1 = root.AddEntity("entity1");
       entity1.Name.Should().Be("entity1");
       root.Entities.InCreationOrder.Count.Should().Be(1);
-      root.Entities.Exists(entity1.Id).Should().Be(true);
+      root.Entities.Contains(entity1.Id).Should().Be(true);
       root.Entities.Get(entity1.Id).Should().Be(entity1);
       root.Entities[entity1.Id].Should().Be(entity1);
 
       var entity2 = root.AddEntity("entity2");
       entity2.Name.Should().Be("entity2");
       root.Entities.InCreationOrder.Count.Should().Be(2);
-      root.Entities.Exists(entity2.Id).Should().Be(true);
+      root.Entities.Contains(entity2.Id).Should().Be(true);
       root.Entities[entity2.Id].Should().Be(entity2);
 
       entity1.Rename("newName");
@@ -141,13 +141,13 @@ public class NestedEntitiesTests : UniversalTestBase
       root.Entities.InCreationOrder.Count.Should().Be(2);
 
       entity2.Remove();
-      root.Entities.Exists(entity2.Id).Should().Be(false);
+      root.Entities.Contains(entity2.Id).Should().Be(false);
       root.Entities.InCreationOrder.Count.Should().Be(1);
       root.Invoking(_ => root.Entities.Get(entity2.Id)).Should().Throw<Exception>();
       root.Invoking(_ => { var __ = root.Entities[entity2.Id]; }).Should().Throw<Exception>();
 
       entity1.Remove();
-      root.Entities.Exists(entity1.Id).Should().Be(false);
+      root.Entities.Contains(entity1.Id).Should().Be(false);
       root.Entities.InCreationOrder.Count.Should().Be(0);
       root.Invoking(_ => root.Entities.Get(entity1.Id)).Should().Throw<Exception>();
       root.Invoking(_ => { var __ = root.Entities[entity1.Id]; }).Should().Throw<Exception>();
