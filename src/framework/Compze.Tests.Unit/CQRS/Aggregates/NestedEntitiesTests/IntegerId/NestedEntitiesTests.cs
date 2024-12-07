@@ -2,6 +2,7 @@
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
+using Xunit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -13,13 +14,12 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
 
-[TestFixture]
 public class NestedEntitiesTests : UniversalTestBase
 {
-   [Test]
+   [Fact]
    public void ConstructorWorks() => new Root("root").Name.Should().Be("root");
 
-   [Test]
+   [Fact]
    public void Createing_nested_entities_works_and_events_dispatch_correctly()
    {
       var root = new Root("root");
@@ -60,7 +60,7 @@ public class NestedEntitiesTests : UniversalTestBase
       root.Invoking(_ => { var __ = root.Entities[entity1.Id]; }).Should().Throw<Exception>();
    }
 
-   [Test]
+   [Fact]
    public void ComponentPropertiesAreSetcorrectly() {
       var root = new Root("root");
 
@@ -71,7 +71,7 @@ public class NestedEntitiesTests : UniversalTestBase
       component.Name.Should().Be("newName");
    }
 
-   [Test]
+   [Fact]
    public void EntityNestedInComponentWorks()
    {
       var root = new Root("root").Component;
@@ -113,7 +113,7 @@ public class NestedEntitiesTests : UniversalTestBase
    }
 
 
-   [Test]
+   [Fact]
    public void EntityNestedInEntityWorks()
    {
       var root = new Root("root").AddEntity("RootEntityName");
