@@ -90,7 +90,7 @@ static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
       static void AssertValidInternal(ITypeMapper typeMapper)
       {
          var classInheritanceChain = typeof(TAggregate).ClassInheritanceChain().ToList();
-         var inheritedAggregateType = classInheritanceChain.Where(baseClass => baseClass.IsConstructedGenericType && baseClass.GetGenericTypeDefinition() == typeof(Aggregate<,,,,>)).Single();
+         var inheritedAggregateType = classInheritanceChain.Single(baseClass => baseClass.IsConstructedGenericType && baseClass.GetGenericTypeDefinition() == typeof(Aggregate<,,,,>));
 
          var detectedEventImplementationType = inheritedAggregateType.GenericTypeArguments[1];
          var detectedEventType = inheritedAggregateType.GenericTypeArguments[2];
