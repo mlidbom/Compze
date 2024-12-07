@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Compze.Tests.Unit.CQRS.EventHandling;
 
-public class MutableEventDispatcherTests
+public static class MutableEventDispatcher_specification
 {
    public class Given_an_instance
    {
