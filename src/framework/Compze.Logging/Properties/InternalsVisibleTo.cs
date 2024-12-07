@@ -4,4 +4,4 @@
 [assembly: InternalsVisibleTo("Compze.Testing")]
 [assembly: InternalsVisibleTo("Compze.EventStore")]
 [assembly: InternalsVisibleTo("Compze.ExternalDependencies")]
-[assembly: InternalsVisibleTo("Compze.Tests.Internals")]
+[assembly: InternalsVisibleTo("Compze.Tests.Integration.Internals")]

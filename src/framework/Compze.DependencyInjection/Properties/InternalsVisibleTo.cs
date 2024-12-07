@@ -6,5 +6,5 @@
 [assembly: InternalsVisibleTo("Compze.Messaging")]
 [assembly: InternalsVisibleTo("Compze.Testing")]
 [assembly: InternalsVisibleTo("Compze.ExternalDependencies")]
-[assembly: InternalsVisibleTo("Compze.Tests.Internals")]
+[assembly: InternalsVisibleTo("Compze.Tests.Integration.Internals")]
 [assembly: InternalsVisibleTo("Compze.Tests.Performance.Internals")]

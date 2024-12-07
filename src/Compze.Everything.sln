@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Messaging", "framework\Compze.Messaging\Compze.Messaging.csproj", "{3632254D-0C4A-4EB8-B388-4C99F8939584}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Tests.Internals", "framework\Compze.Tests.Internals\Compze.Tests.Internals.csproj", "{4C78131D-DD7B-4C3E-B931-D4C6436EE09E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Tests.Integration.Internals", "framework\Compze.Tests.Integration.Internals\Compze.Tests.Integration.Internals.csproj", "{4C78131D-DD7B-4C3E-B931-D4C6436EE09E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.ExternalDependencies", "framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj", "{3B776BD4-0EDD-4A83-BC9A-3A53D6649AB0}"
 EndProject
