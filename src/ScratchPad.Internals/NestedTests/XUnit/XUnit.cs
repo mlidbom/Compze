@@ -6,7 +6,7 @@ using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace ScratchPad.NestedTests;
+namespace ScratchPad.NestedTests.XUnit;
 
 ///<summary>
 /// This attribute will run the test ONLY for the class that declares the test. It will not be executed when inheriting classes run their tests.

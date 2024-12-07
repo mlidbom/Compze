@@ -1,9 +1,9 @@
-﻿namespace ScratchPad.NestedTests;
-
-using System;
+﻿using System;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
+
+namespace ScratchPad.NestedTests.NUnit;
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
 public sealed class XTestAttribute : TestAttribute, ISimpleTestBuilder

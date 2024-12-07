@@ -38,12 +38,6 @@
         <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
         <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0"/>
         <PackageReference Include="xunit.v3" Version="0.7.0-pre.15" />
-        <PackageReference Include="xunit.v3.assert" Version="0.7.0-pre.15" />
-        <PackageReference Include="xunit.v3.common" Version="0.7.0-pre.15" />
-        <PackageReference Include="xunit.v3.core" Version="0.7.0-pre.15" />
-        <PackageReference Include="xunit.v3.extensibility.core" Version="0.7.0-pre.15" />
-        <PackageReference Include="xunit.v3.runner.common" Version="0.7.0-pre.15" />
-        <PackageReference Include="xunit.v3.runner.inproc.console" Version="0.7.0-pre.15" />
     </ItemGroup>
 
 </Project>
