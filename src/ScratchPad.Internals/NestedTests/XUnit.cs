@@ -8,7 +8,10 @@ using Xunit.v3;
 
 namespace ScratchPad.NestedTests;
 
-///<summary>This attribute will run the test ONLY for the class that declares the test. It will not be executed when inheriting classes run their tests.</summary>
+///<summary>
+/// This attribute will run the test ONLY for the class that declares the test. It will not be executed when inheriting classes run their tests.
+///This enables us to use BDD style nested classes and inheritance to achieve specification like testing, without an explosion of duplicated test runs.
+/// </summary>
 [XunitTestCaseDiscoverer(typeof(XFactDiscoverer))]
 public sealed class XFactAttribute : FactAttribute {}
 
