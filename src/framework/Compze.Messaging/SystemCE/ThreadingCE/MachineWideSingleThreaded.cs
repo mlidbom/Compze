@@ -71,6 +71,5 @@ class MachineWideSingleThreaded
    }
 
    internal static MachineWideSingleThreaded For(string name) => new(name);
-   internal static MachineWideSingleThreaded For<TSynchronized>() => For(typeof(TSynchronized));
    static MachineWideSingleThreaded For(Type synchronized) => new($"{nameof(MachineWideSingleThreaded)}_{synchronized.AssemblyQualifiedName}");
 }

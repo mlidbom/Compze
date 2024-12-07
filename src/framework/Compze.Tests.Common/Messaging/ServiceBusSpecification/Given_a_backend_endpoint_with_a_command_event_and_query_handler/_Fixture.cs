@@ -41,7 +41,6 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
 
    protected IEndpoint ClientEndpoint { get; set; }
    protected IEndpoint RemoteEndpoint { get; set; }
-   protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
 
    [SetUp] public async Task Setup()
    {

@@ -30,17 +30,11 @@ interface IDbConnectionPool<out TConnection, out TCommand>
    int PrepareAndExecuteNonQuery(string commandText) =>
       UseConnection(connection => connection.PrepareAndExecuteNonQuery(commandText));
 
-   object? PrepareAndExecuteScalar(string commandText) =>
-      UseConnection(connection => connection.PrepareAndExecuteScalar(commandText));
-
    async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>
       await UseConnectionAsync(async connection => await connection.PrepareAndExecuteNonQueryAsync(commandText).CaF()).CaF();
 
    void UseCommand(Action<TCommand> action) =>
       UseConnection(connection => connection.UseCommand(action));
-
-   Task UseCommandAsync(Func<TCommand, Task> action) =>
-      UseConnectionAsync(async connection => await connection.UseCommandAsync(action).CaF());
 
    TResult UseCommand<TResult>(Func<TCommand, TResult> action) =>
       UseConnection(connection => connection.UseCommand(action));

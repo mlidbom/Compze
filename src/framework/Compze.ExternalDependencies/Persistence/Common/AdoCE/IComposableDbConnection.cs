@@ -40,8 +40,6 @@ interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
 
    object? ExecuteScalar(string commandText) => UseCommand(command => command.ExecuteScalar(commandText));
 
-   Task<object?> ExecuteScalarAsync(string commandText) => UseCommand(command => command.ExecuteScalarAsync(commandText));
-
    int PrepareAndExecuteNonQuery(string commandText) => UseCommand(command => command.PrepareAndExecuteNonQuery(commandText));
 
    async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>

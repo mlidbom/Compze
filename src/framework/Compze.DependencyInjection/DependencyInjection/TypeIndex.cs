@@ -35,6 +35,4 @@ class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
    {
       internal static readonly int Index = ServiceTypeIndex.For(typeof(TType));
    }
-
-   public static Type GetServiceForIndex(int serviceTypeIndex) => _backMap[serviceTypeIndex];
 }

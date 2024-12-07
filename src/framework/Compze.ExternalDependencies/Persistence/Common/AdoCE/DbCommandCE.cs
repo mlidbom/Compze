@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,9 +30,6 @@ static class DbCommandCE
    public static object? PrepareAndExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteScalar();
 
-   public static async Task<object?> PrepareAndExecuteScalarAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).PrepareStatement().ExecuteScalarAsync().CaF();
-
    public static int PrepareAndExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQuery();
 
@@ -45,13 +41,6 @@ static class DbCommandCE
 
    public static TCommand SetCommandText<TCommand>(this TCommand @this, string commandText) where TCommand : DbCommand =>
       @this.mutate(me => me.CommandText = commandText);
-
-   public static TCommand SetStoredProcedure<TCommand>(this TCommand @this, string storedProcedure) where TCommand : DbCommand =>
-      @this.mutate(me =>
-      {
-         me.CommandType = CommandType.StoredProcedure;
-         me.CommandText = storedProcedure;
-      });
 
    public static TCommand PrepareStatement<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
@@ -76,6 +65,7 @@ static class DbCommandCE
    }
 
    static readonly IReadOnlyList<string> ParameterPrefixes = ["@", ":"];
+   // ReSharper disable once UnusedMember.Global : Only used when debugging,but very useful then
    public static TCommand LogCommand<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       ConsoleCE.WriteLine("####################################### Logging command###############################################");

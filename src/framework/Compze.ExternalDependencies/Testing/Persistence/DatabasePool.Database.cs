@@ -23,7 +23,6 @@ partial class DbPool
       internal Database(string name) : this(IdFromName(name)) { }
 
       internal bool ShouldBeReleased => IsReserved && ReservationExpirationTime < DateTime.UtcNow;
-      internal bool IsFree => !IsReserved;
 
       static int IdFromName(string name)
       {

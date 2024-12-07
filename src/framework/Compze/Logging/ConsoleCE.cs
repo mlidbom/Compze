@@ -1,7 +1,6 @@
 ﻿using System;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using JetBrains.Annotations;
 
 namespace Compze.Logging;
 
@@ -13,9 +12,6 @@ static class ConsoleCE
    internal static void WriteWarningLine(string message) => WriteLine($"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {message}");
    internal static void WriteImportantLine(string message) => WriteLine($"############################## {message}");
    internal static void WriteLine(string message) => Monitor.Update(() => Console.WriteLine(message));
-
-   [StringFormatMethod("message")] internal static void WriteLine(string message, params object[] args) =>
-      WriteLine(StringCE.FormatInvariant(message, args));
 
    internal static void WriteLine() =>
       WriteLine("");

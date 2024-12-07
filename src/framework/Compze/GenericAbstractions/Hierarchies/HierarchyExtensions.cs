@@ -63,14 +63,4 @@ static class HierarchyExtensions
       Argument.NotNull(root);
       return EnumerableCE.Create(root).FlattenHierarchy(me => me.Children);
    }
-
-
-   /// <summary>
-   /// Given a sequence of <see cref="IAutoHierarchy{T}"/> returns a sequence containing the wrapped T values.
-   /// </summary>
-   public static IEnumerable<T> Unwrap<T>(this IEnumerable<IAutoHierarchy<T>> root)
-   {
-      Argument.NotNull(root);
-      return root.Select(me => me.Wrapped);
-   }
 }

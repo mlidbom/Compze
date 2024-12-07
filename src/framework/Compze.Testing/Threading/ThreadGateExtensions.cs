@@ -13,11 +13,9 @@ static class ThreadGateExtensions
    public static IThreadGate Await(this IThreadGate @this, TimeSpan timeout, Func<bool> condition) => @this.ExecuteWithExclusiveLockWhen(timeout, condition, () => {});
 
    public static IThreadGate AwaitClosed(this IThreadGate @this) => @this.Await(() => !@this.IsOpen);
-   public static bool TryAwaitClosed(this IThreadGate @this, TimeSpan timeout) => @this.TryAwait(timeout, () => !@this.IsOpen);
 
    public static IThreadGate AwaitQueueLengthEqualTo(this IThreadGate @this, int length) => @this.Await(() => @this.Queued == length);
    public static IThreadGate AwaitQueueLengthEqualTo(this IThreadGate @this, int length, TimeSpan timeout) => @this.Await(timeout, () => @this.Queued == length);
-   public static IThreadGate AwaitQueueLengthAtLeast(this IThreadGate @this, int length, TimeSpan timeout) => @this.Await(timeout, () => @this.Queued >= length);
    public static bool TryAwaitQueueLengthEqualTo(this IThreadGate @this, int length, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Queued == length);
 
    public static IThreadGate AwaitPassedThroughCountEqualTo(this IThreadGate @this, int length) => @this.Await(() => @this.Passed == length);
@@ -25,7 +23,6 @@ static class ThreadGateExtensions
    public static bool TryAwaitPassededThroughCountEqualTo(this IThreadGate @this, int count, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Passed == count);
 
    public static IThreadGate ThrowPostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ => throw exception);
-   public static IThreadGate ThrowPrePassThrough(this IThreadGate @this, Exception exception) => @this.SetPrePassThroughAction(_ => throw exception);
 
    public static IThreadGate FailTransactionOnPreparePostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ =>
    {
@@ -43,6 +40,4 @@ static class ThreadGateExtensions
 
    public static Task<IThreadGate> ExecuteWithExclusiveLockWhenAsync(this IThreadGate @this, TimeSpan timeout, Func<bool> condition, Action action)
       => Task.Run(() => @this.ExecuteWithExclusiveLockWhen(timeout, condition, action));
-
-   public static IThreadGate WithExclusiveLock(this IThreadGate @this, Action action) => @this.ExecuteWithExclusiveLockWhen(@this.DefaultTimeout, () => true, action);
 }

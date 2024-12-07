@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.Contracts;
-using Compze.Functional;
-using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -40,27 +37,6 @@ partial class DbPool
 
          reserved?.Reserve(reservationName, poolId, reservationLength);
          return reserved != null;
-      }
-
-      internal IEnumerable<Database> ReserveDatabasesForCleaning(Guid poolId)
-      {
-         CollectGarbage();
-         var databasesToClean = Math.Max(CleanDatabaseNumberTarget - CleanUnReserved.Count(), 0);
-
-         return DirtyUnReserved
-               .Take(databasesToClean)
-               .Select(it => it.mutate(db => db.Reserve(reservationName: Guid.NewGuid().ToString(),
-                                                              poolId: poolId,
-                                                              reservationLength: 10.Minutes())))
-               .ToList();
-      }
-
-      internal void ReleaseClean(string reservationName)
-      {
-         var existing = _databases.Single(it => it.ReservationName == reservationName);
-         Assert.Argument.Is(existing.IsReserved);
-         existing.Release();
-         existing.Clean();
       }
 
       void CollectGarbage() => _databases.Where(db => db.ShouldBeReleased)

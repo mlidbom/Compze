@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace Compze.Persistence.MsSql.Testing.Databases;
+﻿namespace Compze.Persistence.MsSql.Testing.Databases;
 
 static class MsSqlDatabaseHelpers
 {
@@ -43,13 +41,6 @@ static class MsSqlDatabaseHelpers
                                                                set @sql = 'ALTER DATABASE [' + @databaseName +  '] SET READ_COMMITTED_SNAPSHOT ON'
                                                                exec sp_executesql @sql
                                                                """;
-
-   internal static void DropAllObjects(this IDbConnection connection)
-   {
-      using var cmd = connection.CreateCommand();
-      cmd.CommandText = DropAllObjectsStatement;
-      cmd.ExecuteNonQuery();
-   }
 
    internal static void DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel(this ICompzeMsSqlConnection connection)
    {

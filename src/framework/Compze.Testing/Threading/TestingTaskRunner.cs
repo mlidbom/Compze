@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;
@@ -16,11 +15,6 @@ sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDisposable
    readonly TimeSpan _timeout = timeout;
 
    public static TestingTaskRunner WithTimeout(TimeSpan timeout) => new(timeout);
-
-   public void Monitor(IEnumerable<Task> tasks) => Monitor(tasks.ToArray());
-   public void Monitor(params Task[] tasks) => _monitoredTasks.AddRange(tasks);
-
-   public TestingTaskRunner Run(IEnumerable<Action> tasks) => Run(tasks.ToArray());
 
    public TestingTaskRunner Run(params Action[] tasks)
    {

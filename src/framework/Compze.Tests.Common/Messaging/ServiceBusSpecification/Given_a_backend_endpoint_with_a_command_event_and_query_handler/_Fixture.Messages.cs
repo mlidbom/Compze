@@ -82,11 +82,6 @@ public partial class Fixture
    protected class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
    protected class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
    protected class MyQueryResult;
-   protected class MyAtMostOnceCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
-   {
-      protected MyAtMostOnceCommand() : base(DeduplicationIdHandling.Reuse) {}
-      internal static MyAtMostOnceCommand Create() => new() {MessageId = Guid.NewGuid()};
-   }
 
    protected class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
    {
