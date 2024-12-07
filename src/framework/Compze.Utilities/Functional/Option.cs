@@ -24,7 +24,7 @@ public sealed class Some<T> : Option<T>
    [NotNull]public T Value { get; }
 }
 
-public sealed class None<T> : Option<T>, IStaticInstancePropertySingleton
+public sealed class None<T> : Option<T>
 {
    None(){}
    internal static readonly None<T> Instance = new();

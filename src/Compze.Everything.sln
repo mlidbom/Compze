@@ -72,6 +72,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Logging.Serilog", "f
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Common", "framework\Compze.Tests.Common\Compze.Tests.Common.csproj", "{A81661B5-59BE-4EAA-9C3A-61A1A8B3CDF9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Utilities", "framework\Compze.Utilities\Compze.Utilities.csproj", "{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -241,6 +243,12 @@ Global
 		{A81661B5-59BE-4EAA-9C3A-61A1A8B3CDF9}.docs|Any CPU.Build.0 = Debug|Any CPU
 		{A81661B5-59BE-4EAA-9C3A-61A1A8B3CDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A81661B5-59BE-4EAA-9C3A-61A1A8B3CDF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}.docs|Any CPU.ActiveCfg = Debug|Any CPU
+		{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}.docs|Any CPU.Build.0 = Debug|Any CPU
+		{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -272,6 +280,7 @@ Global
 		{88FC4260-5E54-48CE-A2F7-1B42D79AD92A} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 		{5C0AAFF4-F0F0-4DE6-91CC-F4791100DDC4} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 		{A81661B5-59BE-4EAA-9C3A-61A1A8B3CDF9} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
+		{056FBD08-F60E-48CE-90E7-CEF7457F1EE2} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {275B298E-4082-4323-8E00-FB580CDC1E06}

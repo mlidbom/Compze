@@ -5,7 +5,7 @@ using Compze.SystemCE;
 namespace Compze.Functional;
 
 ///<summary>The functional programming unit concept. Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>. Simply return <see cref="Unit"/> instead of void from methods with no return value.</summary>
-struct Unit : IEquatable<Unit>, IStaticInstancePropertySingleton
+struct Unit : IEquatable<Unit>
 {
    internal static readonly Unit Instance = new();
    internal static readonly Task<Unit> InstanceTask = Task.FromResult(Instance);
