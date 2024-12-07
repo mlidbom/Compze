@@ -5,8 +5,6 @@ namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 partial class MonitorCE
 {
-   public delegate T OutParamFunc<T>(out T outParam);
-
    public TReturn Read<TReturn>(Func<TReturn> func)
    {
       using(TakeReadLock()) return func();
