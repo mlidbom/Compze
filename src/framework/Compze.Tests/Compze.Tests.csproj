@@ -37,6 +37,10 @@
       </Content>
    </ItemGroup>
 
+   <ItemGroup>
+     <Folder Include="Integration\" />
+   </ItemGroup>
+
     <PropertyGroup>
         <NoWarn>CS0436</NoWarn>
     </PropertyGroup>

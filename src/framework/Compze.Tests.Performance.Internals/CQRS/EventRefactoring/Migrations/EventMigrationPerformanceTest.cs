@@ -13,6 +13,7 @@ using NUnit.Framework;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
+using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
