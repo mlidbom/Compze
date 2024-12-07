@@ -2,6 +2,7 @@
 using System.Threading;
 using Compze.SystemCE;
 using Compze.Testing.Threading;
+using Compze.Testing.XUnit;
 using FluentAssertions;
 using Xunit;
 
@@ -11,7 +12,7 @@ namespace Compze.Tests.SystemCE.ThreadingCE;
 
 public class MonitorClassApiExploration
 {
-   [Fact] public void Wait_returns_after_timeout_even_without_pulse()
+   [XFact] public void Wait_returns_after_timeout_even_without_pulse()
    {
       var guarded = new object();
 
@@ -21,7 +22,7 @@ public class MonitorClassApiExploration
              .BeFalse();
    }
 
-   [Fact] public void Wait_does_not_return_return_until_lock_is_available_to_reacquire_after_timeout()
+   [XFact] public void Wait_does_not_return_return_until_lock_is_available_to_reacquire_after_timeout()
    {
       var guarded = new object();
 
@@ -60,7 +61,7 @@ public class MonitorClassApiExploration
       waitSucceeded.Should().Be(false);
    }
 
-   [Fact] public void Wait_does_not_hang_on_long_timeout_values()
+   [XFact] public void Wait_does_not_hang_on_long_timeout_values()
    {
       var guarded = new object();
 
