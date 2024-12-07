@@ -50,6 +50,10 @@ public class Example
 
       return Monitor.Update(() =>
       {
+         if(_createdWrapperTypes.TryGetValue(wrapperEventType, out cachedWrapperImplementation))
+         {
+            return cachedWrapperImplementation;
+         }
 
          if(!wrapperEventType.IsInterface) throw new ArgumentException("Must be an interface", $"{nameof(wrapperEventType)}");
          if(wrapperEventType.GetInterfaces().All(iface => iface != typeof(IWrapperEvent<>).MakeGenericType(wrapperEventType.GetGenericArguments()[0])))
