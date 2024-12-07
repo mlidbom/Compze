@@ -61,6 +61,7 @@ public class NestedEntities_specification : UniversalTestBase
          public class The_aggregates_Entities_collection : After_adding_entity_named_entity1
          {
             [XFact] public void Single_returns_the_entity() => Aggregate.Entities.Single().Should().Be(agEntity1);
+            [XFact] public void InCreationOrder_0_returns_the_entity() => Aggregate.Entities.InCreationOrder[0].Should().Be(agEntity1);
             [XFact] public void InCreationOrder_Count_is_1() => Aggregate.Entities.InCreationOrder.Count.Should().Be(1);
 
             public class Passing_the_entitys_id_to : The_aggregates_Entities_collection
@@ -79,6 +80,7 @@ public class NestedEntities_specification : UniversalTestBase
          public class The_QueryModels_Entities_collection : After_adding_entity_named_entity1
          {
             [XFact] public void Single_returns_the_entity_query_model() => QueryModel.Entities.Single().Should().Be(qmEntity1);
+            [XFact] public void InCreationOrder_0_returns_the_entity_query_model() => QueryModel.Entities.InCreationOrder[0].Should().Be(qmEntity1);
             [XFact] public void InCreationOrder_Count_is_1() => QueryModel.Entities.InCreationOrder.Count.Should().Be(1);
 
             public class Passing_the_entitys_id_to : The_aggregates_Entities_collection
@@ -93,6 +95,21 @@ public class NestedEntities_specification : UniversalTestBase
                }
             }
          }
+
+         public class After_adding_entity_named_entity2 : After_adding_entity_named_entity1
+         {
+            readonly RemovableEntity agEntity2;
+            readonly Entity qmEntity2;
+
+            public After_adding_entity_named_entity2()
+            {
+               agEntity2 = Aggregate.AddEntity("entity2");
+               qmEntity2 = QueryModel.Entities.InCreationOrder[1];
+            }
+
+            [XFact] public void The_name_of_the_added_entity_is_entity2() => agEntity2.Name.Should().Be("entity2");
+            [XFact] public void The_name_of_the_added_query_model_is_entity2() => qmEntity2.Name.Should().Be("entity2");
+         }
       }
 
       [XFact] public void Aggregate_entity_tests()
@@ -102,8 +119,7 @@ public class NestedEntities_specification : UniversalTestBase
 
          var agEntity2 = Aggregate.AddEntity("entity2");
          var qmEntity2 = QueryModel.Entities.InCreationOrder[1];
-         agEntity2.Name.Should().Be("entity2");
-         qmEntity2.Name.Should().Be("entity2");
+
          Aggregate.Entities.InCreationOrder.Count.Should().Be(2);
          QueryModel.Entities.InCreationOrder.Count.Should().Be(2);
          Aggregate.Entities.Contains(agEntity2.Id).Should().Be(true);
