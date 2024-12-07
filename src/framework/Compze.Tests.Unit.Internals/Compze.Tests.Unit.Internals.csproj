@@ -6,7 +6,6 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>Compze.Tests</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>

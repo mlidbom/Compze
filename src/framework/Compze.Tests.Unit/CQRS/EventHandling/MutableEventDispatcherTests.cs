@@ -8,7 +8,7 @@ using Xunit;
 #pragma warning disable IDE0051 //Review OK: unused private members are intentional in this test.
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
 
-namespace Compze.Tests.CQRS.EventHandling;
+namespace Compze.Tests.Unit.CQRS.EventHandling;
 
 public class MutableEventDispatcherTests
 {

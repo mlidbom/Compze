@@ -3,7 +3,7 @@ using Compze.DDD;
 using Compze.Testing;
 using NUnit.Framework;
 
-namespace Compze.Tests.DDD;
+namespace Compze.Tests.Unit.DDD;
 
 
 #pragma warning disable NUnit2010 //I'm testing the methods and operators you want me not to use ;)

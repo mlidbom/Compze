@@ -5,7 +5,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.GenericAbstractions.Time;
+namespace Compze.Tests.Unit.GenericAbstractions.Time;
 
 [TestFixture]
 public class DummyTimeSourceTests : UniversalTestBase

@@ -2,6 +2,7 @@
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
+
 // ReSharper disable ImplicitlyCapturedClosure
 
 // ReSharper disable InconsistentNaming
@@ -10,7 +11,7 @@ using NUnit.Framework;
 
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
+namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
 
 [TestFixture]
 public class NestedEntitiesTests : UniversalTestBase

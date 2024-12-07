@@ -5,7 +5,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 
-namespace Compze.Tests.GenericAbstractions.Time;
+namespace Compze.Tests.Unit.GenericAbstractions.Time;
 
 [TestFixture] public class DateTimeNowTimeSourceTests : UniversalTestBase
 {

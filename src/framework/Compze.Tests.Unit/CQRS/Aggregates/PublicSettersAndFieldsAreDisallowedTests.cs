@@ -6,13 +6,14 @@ using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable MemberCanBeInternal
 #pragma warning disable CA1806 // Do not ignore method results
 
-namespace Compze.Tests.CQRS.Aggregates;
+namespace Compze.Tests.Unit.CQRS.Aggregates;
 
 public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {

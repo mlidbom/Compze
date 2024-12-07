@@ -1,9 +1,9 @@
 using System;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore.Aggregates;
-using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
+namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 
 class Root : Aggregate<Root, RootEvent.Implementation.Root, RootEvent.IRoot>
 {
