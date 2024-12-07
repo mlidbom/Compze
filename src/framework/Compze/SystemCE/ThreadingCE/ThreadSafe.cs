@@ -23,7 +23,7 @@ static class ThreadSafe
       original = original.AddToCopy(item);
 
 
-   ///<summary>Must be called from synchronized code that guarantees that this is the only thread modifying <paramref name="original"/>. It's purpose is to allow readers free access to <paramref name="original"/> even though <paramref name="original"/> is only thread safe for concurrent readers.</summary>
+   ///<summary>Must be called from synchronized code that guarantees that this is the only thread modifying <paramref name="original"/>. It's purpose is to allow readers free unlocked access to <paramref name="original"/> even though <paramref name="original"/> is only thread safe for concurrent readers.</summary>
    internal static void AddToCopyAndReplace<TKey, TValue>(ref IReadOnlyDictionary<TKey, TValue> original, TKey key, TValue value) where TKey : notnull =>
       original = original.AddToCopy(key, value);
 
