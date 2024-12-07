@@ -8,15 +8,16 @@ using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Refactoring.Migrations;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
-using Compze.Testing.Performance;
-using NUnit.Framework;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
+using Compze.Testing.Performance;
+using Compze.Tests.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 using JetBrains.Annotations;
+using NUnit.Framework;
 
-namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 
 [LongRunning]
 public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)

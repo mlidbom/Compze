@@ -6,7 +6,7 @@ using Compze.Testing.Performance;
 using Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 using NUnit.Framework;
 
-namespace Compze.Tests.SystemCE.ThreadingCE;
+namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
 [TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {

@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 //ncrunch: no coverage start
 
-namespace Compze.Tests.Messaging.Hypermedia;
+namespace Compze.Tests.Performance.Internals.Messaging.Hypermedia;
 
 public abstract class PerformanceTestBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

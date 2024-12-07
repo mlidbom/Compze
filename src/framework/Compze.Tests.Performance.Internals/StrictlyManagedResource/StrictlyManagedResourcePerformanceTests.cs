@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Compze.Tests.StrictlyManagedResource;
+namespace Compze.Tests.Performance.Internals.StrictlyManagedResource;
 
 [TestFixture]public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
 {

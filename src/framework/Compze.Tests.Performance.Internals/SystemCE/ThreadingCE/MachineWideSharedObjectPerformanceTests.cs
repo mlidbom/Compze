@@ -7,7 +7,7 @@ using Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.SystemCE.ThreadingCE;
+namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
 [TestFixture] public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {

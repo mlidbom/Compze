@@ -9,9 +9,9 @@ using Compze.SystemCE.LinqCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
 using NUnit.Framework;
-using CreatesItsOwnResultQuery = Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Messaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
+using CreatesItsOwnResultQuery = Compze.Messaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Messaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
 
-namespace Compze.Tests.Messaging.Hypermedia;
+namespace Compze.Tests.Performance.Internals.Messaging.Hypermedia;
 
 public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) : PerformanceTestBase(pluggableComponentsCombination)
 {

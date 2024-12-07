@@ -1,11 +1,12 @@
 ﻿using Compze.DependencyInjection;
 using Compze.Testing;
 using Compze.Testing.Performance;
+using Compze.Tests.Persistence.DocumentDb;
 using FluentAssertions.Extensions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Compze.Tests.Persistence.DocumentDb;
+namespace Compze.Tests.Performance.Internals.Persistence.DocumentDb;
 
 [LongRunning]
 class DocumentDbPerformanceTests([NotNull] string pluggableComponentsCombination) : DocumentDbTestsBase(pluggableComponentsCombination)

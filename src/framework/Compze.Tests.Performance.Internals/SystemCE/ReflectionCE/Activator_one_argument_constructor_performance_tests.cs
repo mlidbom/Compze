@@ -11,7 +11,7 @@ using NUnit.Framework;
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
 #pragma warning disable CA1806  // Do not ignore method results
 
-namespace Compze.Tests.SystemCE.ReflectionCE;
+namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
 [TestFixture]public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
 {

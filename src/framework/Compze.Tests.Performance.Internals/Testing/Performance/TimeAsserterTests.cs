@@ -3,7 +3,7 @@ using Compze.Testing;
 using Compze.Testing.Performance;
 using NUnit.Framework;
 
-namespace Compze.Tests.Testing.Performance;
+namespace Compze.Tests.Performance.Internals.Testing.Performance;
 
 [TestFixture] public class TimeAsserterTests : UniversalTestBase
 {

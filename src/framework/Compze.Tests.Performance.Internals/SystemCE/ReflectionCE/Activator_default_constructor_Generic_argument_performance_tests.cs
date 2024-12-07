@@ -6,9 +6,10 @@ using Compze.Testing.Performance;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+
 #pragma warning disable CA1806 // Do not ignore method results
 
-namespace Compze.Tests.SystemCE.ReflectionCE;
+namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
 [TestFixture]public class Activator_default_constructor_Generic_argument_performance_tests : UniversalTestBase
 {

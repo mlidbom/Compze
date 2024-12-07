@@ -1,8 +1,8 @@
 ﻿using System;
 using Compze.DependencyInjection;
 using Compze.Logging;
-using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE;
 using Compze.Testing;
@@ -10,7 +10,7 @@ using Compze.Testing.Performance;
 using Compze.Tests.Integration.Internals.Testing.Persistence;
 using NUnit.Framework;
 
-namespace Compze.Tests.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;
 
 public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
 {
