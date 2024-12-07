@@ -13,16 +13,16 @@ namespace Compze.Testing.TestFrameworkExtensions.XUnit;
 /// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
 ///This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
-[XunitTestCaseDiscoverer(CompzeTestingTestframeworkExtensionsXUnitXFactDiscovererFullTypeName, XFactAttributeAssembly)]
+[XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
 sealed class XFactAttribute : FactAttribute
 {
-   const string CompzeTestingTestframeworkExtensionsXUnitXFactDiscovererFullTypeName = "Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer";
-   const string XFactAttributeAssembly = "Compze.Testing";
+   const string XFactDiscovererFullTypeName = "Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer";
+   const string XFactDiscovererAssembly = "Compze.Testing";
 
    static XFactAttribute()
    {
-      Invariant.Is(CompzeTestingTestframeworkExtensionsXUnitXFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable());
-      Invariant.Is(XFactAttributeAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name);
+      Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable());
+      Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name);
    }
 }
 
