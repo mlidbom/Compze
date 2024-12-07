@@ -38,4 +38,8 @@
       </None>
    </ItemGroup>
 
+    <PropertyGroup>
+        <NoWarn>CS0436</NoWarn>
+    </PropertyGroup>
+
 </Project>

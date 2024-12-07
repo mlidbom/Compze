@@ -3,7 +3,6 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <NuGetAuditMode>direct</NuGetAuditMode>
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
         <AnalysisLevel>latest-all</AnalysisLevel>
@@ -13,6 +12,7 @@
     <ItemGroup>
         <ProjectReference Include="..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj"/>
         <ProjectReference Include="..\framework\Compze.Messaging\Compze.Messaging.csproj"/>
+        <ProjectReference Include="..\framework\Compze.Testing\Compze.Testing.csproj" />
         <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.API\AccountManagement.API.csproj"/>
         <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj"/>
     </ItemGroup>
@@ -39,5 +39,10 @@
         <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0"/>
         <PackageReference Include="xunit.v3" Version="0.7.0-pre.15" />
     </ItemGroup>
+
+    <!--Remove when the bug causing this warning to appear has been fixed: https://github.com/microsoft/testfx/issues/3813 https://github.com/microsoft/testfx/pull/3891 -->
+    <PropertyGroup>
+        <NoWarn>CS0436</NoWarn>
+    </PropertyGroup>
 
 </Project>
