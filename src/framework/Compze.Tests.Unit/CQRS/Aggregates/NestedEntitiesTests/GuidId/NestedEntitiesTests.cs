@@ -7,6 +7,7 @@ using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 using FluentAssertions;
 using NUnit.Framework;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -14,17 +15,15 @@ using NUnit.Framework;
 
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-
 namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId;
 
-[TestFixture]
-public class NestedEntitiesTests : UniversalTestBase
+[TestFixture] public class NestedEntitiesTests : UniversalTestBase
 {
-   Root Ag = new("root", Guid.NewGuid()); //initializing only to make compiler happy, will be replaced.
-   RootQueryModel Qm = new();                  //initializing only to make compiler happy, will be replaced.
+   Root Ag; //initializing only to make compiler happy, will be replaced.
+   RootQueryModel Qm;             //initializing only to make compiler happy, will be replaced.
    Guid AggregateId;
 
-   [SetUp]public void Setup()
+   [SetUp] public void Setup()
    {
       AggregateId = Guid.NewGuid();
       Ag = new Root("root", AggregateId);
@@ -42,8 +41,7 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Id.Should().Be(AggregateId);
    }
 
-   [Test]
-   public void Aggregate_entity_tests()
+   [Test] public void Aggregate_entity_tests()
    {
       var agEntity1 = Ag.AddEntity("entity1");
       var qmEntity1 = Qm.Entities.InCreationOrder[0];
@@ -85,7 +83,6 @@ public class NestedEntitiesTests : UniversalTestBase
       agEntity1.Name.Should().Be("newName");
       qmEntity1.Name.Should().Be("newName");
 
-
       Ag.Entities.InCreationOrder.Count.Should().Be(2);
       Qm.Entities.InCreationOrder.Count.Should().Be(2);
 
@@ -96,8 +93,14 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Entities.InCreationOrder.Count.Should().Be(1);
       Ag.Invoking(_ => Ag.Entities.Get(agEntity2.Id)).Should().Throw<Exception>();
       Qm.Invoking(_ => Ag.Entities.Get(qmEntity2.Id)).Should().Throw<Exception>();
-      Ag.Invoking(_ => { var __ = Ag.Entities[agEntity2.Id]; }).Should().Throw<Exception>();
-      Qm.Invoking(_ => { var __ = Ag.Entities[qmEntity2.Id]; }).Should().Throw<Exception>();
+      Ag.Invoking(_ =>
+      {
+         var __ = Ag.Entities[agEntity2.Id];
+      }).Should().Throw<Exception>();
+      Qm.Invoking(_ =>
+      {
+         var __ = Ag.Entities[qmEntity2.Id];
+      }).Should().Throw<Exception>();
 
       agEntity1.Remove();
       Ag.Entities.Contains(agEntity1.Id).Should().Be(false);
@@ -106,12 +109,17 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Entities.InCreationOrder.Count.Should().Be(0);
       Ag.Invoking(_ => Ag.Entities.Get(agEntity1.Id)).Should().Throw<Exception>();
       Qm.Invoking(_ => Ag.Entities.Get(agEntity1.Id)).Should().Throw<Exception>();
-      Ag.Invoking(_ => { var __ = Ag.Entities[agEntity1.Id]; }).Should().Throw<Exception>();
-      Qm.Invoking(_ => { var __ = Ag.Entities[agEntity1.Id]; }).Should().Throw<Exception>();
+      Ag.Invoking(_ =>
+      {
+         var __ = Ag.Entities[agEntity1.Id];
+      }).Should().Throw<Exception>();
+      Qm.Invoking(_ =>
+      {
+         var __ = Ag.Entities[agEntity1.Id];
+      }).Should().Throw<Exception>();
    }
 
-   [Test]
-   public void Aggregate_Component_tests()
+   [Test] public void Aggregate_Component_tests()
    {
       Ag.Component.Name.Should().BeNullOrEmpty();
       Qm.Component.Name.Should().BeNullOrEmpty();
@@ -121,8 +129,7 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Component.Name.Should().Be("newName");
    }
 
-   [Test]
-   public void Aggregate_Component_Component_tests()
+   [Test] public void Aggregate_Component_Component_tests()
    {
       Ag.Component.CComponent.Name.Should().BeNullOrEmpty();
       Qm.Component.CComponent.Name.Should().BeNullOrEmpty();
@@ -131,8 +138,7 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Component.CComponent.Name.Should().Be("newName");
    }
 
-   [Test]
-   public void Aggregate_Component_Entity_tests()
+   [Test] public void Aggregate_Component_Entity_tests()
    {
       var agComponent = Ag.Component;
       var qmComponent = Qm.Component;
@@ -205,9 +211,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmComponent.Invoking(it => { _ = it.Entities[agComponentEntity1.Id]; }).Should().Throw<Exception>();
    }
 
-
-   [Test]
-   public void Aggregate_Entity_Entity_tests()
+   [Test] public void Aggregate_Entity_Entity_tests()
    {
       var agRootEntity = Ag.AddEntity("RootEntityName");
       var qmRootEntity = Qm.Entities.InCreationOrder[0];
@@ -269,8 +273,14 @@ public class NestedEntitiesTests : UniversalTestBase
       qmRootEntity.Entities.InCreationOrder.Count.Should().Be(1);
       agRootEntity.Invoking(_ => agRootEntity.Entities.Get(agNestedEntity2.Id)).Should().Throw<Exception>();
       qmRootEntity.Invoking(_ => agRootEntity.Entities.Get(agNestedEntity2.Id)).Should().Throw<Exception>();
-      agRootEntity.Invoking(_ => { var __ = agRootEntity.Entities[agNestedEntity2.Id]; }).Should().Throw<Exception>();
-      qmRootEntity.Invoking(_ => { var __ = agRootEntity.Entities[agNestedEntity2.Id]; }).Should().Throw<Exception>();
+      agRootEntity.Invoking(_ =>
+      {
+         var __ = agRootEntity.Entities[agNestedEntity2.Id];
+      }).Should().Throw<Exception>();
+      qmRootEntity.Invoking(_ =>
+      {
+         var __ = agRootEntity.Entities[agNestedEntity2.Id];
+      }).Should().Throw<Exception>();
 
       agNestedEntity1.Remove();
       agRootEntity.Entities.Contains(agNestedEntity1.Id).Should().Be(false);
@@ -279,8 +289,13 @@ public class NestedEntitiesTests : UniversalTestBase
       qmRootEntity.Entities.InCreationOrder.Count.Should().Be(0);
       agRootEntity.Invoking(_ => agRootEntity.Entities.Get(agNestedEntity1.Id)).Should().Throw<Exception>();
       qmRootEntity.Invoking(_ => agRootEntity.Entities.Get(agNestedEntity1.Id)).Should().Throw<Exception>();
-      agRootEntity.Invoking(_ => { var __ = agRootEntity.Entities[agNestedEntity1.Id]; }).Should().Throw<Exception>();
-      qmRootEntity.Invoking(_ => { var __ = agRootEntity.Entities[agNestedEntity1.Id]; }).Should().Throw<Exception>();
+      agRootEntity.Invoking(_ =>
+      {
+         var __ = agRootEntity.Entities[agNestedEntity1.Id];
+      }).Should().Throw<Exception>();
+      qmRootEntity.Invoking(_ =>
+      {
+         var __ = agRootEntity.Entities[agNestedEntity1.Id];
+      }).Should().Throw<Exception>();
    }
-
 }
