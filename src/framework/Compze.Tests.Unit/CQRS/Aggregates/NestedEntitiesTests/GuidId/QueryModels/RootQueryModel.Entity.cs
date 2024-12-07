@@ -5,12 +5,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
-[UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity,
-   Guid,
-   RootEvent.Entity.IRoot,
-   RootEvent.Entity.Created,
-   RootEvent.Entity.Removed,
-   RootEvent.Entity.Implementation.Root.IdGetterSetter>
+[UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, RootEvent.Entity.IRoot, RootEvent.Entity.Created, RootEvent.Entity.Removed, RootEvent.Entity.Implementation.Root.IdGetterSetter>
 {
    public string Name { get; private set; } = string.Empty;
    public Entity(RootQueryModel root) : base(root)

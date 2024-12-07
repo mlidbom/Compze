@@ -4,15 +4,10 @@ using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
 namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 
-partial class RemovableEntity : Root.RemovableEntity<RemovableEntity,
-   Guid,
-   RootEvent.Entity.Implementation.Root,
-   RootEvent.Entity.IRoot,
-   RootEvent.Entity.Created,
-   RootEvent.Entity.Removed,
-   RootEvent.Entity.Implementation.Root.IdGetterSetter>
+partial class RemovableEntity : Root.RemovableEntity<RemovableEntity, Guid, RootEvent.Entity.Implementation.Root, RootEvent.Entity.IRoot, RootEvent.Entity.Created, RootEvent.Entity.Removed, RootEvent.Entity.Implementation.Root.IdGetterSetter>
 {
    public string Name { get; private set; } = string.Empty;
+
    public RemovableEntity(Root root) : base(root)
    {
       _entities = RemovableNestedEntity.CreateSelfManagingCollection(this);
