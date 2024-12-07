@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -50,11 +51,11 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.ResourceAccess;
       {
          using(monitor.TakeUpdateLock()) {}
 
-         FluentActions.Invoking(() => Task.Run(() => monitor.TakeUpdateLock(timeout: 10.Milliseconds())).Wait())
+         Invoking(() => Task.Run(() => monitor.TakeUpdateLock(timeout: 10.Milliseconds())).Wait())
                                        .Should().Throw<Exception>();
       }
 
-      Task.Run(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
+      TaskCE.RunPrioritized(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
    }
 
    [TestFixture] public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
@@ -81,7 +82,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.ResourceAccess;
          var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
          var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);
 
-         Task.Run(() =>
+         TaskCE.RunPrioritized(() =>
          {
             var @lock = monitor.TakeUpdateLock();
             threadOneHasTakenUpdateLock.Set();
@@ -93,7 +94,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.ResourceAccess;
          threadOneHasTakenUpdateLock.WaitOne();
 
          var thrownException = Invoking(
-                                         () => Task.Run(() =>
+                                         () => TaskCE.RunPrioritized(() =>
                                                     {
                                                        threadTwoIsAboutToTryToEnterUpdateLock.Set();
                                                        monitor.TakeUpdateLock();
