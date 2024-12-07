@@ -3,7 +3,7 @@ using Compze.Functional;
 using Compze.Testing;
 using NUnit.Framework;
 
-namespace Compze.Tests;
+namespace Compze.Tests.Unit.Internals;
 
 [TestFixture]
 public class ObjectExtensionsTest : UniversalTestBase

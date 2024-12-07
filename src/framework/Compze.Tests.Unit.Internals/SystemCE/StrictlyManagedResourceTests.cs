@@ -1,5 +1,4 @@
 ﻿using System;
-using Compze.Functional;
 using Compze.SystemCE;
 using Compze.Testing;
 using FluentAssertions;
@@ -7,7 +6,7 @@ using JetBrains.Annotations;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 
-namespace Compze.Tests.SystemCE;
+namespace Compze.Tests.Unit.Internals.SystemCE;
 
 class StrictlyManagedResourceTests : UniversalTestBase
 {
@@ -15,7 +14,7 @@ class StrictlyManagedResourceTests : UniversalTestBase
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {
-         Unit.From(() =>
+         Functional.Unit.From(() =>
          {
             _ = new StrictlyManagedResource<MyClass>();
          });

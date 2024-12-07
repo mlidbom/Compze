@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.Tests.SystemCE.ThreadingCE;
+namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
 [UsedImplicitly] class SharedObject
 {

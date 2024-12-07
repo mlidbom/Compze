@@ -4,7 +4,7 @@ using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.Testing;
 using NUnit.Framework;
 
-namespace Compze.Tests.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.Tests.Unit.Internals.SystemCE.CollectionsCE.GenericCE;
 
 public static class DictionaryExtensionsGetOrAddWhenKey
 {

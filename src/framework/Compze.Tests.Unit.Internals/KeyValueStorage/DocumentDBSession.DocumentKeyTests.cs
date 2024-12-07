@@ -3,7 +3,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.KeyValueStorage;
+namespace Compze.Tests.Unit.Internals.KeyValueStorage;
 
 [TestFixture]
 public class DocumentDBSession_DocumentKeyTests : UniversalTestBase

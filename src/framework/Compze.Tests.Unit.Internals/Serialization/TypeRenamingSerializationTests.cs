@@ -11,7 +11,7 @@ using NUnit.Framework;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Compze.Tests.Serialization
+namespace Compze.Tests.Unit.Internals.Serialization
 {
     namespace OriginalTypes
     {

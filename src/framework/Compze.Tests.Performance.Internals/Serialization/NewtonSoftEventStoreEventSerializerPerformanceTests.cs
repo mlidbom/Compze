@@ -6,6 +6,7 @@ using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
+using Compze.Tests.Unit.Internals.Serialization;
 using Newtonsoft.Json;
 using NUnit.Framework;
 

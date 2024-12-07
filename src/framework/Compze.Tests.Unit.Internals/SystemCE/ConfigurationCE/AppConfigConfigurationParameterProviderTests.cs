@@ -4,7 +4,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.SystemCE.ConfigurationCE;
+namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
 
 [TestFixture] public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
 {

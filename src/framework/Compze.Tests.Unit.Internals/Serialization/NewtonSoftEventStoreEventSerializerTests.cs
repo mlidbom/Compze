@@ -9,7 +9,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Compze.Tests.Serialization;
+namespace Compze.Tests.Unit.Internals.Serialization;
 
 [TestFixture]
 public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase

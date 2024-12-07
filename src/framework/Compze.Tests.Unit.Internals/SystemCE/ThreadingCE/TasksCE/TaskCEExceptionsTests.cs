@@ -7,7 +7,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 
-namespace Compze.Tests.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
 
 public class TaskCEExceptionsTests : UniversalTestBase
 {

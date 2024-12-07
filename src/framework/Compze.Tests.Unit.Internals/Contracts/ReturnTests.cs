@@ -6,7 +6,7 @@ using static FluentAssertions.FluentActions;
 using static Compze.Contracts.Assert;
 // ReSharper disable ExpressionIsAlwaysNull
 
-namespace Compze.Tests.Contracts;
+namespace Compze.Tests.Unit.Internals.Contracts;
 
 [TestFixture] public class ReturnTests : UniversalTestBase
 {

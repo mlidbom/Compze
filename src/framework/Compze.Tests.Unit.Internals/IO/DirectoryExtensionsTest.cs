@@ -8,7 +8,7 @@ using Compze.SystemCE.LinqCE;
 using Compze.Testing;
 using NUnit.Framework;
 
-namespace Compze.Tests.IO;
+namespace Compze.Tests.Unit.Internals.IO;
 
 [TestFixture]
 public class DirectoryExtensionsTest : UniversalTestBase
