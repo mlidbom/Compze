@@ -6,7 +6,6 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>Compze.Tests</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -35,10 +34,6 @@
          <Link>TestUsingPluggableComponentCombinations</Link>
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-   </ItemGroup>
-
-   <ItemGroup>
-     <Folder Include="Integration\" />
    </ItemGroup>
 
     <PropertyGroup>

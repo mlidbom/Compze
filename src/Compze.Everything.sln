@@ -48,7 +48,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "..\Website\Websi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{AF41900C-BCBE-4D87-83C2-C1DCECA130E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests", "framework\Compze.Tests\Compze.Tests.csproj", "{FCD6E0F2-063F-4270-8FC8-6AAFD5F5320D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Integration", "framework\Compze.Tests.Integration\Compze.Tests.Integration.csproj", "{FCD6E0F2-063F-4270-8FC8-6AAFD5F5320D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Unit", "framework\Compze.Tests.Unit\Compze.Tests.Unit.csproj", "{0110A67F-C3F0-427C-95D9-DCC1ED03F520}"
 EndProject
