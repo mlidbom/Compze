@@ -54,8 +54,11 @@ static class WrapperEvent
 
       Monitor.Update(() =>
       {
-         constructor = CreateConstructorFor(wrappedEventType);
-         ThreadSafe.AddToCopyAndReplace(ref _wrapperConstructors, wrappedEventType, constructor);
+         if(!_wrapperConstructors.TryGetValue(wrappedEventType, out constructor))
+         {
+            constructor = CreateConstructorFor(wrappedEventType);
+            ThreadSafe.AddToCopyAndReplace(ref _wrapperConstructors, wrappedEventType, constructor);
+         }
       });
 
       return constructor!;
