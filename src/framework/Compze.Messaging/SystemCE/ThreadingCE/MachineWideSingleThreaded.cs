@@ -44,18 +44,7 @@ class MachineWideSingleThreaded
                                                     }));
    }
 
-   internal void Execute([InstantHandle] Action action)
-   {
-      try
-      {
-         _mutex.WaitOne();
-         action();
-      }
-      finally
-      {
-         _mutex.ReleaseMutex();
-      }
-   }
+   internal void Execute([InstantHandle] Action action) => Execute(action.AsUnitFunc());
 
    internal TResult Execute<TResult>([InstantHandle] Func<TResult> func)
    {
