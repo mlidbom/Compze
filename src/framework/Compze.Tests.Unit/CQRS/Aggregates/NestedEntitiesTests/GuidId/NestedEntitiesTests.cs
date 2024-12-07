@@ -53,7 +53,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmEntity1.Name.Should().Be("entity1");
       Ag.Entities.InCreationOrder.Count.Should().Be(1);
       Qm.Entities.InCreationOrder.Count.Should().Be(1);
-      Ag.Entities.Exists(agEntity1.Id).Should().Be(true);
+      Ag.Entities.Contains(agEntity1.Id).Should().Be(true);
       Qm.Entities.Exists(qmEntity1.Id).Should().Be(true);
       Qm.Entities.TryGet(qmEntity1.Id, out qmEntityFetched).Should().Be(true);
       qmEntityFetched!.Id.Should().Be(qmEntity1.Id);
@@ -68,7 +68,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmEntity2.Name.Should().Be("entity2");
       Ag.Entities.InCreationOrder.Count.Should().Be(2);
       Qm.Entities.InCreationOrder.Count.Should().Be(2);
-      Ag.Entities.Exists(agEntity2.Id).Should().Be(true);
+      Ag.Entities.Contains(agEntity2.Id).Should().Be(true);
       Qm.Entities.Exists(qmEntity2.Id).Should().Be(true);
       Ag.Entities[agEntity2.Id].Should().Be(agEntity2);
       Qm.Entities[qmEntity2.Id].Should().Be(qmEntity2);
@@ -90,7 +90,7 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Entities.InCreationOrder.Count.Should().Be(2);
 
       agEntity2.Remove();
-      Ag.Entities.Exists(agEntity2.Id).Should().Be(false);
+      Ag.Entities.Contains(agEntity2.Id).Should().Be(false);
       Qm.Entities.Exists(qmEntity2.Id).Should().Be(false);
       Ag.Entities.InCreationOrder.Count.Should().Be(1);
       Qm.Entities.InCreationOrder.Count.Should().Be(1);
@@ -100,7 +100,7 @@ public class NestedEntitiesTests : UniversalTestBase
       Qm.Invoking(_ => { var __ = Ag.Entities[qmEntity2.Id]; }).Should().Throw<Exception>();
 
       agEntity1.Remove();
-      Ag.Entities.Exists(agEntity1.Id).Should().Be(false);
+      Ag.Entities.Contains(agEntity1.Id).Should().Be(false);
       Qm.Entities.Exists(agEntity1.Id).Should().Be(false);
       Ag.Entities.InCreationOrder.Count.Should().Be(0);
       Qm.Entities.InCreationOrder.Count.Should().Be(0);
@@ -148,7 +148,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmComponentEntity1.Name.Should().Be("entity1");
       agComponent.Entities.InCreationOrder.Count.Should().Be(1);
       qmComponent.Entities.InCreationOrder.Count.Should().Be(1);
-      agComponent.Entities.Exists(agComponentEntity1.Id).Should().Be(true);
+      agComponent.Entities.Contains(agComponentEntity1.Id).Should().Be(true);
       qmComponent.Entities.Exists(agComponentEntity1.Id).Should().Be(true);
       agComponent.Entities.Get(agComponentEntity1.Id).Should().Be(agComponentEntity1);
       qmComponent.Entities.Get(agComponentEntity1.Id).Should().Be(qmComponentEntity1);
@@ -164,7 +164,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmEntity2.Name.Should().Be("entity2");
       agComponent.Entities.InCreationOrder.Count.Should().Be(2);
       qmComponent.Entities.InCreationOrder.Count.Should().Be(2);
-      agComponent.Entities.Exists(agEntity2.Id).Should().Be(true);
+      agComponent.Entities.Contains(agEntity2.Id).Should().Be(true);
       qmComponent.Entities.Exists(agEntity2.Id).Should().Be(true);
       agComponent.Entities[agEntity2.Id].Should().Be(agEntity2);
       qmComponent.Entities[agEntity2.Id].Should().Be(qmEntity2);
@@ -185,7 +185,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmComponent.Entities.InCreationOrder.Count.Should().Be(2);
 
       agEntity2.Remove();
-      agComponent.Entities.Exists(agEntity2.Id).Should().Be(false);
+      agComponent.Entities.Contains(agEntity2.Id).Should().Be(false);
       qmComponent.Entities.Exists(agEntity2.Id).Should().Be(false);
       agComponent.Entities.InCreationOrder.Count.Should().Be(1);
       qmComponent.Entities.InCreationOrder.Count.Should().Be(1);
@@ -195,7 +195,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmComponent.Invoking(it => { _ = it.Entities[agEntity2.Id]; }).Should().Throw<Exception>();
 
       agComponentEntity1.Remove();
-      agComponent.Entities.Exists(agComponentEntity1.Id).Should().Be(false);
+      agComponent.Entities.Contains(agComponentEntity1.Id).Should().Be(false);
       qmComponent.Entities.Exists(agComponentEntity1.Id).Should().Be(false);
       agComponent.Entities.InCreationOrder.Count.Should().Be(0);
       qmComponent.Entities.InCreationOrder.Count.Should().Be(0);
@@ -224,7 +224,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmNestedEntity1.Name.Should().Be("entity1");
       agRootEntity.Entities.InCreationOrder.Count.Should().Be(1);
       qmRootEntity.Entities.InCreationOrder.Count.Should().Be(1);
-      agRootEntity.Entities.Exists(agNestedEntity1.Id).Should().Be(true);
+      agRootEntity.Entities.Contains(agNestedEntity1.Id).Should().Be(true);
       qmRootEntity.Entities.Exists(agNestedEntity1.Id).Should().Be(true);
       agRootEntity.Entities.Get(agNestedEntity1.Id).Should().Be(agNestedEntity1);
       qmRootEntity.Entities.Get(agNestedEntity1.Id).Should().Be(qmNestedEntity1);
@@ -242,7 +242,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmNestedEntity2.Name.Should().Be("entity2");
       agRootEntity.Entities.InCreationOrder.Count.Should().Be(2);
       qmRootEntity.Entities.InCreationOrder.Count.Should().Be(2);
-      agRootEntity.Entities.Exists(agNestedEntity2.Id).Should().Be(true);
+      agRootEntity.Entities.Contains(agNestedEntity2.Id).Should().Be(true);
       qmRootEntity.Entities.Exists(agNestedEntity2.Id).Should().Be(true);
       agRootEntity.Entities[agNestedEntity2.Id].Should().Be(agNestedEntity2);
       qmRootEntity.Entities[agNestedEntity2.Id].Should().Be(qmNestedEntity2);
@@ -263,7 +263,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmRootEntity.Entities.InCreationOrder.Count.Should().Be(2);
 
       agNestedEntity2.Remove();
-      agRootEntity.Entities.Exists(agNestedEntity2.Id).Should().Be(false);
+      agRootEntity.Entities.Contains(agNestedEntity2.Id).Should().Be(false);
       qmRootEntity.Entities.Exists(agNestedEntity2.Id).Should().Be(false);
       agRootEntity.Entities.InCreationOrder.Count.Should().Be(1);
       qmRootEntity.Entities.InCreationOrder.Count.Should().Be(1);
@@ -273,7 +273,7 @@ public class NestedEntitiesTests : UniversalTestBase
       qmRootEntity.Invoking(_ => { var __ = agRootEntity.Entities[agNestedEntity2.Id]; }).Should().Throw<Exception>();
 
       agNestedEntity1.Remove();
-      agRootEntity.Entities.Exists(agNestedEntity1.Id).Should().Be(false);
+      agRootEntity.Entities.Contains(agNestedEntity1.Id).Should().Be(false);
       qmRootEntity.Entities.Exists(agNestedEntity1.Id).Should().Be(false);
       agRootEntity.Entities.InCreationOrder.Count.Should().Be(0);
       qmRootEntity.Entities.InCreationOrder.Count.Should().Be(0);

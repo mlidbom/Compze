@@ -8,7 +8,7 @@ public interface IReadOnlyEntityCollection<TEntity, in TEntityId> : IEnumerable<
    IReadOnlyList<TEntity> InCreationOrder { get; }
    // ReSharper disable once UnusedMember.Global todo:write test
    bool TryGet(TEntityId id, [MaybeNullWhen(false)]out TEntity component);
-   bool Exists(TEntityId id);
+   bool Contains(TEntityId id);
    TEntity Get(TEntityId id);
    TEntity this[TEntityId id] { get; }
 }
