@@ -37,7 +37,7 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
         <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
         <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0"/>
-        <PackageReference Include="xunit.v3" Version="0.7.0-pre.15" />
+        <PackageReference Include="xunit" Version="2.9.2" />
     </ItemGroup>
 
     <!--Remove when the bug causing this warning to appear has been fixed: https://github.com/microsoft/testfx/issues/3813 https://github.com/microsoft/testfx/pull/3891 -->

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using JetBrains.Annotations;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Testing.TestFrameworkExtensions.XUnit;
+namespace ScratchPad.NestedTests;
 
-///<summary>
-/// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
-///This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
-/// </summary>
-[XunitTestCaseDiscoverer("Compze.Testing.TestFrameworkExtensions.XUnit", "Compze.Testing")]
-public class XFactAttribute : FactAttribute {}
+[XunitTestCaseDiscoverer("ScratchPad.NestedTests.XFactDiscoverer", "ScratchPad.Internals")]
+public sealed class Xv2FactAttribute : FactAttribute {}
 
 [UsedImplicitly] public class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
 {
@@ -27,5 +24,18 @@ public class XFactAttribute : FactAttribute {}
          return Array.Empty<IXunitTestCase>();
 
       return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
+   }
+}
+
+// Example usage
+public class Outer_scenario_duplicates
+{
+   readonly Guid _guid = Guid.NewGuid();
+
+   [Xv2Fact] public void Outer_test_1() => Guid.NewGuid().Should().NotBeEmpty();
+
+   public class Inner_scenario : Outer_scenario_duplicates
+   {
+      [Xv2Fact] public void Inner_fact() => Guid.NewGuid().Should().NotBeEmpty();
    }
 }
