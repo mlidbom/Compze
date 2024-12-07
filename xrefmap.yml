@@ -7860,23 +7860,23 @@ references:
   fullName.vb: Compze.Persistence.EventStore.Aggregates.EntityCollection(Of TEntity, TEntityId)
   nameWithType: EntityCollection<TEntity, TEntityId>
   nameWithType.vb: EntityCollection(Of TEntity, TEntityId)
-- uid: Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Exists(`1)
-  name: Exists(TEntityId)
-  href: api/Compze.Persistence.EventStore.Aggregates.EntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_EntityCollection_2_Exists__1_
-  commentId: M:Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Exists(`1)
-  fullName: Compze.Persistence.EventStore.Aggregates.EntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  fullName.vb: Compze.Persistence.EventStore.Aggregates.EntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-  nameWithType: EntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  nameWithType.vb: EntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-- uid: Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Exists*
-  name: Exists
-  href: api/Compze.Persistence.EventStore.Aggregates.EntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_EntityCollection_2_Exists_
-  commentId: Overload:Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Exists
+- uid: Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Contains(`1)
+  name: Contains(TEntityId)
+  href: api/Compze.Persistence.EventStore.Aggregates.EntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_EntityCollection_2_Contains__1_
+  commentId: M:Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Contains(`1)
+  fullName: Compze.Persistence.EventStore.Aggregates.EntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  fullName.vb: Compze.Persistence.EventStore.Aggregates.EntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+  nameWithType: EntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  nameWithType.vb: EntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+- uid: Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Contains*
+  name: Contains
+  href: api/Compze.Persistence.EventStore.Aggregates.EntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_EntityCollection_2_Contains_
+  commentId: Overload:Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Contains
   isSpec: "True"
-  fullName: Compze.Persistence.EventStore.Aggregates.EntityCollection<TEntity, TEntityId>.Exists
-  fullName.vb: Compze.Persistence.EventStore.Aggregates.EntityCollection(Of TEntity, TEntityId).Exists
-  nameWithType: EntityCollection<TEntity, TEntityId>.Exists
-  nameWithType.vb: EntityCollection(Of TEntity, TEntityId).Exists
+  fullName: Compze.Persistence.EventStore.Aggregates.EntityCollection<TEntity, TEntityId>.Contains
+  fullName.vb: Compze.Persistence.EventStore.Aggregates.EntityCollection(Of TEntity, TEntityId).Contains
+  nameWithType: EntityCollection<TEntity, TEntityId>.Contains
+  nameWithType.vb: EntityCollection(Of TEntity, TEntityId).Contains
 - uid: Compze.Persistence.EventStore.Aggregates.EntityCollection`2.Get(`1)
   name: Get(TEntityId)
   href: api/Compze.Persistence.EventStore.Aggregates.EntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_EntityCollection_2_Get__1_
@@ -8026,23 +8026,23 @@ references:
   fullName.vb: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection(Of TEntity, TEntityId)
   nameWithType: IReadOnlyEntityCollection<TEntity, TEntityId>
   nameWithType.vb: IReadOnlyEntityCollection(Of TEntity, TEntityId)
-- uid: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Exists(`1)
-  name: Exists(TEntityId)
-  href: api/Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_IReadOnlyEntityCollection_2_Exists__1_
-  commentId: M:Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Exists(`1)
-  fullName: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  fullName.vb: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-  nameWithType: IReadOnlyEntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  nameWithType.vb: IReadOnlyEntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-- uid: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Exists*
-  name: Exists
-  href: api/Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_IReadOnlyEntityCollection_2_Exists_
-  commentId: Overload:Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Exists
+- uid: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Contains(`1)
+  name: Contains(TEntityId)
+  href: api/Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_IReadOnlyEntityCollection_2_Contains__1_
+  commentId: M:Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Contains(`1)
+  fullName: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  fullName.vb: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+  nameWithType: IReadOnlyEntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  nameWithType.vb: IReadOnlyEntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+- uid: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Contains*
+  name: Contains
+  href: api/Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_IReadOnlyEntityCollection_2_Contains_
+  commentId: Overload:Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Contains
   isSpec: "True"
-  fullName: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection<TEntity, TEntityId>.Exists
-  fullName.vb: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection(Of TEntity, TEntityId).Exists
-  nameWithType: IReadOnlyEntityCollection<TEntity, TEntityId>.Exists
-  nameWithType.vb: IReadOnlyEntityCollection(Of TEntity, TEntityId).Exists
+  fullName: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection<TEntity, TEntityId>.Contains
+  fullName.vb: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection(Of TEntity, TEntityId).Contains
+  nameWithType: IReadOnlyEntityCollection<TEntity, TEntityId>.Contains
+  nameWithType.vb: IReadOnlyEntityCollection(Of TEntity, TEntityId).Contains
 - uid: Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection`2.Get(`1)
   name: Get(TEntityId)
   href: api/Compze.Persistence.EventStore.Aggregates.IReadOnlyEntityCollection-2.html#Compze_Persistence_EventStore_Aggregates_IReadOnlyEntityCollection_2_Get__1_
