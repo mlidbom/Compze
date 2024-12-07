@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using static Compze.Contracts.Assert;
 
 namespace Compze.SystemCE.LinqCE;
 
@@ -12,7 +13,7 @@ public static partial class EnumerableCE
    /// </summary>
    public static void ForEach<TSource, TReturn>(this IEnumerable<TSource> source, Func<TSource, TReturn> action)
    {
-      Contracts.Assert.Argument.NotNull(source).NotNull(action);
+      Argument.NotNull(source).NotNull(action);
       foreach(var item in source)
       {
          action(item);
@@ -24,7 +25,7 @@ public static partial class EnumerableCE
    /// </summary>
    public static void ForEach<T>(this IEnumerable<T> source, [InstantHandle]Action<T> action)
    {
-      Contracts.Assert.Argument.NotNull(source).NotNull(action);
+      Argument.NotNull(source).NotNull(action);
 
       foreach (var item in source)
       {
@@ -37,7 +38,7 @@ public static partial class EnumerableCE
    /// </summary>
    public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
    {
-      Contracts.Assert.Argument.NotNull(source).NotNull(action);
+      Argument.NotNull(source).NotNull(action);
 
       var index = 0;
       foreach(var item in source)

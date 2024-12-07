@@ -5,6 +5,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.Messaging.Buses.Implementation;
 using Compze.SystemCE.ThreadingCE.TasksCE;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Messaging.Buses;
 
@@ -34,7 +35,7 @@ class Endpoint : IEndpoint
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
-      Contracts.Assert.Argument.NotNull(serviceLocator).NotNull(configuration);
+      Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
       _transport = transport;
@@ -53,7 +54,7 @@ class Endpoint : IEndpoint
 
    public async Task InitAsync()
    {
-      Assert.State.Is(!IsRunning);
+      State.Is(!IsRunning);
 
       RunSanityChecks();
 
@@ -88,7 +89,7 @@ class Endpoint : IEndpoint
 
    public async Task StopAsync()
    {
-      Assert.State.Is(IsRunning);
+      State.Is(IsRunning);
       IsRunning = false;
       _transport.Stop();
       if(_serverComponents != null )

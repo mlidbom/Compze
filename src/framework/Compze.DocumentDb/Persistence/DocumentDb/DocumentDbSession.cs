@@ -8,6 +8,7 @@ using Compze.DDD;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.TransactionsCE;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.DocumentDb;
 
@@ -99,7 +100,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGet(key, out TValue? value)) return Assert.Result.ReturnNotNull(value);
+      if(TryGet(key, out TValue? value)) return Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
@@ -108,14 +109,14 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Assert.Result.ReturnNotNull(value);
+      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
    public virtual void Save<TValue>(object id, TValue value)
    {
-      Contracts.Assert.Argument.NotNull(value);
+      Argument.NotNull(value);
       _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 

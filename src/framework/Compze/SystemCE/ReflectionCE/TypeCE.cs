@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Compze.Contracts.Assert;
 
 namespace Compze.SystemCE.ReflectionCE;
 
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
 static class TypeCE
 {
-   public static string FullNameNotNull(this Type @this) => Contracts.Assert.Result.ReturnNotNull(@this.FullName);
+   public static string FullNameNotNull(this Type @this) => Result.ReturnNotNull(@this.FullName);
 
    /// ///<returns>true if <paramref name="me"/> implements the interface: <typeparamref name="TImplemented"/>. By definition true if <paramref name="me"/> == <typeparamref name="TImplemented"/>.</returns>
    public static bool Implements<TImplemented>(this Type me)
    {
-      Contracts.Assert.Argument.NotNull(me);
+      Argument.NotNull(me);
 
       if(!typeof(TImplemented).IsInterface)
       {
@@ -25,7 +26,7 @@ static class TypeCE
    ///<returns>true if <paramref name="me"/> implements the interface: <paramref name="implemented"/>. By definition true if <paramref name="me"/> == <paramref name="implemented"/>.</returns>
    public static bool Implements(this Type me, Type implemented)
    {
-      Contracts.Assert.Argument.NotNull(me).NotNull(implemented);
+      Argument.NotNull(me).NotNull(implemented);
 
       if(!implemented.IsInterface)
       {

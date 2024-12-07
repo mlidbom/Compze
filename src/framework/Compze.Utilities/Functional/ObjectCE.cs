@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Functional;
 
@@ -18,5 +19,5 @@ static class ObjectCE
       }
    }
 
-   public static string ToStringNotNull(this object @this) => Contracts.Assert.Result.ReturnNotNull(@this.ToString());
+   public static string ToStringNotNull(this object @this) => Result.ReturnNotNull(@this.ToString());
 }

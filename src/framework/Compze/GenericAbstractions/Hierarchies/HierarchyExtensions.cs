@@ -5,6 +5,7 @@ using System.Linq;
 using Compze.Contracts;
 using Compze.GenericAbstractions.Wrappers;
 using Compze.SystemCE.LinqCE;
+using static Compze.Contracts.Assert;
 
 namespace Compze.GenericAbstractions.Hierarchies;
 
@@ -37,7 +38,7 @@ static class HierarchyExtensions
 
       internal Hierarchy(T nodeValue, Func<T, IEnumerable<T>> childGetter)
       {
-         Assert.Argument.NotNull(childGetter);
+         Argument.NotNull(childGetter);
          Wrapped = nodeValue;
          _childGetter = childGetter;
       }
@@ -49,8 +50,8 @@ static class HierarchyExtensions
    /// </summary>
    public static IAutoHierarchy<T> AsHierarchy<T>(this T me, Func<T, IEnumerable<T>> childGetter)
    {
-      Contracts.Assert.Argument.NotNull(me).NotNull(childGetter);
-      return Contracts.Assert.Result.ReturnNotNull(new Hierarchy<T>(me, childGetter));
+      Argument.NotNull(me).NotNull(childGetter);
+      return Result.ReturnNotNull(new Hierarchy<T>(me, childGetter));
    }
 
    /// <summary>
@@ -59,7 +60,7 @@ static class HierarchyExtensions
    /// </summary>
    public static IEnumerable<T> Flatten<T>(this T root) where T : IHierarchy<T>
    {
-      Contracts.Assert.Argument.NotNull(root);
+      Argument.NotNull(root);
       return EnumerableCE.Create(root).FlattenHierarchy(me => me.Children);
    }
 
@@ -69,7 +70,7 @@ static class HierarchyExtensions
    /// </summary>
    public static IEnumerable<T> Unwrap<T>(this IEnumerable<IAutoHierarchy<T>> root)
    {
-      Contracts.Assert.Argument.NotNull(root);
+      Argument.NotNull(root);
       return root.Select(me => me.Wrapped);
    }
 }

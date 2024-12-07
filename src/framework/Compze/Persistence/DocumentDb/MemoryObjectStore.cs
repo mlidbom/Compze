@@ -8,6 +8,7 @@ using Compze.Functional;
 using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.DocumentDb;
 
@@ -49,11 +50,11 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
       return true;
    }
 
-   static string GetIdString(object id) => Contracts.Assert.Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
+   static string GetIdString(object id) => Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
 
    public virtual void Add<T>(object id, T value) => _monitor.Update(() =>
    {
-      Assert.Argument.NotNull(value);
+      Argument.NotNull(value);
 
       var idString = GetIdString(id);
       if(ContainsInternal(value.GetType(), idString))

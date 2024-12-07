@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using Compze.Functional;
 using JetBrains.Annotations;
+using static Compze.Contracts.Assert;
 
 namespace Compze.SystemCE;
 
@@ -17,7 +18,7 @@ static class StringCE
    /// <summary>Delegates to <see cref="string.Join(string,string[])"/> </summary>
    public static string Join(this IEnumerable<string> @this, string separator)
    {
-      Contracts.Assert.Argument.NotNull(@this).NotNull(separator);
+      Argument.NotNull(@this).NotNull(separator);
 
       return string.Join(separator, @this.ToArray());
    }

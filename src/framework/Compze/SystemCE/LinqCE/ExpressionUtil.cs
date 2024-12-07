@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using static Compze.Contracts.Assert;
 
 namespace Compze.SystemCE.LinqCE;
 
@@ -8,13 +9,13 @@ static class ExpressionUtil
 {
    public static string ExtractMemberPath<TValue>(Expression<Func<TValue>> func)
    {
-      Contracts.Assert.Argument.NotNull(func);
+      Argument.NotNull(func);
       return ExtractMemberPath((LambdaExpression)func);
    }
 
    static string ExtractMemberPath(LambdaExpression lambda)
    {
-      Contracts.Assert.Argument.NotNull(lambda);
+      Argument.NotNull(lambda);
       var memberExpression = lambda.Body is UnaryExpression unaryExpression
                                 ? (MemberExpression)unaryExpression.Operand
                                 : (MemberExpression)lambda.Body;

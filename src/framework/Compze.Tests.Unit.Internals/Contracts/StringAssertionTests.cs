@@ -2,6 +2,7 @@
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
+using static Compze.Contracts.Assert;
 using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Contracts;
@@ -18,23 +19,23 @@ namespace Compze.Tests.Unit.Internals.Contracts;
       const string spacesString = " ";
       const string tabsString = "   ";
 
-      Invoking(() => Compze.Contracts.Assert.Argument.NotNull(nullString))
+      Invoking(() => Argument.NotNull(nullString))
         .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(nullString));
 
-      Invoking(() => Compze.Contracts.Assert.Argument.NotNull(okString).NotNull(nullString).NotNull(notNullObject))
+      Invoking(() => Argument.NotNull(okString).NotNull(nullString).NotNull(notNullObject))
         .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(nullString));
 
-      Invoking(() => Compze.Contracts.Assert.Argument.NotNullOrEmpty(okString).NotNullOrEmpty(emptyString))
+      Invoking(() => Argument.NotNullOrEmpty(okString).NotNullOrEmpty(emptyString))
         .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(emptyString));
 
-      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(spacesString))
+      Invoking(() => Argument.NotNullEmptyOrWhitespace(spacesString))
         .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(spacesString));
 
-      Invoking(() => Compze.Contracts.Assert.Argument.NotNullEmptyOrWhitespace(tabsString))
+      Invoking(() => Argument.NotNullEmptyOrWhitespace(tabsString))
         .Should().Throw<ArgumentException>()
         .Which.Message.Should().Contain(nameof(tabsString));
    }

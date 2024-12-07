@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Compze.Contracts.Assert;
 
 namespace Compze.SystemCE.LinqCE;
 
@@ -15,7 +16,7 @@ public static partial class EnumerableCE
    /// <returns></returns>
    public static IEnumerable<T> Create<T>(params T[] values)
    {
-      Contracts.Assert.Argument.NotNull(values);
+      Argument.NotNull(values);
       return values;
    }
 
@@ -24,7 +25,7 @@ public static partial class EnumerableCE
    /// </summary>
    static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
    {
-      Contracts.Assert.Argument.NotNull(source).NotNull(instances);
+      Argument.NotNull(source).NotNull(instances);
       return source.Concat(instances);
    }
 
@@ -40,7 +41,7 @@ public static partial class EnumerableCE
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
    internal static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
    {
-      Contracts.Assert.Argument.NotNull(me).NotNull(condition);
+      Argument.NotNull(me).NotNull(condition);
 
       return !me.Any(condition);
    }
@@ -50,7 +51,7 @@ public static partial class EnumerableCE
    /// </summary>
    internal static IEnumerable<IEnumerable<T>> ChopIntoSizesOf<T>(this IEnumerable<T> me, int size)
    {
-      Contracts.Assert.Argument.NotNull(me);
+      Argument.NotNull(me);
 
       // ReSharper disable once GenericEnumeratorNotDisposed ReSharper is plain wrong again.
       using var enumerator = me.GetEnumerator();
@@ -87,7 +88,7 @@ public static partial class EnumerableCE
    /// <returns>All the objects in all the nested collections </returns>
    internal static IEnumerable<TChild> Flatten<T, TChild>(this IEnumerable<T> me) where T : IEnumerable<TChild>
    {
-      Contracts.Assert.Argument.NotNull(me);
+      Argument.NotNull(me);
 
       return me.SelectMany(obj => obj);
    }

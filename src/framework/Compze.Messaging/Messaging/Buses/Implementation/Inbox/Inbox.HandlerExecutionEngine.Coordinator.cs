@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Messaging.Buses.Implementation;
 
@@ -26,7 +27,7 @@ partial class Inbox
          {
             HandlerExecutionTask? handlerExecutionTask = null;
             _implementation.Await(implementation => implementation.TryGetDispatchableMessage(dispatchingRules, out handlerExecutionTask));
-            return Contracts.Assert.Result.ReturnNotNull(handlerExecutionTask);
+            return Result.ReturnNotNull(handlerExecutionTask);
          }
 
          public Task<object?> EnqueueMessageTask(TransportMessage.InComing message) => _implementation.Update(implementation =>

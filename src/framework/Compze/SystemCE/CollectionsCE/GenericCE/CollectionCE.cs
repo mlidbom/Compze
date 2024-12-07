@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.SystemCE.LinqCE;
+using static Compze.Contracts.Assert;
 
 namespace Compze.SystemCE.CollectionsCE.GenericCE;
 
@@ -11,7 +12,7 @@ static class CollectionCE
    ///<summary>Remove entries matching the condition from the collection.</summary>
    public static IReadOnlyList<T> RemoveWhere<T>(this ICollection<T> me, Func<T, bool> condition)
    {
-      Contracts.Assert.Argument.NotNull(me).NotNull(condition);
+      Argument.NotNull(me).NotNull(condition);
       var removed = me.Where(condition).ToList();
       removed.ForEach(removeMe => me.Remove(removeMe));
       return removed;
@@ -20,7 +21,7 @@ static class CollectionCE
    ///<summary>Add all instances in <param name="toAdd"> to the collection <param name="me"></param>.</param></summary>
    public static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
    {
-      Contracts.Assert.Argument.NotNull(me).NotNull(toAdd);
+      Argument.NotNull(me).NotNull(toAdd);
       toAdd.ForEach(me.Add);
    }
 }

@@ -8,6 +8,7 @@ using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ReactiveCE;
 using Compze.SystemCE.ReflectionCE;
 using Compze.SystemCE.ThreadingCE;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.EventStore;
 
@@ -23,7 +24,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
    public EventStoreUpdater(IEventStoreEventPublisher eventStoreEventPublisher, IEventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)
    {
-      Contracts.Assert.Argument.NotNull(eventStoreEventPublisher).NotNull(store).NotNull(timeSource);
+      Argument.NotNull(eventStoreEventPublisher).NotNull(store).NotNull(timeSource);
 
       _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(), new SingleTransactionUsageGuard());
       _eventStoreEventPublisher = eventStoreEventPublisher;
@@ -58,7 +59,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    TAggregate LoadSpecificVersionInternal<TAggregate>(Guid aggregateId, int version, bool verifyVersion = true) where TAggregate : IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      Assert.Argument.IsGreaterThan(version, 0);
+      Argument.IsGreaterThan(version, 0);
 
       _usageGuard.AssertNoContextChangeOccurred(this);
 

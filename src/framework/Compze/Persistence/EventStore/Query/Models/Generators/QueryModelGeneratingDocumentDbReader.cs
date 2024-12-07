@@ -6,6 +6,7 @@ using Compze.DDD;
 using Compze.Functional;
 using Compze.Persistence.DocumentDb;
 using Compze.SystemCE.ThreadingCE;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
@@ -21,7 +22,7 @@ public class QueryModelGeneratingDocumentDbReader(IEnumerable<IQueryModelGenerat
       _usageGuard.AssertNoContextChangeOccurred(this);
       if (TryGet(key, out TValue? value))
       {
-         return Contracts.Assert.Result.ReturnNotNull(value);
+         return Result.ReturnNotNull(value);
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
@@ -32,7 +33,7 @@ public class QueryModelGeneratingDocumentDbReader(IEnumerable<IQueryModelGenerat
       _usageGuard.AssertNoContextChangeOccurred(this);
       if (TryGetVersion(key, out TValue? value, version))
       {
-         return Contracts.Assert.Result.ReturnNotNull(value);
+         return Result.ReturnNotNull(value);
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
