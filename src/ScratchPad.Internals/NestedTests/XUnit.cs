@@ -1,28 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace ScratchPad.NestedTests;
 
-[XunitTestCaseDiscoverer("ScratchPad.NestedTests.XFactDiscoverer", "ScratchPad.Internals")]
-public class XFactAttribute : FactAttribute {}
+// Register the discoverer using typeof
+[XunitTestCaseDiscoverer(typeof(XFactDiscoverer))]
+public sealed class XFactAttribute : FactAttribute {}
 
-public class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
+// Custom Test Case Discoverer
+public class XFactDiscoverer : IXunitTestCaseDiscoverer
 {
-   readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
-
-   public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
+   public ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, IFactAttribute factAttribute)
    {
-      var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
-      var currentType = testMethod.TestClass.Class.ToRuntimeType();
+      var declaringType = testMethod.Method.DeclaringType;
+      var currentType = testMethod.TestClass.Class;
 
-      if(declaringType != currentType) // Skip tests declared in base classes
-         return Array.Empty<IXunitTestCase>();
+      if(declaringType != currentType)
+         return ValueTask.FromResult((IReadOnlyCollection<IXunitTestCase>)Array.Empty<IXunitTestCase>());
 
-      return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
+      return ValueTask.FromResult((IReadOnlyCollection<IXunitTestCase>)
+                                  [
+                                     new XunitTestCase(
+                                        testMethod: testMethod,
+                                        testCaseDisplayName:"Nonsense",
+                                        uniqueID: testMethod.UniqueID,
+                                        @explicit: factAttribute.Explicit)
+                                  ]);
    }
 }
 
@@ -31,10 +39,10 @@ public class Outer_scenario_duplicates
 {
    readonly Guid _guid = Guid.NewGuid();
 
-   [XFact] public void Outer_test_1() => Guid.NewGuid().Should().NotBeEmpty();
+   [XFact] public void Outer_test_1() => _guid.Should().NotBeEmpty();
 
    public class Inner_scenario : Outer_scenario_duplicates
    {
-      [XFact] public void Inner_fact() => Guid.NewGuid().Should().NotBeEmpty();
+      [XFact] public void Inner_fact() => _guid.Should().NotBeEmpty();
    }
 }
