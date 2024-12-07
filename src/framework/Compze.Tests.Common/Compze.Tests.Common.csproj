@@ -32,4 +32,10 @@
       </PackageReference>
    </ItemGroup>
 
+    <PropertyGroup>
+        <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+        <NoWarn>CS0436</NoWarn>
+    </PropertyGroup>
+
+
 </Project>

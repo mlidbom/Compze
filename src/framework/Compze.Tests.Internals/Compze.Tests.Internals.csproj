@@ -33,11 +33,7 @@
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="xunit" Version="2.9.2" />
-      <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
-         <PrivateAssets>all</PrivateAssets>
-         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
+      <PackageReference Include="xunit.v3" Version="0.7.0-pre.15" />
    </ItemGroup>
 
    <ItemGroup>
@@ -51,5 +47,9 @@
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
    </ItemGroup>
+
+    <PropertyGroup>
+        <NoWarn>CS0436</NoWarn>
+    </PropertyGroup>
 
 </Project>
