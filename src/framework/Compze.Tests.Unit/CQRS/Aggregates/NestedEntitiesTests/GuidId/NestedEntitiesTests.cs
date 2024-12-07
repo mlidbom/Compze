@@ -45,7 +45,6 @@ namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId;
    {
       var agEntity1 = Ag.AddEntity("entity1");
       var qmEntity1 = Qm.Entities.InCreationOrder[0];
-      Entity? qmEntityFetched;
       qmEntity1.Id.Should().Be(agEntity1.Id);
       agEntity1.Name.Should().Be("entity1");
       qmEntity1.Name.Should().Be("entity1");
@@ -53,7 +52,7 @@ namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId;
       Qm.Entities.InCreationOrder.Count.Should().Be(1);
       Ag.Entities.Contains(agEntity1.Id).Should().Be(true);
       Qm.Entities.Exists(qmEntity1.Id).Should().Be(true);
-      Qm.Entities.TryGet(qmEntity1.Id, out qmEntityFetched).Should().Be(true);
+      Qm.Entities.TryGet(qmEntity1.Id, out var qmEntityFetched).Should().Be(true);
       qmEntityFetched!.Id.Should().Be(qmEntity1.Id);
       Ag.Entities.Get(agEntity1.Id).Should().Be(agEntity1);
       Qm.Entities.Get(qmEntity1.Id).Should().Be(qmEntity1);
