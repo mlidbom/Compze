@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Messaging", "framework\Compze.Messaging\Compze.Messaging.csproj", "{3632254D-0C4A-4EB8-B388-4C99F8939584}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Tests.Internals", "framework\Compze.Tests.Internals\Compze.Tests.Internals.csproj", "{4C78131D-DD7B-4C3E-B931-D4C6436EE09E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Tests.Integration.Internals", "framework\Compze.Tests.Integration.Internals\Compze.Tests.Integration.Internals.csproj", "{4C78131D-DD7B-4C3E-B931-D4C6436EE09E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.ExternalDependencies", "framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj", "{3B776BD4-0EDD-4A83-BC9A-3A53D6649AB0}"
 EndProject
@@ -48,7 +48,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "..\Website\Websi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{AF41900C-BCBE-4D87-83C2-C1DCECA130E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests", "framework\Compze.Tests\Compze.Tests.csproj", "{FCD6E0F2-063F-4270-8FC8-6AAFD5F5320D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Integration", "framework\Compze.Tests.Integration\Compze.Tests.Integration.csproj", "{FCD6E0F2-063F-4270-8FC8-6AAFD5F5320D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Unit", "framework\Compze.Tests.Unit\Compze.Tests.Unit.csproj", "{0110A67F-C3F0-427C-95D9-DCC1ED03F520}"
 EndProject

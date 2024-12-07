@@ -5,7 +5,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.SystemExtensions;
+namespace Compze.Tests.Unit.Internals.SystemExtensions;
 
 [TestFixture] public class ExceptionExtensionsTests : UniversalTestBase
 {

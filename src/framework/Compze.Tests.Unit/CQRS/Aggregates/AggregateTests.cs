@@ -8,7 +8,7 @@ using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compze.Tests.CQRS.Aggregates;
+namespace Compze.Tests.Unit.CQRS.Aggregates;
 
 [TestFixture]
 public class AggregateTests : UniversalTestBase

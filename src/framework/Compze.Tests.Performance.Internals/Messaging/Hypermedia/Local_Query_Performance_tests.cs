@@ -5,7 +5,7 @@ using Compze.Testing;
 using Compze.Testing.Performance;
 using NUnit.Framework;
 
-namespace Compze.Tests.Messaging.Hypermedia;
+namespace Compze.Tests.Performance.Internals.Messaging.Hypermedia;
 
 public class Local_Query_performance_tests(string pluggableComponentsCombination) : PerformanceTestBase(pluggableComponentsCombination)
 {

@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 
-namespace Compze.Tests.Contracts;
+namespace Compze.Tests.Unit.Internals.Contracts;
 
 // ReSharper disable ExpressionIsAlwaysNull
 [TestFixture] public class StringAssertionTests : UniversalTestBase

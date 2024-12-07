@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 // ReSharper disable InconsistentlySynchronizedField
 
-namespace Compze.Tests.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE.ResourceAccess;
 
 public class MonitorCEPerformanceTests : UniversalTestBase
 {

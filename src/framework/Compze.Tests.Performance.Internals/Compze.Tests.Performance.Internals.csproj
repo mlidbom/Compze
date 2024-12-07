@@ -6,7 +6,6 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>Compze.Tests</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -21,9 +20,9 @@
    <ItemGroup>
       <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
       <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
-      <ProjectReference Include="..\Compze.Tests\Compze.Tests.csproj" />
+      <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
       <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
-      <ProjectReference Include="..\Compze.Tests.Internals\Compze.Tests.Internals.csproj" />
+      <ProjectReference Include="..\Compze.Tests.Integration.Internals\Compze.Tests.Integration.Internals.csproj" />
       <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
    </ItemGroup>
 

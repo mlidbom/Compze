@@ -6,7 +6,7 @@ using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 using static Compze.Contracts.Assert;
 
-namespace Compze.Tests.Contracts;
+namespace Compze.Tests.Unit.Internals.Contracts;
 
 // ReSharper disable ExpressionIsAlwaysNull
 [TestFixture] public class ObjectNotNullTests : UniversalTestBase

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 using static Compze.Contracts.Assert;
 
-namespace Compze.Tests.Contracts;
+namespace Compze.Tests.Unit.Internals.Contracts;
 
 [TestFixture] public class ObjectNotDefaultTests : UniversalTestBase
 {

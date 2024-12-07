@@ -3,7 +3,7 @@ using Compze.SystemCE.LinqCE;
 using Compze.Testing;
 using NUnit.Framework;
 
-namespace Compze.Tests.Linq;
+namespace Compze.Tests.Unit.Internals.Linq;
 
 [TestFixture]
 public class SeqTests : UniversalTestBase

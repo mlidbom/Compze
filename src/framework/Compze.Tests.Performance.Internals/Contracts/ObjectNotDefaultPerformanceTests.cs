@@ -1,10 +1,10 @@
 using Compze.SystemCE;
+using Compze.Testing;
 using Compze.Testing.Performance;
 using NUnit.Framework;
-using Compze.Testing;
 using Assert = Compze.Contracts.Assert;
 
-namespace Compze.Tests.Contracts;
+namespace Compze.Tests.Performance.Internals.Contracts;
 
 [TestFixture] public class ObjectNotDefaultPerformanceTests : UniversalTestBase
 {

@@ -4,7 +4,7 @@ using Compze.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Compze.Tests.Messaging;
+namespace Compze.Tests.Unit.Internals.Messaging;
 
 interface INonGenericWrapperEvent : IWrapperEvent<IEvent>;
 interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;

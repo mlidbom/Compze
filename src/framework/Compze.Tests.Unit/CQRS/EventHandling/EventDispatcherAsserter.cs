@@ -2,7 +2,7 @@
 using Compze.Messaging.Events;
 using FluentAssertions;
 
-namespace Compze.Tests.CQRS.EventHandling;
+namespace Compze.Tests.Unit.CQRS.EventHandling;
 
 static class EventDispatcherAsserter
 {

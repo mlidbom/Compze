@@ -3,7 +3,7 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
-namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
 static partial class RootEvent
 {

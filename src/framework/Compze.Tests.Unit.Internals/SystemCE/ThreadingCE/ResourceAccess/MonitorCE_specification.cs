@@ -8,12 +8,11 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NCrunch.Framework;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Compze.Tests.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.ResourceAccess;
 
 [TestFixture] public class MonitorCE_specification : UniversalTestBase
 {

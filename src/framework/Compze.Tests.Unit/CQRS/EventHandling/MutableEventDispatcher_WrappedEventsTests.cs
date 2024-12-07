@@ -4,7 +4,7 @@ using Compze.Persistence.EventStore;
 using Compze.Testing;
 using NUnit.Framework;
 
-namespace Compze.Tests.CQRS.EventHandling;
+namespace Compze.Tests.Unit.CQRS.EventHandling;
 
 [TestFixture]public class MutableEventDispatcher_WrappedEventsTests : UniversalTestBase
 {

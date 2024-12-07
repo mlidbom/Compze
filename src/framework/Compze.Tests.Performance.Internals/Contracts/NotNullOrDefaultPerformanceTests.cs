@@ -4,7 +4,7 @@ using Compze.Testing.Performance;
 using NUnit.Framework;
 using Assert = Compze.Contracts.Assert;
 
-namespace Compze.Tests.Contracts;
+namespace Compze.Tests.Performance.Internals.Contracts;
 
 [TestFixture] public class NotNullOrDefaultPerformanceTests : UniversalTestBase
 {

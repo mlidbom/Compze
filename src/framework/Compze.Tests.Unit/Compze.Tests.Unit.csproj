@@ -6,7 +6,6 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>Compze.Tests</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -32,5 +31,9 @@
       </PackageReference>
        <PackageReference Include="xunit.v3" Version="0.7.0-pre.15" />
    </ItemGroup>
+
+    <PropertyGroup>
+        <NoWarn>CS0436</NoWarn>
+    </PropertyGroup>
 
 </Project>

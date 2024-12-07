@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Compze.Tests.Testing.Threading;
+namespace Compze.Tests.Unit.Internals.Testing.Threading;
 
 [TestFixture] public class Given_a_locked_ThreadGate : UniversalTestBase
 {

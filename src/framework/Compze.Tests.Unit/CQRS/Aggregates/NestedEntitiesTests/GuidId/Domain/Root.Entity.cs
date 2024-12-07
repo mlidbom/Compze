@@ -1,8 +1,8 @@
 using System;
 using Compze.Persistence.EventStore.Aggregates;
-using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
+namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 
 partial class RemovableEntity : Root.RemovableEntity<RemovableEntity, Guid, RootEvent.Entity.Implementation.Root, RootEvent.Entity.IRoot, RootEvent.Entity.Created, RootEvent.Entity.Removed, RootEvent.Entity.Implementation.Root.IdGetterSetter>
 {

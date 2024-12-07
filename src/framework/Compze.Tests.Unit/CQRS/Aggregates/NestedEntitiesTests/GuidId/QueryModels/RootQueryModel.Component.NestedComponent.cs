@@ -1,6 +1,6 @@
-using Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
+using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-namespace Compze.Tests.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
+namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
 partial class Component
 {
