@@ -18,7 +18,7 @@ partial class Inbox
          // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
          internal class HandlerExecutionTask
          {
-            readonly AsyncTaskCompletionSource<object?> _taskCompletionSource = new();
+            readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             internal readonly TransportMessage.InComing TransportMessage;
             readonly Coordinator _coordinator;
             readonly Func<object, object?> _messageTask;
@@ -55,7 +55,7 @@ partial class Inbox
                                         })
                                         : _serviceLocator.ExecuteInIsolatedScope(() => _messageTask(message));
 
-                        _taskCompletionSource.ScheduleContinuation(result);
+                        _taskCompletionSource.SetResult(result);
                         _coordinator.Succeeded(this);
                         return;
                      }
@@ -73,7 +73,7 @@ partial class Inbox
                               _messageStorage.MarkAsFailed(TransportMessage);
                            }
 
-                           try { _taskCompletionSource.ScheduleException(exception); }
+                           try { _taskCompletionSource.SetException(exception); }
                            catch(Exception e)
                            {
                               this.Log().Error(e);
