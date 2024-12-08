@@ -16,4 +16,7 @@ public interface IEventStored
 }
 
 // ReSharper disable once UnusedTypeParameter it is used for type information in various parts of the framework.
-public interface IEventStored<TEvent> : IEventStored where TEvent : IAggregateEvent;
+public interface IEventStored<out TEvent> : IEventStored where TEvent : IAggregateEvent
+{
+   new IObservable<TEvent> EventStream { get; }
+}

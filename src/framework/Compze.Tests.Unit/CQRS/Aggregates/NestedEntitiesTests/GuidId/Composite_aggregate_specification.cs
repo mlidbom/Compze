@@ -29,8 +29,8 @@ public static partial class Composite_aggregate_specification
          _aggregateId = Guid.NewGuid();
          _aggregate = new CompositeAggregate("root", _aggregateId);
          _queryModel = new RootQueryModel();
-         IEventStored eventStored = _aggregate;
-         eventStored.EventStream.Subscribe(@event => _queryModel.ApplyEvent((CompositeAggregateEvent.ICompositeAggregateEvent)@event));
+         IEventStored<CompositeAggregateEvent.ICompositeAggregateEvent> eventStored = _aggregate;
+         eventStored.EventStream.Subscribe(@event => _queryModel.ApplyEvent(@event));
          eventStored.Commit(_queryModel.LoadFromHistory);
       }
 

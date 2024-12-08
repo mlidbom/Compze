@@ -110,6 +110,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    readonly SimpleObservable<TAggregateEventImplementation> _eventStream = new();
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Aggregates.
    IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
+   IObservable<TAggregateEvent> IEventStored<TAggregateEvent>.EventStream => _eventStream;
 
    void IEventStored.Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents)
    {
