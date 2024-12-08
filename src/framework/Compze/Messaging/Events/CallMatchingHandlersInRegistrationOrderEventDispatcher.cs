@@ -33,7 +33,7 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : I
    {
       //Urgent: Wrapping here seems arguable at best.
       var wrapped = evt as IWrapperEvent<IEvent>
-                 ?? WrapperEvent.WrapEvent((IEvent)evt);
+                 ?? WrapperEvent.WrapEvent(evt);
 
       var handlers = GetHandlers(wrapped.GetType());
       for(var i = 0; i < handlers.Length; i++)

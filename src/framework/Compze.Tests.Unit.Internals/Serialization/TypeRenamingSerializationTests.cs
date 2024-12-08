@@ -22,24 +22,24 @@ namespace Compze.Tests.Unit.Internals.Serialization
       {
          internal static TypeA Create() => new() { TypeAName = typeof(TypeA).FullName };
 
-         public string TypeAName { get; set; }
+         public string? TypeAName { get; set; }
 
          public class TypeAA : TypeA
          {
             public new static TypeA Create() => new TypeAA { TypeAAName = typeof(TypeAA).FullName };
-            public string TypeAAName { get; set; }
+            public string? TypeAAName { get; set; }
          }
       }
 
       class TypeB : BaseTypeA
       {
          internal static TypeB Create() => new() { TypeBName = typeof(TypeB).FullName };
-         public string TypeBName { get; set; }
+         public string? TypeBName { get; set; }
 
          public class TypeBB : TypeB
          {
             public new static TypeBB Create() => new() { TypeBBName = typeof(TypeBB).FullName };
-            public string TypeBBName { get; set; }
+            public string? TypeBBName { get; set; }
          }
       }
 
@@ -52,10 +52,10 @@ namespace Compze.Tests.Unit.Internals.Serialization
                                              ListOfTypeA = [OriginalTypes.TypeA.Create(), OriginalTypes.TypeB.Create(), OriginalTypes.TypeA.TypeAA.Create(), OriginalTypes.TypeB.TypeBB.Create()]
                                           };
 
-         public BaseTypeA TypeA { get; set; }
-         public BaseTypeA TypeB { get; set; }
+         public BaseTypeA? TypeA { get; set; }
+         public BaseTypeA? TypeB { get; set; }
 
-         public List<BaseTypeA> ListOfTypeA { get; set; }
+         public List<BaseTypeA>? ListOfTypeA { get; set; }
       }
    }
 
@@ -65,30 +65,30 @@ namespace Compze.Tests.Unit.Internals.Serialization
 
       class TypeA : BaseTypeA
       {
-         public string TypeAName { get; set; }
+         public string? TypeAName { get; set; }
 
          [UsedImplicitly] public class TypeAA : TypeA
          {
-            public string TypeAAName { get; set; }
+            public string? TypeAAName { get; set; }
          }
       }
 
       class TypeB : BaseTypeA
       {
-         public string TypeBName { get; set; }
+         public string? TypeBName { get; set; }
 
          [UsedImplicitly] public class TypeBB : TypeB
          {
-            public string TypeBBName { get; set; }
+            public string? TypeBBName { get; set; }
          }
       }
 
       class Root
       {
-         public BaseTypeA TypeA { get; set; }
-         public BaseTypeA TypeB { get; set; }
+         public BaseTypeA? TypeA { get; set; }
+         public BaseTypeA? TypeB { get; set; }
 
-         public List<BaseTypeA> ListOfTypeA { get; set; }
+         public List<BaseTypeA>? ListOfTypeA { get; set; }
       }
    }
 
