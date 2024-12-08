@@ -19,7 +19,7 @@ public static partial class NestedEntities_specification
                   [XFact] public void entity2_name_is_newName2() => _entity2.Name.Should().Be("newName2");
                   [XFact] public void QueryModel_entity2_name_is_newName2() => _qmEntity2.Name.Should().Be("newName2");
                   [XFact] public void entity1_name_remains_newName() => _entity1.Name.Should().Be("newName");
-                  [XFact] public void QueryModel_entity1_name_remains_newName() => ((After_adding_entity_named_entity1)this)._qmEntity1.Name.Should().Be("newName");
+                  [XFact] public void QueryModel_entity1_name_remains_newName() => _qmEntity1.Name.Should().Be("newName");
                }
             }
          }
