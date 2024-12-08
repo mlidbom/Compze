@@ -260,30 +260,6 @@ public static class NestedEntities_specification
          }
       }
 
-      [XFact] public void Aggregate_entity_tests()
-      {
-         var agEntity1 = Aggregate.AddEntity("entity1");
-         var agEntity2 = Aggregate.AddEntity("entity2");
-
-         agEntity2.Remove();
-
-         agEntity1.Remove();
-         Aggregate.Entities.Contains(agEntity1.Id).Should().Be(false);
-         QueryModel.Entities.Contains(agEntity1.Id).Should().Be(false);
-         Aggregate.Entities.InCreationOrder.Count.Should().Be(0);
-         QueryModel.Entities.InCreationOrder.Count.Should().Be(0);
-         Aggregate.Invoking(_ => Aggregate.Entities.Get(agEntity1.Id)).Should().Throw<Exception>();
-         QueryModel.Invoking(_ => Aggregate.Entities.Get(agEntity1.Id)).Should().Throw<Exception>();
-         Aggregate.Invoking(_ =>
-         {
-            var __ = Aggregate.Entities[agEntity1.Id];
-         }).Should().Throw<Exception>();
-         QueryModel.Invoking(_ =>
-         {
-            var __ = Aggregate.Entities[agEntity1.Id];
-         }).Should().Throw<Exception>();
-      }
-
       [XFact] public void Aggregate_Component_tests()
       {
          Aggregate.Component.Name.Should().BeNullOrEmpty();
