@@ -3,7 +3,7 @@ using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore.Aggregates;
 using JetBrains.Annotations;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
+namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.IntegerId.Domain;
 
 class Root : Aggregate<Root, RootEvent.Implementation.Root, RootEvent.IRoot>
 {

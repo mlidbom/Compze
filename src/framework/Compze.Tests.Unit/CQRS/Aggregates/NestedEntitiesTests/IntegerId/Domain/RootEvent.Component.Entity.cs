@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
-namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.IntegerId;
+namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.IntegerId.Domain;
 
 static partial class RootEvent
 {

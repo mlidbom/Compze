@@ -1,5 +1,6 @@
 ﻿using System;
 using Compze.Testing;
+using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.IntegerId.Domain;
 using FluentAssertions;
 using NUnit.Framework;
 using Xunit;
