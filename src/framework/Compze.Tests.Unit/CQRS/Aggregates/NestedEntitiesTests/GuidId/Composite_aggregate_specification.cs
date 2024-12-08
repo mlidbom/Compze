@@ -20,32 +20,32 @@ public static partial class Composite_aggregate_specification
 {
    public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events
    {
-      readonly CompositeAggregate Aggregate;
-      readonly RootQueryModel QueryModel;
-      readonly Guid AggregateId;
+      readonly CompositeAggregate _aggregate;
+      readonly RootQueryModel _queryModel;
+      readonly Guid _aggregateId;
 
       public After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events()
       {
-         AggregateId = Guid.NewGuid();
-         Aggregate = new CompositeAggregate("root", AggregateId);
-         QueryModel = new RootQueryModel();
-         IEventStored eventStored = Aggregate;
-         eventStored.EventStream.Subscribe(@event => QueryModel.ApplyEvent((CompositeAggregateEvent.ICompositeAggregateEvent)@event));
-         eventStored.Commit(QueryModel.LoadFromHistory);
+         _aggregateId = Guid.NewGuid();
+         _aggregate = new CompositeAggregate("root", _aggregateId);
+         _queryModel = new RootQueryModel();
+         IEventStored eventStored = _aggregate;
+         eventStored.EventStream.Subscribe(@event => _queryModel.ApplyEvent((CompositeAggregateEvent.ICompositeAggregateEvent)@event));
+         eventStored.Commit(_queryModel.LoadFromHistory);
       }
 
-      [XFact] public void Aggregate_name_is_root() => Aggregate.Name.Should().Be("root");
-      [XFact] public void Query_model_name_is_root() => QueryModel.Name.Should().Be("root");
-      [XFact] public void Aggregate_id_is_the_supplied_id() => Aggregate.Id.Should().Be(AggregateId);
-      [XFact] public void QueryModel_id_is_the_supplied_id() => QueryModel.Id.Should().Be(AggregateId);
+      [XFact] public void Aggregate_name_is_root() => _aggregate.Name.Should().Be("root");
+      [XFact] public void Query_model_name_is_root() => _queryModel.Name.Should().Be("root");
+      [XFact] public void Aggregate_id_is_the_supplied_id() => _aggregate.Id.Should().Be(_aggregateId);
+      [XFact] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.Should().Be(_aggregateId);
 
       [XFact] public void Aggregate_Component_Component_tests()
       {
-         Aggregate.Component.CComponent.Name.Should().BeNullOrEmpty();
-         QueryModel.Component.CComponent.Name.Should().BeNullOrEmpty();
-         Aggregate.Component.CComponent.Rename("newName");
-         Aggregate.Component.CComponent.Name.Should().Be("newName");
-         QueryModel.Component.CComponent.Name.Should().Be("newName");
+         _aggregate.Component.CComponent.Name.Should().BeNullOrEmpty();
+         _queryModel.Component.CComponent.Name.Should().BeNullOrEmpty();
+         _aggregate.Component.CComponent.Rename("newName");
+         _aggregate.Component.CComponent.Name.Should().Be("newName");
+         _queryModel.Component.CComponent.Name.Should().Be("newName");
       }
    }
 }

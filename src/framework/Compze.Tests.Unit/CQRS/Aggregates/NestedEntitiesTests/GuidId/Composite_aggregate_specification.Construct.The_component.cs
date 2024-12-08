@@ -15,8 +15,8 @@ public static partial class Composite_aggregate_specification
 
          public The_component()
          {
-            _component = Aggregate.Component;
-            _qmComponent = QueryModel.Component;
+            _component = _aggregate.Component;
+            _qmComponent = _queryModel.Component;
          }
          [XFact] public void Component_Name_is_empty_string() => _component.Name.Should().Be("");
          [XFact] public void QueryModel_Name_is_empty_string() => _qmComponent.Name.Should().Be("");

@@ -17,8 +17,8 @@ public static partial class Composite_aggregate_specification
 
          public After_adding_entity_named_entity1()
          {
-            _entity1 = Aggregate.AddEntity("entity1");
-            _qmEntity1 = QueryModel.Entities.Single();
+            _entity1 = _aggregate.AddEntity("entity1");
+            _qmEntity1 = _queryModel.Entities.Single();
          }
 
          [XFact] public void Added_entity_is_named_entity1() => _entity1.Name.Should().Be("entity1");
@@ -27,19 +27,19 @@ public static partial class Composite_aggregate_specification
 
          public class The_aggregates_Entities_collection : After_adding_entity_named_entity1
          {
-            [XFact] public void Single_returns_the_entity() => Aggregate.Entities.Single().Should().Be(_entity1);
-            [XFact] public void InCreationOrder_0_returns_the_entity() => Aggregate.Entities.InCreationOrder[0].Should().Be(_entity1);
-            [XFact] public void InCreationOrder_Count_is_1() => Aggregate.Entities.InCreationOrder.Count.Should().Be(1);
+            [XFact] public void Single_returns_the_entity() => _aggregate.Entities.Single().Should().Be(_entity1);
+            [XFact] public void InCreationOrder_0_returns_the_entity() => _aggregate.Entities.InCreationOrder[0].Should().Be(_entity1);
+            [XFact] public void InCreationOrder_Count_is_1() => _aggregate.Entities.InCreationOrder.Count.Should().Be(1);
 
             public class Passing_the_entitys_id_to : The_aggregates_Entities_collection
             {
-               [XFact] public void Contains_returns_true() => Aggregate.Entities.Contains(_entity1.Id).Should().Be(true);
-               [XFact] public void Get_returns_the_entity() => Aggregate.Entities.Get(_entity1.Id).Should().Be(_entity1);
-               [XFact] public void Indexer_returns_the_entity() => Aggregate.Entities[_entity1.Id].Should().Be(_entity1);
+               [XFact] public void Contains_returns_true() => _aggregate.Entities.Contains(_entity1.Id).Should().Be(true);
+               [XFact] public void Get_returns_the_entity() => _aggregate.Entities.Get(_entity1.Id).Should().Be(_entity1);
+               [XFact] public void Indexer_returns_the_entity() => _aggregate.Entities[_entity1.Id].Should().Be(_entity1);
 
                [XFact] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()
                {
-                  Aggregate.Entities.TryGet(_entity1.Id, out var agEntity1Fetched).Should().BeTrue();
+                  _aggregate.Entities.TryGet(_entity1.Id, out var agEntity1Fetched).Should().BeTrue();
                   agEntity1Fetched.Should().Be(_entity1);
                }
             }
@@ -47,19 +47,19 @@ public static partial class Composite_aggregate_specification
 
          public class The_QueryModels_Entities_collection : After_adding_entity_named_entity1
          {
-            [XFact] public void Single_returns_the_entity_query_model() => QueryModel.Entities.Single().Should().Be(_qmEntity1);
-            [XFact] public void InCreationOrder_0_returns_the_entity_query_model() => QueryModel.Entities.InCreationOrder[0].Should().Be(_qmEntity1);
-            [XFact] public void InCreationOrder_Count_is_1() => QueryModel.Entities.InCreationOrder.Count.Should().Be(1);
+            [XFact] public void Single_returns_the_entity_query_model() => _queryModel.Entities.Single().Should().Be(_qmEntity1);
+            [XFact] public void InCreationOrder_0_returns_the_entity_query_model() => _queryModel.Entities.InCreationOrder[0].Should().Be(_qmEntity1);
+            [XFact] public void InCreationOrder_Count_is_1() => _queryModel.Entities.InCreationOrder.Count.Should().Be(1);
 
             public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection
             {
-               [XFact] public void Contains_returns_true() => QueryModel.Entities.Contains(_entity1.Id).Should().Be(true);
-               [XFact] public void Get_returns_the_entity_query_model() => QueryModel.Entities.Get(_entity1.Id).Should().Be(_qmEntity1);
-               [XFact] public void Indexer_returns_the_entity() => QueryModel.Entities[_entity1.Id].Should().Be(_qmEntity1);
+               [XFact] public void Contains_returns_true() => _queryModel.Entities.Contains(_entity1.Id).Should().Be(true);
+               [XFact] public void Get_returns_the_entity_query_model() => _queryModel.Entities.Get(_entity1.Id).Should().Be(_qmEntity1);
+               [XFact] public void Indexer_returns_the_entity() => _queryModel.Entities[_entity1.Id].Should().Be(_qmEntity1);
 
                [XFact] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()
                {
-                  QueryModel.Entities.TryGet(_entity1.Id, out var qmEntity1Fetched).Should().BeTrue();
+                  _queryModel.Entities.TryGet(_entity1.Id, out var qmEntity1Fetched).Should().BeTrue();
                   qmEntity1Fetched.Should().Be(_qmEntity1);
                }
             }

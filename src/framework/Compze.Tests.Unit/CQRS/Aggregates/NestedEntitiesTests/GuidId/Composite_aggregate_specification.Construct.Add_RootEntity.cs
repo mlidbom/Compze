@@ -16,8 +16,8 @@ public static partial class Composite_aggregate_specification
 
          public After_calling_AddEntity_with_name_RootEntity_and_a_new_Guid()
          {
-            _rootEntity = Aggregate.AddEntity("RootEntity");
-            _qmRootEntity = QueryModel.Entities.InCreationOrder[0];
+            _rootEntity = _aggregate.AddEntity("RootEntity");
+            _qmRootEntity = _queryModel.Entities.InCreationOrder[0];
          }
 
          [XFact] public void RootEntity_Name_is_RootEntity() => _rootEntity.Name.Should().Be("RootEntity");
