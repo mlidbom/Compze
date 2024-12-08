@@ -37,7 +37,7 @@ public static partial class Composite_aggregate_specification
                public class The_Entities_collection : After_calling_AddEntity_with_name_entity1_and_a_newGuid
                {
                   [XFact] public void Single_returns_the_entity() => _rootEntity.Entities.Single().Should().Be(_entity1);
-                  [XFact] public void InCreationOrder_0_returns_the_entity() => _rootEntity.Entities.InCreationOrder[0].Should().Be(_entity1);
+                  [XFact] public void InCreationOrder_Indexer_0_returns_the_entity() => _rootEntity.Entities.InCreationOrder[0].Should().Be(_entity1);
                   [XFact] public void InCreationOrder_Count_is_1() => _rootEntity.Entities.InCreationOrder.Count.Should().Be(1);
 
                   public class Passing_the_entitys_id_to : The_Entities_collection
