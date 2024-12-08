@@ -6,13 +6,13 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryMode
 
 partial class Component
 {
-   [UsedImplicitly]public class Entity : Component.RemovableNestedEntity<Entity, Guid, RootEvent.Component.Entity.IRoot, RootEvent.Component.Entity.Created, RootEvent.Component.Entity.Removed, RootEvent.Component.Entity.Implementation.Root.IdGetterSetter>
+   [UsedImplicitly]public class Entity : Component.RemovableNestedEntity<Entity, Guid, CompositeAggregateEvent.Component.Entity.IRoot, CompositeAggregateEvent.Component.Entity.Created, CompositeAggregateEvent.Component.Entity.Removed, CompositeAggregateEvent.Component.Entity.Implementation.Root.IdGetterSetter>
    {
       public string Name { get; private set; } = string.Empty;
       public Entity(Component parent) : base(parent)
       {
          RegisterEventAppliers()
-           .For<RootEvent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
+           .For<CompositeAggregateEvent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
       }
    }
 }

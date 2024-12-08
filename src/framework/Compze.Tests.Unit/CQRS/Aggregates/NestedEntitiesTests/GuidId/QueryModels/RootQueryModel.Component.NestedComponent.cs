@@ -4,12 +4,12 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryMode
 
 partial class Component
 {
-   public class NestedComponent : Component.NestedComponent<NestedComponent, RootEvent.Component.NestedComponent.IRoot>
+   public class NestedComponent : Component.NestedComponent<NestedComponent, CompositeAggregateEvent.Component.NestedComponent.IRoot>
    {
       public NestedComponent(Component parent) : base(parent)
       {
          RegisterEventAppliers()
-           .For<RootEvent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
+           .For<CompositeAggregateEvent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
       }
 
       public string Name { get; private set; } = string.Empty;

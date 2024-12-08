@@ -5,7 +5,7 @@
 #pragma warning disable IDE1006 //Review OK: Test Naming Styles
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-static partial class RootEvent
+static partial class CompositeAggregateEvent
 {
    public static partial class Component
    {

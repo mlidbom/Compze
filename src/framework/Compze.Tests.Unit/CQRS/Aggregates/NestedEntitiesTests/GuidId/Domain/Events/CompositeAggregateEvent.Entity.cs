@@ -7,11 +7,11 @@ using JetBrains.Annotations;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-static partial class RootEvent
+static partial class CompositeAggregateEvent
 {
    public static partial class Entity
    {
-      public interface IRoot : RootEvent.IRoot
+      public interface IRoot : CompositeAggregateEvent.ICompositeAggregateEvent
       {
          Guid EntityId { get; }
       }
@@ -32,7 +32,7 @@ static partial class RootEvent
 
       internal static class Implementation
       {
-         public abstract class Root : RootEvent.Implementation.Root, Entity.IRoot
+         public abstract class Root : CompositeAggregateEvent.Implementation.Root, Entity.IRoot
          {
             public Guid EntityId { get; protected set; }
 

@@ -5,14 +5,14 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
-[UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, RootEvent.Entity.IRoot, RootEvent.Entity.Created, RootEvent.Entity.Removed, RootEvent.Entity.Implementation.Root.IdGetterSetter>
+[UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, CompositeAggregateEvent.Entity.IRoot, CompositeAggregateEvent.Entity.Created, CompositeAggregateEvent.Entity.Removed, CompositeAggregateEvent.Entity.Implementation.Root.IdGetterSetter>
 {
    public string Name { get; private set; } = string.Empty;
    public Entity(RootQueryModel root) : base(root)
    {
       _entities = RemovableNestedEntity.CreateSelfManagingCollection(this);
       RegisterEventAppliers()
-        .For<RootEvent.Entity.PropertyUpdated.Name>(e => Name = e.Name);
+        .For<CompositeAggregateEvent.Entity.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
    public IReadonlyQueryModelEntityCollection<RemovableNestedEntity, Guid> Entities => _entities.Entities;

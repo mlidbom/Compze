@@ -4,14 +4,14 @@ using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
-partial class Component : RootQueryModel.Component<Component, RootEvent.Component.IRoot>
+partial class Component : RootQueryModel.Component<Component, CompositeAggregateEvent.Component.IRoot>
 {
    public Component(RootQueryModel root) : base(root)
    {
       _entities = Component.Entity.CreateSelfManagingCollection(this);
       CComponent = new NestedComponent(this);
       RegisterEventAppliers()
-        .For<RootEvent.Component.PropertyUpdated.Name>(e => Name = e.Name);
+        .For<CompositeAggregateEvent.Component.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
    readonly Component.Entity.CollectionManager _entities;

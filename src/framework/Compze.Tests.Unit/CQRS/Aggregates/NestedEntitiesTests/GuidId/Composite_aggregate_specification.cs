@@ -20,17 +20,17 @@ public static partial class Composite_aggregate_specification
 {
    public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events
    {
-      readonly Root Aggregate;
+      readonly CompositeAggregate Aggregate;
       readonly RootQueryModel QueryModel;
       readonly Guid AggregateId;
 
       public After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events()
       {
          AggregateId = Guid.NewGuid();
-         Aggregate = new Root("root", AggregateId);
+         Aggregate = new CompositeAggregate("root", AggregateId);
          QueryModel = new RootQueryModel();
          IEventStored eventStored = Aggregate;
-         eventStored.EventStream.Subscribe(@event => QueryModel.ApplyEvent((RootEvent.IRoot)@event));
+         eventStored.EventStream.Subscribe(@event => QueryModel.ApplyEvent((CompositeAggregateEvent.ICompositeAggregateEvent)@event));
          eventStored.Commit(QueryModel.LoadFromHistory);
       }
 

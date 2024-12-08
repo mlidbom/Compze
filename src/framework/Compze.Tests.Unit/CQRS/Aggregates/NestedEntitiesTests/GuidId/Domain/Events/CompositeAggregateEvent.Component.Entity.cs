@@ -7,20 +7,21 @@ using JetBrains.Annotations;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-static partial class RootEvent
+static partial class CompositeAggregateEvent
 {
-   public static partial class Entity
+   public static partial class Component
    {
-      public static class NestedEntity
+      public static class Entity
       {
-         public interface IRoot : RootEvent.Entity.IRoot
+         public interface IRoot : CompositeAggregateEvent.Component.IRoot
          {
-            Guid NestedEntityId { get; }
+            Guid EntityId { get; }
          }
 
          public interface Created : PropertyUpdated.Name;
 
          interface Renamed : PropertyUpdated.Name;
+
          public interface Removed : IRoot;
 
          public static class PropertyUpdated
@@ -33,33 +34,33 @@ static partial class RootEvent
 
          internal static class Implementation
          {
-            public abstract class Root : RootEvent.Entity.Implementation.Root, NestedEntity.IRoot
+            public abstract class Root : CompositeAggregateEvent.Component.Implementation.Root, Entity.IRoot
             {
-               public Guid NestedEntityId { get; protected set; }
+               public Guid EntityId { get; protected set; }
 
-               [UsedImplicitly] public new class IdGetterSetter : Root, IGetSetAggregateEntityEventEntityId<Guid, Root, IRoot>
+               [UsedImplicitly] public class IdGetterSetter : IGetSetAggregateEntityEventEntityId<Guid, Root, IRoot>
                {
-                  public void SetEntityId(Root @event, Guid id) => @event.NestedEntityId = id;
-                  public Guid GetId(IRoot @event) => @event.NestedEntityId;
+                  public void SetEntityId(Root @event, Guid id) => @event.EntityId = id;
+                  public Guid GetId(IRoot @event) => @event.EntityId;
                }
             }
 
-            public class Created : Root, NestedEntity.Created
+            public class Created : Root, Entity.Created
             {
-               public Created(Guid id, string name)
+               public Created(Guid entityId, string name)
                {
-                  NestedEntityId = id;
+                  EntityId = entityId;
                   Name = name;
                }
                public string Name { get; }
             }
 
-            public class Renamed(string name) : Root, NestedEntity.Renamed
+            public class Renamed(string name) : Root, Entity.Renamed
             {
                public string Name { get; } = name;
             }
 
-            public class Removed : Root, NestedEntity.Removed;
+            public class Removed : Root, Entity.Removed;
          }
       }
    }

@@ -4,7 +4,7 @@ using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 
-class RootQueryModel : SelfGeneratingQueryModel<RootQueryModel, RootEvent.IRoot>
+class RootQueryModel : SelfGeneratingQueryModel<RootQueryModel, CompositeAggregateEvent.ICompositeAggregateEvent>
 {
    public string Name { get; private set; } = string.Empty;
    readonly Entity.CollectionManager _entities;
@@ -16,7 +16,7 @@ class RootQueryModel : SelfGeneratingQueryModel<RootQueryModel, RootEvent.IRoot>
       _entities = Entity.CreateSelfManagingCollection(this);
 
       RegisterEventAppliers()
-        .For<RootEvent.PropertyUpdated.Name>(e => Name = e.Name);
+        .For<CompositeAggregateEvent.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
    public IReadonlyQueryModelEntityCollection<Entity, Guid> Entities => _entities.Entities;

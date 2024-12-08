@@ -3,11 +3,11 @@
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain.Events;
 
-static partial class RootEvent
+static partial class CompositeAggregateEvent
 {
    public static partial class Component
    {
-      public interface IRoot : RootEvent.IRoot;
+      public interface IRoot : CompositeAggregateEvent.ICompositeAggregateEvent;
 
       interface Renamed : PropertyUpdated.Name;
 
@@ -21,7 +21,7 @@ static partial class RootEvent
 
       internal static class Implementation
       {
-         public abstract class Root : RootEvent.Implementation.Root, Component.IRoot;
+         public abstract class Root : CompositeAggregateEvent.Implementation.Root, Component.IRoot;
 
          public class Renamed(string name) : Root, Component.Renamed
          {
