@@ -1,8 +1,8 @@
 ﻿{
   "scripts": {
     "browser-livereload-old": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
-    "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*' --no-ghost-mode --no-notify --reload-delay 10",
-    "browser-livereload-3": "browser-sync start --server _site/ --port 8080 --files='_site/**/*.{html,css,js}'",
+    "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*' --no-ghost-mode --no-notify --no-inject-changes",
+    "browser-livereload-vxx": "browser-sync start --server _site/ --port 8080 --files='_site/*' --no-ghost-mode --no-notify --no-inject-changes --reload-delay 10",
     "watch": "npm-watch build",
     "build": "docfx build",
     "build-full": "docfx",
