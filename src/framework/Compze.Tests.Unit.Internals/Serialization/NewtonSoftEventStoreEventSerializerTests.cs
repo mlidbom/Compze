@@ -7,6 +7,7 @@ using Compze.SystemCE;
 using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Compze.Tests.Unit.Internals.Serialization;
@@ -20,10 +21,7 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
 
    internal class TestEvent : AggregateEvent
    {
-      [UsedImplicitly]
-      public TestEvent() { }
-
-      public TestEvent(string test1, string test2)
+      [JsonConstructor]public TestEvent(string test1, string test2)
       {
          Test1 = test1;
          Test2 = test2;
