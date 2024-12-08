@@ -11,6 +11,7 @@
 }
 
 
-#main-grid-container{
-  display: grid;
+#main-page-sections-container {
+  display: grid; 
+  grid-template-columns: 400px 400px 400px;
 }

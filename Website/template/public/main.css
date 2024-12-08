@@ -9,8 +9,9 @@
   max-width: 1000px;
 }
 
-#main-grid-container {
+#main-page-sections-container {
   display: grid;
+  grid-template-columns: 400px 400px 400px;
 }
 
 /*# sourceMappingURL=main.css.map */
