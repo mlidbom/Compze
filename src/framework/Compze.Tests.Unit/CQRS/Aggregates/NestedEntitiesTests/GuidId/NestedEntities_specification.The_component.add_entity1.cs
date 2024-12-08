@@ -73,9 +73,9 @@ public static partial class NestedEntities_specification
 
             public class After_calling_AddEntity_with_name_entity2_and_a_newGuid : After_calling_AddEntity_with_name_entity1_and_a_newGuid
             {
-               internal readonly Guid _entity2Id;
-               internal readonly Component.Entity _entity2;
-               internal readonly QueryModels.Component.Entity _qmEntity2;
+               readonly Guid _entity2Id;
+               readonly Component.Entity _entity2;
+               readonly QueryModels.Component.Entity _qmEntity2;
 
                public After_calling_AddEntity_with_name_entity2_and_a_newGuid()
                {
@@ -85,8 +85,9 @@ public static partial class NestedEntities_specification
                }
 
                [XFact] public void Added_entity_is_named_entity2() => _entity2.Name.Should().Be("entity2");
-               [XFact] public void Added_entity_querymodel_is_named_entity2() => _qmEntity2.Name.Should().Be("entity2");
-               [XFact] public void Added_entity_querymodel_has_the_same_id_as_the_entity() => _qmEntity2.Id.Should().Be(_entity2.Id);
+               [XFact] public void Added_entity_has_the_supplied_id_() => _entity2.Id.Should().Be(_entity2Id);
+               [XFact] public void Added_entity_QueryModel_is_named_entity2() => _qmEntity2.Name.Should().Be("entity2");
+               [XFact] public void Added_entity_QueryModel_has_the_same_id_as_the_entity() => _qmEntity2.Id.Should().Be(_entity2.Id);
                [XFact] public new void Invoking_AddEntity_with_a_new_name_but_the_same_id_throws() => _component.Invoking(it => it.AddEntity("newEntityName", _entity2.Id)).Should().Throw<Exception>();
 
                public class The_Entities_collection_ : After_calling_AddEntity_with_name_entity2_and_a_newGuid
