@@ -18,7 +18,7 @@ public static partial class NestedEntities_specification
             {
                public class After_calling_entity1_Remove : After_calling_entity2_Remove
                {
-                  public After_calling_entity1_Remove() => agEntity1.Remove();
+                  public After_calling_entity1_Remove() => _entity1.Remove();
 
                   public new class The_aggregates_Entities_collection : After_calling_entity1_Remove
                   {
@@ -28,13 +28,13 @@ public static partial class NestedEntities_specification
 
                      public class Passing_the_entity1_id_to : The_aggregates_Entities_collection
                      {
-                        [XFact] public void Contains_returns_false() => Aggregate.Entities.Contains(agEntity1.Id).Should().Be(false);
-                        [XFact] public void Get_throws() => Invoking(() => Aggregate.Entities.Get(agEntity1.Id)).Should().Throw<Exception>();
-                        [XFact] public void Indexer_throws() => Invoking(() => Aggregate.Entities[agEntity1.Id]).Should().Throw<Exception>();
+                        [XFact] public void Contains_returns_false() => Aggregate.Entities.Contains(_entity1.Id).Should().Be(false);
+                        [XFact] public void Get_throws() => Invoking(() => Aggregate.Entities.Get(_entity1.Id)).Should().Throw<Exception>();
+                        [XFact] public void Indexer_throws() => Invoking(() => Aggregate.Entities[_entity1.Id]).Should().Throw<Exception>();
 
                         [XFact] public void TryGet_returns_false_and_the_out_parameter_is_null()
                         {
-                           Aggregate.Entities.TryGet(agEntity1.Id, out var agEntity1Fetched).Should().BeFalse();
+                           Aggregate.Entities.TryGet(_entity1.Id, out var agEntity1Fetched).Should().BeFalse();
                            agEntity1Fetched.Should().Be(null);
                         }
                      }
@@ -48,13 +48,13 @@ public static partial class NestedEntities_specification
 
                      public class Passing_the_entity1_id_to : The_QueryModel_Entities_collection
                      {
-                        [XFact] public void Contains_returns_false() => QueryModel.Entities.Contains(agEntity1.Id).Should().Be(false);
-                        [XFact] public void Get_throws() => Invoking(() => QueryModel.Entities.Get(agEntity1.Id)).Should().Throw<Exception>();
-                        [XFact] public void Indexer_throws() => Invoking(() => QueryModel.Entities[agEntity1.Id]).Should().Throw<Exception>();
+                        [XFact] public void Contains_returns_false() => QueryModel.Entities.Contains(_entity1.Id).Should().Be(false);
+                        [XFact] public void Get_throws() => Invoking(() => QueryModel.Entities.Get(_entity1.Id)).Should().Throw<Exception>();
+                        [XFact] public void Indexer_throws() => Invoking(() => QueryModel.Entities[_entity1.Id]).Should().Throw<Exception>();
 
                         [XFact] public void TryGet_returns_false_and_the_out_parameter_is_null()
                         {
-                           QueryModel.Entities.TryGet(agEntity1.Id, out var qmEntity1Fetched).Should().BeFalse();
+                           QueryModel.Entities.TryGet(_entity1.Id, out var qmEntity1Fetched).Should().BeFalse();
                            qmEntity1Fetched.Should().Be(null);
                         }
                      }
