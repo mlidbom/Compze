@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Compze.Testing.TestFrameworkExtensions.XUnit;
 using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 using FluentAssertions;
@@ -15,11 +16,118 @@ public static partial class NestedEntities_specification
          {
             readonly Guid _entity1Id;
             readonly Component.Entity _entity1;
+            readonly QueryModels.Component.Entity _qmEntity1;
 
             public After_calling_AddEntity_with_name_entity1_and_a_newGuid()
             {
                _entity1Id = Guid.NewGuid();
                _entity1 = _component.AddEntity("entity1", _entity1Id);
+               _qmEntity1 = _qmComponent.Entities.InCreationOrder[0];
+            }
+
+            [XFact] public void Added_entity_is_named_entity1() => _entity1.Name.Should().Be("entity1");
+            [XFact] public void Added_entity_has_the_supplied_id() => _entity1.Id.Should().Be(_entity1Id);
+            [XFact] public void Invoking_AddEntity_with_a_new_name_but_the_same_id_throws() => _component.Invoking(it => it.AddEntity("newEntityName", _entity1.Id)).Should().Throw<Exception>();
+            [XFact] public void QueryModel_has_a_single_entity_named_entity1() => _qmComponent.Entities.Single().Name.Should().Be("entity1");
+            [XFact] public void QueryModels_single_entity_has_the_same_Id_as_the_entity() => _qmComponent.Entities.Single().Id.Should().Be(_entity1.Id);
+
+            public class The_Entities_collection : After_calling_AddEntity_with_name_entity1_and_a_newGuid
+            {
+               [XFact] public void Single_returns_the_entity() => _component.Entities.Single().Should().Be(_entity1);
+               [XFact] public void InCreationOrder_0_returns_the_entity() => _component.Entities.InCreationOrder[0].Should().Be(_entity1);
+               [XFact] public void InCreationOrder_Count_is_1() => _component.Entities.InCreationOrder.Count.Should().Be(1);
+
+               public class Passing_the_entitys_id_to : The_Entities_collection
+               {
+                  [XFact] public void Contains_returns_true() => _component.Entities.Contains(_entity1.Id).Should().Be(true);
+                  [XFact] public void Get_returns_the_entity() => _component.Entities.Get(_entity1.Id).Should().Be(_entity1);
+                  [XFact] public void Indexer_returns_the_entity() => _component.Entities[_entity1.Id].Should().Be(_entity1);
+
+                  [XFact] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()
+                  {
+                     _component.Entities.TryGet(_entity1.Id, out var agEntity1Fetched).Should().BeTrue();
+                     agEntity1Fetched.Should().Be(_entity1);
+                  }
+               }
+            }
+
+            public class The_QueryModels_Entities_collection : After_calling_AddEntity_with_name_entity1_and_a_newGuid
+            {
+               [XFact] public void Single_returns_the_entity_query_model() => _qmComponent.Entities.Single().Should().Be(_qmEntity1);
+               [XFact] public void InCreationOrder_0_returns_the_entity_query_model() => _qmComponent.Entities.InCreationOrder[0].Should().Be(_qmEntity1);
+               [XFact] public void InCreationOrder_Count_is_1() => _qmComponent.Entities.InCreationOrder.Count.Should().Be(1);
+
+               public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection
+               {
+                  [XFact] public void Contains_returns_true() => _qmComponent.Entities.Contains(_entity1.Id).Should().Be(true);
+                  [XFact] public void Get_returns_the_entity_query_model() => _qmComponent.Entities.Get(_entity1.Id).Should().Be(_qmEntity1);
+                  [XFact] public void Indexer_returns_the_entity() => _qmComponent.Entities[_entity1.Id].Should().Be(_qmEntity1);
+
+                  [XFact] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()
+                  {
+                     _qmComponent.Entities.TryGet(_entity1.Id, out var qmEntity1Fetched).Should().BeTrue();
+                     qmEntity1Fetched.Should().Be(_qmEntity1);
+                  }
+               }
+            }
+
+            public class After_calling_AddEntity_with_name_entity2_and_a_newGuid : After_calling_AddEntity_with_name_entity1_and_a_newGuid
+            {
+               internal readonly Guid _entity2Id;
+               internal readonly Component.Entity _entity2;
+               internal readonly QueryModels.Component.Entity _qmEntity2;
+
+               public After_calling_AddEntity_with_name_entity2_and_a_newGuid()
+               {
+                  _entity2Id = Guid.NewGuid();
+                  _entity2 = _component.AddEntity("entity2", _entity2Id);
+                  _qmEntity2 = _qmComponent.Entities.InCreationOrder[1];
+               }
+
+               [XFact] public void Added_entity_is_named_entity2() => _entity2.Name.Should().Be("entity2");
+               [XFact] public void Added_entity_querymodel_is_named_entity2() => _qmEntity2.Name.Should().Be("entity2");
+               [XFact] public void Added_entity_querymodel_has_the_same_id_as_the_entity() => _qmEntity2.Id.Should().Be(_entity2.Id);
+               [XFact] public new void Invoking_AddEntity_with_a_new_name_but_the_same_id_throws() => _component.Invoking(it => it.AddEntity("newEntityName", _entity2.Id)).Should().Throw<Exception>();
+
+               public class The_Entities_collection_ : After_calling_AddEntity_with_name_entity2_and_a_newGuid
+               {
+                  [XFact] public void Single_throws() => _component.Entities.Invoking(it => it.Single()).Should().Throw<Exception>();
+                  [XFact] public void InCreationOrder_1_returns_the_entity() => _component.Entities.InCreationOrder[1].Should().Be(_entity2);
+                  [XFact] public void InCreationOrder_Count_is_2() => _component.Entities.InCreationOrder.Count.Should().Be(2);
+
+                  public class Passing_the_entitys_id_to : The_Entities_collection_
+                  {
+                     [XFact] public void Contains_returns_true() => _component.Entities.Contains(_entity2.Id).Should().Be(true);
+                     [XFact] public void Get_returns_the_entity() => _component.Entities.Get(_entity2.Id).Should().Be(_entity2);
+                     [XFact] public void Indexer_returns_the_entity() => _component.Entities[_entity2.Id].Should().Be(_entity2);
+
+                     [XFact] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()
+                     {
+                        _component.Entities.TryGet(_entity2.Id, out var agEntity2Fetched).Should().BeTrue();
+                        agEntity2Fetched.Should().Be(_entity2);
+                     }
+                  }
+               }
+
+               public class The_QueryModels_Entities_collection_ : After_calling_AddEntity_with_name_entity2_and_a_newGuid
+               {
+                  [XFact] public void Single_throws() => _qmComponent.Entities.Invoking(it => it.Single()).Should().Throw<Exception>();
+                  [XFact] public void InCreationOrder_1_returns_the_entity_query_model() => _qmComponent.Entities.InCreationOrder[1].Should().Be(_qmEntity2);
+                  [XFact] public void InCreationOrder_Count_is_2() => _qmComponent.Entities.InCreationOrder.Count.Should().Be(2);
+
+                  public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection_
+                  {
+                     [XFact] public void Contains_returns_true() => _qmComponent.Entities.Contains(_entity2.Id).Should().Be(true);
+                     [XFact] public void Get_returns_the_entity_query_model() => _qmComponent.Entities.Get(_entity2.Id).Should().Be(_qmEntity2);
+                     [XFact] public void Indexer_returns_the_entity() => _qmComponent.Entities[_entity2.Id].Should().Be(_qmEntity2);
+
+                     [XFact] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()
+                     {
+                        _qmComponent.Entities.TryGet(_entity2.Id, out var qmEntity2Fetched).Should().BeTrue();
+                        qmEntity2Fetched.Should().Be(_qmEntity2);
+                     }
+                  }
+               }
             }
          }
 
@@ -30,35 +138,14 @@ public static partial class NestedEntities_specification
 
             var _entity1Id = Guid.NewGuid();
             var _entity1 = _component.AddEntity("entity1", _entity1Id);
-            _component.Invoking(it => it.AddEntity("entity2", _entity1Id)).Should().Throw<Exception>();
 
             var qmEntity1 = _qmComponent.Entities.InCreationOrder[0];
-
-            qmEntity1.Id.Should().Be(_entity1.Id).And.Be(_entity1Id);
-            _entity1.Name.Should().Be("entity1");
-            qmEntity1.Name.Should().Be("entity1");
-            _component.Entities.InCreationOrder.Count.Should().Be(1);
-            _qmComponent.Entities.InCreationOrder.Count.Should().Be(1);
-            _component.Entities.Contains(_entity1.Id).Should().Be(true);
-            _qmComponent.Entities.Contains(_entity1.Id).Should().Be(true);
-            _component.Entities.Get(_entity1.Id).Should().Be(_entity1);
-            _qmComponent.Entities.Get(_entity1.Id).Should().Be(qmEntity1);
-            _component.Entities[_entity1.Id].Should().Be(_entity1);
-            _qmComponent.Entities[_entity1.Id].Should().Be(qmEntity1);
 
             var entity2Id = Guid.NewGuid();
             var agEntity2 = _component.AddEntity("entity2", entity2Id);
             _component.Invoking(it => it.AddEntity("entity3", entity2Id)).Should().Throw<Exception>();
 
             var qmEntity2 = _qmComponent.Entities.InCreationOrder[1];
-            agEntity2.Name.Should().Be("entity2");
-            qmEntity2.Name.Should().Be("entity2");
-            _component.Entities.InCreationOrder.Count.Should().Be(2);
-            _qmComponent.Entities.InCreationOrder.Count.Should().Be(2);
-            _component.Entities.Contains(agEntity2.Id).Should().Be(true);
-            _qmComponent.Entities.Contains(agEntity2.Id).Should().Be(true);
-            _component.Entities[agEntity2.Id].Should().Be(agEntity2);
-            _qmComponent.Entities[agEntity2.Id].Should().Be(qmEntity2);
 
             _entity1.Rename("newName");
             _entity1.Name.Should().Be("newName");

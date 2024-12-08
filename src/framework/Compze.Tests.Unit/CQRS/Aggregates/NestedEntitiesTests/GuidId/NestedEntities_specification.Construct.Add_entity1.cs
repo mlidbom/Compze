@@ -51,7 +51,7 @@ public static partial class NestedEntities_specification
             [XFact] public void InCreationOrder_0_returns_the_entity_query_model() => QueryModel.Entities.InCreationOrder[0].Should().Be(_qmEntity1);
             [XFact] public void InCreationOrder_Count_is_1() => QueryModel.Entities.InCreationOrder.Count.Should().Be(1);
 
-            public class Passing_the_entitys_id_to : The_aggregates_Entities_collection
+            public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection
             {
                [XFact] public void Contains_returns_true() => QueryModel.Entities.Contains(_entity1.Id).Should().Be(true);
                [XFact] public void Get_returns_the_entity_query_model() => QueryModel.Entities.Get(_entity1.Id).Should().Be(_qmEntity1);
