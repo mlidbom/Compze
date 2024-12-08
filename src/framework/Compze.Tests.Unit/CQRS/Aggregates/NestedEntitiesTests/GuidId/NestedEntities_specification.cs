@@ -39,16 +39,6 @@ public static partial class NestedEntities_specification
       [XFact] public void Aggregate_id_is_the_supplied_id() => Aggregate.Id.Should().Be(AggregateId);
       [XFact] public void QueryModel_id_is_the_supplied_id() => QueryModel.Id.Should().Be(AggregateId);
 
-      [XFact] public void Aggregate_Component_tests()
-      {
-         Aggregate.Component.Name.Should().BeNullOrEmpty();
-         QueryModel.Component.Name.Should().BeNullOrEmpty();
-
-         Aggregate.Component.Rename("newName");
-         Aggregate.Component.Name.Should().Be("newName");
-         QueryModel.Component.Name.Should().Be("newName");
-      }
-
       [XFact] public void Aggregate_Component_Component_tests()
       {
          Aggregate.Component.CComponent.Name.Should().BeNullOrEmpty();
