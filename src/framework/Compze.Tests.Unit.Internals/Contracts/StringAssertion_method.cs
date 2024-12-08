@@ -3,7 +3,7 @@ using Compze.Testing.TestFrameworkExtensions.XUnit;
 
 namespace Compze.Tests.Unit.Internals.Contracts;
 
-public class StringAssertion_method : AssertionTestBase
+public class StringAssertion_method : AssertionMethodsTest
 {
    const string EmptyString = "";
    static readonly string NullString = null;
