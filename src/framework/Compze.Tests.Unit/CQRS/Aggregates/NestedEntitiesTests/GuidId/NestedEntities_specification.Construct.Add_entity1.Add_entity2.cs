@@ -4,6 +4,7 @@ using Compze.Testing.TestFrameworkExtensions.XUnit;
 using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId.QueryModels;
 using FluentAssertions;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.NestedEntitiesTests.GuidId;
 
@@ -29,7 +30,7 @@ public static partial class NestedEntities_specification
 
             public new class The_aggregates_Entities_collection : After_adding_entity_named_entity2
             {
-               [XFact] public void Single_throws() => FluentActions.Invoking(() => Aggregate.Entities.Single()).Should().Throw<Exception>();
+               [XFact] public void Single_throws() => Invoking(() => Aggregate.Entities.Single()).Should().Throw<Exception>();
                [XFact] public void InCreationOrder_1_returns_the_entity() => Aggregate.Entities.InCreationOrder[1].Should().Be(agEntity2);
                [XFact] public void InCreationOrder_Count_is_2() => Aggregate.Entities.InCreationOrder.Count.Should().Be(2);
 
@@ -49,7 +50,7 @@ public static partial class NestedEntities_specification
 
             public new class The_QueryModels_Entities_collection : After_adding_entity_named_entity2
             {
-               [XFact] public void Single_throws() => FluentActions.Invoking(() => QueryModel.Entities.Single()).Should().Throw<Exception>();
+               [XFact] public void Single_throws() => Invoking(() => QueryModel.Entities.Single()).Should().Throw<Exception>();
                [XFact] public void InCreationOrder_1_returns_the_entity_query_model() => QueryModel.Entities.InCreationOrder[1].Should().Be(qmEntity2);
                [XFact] public void InCreationOrder_Count_is_2() => QueryModel.Entities.InCreationOrder.Count.Should().Be(2);
 
