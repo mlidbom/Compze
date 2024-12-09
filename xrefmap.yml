@@ -4,9 +4,6 @@ references:
 - uid: Compze
   name: Compze
   href: api/Compze.html
-  commentId: N:Compze
-  fullName: Compze
-  nameWithType: Compze
 - uid: Compze.CompzeApi
   name: CompzeApi
   href: api/Compze.CompzeApi.html
