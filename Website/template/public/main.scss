@@ -7,11 +7,17 @@
 }
 
 [data-layout="landing"] .container-xxl {
-  max-width: 1000px;
+  max-width: 1800px;
 }
 
 
-#main-page-sections-container {
-  display: grid; 
-  grid-template-columns: 400px 400px 400px;
+.sections-container {
+  display: grid;
+  gap: 5pt;
+  grid-template-columns: 1fr 1fr 1fr;
+  > div {
+    padding: 5pt;
+    border: 1px solid;
+    border-radius: 5px;
+  }
 }

@@ -1,7 +1,8 @@
 ﻿{
   "scripts": {
     "browser-livereload-old": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
-    "browser-livereload": "browser-sync start --server _site/ --listen='127.0.0.1' --port 8080 --files='_site/*' --no-ghost-mode --no-notify --no-inject-changes --reload-delay 10",
+    "browser-livereload": "browser-sync start --server _site/ --listen='127.0.0.1' --port 8080 --files='_site/*'",
+    "browser-livereload-aoeu": "browser-sync start --server _site/ --listen='127.0.0.1' --port 8080 --files='_site/*' --no-ghost-mode --no-notify --no-inject-changes --reload-delay 10",
     "browser-livereload-xx": "browser-sync start --server _site/ --host='127.0.0.1' --open='external' --port 8080 --files='_site/*' --no-ghost-mode --no-notify --no-inject-changes --reload-delay 10",
     "browser-livereload-vk": "browser-sync start --server _site/ --port 8080 --files='_site/*' --no-ghost-mode --no-notify --no-inject-changes --reload-delay 10",
     "browser-livereload-vxx": "browser-sync start --server _site/ --port 8080 --files='_site/*' --no-ghost-mode --no-notify --no-inject-changes --reload-delay 10",

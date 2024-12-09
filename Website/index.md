@@ -2,38 +2,51 @@
 _layout: landing
 ---
 
-# Structure out of complexity and chaos
+# Filling in the gaps
+## Mining structure out of complexity and chaos
 
+### Filling in cracks
 
-<div id="main-page-sections-container">
+<div class="sections-container">
    <div>
 
-[!INCLUDE [node01](index/node01.md)]
+[!INCLUDE [](index/testing.md)]
 
    </div>
    <div>
 
-[!INCLUDE [node02](index/node02.md)]
+[!INCLUDE [](index/threading.md)]
 
    </div>
    <div>
 
-[!INCLUDE [node03](index/node03.md)]
+[!INCLUDE [](index/contracts.md)]
+
+   </div>
+</div>
+
+---
+
+### Filling in ocean trenches
+<div class="sections-container">
+   <div>
+
+[!INCLUDE [](index/events.md)]
 
    </div>
    <div>
 
-[!INCLUDE [node04](index/node04.md)]
+[!INCLUDE [](index/aggregates.md)]
 
    </div>
    <div>
 
-[!INCLUDE [node05](index/node05.md)]
+[!INCLUDE [](index/servicebus.md)]
 
    </div>
    <div>
 
-[!INCLUDE [node06](index/node06.md)]
+[!INCLUDE [](index/eventstore.md)]
 
    </div>
 </div>
