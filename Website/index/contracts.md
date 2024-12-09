@@ -1,2 +1,10 @@
-﻿#### Compze.Contracts
-* Simple, fluent, expressive and easily extended code contract validation.
+﻿<div>
+
+#### Compze.Contracts
+* Code contracts that are
+   * Simple
+   * Fluent
+   * Expressive 
+   * Easily extended with custom assertions
+
+</div>

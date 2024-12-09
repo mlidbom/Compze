@@ -1,3 +1,9 @@
-﻿#### Compze.Threading
+﻿<div>
+
+#### Compze.Threading
 * Transform thread synchronization with just a handful of abstractions.
-* Manipulate threads in testing with the elegance of an orchestra conductor. 
+* Easily guarantee that all usage of a resource is synchronized.
+* Easily wait for shared objects to reach certain states.
+* Don't deadlock permanently. Instead, time out, and report the stack traces of the conflicting threads.
+
+</div>
