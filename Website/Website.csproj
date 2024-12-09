@@ -35,6 +35,7 @@
 
     <ItemGroup>
         <Watch Include="_site/**/*.*" />
+        <Watch Include="**/*.cs" />
     </ItemGroup>
 
 </Project>
