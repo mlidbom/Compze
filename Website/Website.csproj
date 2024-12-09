@@ -33,4 +33,9 @@
       <_ContentIncludedByDefault Remove="_site\toc.json" />
    </ItemGroup>
 
+    <ItemGroup>
+        <Watch Include="_site/**/*.*" />
+        <Watch Include="**/*.cs" />
+    </ItemGroup>
+
 </Project>
