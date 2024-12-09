@@ -21,4 +21,8 @@
   border-radius: 5px;
 }
 
+#logo {
+  visibility: hidden;
+}
+
 /*# sourceMappingURL=main.css.map */
