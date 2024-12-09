@@ -25,4 +25,8 @@
   visibility: hidden;
 }
 
+p {
+  max-width: 80ch;
+}
+
 /*# sourceMappingURL=main.css.map */

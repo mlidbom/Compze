@@ -3664,19 +3664,6 @@
       "version": ""
     },
     {
-      "type": "Toc",
-      "source_relative_path": "docs/toc.yml",
-      "output": {
-        ".html": {
-          "relative_path": "docs/toc.html"
-        },
-        ".json": {
-          "relative_path": "docs/toc.json"
-        }
-      },
-      "version": ""
-    },
-    {
       "type": "Resource",
       "source_relative_path": "favicon.ico",
       "output": {
@@ -3772,6 +3759,39 @@
       "output": {
         ".html": {
           "relative_path": "index/threading.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "news/2024-12-09-new-site.md",
+      "output": {
+        ".html": {
+          "relative_path": "news/2024-12-09-new-site.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "news/2024-12-10-news-section.md",
+      "output": {
+        ".html": {
+          "relative_path": "news/2024-12-10-news-section.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "news/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "news/toc.html"
+        },
+        ".json": {
+          "relative_path": "news/toc.json"
         }
       },
       "version": ""
