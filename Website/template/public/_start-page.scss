@@ -1,0 +1,16 @@
+﻿[data-layout="landing"] .container-xxl {
+  max-width: 1800px;
+}
+
+
+.sections-container {
+  display: grid;
+  gap: 5pt;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-bottom: 30px;
+  > div {
+    padding: 5pt;
+    border: 1px solid;
+    border-radius: 5px;
+  }
+}
