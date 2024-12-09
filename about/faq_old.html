@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title> | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content=" | Compze ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/about/faq_old.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<h2 id="how-stable-is-compze">How stable is Compze?</h2>
+<p>The event store and the document database have been proven in production for a number of years. The current code has only minor changes. The service bus is new, under development, and untried in production. Of course all the components have test suites. No component has known bugs. We normally prioritize bug fixes over all feature development.</p>
+<h2 id="what-type-of-infrastructure-does-compze-require">What type of infrastructure does Compze require?</h2>
+<p>Compze uses a relational database for all storage. Currently, supported databases are Sql Server, PostgreSql and MySql. Other than a Sql instance composable components have no special requirements.</p>
+<h2 id="performance--scalability">Performance &amp; scalability</h2>
+<h3 id="how-well-does-compze-components-perform">How well does Compze components perform?</h3>
+<p>Very well and it will only get better. We have spent a ton of effort making sure that both performance and scalability is as high as possible without sacrificing reliability, productivity and maintainability. We have automated performance degradation tests that run continuously as we develop. We continuously look for ways to make things even faster and as we do we adjust the tests to require the new level of performance that we have achieved.</p>
+<h3 id="what-if-we-need-extreme-querying-scalability">What if we need extreme querying scalability?</h3>
+<p>Given this requirement we assume that you are willing to sacrifice some level of consistency in query results. These are then possible options:</p>
+<ul>
+<li>Maintain query models in any storage with sufficient scalablility.</li>
+<li>Add a layer on top of your querying API that makes use of a distributed cache.</li>
+</ul>
+<h3 id="what-if-we-need-extreme-write-side-scalability">What if we need extreme write side scalability?</h3>
+<p>If only a small subset of your data requires this level of write scalability, consider implementing only that part using other tools. If most of your data requires that level of scalability we would not recommend using our tools.</p>
+<h2 id="reliability">Reliability</h2>
+<h3 id="why-do-you-enforce-transactions-for-all-updates">Why do you enforce transactions for all updates?</h3>
+<p>Because it is our opinion that without transactions you have to sacrifice either reliability or simplicity/maintainability and we prioritize those over scalability and performance.</p>
+<h3 id="why-do-you-enforce-exactly-once-delivery-for-domain-events">Why do you enforce exactly once delivery for domain events?</h3>
+<p>Because it is our opinion that without exactly once delivery you have to sacrifice either reliability or simplicity/maintainability and we prioritize those over scalability and performance.</p>
+<h3 id="ive-heard-that-exactly-once-delivery-is-impossible">I've heard that exactly once delivery is impossible...</h3>
+<p>All arguments to that effect that we have encountered reason by disallowing transactions and/or message deduplication. Only through imposing this artificial constraint does exactly once delivery become &quot;impossible&quot;. Exactly once  == at least once + deduplication + transactions.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/about/faq_old.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

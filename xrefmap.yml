@@ -8825,6 +8825,23 @@ references:
   fullName.vb: Compze.Persistence.EventStore.IEventStored(Of TEvent)
   nameWithType: IEventStored<TEvent>
   nameWithType.vb: IEventStored(Of TEvent)
+- uid: Compze.Persistence.EventStore.IEventStored`1.EventStream
+  name: EventStream
+  href: api/Compze.Persistence.EventStore.IEventStored-1.html#Compze_Persistence_EventStore_IEventStored_1_EventStream
+  commentId: P:Compze.Persistence.EventStore.IEventStored`1.EventStream
+  fullName: Compze.Persistence.EventStore.IEventStored<TEvent>.EventStream
+  fullName.vb: Compze.Persistence.EventStore.IEventStored(Of TEvent).EventStream
+  nameWithType: IEventStored<TEvent>.EventStream
+  nameWithType.vb: IEventStored(Of TEvent).EventStream
+- uid: Compze.Persistence.EventStore.IEventStored`1.EventStream*
+  name: EventStream
+  href: api/Compze.Persistence.EventStore.IEventStored-1.html#Compze_Persistence_EventStore_IEventStored_1_EventStream_
+  commentId: Overload:Compze.Persistence.EventStore.IEventStored`1.EventStream
+  isSpec: "True"
+  fullName: Compze.Persistence.EventStore.IEventStored<TEvent>.EventStream
+  fullName.vb: Compze.Persistence.EventStore.IEventStored(Of TEvent).EventStream
+  nameWithType: IEventStored<TEvent>.EventStream
+  nameWithType.vb: IEventStored(Of TEvent).EventStream
 - uid: Compze.Persistence.EventStore.IMutableAggregateEvent
   name: IMutableAggregateEvent
   href: api/Compze.Persistence.EventStore.IMutableAggregateEvent.html
@@ -9197,23 +9214,23 @@ references:
   fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId)
   nameWithType: IReadonlyQueryModelEntityCollection<TEntity, TEntityId>
   nameWithType.vb: IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId)
-- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Exists(`1)
-  name: Exists(TEntityId)
-  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_IReadonlyQueryModelEntityCollection_2_Exists__1_
-  commentId: M:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Exists(`1)
-  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-  nameWithType: IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  nameWithType.vb: IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Exists*
-  name: Exists
-  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_IReadonlyQueryModelEntityCollection_2_Exists_
-  commentId: Overload:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Exists
+- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Contains(`1)
+  name: Contains(TEntityId)
+  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_IReadonlyQueryModelEntityCollection_2_Contains__1_
+  commentId: M:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Contains(`1)
+  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+  nameWithType: IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  nameWithType.vb: IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Contains*
+  name: Contains
+  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_IReadonlyQueryModelEntityCollection_2_Contains_
+  commentId: Overload:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Contains
   isSpec: "True"
-  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Exists
-  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Exists
-  nameWithType: IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Exists
-  nameWithType.vb: IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Exists
+  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Contains
+  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Contains
+  nameWithType: IReadonlyQueryModelEntityCollection<TEntity, TEntityId>.Contains
+  nameWithType.vb: IReadonlyQueryModelEntityCollection(Of TEntity, TEntityId).Contains
 - uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection`2.Get(`1)
   name: Get(TEntityId)
   href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.IReadonlyQueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_IReadonlyQueryModelEntityCollection_2_Get__1_
@@ -9294,23 +9311,23 @@ references:
   fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection(Of TEntity, TEntityId)
   nameWithType: QueryModelEntityCollection<TEntity, TEntityId>
   nameWithType.vb: QueryModelEntityCollection(Of TEntity, TEntityId)
-- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Exists(`1)
-  name: Exists(TEntityId)
-  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_QueryModelEntityCollection_2_Exists__1_
-  commentId: M:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Exists(`1)
-  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-  nameWithType: QueryModelEntityCollection<TEntity, TEntityId>.Exists(TEntityId)
-  nameWithType.vb: QueryModelEntityCollection(Of TEntity, TEntityId).Exists(TEntityId)
-- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Exists*
-  name: Exists
-  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_QueryModelEntityCollection_2_Exists_
-  commentId: Overload:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Exists
+- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Contains(`1)
+  name: Contains(TEntityId)
+  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_QueryModelEntityCollection_2_Contains__1_
+  commentId: M:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Contains(`1)
+  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+  nameWithType: QueryModelEntityCollection<TEntity, TEntityId>.Contains(TEntityId)
+  nameWithType.vb: QueryModelEntityCollection(Of TEntity, TEntityId).Contains(TEntityId)
+- uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Contains*
+  name: Contains
+  href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_QueryModelEntityCollection_2_Contains_
+  commentId: Overload:Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Contains
   isSpec: "True"
-  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection<TEntity, TEntityId>.Exists
-  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection(Of TEntity, TEntityId).Exists
-  nameWithType: QueryModelEntityCollection<TEntity, TEntityId>.Exists
-  nameWithType.vb: QueryModelEntityCollection(Of TEntity, TEntityId).Exists
+  fullName: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection<TEntity, TEntityId>.Contains
+  fullName.vb: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection(Of TEntity, TEntityId).Contains
+  nameWithType: QueryModelEntityCollection<TEntity, TEntityId>.Contains
+  nameWithType.vb: QueryModelEntityCollection(Of TEntity, TEntityId).Contains
 - uid: Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection`2.Get(`1)
   name: Get(TEntityId)
   href: api/Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels.QueryModelEntityCollection-2.html#Compze_Persistence_EventStore_Query_Models_SelfGeneratingQueryModels_QueryModelEntityCollection_2_Get__1_
@@ -11935,22 +11952,6 @@ references:
   fullName.vb: Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendAndClientException(Of TException)(Compze.Messaging.Buses.ITestingEndpointHost, System.Action)
   nameWithType: TestingHostExtensions.AssertThatRunningScenarioThrowsBackendAndClientException<TException>(ITestingEndpointHost, Action)
   nameWithType.vb: TestingHostExtensions.AssertThatRunningScenarioThrowsBackendAndClientException(Of TException)(ITestingEndpointHost, Action)
-- uid: Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException*
-  name: AssertThatRunningScenarioThrowsBackendException
-  href: api/Compze.Testing.Messaging.Buses.TestingHostExtensions.html#Compze_Testing_Messaging_Buses_TestingHostExtensions_AssertThatRunningScenarioThrowsBackendException_
-  commentId: Overload:Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException
-  isSpec: "True"
-  fullName: Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException
-  nameWithType: TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException
-- uid: Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException``1(Compze.Messaging.Buses.ITestingEndpointHost,System.Action)
-  name: AssertThatRunningScenarioThrowsBackendException<TException>(ITestingEndpointHost, Action)
-  href: api/Compze.Testing.Messaging.Buses.TestingHostExtensions.html#Compze_Testing_Messaging_Buses_TestingHostExtensions_AssertThatRunningScenarioThrowsBackendException__1_Compze_Messaging_Buses_ITestingEndpointHost_System_Action_
-  commentId: M:Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException``1(Compze.Messaging.Buses.ITestingEndpointHost,System.Action)
-  name.vb: AssertThatRunningScenarioThrowsBackendException(Of TException)(ITestingEndpointHost, Action)
-  fullName: Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException<TException>(Compze.Messaging.Buses.ITestingEndpointHost, System.Action)
-  fullName.vb: Compze.Testing.Messaging.Buses.TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException(Of TException)(Compze.Messaging.Buses.ITestingEndpointHost, System.Action)
-  nameWithType: TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException<TException>(ITestingEndpointHost, Action)
-  nameWithType.vb: TestingHostExtensions.AssertThatRunningScenarioThrowsBackendException(Of TException)(ITestingEndpointHost, Action)
 - uid: Compze.Testing.Performance
   name: Compze.Testing.Performance
   href: api/Compze.Testing.Performance.html
@@ -12258,6 +12259,81 @@ references:
   fullName.vb: Compze.Testing.TestEnv.PersistenceLayer.ValueFor(Of TValue)(TValue, TValue, TValue, TValue, TValue, TValue)
   nameWithType: TestEnv.PersistenceLayer.ValueFor<TValue>(TValue, TValue, TValue, TValue, TValue, TValue)
   nameWithType.vb: TestEnv.PersistenceLayer.ValueFor(Of TValue)(TValue, TValue, TValue, TValue, TValue, TValue)
+- uid: Compze.Testing.TestFrameworkExtensions
+  name: Compze.Testing.TestFrameworkExtensions
+  href: api/Compze.Testing.TestFrameworkExtensions.html
+- uid: Compze.Testing.TestFrameworkExtensions.NUnit
+  name: Compze.Testing.TestFrameworkExtensions.NUnit
+  href: api/Compze.Testing.TestFrameworkExtensions.NUnit.html
+  commentId: N:Compze.Testing.TestFrameworkExtensions.NUnit
+  fullName: Compze.Testing.TestFrameworkExtensions.NUnit
+  nameWithType: Compze.Testing.TestFrameworkExtensions.NUnit
+- uid: Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute
+  name: XTestAttribute
+  href: api/Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.html
+  commentId: T:Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute
+  fullName: Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute
+  nameWithType: XTestAttribute
+- uid: Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.BuildFrom(NUnit.Framework.Interfaces.IMethodInfo,NUnit.Framework.Internal.Test)
+  name: BuildFrom(IMethodInfo, Test?)
+  href: api/Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.html#Compze_Testing_TestFrameworkExtensions_NUnit_XTestAttribute_BuildFrom_NUnit_Framework_Interfaces_IMethodInfo_NUnit_Framework_Internal_Test_
+  commentId: M:Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.BuildFrom(NUnit.Framework.Interfaces.IMethodInfo,NUnit.Framework.Internal.Test)
+  name.vb: BuildFrom(IMethodInfo, Test)
+  fullName: Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.BuildFrom(NUnit.Framework.Interfaces.IMethodInfo, NUnit.Framework.Internal.Test?)
+  fullName.vb: Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.BuildFrom(NUnit.Framework.Interfaces.IMethodInfo, NUnit.Framework.Internal.Test)
+  nameWithType: XTestAttribute.BuildFrom(IMethodInfo, Test?)
+  nameWithType.vb: XTestAttribute.BuildFrom(IMethodInfo, Test)
+- uid: Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.BuildFrom*
+  name: BuildFrom
+  href: api/Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.html#Compze_Testing_TestFrameworkExtensions_NUnit_XTestAttribute_BuildFrom_
+  commentId: Overload:Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.BuildFrom
+  isSpec: "True"
+  fullName: Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.BuildFrom
+  nameWithType: XTestAttribute.BuildFrom
+- uid: Compze.Testing.TestFrameworkExtensions.XUnit
+  name: Compze.Testing.TestFrameworkExtensions.XUnit
+  href: api/Compze.Testing.TestFrameworkExtensions.XUnit.html
+  commentId: N:Compze.Testing.TestFrameworkExtensions.XUnit
+  fullName: Compze.Testing.TestFrameworkExtensions.XUnit
+  nameWithType: Compze.Testing.TestFrameworkExtensions.XUnit
+- uid: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer
+  name: XFactDiscoverer
+  href: api/Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.html
+  commentId: T:Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer
+  fullName: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer
+  nameWithType: XFactDiscoverer
+- uid: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.#ctor(Xunit.Abstractions.IMessageSink)
+  name: XFactDiscoverer(IMessageSink)
+  href: api/Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.html#Compze_Testing_TestFrameworkExtensions_XUnit_XFactDiscoverer__ctor_Xunit_Abstractions_IMessageSink_
+  commentId: M:Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.#ctor(Xunit.Abstractions.IMessageSink)
+  name.vb: New(IMessageSink)
+  fullName: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.XFactDiscoverer(Xunit.Abstractions.IMessageSink)
+  fullName.vb: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.New(Xunit.Abstractions.IMessageSink)
+  nameWithType: XFactDiscoverer.XFactDiscoverer(IMessageSink)
+  nameWithType.vb: XFactDiscoverer.New(IMessageSink)
+- uid: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.#ctor*
+  name: XFactDiscoverer
+  href: api/Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.html#Compze_Testing_TestFrameworkExtensions_XUnit_XFactDiscoverer__ctor_
+  commentId: Overload:Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.XFactDiscoverer
+  fullName.vb: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.New
+  nameWithType: XFactDiscoverer.XFactDiscoverer
+  nameWithType.vb: XFactDiscoverer.New
+- uid: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.Discover(Xunit.Abstractions.ITestFrameworkDiscoveryOptions,Xunit.Abstractions.ITestMethod,Xunit.Abstractions.IAttributeInfo)
+  name: Discover(ITestFrameworkDiscoveryOptions, ITestMethod, IAttributeInfo)
+  href: api/Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.html#Compze_Testing_TestFrameworkExtensions_XUnit_XFactDiscoverer_Discover_Xunit_Abstractions_ITestFrameworkDiscoveryOptions_Xunit_Abstractions_ITestMethod_Xunit_Abstractions_IAttributeInfo_
+  commentId: M:Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.Discover(Xunit.Abstractions.ITestFrameworkDiscoveryOptions,Xunit.Abstractions.ITestMethod,Xunit.Abstractions.IAttributeInfo)
+  fullName: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.Discover(Xunit.Abstractions.ITestFrameworkDiscoveryOptions, Xunit.Abstractions.ITestMethod, Xunit.Abstractions.IAttributeInfo)
+  nameWithType: XFactDiscoverer.Discover(ITestFrameworkDiscoveryOptions, ITestMethod, IAttributeInfo)
+- uid: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.Discover*
+  name: Discover
+  href: api/Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.html#Compze_Testing_TestFrameworkExtensions_XUnit_XFactDiscoverer_Discover_
+  commentId: Overload:Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.Discover
+  isSpec: "True"
+  fullName: Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.Discover
+  nameWithType: XFactDiscoverer.Discover
 - uid: Compze.Testing.Threading
   name: Compze.Testing.Threading
   href: api/Compze.Testing.Threading.html

@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Modern architecture for normal projects | Compze </title>
+      <title> | Compze </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Modern architecture for normal projects | Compze ">
+      <meta name="title" content=" | Compze ">
       
       
       <link rel="icon" href="favicon.ico">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/semantic-events-design/Website/index.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/index.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -71,73 +71,139 @@
         </div>
 
         <article data-uid="">
-<h1 id="modern-architecture-for-normal-projects">Modern architecture for normal projects</h1>
 
-<p>Compze provides tooling for normal modern architecture projects.</p>
-<h3 id="modern-architectures">Modern architectures</h3>
-<p>By modern architecture we mean software that tend to use tools or designs with labels such as Event Driven Architecture, Event Driven SOA, CQRS, Microservices, NoSql, Event Sourcing etc.</p>
-<h3 id="normal-projects">Normal projects</h3>
-<p>By normal projects we mean the vast majority of projects. Projects where reliability, productivity and maintainability are the top priorities. Projects where extreme scalability and availability are not required.</p>
-<h3 id="existing-tooling-and-platforms">Existing tooling and platforms</h3>
-<p>Unfortunately, it seems to us that most modern architecture tooling and platforms do not target normal projects. Instead they sacrifice reliability on the altar of nominal scalability and availability. In our experience this tends to result in a complexity explosion as the developers try to build reliable software with tooling not designed for reliability. Ultimately scalability and availability often disappear along with both productivity and maintainability as the complexity skyrockets.</p>
-<h3 id="how-compze-components-are-different">How Compze components are different</h3>
-<p>Compze consistently prioritizes reliability, productivity and maintainability for normal projects. Therefore all our tools fully support the following:</p>
+<h3 id="paradigm-shifts">Paradigm shifts</h3>
+<p>There are areas where it seems to us like the industry at large is stuck in old models.<br>
+Seemingly not realizing that new paradigms are within arms reach which can transform how we build systems for the better.<br>
+We don't claim to be the inventors of these paradigms. Rather we aim to help make them widely understood, accessible, and popular:</p>
+<div class="sections-container">
+<div>
+<h4 id="compzeevents">Compze.Events</h4>
+<p>Leveraging C# interface inheritance and generic variance enables</p>
 <ul>
-<li>Transactions and TransactionScope.</li>
-<li>High performance black box testing using the real production components.</li>
-<li>Renaming and moving classes already persisted in production data without breaking production data</li>
-<li>Renaming properties and fields without breaking production data (using Newtonsoft.Net attributes)</li>
-<li>Powerful semantic event modelling paradigm</li>
-<li>Compile time and runtime design validation catching all known common design mistakes.</li>
-<li>link:about/faq#performance[All the performance and scalability that we can squeeze out]</li>
+<li>A powerful universal event modeling paradigm which
+<ul>
+<li>Gives an unprecedented ability to understand domains in terms of how the events that can occur relate to each other.</li>
+<li>Eliminates all need for manual event routing and type checking.</li>
+<li>Enables modeling inheritance and composition of event based aggregates with elegant ease and precision.</li>
+<li>Unifies fine-grained property-updated style events and coarse-grained domain events.</li>
+<li>Enables subscribing to precisely the event you need, yet be guaranteed that when new events are added, inheriting the current event, you will receive those too.</li>
 </ul>
-<h3 id="hypermedia-service-bus">Hypermedia Service Bus</h3>
-<p>A unified messaging platform that gives you</p>
+</li>
+</ul>
+</div>
+<div>
+<h4 id="compzeaggregates">Compze.Aggregates</h4>
 <ul>
-<li>Powerful zero configuration routing</li>
-<li>A service bus with an exactly-once delivery guarantee</li>
-<li>RPC style communication with optional command deduplication
+<li>Build maintainable Compze.Events based domain aggregates.</li>
+<li>Compose aggregates out of reusable event based
 <ul>
-<li>Letting you build
+<li>Aggregate base classes</li>
+<li>Components</li>
+<li>Entities</li>
+</ul>
+</li>
+<li>Store your aggregates however you like. Event store optional.
 <ul>
-<li>Type safe Hypermedia APIs that can be consumed with with full intellisense and type safety in
+<li>Note: Much/most of the maintenance pain of event driven systems lie in the constraints imposed by event sourcing and the requirement to maintain events forever. Well, if you don't need that, just skip it!</li>
+</ul>
+</li>
+</ul>
+</div>
+<div>
+<h4 id="compzeservicebus">Compze.ServiceBus</h4>
 <ul>
-<li>.Net language clients such as ASP.Net or Blazor (Blazor support not yet implemented)</li>
-<li>Typescript (Not yet implemented)</li>
+<li>Fully supports the Compze.Events modelling paradigm.</li>
+<li>Performant black box testing</li>
+<li>In process
+<ul>
+<li>Leverage Compze.Events and Aggregates without incurring any of the complexities of asynchronous distribution.</li>
+</ul>
+</li>
+<li>Distributed
+<ul>
+<li>Fully transactional</li>
+<li>Exactly once delivery</li>
+<li>Persist messages in your existing database server.
+<ul>
+<li>PostgreSQL, MS SQL, MySQL</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+</div>
+<div>
+<h4 id="compzeeventstore">Compze.EventStore</h4>
+<ul>
+<li>Fully leverages Compze.Events</li>
+<li>Fully transactional</li>
+<li>Easy performant black box testing</li>
+<li>Persist events in your application's existing database server
+<ul>
+<li>PostgreSQL, MS SQL, MySQL</li>
+</ul>
 </li>
-<li>All the features from <a href="#how-composable-components-are-different">How Compze components are different</a></li>
+<li>Refactor your event histories</li>
 </ul>
-<h3 id="event-store">Event Store</h3>
+</div>
+<div>
+<h4 id="compzehypermedia">Compze.HyperMedia</h4>
+<p>Create APIs that</p>
 <ul>
-<li>Build complex aggregates nesting entities and components in each other to arbitrary depths with ease by leveraging semantic events.</li>
-<li>Refactoring of event histories including fully removing obsolete code</li>
-<li>Performant on-demand generation of query models from events dramatically reduces the need for persisted query models</li>
-<li>All the features from <a href="#how-composable-components-are-different">How Compze components are different</a></li>
+<li>Can be navigated like browsing a WebSite, through autocomplete in your IDE.</li>
+<li>Can be in-memory, or remote over HTTP</li>
+<li>Are fully type safe</li>
+<li>Further encapsulates your domain, exposing less implementation details than traditional services.</li>
+<li>Are excellently suited for building that Just-Beneath-The-UI-Rendering layer that is ideal for black box testing.</li>
+<li>Support performant black box testing.</li>
 </ul>
-<h3 id="document-database">Document Database</h3>
+</div>
+</div>
+<h3 id="filling-in-cracks--scratching-that-persistent-itch">Filling in cracks / Scratching that persistent itch</h3>
+<p>Some problems don't need very much code to resolve them. You might say they are just cracks that need to be filled in.<br>
+Having that itch scratched can feel fabulous though!</p>
+<div class="sections-container">
+<div>
+<h4 id="compzetesting">Compze.Testing</h4>
 <ul>
-<li>Save or load instances of any class serializable with Newtonsoft.Json with a single line of code.</li>
-<li>Automatically tracks and persists changes to loaded documents</li>
-<li>All the features from <a href="#how-composable-components-are-different">How Compze components are different</a></li>
-</ul>
-<h3 id="hypermedia-api">Hypermedia API</h3>
-<p>Most APIs consist of a number of service classes and interfaces. Imagine instead an APIs that is a lot like a website. That had a start resource from which you follow links to other resources where you could fill in commands and post them. That is essentially what a Hypermedia API is. Hypermedia API have these advantages among others:</p>
+<li>BDD style testing without leaving NUnit/XUnit.</li>
+<li>Manipulate threads with precision to expose those hard to recreate race conditions.</li>
+<li>Get an empty database for black box testing in a single line of code.
 <ul>
-<li>You expose zero implementation details about your API. Clients only know about the hypermedia controls such as commands, resources and links.</li>
-<li>Developers don't need to read a ton of documentation to figure out how to use your API or what functionality is available. Instead they just follow the links using intellisense from your start-resource to explore the functionality.</li>
+<li>PostgreSQL, MS SQL, MySQL</li>
 </ul>
-<h3 id="semantic-event-modelling-paradigm">Semantic event modelling paradigm</h3>
-<p>Simply means that you declare how the meaning of one event relates to the meaning of another through .Net interface inheritance. As it turns out this enables very flexible and powerful domain designs with complex aggregates, zero configuration routing and elimination of a ton of duplicated event handler code.</p>
+</li>
+</ul>
+</div>
+<div>
+<h4 id="compzethreading">Compze.Threading</h4>
+<ul>
+<li>Transform thread synchronization with just a handful of abstractions.</li>
+<li>Guarantee that all usage of a resource is synchronized.</li>
+<li>Wait for shared objects to reach certain states.</li>
+<li>Don't deadlock permanently. Instead, time out, and report the stack traces of the conflicting threads.</li>
+</ul>
+</div>
+<div>
+<h4 id="compzecontracts">Compze.Contracts</h4>
+<ul>
+<li>Code contracts that are
+<ul>
+<li>Simple</li>
+<li>Fluent</li>
+<li>Expressive</li>
+<li>Easily extended with custom assertions</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/semantic-events-design/Website/index.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/index.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>

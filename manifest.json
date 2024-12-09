@@ -42,6 +42,16 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "about/faq_old.md",
+      "output": {
+        ".html": {
+          "relative_path": "about/faq_old.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "about/index.md",
       "output": {
         ".html": {
@@ -3492,6 +3502,56 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.TestFrameworkExtensions.NUnit.XTestAttribute.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.TestFrameworkExtensions.NUnit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.TestFrameworkExtensions.NUnit.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.TestFrameworkExtensions.XUnit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.TestFrameworkExtensions.XUnit.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Compze.Testing.TestFrameworkExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Compze.Testing.TestFrameworkExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Compze.Testing.Threading.TestingTaskRunner.yml",
       "output": {
         ".html": {
@@ -3632,6 +3692,86 @@
       "output": {
         ".html": {
           "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/aggregates.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/aggregates.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/contracts.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/contracts.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/events.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/events.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/eventstore.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/eventstore.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/hypermedia.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/hypermedia.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/servicebus.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/servicebus.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/testing.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/testing.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/threading.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/threading.html"
         }
       },
       "version": ""
