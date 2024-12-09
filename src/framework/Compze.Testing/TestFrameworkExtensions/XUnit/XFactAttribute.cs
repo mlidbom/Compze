@@ -26,7 +26,7 @@ sealed class XFactAttribute : FactAttribute
    }
 }
 
-[UsedImplicitly] public class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
+[UsedImplicitly] class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
 {
    readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 
