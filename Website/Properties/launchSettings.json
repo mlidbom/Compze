@@ -23,7 +23,7 @@
       "commandName": "Executable",
       "executablePath": "dotnet",
       "workingDirectory": "$(ProjectDir)",
-      "commandLineArgs": "watch", 
+      "commandLineArgs": "watch --no-hot-reload", 
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

@@ -1,14 +1,14 @@
 ﻿<div>
 
 #### Compze.ServiceBus
-* Fully leverages the power of the Compze.Events modelling paradigm.
+* Fully supports the Compze.Events modelling paradigm.
+* Performant black box testing
 * In process
-  * The advantages of event driven design without the complexities of asynchronous distribution.
+  * Leverage Compze.Events and Aggregates without incurring any of the complexities of asynchronous distribution.
 * Distributed
   * Fully transactional
   * Exactly once delivery
-  * Performant black box testing
-  * Persists messages in your existing database server.
+  * Persist messages in your existing database server.
     * PostgreSQL, MS SQL, MySQL
 
 </div>
