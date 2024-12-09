@@ -2,8 +2,7 @@
 _layout: landing
 ---
 
-# Filling in the gaps
-## Mining structure out of complexity and chaos
+## Mining structure from complexity and chaos
 
 ### Filling in cracks
 
@@ -27,7 +26,7 @@ _layout: landing
 
 ---
 
-### Filling in ocean trenches
+### Filling in trenches
 <div class="sections-container">
    <div>
 
@@ -41,12 +40,12 @@ _layout: landing
    </div>
    <div>
 
-[!INCLUDE [](index/servicebus.md)]
+[!INCLUDE [](index/eventstore.md)]
 
    </div>
    <div>
 
-[!INCLUDE [](index/eventstore.md)]
+[!INCLUDE [](index/servicebus.md)]
 
    </div>
 </div>
