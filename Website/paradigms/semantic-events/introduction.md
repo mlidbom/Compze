@@ -30,4 +30,4 @@ The correct answer is:
 >User: SOME-GUID was registered  
 >User: SOME-GUID was imported from Google
 
-The type `IUserImportedFromGoogle` is compatible with all of the registered handlers, and will therefore be delivered to all of them in the order that the handlers were registered.
+The type `IUserImportedFromGoogle` is compatible with all the registered handlers, and will therefore be delivered to all of them in the order that the handlers were registered.
