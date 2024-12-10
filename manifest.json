@@ -3664,6 +3664,39 @@
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "docs/prerequisite-terms.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/prerequisite-terms.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/the-tools.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/the-tools.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "docs/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/toc.html"
+        },
+        ".json": {
+          "relative_path": "docs/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "Resource",
       "source_relative_path": "favicon.ico",
       "output": {
@@ -3725,10 +3758,30 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "index/hypermedia-apis.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/hypermedia-apis.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "index/hypermedia.md",
       "output": {
         ".html": {
           "relative_path": "index/hypermedia.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index/semantic-events.md",
+      "output": {
+        ".html": {
+          "relative_path": "index/semantic-events.html"
         }
       },
       "version": ""
@@ -3775,10 +3828,20 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "news/2024-12-10-news-section.md",
+      "source_relative_path": "news/2024-12-10-01-news-section.md",
       "output": {
         ".html": {
-          "relative_path": "news/2024-12-10-news-section.html"
+          "relative_path": "news/2024-12-10-01-news-section.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "news/2024-12-10-02-semantic-events-sections.md",
+      "output": {
+        ".html": {
+          "relative_path": "news/2024-12-10-02-semantic-events-sections.html"
         }
       },
       "version": ""
@@ -3792,6 +3855,72 @@
         },
         ".json": {
           "relative_path": "news/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "paradigms/hypermedia-apis/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/hypermedia-apis/introduction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "paradigms/hypermedia-apis/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/hypermedia-apis/toc.html"
+        },
+        ".json": {
+          "relative_path": "paradigms/hypermedia-apis/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "paradigms/semantic-events/event-naming.md",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/semantic-events/event-naming.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "paradigms/semantic-events/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/semantic-events/introduction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "paradigms/semantic-events/property-updated-events.md",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/semantic-events/property-updated-events.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "paradigms/semantic-events/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/semantic-events/toc.html"
+        },
+        ".json": {
+          "relative_path": "paradigms/semantic-events/toc.json"
         }
       },
       "version": ""

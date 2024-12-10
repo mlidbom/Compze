@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title> | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content=" | Compze ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/docs/the-tools.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<div>
+<h4 id="the-tools">The tools</h4>
+</div>
+<div class="grid">
+<div>
+<h4 id="compzeevents">Compze.Events</h4>
+<p>Leveraging C# interface inheritance and generic variance enables</p>
+<ul>
+<li>A powerful universal event modeling paradigm which
+<ul>
+<li>Gives an unprecedented ability to understand domains in terms of how the events that can occur relate to each other.</li>
+<li>Eliminates all need for manual event routing and type checking.</li>
+<li>Enables modeling inheritance and composition of event based aggregates with elegant ease and precision.</li>
+<li>Unifies fine-grained property-updated style events and coarse-grained domain events.</li>
+<li>Enables subscribing to precisely the event you need, yet be guaranteed that when new events are added, inheriting the current event, you will receive those too.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div>
+<h4 id="compzeaggregates">Compze.Aggregates</h4>
+<ul>
+<li>Build maintainable Compze.Events based domain aggregates.</li>
+<li>Compose aggregates out of reusable event based
+<ul>
+<li>Aggregate base classes</li>
+<li>Components</li>
+<li>Entities</li>
+</ul>
+</li>
+<li>Store your aggregates however you like. Event store optional.
+<ul>
+<li>Note: Much/most of the maintenance pain of event driven systems lie in the constraints imposed by event sourcing and the requirement to maintain events forever. Well, if you don't need that, just skip it!</li>
+</ul>
+</li>
+</ul>
+</div>
+<div>
+<h4 id="compzeservicebus">Compze.ServiceBus</h4>
+<ul>
+<li>Fully supports the Compze.Events modelling paradigm.</li>
+<li>Performant black box testing</li>
+<li>In process
+<ul>
+<li>Leverage Compze.Events and Aggregates without incurring any of the complexities of asynchronous distribution.</li>
+</ul>
+</li>
+<li>Distributed
+<ul>
+<li>Fully transactional</li>
+<li>Exactly once delivery</li>
+<li>Persist messages in your existing database server.
+<ul>
+<li>PostgreSQL, MS SQL, MySQL</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div>
+<h4 id="compzeeventstore">Compze.EventStore</h4>
+<ul>
+<li>Fully leverages Compze.Events</li>
+<li>Fully transactional</li>
+<li>Easy performant black box testing</li>
+<li>Persist events in your application's existing database server
+<ul>
+<li>PostgreSQL, MS SQL, MySQL</li>
+</ul>
+</li>
+<li>Refactor your event histories</li>
+</ul>
+</div>
+<div>
+<h4 id="compzehypermedia">Compze.HyperMedia</h4>
+<p>Create APIs that</p>
+<ul>
+<li>Can be navigated like browsing a WebSite, through autocomplete in your IDE.</li>
+<li>Can be in-memory, or remote over HTTP</li>
+<li>Are fully type safe</li>
+<li>Further encapsulates your domain, exposing less implementation details than traditional services.</li>
+<li>Are excellently suited for building that Just-Beneath-The-UI-Rendering layer that is ideal for black box testing.</li>
+<li>Support performant black box testing.</li>
+</ul>
+</div>
+</div>
+<div>
+<h3 id="filling-in-cracks--scratching-that-persistent-itch">Filling in cracks / Scratching that persistent itch</h3>
+<p>Some problems don't need very much code to resolve them. You might say they are just cracks that need to be filled in. Having that itch scratched can feel fabulous though!</p>
+</div>
+<div class="grid">
+<div>
+<h4 id="compzetesting">Compze.Testing</h4>
+<ul>
+<li>BDD style testing without leaving NUnit/XUnit.</li>
+<li>Manipulate threads with precision to expose those hard to recreate race conditions.</li>
+<li>Get an empty database for black box testing in a single line of code.
+<ul>
+<li>PostgreSQL, MS SQL, MySQL</li>
+</ul>
+</li>
+</ul>
+</div>
+<div>
+<h4 id="compzethreading">Compze.Threading</h4>
+<ul>
+<li>Transform thread synchronization with just a handful of abstractions.</li>
+<li>Guarantee that all usage of a resource is synchronized.</li>
+<li>Wait for shared objects to reach certain states.</li>
+<li>Don't deadlock permanently. Instead, time out, and report the stack traces of the conflicting threads.</li>
+</ul>
+</div>
+<div>
+<h4 id="compzecontracts">Compze.Contracts</h4>
+<ul>
+<li>Code contracts that are
+<ul>
+<li>Simple</li>
+<li>Fluent</li>
+<li>Expressive</li>
+<li>Easily extended with custom assertions</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/docs/the-tools.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

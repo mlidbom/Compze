@@ -5,17 +5,25 @@
   margin-bottom: 0;
 }
 
-[data-layout=landing] .container-xxl {
-  max-width: 1800px;
+#start-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-
-.sections-container {
+#start-page > div {
   display: grid;
   gap: 5pt;
-  grid-template-columns: 1fr 1fr 1fr;
   margin-bottom: 30px;
 }
-.sections-container > div {
+#start-page > div p {
+  width: 65ch;
+}
+#start-page > div.grid {
+  width: 100%;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fit, 65ch);
+}
+#start-page > div > div {
   padding: 5pt;
   border: 1px solid;
   border-radius: 5px;
@@ -23,10 +31,6 @@
 
 #logo {
   visibility: hidden;
-}
-
-p {
-  max-width: 80ch;
 }
 
 /*# sourceMappingURL=main.css.map */

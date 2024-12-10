@@ -2,21 +2,21 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Semantic Routing | Compze </title>
+      <title> | Compze </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Semantic Routing | Compze ">
+      <meta name="title" content=" | Compze ">
       
       
       <link rel="icon" href="../../favicon.ico">
       <link rel="stylesheet" href="../../public/docfx.min.css">
       <link rel="stylesheet" href="../../public/main.css">
       <meta name="docfx:navrel" content="../../toc.html">
-      <meta name="docfx:tocrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
       
       <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/docs/messaging/semantic-routing.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/property-updated-events.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -85,67 +85,50 @@
         </div>
 
         <article data-uid="">
-<h1 id="semantic-routing">Semantic Routing</h1>
 
-<div class="NOTE">
-<h5>Note</h5>
-<p>Semantic routing is used throughout the toolkit. It is foundational for the Event Store, Service Bus, Query Model updaters and Generators...</p>
-</div>
-<h2 id="definition">Definition</h2>
-<ul>
-<li>Events are delivered to every registered handler with a compatible argument type.</li>
-<li>Commands and query message types must have exactly one handler.</li>
-</ul>
-<div class="TIP">
-<h5>Tip</h5>
-<p>The first rule is really just polymorphism.</p>
-</div>
-<div class="TIP">
-<h5>Tip</h5>
-<p>Semantic Routing is also known as &quot;Polymorphic routing&quot; or &quot;Polymorphic  dispatching&quot;.</p>
-</div>
-<h3 id="clarifying-examples">Clarifying examples</h3>
-<p>Given these event interfaces and implementing classes</p>
-<pre><code>interface IA
-interface IB : IA
-interface IC : IB
+<h4 id="adding-properties-to-our-events">Adding properties to our events</h4>
+<p>You may have noticed that the events on the last page were missing a little something, namely properties.<br>
+Now the natural expectation would be for a slightly more realistic version of something like this:</p>
+<pre><code class="lang-csharp">interface IUserRegistered : IUserEvent, IAggregateCreatedEvent;
+interface IUserChangedEmail : IUserEvent;
+</code></pre>
+<p>to be something like this:</p>
+<pre><code class="lang-csharp">interface IUserRegistered : IUserEvent, IAggregateCreatedEvent
+{
+   Email Email { get; }
+}
 
-class A : IA {}
-class B : IB {}
-class C : IC {}
+interface IUserChangedEmail : IUserEvent
+{
+   Email Email { get; }
+}
 </code></pre>
-<p>And these handler methods registered on our service bus</p>
-<pre><code>void HandleA(IA ia){} //Handles IA, IB and IC
-void HandleB(IB ib){} //Handles IB and IC
-void HandleC(IC ic){} //Handles only IC
+<p>However, doing that does not work well at all.</p>
+<h4 id="the-dilemma-of-fine-grained-vs-coarse-grained-events">The dilemma of Fine-grained vs Coarse-grained events</h4>
+<p>The reason the above code is terrible idea, is that some event listeners care only about updated data, and others care about semantics. If we do things like above, the code that care only about data will not only have to know about and manually listen to every single concrete event in the system that updates <code>Email</code>, we must keep track of every such listener for every single aggregate property in our whole system, and update  each of them every time a new event that updates a user email is created 😨</p>
+<p>Classically the above problem has lead to projects being forced to choose between using fine-grained property-updated events and coarse-grained semantically meaningful domain events. The problem is that both choices are maintainability disasters. If you go with property-updated style events you lose virtually all ability to understand the semantics of what happened, as a single user interaction is exploded into a number of individual data atoms 😬 If you go with coarse-grained events, we run head first into the issues described in the previous paragraph. You cannot win as long as you accept the choice.</p>
+<h4 id="unifying-fine-grained-and-coarse-grained-events">Unifying Fine-grained and Coarse-grained events</h4>
+<p>With semantic events you don't need to choose. If you do this:</p>
+<pre><code class="lang-csharp">interface IUserEmailPropertyUpdated : IUserEvent
+{
+   Email Email { get; }
+}
+
+interface IUserRegistered : IUserEmailPropertyUpdated, IAggregateCreatedEvent;
+interface IUserChangedEmail : IUserEmailPropertyUpdated;
 </code></pre>
-<p>.Let's publish some events and examine the results.</p>
-<pre><code>serviceBus.Publish(new A()); //Delivered to HandleA
-serviceBus.Publish(new B()); //Delivered to HandleA and HandleB
-serviceBus.Publish(new C()); //Delivered to HandleA, HandleB and HandleC
+<p>The whole problem disappears like it never existed ☺️<br>
+When we design events like that, a listener like this ...</p>
+<pre><code class="lang-csharp">eventHandlerRegistrar
+  .ForEvent&lt;IUserEmailPropertyUpdated&gt;(emailUpdated =&gt; WriteLine($&quot;User: {emailUpdated.AggregateId} Email: {emailUpdated.Email}&quot;));
 </code></pre>
-<h3 id="loose-coupling-through-interfaces">Loose coupling through interfaces</h3>
-<p>Working with events in terms of interfaces maintains flexibility.
-Here is a partial list of things it is possible to do without having to change any code in any event listener.</p>
-<ul>
-<li>Refactoring event classes</li>
-<li>Adding event classes</li>
-<li>Adding event interfaces</li>
-<li>Changing event inheritance hierarchy</li>
-</ul>
-<div class="TIP">
-<h5>Tip</h5>
-<p>Remember to think about events in terms of interfaces. The event classes are an implementation detail that should only ever be known by the code that publishes the event.</p>
-</div>
-<div class="WARNING">
-<h5>Warning</h5>
-<p>Do not subscribe to event classes. You will lose the benefits just discussed.</p>
-</div>
+<p>... will never need to change throughout the whole lifetime of the system. It will be called whenever a user's email is updated. Period.</p>
+<p>Likewise, listeners that care about when users are registered will listen to <code>IUserRegistered</code> and receive the same benefits. No matter how many new ways of registering users we add, no matter how many new subtypes of <code>IUserRegistered</code> are added. That code will always be called and does not need to change.</p>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/docs/messaging/semantic-routing.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/property-updated-events.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>

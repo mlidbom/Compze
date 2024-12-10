@@ -1,32 +1,6 @@
-﻿.alert {
-  --bs-alert-padding-y: 0.3rem;
-
-  p:last-of-type {
-    margin-bottom: 0;
-  }
-}
-
-[data-layout="landing"] .container-xxl {
-  max-width: 1800px;
-}
-
-
-.sections-container {
-  display: grid;
-  gap: 5pt;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin-bottom: 30px;
-  > div {
-    padding: 5pt;
-    border: 1px solid;
-    border-radius: 5px;
-  }
-}
+﻿@use 'defaults';
+@use 'start-page';
 
 #logo {
-  visibility: hidden;  
-}
-
-p {
-  max-width: 80ch;
+  visibility: hidden;
 }
