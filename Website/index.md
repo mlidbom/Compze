@@ -14,6 +14,7 @@ There are two areas where it seems to us like the industry has been stuck in old
 <div class="grid">
 
 [!INCLUDE [](index/semantic-events.md)]
+
 [!INCLUDE [](index/hypermedia-apis.md)]
 
 </div>

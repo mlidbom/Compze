@@ -28,13 +28,13 @@ public static partial class Composite_aggregate_specification
             [XFact] public void The_name_of_the_added_entity_is_entity2() => _entity2.Name.Should().Be("entity2");
             [XFact] public void The_name_of_the_added_query_model_is_entity2() => _qmEntity2.Name.Should().Be("entity2");
 
-            public new class The_aggregates_Entities_collection : After_adding_entity_named_entity2
+            public class The_aggregates_Entities_collection_ : After_adding_entity_named_entity2
             {
                [XFact] public void Single_throws() => Invoking(() => _aggregate.Entities.Single()).Should().Throw<Exception>();
                [XFact] public void InCreationOrder_1_returns_the_entity() => _aggregate.Entities.InCreationOrder[1].Should().Be(_entity2);
                [XFact] public void InCreationOrder_Count_is_2() => _aggregate.Entities.InCreationOrder.Count.Should().Be(2);
 
-               public class Passing_the_entitys_id_to : The_aggregates_Entities_collection
+               public class Passing_the_entitys_id_to : The_aggregates_Entities_collection_
                {
                   [XFact] public void Contains_returns_true() => _aggregate.Entities.Contains(_entity2.Id).Should().Be(true);
                   [XFact] public void Get_returns_the_entity() => _aggregate.Entities.Get(_entity2.Id).Should().Be(_entity2);
@@ -48,13 +48,13 @@ public static partial class Composite_aggregate_specification
                }
             }
 
-            public new class The_QueryModels_Entities_collection : After_adding_entity_named_entity2
+            public class The_QueryModels_Entities_collection_ : After_adding_entity_named_entity2
             {
                [XFact] public void Single_throws() => Invoking(() => _queryModel.Entities.Single()).Should().Throw<Exception>();
                [XFact] public void InCreationOrder_1_returns_the_entity_query_model() => _queryModel.Entities.InCreationOrder[1].Should().Be(_qmEntity2);
                [XFact] public void InCreationOrder_Count_is_2() => _queryModel.Entities.InCreationOrder.Count.Should().Be(2);
 
-               public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection
+               public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection_
                {
                   [XFact] public void Contains_returns_true() => _queryModel.Entities.Contains(_entity2.Id).Should().Be(true);
                   [XFact] public void Get_returns_the_entity_query_model() => _queryModel.Entities.Get(_entity2.Id).Should().Be(_qmEntity2);
