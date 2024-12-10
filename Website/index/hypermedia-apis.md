@@ -16,4 +16,5 @@ What if we designed Hypermedia APIs instead? APIs which:
 * Are excellently suited for building a Just-Beneath-The-UI-Rendering-Layer layer, ideal for black box testing.
 
 Once you used APIs like that, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
+
 </div>
