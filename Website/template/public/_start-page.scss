@@ -1,16 +1,26 @@
-﻿[data-layout="landing"] .container-xxl {
-  max-width: 1800px;
-}
+﻿#start-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-
-.sections-container {
-  display: grid;
-  gap: 5pt;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin-bottom: 30px;
   > div {
-    padding: 5pt;
-    border: 1px solid;
-    border-radius: 5px;
+    display: grid;
+    gap: 5pt;
+    margin-bottom: 30px;
+
+    &.two-columns {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &.three-columns {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    > div {
+      max-width: 75ch;
+      padding: 5pt;
+      border: 1px solid;
+      border-radius: 5px;
+    }
   }
 }
