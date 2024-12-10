@@ -59,7 +59,6 @@ namespace Website.paradigms.semantic_events
       }
       #endregion
 
-
       #region nested-events2
       interface IUserEvent : IAggregateEvent
       {
