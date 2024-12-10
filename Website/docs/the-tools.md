@@ -6,9 +6,13 @@
 <div class="grid">
 
 [!INCLUDE [](../index/events.md)]
+
 [!INCLUDE [](../index/aggregates.md)]
+
 [!INCLUDE [](../index/servicebus.md)]
+
 [!INCLUDE [](../index/eventstore.md)]
+
 [!INCLUDE [](../index/hypermedia.md)]
 
 </div>
@@ -23,7 +27,9 @@ Some problems don't need very much code to resolve them. You might say they are 
 <div class="grid">
 
 [!INCLUDE [](../index/testing.md)]
+
 [!INCLUDE [](../index/threading.md)]
+
 [!INCLUDE [](../index/contracts.md)]
 
 </div>

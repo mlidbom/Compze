@@ -1,9 +1,9 @@
 ﻿<div>
 
-#### [Browsable APIs](../paradigms/browsable-apis/browsable-apis-introduction.md)
-The, by far, most popular API in the world is a Browsable API (specifically a Hypermedia API). You are using it right now. It's called the world wide web. Can you imagine trying to use it without a browser with support for links? Imagine reading a web page and instead of a links you are presented with `Guid`s, or `int`s with no hint as to what to do with them...
+#### [Hypermedia APIs](../paradigms/hypermedia-apis/hypermedia-apis-introduction.md)
+The, by far, most popular API in the world is a Hypermedia API. You are using it right now. It's called the world wide web. Can you imagine trying to use it without a browser with support for links? Imagine reading a web page and instead of a links you are presented with `Guid`s, or `int`s with no hint as to what to do with them...
 
-Well. That is, literally, how we build most APIs today!
+That is, literally, how we build most APIs today. That's a sobering thought...
 
 What if we designed Browsable APIs instead? APIs which: 
 

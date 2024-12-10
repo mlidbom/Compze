@@ -1,7 +1,7 @@
 - name: Semantic Events
   href: paradigms/semantic-events/
-- name: Browsable APIs
-  href: paradigms/browsable-apis/
+- name: Hypermedia APIs
+  href: paradigms/hypermedia-apis/
 - name: Docs
   href: docs/
 - name: News
