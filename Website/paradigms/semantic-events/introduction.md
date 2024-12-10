@@ -18,7 +18,7 @@ And of course things can happen related to users:
 
 [!code-csharp[](introduction.cs#UserEvents1)]
 
-Now stop and look carefully at how these interfaces inherit each other. This is the core concept of semantic events. That the relationship in meaning between events can be modeled using .Net type compatibility. On of the many advantages is that Compze can internally take care of everything that needs to happen for new aggregates automatically just because you implement `IAggregateCreatedEvent`
+Now stop and look carefully at how these interfaces inherit each other. This is the core concept of semantic events. That the relationship in meaning between events can be modeled using .Net type compatibility. One of the many advantages is that Compze can internally take care of everything that needs to happen for new aggregates automatically just because you implement `IAggregateCreatedEvent`
 
 
 Let's examine a simple example of what this means in practice. Here's how you might subscribe to these events:
