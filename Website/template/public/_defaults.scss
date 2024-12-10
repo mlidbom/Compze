@@ -1,13 +1,7 @@
-$paragraph-width: 65ch;
-
 .alert {
   --bs-alert-padding-y: 0.3rem;
 
   p:last-of-type {
     margin-bottom: 0;
   }
-}
-
-p {
-  max-width: $paragraph-width;
 }
