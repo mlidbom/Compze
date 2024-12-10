@@ -8,12 +8,11 @@
     gap: 5pt;
     margin-bottom: 30px;
 
-    &.two-columns {
-      grid-template-columns: 1fr 1fr;
-    }
 
-    &.three-columns {
-      grid-template-columns: 1fr 1fr 1fr;
+    &.grid {
+      width: 100%;
+      justify-content: center;
+      grid-template-columns: repeat(auto-fit, 65ch);
     }
 
     > div {
