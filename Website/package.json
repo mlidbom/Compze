@@ -1,7 +1,7 @@
 {
   "scripts": {
     "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
-    "live-server": "live-server --port=8080 --host=localhost --watch=_site/ --open=_site/",
+    "live-server": "live-server --port=8080 --host=localhost --watch=_site/ --open=_site/ --quiet",
     "watch": "npm-watch build",
     "build": "docfx build",
     "build-full": "docfx",
