@@ -7,7 +7,7 @@ _layout: landing
 <div>
 
 ### Ushering in paradigm shifts
-There are areas where it seems to us like the industry at large is stuck in old models. Seemingly not realizing that new paradigms are available. Paradigms which can transform how we build systems for the better. We don't claim to be the inventors of these paradigms. Rather we aim to help make them widely understood, accessible, and popular:
+There are areas where it seems to us like the industry at large is stuck in old models. Seemingly not realizing that new paradigms are already here. Paradigms which can transform how we build systems for the better. We don't claim to be the inventors of these paradigms. Rather we aim to help make them widely understood, accessible, and popular:
 
 </div>
 
