@@ -31,3 +31,5 @@ The correct answer is:
 >User: SOME-GUID was imported from Google
 
 The type `IUserImportedFromGoogle` is compatible with all the registered handlers, and will therefore be delivered to all of them in the order that the handlers were registered.
+
+If an `IUserEvent` was published only the first subscriber would be called, if an `IUserRegistered` was published, only the first two.
