@@ -1,7 +1,7 @@
 ﻿### Semantic Events?
 Rather than get bogged down in trying for a definition, we are just going to dive right in to code using semantic events.
 
-This is the root of the event inheritance hierarchy. By some level of indirection, Every event implements it:
+This is the root of the event inheritance hierarchy. By some level of indirection, every event implements it:
 [!code-csharp[](introduction.cs#IEvent)]
 
 Every event raised by an aggregate will implement this interface:
