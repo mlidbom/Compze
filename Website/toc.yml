@@ -1,5 +1,5 @@
-#- name: Docs
-#  href: docs/
+- name: Docs
+  href: docs/
 - name: News
   href: news/
 #- name: FAQ

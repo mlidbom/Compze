@@ -1,4 +1,6 @@
-﻿#start-page {
+﻿@use 'defaults';
+
+#start-page {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,11 +14,10 @@
     &.grid {
       width: 100%;
       justify-content: center;
-      grid-template-columns: repeat(auto-fit, 65ch);
+      grid-template-columns: repeat(auto-fit, defaults.$paragraph-width);
     }
 
     > div {
-      max-width: 75ch;
       padding: 5pt;
       border: 1px solid;
       border-radius: 5px;

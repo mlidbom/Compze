@@ -1,3 +1,5 @@
+$paragraph-width: 65ch;
+
 .alert {
   --bs-alert-padding-y: 0.3rem;
 
@@ -7,5 +9,5 @@
 }
 
 p {
-  max-width: 80ch;
+  max-width: $paragraph-width;
 }
