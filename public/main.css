@@ -18,6 +18,9 @@
 #start-page > div p {
   width: 65ch;
 }
+#start-page > div h4 {
+  text-align: center;
+}
 #start-page > div.grid {
   width: 100%;
   justify-content: center;
