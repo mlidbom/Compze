@@ -1,6 +1,6 @@
 ﻿<div>
 
-#### [Hypermedia APIs](../paradigms/hypermedia-apis/hypermedia-apis-introduction.md)
+#### [Hypermedia APIs](../paradigms/hypermedia-apis/introduction.md)
 The, by far, most popular API in the world is a Hypermedia API. You are using it right now. It's called the world wide web. Can you imagine trying to use it without a browser with support for links? Imagine reading a web page and instead of a links you are presented with `Guid`s, or `int`s with no hint as to what to do with them: Page 4375...
 
 That is, literally, how we build most APIs today. That's a sobering thought...

@@ -1,6 +1,6 @@
 ﻿<div>
 
-#### [Semantic Events](../paradigms/semantic-events/semantic-events-introduction.md)
+#### [Semantic Events](../paradigms/semantic-events/introduction.md)
 Leveraging well established and understood C# features enables an event modeling paradigm which
 * Gives an unprecedented ability to understand domains in terms of how the events that can occur relate to each other.
 * Eliminates all need for manual event routing and type checking.
