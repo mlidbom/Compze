@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title> | Compze </title>
+      <title>Semantic Events: | Compze </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content=" | Compze ">
+      <meta name="title" content="Semantic Events: | Compze ">
       
       
       <link rel="icon" href="../../favicon.ico">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/introduction.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/definition.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -86,49 +86,29 @@
 
         <article data-uid="">
 
-<h3 id="so-what-does-all-of-that-mean-in-practice">So what does all of that mean in practice?</h3>
-<p>Let's dive right in to some code illustrating semantic events.</p>
-<p>This is the root of the event inheritance hierarchy. By some level of indirection, every event implements it:</p>
-<pre><code class="lang-csharp">public interface IEvent;
-</code></pre>
-<p>Every event raised by an aggregate will implement this interface:</p>
-<pre><code class="lang-csharp">public interface IAggregateEvent : IEvent
-{
-   Guid AggregateId { get; }
-}
-</code></pre>
-<p>Every event that means an aggregate was created will implement this interface.</p>
-<pre><code class="lang-csharp">public interface IAggregateCreatedEvent : IAggregateEvent;
-</code></pre>
-<p>Let's use User as an example aggregate. Here's the root of the User aggregate event hierarchy:</p>
-<pre><code class="lang-csharp">interface IUserEvent : IAggregateEvent;
-</code></pre>
-<p>And of course things can happen related to users:</p>
-<pre><code class="lang-csharp">interface IUserCreated : IUserEvent, IAggregateCreatedEvent;
-interface IUserRegistered : IUserCreated;
-interface IUserImported : IUserRegistered;
-</code></pre>
-<p>Now stop and look carefully at how the events so far implement each other. This is the core concept of semantic events. That the relationship in meaning between events can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the events we need. Most of this information is declared by implementing various interfaces.</p>
-<p>Let's examine a simple example of what this means in practice. Here's how you might subscribe to these events:</p>
-<pre><code class="lang-csharp">registrar
-  .ForEvent&lt;IUserEvent&gt;(userEvent =&gt; WriteLine($&quot;User: {userEvent.AggregateId} something happened&quot;))
-  .ForEvent&lt;IUserRegistered&gt;(userRegistered =&gt; WriteLine($&quot;User: {userRegistered.AggregateId} registered&quot;))
-  .ForEvent&lt;IUserImported&gt;(userImported =&gt; WriteLine($&quot;User: {userImported.AggregateId} imported&quot;));
-</code></pre>
-<p>Now let's see if your intuition is on target here. When an <code>IUserImported</code> event is published, What will be the output?
-The correct answer is:</p>
-<blockquote>
-<p>User: SOME-GUID something happened<br>
-User: SOME-GUID registered<br>
-User: SOME-GUID imported</p>
-</blockquote>
-<p>The type <code>IUserImported</code> event is compatible with all the registered handlers, and will therefore be delivered to all of them in the order that the handlers were registered.</p>
-<p>If an <code>IUserEvent</code> was published only the first subscriber would be called, if an <code>IUserRegistered</code> was published, the first two would be called.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>You are absolutely not expected to understand all the how's and why's of this definition the first time you read it. Think of it as combination cheat sheet and teaser.</p>
+</div>
+<h1 id="semantic-events">Semantic Events:</h1>
+<h4 id="declare-their-meaning-through-their-type">Declare their meaning through their type</h4>
+<p>Semantic events use the type system of the language in which they are implemented to declare their meaning, in as much detail and as unambiguously as possible. All the semantics of the event should be part of the declaration of the event type.</p>
+<h4 id="are-always-interfaces">Are always interfaces</h4>
+<p>In .Net semantic events are always interfaces, because to encode meaning in detail multiple inheritance is required. Some class will implement the interface, but you always subscribe to interfaces and design in terms of interfaces.</p>
+<h4 id="implements-ievent">Implements <code>IEvent</code></h4>
+<p>Every semantic event implements <code>IEvent</code></p>
+<h4 id="are-routed-by-type-compatibility">Are routed by type compatibility</h4>
+<p>The type of an event is the means through which events are routed to subscribers. Every single type-compatible registered handler method, local or remote, will be called when an event is published.</p>
+<p>For instance given that the method <code>void HandleEvent(IEventType anEvent)</code> is registered as an event handler, then every single event that can be assigned to a variable of type IEventType will be delivered to <code>HandleEvent</code></p>
+<h5 id="this-type-compatibility-includes-support-for-generic-covariance">This type compatibility includes support for generic covariance</h5>
+<p>Interface inheritance is not enough to a model realistic domain effectively. To support inheritance of event based aggregates, and reusable event based components, semantic events leverage generic covariance.</p>
+<p>For example: given the interface  <code>IWrapperEvent&lt;out T&gt;</code> this handler: <code>void HandleEvent(IWrapperEvent&lt;IEvent&gt; anEvent)</code> would be called whenever any type of <code>IWrapperEvent&lt;T&gt;</code> was published. <code>IWrapperEvent&lt;IUserEvent&gt;</code>, <code>IWrapperEvent&lt;IAnimalEvent&gt;</code> and so on.</p>
+<p>Likewise, given the interface <code>IInheritingWrapperEvent&lt;out T&gt; : IWrapperEvent&lt;T&gt;;</code> when any <code>IInheritingWrapperEvent&lt;T&gt;</code> was published, the above handler would also be called.</p>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/introduction.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/definition.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>

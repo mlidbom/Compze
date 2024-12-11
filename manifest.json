@@ -3904,6 +3904,16 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "paradigms/semantic-events/definition.md",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/semantic-events/definition.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "paradigms/semantic-events/event-naming.md",
       "output": {
         ".html": {

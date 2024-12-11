@@ -124,6 +124,8 @@ When we design events like that, a listener like this ...</p>
 </code></pre>
 <p>... will never need to change throughout the whole lifetime of the system. It will be called whenever a user's email is updated. Period.</p>
 <p>Likewise, listeners that care about when users are registered will listen to <code>IUserRegistered</code> and receive the same benefits. No matter how many new ways of registering users we add, no matter how many new subtypes of <code>IUserRegistered</code> are added. That code will always be called and does not need to change.</p>
+<h4 id="a-better-perspective">A better perspective?</h4>
+<p>Rather than saying that some listeners care only about data, and not semantics, it may be better to say that they care about different aspects of semantics, of the meaning of the event. That <code>IUserRegistered</code> changes the <code>Email</code> property of a <code>User</code> is part of the semantics of the event and to be properly designed that means that the event must implement another event that declares this meaning. Without that, the declaration of <code>IUserRegistered</code> is semantically incomplete and that is why we run into trouble.</p>
 
 </article>
 
