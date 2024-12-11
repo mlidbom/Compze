@@ -15,10 +15,10 @@ Every semantic event implements `IEvent`
 #### Are routed by type compatibility
 The type of an event is the means through which events are routed to subscribers. Every single type-compatible registered handler method, local or remote, will be called when an event is published.
 
-For instance given that the method `void HandleEvent(IEventType anEvent)` is registered as an event handler, then every single event that can be assigned to a variable of type IEventType will be delivered to `HandleEvent`
+To illustrate: Given that the method `void HandleEvent(IEventType anEvent)` is registered as an event handler, then every single event that can be assigned to a variable of type IEventType will be delivered to `HandleEvent`
 
 ##### This type compatibility includes support for generic covariance
-Interface inheritance is not enough to a model realistic domain effectively. To support inheritance of event based aggregates, and reusable event based components, semantic events leverage generic covariance. 
+Interface inheritance is not enough to a model realistic domains effectively. To support inheritance of event based aggregates, and reusable event based components, semantic events leverage generic covariance. 
 
 For example: given the interface  `IWrapperEvent<out T>` this handler: `void HandleEvent(IWrapperEvent<IEvent> anEvent)` would be called whenever any type of `IWrapperEvent<T>` was published. `IWrapperEvent<IUserEvent>`, `IWrapperEvent<IAnimalEvent>` and so on.
 
