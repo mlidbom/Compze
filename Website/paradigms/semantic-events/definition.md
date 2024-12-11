@@ -1,8 +1,8 @@
-﻿# Semantic Events
+﻿# An attempt at a definition
 >[!NOTE]
 >You are absolutely not expected to understand all the how's and why's of this definition the first time you read it. Think of it as combination cheat sheet and teaser.
 
-#### Declare their meaning through their type
+#### Semantic Events declare their meaning through their type
 Semantic events are events that use the type system of the language in which they are implemented to declare their meaning, in as much detail and as unambiguously as possible. All the semantics of the event are part of the declaration of the event type.
 
 #### Are routed by type compatibility
