@@ -4,4 +4,6 @@
   href: property-updated-events.md
 - name: Event naming
   href: event-naming.md
+- name: Aggregate inheritance
+  href: aggregate-inheritance.md
   

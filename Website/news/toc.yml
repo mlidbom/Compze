@@ -1,3 +1,6 @@
+items:
+- name: 2024-12-11 Aggregate inheritance
+  href: 2024-12-11-inheriting-aggregates.md
 - name: 2024-12-10 Three semantic events pages
   href: 2024-12-10-02-semantic-events-sections.md
 - name: 2024-12-10 News section added
