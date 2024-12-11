@@ -8,18 +8,11 @@ We've tried a number of different ways of dealing with event naming. One is usin
 
 [!code-csharp[](event-naming.cs#unhelpful)]
 
-What we've mostly ended up with so far is a structure similar to the below code. We would certainly not call it pretty, but it works reasonably well in practice in our experience: 
-
-[!code-csharp[](event-naming.cs#nested-events)]
-
-This gives us:
-[!code-csharp[](event-naming.cs#helpful)]
-
-We are not satisfied with the above though. A promising alternative we recently came up with is something like this:
+The best structure we've found to deal with event naming is this:
 [!code-csharp[](event-naming.cs#nested-events2)]
+Nice and structured with each level of nesting inheriting from the previous level.
 
 Giving us:
-
 [!code-csharp[](event-naming.cs#helpful2)]
-You know, this we actually like pretty well. But we have not used it much yet and dare not promise that it does not carry any nasty surprises. Assuming we don't find any nasty gotchas, this will most likely become our standard approach.
 
+Readable and unambiguous. Not bad.
