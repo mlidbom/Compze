@@ -3847,6 +3847,16 @@
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "news/2024-12-11-inheriting-aggregates.md",
+      "output": {
+        ".html": {
+          "relative_path": "news/2024-12-11-inheriting-aggregates.html"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "Toc",
       "source_relative_path": "news/toc.yml",
       "output": {
@@ -3878,6 +3888,16 @@
         },
         ".json": {
           "relative_path": "paradigms/hypermedia-apis/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "paradigms/semantic-events/aggregate-inheritance.md",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/semantic-events/aggregate-inheritance.html"
         }
       },
       "version": ""

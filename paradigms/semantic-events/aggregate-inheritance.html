@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Aggregate Inheritance | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Aggregate Inheritance | Compze ">
+      
+      
+      <link rel="icon" href="../../favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/aggregate-inheritance.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<div class="NOTE">
+<h5>Note</h5>
+<p>Here we are entering less well charted waters. We have few doubts about the design we present here. However, full, convenient support for routing events like this, and for building aggregates in this way, is still a work in progress.</p>
+</div>
+<h1 id="aggregate-inheritance">Aggregate Inheritance</h1>
+<p>So far we have adressed the inheritance hierarchy of events within a single aggregate. Now let's look at what happens when we inherit one aggregate from another. Let's go with a trivial and classic example to make the point with as little distraction as possible. Animals.</p>
+<pre><code class="lang-csharp">interface IAnimalEvent : IAggregateEvent
+{
+   interface IBorn : IAnimalEvent, IAggregateCreatedEvent;
+}
+
+interface ICatEvent : IAnimalEvent;
+interface IDogEvent : IAnimalEvent;
+</code></pre><h4 id="the-problem">The problem</h4>
+<p>Now imagine you care only about Dogs. You're a dog person, you only care about when dogs are born. How would you listen to just the dog born events?</p>
+<p>Uh oh! You can't. Much of the point of inheritance is to reuse functionality. So we can't very well require every inheriting class to reimplement birth using a different interface. That would defeat the point.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>If you're thinking of using some sort of factory method pattern for generating the subclass events and adding inheriting interfaces for dogs. Don't. We tried it. And it turns out that you will have to mirror and duplicate the entire semantic hierarchy of the base class event interfaces for each inheriting class. It turns into an absolutely horrifying mess of duplication where the slightest misstep breaks things. We gave up entirely on inheriting aggregates when we had found no better way than that. Please don't even try it.</p>
+</div>
+<h4 id="the-solution">The solution</h4>
+<p>Thankfully we eventually realized that there is an elegant simple solution built right into C#. This should be familiar:</p>
+<pre><code class="lang-csharp">IEnumerable&lt;object&gt; objects = [new object(), new object()];
+IEnumerable&lt;string&gt; strings = [&quot;1&quot;, &quot;2&quot;];
+objects = strings;
+</code></pre>
+<p>Do you see it? Generic covariance! <code>IEnumarable&lt;string&gt;</code> is assignable to <code>IEnumerable&lt;object&gt;</code> and assignability is how we route events with Semantic Events. Eureka! Well it turns out it works. (But requires a lot of major refactorings within Compze which are still ongoing.)</p>
+<p>Rather than try to twist english into a language capable of expressing it, which I'm finding unmanageable, I'll use C#.</p>
+<pre><code class="lang-csharp">interface IAnimalEvent&lt;out T&gt; : IAggregateWrapperEvent&lt;T&gt; where T : IAnimalEvent;
+interface ICatEvent&lt;out T&gt; : IAnimalEvent&lt;T&gt; where T : IAnimalEvent;
+interface IDogEvent&lt;out T&gt; : IAnimalEvent&lt;T&gt; where T : IAnimalEvent;
+</code></pre>
+<p>Now, what an animal actually publishes is never just <code>IAnimalEvent</code>, it is always <code>IAnimalEvent&lt;T&gt;</code>, correspondingly a Dog publishes <code>IDogEvent&lt;T&gt;</code> and the problem has been solved. Now you can listen to just the events from dogs by doing this:</p>
+<pre><code class="lang-csharp">eventHandlerRegistrar
+  .ForEvent&lt;IDogEvent&lt;IAnimalEvent.IBorn&gt;&gt;(born =&gt; WriteLine($&quot;Dog Id:{born.Event.AggregateId} was born!&quot;));
+</code></pre>
+<p>Do this if you only care about cats:</p>
+<pre><code class="lang-csharp">eventHandlerRegistrar
+  .ForEvent&lt;ICatEvent&lt;IAnimalEvent.IBorn&gt;&gt;(born =&gt; WriteLine($&quot;Cat Id:{born.Event.AggregateId} was born!&quot;));
+</code></pre>
+<p>This if you don't care what type of animal it was:</p>
+<pre><code class="lang-csharp">eventHandlerRegistrar
+  .ForEvent&lt;IAnimalEvent.IBorn&gt;(born =&gt; WriteLine($&quot;Animal Id:{born.AggregateId} was born!&quot;));
+</code></pre>
+<p>And this if you care about all animals, but need handle them differently somehow:</p>
+<pre><code class="lang-csharp">eventHandlerRegistrar
+  .ForEvent&lt;IAnimalEvent&lt;IAnimalEvent.IBorn&gt;&gt;(
+      born =&gt; WriteLine($&quot;{born.GetType().Name.Replace(&quot;Event&quot;, &quot;&quot;)} Id: {born.Event.AggregateId}, was born!&quot;));
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/paradigms/semantic-events/aggregate-inheritance.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
