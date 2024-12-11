@@ -47,10 +47,10 @@ namespace Website.paradigms.semantic_events
       {
          public void IllustrateEventListening()
          {
-            MessageHandlerRegistrarWithDependencyInjectionSupport eventHandlerRegistrar = ((MessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
+            MessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((MessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
 
             #region EmailPropertyUpdatedListener
-            eventHandlerRegistrar
+            registrar
               .ForEvent<IUserEmailPropertyUpdated>(emailUpdated => WriteLine($"User: {emailUpdated.AggregateId} Email: {emailUpdated.Email}"));
             #endregion
          }

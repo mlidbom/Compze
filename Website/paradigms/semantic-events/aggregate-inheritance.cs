@@ -35,23 +35,23 @@ class Examples
 
    public void Listeners()
    {
-      MessageHandlerRegistrarWithDependencyInjectionSupport eventHandlerRegistrar = ((MessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
+      MessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((MessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
 
       #region doglistener
-      eventHandlerRegistrar
+      registrar
         .ForEvent<IDogEvent<IAnimalEvent.IBorn>>(born => WriteLine($"Dog Id:{born.Event.AggregateId} was born!"));
       #endregion
       #region catlistener
-      eventHandlerRegistrar
+      registrar
         .ForEvent<ICatEvent<IAnimalEvent.IBorn>>(born => WriteLine($"Cat Id:{born.Event.AggregateId} was born!"));
       #endregion
       #region animallistener
-      eventHandlerRegistrar
+      registrar
         .ForEvent<IAnimalEvent.IBorn>(born => WriteLine($"Animal Id:{born.AggregateId} was born!"));
       #endregion
 
       #region wrappedanimallistener
-      eventHandlerRegistrar
+      registrar
         .ForEvent<IAnimalEvent<IAnimalEvent.IBorn>>(
             born => WriteLine($"{born.GetType().Name.Replace("Event", "")} Id: {born.Event.AggregateId}, was born!"));
       #endregion
