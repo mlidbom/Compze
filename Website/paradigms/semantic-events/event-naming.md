@@ -18,4 +18,4 @@ Giving us:
 Readable and unambiguous. Not bad.
 
 >[!NOTE]
-> We do not repeat `Event` for every level of nesting. And should you dislike the repeated `I` we will not condemn doing this: `IUserEvent.Profile.PropertyUpdated.Name` :wink:
+> We do not repeat `Event` for every level of nesting. And should you dislike the repeated `I` we do not condemn doing this: `IUserEvent.Profile.PropertyUpdated.Name` :wink:
