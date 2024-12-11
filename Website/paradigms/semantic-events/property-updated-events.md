@@ -26,6 +26,6 @@ When we design events like that, a listener like this ...
 
 Likewise, listeners that care about when users are registered will listen to `IUserRegistered` and receive the same benefits. No matter how many new ways of registering users we add, no matter how many new subtypes of `IUserRegistered` are added. That code will always be called and does not need to change.
 
-#### A better perspective
-Rather than saying that some listeners care only about data, and not semantics, it is probably better to say that they care about different aspects of semantics, of the meaning of the event. If the events just pop the properties in they have broken the design rule that event are atomic. And thus they have not been designed according to the principles of semantic event design. In other words, that `IUserRegistered` changes the `Email` property of a `User` is part of the semantics of the event and to be properly designed that means that the event must implement another event that declares this meaning. Without that, the declaration of `IUserRegistered` is semantically incomplete and that is why we run into trouble.
+#### A better perspective?
+Rather than saying that some listeners care only about data, and not semantics, it may be better to say that they care about different aspects of semantics, of the meaning of the event. That `IUserRegistered` changes the `Email` property of a `User` is part of the semantics of the event and to be properly designed that means that the event must implement another event that declares this meaning. Without that, the declaration of `IUserRegistered` is semantically incomplete and that is why we run into trouble.
 
