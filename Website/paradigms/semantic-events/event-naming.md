@@ -16,3 +16,6 @@ Giving us:
 [!code-csharp[](event-naming.cs#helpful2)]
 
 Readable and unambiguous. Not bad.
+
+>[!NOTE]
+> We do not repeat `Event` for every level of nesting. And should you feel that the repeated `I` is an eyesore we will not condemn doing this: `IUserEvent.Profile.PropertyUpdated.Name` :wink:
