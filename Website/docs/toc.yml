@@ -1,4 +1,2 @@
-- name: Messaging
-  items:
-    - href: messaging/basics.md
-    - href: messaging/semantic-routing.md
+- name: Prerequisite terms
+  href: prerequisite-terms.md

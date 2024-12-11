@@ -1,6 +1,7 @@
-﻿{
+{
   "scripts": {
     "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
+    "live-server": "live-server --port=8080 --host=localhost --watch=_site/ --open=_site/ --quiet",
     "watch": "npm-watch build",
     "build": "docfx build",
     "build-full": "docfx",
@@ -9,14 +10,18 @@
   },
   "watch": {
     "build": {
-      "patterns": [ "./*" ],
+      "patterns": [
+        "./*"
+      ],
       "extensions": "md,yml,css,cs.js",
       "quiet": false,
       "ignore": "_site/*",
       "delay": 500
     },
     "build-site-only": {
-      "patterns": [ "./*" ],
+      "patterns": [
+        "./*"
+      ],
       "extensions": "md,yml,css,cs,js",
       "quiet": false,
       "ignore": "_site/*",
@@ -24,7 +29,8 @@
     }
   },
   "devDependencies": {
-    "npm-watch": "^0.13.0",
-    "browser-sync": "^3.0.3"
+    "browser-sync": "^3.0.3",
+    "live-server": "^1.2.2",
+    "npm-watch": "^0.13.0"
   }
 }

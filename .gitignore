@@ -35,3 +35,5 @@ nCrunchTemp*
 /Website/api/
 /Website/node_modules/
 /Website/package-lock.json
+Website/**/*.css.map
+Website/**/*.css

@@ -18,13 +18,13 @@ public static partial class Composite_aggregate_specification
             {
                public After_calling_entity2_Remove() => _entity2.Remove();
 
-               public new class The_aggregates_Entities_collection : After_calling_entity2_Remove
+               public class The_aggregates_Entities_collection__ : After_calling_entity2_Remove
                {
                   [XFact] public void Single_return_entity1() => _aggregate.Entities.Single().Should().Be(_entity1);
                   [XFact] public void InCreationOrder_1_throws() => Invoking(() => _aggregate.Entities.InCreationOrder[1]).Should().Throw<Exception>();
                   [XFact] public void InCreationOrder_Count_is_1() => _aggregate.Entities.InCreationOrder.Count.Should().Be(1);
 
-                  public class Passing_the_entity2_id_to : The_aggregates_Entities_collection
+                  public class Passing_the_entity2_id_to : The_aggregates_Entities_collection__
                   {
                      [XFact] public void Contains_returns_false() => _aggregate.Entities.Contains(_entity2.Id).Should().Be(false);
                      [XFact] public void Get_throws() => Invoking(() => _aggregate.Entities.Get(_entity2.Id)).Should().Throw<Exception>();

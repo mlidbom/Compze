@@ -1,6 +1,13 @@
+- name: Semantic Events
+  href: paradigms/semantic-events/
+#- name: Hypermedia APIs
+#  href: paradigms/hypermedia-apis/
 - name: Docs
   href: docs/
-- name: FAQ
-  href: about/faq.md
-- name: API
-  href: api/
+- name: News
+  href: news/
+
+#- name: FAQ
+#  href: about/faq.md
+#- name: API
+#  href: api/

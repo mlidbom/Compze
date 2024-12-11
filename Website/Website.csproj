@@ -33,4 +33,14 @@
       <_ContentIncludedByDefault Remove="_site\toc.json" />
    </ItemGroup>
 
+    <ItemGroup>
+        <Watch Include="_site/**/*.*" />
+        <Watch Include="**/*.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\src\framework\Compze.Messaging\Compze.Messaging.csproj" />
+      <ProjectReference Include="..\src\framework\Compze\Compze.csproj" />
+    </ItemGroup>
+
 </Project>

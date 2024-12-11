@@ -28,13 +28,13 @@ Get-Location
 
 docfx.exe
 
-robocopy.exe /MIR "$buildFolder" "$ghPagesCheckoutFolder" /XD ".git" "node_modules" /XF ".gitignore" "CNAME"
+robocopy.exe /MIR /NFL /NDL "$buildFolder" "$ghPagesCheckoutFolder" /XD ".git" "node_modules" /XF ".gitignore" "CNAME"
 
 Push-Location $ghPagesCheckoutFolder
 
 git add .
-git commit --quiet -a -m "Automatic commit created by automated build and publish script."
-git push --quiet
+git commit -a -m "Automatic commit created by automated build and publish script."
+git push
 
 Pop-Location
 Pop-Location
