@@ -7,7 +7,7 @@ So far we have adressed the inheritance hierarchy of events within a single aggr
 [!code-csharp[](aggregate-inheritance.cs#noises1)]
 
 #### The problem
-Now imagine you care only about Dogs. You're a dog person, you only care about when dogs are born. How would you listen to just the dog born events?
+Now imagine you're a dog person, you only care about when dogs are born. How would you listen to just the dog born events?
 
 Uh oh! You can't. Much of the point of inheritance is to reuse functionality. So we can't very well require every inheriting class to reimplement birth using a different interface. That would defeat the point. 
 
