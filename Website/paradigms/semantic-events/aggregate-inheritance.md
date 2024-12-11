@@ -12,7 +12,7 @@ Now imagine you're a dog person, you only care about when dogs are born. How wou
 Uh oh! You can't. Much of the point of inheritance is to reuse functionality. So we can't very well require every inheriting class to reimplement birth using a different interface. That would defeat the point. 
 
 >[!WARNING]
->If you're thinking of using some sort of factory method pattern for generating the subclass events and adding inheriting interfaces for dogs. Don't. We tried it. And it turns out that you will have to mirror and duplicate the entire semantic hierarchy of the base class event interfaces for each inheriting class. It turns into an absolutely horrifying mess of duplication where the slightest misstep breaks things. We gave up entirely on inheriting aggregates when we had found no better way than that. Please don't even try it.
+>If you're thinking of using some sort of factory method pattern for generating the subclass events and adding inheriting interfaces for dogs. Don't. We tried it. And it turns out that you will have to mirror and duplicate the entire semantic hierarchy of the base class event interfaces for each inheriting class. It turns into an absolutely horrifying mess of duplication where the slightest misstep breaks things. We gave up entirely on inheriting aggregates when we had found no better way than that. Please, don't even try it.
 
 #### The solution
 Thankfully we eventually realized that there is an elegant simple solution built right into C#. This should be familiar: 
