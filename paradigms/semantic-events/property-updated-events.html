@@ -119,7 +119,7 @@ interface IUserChangedEmail : IUserEmailPropertyUpdated;
 </code></pre>
 <p>The whole problem disappears like it never existed ☺️<br>
 When we design events like that, a listener like this ...</p>
-<pre><code class="lang-csharp">eventHandlerRegistrar
+<pre><code class="lang-csharp">registrar
   .ForEvent&lt;IUserEmailPropertyUpdated&gt;(emailUpdated =&gt; WriteLine($&quot;User: {emailUpdated.AggregateId} Email: {emailUpdated.Email}&quot;));
 </code></pre>
 <p>... will never need to change throughout the whole lifetime of the system. It will be called whenever a user's email is updated. Period.</p>
