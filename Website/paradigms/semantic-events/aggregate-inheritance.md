@@ -20,7 +20,7 @@ Thankfully we eventually realized that there is an elegant simple solution built
 
 Do you see it? Generic covariance! `IEnumarable<string>` is assignable to `IEnumerable<object>` and assignability is how we route events with Semantic Events. Eureka! Well it turns out it works. (But requires a lot of major refactorings within Compze which are still ongoing.)
 
-Rather than try to twist english into a language capable of expressing it, which I'm finding unmanageable, I'll use C#.
+Rather than try to twist english into a language capable of expressing what I'm talking about, which I'm finding unmanageable, I'll use C#.
 
 [!code-csharp[](aggregate-inheritance.cs#noises1wrapped)]
 So the wrapping interfaces, which take a type parameter, tell us which class published the event. A `Cat` or a `Dog` instance (assuming `Animal` is abstract). The inner event is the real event that contains all the specifics of what happened.
