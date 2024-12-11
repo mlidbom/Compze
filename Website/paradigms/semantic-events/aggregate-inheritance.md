@@ -36,7 +36,7 @@ This if you don't care what type of animal it was:
 
 [!code-csharp[](aggregate-inheritance.cs#animallistener)]
 
-And this if you care about all animals, but need handle them differently somehow:
+And this if you care about all animals, but need handle different animals differently:
 
 [!code-csharp[](aggregate-inheritance.cs#wrappedanimallistener)]
 
