@@ -1,5 +1,5 @@
 ﻿>[!NOTE]
-> Here we are entering less well charted waters. We have few doubts about the design we present here. However, full, convenient support for routing events like this, and for building aggregates in this way, is still a work in progress.
+> Here we are entering less well charted waters. We are confident about the design we present here. However, full, convenient support for routing events like this, and for building aggregates in this way, is still a work in progress.
 
 # Aggregate Inheritance
 So far we have adressed the inheritance hierarchy of events within a single aggregate. Now let's look at what happens when we inherit one aggregate from another. Let's go with a trivial and classic example to make the point with as little distraction as possible. Animals.
