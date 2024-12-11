@@ -99,9 +99,9 @@
 <p>Every semantic event implements <code>IEvent</code></p>
 <h4 id="are-routed-by-type-compatibility">Are routed by type compatibility</h4>
 <p>The type of an event is the means through which events are routed to subscribers. Every single type-compatible registered handler method, local or remote, will be called when an event is published.</p>
-<p>For instance given that the method <code>void HandleEvent(IEventType anEvent)</code> is registered as an event handler, then every single event that can be assigned to a variable of type IEventType will be delivered to <code>HandleEvent</code></p>
+<p>To illustrate: Given that the method <code>void HandleEvent(IEventType anEvent)</code> is registered as an event handler, then every single event that can be assigned to a variable of type IEventType will be delivered to <code>HandleEvent</code></p>
 <h5 id="this-type-compatibility-includes-support-for-generic-covariance">This type compatibility includes support for generic covariance</h5>
-<p>Interface inheritance is not enough to a model realistic domain effectively. To support inheritance of event based aggregates, and reusable event based components, semantic events leverage generic covariance.</p>
+<p>Interface inheritance is not enough to a model realistic domains effectively. To support inheritance of event based aggregates, and reusable event based components, semantic events leverage generic covariance.</p>
 <p>For example: given the interface  <code>IWrapperEvent&lt;out T&gt;</code> this handler: <code>void HandleEvent(IWrapperEvent&lt;IEvent&gt; anEvent)</code> would be called whenever any type of <code>IWrapperEvent&lt;T&gt;</code> was published. <code>IWrapperEvent&lt;IUserEvent&gt;</code>, <code>IWrapperEvent&lt;IAnimalEvent&gt;</code> and so on.</p>
 <p>Likewise, given the interface <code>IInheritingWrapperEvent&lt;out T&gt; : IWrapperEvent&lt;T&gt;;</code> when any <code>IInheritingWrapperEvent&lt;T&gt;</code> was published, the above handler would also be called.</p>
 
