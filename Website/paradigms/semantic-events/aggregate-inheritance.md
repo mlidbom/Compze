@@ -23,8 +23,9 @@ Do you see it? Generic covariance! `IEnumarable<string>` is assignable to `IEnum
 Rather than try to twist english into a language capable of expressing it, which I'm finding unmanageable, I'll use C#.
 
 [!code-csharp[](aggregate-inheritance.cs#noises1wrapped)]
+So the wrapping interfaces, which take a type parameter, tell us which class published the event. A `Cat` or a `Dog` instance (assuming `Animal` is abstract). The inner event is the real event that contains all the specifics of what happened.
 
-Now, what an animal actually publishes is never just `IAnimalEvent`, it is always `IAnimalEvent<T>`, correspondingly a Dog publishes `IDogEvent<T>` and the problem has been solved. Now you can listen to just the events from dogs by doing this:
+So actually, what a `Dog` publishes is never just `IDogEvent`, it is always `IDogEvent<IAnimalEvent>`, correspondingly a Cat publishes `ICatEvent<IAnimalEvent>` and the problem has been solved. Now you can listen to just the events from dogs by doing this:
 
 [!code-csharp[](aggregate-inheritance.cs#doglistener)]
 
