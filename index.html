@@ -75,7 +75,7 @@
 <div id="start-page">
 <div>
 <h3 id="ushering-in-paradigm-shifts">Ushering in paradigm shifts</h3>
-<p>There are two areas where it seems to us like the industry has been stuck in old models for more than a decade. Failing to realize and leverage the potential of paradigms that are already here. Paradigms which can fundamentally transform how we build systems for the better. Compze aims to help make these paradigms widely understood, accessible, and popular through tooling and documentation:</p>
+<p>There are two areas where it seems to us like the industry has been stuck in old models for more than a decade. Failing to realize and leverage the potential of paradigms that are already here. Paradigms which can fundamentally transform how we build systems for the better. Compze aims to help make these paradigms widely understood, accessible, and popular through developing tooling and writing documentation:</p>
 </div>
 <div class="grid">
 <div>
@@ -93,19 +93,25 @@
 <p>It's essentially the event equivalent of working in C# while completely refusing to use generics and object-oriented programming. Surely we should not even need to argue that this is ill-advised?</p>
 </div>
 <div>
-<h4 id="hypermedia-apis"><a href="paradigms/hypermedia-apis/introduction.html">Hypermedia APIs</a></h4>
-<p>The, by far, most popular API in the world is a Hypermedia API. You are using it right now. It's called the world wide web. Can you imagine trying to use it without a browser with support for links? Imagine reading this page and instead of a link you are presented with: page-4375...</p>
-<p>That is actually how we build most APIs today. That's a sobering thought...</p>
-<p>What if we designed Hypermedia APIs instead? APIs which:</p>
+<h4 id="browsable-apis"><a href="paradigms/hypermedia-apis/introduction.html">Browsable APIs</a></h4>
+<p>The most popular API in the world is a Browsable API (REST to be exact). You are using it right now. It's called the world wide web. Can you imagine trying to use it without links and forms? Imagine reading this page and instead of a link you are presented with: 4375.</p>
+<p>That is actually how we build most APIs today. Why?</p>
+<p>What if we designed Browsable APIs instead? APIs which:</p>
 <ul>
-<li>Are accessed using a Browser, navigated much like a website, by
+<li>Can be fully explored using a <code>Navigator</code>, browsed much like a website, by
 <ul>
-<li>Following links</li>
-<li>Posting commands</li>
+<li><code>Get</code>ting <code>Link</code>s</li>
+<li><code>Post</code>ing <code>Command</code>s</li>
 <li>All with full type safety and autocomplete in your IDE</li>
 </ul>
 </li>
-<li>Can be in-memory, or remote over HTTP</li>
+<li>Can be in-memory, or remote</li>
+<li>Routes messages by .Net types giving
+<ul>
+<li>Zero configuration routing</li>
+<li>A simple already well known programming model.</li>
+</ul>
+</li>
 <li>Further encapsulates your domain, exposing less implementation details than traditional services.</li>
 <li>Are excellently suited for building a Just-Beneath-The-UI-Rendering-Layer layer, ideal for black box testing.</li>
 </ul>

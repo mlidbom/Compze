@@ -101,7 +101,7 @@ interface ICatEvent : IAnimalEvent;
 interface IDogEvent : IAnimalEvent;
 </code></pre><h4 id="the-problem">The problem</h4>
 <p>Now imagine you're a dog person, you only care about when dogs are born. How would you listen to just the dog born events?</p>
-<p>Uh oh! You can't. Much of the point of inheritance is to reuse functionality. So we can't very well require every inheriting class to reimplement birth using a different interface. That would defeat the point.</p>
+<p>Uh oh! You can't. There is only one <code>IBorn</code> and it is shared by all the animals. Much of the point of inheritance is to reuse functionality, so we can't very well require every inheriting class to reimplement birth using a different interface. That would defeat the point.</p>
 <div class="WARNING">
 <h5>Warning</h5>
 <p>If you're thinking of using some sort of factory method pattern for generating the subclass events and adding inheriting interfaces for dogs. Don't. We tried it. And it turns out that you will have to mirror and duplicate the entire semantic hierarchy of the base class event interfaces for each inheriting class. It turns into an absolutely horrifying mess of duplication where the slightest misstep breaks things. We gave up entirely on inheriting aggregates when we had found no better way than that. Please, don't even try it.</p>
@@ -113,12 +113,12 @@ IEnumerable&lt;string&gt; strings = [&quot;1&quot;, &quot;2&quot;];
 objects = strings;
 </code></pre>
 <p>Do you see it? Generic covariance! <code>IEnumarable&lt;string&gt;</code> is assignable to <code>IEnumerable&lt;object&gt;</code> and assignability is how we route events with Semantic Events. Eureka! Well it turns out it works. (But requires a lot of major refactorings within Compze which are still ongoing.)</p>
-<p>Rather than try to twist english into a language capable of expressing it, which I'm finding unmanageable, I'll use C#.</p>
+<p>Rather than try to twist english into a language capable of expressing what I'm talking about, which I'm finding unmanageable, I'll use C#.</p>
 <pre><code class="lang-csharp">interface IAnimalEvent&lt;out T&gt; : IAggregateWrapperEvent&lt;T&gt; where T : IAnimalEvent;
 interface ICatEvent&lt;out T&gt; : IAnimalEvent&lt;T&gt; where T : IAnimalEvent;
 interface IDogEvent&lt;out T&gt; : IAnimalEvent&lt;T&gt; where T : IAnimalEvent;
 </code></pre>
-<p>So the wrapping interfaces, which take a type parameter, tell us which class published the event. A <code>Cat</code> or a <code>Dog</code> instance (assuming <code>Animal</code> is abstract). The inner event is the real event that contains all the specifics of what happened.</p>
+<p>So the wrapping interfaces, which take a type parameter, tell us only which class published the event. A <code>Cat</code> or a <code>Dog</code> instance (assuming <code>Animal</code> is abstract). The inner event is the real event that contains all the specifics of what happened.</p>
 <p>So actually, what a <code>Dog</code> publishes is never just <code>IDogEvent</code>, it is always <code>IDogEvent&lt;IAnimalEvent&gt;</code>, correspondingly a Cat publishes <code>ICatEvent&lt;IAnimalEvent&gt;</code> and the problem has been solved. Now you can listen to just the events from dogs by doing this:</p>
 <pre><code class="lang-csharp">registrar
   .ForEvent&lt;IDogEvent&lt;IAnimalEvent.IBorn&gt;&gt;(born =&gt; WriteLine($&quot;Dog Id:{born.Event.AggregateId} was born!&quot;));
@@ -131,7 +131,7 @@ interface IDogEvent&lt;out T&gt; : IAnimalEvent&lt;T&gt; where T : IAnimalEvent;
 <pre><code class="lang-csharp">registrar
   .ForEvent&lt;IAnimalEvent.IBorn&gt;(born =&gt; WriteLine($&quot;Animal Id:{born.AggregateId} was born!&quot;));
 </code></pre>
-<p>And this if you care about all animals, but need handle them differently somehow:</p>
+<p>And this if you care about all animals, but need handle different animals differently:</p>
 <pre><code class="lang-csharp">registrar
   .ForEvent&lt;IAnimalEvent&lt;IAnimalEvent.IBorn&gt;&gt;(
       born =&gt; WriteLine($&quot;{born.GetType().Name.Replace(&quot;Event&quot;, &quot;&quot;)} Id: {born.Event.AggregateId}, was born!&quot;));

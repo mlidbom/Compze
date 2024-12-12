@@ -3943,6 +3943,16 @@
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "paradigms/semantic-events/reusable-components.md",
+      "output": {
+        ".html": {
+          "relative_path": "paradigms/semantic-events/reusable-components.html"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "Toc",
       "source_relative_path": "paradigms/semantic-events/toc.yml",
       "output": {
