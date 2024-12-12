@@ -8,4 +8,6 @@
   href: event-naming.md
 - name: Aggregate inheritance
   href: aggregate-inheritance.md
+- name: Reusable components and entities
+  href: reusable-components.md
   
