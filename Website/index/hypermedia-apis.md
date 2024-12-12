@@ -12,6 +12,9 @@ What if we designed Browsable APIs instead? APIs which:
   * `Post`ing `Command`s
   * All with full type safety and autocomplete in your IDE
 * Can be in-memory, or remote
+* Routes messages by .Net types giving 
+  * Zero configuration routing
+  * A simple already well known programming model.
 * Further encapsulates your domain, exposing less implementation details than traditional services.
 * Are excellently suited for building a Just-Beneath-The-UI-Rendering-Layer layer, ideal for black box testing.
 
