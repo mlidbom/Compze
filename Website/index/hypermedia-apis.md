@@ -1,15 +1,15 @@
 ﻿<div>
 
-#### [Hypermedia APIs](../paradigms/hypermedia-apis/introduction.md)
-The, by far, most popular API in the world is a Hypermedia API. You are using it right now. It's called the world wide web. Can you imagine trying to use it without a browser with support for links? Imagine reading this page and instead of a link you are presented with: page-4375...
+#### [Browsable APIs](../paradigms/hypermedia-apis/introduction.md)
+The most popular API in the world is a Browsable API (REST to be exact). You are using it right now. It's called the world wide web. Can you imagine trying to use it without a browser with support for links and forms? Imagine reading this page and instead of a link you are presented with: 4375...
 
-That is actually how we build most APIs today. That's a sobering thought...
+That is actually how we build most APIs today. Think about that for a minute.
 
-What if we designed Hypermedia APIs instead? APIs which: 
+What if we designed Browsable APIs instead? APIs which: 
 
-* Are accessed using a Browser, navigated much like a website, by
-  * Following links
-  * Posting commands
+* Are accessed using a `Navigator`, browsed much like a website, by
+  * Following `Link`s to `Get` Objects
+  * `Post`ing `Command`s
   * All with full type safety and autocomplete in your IDE
 * Can be in-memory, or remote over HTTP
 * Further encapsulates your domain, exposing less implementation details than traditional services.
