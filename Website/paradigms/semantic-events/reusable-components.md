@@ -13,7 +13,9 @@ Since it is shared reusable component
 * It cannot raise aggregate events, that must be upp to the aggregate.
 * We must be able to subscribe to the published events by type, meaning that the event ultimately raised by the aggregate must declaratively, statically, contain the type of the event from the component.
 
-Thankfully the solution to inheriting aggregates has taken us most of the way to a solution for this problem too. We will just need to wrap one more time, generic covariance to the rescue once more. 
+Thankfully the solution to inheriting aggregates has taken us most of the way to a solution for this problem too. We will just need to wrap one more time, generic covariance to the rescue once more.
+
+.... More soon. 2024-12-14
 
 
 
