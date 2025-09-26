@@ -23,7 +23,7 @@ namespace Compze.Testing;
 
    [OneTimeTearDown] public async Task UniversalTeardown()
    {
-      //We don't consume here,because some test runners, including NCrunch will not surface teardown exceptions so consuming here would hide them. Without consuming, we may see them on the next test run.
+      //We don't consume here,because some test runners, including NCrunch, will not surface teardown exceptions, so consuming here would hide them. Without consuming, we may see them on the next test run.
       GCCE.ForceFullGcAllGenerationsAndWaitForFinalizers();
       if(UncatchableExceptionsGatherer.Exceptions.Any())
       {
