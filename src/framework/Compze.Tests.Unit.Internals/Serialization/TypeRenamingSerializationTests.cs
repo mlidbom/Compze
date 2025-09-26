@@ -134,8 +134,8 @@ namespace Compze.Tests.Unit.Internals.Serialization
          var originalJson = _originalTypesSerializer.Serialize(originalRoot);
          var deserializedRoot = (OriginalTypes.Root)_originalTypesSerializer.Deserialize(typeof(OriginalTypes.Root), originalJson);
 
-         deserializedRoot.Should().BeEquivalentTo(originalRoot, options => options.RespectingRuntimeTypes());
-         originalRoot.Should().BeEquivalentTo(deserializedRoot, options => options.RespectingRuntimeTypes());
+         deserializedRoot.Should().BeEquivalentTo(originalRoot, options => options.PreferringRuntimeMemberTypes());
+         originalRoot.Should().BeEquivalentTo(deserializedRoot, options => options.PreferringRuntimeMemberTypes());
       }
 
       [Test] public void Handles_renaming_of_types()
@@ -145,8 +145,8 @@ namespace Compze.Tests.Unit.Internals.Serialization
 
          var deserializedRenamedRoot = (RenamedTypes.Root)_renamedTypesSerializer.Deserialize(typeof(RenamedTypes.Root), originalJson);
 
-         deserializedRenamedRoot.Should().BeEquivalentTo(originalRoot, options => options.RespectingRuntimeTypes());
-         originalRoot.Should().BeEquivalentTo(deserializedRenamedRoot, options => options.RespectingRuntimeTypes());
+         deserializedRenamedRoot.Should().BeEquivalentTo(originalRoot, options => options.PreferringRuntimeMemberTypes());
+         originalRoot.Should().BeEquivalentTo(deserializedRenamedRoot, options => options.PreferringRuntimeMemberTypes());
       }
    }
 }

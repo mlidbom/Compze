@@ -37,7 +37,7 @@ public class Exactly_once_guarantee_tests(string pluggableComponentsCombination)
       backendException.InnerException!.Message.Should().Contain(exceptionMessage);
       frontEndException.Message.Should().Contain(exceptionMessage);
 
-      MyLocalAggregateEventHandlerThreadGate.Passed.Should().BeGreaterOrEqualTo(1);
+      MyLocalAggregateEventHandlerThreadGate.Passed.Should().BeGreaterThanOrEqualTo(1);
 
       MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
                                              .Should()

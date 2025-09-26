@@ -10,34 +10,34 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj"/>
-        <ProjectReference Include="..\framework\Compze.Messaging\Compze.Messaging.csproj"/>
+        <ProjectReference Include="..\framework\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+        <ProjectReference Include="..\framework\Compze.Messaging\Compze.Messaging.csproj" />
         <ProjectReference Include="..\framework\Compze.Testing\Compze.Testing.csproj" />
-        <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.API\AccountManagement.API.csproj"/>
-        <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj"/>
+        <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.API\AccountManagement.API.csproj" />
+        <ProjectReference Include="..\Samples\AccountManagement\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="7.0.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-        <PackageReference Include="NCrunch.Framework" Version="5.11.0"/>
-        <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2"/>
-        <PackageReference Include="NUnit" Version="4.2.2"/>
-        <PackageReference Include="NUnit.Analyzers" Version="4.4.0">
+        <PackageReference Include="FluentAssertions" Version="8.7.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+        <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
+        <PackageReference Include="NUnit" Version="4.4.0" />
+        <PackageReference Include="NUnit.Analyzers" Version="4.10.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0">
+        <PackageReference Include="NUnit3TestAdapter" Version="5.1.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Serilog" Version="4.1.0"/>
-        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
-        <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
-        <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0"/>
-        <PackageReference Include="xunit" Version="2.9.2" />
+        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+        <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+        <PackageReference Include="xunit" Version="2.9.3" />
     </ItemGroup>
 
     <!--Remove when the bug causing this warning to appear has been fixed: https://github.com/microsoft/testfx/issues/3813 https://github.com/microsoft/testfx/pull/3891 -->

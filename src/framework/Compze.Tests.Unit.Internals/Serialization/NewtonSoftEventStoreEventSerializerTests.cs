@@ -77,7 +77,7 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
 
       roundTripped.Should().BeEquivalentTo(eventWithOnlySubclassValues,
                                            config => config
-                                                    .RespectingRuntimeTypes()
+                                                    .PreferringRuntimeMemberTypes()
                                                     .ComparingByMembers<AggregateEvent>()
                                                     .Excluding(@event => @event.UtcTimeStamp)//Timestamp is defaulted in the constructor used by serialization.
                                                     .Excluding(@event => @event.MessageId)

@@ -224,7 +224,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
          migratedHistory.Cast<AggregateEvent>()
                         .Should().BeEquivalentTo(
                             expected.Cast<AggregateEvent>(),
-                            config => config.RespectingRuntimeTypes()
+                            config => config.PreferringRuntimeMemberTypes()
                                             .WithStrictOrdering()
                                             .ComparingByMembers<AggregateEvent>()
                                             .Excluding(@event => @event.MessageId));
