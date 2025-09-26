@@ -40,7 +40,7 @@ namespace Compze.Testing;
                   .Enrich.WithExceptionDetails()
                   .Enrich.With<NUnitTestEnricher>()
                   .MinimumLevel.Debug()
-                  .WriteTo.Seq("http://192.168.0.11:5341")
+                  .WriteTo.Seq("http://192.168.0.11:5341", formatProvider: CultureInfo.InvariantCulture)
                   .WriteTo.Console(formatProvider:CultureInfo.InvariantCulture)
                   .CreateLogger();
 
