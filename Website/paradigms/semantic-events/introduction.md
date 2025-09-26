@@ -1,5 +1,5 @@
-﻿### Semantic Events?
-Rather than get bogged down in trying for a definition, let's just dive right in to code using semantic events.
+﻿### So what does all of that mean in practice?
+Let's dive right in to some code illustrating semantic events.
 
 This is the root of the event inheritance hierarchy. By some level of indirection, every event implements it:
 [!code-csharp[](introduction.cs#IEvent)]
@@ -18,7 +18,7 @@ And of course things can happen related to users:
 
 [!code-csharp[](introduction.cs#UserEvents1)]
 
-Now stop and look carefully at how the events so far implement each other. This is the core concept of semantic events. That the relationship in meaning between events can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the events we need.
+Now stop and look carefully at how the events so far implement each other. This is the core concept of semantic events. That the relationship in meaning between events can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the events we need. Most of this information is declared by implementing various interfaces.
 
 Let's examine a simple example of what this means in practice. Here's how you might subscribe to these events:
 [!code-csharp[](introduction.cs#UserEventRegistration)]

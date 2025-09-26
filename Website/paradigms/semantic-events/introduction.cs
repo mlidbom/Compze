@@ -40,10 +40,10 @@ namespace Website.paradigms.semantic_events
       {
          public void IllustrateEventListening()
          {
-            MessageHandlerRegistrarWithDependencyInjectionSupport eventHandlerRegistrar = ((MessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
+            MessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((MessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
 
             #region UserEventRegistration
-            eventHandlerRegistrar
+            registrar
               .ForEvent<IUserEvent>(userEvent => WriteLine($"User: {userEvent.AggregateId} something happened"))
               .ForEvent<IUserRegistered>(userRegistered => WriteLine($"User: {userRegistered.AggregateId} registered"))
               .ForEvent<IUserImported>(userImported => WriteLine($"User: {userImported.AggregateId} imported"));

@@ -3,6 +3,7 @@ using Compze.Persistence.EventStore;
 using Compze.SystemCE;
 using static System.Console;
 using IEvent = Compze.Messaging.IEvent;
+// ReSharper disable UnusedParameter.Local
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -34,7 +35,7 @@ namespace Website.paradigms.semantic_events
 
             #region helpful2
             registrar
-              .ForEvent<IUserEvent.IProfileEvent.IPropertyUpdated.IName>(clarity => WriteLine($"Ahh: {clarity.Name}"));
+              .ForEvent<IUserEvent.IProfile.IPropertyUpdated.IName>(clarity => WriteLine($"Ahh: {clarity.Name}"));
             #endregion
          }
       }
@@ -62,9 +63,9 @@ namespace Website.paradigms.semantic_events
       #region nested-events2
       interface IUserEvent : IAggregateEvent
       {
-         internal interface IProfileEvent : IUserEvent
+         internal interface IProfile : IUserEvent
          {
-            internal interface IPropertyUpdated : IProfileEvent
+            internal interface IPropertyUpdated : IProfile
             {
                internal interface IName : IPropertyUpdated
                {

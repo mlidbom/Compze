@@ -82,6 +82,7 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
 /// absolute requirement for a correct implementation of <see cref="object.Equals(object)"/>,
 /// <see cref="object.GetHashCode"/>, and <see cref="IEquatable{TEntity}"/>.
 /// </summary>
+// ReSharper disable once NotResolvedInText
 [DebuggerDisplay("{GetType().Name} Id={Id}")]
 public class Entity<TEntity> : Entity<TEntity, Guid>, IPersistentEntity<Guid>, IEquatable<TEntity> where TEntity : Entity<TEntity>
 {
