@@ -30,7 +30,6 @@
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
-      <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
       <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
    </ItemGroup>

@@ -43,7 +43,6 @@ public class Startup
       if (env.IsDevelopment())
       {
          app.UseDeveloperExceptionPage();
-         app.UseBrowserLink();
       }
       else
       {
