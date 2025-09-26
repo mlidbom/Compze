@@ -3,6 +3,7 @@ using Compze.Persistence.EventStore;
 using Compze.SystemCE;
 using static System.Console;
 using IEvent = Compze.Messaging.IEvent;
+// ReSharper disable UnusedParameter.Local
 
 // ReSharper disable ClassNeverInstantiated.Global
 

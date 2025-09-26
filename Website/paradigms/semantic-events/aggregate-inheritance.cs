@@ -3,6 +3,8 @@ using Compze.Messaging.Buses;
 using Compze.Persistence.EventStore;
 using Compze.SystemCE;
 using static System.Console;
+// ReSharper disable NotAccessedVariable
+// ReSharper disable RedundantAssignment
 
 // ReSharper disable once CheckNamespace
 namespace Website.paradigms.semantic_events.InheritingAggregates;
