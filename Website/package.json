@@ -8,12 +8,13 @@
     "watch-site-only": "npm-watch build-site-only",
     "build-site-only": "docfx build docfx-site-only.json"
   },
+  //remember the npm-watch magic incantation, the name of the watch is the same as the name of the script the watch will run when it detects a change
   "watch": {
     "build": {
       "patterns": [
         "./*"
       ],
-      "extensions": "md,yml,css,cs.js",
+      "extensions": "md,yml,css,cs,js",
       "quiet": false,
       "ignore": "_site/*",
       "delay": 500
