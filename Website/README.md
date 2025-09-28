@@ -1,4 +1,4 @@
-Look in package.json for information on how to build and run this project
+Look in package.json for details on what these instructions actually execute.
 
 * For local development, run npm install to install dependencies
 	* If in visual studio
