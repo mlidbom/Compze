@@ -8,7 +8,7 @@
     "watch-site-only": "npm-watch build-site-only",
     "build-site-only": "docfx build docfx-site-only.json"
   },
-  //remember the npm-watch magic incantation, the name of the watch is the same as the name of the script the watch will run when it detects a change
+  "_###_important_comment_###_": "remember the npm-watch magic incantation, the name of the watch is the same as the name of the script the watch will run when it detects a change",
   "watch": {
     "build": {
       "patterns": [
