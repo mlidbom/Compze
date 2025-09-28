@@ -4,9 +4,9 @@ Look in package.json for information on how to build and run this project
 	* If in visual studio
 		* make sure to install the NPM Task Runner extension
 		* open the Task Runner Explorer and run the 'watch-site-only' task 
-		* once that is up, run browser-livereload or the live-server. One is much better for some reason that I can't remember. Sorry you'll have to try both.
+		* once that is up, run browser-livereload or the live-server. I introduced live-server because of some issues with browser-livereload that I don't remember..
 
-the watch-site-only task will watch for changes in the site folder and recompile as needed \
-while the browser-livereload task will serve the site and update the browser when changes are made
+* watch-site-only task will watch for changes in the site folder and rebuild the site as needed \
+*  browser-livereload/live-server will serve the site and update the browser when changes are made
 
 To build and publish, run buildAndPublish.ps1
