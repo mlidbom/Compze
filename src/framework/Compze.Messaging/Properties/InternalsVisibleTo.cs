@@ -6,3 +6,4 @@
 [assembly: InternalsVisibleTo("Compze.Tests.Unit.Internals")]
 [assembly: InternalsVisibleTo("Compze.Tests.Performance.Internals")]
 [assembly: InternalsVisibleTo("Compze.Persistence.PostgreSql")]
+[assembly: InternalsVisibleTo("Compze.Persistence.MySql")]

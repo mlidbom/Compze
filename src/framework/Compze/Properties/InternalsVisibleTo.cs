@@ -16,3 +16,4 @@
 [assembly: InternalsVisibleTo("Compze.Logging.Serilog")]
 [assembly: InternalsVisibleTo("ScratchPad.Internals")]
 [assembly: InternalsVisibleTo("Compze.Persistence.PostgreSql")]
+[assembly: InternalsVisibleTo("Compze.Persistence.MySql")]
