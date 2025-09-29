@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+	</PropertyGroup>
+	<PropertyGroup>
+		<RootNamespace>Compze</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+		<ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+		<ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
+		<ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+		<ProjectReference Include="..\Compze\Compze.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+	</ItemGroup>
+
+</Project>
