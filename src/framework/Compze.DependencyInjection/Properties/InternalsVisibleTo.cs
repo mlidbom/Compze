@@ -5,7 +5,7 @@
 
 [assembly: InternalsVisibleTo("Compze.Messaging")]
 [assembly: InternalsVisibleTo("Compze.Testing")]
-[assembly: InternalsVisibleTo("Compze.ExternalDependencies")]
+[assembly: InternalsVisibleTo("Compze.Persistence")]
 [assembly: InternalsVisibleTo("Compze.Tests.Integration.Internals")]
 [assembly: InternalsVisibleTo("Compze.Tests.Performance.Internals")]
 [assembly: InternalsVisibleTo("Compze.Persistence.PostgreSql")]

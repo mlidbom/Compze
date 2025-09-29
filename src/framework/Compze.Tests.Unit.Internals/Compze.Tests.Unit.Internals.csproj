@@ -13,7 +13,7 @@
 
    <ItemGroup>
       <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
-      <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
+      <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
    </ItemGroup>
 
