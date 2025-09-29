@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace AccountManagement;
 
-public class SetupTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class SetupTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    [Test] public async Task TestSetup()
    {

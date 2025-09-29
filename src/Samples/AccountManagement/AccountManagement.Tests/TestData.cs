@@ -15,7 +15,7 @@ static class TestData
 
       internal static class Invalid
       {
-         public const string Null = null;
+         public const string? Null = null;
          public static readonly string EmptyString = string.Empty;
          public static readonly string ShorterThanFourCharacters = ValidPassword[..3];
          public const string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
@@ -23,7 +23,7 @@ static class TestData
          public static readonly string MissingUpperCaseCharacter = ValidPassword.ToLowerInvariant();
          public static readonly string MissingLowercaseCharacter = ValidPassword.ToUpperInvariant();
 
-         public static readonly string[] All =
+         public static readonly string?[] All =
          [
             Null,
             EmptyString,
@@ -45,7 +45,7 @@ static class TestData
 
       internal static string CreateUnusedEmail() => $"test.test@test{Interlocked.Increment(ref _registeredAccounts)}.se";
 
-      internal static IEnumerable<string> InvalidEmails => InvalidEmailsTestData.Select(it => it.Data);
+      internal static IEnumerable<string?> InvalidEmails => InvalidEmailsTestData.Select(it => it.Data);
 
       internal static IReadOnlyList<StringTestData> InvalidEmailsTestData =>
          new List<StringTestData>
@@ -62,13 +62,13 @@ static class TestData
          };
 
 
-      public class StringTestData(string data, string description) : TestData<string>(data, description);
+      public class StringTestData(string? data, string description) : TestData<string>(data, description);
 
       public class TestData<TData> : TestCaseData
          where TData : class
       {
-         public TData Data { get; }
-         public TestData(TData data, string description) : base(data)
+         public TData? Data { get; }
+         public TestData(TData? data, string description) : base(data)
          {
             Data = data;
             SetName($"{description} ==  \"{data?.ToString() ?? "NULL"}\"");

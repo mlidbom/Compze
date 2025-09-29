@@ -5,7 +5,7 @@ using Compze.Messaging.Buses;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-class RegisterAccountScenario(IEndpoint clientEndpoint, string email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource Account)>
+class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource? Account)>
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
 
@@ -32,7 +32,7 @@ class RegisterAccountScenario(IEndpoint clientEndpoint, string email = null, str
       return this;
    }
 
-   public override (AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource Account) Execute()
+   public override (AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource? Account) Execute()
    {
       var registrationAttemptResult = _clientEndpoint.ExecuteClientRequest(Api.Command.Register(AccountId, Email, Password));
 

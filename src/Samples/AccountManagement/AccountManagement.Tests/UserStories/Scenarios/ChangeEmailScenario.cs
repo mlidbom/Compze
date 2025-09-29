@@ -20,7 +20,7 @@ class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 
    public AccountResource Account { get; private set; }
 
-   public static ChangeAccountEmailScenario Create(IEndpoint domainEndpoint) => new(domainEndpoint, new RegisterAccountScenario(domainEndpoint).Execute().Account);
+   public static ChangeAccountEmailScenario Create(IEndpoint domainEndpoint) => new(domainEndpoint, new RegisterAccountScenario(domainEndpoint).Execute().Account!);
 
    public ChangeAccountEmailScenario(IEndpoint clientEndpoint, AccountResource account)
    {

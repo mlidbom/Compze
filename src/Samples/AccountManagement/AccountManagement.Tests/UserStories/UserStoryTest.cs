@@ -11,11 +11,11 @@ using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public abstract class UserStoryTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class UserStoryTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
-   protected ITestingEndpointHost Host { get; set; }
-   IEndpoint _clientEndpoint;
-   internal AccountScenarioApi Scenario => new(_clientEndpoint);
+   protected ITestingEndpointHost? Host { get; set; }
+   IEndpoint? _clientEndpoint;
+   internal AccountScenarioApi Scenario => new(_clientEndpoint!);
 
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
@@ -25,5 +25,5 @@ public abstract class UserStoryTest([NotNull] string pluggableComponentsCombinat
       await Host.StartAsync().CaF();
    }
 
-   [TearDown] public async Task Teardown() => await Host.DisposeAsync().CaF();
+   [TearDown] public async Task Teardown() => await Host!.DisposeAsync().CaF();
 }

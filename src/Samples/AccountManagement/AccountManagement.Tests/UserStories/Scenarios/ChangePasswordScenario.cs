@@ -30,7 +30,7 @@ class ChangePasswordScenario : ScenarioBase<AccountResource>
       var registerAccountScenario = new RegisterAccountScenario(domainEndpoint);
       var account = registerAccountScenario.Execute().Account;
 
-      return new ChangePasswordScenario(domainEndpoint, account, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
+      return new ChangePasswordScenario(domainEndpoint, account!, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
    }
 
    public ChangePasswordScenario(IEndpoint clientEndpoint, AccountResource account, string oldPassword, string newPassword)
