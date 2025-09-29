@@ -53,7 +53,7 @@ public record EndpointId
 public interface IEndpointBuilder : IDisposable
 {
    IDependencyInjectionContainer Container { get; }
-   ITypeMappingRegistar TypeMapper { get; }
+   ITypeMappingRegistrar TypeMapper { get; }
    EndpointConfiguration Configuration { get; }
    MessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 }

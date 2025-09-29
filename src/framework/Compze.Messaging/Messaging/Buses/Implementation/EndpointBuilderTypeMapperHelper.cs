@@ -15,7 +15,7 @@ static class EndpointBuilderTypeMapperHelper
       internal const char StringDictionary = '4';
    }
 
-   public static ITypeMappingRegistar MapTypeAndStandardCollectionTypes<TType>(this ITypeMappingRegistar @this, string guidTemplate)
+   public static ITypeMappingRegistrar MapTypeAndStandardCollectionTypes<TType>(this ITypeMappingRegistrar @this, string guidTemplate)
    {
       @this.Map<TType>(guidTemplate.WithPostFix(Postfix.TypeItself));
 
@@ -23,7 +23,7 @@ static class EndpointBuilderTypeMapperHelper
       return @this;
    }
 
-   public static ITypeMappingRegistar MapStandardCollectionTypes<TType>(this ITypeMappingRegistar @this, string guidTemplate)
+   public static ITypeMappingRegistrar MapStandardCollectionTypes<TType>(this ITypeMappingRegistrar @this, string guidTemplate)
    {
       @this.Map<TType[]>(guidTemplate.WithPostFix(Postfix.Array));
       @this.Map<List<TType>>(guidTemplate.WithPostFix(Postfix.List));

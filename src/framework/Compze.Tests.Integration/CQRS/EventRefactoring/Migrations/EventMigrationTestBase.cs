@@ -176,7 +176,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
          endpointBuilder =>
             endpointBuilder.Container.RegisterEventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsfactory));
 
-      serviceLocator.Resolve<ITypeMappingRegistar>()
+      serviceLocator.Resolve<ITypeMappingRegistrar>()
                     .Map<Compze.Tests.CQRS.EventRefactoring.Migrations.TestAggregate>("dbc5cd48-bc09-4d96-804d-6712493a413d")
                     .Map<Compze.Tests.CQRS.EventRefactoring.Migrations.Events.E1>("cdb56e08-9ccb-497a-89cd-230913a51877")
                     .Map<Compze.Tests.CQRS.EventRefactoring.Migrations.Events.E2>("808a5fed-4925-4b2c-8992-fd75521959e6")

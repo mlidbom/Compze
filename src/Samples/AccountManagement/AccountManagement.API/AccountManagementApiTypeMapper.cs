@@ -5,7 +5,7 @@ namespace AccountManagement;
 
 static class AccountManagementApiTypeMapper
 {
-   public static void MapTypes(ITypeMappingRegistar typeMapper)
+   public static void MapTypes(ITypeMappingRegistrar typeMapper)
    {
       typeMapper
         .Map<API.AccountResource.Command.ChangeEmail>("f38f0473-e0cc-4ef7-9ff6-4e99da03a39e")

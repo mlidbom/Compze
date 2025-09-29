@@ -51,7 +51,7 @@ public class EventStoreUpdaterTest(string pluggableComponentsCombination) : Dupl
       _serviceLocator.Resolve<IMessageHandlerRegistrar>()
                      .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
 
-      _serviceLocator.Resolve<ITypeMappingRegistar>()
+      _serviceLocator.Resolve<ITypeMappingRegistrar>()
                      .Map<User>("2cfabb11-5e5a-494d-898f-8bfc654544eb")
                      .Map<IUserEvent>("0727c209-2f49-46ab-a56b-a1332415a895")
                      .Map<MigratedAfterUserChangedEmailEvent>("9ff42a12-f28c-447a-8aa1-79e6f685fa41")

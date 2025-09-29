@@ -11,7 +11,7 @@ using Compze.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Refactoring.Naming;
 
-class TypeMapper : ITypeMapper, ITypeMappingRegistar
+class TypeMapper : ITypeMapper, ITypeMappingRegistrar
 {
    readonly IThreadShared<State> _state = ThreadShared.WithDefaultTimeout<State>();
 
@@ -63,13 +63,13 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistar
 
    public void IncludeMappingsFrom(TypeMapper other) => _state.Update(state => other._state.Update(state.IncludeMappingsFrom));
 
-   public ITypeMappingRegistar Map<TType>(Guid typeIdGuid)
+   public ITypeMappingRegistrar Map<TType>(Guid typeIdGuid)
    {
       _state.Update(state => state.Map(typeof(TType), new TypeId(typeIdGuid)));
       return this;
    }
 
-   public ITypeMappingRegistar Map<TType>(string typeGuid) => Map<TType>(Guid.Parse(typeGuid));
+   public ITypeMappingRegistrar Map<TType>(string typeGuid) => Map<TType>(Guid.Parse(typeGuid));
 
    static void AssertTypeValidForMapping(Type type)
    {
@@ -130,5 +130,5 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistar
       public void IncludeMappingsFrom(State otherState) => otherState.TypeToTypeIdMap.ForEach(pair => Map(pair.Key, pair.Value));
    }
 
-   static string MapMethodCallforType(Type type) => $"""{nameof(ITypeMappingRegistar.Map)}<{type.GetFullNameCompilable()}>("{Guid.NewGuid()}")""";
+   static string MapMethodCallforType(Type type) => $"""{nameof(ITypeMappingRegistrar.Map)}<{type.GetFullNameCompilable()}>("{Guid.NewGuid()}")""";
 }

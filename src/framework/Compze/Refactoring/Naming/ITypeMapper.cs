@@ -14,8 +14,8 @@ interface ITypeMapper
    void AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings);
 }
 
-public interface ITypeMappingRegistar
+public interface ITypeMappingRegistrar
 {
-   ITypeMappingRegistar Map<TType>(Guid typeGuid);
-   ITypeMappingRegistar Map<TType>(string typeGuid);
+   ITypeMappingRegistrar Map<TType>(Guid typeGuid);
+   ITypeMappingRegistrar Map<TType>(string typeGuid);
 }

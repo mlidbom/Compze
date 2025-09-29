@@ -33,7 +33,7 @@ public class EventStoreTests(string pluggableComponentsCombination) : DuplicateB
    [SetUp] public void SetupTask()
    {
       _serviceLocator = TestWiringHelper.SetupTestingServiceLocator();
-      _serviceLocator.Resolve<ITypeMappingRegistar>()
+      _serviceLocator.Resolve<ITypeMappingRegistrar>()
                      .Map<SomeEvent>("9e71c8cb-397a-489c-8ff7-15805a7509e8")
                      .Map<UserRegistered>("e965b5d4-6f1a-45fa-9660-2fec0abc4a0a");
    }

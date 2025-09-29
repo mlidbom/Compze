@@ -8,7 +8,7 @@ static class DomainTypeMapper
    //In order to enable you to freely rename and move types you must map each concrete type to a unique Guid.
    //To make this as easy as possible for you Compze will detect missing mappings and throw an exception telling exactly which lines of code you need to paste into the method below.
    //The lines you see here are pasted directly from the message in such an exception.
-   public static void MapTypes(ITypeMappingRegistar typeMapper)
+   public static void MapTypes(ITypeMappingRegistrar typeMapper)
    {
       typeMapper
         .Map<Domain.Account>("c2ca53e0-ee6d-4725-8bf8-c13b680d0ac5")

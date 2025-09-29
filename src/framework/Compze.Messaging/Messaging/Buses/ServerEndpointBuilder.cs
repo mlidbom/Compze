@@ -22,7 +22,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    public IDependencyInjectionContainer Container { get; }
 
-   public ITypeMappingRegistar TypeMapper => _typeMapper;
+   public ITypeMappingRegistrar TypeMapper => _typeMapper;
    readonly IGlobalBusStateTracker _globalStateTracker;
    readonly MessageHandlerRegistry _registry;
    readonly IEndpointHost _host;
@@ -90,7 +90,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       Container.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
 
       Container.Register(
-         Singleton.For<ITypeMappingRegistar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
+         Singleton.For<ITypeMappingRegistrar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
          Singleton.For<IGlobalBusStateTracker>().CreatedBy(() => _globalStateTracker),
          Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
          Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)

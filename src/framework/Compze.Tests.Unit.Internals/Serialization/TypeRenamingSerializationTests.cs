@@ -112,13 +112,13 @@ namespace Compze.Tests.Unit.Internals.Serialization
          _originaltypesMap = new TypeMapper();
          _renamedTypesMap = new TypeMapper();
 
-         ((ITypeMappingRegistar)_originaltypesMap)
+         ((ITypeMappingRegistrar)_originaltypesMap)
            .Map<OriginalTypes.TypeA>(Ids.TypeA)
            .Map<OriginalTypes.TypeB>(Ids.TypeB)
            .Map<OriginalTypes.TypeA.TypeAA>(Ids.TypeAA)
            .Map<OriginalTypes.TypeB.TypeBB>(Ids.TypeBB);
 
-         ((ITypeMappingRegistar)_renamedTypesMap)
+         ((ITypeMappingRegistrar)_renamedTypesMap)
            .Map<RenamedTypes.TypeA>(Ids.TypeA)
            .Map<RenamedTypes.TypeB>(Ids.TypeB)
            .Map<RenamedTypes.TypeA.TypeAA>(Ids.TypeAA)
