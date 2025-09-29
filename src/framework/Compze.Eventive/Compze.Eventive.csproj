@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<RootNamespace>Compze</RootNamespace>
+		<NuGetAuditMode>direct</NuGetAuditMode>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Compze\Compze.csproj" />
+	</ItemGroup>
+
+</Project>

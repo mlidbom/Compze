@@ -19,7 +19,12 @@
    </ItemGroup>
 
    <ItemGroup>
+     <ProjectReference Include="..\Compze.SystemCE\Compze.SystemCE.csproj" />
      <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <Folder Include="Persistence\EventStore\" />
    </ItemGroup>
 
 </Project>
