@@ -34,6 +34,6 @@ public class EmailAttributeTests : UniversalTestBase
    class ACommand
    {
       [Email]
-      public string Email { [UsedImplicitly] get; set; }
+      public string? Email { [UsedImplicitly] get; set; }
    }
 }
