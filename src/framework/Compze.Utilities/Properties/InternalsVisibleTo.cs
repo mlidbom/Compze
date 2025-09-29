@@ -18,3 +18,4 @@
 [assembly: InternalsVisibleTo("ScratchPad.Internals")]
 
 [assembly: InternalsVisibleTo("Compze.Tests.Unit")]
+[assembly: InternalsVisibleTo("Compze.Persistence.PostgreSql")]

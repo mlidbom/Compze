@@ -16,6 +16,7 @@
       <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
       <ProjectReference Include="..\Compze.ExternalDependencies\Compze.ExternalDependencies.csproj" />
       <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.PostgreSql\Compze.Persistence.PostgreSql.csproj" />
    </ItemGroup>
 
    <ItemGroup>

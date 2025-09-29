@@ -2,3 +2,4 @@
 
 [assembly: InternalsVisibleTo("Compze.Tests.Integration.Internals")]
 [assembly: InternalsVisibleTo("Compze.Tests.Performance.Internals")]
+[assembly: InternalsVisibleTo("Compze.Persistence.PostgreSql")]

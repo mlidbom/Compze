@@ -15,3 +15,4 @@
 [assembly: InternalsVisibleTo("Compze.DependencyInjection.Microsoft")]
 [assembly: InternalsVisibleTo("Compze.Logging.Serilog")]
 [assembly: InternalsVisibleTo("ScratchPad.Internals")]
+[assembly: InternalsVisibleTo("Compze.Persistence.PostgreSql")]
