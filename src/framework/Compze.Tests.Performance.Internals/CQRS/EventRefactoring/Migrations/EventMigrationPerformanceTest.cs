@@ -20,11 +20,11 @@ using NUnit.Framework;
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 
 [LongRunning]
-public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
+public class EventMigrationPerformanceTest(string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
 {
    List<AggregateEvent> _history;
    TestAggregate _aggregate;
-   IServiceLocator _container;
+   IServiceLocator? _container;
    IReadOnlyList<IEventMigration> _currentMigrations;
    [OneTimeSetUp] public void Given_a_1000_events_large_aggregate()
    {
@@ -55,12 +55,12 @@ public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsC
    {
       _currentMigrations = migrations;
 
-      IServiceLocator clonedLocator = null;
+      IServiceLocator? clonedLocator = null;
 
       await TimeAsserter.ExecuteAsync(
          description: "Uncached loading",
          maxTotal: maxUncachedLoadTime,
-         setup: () => clonedLocator = _container.Clone(),
+         setup: () => clonedLocator = _container!.Clone(),
          tearDownAsync: async Task () => await clonedLocator.NotNull().DisposeAsync(),
          action: () =>
          {
@@ -68,7 +68,7 @@ public class EventMigrationPerformanceTest([NotNull] string pluggableComponentsC
             return Task.CompletedTask;
          });
 
-      await using(clonedLocator = _container.Clone())
+      await using(clonedLocator = _container!.Clone())
       {
          LoadWithCloneLocator(clonedLocator); //Warm up cache
 

@@ -143,7 +143,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
       useConnection();
 
       TimeAsserter.Execute(
-         action: useConnection!,
+         action: useConnection,
          maxTotal: allowedTime,
          iterations : iterations
       );
