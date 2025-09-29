@@ -70,7 +70,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Logging.Serilog", "f
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Common", "framework\Compze.Tests.Common\Compze.Tests.Common.csproj", "{A81661B5-59BE-4EAA-9C3A-61A1A8B3CDF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Utilities", "framework\Compze.Utilities\Compze.Utilities.csproj", "{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.InternalUtilities", "framework\Compze.Utilities\Compze.InternalUtilities.csproj", "{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.PostgreSql", "framework\Compze.Persistence.PostgreSql\Compze.Persistence.PostgreSql.csproj", "{1F205BF0-899E-44FF-A014-0E1FA04B34A1}"
 EndProject
