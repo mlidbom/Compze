@@ -4,6 +4,7 @@ using Compze.SystemCE;
 using static System.Console;
 using IEvent = Compze.Messaging.IEvent;
 // ReSharper disable UnusedParameter.Local
+// ReSharper disable ArrangeTypeMemberModifiers
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -25,7 +26,7 @@ namespace Website.paradigms.semantic_events
             MessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((MessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
 
             #region Unhelpful
-            registrar.ForEvent<IName>(nameEvent => WriteLine($"Uhmm... What is happening here?"));
+            registrar.ForEvent<IName>(nameEvent => WriteLine("Uhmm... What is happening here?"));
             #endregion
 
             #region helpful
