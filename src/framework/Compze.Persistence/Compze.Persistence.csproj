@@ -21,7 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
         <PackageReference Include="MySql.Data" Version="9.4.0" />
         <PackageReference Include="Npgsql" Version="9.0.3" />

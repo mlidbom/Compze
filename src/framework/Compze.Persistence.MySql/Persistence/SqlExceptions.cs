@@ -1,7 +1,4 @@
-﻿using Compze.SystemCE;
-using Microsoft.Data.SqlClient;
-using MySql.Data.MySqlClient;
-using Npgsql;
+﻿using MySql.Data.MySqlClient;
 
 namespace Compze.Persistence;
 
