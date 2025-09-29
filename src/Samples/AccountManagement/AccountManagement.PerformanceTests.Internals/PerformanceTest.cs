@@ -18,11 +18,11 @@ using NUnit.Framework;
 
 namespace AccountManagement;
 
-class PerformanceTest([NotNull] string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+class PerformanceTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
-   ITestingEndpointHost _host;
-   IEndpoint _clientEndpoint;
-   AccountScenarioApi _scenarioApi;
+   ITestingEndpointHost? _host;
+   IEndpoint? _clientEndpoint;
+   AccountScenarioApi? _scenarioApi;
 
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
@@ -38,14 +38,14 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
    [Test] public void SingleThreaded_creates_XX_accounts_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.Execute(
          description: "Register accounts",
-         action: () => _scenarioApi.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
+         action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
          iterations: TestEnv.PersistenceLayer.ValueFor(db2: 6, memory: 6, msSql: 6, mySql: 6, orcl: 6, pgSql: 6),
          maxTotal: 100.Milliseconds().EnvMultiply(1.6));
 
    [Test] public void Multithreaded_creates_XX_accounts_in_20_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.ExecuteThreaded(
          description: "Register accounts",
-         action: () => _scenarioApi.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
+         action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
          iterations: TestEnv.PersistenceLayer.ValueFor(db2: 2, memory: 10, msSql: 4, mySql: 1, orcl: 2, pgSql: 3),
          maxTotal: 20.Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.4));
 
@@ -58,7 +58,7 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
                                    action: () =>
                                    {
                                       var (email, password, _) = accountsReader.Next();
-                                      _scenarioApi.Login(email, password).Execute().Succeeded.Should().BeTrue();
+                                      _scenarioApi!.Login(email, password).Execute().Succeeded.Should().BeTrue();
                                    },
                                    iterations: logins,
                                    maxTotal: 100.Milliseconds());
@@ -73,7 +73,7 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
                                    action: () =>
                                    {
                                       var accountId = accountsReader.Next().Id;
-                                      _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(accountId)).Id.Should().Be(accountId);
+                                      _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(accountId)).Id.Should().Be(accountId);
                                    },
                                    iterations: fetches,
                                    maxTotal: 20.Milliseconds());
@@ -86,15 +86,15 @@ class PerformanceTest([NotNull] string pluggableComponentsCombination) : Duplica
       StopwatchCE.TimeExecutionThreaded(
          () =>
          {
-            var registerAccountScenario = _scenarioApi.Register;
+            var registerAccountScenario = _scenarioApi!.Register;
             var result = registerAccountScenario.Execute().Result;
             result.Status.Should().Be(RegistrationAttemptStatus.Successful);
-            _clientEndpoint.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(result.RegisteredAccount!.Id)).Id.Should().Be(result.RegisteredAccount.Id);
+            _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(result.RegisteredAccount!.Id)).Id.Should().Be(result.RegisteredAccount.Id);
             created.Add((registerAccountScenario.Email, registerAccountScenario.Password, registerAccountScenario.AccountId));
          },
          iterations: accountCount);
       return created;
    }
 
-   [TearDown] public async Task Teardown() => await _host.DisposeAsync().CaF();
+   [TearDown] public async Task Teardown() => await _host!.DisposeAsync().CaF();
 }
