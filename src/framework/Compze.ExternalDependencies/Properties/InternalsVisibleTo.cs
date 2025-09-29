@@ -5,3 +5,4 @@
 [assembly: InternalsVisibleTo("Compze.Persistence.PostgreSql")]
 [assembly: InternalsVisibleTo("Compze.Persistence.MySql")]
 [assembly: InternalsVisibleTo("Compze.Persistence.MicrosoftSqlServer")]
+[assembly: InternalsVisibleTo("Compze.Persistence.InMemory")]
