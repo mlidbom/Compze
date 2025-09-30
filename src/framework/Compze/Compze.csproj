@@ -23,10 +23,6 @@
    </ItemGroup>
 
    <ItemGroup>
-     <Folder Include="Persistence\EventStore\" />
-   </ItemGroup>
-
-   <ItemGroup>
       <InternalsVisibleTo Include="Compze.Messaging" />
       <InternalsVisibleTo Include="Compze.Testing" />
       <InternalsVisibleTo Include="Compze.DependencyInjection" />

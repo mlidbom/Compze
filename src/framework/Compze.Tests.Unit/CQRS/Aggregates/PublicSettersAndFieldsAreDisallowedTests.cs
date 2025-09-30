@@ -1,11 +1,12 @@
-﻿using System;
-using Compze.GenericAbstractions.Time;
+﻿using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Events;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using System;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local
@@ -66,7 +67,10 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootEvent.Root, RootEvent.IRoot>(timeSource)
    {
-      public class AggComponent(Root aggregate) : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(aggregate)
+      public class AggComponent(IUtcTimeTimeSource timeSource, 
+                                Action<RootEvent.Root> raiseEventThroughParent,
+                                IEventHandlerRegistrar<RootEvent.IRoot> appliersRegistrar)
+          : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(timeSource, raiseEventThroughParent, appliersRegistrar, true)
       {
          public string Public { get; set; } = string.Empty;
 
@@ -102,7 +106,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    [Test] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
    {
-      FluentActions.Invoking(() => new Root.AggComponent(null!))
+      FluentActions.Invoking(() => new Root.AggComponent(null!, null!, null!))
                    .Should().Throw<Exception>()
                    .Which.InnerException!
                    .Message

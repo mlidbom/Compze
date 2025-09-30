@@ -13,7 +13,7 @@ class CompositeAggregate : Aggregate<CompositeAggregate, CompositeAggregateEvent
 
    public CompositeAggregate(string name, Guid id) : base(new DateTimeNowTimeSource())
    {
-      Component = new Component(this);
+      Component = new Component(TimeSource, @event => Publish(@event), RegisterEventAppliers());
       _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
       RegisterEventAppliers()
