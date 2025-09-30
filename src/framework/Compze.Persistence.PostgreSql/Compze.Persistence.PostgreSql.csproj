@@ -13,7 +13,7 @@
 	  <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
 	  <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
 	  <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
-	  <ProjectReference Include="..\Compze.Utilities\Compze.InternalUtilities.csproj" />
+	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
 	  <ProjectReference Include="..\Compze\Compze.csproj" />
 	</ItemGroup>
 

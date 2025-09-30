@@ -21,7 +21,7 @@
    </ItemGroup>
 
    <ItemGroup>
-     <ProjectReference Include="..\Compze.Utilities\Compze.InternalUtilities.csproj" />
+     <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
    </ItemGroup>
 
    <ItemGroup>
