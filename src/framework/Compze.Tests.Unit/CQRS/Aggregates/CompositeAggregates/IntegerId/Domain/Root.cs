@@ -15,7 +15,7 @@ class Root : Aggregate<Root, RootEvent.Implementation.Root, RootEvent.IRoot>
 
    public Root(string name) : base(new DateTimeNowTimeSource())
    {
-      Component = new Component(TimeSource, evt => Publish(evt), RegisterEventAppliers());
+      Component = new Component(evt => Publish(evt), RegisterEventAppliers());
       _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
       RegisterEventAppliers()
@@ -32,8 +32,8 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;
-   public Component(IUtcTimeTimeSource timeSource, Action<RootEvent.Component.Implementation.Root> raiseEventThroughParent, IEventHandlerRegistrar<RootEvent.Component.IRoot> appliersRegistrar)
-       : base(timeSource, raiseEventThroughParent, appliersRegistrar, true)
+   public Component(Action<RootEvent.Component.Implementation.Root> raiseEventThroughParent, IEventHandlerRegistrar<RootEvent.Component.IRoot> appliersRegistrar)
+       : base(raiseEventThroughParent, appliersRegistrar, true)
    {
       _entities = Entity.CreateSelfManagingCollection(this);
 

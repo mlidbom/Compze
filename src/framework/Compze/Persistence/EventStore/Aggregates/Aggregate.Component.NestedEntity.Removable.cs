@@ -29,10 +29,10 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       {
          static RemovableNestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
 
-         protected RemovableNestedEntity(TComponent parent) : this(parent.TimeSource, parent.Publish, parent.RegisterEventAppliers()) {}
+         protected RemovableNestedEntity(TComponent parent) : this(parent.Publish, parent.RegisterEventAppliers()) {}
 
-         RemovableNestedEntity(IUtcTimeTimeSource timeSource, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-            : base(timeSource, raiseEventThroughParent, appliersRegistrar)
+         RemovableNestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+            : base(raiseEventThroughParent, appliersRegistrar)
          {
             RegisterEventAppliers()
               .IgnoreUnhandled<TEntityRemovedEvent>();

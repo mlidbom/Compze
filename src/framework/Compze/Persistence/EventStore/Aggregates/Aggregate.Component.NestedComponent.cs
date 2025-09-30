@@ -27,13 +27,12 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          static NestedComponent() => AggregateTypeValidator<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>.AssertStaticStructureIsValid();
 
          protected NestedComponent(TComponent parent)
-            : base(parent.TimeSource, parent.Publish, parent.RegisterEventAppliers(), registerEventAppliers: true) {}
+            : base(parent.Publish, parent.RegisterEventAppliers(), registerEventAppliers: true) {}
 
          protected NestedComponent
-         (IUtcTimeTimeSource timeSource,
-          Action<TNestedComponentEventImplementation> raiseEventThroughParent,
+         (Action<TNestedComponentEventImplementation> raiseEventThroughParent,
           IEventHandlerRegistrar<TNestedComponentEvent> appliersRegistrar,
-          bool registerEventAppliers) : base(timeSource, raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
+          bool registerEventAppliers) : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
       }
    }
 }

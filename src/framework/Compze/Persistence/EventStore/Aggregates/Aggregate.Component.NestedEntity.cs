@@ -32,11 +32,11 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          static readonly TEntityEventIdGetterSetter IdGetterSetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
 
          // ReSharper disable once UnusedMember.Global todo: coverage
-         protected NestedEntity(TComponent parent) : this(parent.TimeSource, parent.Publish, parent.RegisterEventAppliers()) {}
+         protected NestedEntity(TComponent parent) : this(parent.Publish, parent.RegisterEventAppliers()) {}
 
 #pragma warning disable 8618 //Review OK-ish: We guarantee that we never deliver out a null or default value from the public property. The private field cannot be marked nullable because it is a generic type argument and we don't want to constrain it to either classes or structs.
-         protected NestedEntity(IUtcTimeTimeSource timeSource, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-            : base(timeSource, raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
+         protected NestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+            : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
          {
             RegisterEventAppliers()
               .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));

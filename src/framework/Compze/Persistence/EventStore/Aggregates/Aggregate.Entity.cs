@@ -32,15 +32,14 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
       protected Entity(TAggregate aggregate)
-         : this(aggregate.TimeSource, @event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
+         : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
 
 #pragma warning disable CS8618 //Review OK-ish: We ensure that we never return a null or default value from the public Id property
       Entity
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-      (IUtcTimeTimeSource timeSource,
-       Action<TEntityEventImplementation> raiseEventThroughParent,
+      (Action<TEntityEventImplementation> raiseEventThroughParent,
        IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-         : base(timeSource, raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
+         : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
       {
          RegisterEventAppliers()
            .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));

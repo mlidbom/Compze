@@ -67,10 +67,9 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootEvent.Root, RootEvent.IRoot>(timeSource)
    {
-      public class AggComponent(IUtcTimeTimeSource timeSource,
-                                Action<RootEvent.Root> raiseEventThroughParent,
+      public class AggComponent(Action<RootEvent.Root> raiseEventThroughParent,
                                 IEventHandlerRegistrar<RootEvent.IRoot> appliersRegistrar)
-          : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(timeSource, raiseEventThroughParent, appliersRegistrar, true)
+          : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(raiseEventThroughParent, appliersRegistrar, true)
       {
          public string Public { get; set; } = string.Empty;
 
@@ -106,7 +105,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    [Test] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
    {
-      FluentActions.Invoking(() => new Root.AggComponent(null!, null!, null!))
+      FluentActions.Invoking(() => new Root.AggComponent(null!, null!))
                    .Should().Throw<Exception>()
                    .Which.InnerException!
                    .Message

@@ -19,13 +19,10 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
     protected IEventDispatcher<TComponentEvent> EventHandlersEventDispatcher => _eventHandlersEventDispatcher;
     readonly Action<TComponentEventImplementation> _raiseEventThroughParent;
 
-    protected IUtcTimeTimeSource TimeSource { get; set; }
-
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
-    internal EventiveComponent(IUtcTimeTimeSource timeSource, Action<TComponentEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers)
+    internal EventiveComponent(Action<TComponentEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers)
     {
-        TimeSource = timeSource;
         _raiseEventThroughParent = raiseEventThroughParent;
         _eventHandlersEventDispatcher.Register()
                                      .IgnoreUnhandled<TComponentEvent>();

@@ -17,10 +17,9 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
         where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
         where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
     {
-        protected Component(IUtcTimeTimeSource timeSource,
-                            Action<TComponentEventImplementation> raiseEventThroughParent,
+        protected Component(Action<TComponentEventImplementation> raiseEventThroughParent,
                             IEventHandlerRegistrar<TComponentEvent> appliersRegistrar,
                             bool registerEventAppliers)
-            : base(timeSource, raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
+            : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
     }
 }
