@@ -33,10 +33,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
       protected Entity(TAggregate aggregate)
          : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
-
-#pragma warning disable CS8618 //Review OK-ish: We ensure that we never return a null or default value from the public Id property
       Entity
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       (Action<TEntityEventImplementation> raiseEventThroughParent,
        IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
          : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
