@@ -6,7 +6,6 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
-using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace AccountManagement.UserStories;

@@ -13,7 +13,6 @@ using Compze.Testing.Performance;
 using Compze.Testing.SystemCE.CollectionsCE.ConcurrentCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace AccountManagement;

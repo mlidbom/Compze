@@ -1,7 +1,6 @@
 ﻿using System;
 using Compze.SystemCE.LinqCE;
 using FluentAssertions;
-using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace AccountManagement.UserStories;

@@ -1,7 +1,6 @@
 ﻿using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using FluentAssertions;
-using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
