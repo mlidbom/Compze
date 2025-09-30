@@ -13,6 +13,8 @@
    </PropertyGroup>
 
    <ItemGroup>
+      <ProjectReference Include="..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+      <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
       <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />

@@ -12,8 +12,4 @@
 		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Compze\Compze.csproj" />
-	</ItemGroup>
-
 </Project>

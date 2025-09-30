@@ -14,7 +14,6 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Messaging\Compze.Messaging.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj" />
    </ItemGroup>
