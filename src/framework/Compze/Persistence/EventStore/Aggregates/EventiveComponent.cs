@@ -13,13 +13,12 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
 {
     static EventiveComponent() => AggregateTypeValidator<TComponent, TComponentEventImplementation, TComponentEvent>.AssertStaticStructureIsValid();
 
-    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new();
+    readonly IMutableEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
 
-    //todo: I don't like this being internal rather than private
-    internal readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent> _eventHandlersEventDispatcher = new();
+    readonly IMutableEventDispatcher<TComponentEvent> _eventHandlersEventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
+    protected IEventDispatcher<TComponentEvent> EventHandlersEventDispatcher => _eventHandlersEventDispatcher;
     readonly Action<TComponentEventImplementation> _raiseEventThroughParent;
 
-    //todo: I don't like this being internal rather than private
     protected IUtcTimeTimeSource TimeSource { get; set; }
 
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
@@ -41,7 +40,7 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
     protected virtual void Publish(TComponentEventImplementation @event)
     {
         _raiseEventThroughParent(@event);
-        _eventHandlersEventDispatcher.Dispatch(@event);
+        EventHandlersEventDispatcher.Dispatch(@event);
     }
 
     protected IEventHandlerRegistrar<TComponentEvent> RegisterEventAppliers() => _eventAppliersEventDispatcher.Register();

@@ -32,7 +32,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;
-   public Component(IUtcTimeTimeSource timeSource, Action<RootEvent.Component.Implementation.Root> raiseEventThroughParent, IEventHandlerRegistrar<RootEvent.Component.IRoot> appliersRegistrar) 
+   public Component(IUtcTimeTimeSource timeSource, Action<RootEvent.Component.Implementation.Root> raiseEventThroughParent, IEventHandlerRegistrar<RootEvent.Component.IRoot> appliersRegistrar)
        : base(timeSource, raiseEventThroughParent, appliersRegistrar, true)
    {
       _entities = Entity.CreateSelfManagingCollection(this);

@@ -67,7 +67,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootEvent.Root, RootEvent.IRoot>(timeSource)
    {
-      public class AggComponent(IUtcTimeTimeSource timeSource, 
+      public class AggComponent(IUtcTimeTimeSource timeSource,
                                 Action<RootEvent.Root> raiseEventThroughParent,
                                 IEventHandlerRegistrar<RootEvent.IRoot> appliersRegistrar)
           : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(timeSource, raiseEventThroughParent, appliersRegistrar, true)
