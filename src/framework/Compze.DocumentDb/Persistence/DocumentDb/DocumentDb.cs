@@ -28,7 +28,13 @@ class DocumentDb : IDocumentDb
       _typeMapper = typeMapper;
    }
 
-   bool IDocumentDb.TryGet<TDocument>(object id, [MaybeNullWhen(false)] out TDocument value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock)
+
+    //todo:urgent:bug: The DocumentKey uses (id, type) as the key. But polymorphism queries by base type, while storage is by concrete type:
+    // Save<Animal>("1", new Dog());
+    // Save<Animal>("1", new Cat()); // Same ID, different concrete types
+    // This creates two documents with the same logical ID but different type GUIDs. Querying Get<Animal>("1") becomes ambiguous.
+    // I don't see any simple fix for this. I think we should just rip out the polymorphism support. It is too complex to manage and reason about, and the use cases are limited.
+    bool IDocumentDb.TryGet<TDocument>(object id, [MaybeNullWhen(false)] out TDocument value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock)
    {
       value = default;
       var idString = GetIdString(id);
