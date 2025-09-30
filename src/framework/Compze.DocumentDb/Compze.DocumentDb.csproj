@@ -25,4 +25,9 @@
       <Folder Include="Persistence\" />
    </ItemGroup>
 
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Persistence" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+   </ItemGroup>
+
 </Project>

@@ -50,4 +50,8 @@
         <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
     </PropertyGroup>
 
+   <ItemGroup>
+      <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
+   </ItemGroup>
+
 </Project>

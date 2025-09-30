@@ -26,4 +26,26 @@
      <Folder Include="Persistence\EventStore\" />
    </ItemGroup>
 
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Messaging" />
+      <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection" />
+      <InternalsVisibleTo Include="Compze.Serialization" />
+      <InternalsVisibleTo Include="Compze.Logging" />
+      <InternalsVisibleTo Include="Compze.DocumentDb" />
+      <InternalsVisibleTo Include="Compze.EventStore" />
+      <InternalsVisibleTo Include="Compze.Persistence" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
+      <InternalsVisibleTo Include="Compze.Logging.Serilog" />
+      <InternalsVisibleTo Include="ScratchPad.Internals" />
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
+   </ItemGroup>
+
 </Project>

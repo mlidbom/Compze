@@ -33,4 +33,10 @@
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
    </ItemGroup>
 
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Messaging" />
+      <InternalsVisibleTo Include="Compze.Persistence" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+   </ItemGroup>
+
 </Project>

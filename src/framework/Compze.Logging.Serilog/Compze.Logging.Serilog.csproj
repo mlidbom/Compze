@@ -24,4 +24,8 @@
      <ProjectReference Include="..\Compze.Utilities\Compze.InternalUtilities.csproj" />
    </ItemGroup>
 
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Testing" />
+   </ItemGroup>
+
 </Project>

@@ -20,4 +20,14 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
 
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Messaging" />
+      <InternalsVisibleTo Include="Compze.Logging" />
+      <InternalsVisibleTo Include="Compze.DocumentDb" />
+      <InternalsVisibleTo Include="Compze.EventStore" />
+      <InternalsVisibleTo Include="Compze.Persistence" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+   </ItemGroup>
+
 </Project>

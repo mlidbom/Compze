@@ -25,4 +25,8 @@
         <PackageReference Include="SimpleInjector" Version="5.5.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="Compze.Testing" />
+    </ItemGroup>
+
 </Project>

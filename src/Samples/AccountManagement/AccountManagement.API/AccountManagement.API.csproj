@@ -40,4 +40,8 @@
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
    </ItemGroup>
 
+   <ItemGroup>
+      <InternalsVisibleTo Include="AccountManagement.Server" />
+   </ItemGroup>
+
 </Project>
