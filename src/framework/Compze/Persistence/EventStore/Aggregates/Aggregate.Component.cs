@@ -24,40 +24,6 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
                             bool registerEventAppliers)
             : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
 
-        ////////////////////////Nested component
-
-        [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-        public abstract class NestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent> :
-            Component<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>
-            where TNestedComponentEvent : class, TComponentEvent
-            where TNestedComponentEventImplementation : TComponentEventImplementation, TNestedComponentEvent
-            where TNestedComponent : NestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>
-        {
-            static NestedComponent() => AggregateTypeValidator<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>.AssertStaticStructureIsValid();
-
-            protected NestedComponent(TComponent parent)
-                : base(parent.Publish, parent.RegisterEventAppliers(), registerEventAppliers: true) {}
-
-            protected NestedComponent(Action<TNestedComponentEventImplementation> raiseEventThroughParent,
-                                      IEventHandlerRegistrar<TNestedComponentEvent> appliersRegistrar,
-                                      bool registerEventAppliers) : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
-        }
-
-        ////////////////////////Nested entity
-        public abstract class NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-            : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-            where TEntityId : struct
-            where TEntityEvent : class, TComponentEvent
-            where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
-            where TEntityCreatedEvent : TEntityEvent
-            where TEntity : NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-            where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
-        {
-            static NestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
-
-            protected NestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
-        }
-
         ////////////////////////Entity collection
 
         public class EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
@@ -97,6 +63,40 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
                 var result = ManagedEntities.InCreationOrder[^1];
                 return result;
             }
+        }
+
+        ////////////////////////Nested component
+
+        [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
+        public abstract class NestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent> :
+            Component<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>
+            where TNestedComponentEvent : class, TComponentEvent
+            where TNestedComponentEventImplementation : TComponentEventImplementation, TNestedComponentEvent
+            where TNestedComponent : NestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>
+        {
+            static NestedComponent() => AggregateTypeValidator<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>.AssertStaticStructureIsValid();
+
+            protected NestedComponent(TComponent parent)
+                : base(parent.Publish, parent.RegisterEventAppliers(), registerEventAppliers: true) {}
+
+            protected NestedComponent(Action<TNestedComponentEventImplementation> raiseEventThroughParent,
+                                      IEventHandlerRegistrar<TNestedComponentEvent> appliersRegistrar,
+                                      bool registerEventAppliers) : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
+        }
+
+        ////////////////////////Nested entity
+        public abstract class NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+            : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+            where TEntityId : struct
+            where TEntityEvent : class, TComponentEvent
+            where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
+            where TEntityCreatedEvent : TEntityEvent
+            where TEntity : NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+            where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
+        {
+            static NestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
+
+            protected NestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
         }
 
         ///////////////////////Removable nested entity
