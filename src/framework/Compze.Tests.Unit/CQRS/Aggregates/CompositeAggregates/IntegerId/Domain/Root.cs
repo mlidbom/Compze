@@ -49,8 +49,8 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
 
    [UsedImplicitly]public class Entity : RemovableEntity<Entity,
       int,
-      RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.IRoot,
+      RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.Created,
       RootEvent.Component.Entity.Removed,
       RootEvent.Component.Entity.Implementation.Root.IdGetterSetter>
@@ -92,8 +92,8 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
 
    public class RemovableNestedEntity : RemovableEntity<RemovableNestedEntity,
       int,
-      RootEvent.Entity.NestedEntity.Implementation.Root,
       RootEvent.Entity.NestedEntity.IRoot,
+      RootEvent.Entity.NestedEntity.Implementation.Root,
       RootEvent.Entity.NestedEntity.Created,
       RootEvent.Entity.NestedEntity.Removed,
       RootEvent.Entity.NestedEntity.Implementation.Root.IdGetterSetter>

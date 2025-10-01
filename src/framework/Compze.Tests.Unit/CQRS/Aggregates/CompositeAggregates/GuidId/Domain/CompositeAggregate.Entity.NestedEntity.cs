@@ -12,8 +12,8 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
         RemovableEntity.RemovableEntity<
             RemovableNestedEntity,
             Guid,
-            CompositeAggregateEvent.Entity.NestedEntity.Implementation.Root,
             CompositeAggregateEvent.Entity.NestedEntity.IRoot,
+            CompositeAggregateEvent.Entity.NestedEntity.Implementation.Root,
             CompositeAggregateEvent.Entity.NestedEntity.Created,
             CompositeAggregateEvent.Entity.NestedEntity.Removed,
             CompositeAggregateEvent.Entity.NestedEntity.Implementation.Root.IdGetterSetter>

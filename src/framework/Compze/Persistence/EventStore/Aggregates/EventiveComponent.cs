@@ -62,8 +62,8 @@ public abstract class EventiveComponent<TParent,
 
     public abstract class Entity<TEntity,
                                  TEntityId,
-                                 TEntityEventImplementation,
                                  TEntityEvent,
+                                 TEntityEventImplementation,
                                  TEntityCreatedEvent,
                                  TEntityEventIdGetterSetter> :
         EventiveEntity<
@@ -80,7 +80,7 @@ public abstract class EventiveComponent<TParent,
         where TEntityEvent : class, TComponentEvent
         where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
-        where TEntity : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        where TEntity : Entity<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
         protected Entity(TComponent aggregate) : base(aggregate) {}
@@ -88,8 +88,8 @@ public abstract class EventiveComponent<TParent,
 
     public abstract class RemovableEntity<TEntity,
                                           TEntityId,
-                                          TEntityEventImplementation,
                                           TEntityEvent,
+                                          TEntityEventImplementation,
                                           TEntityCreatedEvent,
                                           TEntityRemovedEvent,
                                           TEntityEventIdGetterSetter> :
@@ -109,7 +109,7 @@ public abstract class EventiveComponent<TParent,
         where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
         where TEntityRemovedEvent : TEntityEvent
-        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
         protected RemovableEntity(TComponent aggregate) : base(aggregate) {}

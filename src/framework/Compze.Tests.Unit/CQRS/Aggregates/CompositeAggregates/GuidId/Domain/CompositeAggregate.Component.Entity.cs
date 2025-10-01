@@ -10,7 +10,8 @@ partial class Component
         Component.RemovableEntity<
             Entity,
             Guid,
-            CompositeAggregateEvent.Component.Entity.Implementation.Root, CompositeAggregateEvent.Component.Entity.IRoot,
+            CompositeAggregateEvent.Component.Entity.IRoot,
+            CompositeAggregateEvent.Component.Entity.Implementation.Root,
             CompositeAggregateEvent.Component.Entity.Created,
             CompositeAggregateEvent.Component.Entity.Removed,
             CompositeAggregateEvent.Component.Entity.Implementation.Root.IdGetterSetter>
