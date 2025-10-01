@@ -33,7 +33,8 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
       protected Entity(TAggregate aggregate)
          : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
-      Entity
+
+      protected Entity
       (Action<TEntityEventImplementation> raiseEventThroughParent,
        IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
          : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)

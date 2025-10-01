@@ -19,7 +19,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
    {
       public abstract class NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-         : NestedComponent<TEntity, TEntityEventImplementation, TEntityEvent>
+         : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
          where TEntityId : struct
          where TEntityEvent : class, TComponentEvent
          where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
@@ -29,46 +29,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       {
          static NestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
 
-         static readonly TEntityEventIdGetterSetter IdGetterSetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
-
-         // ReSharper disable once UnusedMember.Global todo: coverage
-         protected NestedEntity(TComponent parent) : this(parent.Publish, parent.RegisterEventAppliers()) {}
-
-#pragma warning disable 8618 //Review OK-ish: We guarantee that we never deliver out a null or default value from the public property. The private field cannot be marked nullable because it is a generic type argument and we don't want to constrain it to either classes or structs.
-         protected NestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-            : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
-         {
-            RegisterEventAppliers()
-              .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));
-         }
-#pragma warning restore 8618
-
-         protected override void Publish(TEntityEventImplementation @event)
-         {
-            var id = IdGetterSetter.GetId(@event);
-            if(Equals(id, default(TEntityId)))
-            {
-               IdGetterSetter.SetEntityId(@event, Id);
-            }
-            else if(!Equals(id, Id))
-            {
-               throw new Exception($"Attempted to raise event with EntityId: {id} from within entity with EntityId: {Id}");
-            }
-            base.Publish(@event);
-         }
-
-         TEntityId _id;
-         public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
-
-         // ReSharper disable once UnusedMember.Global todo: coverage
-         public static CollectionManager CreateSelfManagingCollection(TComponent parent)
-            => new(parent: parent, raiseEventThroughParent: parent.Publish, appliersRegistrar: parent.RegisterEventAppliers());
-
-         public class CollectionManager : EntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-         {
-            internal CollectionManager(TComponent parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-               : base(parent, raiseEventThroughParent, appliersRegistrar) {}
-         }
+         protected NestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
       }
    }
 }
