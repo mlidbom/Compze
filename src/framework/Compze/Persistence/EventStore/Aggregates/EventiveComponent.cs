@@ -47,9 +47,9 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
                                    TEntityCreatedEvent,
                                    TEntityEventIdGetterSetter> :
         EventiveEntity<
-            TParent,
-            TParentEvent,
-            TParentEventImplementation,
+            TComponent,
+            TComponentEvent,
+            TComponentEventImplementation,
             TEntity,
             TEntityId,
             TEntityEventImplementation,
@@ -57,13 +57,13 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
             TEntityCreatedEvent,
             TEntityEventIdGetterSetter>
         where TEntityId : struct
-        where TEntityEvent : class, TParentEvent
-        where TEntityEventImplementation : TParentEventImplementation, TEntityEvent
+        where TEntityEvent : class, TComponentEvent
+        where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
-        where TEntity : EventiveEntity<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        where TEntity : EcEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
-        protected EcEntity(TParent aggregate) : base(aggregate) {}
+        protected EcEntity(TComponent aggregate) : base(aggregate) {}
         protected EcEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
     }
 
@@ -75,9 +75,9 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
                                             TEntityRemovedEvent,
                                             TEntityEventIdGetterSetter> :
         EventiveRemovableEntity<
-            TParent,
-            TParentEvent,
-            TParentEventImplementation,
+            TComponent,
+            TComponentEvent,
+            TComponentEventImplementation,
             TEntity,
             TEntityId,
             TEntityEventImplementation,
@@ -86,13 +86,13 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
             TEntityRemovedEvent,
             TEntityEventIdGetterSetter>
         where TEntityId : struct
-        where TEntityEvent : class, TParentEvent
-        where TEntityEventImplementation : TParentEventImplementation, TEntityEvent
+        where TEntityEvent : class, TComponentEvent
+        where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
         where TEntityRemovedEvent : TEntityEvent
         where TEntity : EcRemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
-        protected EcRemovableEntity(TParent aggregate) : base(aggregate) {}
+        protected EcRemovableEntity(TComponent aggregate) : base(aggregate) {}
     }
 }

@@ -12,7 +12,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
     where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
     public abstract class AggregateRemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
-        : AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        : EventiveRemovableEntity<TAggregate, TAggregateEvent, TAggregateEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityId : struct
         where TEntityEvent : class, TAggregateEvent
         where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
@@ -25,17 +25,6 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
         protected AggregateRemovableEntity(TAggregate aggregate) : base(aggregate)
         {
-            RegisterEventAppliers()
-               .IgnoreUnhandled<TEntityRemovedEvent>();
-        }
-
-        public new static CollectionManager CreateSelfManagingCollection(TAggregate parent)
-            => new(parent: parent, raiseEventThroughParent: @event => parent.Publish(@event), appliersRegistrar: parent.RegisterEventAppliers());
-
-        public new class CollectionManager : ComponentRemovableEntityCollectionManager<TAggregate, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
-        {
-            internal CollectionManager(TAggregate parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-                : base(parent, raiseEventThroughParent, appliersRegistrar) {}
         }
     }
 }

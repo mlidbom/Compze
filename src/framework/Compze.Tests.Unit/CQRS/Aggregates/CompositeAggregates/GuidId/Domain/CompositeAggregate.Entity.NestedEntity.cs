@@ -9,7 +9,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 [UsedImplicitly] partial class RemovableEntity
 {
     public class RemovableNestedEntity :
-        RemovableEntity.ComponentRemovableNestedEntity<
+        RemovableEntity.EcRemovableEntity<
             RemovableNestedEntity,
             Guid,
             CompositeAggregateEvent.Entity.NestedEntity.Implementation.Root,

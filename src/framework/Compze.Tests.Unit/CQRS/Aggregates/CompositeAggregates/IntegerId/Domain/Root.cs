@@ -90,7 +90,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootEvent.Entity.Implementation.Removed());
 
-   public class RemovableNestedEntity : ComponentRemovableNestedEntity<RemovableNestedEntity,
+   public class RemovableNestedEntity : EcRemovableEntity<RemovableNestedEntity,
       int,
       RootEvent.Entity.NestedEntity.Implementation.Root,
       RootEvent.Entity.NestedEntity.IRoot,
