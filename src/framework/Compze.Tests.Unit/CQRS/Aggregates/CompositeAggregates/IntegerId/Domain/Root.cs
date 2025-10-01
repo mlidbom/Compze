@@ -6,7 +6,7 @@ using System;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 
-class Root : Aggregate<Root, RootEvent.Implementation.Root, RootEvent.IRoot>
+class Root : Aggregate<Root, RootEvent.IRoot, RootEvent.Implementation.Root>
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;

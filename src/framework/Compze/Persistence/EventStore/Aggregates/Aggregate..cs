@@ -12,8 +12,8 @@ using JetBrains.Annotations;
 namespace Compze.Persistence.EventStore.Aggregates;
 
 //Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]
-public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent> : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, AggregateWrapperEvent<TAggregateEvent>, IAggregateWrapperEvent<TAggregateEvent>>
-    where TAggregate : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent>
+public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation> : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, IAggregateWrapperEvent<TAggregateEvent>, AggregateWrapperEvent<TAggregateEvent>>
+    where TAggregate : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation>
     where TAggregateEvent : class, IAggregateEvent
     where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
@@ -23,13 +23,13 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
     protected Aggregate(IUtcTimeTimeSource timeSource) : base(timeSource) {}
 }
 
-public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface> :
+public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, TWrapperEventInterface, TWrapperEventImplementation> :
     VersionedEntity<TAggregate>,
     IEventStored<TAggregateEvent>,
     IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>
     where TWrapperEventImplementation : TWrapperEventInterface
     where TWrapperEventInterface : IAggregateWrapperEvent<TAggregateEvent>
-    where TAggregate : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
+    where TAggregate : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, TWrapperEventInterface, TWrapperEventImplementation>
     where TAggregateEvent : class, IAggregateEvent
     where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {

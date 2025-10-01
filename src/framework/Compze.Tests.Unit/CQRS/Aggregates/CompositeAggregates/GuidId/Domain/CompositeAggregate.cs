@@ -7,8 +7,8 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 class CompositeAggregate :
     Aggregate<CompositeAggregate,
-        CompositeAggregateEvent.Implementation.Root,
-        CompositeAggregateEvent.ICompositeAggregateEvent>
+        CompositeAggregateEvent.ICompositeAggregateEvent,
+        CompositeAggregateEvent.Implementation.Root>
 {
     public string Name { get; private set; } = string.Empty;
     readonly RemovableEntity.CollectionManager _entities;

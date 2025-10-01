@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates;
 
-class User : Aggregate<User,UserEvent, IUserEvent>
+class User : Aggregate<User,IUserEvent, UserEvent>
 {
    public string Email { get; private set; } = "";
    public string Password { get; private set; } = "";
