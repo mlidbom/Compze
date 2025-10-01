@@ -36,7 +36,7 @@ public abstract class EventiveEntity<TParent,
     public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
     protected EventiveEntity(TParent aggregate)
-        : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) { }
+        : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
 
     protected EventiveEntity(Action<TEntityEventImplementation> raiseEventThroughParent,
                              IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
@@ -68,7 +68,7 @@ public abstract class EventiveEntity<TParent,
     // ReSharper disable once UnusedMember.Global todo: write tests.
     public static CollectionManager CreateSelfManagingCollection(TParent parent) => new(parent, @event => parent.Publish(@event), parent.RegisterEventAppliers());
 
-    public class CollectionManager : EntityCollectionManager<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+    public class CollectionManager : EntityCollectionManager<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
     {
         internal CollectionManager(TParent parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
             : base(parent, raiseEventThroughParent, appliersRegistrar) {}
