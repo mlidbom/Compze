@@ -92,6 +92,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    // ReSharper disable once UnusedMember.Global todo: coverage
    protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventHandlers() => _eventHandlersDispatcher.Register();
 
+   void IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>.ApplyEvent(TAggregateEvent theEvent) => ApplyEvent(theEvent);
    void ApplyEvent(TAggregateEvent theEvent)
    {
       using(ScopedChange.Enter(onEnter: () => _applyingEvents = true, onDispose: () => _applyingEvents = false))

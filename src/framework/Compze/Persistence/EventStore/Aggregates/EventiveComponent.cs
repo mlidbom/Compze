@@ -20,6 +20,7 @@ public abstract partial class EventiveComponent<TParent, TParentEvent, TParentEv
     protected IEventDispatcher<TComponentEvent> EventHandlersEventDispatcher => _eventHandlersEventDispatcher;
     readonly Action<TComponentEventImplementation> _raiseEventThroughParent;
 
+    void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
     internal EventiveComponent(Action<TComponentEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers)

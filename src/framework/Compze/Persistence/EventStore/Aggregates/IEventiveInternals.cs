@@ -7,5 +7,6 @@ public interface IEventiveInternals<in TEventImplementation, in TEvent>
     where TEvent : class, IAggregateEvent
 {
     void Publish(TEventImplementation theEvent);
+    void ApplyEvent(TEvent @event);
     IEventHandlerRegistrar<TEvent> RegisterEventAppliers();
 }
