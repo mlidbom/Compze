@@ -1,46 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+	</PropertyGroup>
 
-   <ItemGroup>
-      <Compile Remove="_site\**" />
-      <Compile Remove="api\**" />
-   </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="_site\**" />
+		<Compile Remove="api\**" />
+	</ItemGroup>
 
-   <ItemGroup>
-      <EmbeddedResource Remove="_site\**" />
-      <EmbeddedResource Remove="api\**" />
-   </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Remove="_site\**" />
+		<EmbeddedResource Remove="api\**" />
+	</ItemGroup>
 
-   <ItemGroup>
-      <Content Remove="_site\**" />
-      <Content Remove="api\**" />
-   </ItemGroup>
+	<ItemGroup>
+		<Content Remove="_site\**" />
+		<Content Remove="api\**" />
+	</ItemGroup>
 
-   <ItemGroup>
-      <None Remove="_site\**" />
-      <None Remove="api\**" />
-   </ItemGroup>
+	<ItemGroup>
+		<None Remove="_site\**" />
+		<None Remove="api\**" />
+	</ItemGroup>
 
-   <ItemGroup>
-      <_ContentIncludedByDefault Remove="_site\api\toc.json" />
-      <_ContentIncludedByDefault Remove="_site\docs\toc.json" />
-      <_ContentIncludedByDefault Remove="_site\index.json" />
-      <_ContentIncludedByDefault Remove="_site\manifest.json" />
-      <_ContentIncludedByDefault Remove="_site\toc.json" />
-   </ItemGroup>
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="_site\api\toc.json" />
+		<_ContentIncludedByDefault Remove="_site\docs\toc.json" />
+		<_ContentIncludedByDefault Remove="_site\index.json" />
+		<_ContentIncludedByDefault Remove="_site\manifest.json" />
+		<_ContentIncludedByDefault Remove="_site\toc.json" />
+	</ItemGroup>
 
-    <ItemGroup>
-        <Watch Include="_site/**/*.*" />
-        <Watch Include="**/*.cs" />
-    </ItemGroup>
+	<ItemGroup>
+		<Watch Include="_site/**/*.*" />
+		<Watch Include="**/*.cs" />
+	</ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\src\framework\Compze.Messaging\Compze.Messaging.csproj" />
-      <ProjectReference Include="..\src\framework\Compze\Compze.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\src\framework\Compze.Messaging\Compze.Messaging.csproj" />
+		<ProjectReference Include="..\src\framework\Compze\Compze.csproj" />
+	</ItemGroup>
 
 </Project>
