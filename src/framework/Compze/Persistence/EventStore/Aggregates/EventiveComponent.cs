@@ -5,7 +5,6 @@ namespace Compze.Persistence.EventStore.Aggregates;
 
 public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
     : IEventiveInternals<TComponentEventImplementation, TComponentEvent>
-    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
     where TComponentEvent : class, TParentEvent
