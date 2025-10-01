@@ -55,16 +55,16 @@ public class EntityCollectionManager<TParent,
     }
 }
 
-public class EntityCollectionManager<TParent,
-                                     TParentEvent,
-                                     TParentEventImplementation,
-                                     TEntity,
-                                     TEntityId,
-                                     TEntityEventImplementation,
-                                     TEntityEvent,
-                                     TEntityCreatedEvent,
-                                     TEntityRemovedEvent,
-                                     TEntityEventIdGetterSetter>
+public class RemovableEntityCollectionManager<TParent,
+                                              TParentEvent,
+                                              TParentEventImplementation,
+                                              TEntity,
+                                              TEntityId,
+                                              TEntityEventImplementation,
+                                              TEntityEvent,
+                                              TEntityCreatedEvent,
+                                              TEntityRemovedEvent,
+                                              TEntityEventIdGetterSetter>
     : EntityCollectionManager<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
@@ -77,9 +77,9 @@ public class EntityCollectionManager<TParent,
     where TEntityEventIdGetterSetter :
     IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
 {
-    protected EntityCollectionManager(TParent parent,
-                                      Action<TEntityEventImplementation> raiseEventThroughParent,
-                                      IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+    protected RemovableEntityCollectionManager(TParent parent,
+                                               Action<TEntityEventImplementation> raiseEventThroughParent,
+                                               IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
         : base(parent, raiseEventThroughParent, appliersRegistrar)
     {
         appliersRegistrar.For<TEntityRemovedEvent>(e =>
