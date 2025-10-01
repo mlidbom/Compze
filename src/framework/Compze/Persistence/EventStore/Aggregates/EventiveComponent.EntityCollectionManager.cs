@@ -53,7 +53,6 @@ public abstract partial class EventiveComponent<TParent, TParentEvent, TParentEv
         {
             _raiseEventThroughParent(creationEvent);
             var result = ManagedEntities.InCreationOrder[^1];
-            result.EventHandlersEventDispatcher.Dispatch(creationEvent);
             return result;
         }
     }

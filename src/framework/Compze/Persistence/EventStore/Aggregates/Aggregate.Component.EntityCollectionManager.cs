@@ -52,7 +52,6 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          {
             _raiseEventThroughParent(creationEvent);
             var result = ManagedEntities.InCreationOrder[^1];
-            result.EventHandlersEventDispatcher.Dispatch(creationEvent);
             return result;
          }
       }
