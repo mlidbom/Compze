@@ -1,7 +1,6 @@
-﻿using System;
-using Compze.Messaging;
-using Compze.Messaging.Events;
+﻿using Compze.Messaging.Events;
 using Compze.SystemCE.ReflectionCE;
+using System;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
@@ -15,15 +14,13 @@ public class EntityCollectionManager<TParent,
                                      TEntityCreatedEvent,
                                      TEntityEventIdGetterSetter>
     : IEntityCollectionManager<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent>
-    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
     where TEntityId : notnull
     where TEntityEvent : class, TParentEvent
     where TEntityCreatedEvent : TEntityEvent
     where TEntityEventImplementation : TEntityEvent, TParentEventImplementation
-    where TEntity : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEventImplementation, TEntityEvent>,
-    IEventiveInternals<TEntityEventImplementation, TEntityEvent>
+    where TEntity : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEventImplementation, TEntityEvent>
     where TEntityEventIdGetterSetter : IGetAggregateEntityEventEntityId<TEntityEvent, TEntityId>
 {
     protected static readonly TEntityEventIdGetterSetter IdGetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
@@ -43,8 +40,10 @@ public class EntityCollectionManager<TParent,
                 var entity = Constructor.For<TEntity>.WithArguments<TParent>.Instance(parent);
                 ManagedEntities.Add(entity, IdGetter.GetId(e));
             })
-           .For<TEntityEvent>(e => ManagedEntities[IdGetter.GetId(e)].ApplyEvent(e));
+           .For<TEntityEvent>(e => GetEntityAsEventiveInternals(e).ApplyEvent(e));
     }
+
+    IEventiveInternals<TEntityEventImplementation, TEntityEvent> GetEntityAsEventiveInternals(TEntityEvent e) => ManagedEntities[IdGetter.GetId(e)];
 
     public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
 

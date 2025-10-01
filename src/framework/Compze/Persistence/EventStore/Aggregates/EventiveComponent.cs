@@ -39,7 +39,7 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
     IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEventImplementation, TComponentEvent>.RegisterEventAppliers() => RegisterEventAppliers();
     protected IEventHandlerRegistrar<TComponentEvent> RegisterEventAppliers() => _eventAppliersEventDispatcher.Register();
 
-    /////////////////////////
+    ///////////////////////// Collection manager
 
     public class EntityCollectionManager<TEntity,
                                          TEntityId,
