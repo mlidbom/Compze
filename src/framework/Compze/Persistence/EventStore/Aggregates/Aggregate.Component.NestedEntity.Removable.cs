@@ -1,6 +1,6 @@
-﻿using System;
-using Compze.GenericAbstractions.Time;
+﻿using Compze.GenericAbstractions.Time;
 using Compze.Messaging.Events;
+using System;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
@@ -25,7 +25,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
          where TEntityRemovedEvent : TEntityEvent
          where TEntityEventIdGetterSetter :
          IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
-         where TEntity : NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+         where TEntity : RemovableNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
       {
          static RemovableNestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
 
