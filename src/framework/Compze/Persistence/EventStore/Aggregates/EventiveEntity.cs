@@ -35,7 +35,7 @@ public abstract class EventiveEntity<TParent,
     TEntityId _id;
     public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
-    protected EventiveEntity(TParent aggregate): base(aggregate, false)
+    protected EventiveEntity(TParent aggregate) : base(aggregate, false)
     {
         RegisterEventAppliers()
            .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));
@@ -54,7 +54,7 @@ public abstract class EventiveEntity<TParent,
             IdGetterSetter.SetEntityId(@event, Id);
         } else if(!Equals(id, Id))
         {
-            throw new Exception($"Attempted to raise event with EntityId: {id} frow within entity with EntityId: {Id}");
+            throw new Exception($"Attempted to raise event with EntityId: {id} from within entity with EntityId: {Id}");
         }
 
         base.Publish(@event);
@@ -63,9 +63,37 @@ public abstract class EventiveEntity<TParent,
     // ReSharper disable once UnusedMember.Global todo: write tests.
     public static CollectionManager CreateSelfManagingCollection(TParent parent) => new(parent, @event => parent.Publish(@event), parent.RegisterEventAppliers());
 
-    public class CollectionManager : EntityCollectionManager<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+    public class CollectionManager : IEntityCollectionManager<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent>
     {
-        internal CollectionManager(TParent parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-            : base(parent, raiseEventThroughParent, appliersRegistrar) {}
+        protected static readonly TEntityEventIdGetterSetter IdGetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
+
+        protected EntityCollection<TEntity, TEntityId> ManagedEntities { get; }
+        readonly Action<TEntityEventImplementation> _raiseEventThroughParent;
+
+        internal CollectionManager(TParent parent,
+                                    Action<TEntityEventImplementation> raiseEventThroughParent,
+                                    IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+        {
+            ManagedEntities = [];
+            _raiseEventThroughParent = raiseEventThroughParent;
+            appliersRegistrar
+               .For<TEntityCreatedEvent>(e =>
+                {
+                    var entity = Constructor.For<TEntity>.WithArguments<TParent>.Instance(parent);
+                    ManagedEntities.Add(entity, IdGetter.GetId(e));
+                })
+               .For<TEntityEvent>(e => GetEntityAsEventiveInternals(e).ApplyEvent(e));
+        }
+
+        IEventiveInternals<TEntityEvent, TEntityEventImplementation> GetEntityAsEventiveInternals(TEntityEvent e) => ManagedEntities[IdGetter.GetId(e)];
+
+        public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
+
+        public TEntity AddByPublishing<TCreationEvent>(TCreationEvent creationEvent) where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent
+        {
+            _raiseEventThroughParent(creationEvent);
+            var result = ManagedEntities.InCreationOrder[^1];
+            return result;
+        }
     }
 }
