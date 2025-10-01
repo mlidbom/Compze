@@ -55,8 +55,6 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
 
     readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = [];
 
-    void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.Publish(TAggregateEventImplementation theEvent) => Publish(theEvent);
-
     protected TEvent Publish<TEvent>(TEvent theEvent) where TEvent : TAggregateEventImplementation
     {
         Assert.State.Is(!_applyingEvents, () => "You cannot raise events from within event appliers");
@@ -98,8 +96,6 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
     // ReSharper disable once UnusedMember.Global todo: coverage
     protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventHandlers() => _eventHandlersDispatcher.Register();
 
-    void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.ApplyEvent(TAggregateEvent theEvent) => ApplyEvent(theEvent);
-
     void ApplyEvent(TAggregateEvent theEvent)
     {
         using(ScopedChange.Enter(onEnter: () => _applyingEvents = true, onDispose: () => _applyingEvents = false))
@@ -120,6 +116,9 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
 
     readonly SimpleObservable<TAggregateEventImplementation> _eventStream = new();
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Aggregates.
+    void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.ApplyEvent(TAggregateEvent theEvent) => ApplyEvent(theEvent);
+    void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.Publish(TAggregateEventImplementation theEvent) => Publish(theEvent);
+
     IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
     IObservable<TAggregateEvent> IEventStored<TAggregateEvent>.EventStream => _eventStream;
 
