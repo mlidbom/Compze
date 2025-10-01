@@ -36,7 +36,7 @@ public abstract class EventiveRemovableEntity<TParent,
     public new static CollectionManager CreateSelfManagingCollection(TParent parent)
         => new(parent, @event => parent.Publish(@event), parent.RegisterEventAppliers());
 
-    public new class CollectionManager : RemovableEntityCollectionManager<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+    public new class CollectionManager : RemovableEntityCollectionManager<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
     {
         internal CollectionManager(TParent parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
             : base(parent, raiseEventThroughParent, appliersRegistrar) {}
