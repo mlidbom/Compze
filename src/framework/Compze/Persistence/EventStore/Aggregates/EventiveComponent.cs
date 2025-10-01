@@ -1,7 +1,8 @@
 ﻿using Compze.GenericAbstractions.Time;
-using Compze.Messaging.Events;
-using System;
 using Compze.Messaging;
+using Compze.Messaging.Events;
+using Compze.SystemCE.ReflectionCE;
+using System;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
