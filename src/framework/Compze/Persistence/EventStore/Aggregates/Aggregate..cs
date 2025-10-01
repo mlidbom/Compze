@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
-//Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]
+//Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]. Really? If you don't intend to inherit from the Aggregate, what good is it to set the last two type parameters so anything else?
 public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation> : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, IAggregateWrapperEvent<TAggregateEvent>, AggregateWrapperEvent<TAggregateEvent>>
     where TAggregate : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation>
     where TAggregateEvent : class, IAggregateEvent
