@@ -47,7 +47,7 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
                                          TEntityEvent,
                                          TEntityCreatedEvent,
                                          TEntityEventIdGetterSetter>
-        : IEntityCollectionManager<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent>
+        : EntityCollectionManager<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
         where TEntityId : notnull
         where TEntityEvent : class, TParentEvent
         where TEntityCreatedEvent : TEntityEvent
@@ -55,33 +55,9 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
         where TEntity : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEventImplementation, TEntityEvent>
         where TEntityEventIdGetterSetter : IGetAggregateEntityEventEntityId<TEntityEvent, TEntityId>
     {
-        protected static readonly TEntityEventIdGetterSetter IdGetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
-
-        protected EntityCollection<TEntity, TEntityId> ManagedEntities { get; }
-        readonly Action<TEntityEventImplementation> _raiseEventThroughParent;
-
         protected EntityCollectionManager(TParent parent,
                                           Action<TEntityEventImplementation> raiseEventThroughParent,
                                           IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-        {
-            ManagedEntities = [];
-            _raiseEventThroughParent = raiseEventThroughParent;
-            appliersRegistrar
-               .For<TEntityCreatedEvent>(e =>
-                {
-                    var entity = Constructor.For<TEntity>.WithArguments<TParent>.Instance(parent);
-                    ManagedEntities.Add(entity, IdGetter.GetId(e));
-                })
-               .For<TEntityEvent>(e => ManagedEntities[IdGetter.GetId(e)].ApplyEvent(e));
-        }
-
-        public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
-
-        public TEntity AddByPublishing<TCreationEvent>(TCreationEvent creationEvent) where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent
-        {
-            _raiseEventThroughParent(creationEvent);
-            var result = ManagedEntities.InCreationOrder[^1];
-            return result;
-        }
+            : base(parent, raiseEventThroughParent, appliersRegistrar) {}
     }
 }
