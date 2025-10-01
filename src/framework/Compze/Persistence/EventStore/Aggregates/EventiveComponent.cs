@@ -3,9 +3,14 @@ using System;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
-public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
-    : IEventiveInternals<TComponentEventImplementation, TComponentEvent>
-    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
+public abstract class EventiveComponent<TParent,
+                                        TParentEvent,
+                                        TParentEventImplementation,
+                                        TComponent,
+                                        TComponentEventImplementation,
+                                        TComponentEvent>
+    : IEventiveInternals<TComponentEvent, TComponentEventImplementation>
+    where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
     where TComponentEvent : class, TParentEvent
@@ -18,44 +23,49 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
 
     readonly TParent _parent;
 
-    void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
+    void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
     protected EventiveComponent(TParent parent, bool registerEventAppliers = true)
     {
         _parent = parent;
-        if (registerEventAppliers)
+        if(registerEventAppliers)
         {
             parent.RegisterEventAppliers()
                   .For<TComponentEvent>(ApplyEvent);
         }
     }
 
-    void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.Publish(TComponentEventImplementation @event) => Publish(@event);
+    void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.Publish(TComponentEventImplementation @event) => Publish(@event);
 
     protected virtual void Publish(TComponentEventImplementation @event) => _parent.Publish(@event);
 
-    IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEventImplementation, TComponentEvent>.RegisterEventAppliers() => RegisterEventAppliers();
+    IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEvent, TComponentEventImplementation>.RegisterEventAppliers() => RegisterEventAppliers();
 
     public abstract class Component<TEcComponent,
-                                      TEcComponentEventImplementation,
-                                      TEcComponentEvent> :
-        EventiveComponent<TComponent, TComponentEvent, TComponentEventImplementation, TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
+                                    TEcComponentEventImplementation,
+                                    TEcComponentEvent> :
+        EventiveComponent<TComponent,
+            TComponentEvent,
+            TComponentEventImplementation,
+            TEcComponent,
+            TEcComponentEventImplementation,
+            TEcComponentEvent>
         where TEcComponentEvent : class, TComponentEvent
         where TEcComponentEventImplementation : TComponentEventImplementation, TEcComponentEvent
         where TEcComponent : Component<TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
     {
-        protected Component(TComponent parent): base(parent) { }
+        protected Component(TComponent parent) : base(parent) {}
     }
 
     protected IEventHandlerRegistrar<TComponentEvent> RegisterEventAppliers() => _eventAppliersEventDispatcher.Register();
 
     public abstract class Entity<TEntity,
-                                   TEntityId,
-                                   TEntityEventImplementation,
-                                   TEntityEvent,
-                                   TEntityCreatedEvent,
-                                   TEntityEventIdGetterSetter> :
+                                 TEntityId,
+                                 TEntityEventImplementation,
+                                 TEntityEvent,
+                                 TEntityCreatedEvent,
+                                 TEntityEventIdGetterSetter> :
         EventiveEntity<
             TComponent,
             TComponentEvent,
@@ -77,12 +87,12 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
     }
 
     public abstract class RemovableEntity<TEntity,
-                                            TEntityId,
-                                            TEntityEventImplementation,
-                                            TEntityEvent,
-                                            TEntityCreatedEvent,
-                                            TEntityRemovedEvent,
-                                            TEntityEventIdGetterSetter> :
+                                          TEntityId,
+                                          TEntityEventImplementation,
+                                          TEntityEvent,
+                                          TEntityCreatedEvent,
+                                          TEntityRemovedEvent,
+                                          TEntityEventIdGetterSetter> :
         EventiveRemovableEntity<
             TComponent,
             TComponentEvent,

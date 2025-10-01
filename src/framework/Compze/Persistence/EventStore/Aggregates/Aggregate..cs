@@ -26,7 +26,7 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
 public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface> :
     VersionedEntity<TAggregate>,
     IEventStored<TAggregateEvent>,
-    IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>
+    IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>
     where TWrapperEventImplementation : TWrapperEventInterface
     where TWrapperEventInterface : IAggregateWrapperEvent<TAggregateEvent>
     where TAggregate : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
@@ -55,7 +55,7 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
 
     readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = [];
 
-    void IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>.Publish(TAggregateEventImplementation theEvent) => Publish(theEvent);
+    void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.Publish(TAggregateEventImplementation theEvent) => Publish(theEvent);
 
     protected TEvent Publish<TEvent>(TEvent theEvent) where TEvent : TAggregateEventImplementation
     {
@@ -93,12 +93,12 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
     }
 
     protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventAppliersDispatcher.Register();
-    IEventHandlerRegistrar<TAggregateEvent> IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>.RegisterEventAppliers() => RegisterEventAppliers();
+    IEventHandlerRegistrar<TAggregateEvent> IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.RegisterEventAppliers() => RegisterEventAppliers();
 
     // ReSharper disable once UnusedMember.Global todo: coverage
     protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventHandlers() => _eventHandlersDispatcher.Register();
 
-    void IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>.ApplyEvent(TAggregateEvent theEvent) => ApplyEvent(theEvent);
+    void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.ApplyEvent(TAggregateEvent theEvent) => ApplyEvent(theEvent);
 
     void ApplyEvent(TAggregateEvent theEvent)
     {

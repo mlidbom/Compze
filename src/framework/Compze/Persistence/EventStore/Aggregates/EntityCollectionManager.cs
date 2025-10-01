@@ -14,7 +14,7 @@ public class EntityCollectionManager<TParent,
                                      TEntityCreatedEvent,
                                      TEntityEventIdGetterSetter>
     : IEntityCollectionManager<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent>
-    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
+    where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
     where TEntityId : notnull
@@ -44,7 +44,7 @@ public class EntityCollectionManager<TParent,
            .For<TEntityEvent>(e => GetEntityAsEventiveInternals(e).ApplyEvent(e));
     }
 
-    IEventiveInternals<TEntityEventImplementation, TEntityEvent> GetEntityAsEventiveInternals(TEntityEvent e) => ManagedEntities[IdGetter.GetId(e)];
+    IEventiveInternals<TEntityEvent, TEntityEventImplementation> GetEntityAsEventiveInternals(TEntityEvent e) => ManagedEntities[IdGetter.GetId(e)];
 
     public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
 

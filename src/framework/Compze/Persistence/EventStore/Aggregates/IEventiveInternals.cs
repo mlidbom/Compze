@@ -2,7 +2,7 @@
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
-public interface IEventiveInternals<in TEventImplementation, in TEvent>
+public interface IEventiveInternals<in TEvent, in TEventImplementation>
     where TEventImplementation : AggregateEvent, TEvent
     where TEvent : class, IAggregateEvent
 {

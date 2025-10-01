@@ -14,7 +14,7 @@ public abstract class EventiveRemovableEntity<TParent,
                                               TEntityRemovedEvent,
                                               TEntityEventIdGetterSetter>
     : EventiveEntity<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
+    where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
     where TParentEvent : class, IAggregateEvent
     where TEntityId : struct
     where TEntityEvent : class, TParentEvent

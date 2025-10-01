@@ -17,8 +17,8 @@ public abstract class EventiveEntity<TParent,
                                      TEntityCreatedEvent,
                                      TEntityEventIdGetterSetter>
     : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEventImplementation, TEntityEvent>,
-      IEventiveInternals<TEntityEventImplementation, TEntityEvent>
-    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
+      IEventiveInternals<TEntityEvent, TEntityEventImplementation>
+    where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
     where TParentEvent : class, IAggregateEvent
     where TEntityId : struct
     where TEntityEvent : class, TParentEvent
@@ -41,10 +41,10 @@ public abstract class EventiveEntity<TParent,
            .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));
     }
 
-    void IEventiveInternals<TEntityEventImplementation, TEntityEvent>.ApplyEvent(TEntityEvent @event) => ApplyEvent(@event);
-    IEventHandlerRegistrar<TEntityEvent> IEventiveInternals<TEntityEventImplementation, TEntityEvent>.RegisterEventAppliers() => RegisterEventAppliers();
+    void IEventiveInternals<TEntityEvent, TEntityEventImplementation>.ApplyEvent(TEntityEvent @event) => ApplyEvent(@event);
+    IEventHandlerRegistrar<TEntityEvent> IEventiveInternals<TEntityEvent, TEntityEventImplementation>.RegisterEventAppliers() => RegisterEventAppliers();
 
-    void IEventiveInternals<TEntityEventImplementation, TEntityEvent>.Publish(TEntityEventImplementation @event) => Publish(@event);
+    void IEventiveInternals<TEntityEvent, TEntityEventImplementation>.Publish(TEntityEventImplementation @event) => Publish(@event);
 
     protected override void Publish(TEntityEventImplementation @event)
     {

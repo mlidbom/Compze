@@ -14,7 +14,7 @@ public class RemovableEntityCollectionManager<TParent,
                                               TEntityRemovedEvent,
                                               TEntityEventIdGetterSetter>
     : EntityCollectionManager<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
+    where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
     where TEntityId : notnull
