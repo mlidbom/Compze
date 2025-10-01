@@ -1,13 +1,13 @@
-﻿using Compze.GenericAbstractions.Time;
-using Compze.Messaging;
-using Compze.Messaging.Events;
-using Compze.SystemCE.ReflectionCE;
+﻿using Compze.Messaging.Events;
 using System;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
 public abstract partial class EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
-    where TParentEvent : IEvent
+    : IEventiveInternals<TComponentEventImplementation, TComponentEvent>
+    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
+    where TParentEvent : class, IAggregateEvent
+    where TParentEventImplementation : AggregateEvent, TParentEvent
     where TComponentEvent : class, TParentEvent
     where TComponentEventImplementation : TParentEventImplementation, TComponentEvent
     where TComponent : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
@@ -35,12 +35,15 @@ public abstract partial class EventiveComponent<TParent, TParentEvent, TParentEv
         }
     }
 
+    void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.Publish(TComponentEventImplementation @event) => Publish(@event);
+
     protected virtual void Publish(TComponentEventImplementation @event)
     {
         _raiseEventThroughParent(@event);
         EventHandlersEventDispatcher.Dispatch(@event);
     }
 
+    IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEventImplementation, TComponentEvent>.RegisterEventAppliers() => RegisterEventAppliers();
     protected IEventHandlerRegistrar<TComponentEvent> RegisterEventAppliers() => _eventAppliersEventDispatcher.Register();
 
     // ReSharper disable once UnusedMember.Global todo: tests

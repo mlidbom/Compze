@@ -49,6 +49,8 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    bool _applyingEvents;
 
    readonly List<TAggregateEventImplementation> _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers = [];
+
+   void IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>.Publish(TAggregateEventImplementation theEvent) => Publish(theEvent);
    protected TEvent Publish<TEvent>(TEvent theEvent) where TEvent : TAggregateEventImplementation
    {
       Assert.State.Is(!_applyingEvents, () => "You cannot raise events from within event appliers");
@@ -85,6 +87,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    }
 
    protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventAppliersDispatcher.Register();
+   IEventHandlerRegistrar<TAggregateEvent>  IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>.RegisterEventAppliers() => RegisterEventAppliers();
 
    // ReSharper disable once UnusedMember.Global todo: coverage
    protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventHandlers() => _eventHandlersDispatcher.Register();

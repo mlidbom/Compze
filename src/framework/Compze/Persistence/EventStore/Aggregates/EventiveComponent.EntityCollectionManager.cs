@@ -6,7 +6,9 @@ using Compze.SystemCE.ReflectionCE;
 namespace Compze.Persistence.EventStore.Aggregates;
 
 public abstract partial class EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
-    where TParentEvent : IEvent
+    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
+    where TParentEvent : class, IAggregateEvent
+    where TParentEventImplementation: AggregateEvent, TParentEvent
     where TComponentEvent : class, TParentEvent
     where TComponentEventImplementation : TParentEventImplementation, TComponentEvent
     where TComponent : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
