@@ -7,7 +7,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 partial class Component
 {
     [UsedImplicitly] public class Entity :
-        Component.EcRemovableEntity<
+        Component.RemovableEntity<
             Entity,
             Guid,
             CompositeAggregateEvent.Component.Entity.Implementation.Root, CompositeAggregateEvent.Component.Entity.IRoot,

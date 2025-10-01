@@ -16,7 +16,7 @@ class CompositeAggregate :
 
     public CompositeAggregate(string name, Guid id) : base(new DateTimeNowTimeSource())
     {
-        Component = new Component(@event => Publish(@event), RegisterEventAppliers());
+        Component = new Component(this);
         _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
         RegisterEventAppliers()

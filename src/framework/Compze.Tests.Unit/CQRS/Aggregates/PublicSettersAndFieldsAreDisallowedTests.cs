@@ -67,23 +67,21 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootEvent.Root, RootEvent.IRoot>(timeSource)
    {
-      public class AggComponent(Action<RootEvent.Root> raiseEventThroughParent,
-                                IEventHandlerRegistrar<RootEvent.IRoot> appliersRegistrar)
-          : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(raiseEventThroughParent, appliersRegistrar, true)
+      public class AggComponent(Root parent): Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(parent)
       {
          public string Public { get; set; } = string.Empty;
 
-         public class NestedAggComponent(AggComponent parent) : AggComponent.EcComponent<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>(parent)
+         public class NestedAggComponent(AggComponent parent) : AggComponent.Component<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>(parent)
          {
             public string Public { get; set; } = string.Empty;
          }
       }
 
-      public class AggEntity(Root aggregate) : Root.AggregateEntity<AggEntity, Guid, RootEvent.Entity.Root, RootEvent.Entity.IRoot, RootEvent.Entity.IRoot, RootEvent.Entity.Root.GetterSetter>(aggregate)
+      public class AggEntity(Root aggregate) : Root.Entity<AggEntity, Guid, RootEvent.Entity.Root, RootEvent.Entity.IRoot, RootEvent.Entity.IRoot, RootEvent.Entity.Root.GetterSetter>(aggregate)
       {
          public string Public { get; set; }  = string.Empty;
 
-         public class EntNestedComp(AggEntity parent) : AggEntity.EcComponent<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>(parent)
+         public class EntNestedComp(AggEntity parent) : AggEntity.Component<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>(parent)
          {
             public string Public2 { get; set; } = string.Empty;
          }
@@ -105,7 +103,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    [Test] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
    {
-      FluentActions.Invoking(() => new Root.AggComponent(null!, null!))
+      FluentActions.Invoking(() => new Root.AggComponent(null!))
                    .Should().Throw<Exception>()
                    .Which.InnerException!
                    .Message

@@ -5,7 +5,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 partial class Component
 {
     public class NestedComponent :
-        Component.EcComponent<
+        Component.Component<
             NestedComponent,
             CompositeAggregateEvent.Component.NestedComponent.Implementation.Root,
             CompositeAggregateEvent.Component.NestedComponent.IRoot>

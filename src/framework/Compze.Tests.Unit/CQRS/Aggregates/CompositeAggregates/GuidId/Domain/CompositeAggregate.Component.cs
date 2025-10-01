@@ -8,9 +8,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 partial class Component : CompositeAggregate.Component<Component, CompositeAggregateEvent.Component.Implementation.Root, CompositeAggregateEvent.Component.IRoot>
 {
-    public Component(Action<CompositeAggregateEvent.Component.Implementation.Root> raiseEventThroughParent,
-                     IEventHandlerRegistrar<CompositeAggregateEvent.Component.IRoot> appliersRegistrar)
-        : base(raiseEventThroughParent, appliersRegistrar, true)
+    public Component(CompositeAggregate parent) : base(parent)
     {
         _entities = Component.Entity.CreateSelfManagingCollection(this);
         CComponent = new NestedComponent(this);

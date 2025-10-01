@@ -145,35 +145,34 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
         where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
         where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
     {
-        protected Component(Action<TComponentEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers) : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
+        protected Component(TAggregate parent) : base(parent) { }
     }
 
     [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-    public abstract class AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+    public abstract class Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
         : EventiveEntity<TAggregate, TAggregateEvent, TAggregateEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
         where TEntityId : struct
         where TEntityEvent : class, TAggregateEvent
         where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
-        where TEntity : AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        where TEntity : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
-        protected AggregateEntity(TAggregate aggregate) : base(aggregate) {}
-        protected AggregateEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
+        protected Entity(TAggregate aggregate) : base(aggregate) {}
     }
 
-    public abstract class AggregateRemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+    public abstract class RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         : EventiveRemovableEntity<TAggregate, TAggregateEvent, TAggregateEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityId : struct
         where TEntityEvent : class, TAggregateEvent
         where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
         where TEntityRemovedEvent : TEntityEvent
-        where TEntity : AggregateRemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
-        static AggregateRemovableEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
+        static RemovableEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
 
-        protected AggregateRemovableEntity(TAggregate aggregate) : base(aggregate) {}
+        protected RemovableEntity(TAggregate aggregate) : base(aggregate) {}
     }
 }

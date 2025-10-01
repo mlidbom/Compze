@@ -15,7 +15,7 @@ class Root : Aggregate<Root, RootEvent.Implementation.Root, RootEvent.IRoot>
 
    public Root(string name) : base(new DateTimeNowTimeSource())
    {
-      Component = new Component(evt => Publish(evt), RegisterEventAppliers());
+      Component = new Component(this);
       _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
       RegisterEventAppliers()
@@ -32,13 +32,13 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;
-   public Component(Action<RootEvent.Component.Implementation.Root> raiseEventThroughParent, IEventHandlerRegistrar<RootEvent.Component.IRoot> appliersRegistrar)
-       : base(raiseEventThroughParent, appliersRegistrar, true)
-   {
-      _entities = Entity.CreateSelfManagingCollection(this);
 
-      RegisterEventAppliers()
-        .For<RootEvent.Component.PropertyUpdated.Name>(e => Name = e.Name);
+   public Component(Root parent): base(parent)
+   {
+       _entities = Entity.CreateSelfManagingCollection(this);
+
+       RegisterEventAppliers()
+          .For<RootEvent.Component.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
    public IReadOnlyEntityCollection<Entity, int> Entities => _entities.Entities;
@@ -47,7 +47,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Component.Implementation.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootEvent.Component.Entity.Implementation.Created(++_instances, name));
 
-   [UsedImplicitly]public class Entity : EcRemovableEntity<Entity,
+   [UsedImplicitly]public class Entity : RemovableEntity<Entity,
       int,
       RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.IRoot,
@@ -67,7 +67,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    }
 }
 
-[UsedImplicitly]class RemovableEntity : Root.AggregateRemovableEntity<RemovableEntity,
+[UsedImplicitly]class RemovableEntity : Root.RemovableEntity<RemovableEntity,
    int,
    RootEvent.Entity.Implementation.Root,
    RootEvent.Entity.IRoot,
@@ -90,7 +90,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootEvent.Entity.Implementation.Removed());
 
-   public class RemovableNestedEntity : EcRemovableEntity<RemovableNestedEntity,
+   public class RemovableNestedEntity : RemovableEntity<RemovableNestedEntity,
       int,
       RootEvent.Entity.NestedEntity.Implementation.Root,
       RootEvent.Entity.NestedEntity.IRoot,

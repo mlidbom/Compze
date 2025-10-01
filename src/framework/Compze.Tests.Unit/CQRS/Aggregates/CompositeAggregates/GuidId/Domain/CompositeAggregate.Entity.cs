@@ -5,7 +5,7 @@ using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 partial class RemovableEntity :
-    CompositeAggregate.AggregateRemovableEntity<
+    CompositeAggregate.RemovableEntity<
         RemovableEntity,
         Guid,
         CompositeAggregateEvent.Entity.Implementation.Root,

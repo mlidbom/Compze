@@ -17,11 +17,15 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
     readonly IMutableEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
 
     readonly Action<TComponentEventImplementation> _raiseEventThroughParent;
+    readonly TParent _parent;
 
     void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
-    protected EventiveComponent(TParent parent) : this(@event => parent.Publish(@event), parent.RegisterEventAppliers(), true) {}
+    protected EventiveComponent(TParent parent) : this(@event => parent.Publish(@event), parent.RegisterEventAppliers(), true)
+    {
+        _parent = parent;
+    }
 
     internal EventiveComponent(Action<TComponentEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers)
     {
@@ -40,25 +44,20 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
 
     IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEventImplementation, TComponentEvent>.RegisterEventAppliers() => RegisterEventAppliers();
 
-    public abstract class EcComponent<TEcComponent,
+    public abstract class Component<TEcComponent,
                                       TEcComponentEventImplementation,
                                       TEcComponentEvent> :
         EventiveComponent<TComponent, TComponentEvent, TComponentEventImplementation, TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
         where TEcComponentEvent : class, TComponentEvent
         where TEcComponentEventImplementation : TComponentEventImplementation, TEcComponentEvent
-        where TEcComponent : EcComponent<TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
+        where TEcComponent : Component<TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
     {
-        protected EcComponent(TComponent parent): base(parent) { }
-
-        protected EcComponent(Action<TEcComponentEventImplementation> raiseEventThroughParent,
-                              IEventHandlerRegistrar<TEcComponentEvent> appliersRegistrar,
-                              bool registerEventAppliers)
-            : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
+        protected Component(TComponent parent): base(parent) { }
     }
 
     protected IEventHandlerRegistrar<TComponentEvent> RegisterEventAppliers() => _eventAppliersEventDispatcher.Register();
 
-    public abstract class EcEntity<TEntity,
+    public abstract class Entity<TEntity,
                                    TEntityId,
                                    TEntityEventImplementation,
                                    TEntityEvent,
@@ -78,14 +77,13 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
         where TEntityEvent : class, TComponentEvent
         where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
-        where TEntity : EcEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        where TEntity : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
-        protected EcEntity(TComponent aggregate) : base(aggregate) {}
-        protected EcEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
+        protected Entity(TComponent aggregate) : base(aggregate) {}
     }
 
-    public abstract class EcRemovableEntity<TEntity,
+    public abstract class RemovableEntity<TEntity,
                                             TEntityId,
                                             TEntityEventImplementation,
                                             TEntityEvent,
@@ -108,9 +106,9 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
         where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
         where TEntityCreatedEvent : TEntityEvent
         where TEntityRemovedEvent : TEntityEvent
-        where TEntity : EcRemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
-        protected EcRemovableEntity(TComponent aggregate) : base(aggregate) {}
+        protected RemovableEntity(TComponent aggregate) : base(aggregate) {}
     }
 }
