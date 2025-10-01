@@ -10,7 +10,7 @@ namespace Compze.Functional;
 /// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.
 /// Think of these as "missing operators" for .NET types rather than traditional extension methods.
 /// 
-/// NAMING CONVENTION: All methods use lowercase naming breaking.NET conventions for two critical reasons:
+/// NAMING CONVENTION: All methods use lowercase naming breaking .NET conventions for two critical reasons:
 /// 
 /// 1. VISUAL DISTINCTION: Instantly recognizable as language-like features,
 ///    not domain methods - similar to F#'s pipe-forward (|>) operator
