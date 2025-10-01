@@ -126,7 +126,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             public static CollectionManager CreateSelfManagingCollection(TComponent parent)
                 => new(parent: parent, raiseEventThroughParent: parent.Publish, appliersRegistrar: parent.RegisterEventAppliers());
 
-            public new class CollectionManager : EntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+            public new class CollectionManager : RemovableEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
             {
                 internal CollectionManager(TComponent parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
                     : base(parent, raiseEventThroughParent, appliersRegistrar) {}
@@ -135,7 +135,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
         ///////////////////////Removable entity collection
 
-        public class EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+        public class RemovableEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
             : EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             where TEntityId : notnull
             where TEntityEvent : class, TAggregateEvent
@@ -146,7 +146,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             where TEntityEventIdGetterSetter :
             IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
         {
-            protected EntityCollectionManager(TParent parent,
+            protected RemovableEntityCollectionManager(TParent parent,
                                               Action<TEntityEventImplementation> raiseEventThroughParent,
                                               IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
                 : base(parent, raiseEventThroughParent, appliersRegistrar)
