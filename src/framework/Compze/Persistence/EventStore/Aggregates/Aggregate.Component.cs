@@ -26,7 +26,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
         ////////////////////////Entity collection
 
-        public class EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        public class ComponentEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             : IEntityCollectionManager<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent>
             where TEntityId : notnull
             where TEntityEvent : class, TAggregateEvent
@@ -40,7 +40,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             protected EntityCollection<TEntity, TEntityId> ManagedEntities { get; }
             readonly Action<TEntityEventImplementation> _raiseEventThroughParent;
 
-            protected EntityCollectionManager(TParent parent,
+            protected ComponentEntityCollectionManager(TParent parent,
                                               Action<TEntityEventImplementation> raiseEventThroughParent,
                                               IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
             {
@@ -68,41 +68,41 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
         ////////////////////////Nested component
 
         [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-        public abstract class NestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent> :
+        public abstract class ComponentNestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent> :
             Component<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>
             where TNestedComponentEvent : class, TComponentEvent
             where TNestedComponentEventImplementation : TComponentEventImplementation, TNestedComponentEvent
-            where TNestedComponent : NestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>
+            where TNestedComponent : ComponentNestedComponent<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>
         {
-            static NestedComponent() => AggregateTypeValidator<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>.AssertStaticStructureIsValid();
+            static ComponentNestedComponent() => AggregateTypeValidator<TNestedComponent, TNestedComponentEventImplementation, TNestedComponentEvent>.AssertStaticStructureIsValid();
 
-            protected NestedComponent(TComponent parent)
+            protected ComponentNestedComponent(TComponent parent)
                 : base(parent.Publish, parent.RegisterEventAppliers(), registerEventAppliers: true) {}
 
-            protected NestedComponent(Action<TNestedComponentEventImplementation> raiseEventThroughParent,
+            protected ComponentNestedComponent(Action<TNestedComponentEventImplementation> raiseEventThroughParent,
                                       IEventHandlerRegistrar<TNestedComponentEvent> appliersRegistrar,
                                       bool registerEventAppliers) : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
         }
 
         ////////////////////////Nested entity
-        public abstract class NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        public abstract class ComponentNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             where TEntityId : struct
             where TEntityEvent : class, TComponentEvent
             where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
             where TEntityCreatedEvent : TEntityEvent
-            where TEntity : NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+            where TEntity : ComponentNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
         {
-            static NestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
+            static ComponentNestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
 
-            protected NestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
+            protected ComponentNestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
         }
 
         ///////////////////////Removable nested entity
 
-        public abstract class RemovableNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
-            : NestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        public abstract class ComponentRemovableNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+            : ComponentNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             where TEntityId : struct
             where TEntityEvent : class, TComponentEvent
             where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent
@@ -110,13 +110,13 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             where TEntityRemovedEvent : TEntityEvent
             where TEntityEventIdGetterSetter :
             IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
-            where TEntity : RemovableNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+            where TEntity : ComponentRemovableNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         {
-            static RemovableNestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
+            static ComponentRemovableNestedEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
 
-            protected RemovableNestedEntity(TComponent parent) : this(parent.Publish, parent.RegisterEventAppliers()) {}
+            protected ComponentRemovableNestedEntity(TComponent parent) : this(parent.Publish, parent.RegisterEventAppliers()) {}
 
-            RemovableNestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+            ComponentRemovableNestedEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
                 : base(raiseEventThroughParent, appliersRegistrar)
             {
                 RegisterEventAppliers()
@@ -126,7 +126,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             public static CollectionManager CreateSelfManagingCollection(TComponent parent)
                 => new(parent: parent, raiseEventThroughParent: parent.Publish, appliersRegistrar: parent.RegisterEventAppliers());
 
-            public new class CollectionManager : RemovableEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+            public new class CollectionManager : ComponentRemovableEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
             {
                 internal CollectionManager(TComponent parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
                     : base(parent, raiseEventThroughParent, appliersRegistrar) {}
@@ -135,8 +135,8 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
         ///////////////////////Removable entity collection
 
-        public class RemovableEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
-            : EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+        public class ComponentRemovableEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+            : ComponentEntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             where TEntityId : notnull
             where TEntityEvent : class, TAggregateEvent
             where TEntityCreatedEvent : TEntityEvent
@@ -146,7 +146,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
             where TEntityEventIdGetterSetter :
             IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
         {
-            protected RemovableEntityCollectionManager(TParent parent,
+            protected ComponentRemovableEntityCollectionManager(TParent parent,
                                               Action<TEntityEventImplementation> raiseEventThroughParent,
                                               IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
                 : base(parent, raiseEventThroughParent, appliersRegistrar)

@@ -32,7 +32,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
         public new static CollectionManager CreateSelfManagingCollection(TAggregate parent)
             => new(parent: parent, raiseEventThroughParent: @event => parent.Publish(@event), appliersRegistrar: parent.RegisterEventAppliers());
 
-        public new class CollectionManager : RemovableEntityCollectionManager<TAggregate, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+        public new class CollectionManager : ComponentRemovableEntityCollectionManager<TAggregate, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         {
             internal CollectionManager(TAggregate parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
                 : base(parent, raiseEventThroughParent, appliersRegistrar) {}

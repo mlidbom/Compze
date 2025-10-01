@@ -61,7 +61,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       // ReSharper disable once UnusedMember.Global todo: write tests.
       public static CollectionManager CreateSelfManagingCollection(TAggregate parent) => new(parent, @event => parent.Publish(@event), parent.RegisterEventAppliers());
 
-      public class CollectionManager : EntityCollectionManager<TAggregate, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+      public class CollectionManager : ComponentEntityCollectionManager<TAggregate, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       {
          internal CollectionManager(TAggregate parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
             : base(parent, raiseEventThroughParent, appliersRegistrar) {}

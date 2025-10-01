@@ -47,7 +47,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Component.Implementation.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootEvent.Component.Entity.Implementation.Created(++_instances, name));
 
-   [UsedImplicitly]public class Entity : RemovableNestedEntity<Entity,
+   [UsedImplicitly]public class Entity : ComponentRemovableNestedEntity<Entity,
       int,
       RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.IRoot,
@@ -90,7 +90,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootEvent.Entity.Implementation.Removed());
 
-   public class RemovableNestedEntity : RemovableNestedEntity<RemovableNestedEntity,
+   public class RemovableNestedEntity : ComponentRemovableNestedEntity<RemovableNestedEntity,
       int,
       RootEvent.Entity.NestedEntity.Implementation.Root,
       RootEvent.Entity.NestedEntity.IRoot,
