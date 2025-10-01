@@ -106,7 +106,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
 
    public void Dispose() => _container.Dispose();
 
-   public async ValueTask DisposeAsync() => await _container.DisposeAsync().CaF();
+   public async ValueTask DisposeAsync() => await _container.DisposeAsync().caf();
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>() => _container.GetInstance<TComponent>();
 }

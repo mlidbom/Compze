@@ -18,13 +18,13 @@ static class DbCommandCE
       @this.SetCommandText(commandText).ExecuteScalar();
 
    public static async Task<object?> ExecuteScalarAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).ExecuteScalarAsync().CaF();
+      await @this.SetCommandText(commandText).ExecuteScalarAsync().caf();
 
    public static int ExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteNonQuery();
 
    public static async Task<int> ExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).ExecuteNonQueryAsync().CaF();
+      await @this.SetCommandText(commandText).ExecuteNonQueryAsync().caf();
 
 
    public static object? PrepareAndExecuteScalar(this DbCommand @this, string commandText) =>
@@ -34,7 +34,7 @@ static class DbCommandCE
       @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQuery();
 
    public static async Task<int> PrepareAndExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().CaF();
+      await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().caf();
 
    public static TCommand AppendCommandText<TCommand>(this TCommand @this, string append) where TCommand : DbCommand =>
       @this.mutate(me => me.CommandText += append);
@@ -51,7 +51,7 @@ static class DbCommandCE
    public static async Task<TCommand> PrepareStatementAsync<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       Assert.State.Is(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
-      return await @this.mutateAsync(async me => await me.PrepareAsync().CaF()).CaF();
+      return await @this.mutateAsync(async me => await me.PrepareAsync().caf()).caf();
    }
 
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)

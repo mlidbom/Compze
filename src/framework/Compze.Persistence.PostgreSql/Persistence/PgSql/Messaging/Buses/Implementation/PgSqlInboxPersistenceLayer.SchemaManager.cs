@@ -38,7 +38,7 @@ partial class PgSqlInboxPersistenceLayer
 
 
 
-                                                                 """).CaF();
+                                                                 """).caf();
 
       }
    }

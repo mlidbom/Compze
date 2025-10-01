@@ -33,10 +33,10 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
          //first opening of a connection that takes very long and thus trying our own pooling will not help.
          if(Interlocked.Increment(ref _openings) == 1)
          {
-            await connection.OpenAsync().CaF(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
+            await connection.OpenAsync().caf(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
          } else
          {
-            await connection.OpenAsync().CaF();
+            await connection.OpenAsync().caf();
          }
 
          return connection;
@@ -68,9 +68,9 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
       public virtual async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
       {
-         var connection = await OpenConnectionAsync().CaF();
-         await using var connection1 = connection.CaF();
-         return await func(connection).CaF();
+         var connection = await OpenConnectionAsync().caf();
+         await using var connection1 = connection.caf();
+         return await func(connection).caf();
       }
 
       public override string ToString() => _connectionString;
@@ -87,7 +87,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
          if(transactionLocalIdentifier == null)
          {
-            return await base.UseConnectionAsync(func).CaF();
+            return await base.UseConnectionAsync(func).caf();
          } else
          {
             //TConnection requires that the same connection is used throughout a transaction
@@ -96,7 +96,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
                   transactionLocalIdentifier,
                   constructor: async () =>
                   {
-                     var connection = await OpenConnectionAsync().CaF();
+                     var connection = await OpenConnectionAsync().caf();
                      Transaction.Current!.OnCompleted(action: () => _transactionConnections.Update(transactionConnectionsAfterTransaction =>
                      {
                         transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier);
@@ -105,8 +105,8 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
                      return connection;
                   }));
 
-            var connection = await getConnectionTask.CaF();
-            return await func(connection).CaF();
+            var connection = await getConnectionTask.caf();
+            return await func(connection).caf();
          }
       }
 

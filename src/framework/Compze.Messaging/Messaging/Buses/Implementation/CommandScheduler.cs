@@ -25,7 +25,7 @@ class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRu
    public async Task StartAsync()
    {
       _scheduledMessagesTimer = new Timer(callback: _ => SendDueCommands(), state: null, dueTime: 0.Seconds(), period: 100.Milliseconds());
-      await Task.CompletedTask.CaF();
+      await Task.CompletedTask.caf();
    }
 
    public void Schedule(DateTime sendAt, IExactlyOnceCommand message) => _guard.Update(() =>

@@ -44,7 +44,7 @@ public static class ServiceLocatorTransactionRunner
    {
       using (me.BeginScope())
       {
-         return await function().CaF();
+         return await function().caf();
       }
    }
 
@@ -52,7 +52,7 @@ public static class ServiceLocatorTransactionRunner
    {
       using (me.BeginScope())
       {
-         await action().CaF();
+         await action().caf();
       }
    }
 }

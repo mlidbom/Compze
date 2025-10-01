@@ -28,7 +28,7 @@ partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMappe
       AssertRunning();
       var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _typeMapper, _serializer, _httpApiClient);
 
-      await clientConnection.Init().CaF();
+      await clientConnection.Init().caf();
 
       ThreadSafe.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 
@@ -45,21 +45,21 @@ partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMappe
    {
       AssertRunning();
       var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-      await connection.PostAsync(atMostOnceCommand).CaF();
+      await connection.PostAsync(atMostOnceCommand).caf();
    }
 
    public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> atMostOnceCommand)
    {
       AssertRunning();
       var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-      return await connection.PostAsync(atMostOnceCommand).CaF();
+      return await connection.PostAsync(atMostOnceCommand).caf();
    }
 
    public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
    {
       AssertRunning();
       var connection = _router.ConnectionToHandlerFor(query);
-      return await connection.GetAsync(query).CaF();
+      return await connection.GetAsync(query).caf();
    }
 
    public void Stop() => AssertRunning().then(() =>

@@ -17,11 +17,11 @@ class Endpoint : IEndpoint
       public readonly IInbox Inbox = inbox;
       readonly IOutbox _outbox = outbox;
 
-      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).CaF();
+      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).caf();
       public async Task StopAsync()
       {
          _commandScheduler.Stop();
-         await Inbox.StopAsync().CaF();
+         await Inbox.StopAsync().caf();
       }
 
       public void Dispose() => _commandScheduler.Dispose();
@@ -63,7 +63,7 @@ class Endpoint : IEndpoint
       {
          _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await _serverComponents.InitAsync().CaF();
+         await _serverComponents.InitAsync().caf();
       }
 
 
@@ -77,7 +77,7 @@ class Endpoint : IEndpoint
       {
          serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
       }
-      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).CaF();
+      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
    }
 
    static void RunSanityChecks() => AssertAllTypesNeedingMappingsAreMapped();
@@ -93,15 +93,15 @@ class Endpoint : IEndpoint
       IsRunning = false;
       _transport.Stop();
       if(_serverComponents != null )
-         await _serverComponents.StopAsync().CaF();
+         await _serverComponents.StopAsync().caf();
    }
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoMessagesInFlight(timeoutOverride);
 
    public async ValueTask DisposeAsync()
    {
-      if(IsRunning) await StopAsync().CaF();
-      await ServiceLocator.DisposeAsync().CaF();
+      if(IsRunning) await StopAsync().caf();
+      await ServiceLocator.DisposeAsync().caf();
       _serverComponents?.Dispose();
    }
 }

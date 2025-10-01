@@ -45,7 +45,7 @@ partial class MySqlOutboxPersistenceLayer
                                                            DEFAULT CHARACTER SET = utf8mb4;
 
 
-                                                       """).CaF();
+                                                       """).caf();
       }
    }
 }

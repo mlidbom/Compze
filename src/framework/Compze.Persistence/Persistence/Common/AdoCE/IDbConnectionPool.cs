@@ -14,7 +14,7 @@ interface IDbConnectionPool<out TConnection, out TCommand>
 
    void UseConnection(Action<TConnection> action) => UseConnection(action.AsUnitFunc());
 
-   async Task UseConnectionAsync(Func<TConnection, Task> func) => await UseConnectionAsync(func.AsUnitFunc()).CaF();
+   async Task UseConnectionAsync(Func<TConnection, Task> func) => await UseConnectionAsync(func.AsUnitFunc()).caf();
 
    Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func);
 
@@ -25,13 +25,13 @@ interface IDbConnectionPool<out TConnection, out TCommand>
       UseConnection(connection => connection.ExecuteScalar(commandText));
 
    async Task<int> ExecuteNonQueryAsync(string commandText) =>
-      await UseConnectionAsync(async connection => await connection.ExecuteNonQueryAsync(commandText).CaF()).CaF();
+      await UseConnectionAsync(async connection => await connection.ExecuteNonQueryAsync(commandText).caf()).caf();
 
    int PrepareAndExecuteNonQuery(string commandText) =>
       UseConnection(connection => connection.PrepareAndExecuteNonQuery(commandText));
 
    async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>
-      await UseConnectionAsync(async connection => await connection.PrepareAndExecuteNonQueryAsync(commandText).CaF()).CaF();
+      await UseConnectionAsync(async connection => await connection.PrepareAndExecuteNonQueryAsync(commandText).caf()).caf();
 
    void UseCommand(Action<TCommand> action) =>
       UseConnection(connection => connection.UseCommand(action));

@@ -14,9 +14,9 @@ class HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSeriali
 
    public async Task<TResult> PostAsync<TResult>(TransportMessage.OutGoing message, object realMessage, Uri requestUri)
    {
-      var response = await PostAsync(message, realMessage, requestUri).CaF();
+      var response = await PostAsync(message, realMessage, requestUri).caf();
 
-      var resultJson = await response.Content.ReadAsStringAsync().CaF();
+      var resultJson = await response.Content.ReadAsStringAsync().caf();
       var result = (TResult)_serializer.DeserializeResponse(typeof(TResult), resultJson);
       return result;
    }
@@ -28,10 +28,10 @@ class HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSeriali
       var content = new StringContent(message.Body);
       content.Headers.Add(HttpConstants.Headers.MessageId, message.Id.ToString());
       content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, message.Type.GuidValue.ToString());
-      var response = await it.PostAsync(requestUri, content).CaF();
+      var response = await it.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)
       {
-         var problemDetails = await ProblemDetails.FromResponse(response).CaF();
+         var problemDetails = await ProblemDetails.FromResponse(response).caf();
 
          throw new MessageDispatchingFailedException($"""
                                                       Uri:        {requestUri}

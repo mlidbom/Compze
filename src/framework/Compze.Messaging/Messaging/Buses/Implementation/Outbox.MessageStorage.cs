@@ -33,6 +33,6 @@ partial class Outbox
          Assert.Result.Is(affectedRows == 1);
       }
 
-      public async Task StartAsync() => await _persistenceLayer.InitAsync().CaF();
+      public async Task StartAsync() => await _persistenceLayer.InitAsync().caf();
    }
 }

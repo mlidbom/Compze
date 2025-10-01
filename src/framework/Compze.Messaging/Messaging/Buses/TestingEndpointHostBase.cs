@@ -63,7 +63,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
-         await base.DisposeAsync(disposing).CaF();
+         await base.DisposeAsync(disposing).caf();
 
          if(unHandledExceptions.Any())
          {

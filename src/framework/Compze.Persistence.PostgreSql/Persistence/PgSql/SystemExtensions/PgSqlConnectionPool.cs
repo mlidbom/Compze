@@ -32,7 +32,7 @@ interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, Npgs
       }
 
       public TResult UseConnection<TResult>(Func<ICompzeNpgsqlConnection, TResult> func) => _pool.Value.UseConnection(func);
-      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeNpgsqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeNpgsqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).caf();
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
    }

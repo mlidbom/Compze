@@ -17,7 +17,7 @@ interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlC
       internal CompzeMsSqlConnection(string connectionString) => Connection = new SqlConnection(connectionString);
 
       public void Open() => Connection.Open();
-      public async Task OpenAsync() => await Connection.OpenAsync().CaF();
+      public async Task OpenAsync() => await Connection.OpenAsync().caf();
 
       DbCommand ICompzeDbConnection.CreateCommand() => CreateCommand();
       public SqlCommand CreateCommand() => Connection.CreateCommand();

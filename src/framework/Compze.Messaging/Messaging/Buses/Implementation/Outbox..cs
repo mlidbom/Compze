@@ -66,6 +66,6 @@ partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage
    public async Task StartAsync()
    {
       if(!_configuration.IsPureClientEndpoint)
-         await _storage.StartAsync().CaF();
+         await _storage.StartAsync().caf();
    }
 }

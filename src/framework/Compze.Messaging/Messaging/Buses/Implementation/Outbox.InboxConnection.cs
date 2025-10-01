@@ -20,14 +20,14 @@ partial class Outbox
       public MessageTypes.Internal.EndpointInformation EndpointInformation => Assert.State.Is(_endpointInformation != null, () => $"{nameof(Init)} must be called before {nameof(EndpointInformation)} can be accessed")
                                                                                       .then(_endpointInformation!);
 
-      public async Task SendAsync(IExactlyOnceEvent @event) => await _messageSender.SendAsync(@event).CaF();
-      public async Task SendAsync(IExactlyOnceCommand command) => await _messageSender.SendAsync(command).CaF();
+      public async Task SendAsync(IExactlyOnceEvent @event) => await _messageSender.SendAsync(@event).caf();
+      public async Task SendAsync(IExactlyOnceCommand command) => await _messageSender.SendAsync(command).caf();
 
-      public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> command) => await _rpcClient.PostAsync(command).CaF();
-      public async Task PostAsync(IAtMostOnceHypermediaCommand command) => await _rpcClient.PostAsync(command).CaF();
-      public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query) => await _rpcClient.QueryAsync(query).CaF();
+      public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> command) => await _rpcClient.PostAsync(command).caf();
+      public async Task PostAsync(IAtMostOnceHypermediaCommand command) => await _rpcClient.PostAsync(command).caf();
+      public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query) => await _rpcClient.QueryAsync(query).caf();
 
-      internal async Task Init() => _endpointInformation = await GetAsync(new MessageTypes.Internal.EndpointInformationQuery()).CaF();
+      internal async Task Init() => _endpointInformation = await GetAsync(new MessageTypes.Internal.EndpointInformationQuery()).caf();
 
       public void Dispose() {}
    }

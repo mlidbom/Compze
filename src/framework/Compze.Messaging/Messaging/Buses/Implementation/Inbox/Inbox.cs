@@ -26,15 +26,15 @@ namespace Compze.Messaging.Buses.Implementation;
    {
       _handlerExecutionEngine.Start();
       var storageStartTask = _storage.StartAsync();
-      await Task.WhenAll(storageStartTask, _aspNetHost.StartAsync()).CaF();
+      await Task.WhenAll(storageStartTask, _aspNetHost.StartAsync()).caf();
    }
 
-   public async Task StopAsync() => await _aspNetHost.StopAsync().CaF();
+   public async Task StopAsync() => await _aspNetHost.StopAsync().caf();
 
    public async ValueTask DisposeAsync()
    {
       _handlerExecutionEngine.Stop();
-      await StopAsync().CaF();
-      await _aspNetHost.DisposeAsync().CaF();
+      await StopAsync().caf();
+      await _aspNetHost.DisposeAsync().caf();
    }
 }

@@ -29,7 +29,7 @@ class PerformanceTest(string pluggableComponentsCombination) : DuplicateByPlugga
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       _clientEndpoint = _host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);
-      await _host.StartAsync().CaF();
+      await _host.StartAsync().caf();
       //Warmup
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
@@ -95,5 +95,5 @@ class PerformanceTest(string pluggableComponentsCombination) : DuplicateByPlugga
       return created;
    }
 
-   [TearDown] public async Task Teardown() => await _host!.DisposeAsync().CaF();
+   [TearDown] public async Task Teardown() => await _host!.DisposeAsync().caf();
 }
