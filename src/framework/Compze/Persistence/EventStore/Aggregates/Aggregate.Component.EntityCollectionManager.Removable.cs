@@ -17,6 +17,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
     {
         public class EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
             : EntityCollectionManager<TParent, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+            where TParent: IEventiveInternals<TComponentEventImplementation, TComponentEvent>
             where TEntityId : notnull
             where TEntityEvent : class, TAggregateEvent
             where TEntityCreatedEvent : TEntityEvent
