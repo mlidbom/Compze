@@ -86,7 +86,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 
         ////////////////////////Nested entity
         public abstract class ComponentNestedEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-            : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+            : AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
             where TEntityId : struct
             where TEntityEvent : class, TComponentEvent
             where TEntityEventImplementation : TComponentEventImplementation, TEntityEvent

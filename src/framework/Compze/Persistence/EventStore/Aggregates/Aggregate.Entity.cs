@@ -15,26 +15,26 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-   public abstract class Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+   public abstract class AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       : Component<TEntity, TEntityEventImplementation, TEntityEvent>
       where TEntityId : struct
       where TEntityEvent : class, TAggregateEvent
       where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
       where TEntityCreatedEvent : TEntityEvent
-      where TEntity : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
+      where TEntity : AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
    {
-      static Entity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
+      static AggregateEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
 
       static readonly TEntityEventIdGetterSetter IdGetterSetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
 
       TEntityId _id;
       public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
-      protected Entity(TAggregate aggregate)
+      protected AggregateEntity(TAggregate aggregate)
          : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
 
-      protected Entity
+      protected AggregateEntity
       (Action<TEntityEventImplementation> raiseEventThroughParent,
        IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
          : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)

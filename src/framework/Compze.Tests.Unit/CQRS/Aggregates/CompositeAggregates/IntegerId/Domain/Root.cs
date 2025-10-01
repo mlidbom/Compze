@@ -67,7 +67,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    }
 }
 
-[UsedImplicitly]class RemovableEntity : Root.RemovableEntity<RemovableEntity,
+[UsedImplicitly]class RemovableEntity : Root.AggregateRemovableEntity<RemovableEntity,
    int,
    RootEvent.Entity.Implementation.Root,
    RootEvent.Entity.IRoot,
