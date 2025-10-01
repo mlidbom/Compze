@@ -55,22 +55,21 @@ public abstract class EventiveEntity<TParent,
     }
 
     // ReSharper disable once UnusedMember.Global todo: write tests.
-    public static CollectionManager CreateSelfManagingCollection(TParent parent) => new(parent, @event => parent.Publish(@event), parent.RegisterEventAppliers());
+    public static CollectionManager CreateSelfManagingCollection(TParent parent) => new(parent);
 
     public class CollectionManager : IEntityCollectionManager<TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent>
     {
         protected static readonly TEntityEventIdGetterSetter IdGetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
 
         protected EntityCollection<TEntity, TEntityId> ManagedEntities { get; }
-        readonly Action<TEntityEventImplementation> _raiseEventThroughParent;
 
-        internal CollectionManager(TParent parent,
-                                    Action<TEntityEventImplementation> raiseEventThroughParent,
-                                    IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
+        TParent _parent;
+
+        internal CollectionManager(TParent parent)
         {
             ManagedEntities = [];
-            _raiseEventThroughParent = raiseEventThroughParent;
-            appliersRegistrar
+            _parent = parent;
+            parent.RegisterEventAppliers()
                .For<TEntityCreatedEvent>(e =>
                 {
                     var entity = Constructor.For<TEntity>.WithArguments<TParent>.Instance(parent);
@@ -85,7 +84,7 @@ public abstract class EventiveEntity<TParent,
 
         public TEntity AddByPublishing<TCreationEvent>(TCreationEvent creationEvent) where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent
         {
-            _raiseEventThroughParent(creationEvent);
+            _parent.Publish(creationEvent);
             var result = ManagedEntities.InCreationOrder[^1];
             return result;
         }
