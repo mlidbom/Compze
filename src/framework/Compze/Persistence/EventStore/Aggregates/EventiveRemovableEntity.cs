@@ -8,8 +8,8 @@ public abstract class EventiveRemovableEntity<TParent,
                                               TParentEventImplementation,
                                               TEntity,
                                               TEntityId,
-                                              TEntityEventImplementation,
                                               TEntityEvent,
+                                              TEntityEventImplementation,
                                               TEntityCreatedEvent,
                                               TEntityRemovedEvent,
                                               TEntityEventIdGetterSetter>
@@ -22,7 +22,7 @@ public abstract class EventiveRemovableEntity<TParent,
     where TEntityEventImplementation : TParentEventImplementation, TEntityEvent
     where TEntityCreatedEvent : TEntityEvent
     where TEntityRemovedEvent : TEntityEvent
-    where TEntity : EventiveRemovableEntity<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+    where TEntity : EventiveRemovableEntity<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
     where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
 {
     static EventiveRemovableEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();

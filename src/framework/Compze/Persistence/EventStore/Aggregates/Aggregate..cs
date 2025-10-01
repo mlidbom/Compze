@@ -162,7 +162,7 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
     }
 
     public abstract class RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
-        : EventiveRemovableEntity<TAggregate, TAggregateEvent, TAggregateEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
+        : EventiveRemovableEntity<TAggregate, TAggregateEvent, TAggregateEventImplementation, TEntity, TEntityId, TEntityEvent, TEntityEventImplementation, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityId : struct
         where TEntityEvent : class, TAggregateEvent
         where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
