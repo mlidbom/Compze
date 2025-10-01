@@ -1,8 +1,5 @@
 ﻿using System;
-using Compze.Contracts;
-using Compze.GenericAbstractions.Time;
 using Compze.Messaging.Events;
-using Compze.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 namespace Compze.Persistence.EventStore.Aggregates;
@@ -16,7 +13,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
 {
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
    public abstract class AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-      : Component<TEntity, TEntityEventImplementation, TEntityEvent>
+      : EventiveEntity<TAggregate, TAggregateEvent, TAggregateEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       where TEntityId : struct
       where TEntityEvent : class, TAggregateEvent
       where TEntityEventImplementation : TAggregateEventImplementation, TEntityEvent
@@ -24,47 +21,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
       where TEntity : AggregateEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
       where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
    {
-      static AggregateEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
-
-      static readonly TEntityEventIdGetterSetter IdGetterSetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
-
-      TEntityId _id;
-      public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
-
-      protected AggregateEntity(TAggregate aggregate)
-         : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
-
-      protected AggregateEntity
-      (Action<TEntityEventImplementation> raiseEventThroughParent,
-       IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-         : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
-      {
-         RegisterEventAppliers()
-           .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));
-      }
-
-      protected override void Publish(TEntityEventImplementation @event)
-      {
-         var id = IdGetterSetter.GetId(@event);
-         if(Equals(id, default(TEntityId)))
-         {
-            IdGetterSetter.SetEntityId(@event, Id);
-         }
-         else if(!Equals(id, Id))
-         {
-            throw new Exception($"Attempted to raise event with EntityId: {id} frow within entity with EntityId: {Id}");
-         }
-
-         base.Publish(@event);
-      }
-
-      // ReSharper disable once UnusedMember.Global todo: write tests.
-      public static CollectionManager CreateSelfManagingCollection(TAggregate parent) => new(parent, @event => parent.Publish(@event), parent.RegisterEventAppliers());
-
-      public class CollectionManager : ComponentEntityCollectionManager<TAggregate, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
-      {
-         internal CollectionManager(TAggregate parent, Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-            : base(parent, raiseEventThroughParent, appliersRegistrar) {}
-      }
+       protected AggregateEntity(TAggregate aggregate) : base(aggregate) {}
+       protected AggregateEntity(Action<TEntityEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(raiseEventThroughParent, appliersRegistrar) {}
    }
 }

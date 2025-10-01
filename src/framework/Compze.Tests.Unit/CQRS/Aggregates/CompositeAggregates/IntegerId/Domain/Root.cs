@@ -47,7 +47,7 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Component.Implementation.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootEvent.Component.Entity.Implementation.Created(++_instances, name));
 
-   [UsedImplicitly]public class Entity : ComponentRemovableNestedEntity<Entity,
+   [UsedImplicitly]public class Entity : EcRemovableEntity<Entity,
       int,
       RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.IRoot,

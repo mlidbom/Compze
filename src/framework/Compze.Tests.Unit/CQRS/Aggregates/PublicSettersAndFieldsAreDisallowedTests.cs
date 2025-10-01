@@ -73,7 +73,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       {
          public string Public { get; set; } = string.Empty;
 
-         public class NestedAggComponent(AggComponent parent) : AggComponent.ComponentNestedComponent<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>(parent)
+         public class NestedAggComponent(AggComponent parent) : AggComponent.EcComponent<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>(parent)
          {
             public string Public { get; set; } = string.Empty;
          }
@@ -83,7 +83,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       {
          public string Public { get; set; }  = string.Empty;
 
-         public class EntNestedComp(AggEntity parent) : AggEntity.ComponentNestedComponent<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>(parent)
+         public class EntNestedComp(AggEntity parent) : AggEntity.EcComponent<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>(parent)
          {
             public string Public2 { get; set; } = string.Empty;
          }

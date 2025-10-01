@@ -5,6 +5,7 @@ namespace Compze.Persistence.EventStore.Aggregates;
 
 public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
     : IEventiveInternals<TComponentEventImplementation, TComponentEvent>
+    where TParent : IEventiveInternals<TParentEventImplementation, TParentEvent>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
     where TComponentEvent : class, TParentEvent
@@ -19,6 +20,8 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
 
     void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
+
+    protected EventiveComponent(TParent parent) : this(@event => parent.Publish(@event), parent.RegisterEventAppliers(), true) {}
 
     internal EventiveComponent(Action<TComponentEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers)
     {
@@ -45,6 +48,8 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
         where TEcComponentEventImplementation : TComponentEventImplementation, TEcComponentEvent
         where TEcComponent : EcComponent<TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
     {
+        protected EcComponent(TComponent parent): base(parent) { }
+
         protected EcComponent(Action<TEcComponentEventImplementation> raiseEventThroughParent,
                               IEventHandlerRegistrar<TEcComponentEvent> appliersRegistrar,
                               bool registerEventAppliers)
