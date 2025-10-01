@@ -13,7 +13,7 @@ public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggre
     where TAggregateEvent : class, IAggregateEvent
     where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
-    public abstract partial class Component<TComponent, TComponentEventImplementation, TComponentEvent>
+    public abstract class Component<TComponent, TComponentEventImplementation, TComponentEvent>
         : EventiveComponent<TAggregate, TAggregateEvent, TAggregateEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
         where TComponentEvent : class, TAggregateEvent
         where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
