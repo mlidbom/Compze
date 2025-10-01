@@ -21,7 +21,7 @@ public abstract class EventiveComponent<TParent,
 
     readonly IMutableEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
 
-    protected TParent _parent;
+    TParent _parent;
 
     void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
