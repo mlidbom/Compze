@@ -5,7 +5,7 @@ using Compze.Messaging;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
-public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
+public abstract partial class EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
     where TParentEvent : IEvent
     where TComponentEvent : class, TParentEvent
     where TComponentEventImplementation : TParentEventImplementation, TComponentEvent
