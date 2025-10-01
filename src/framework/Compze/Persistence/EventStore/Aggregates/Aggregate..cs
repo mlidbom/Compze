@@ -171,8 +171,6 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
         where TEntity : RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         where TEntityEventIdGetterSetter : IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
     {
-        static RemovableEntity() => AggregateTypeValidator<TEntity, TEntityEventImplementation, TEntityEvent>.AssertStaticStructureIsValid();
-
         protected RemovableEntity(TAggregate aggregate) : base(aggregate) {}
     }
 }
