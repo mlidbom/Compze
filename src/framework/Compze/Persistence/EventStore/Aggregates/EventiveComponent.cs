@@ -7,15 +7,15 @@ public abstract class EventiveComponent<TParent,
                                         TParentEvent,
                                         TParentEventImplementation,
                                         TComponent,
-                                        TComponentEventImplementation,
-                                        TComponentEvent>
+                                        TComponentEvent,
+                                        TComponentEventImplementation>
     : IEventiveInternals<TComponentEvent, TComponentEventImplementation>
     where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
     where TParentEvent : class, IAggregateEvent
     where TParentEventImplementation : AggregateEvent, TParentEvent
     where TComponentEvent : class, TParentEvent
     where TComponentEventImplementation : TParentEventImplementation, TComponentEvent
-    where TComponent : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
+    where TComponent : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEvent, TComponentEventImplementation>
 {
     static EventiveComponent() => AggregateTypeValidator<TComponent, TComponentEventImplementation, TComponentEvent>.AssertStaticStructureIsValid();
 
@@ -49,8 +49,8 @@ public abstract class EventiveComponent<TParent,
             TComponentEvent,
             TComponentEventImplementation,
             TEcComponent,
-            TEcComponentEventImplementation,
-            TEcComponentEvent>
+            TEcComponentEvent,
+            TEcComponentEventImplementation>
         where TEcComponentEvent : class, TComponentEvent
         where TEcComponentEventImplementation : TComponentEventImplementation, TEcComponentEvent
         where TEcComponent : Component<TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>

@@ -140,7 +140,7 @@ public class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEven
 #pragma warning restore CA1033
 
     public abstract class Component<TComponent, TComponentEventImplementation, TComponentEvent>
-        : EventiveComponent<TAggregate, TAggregateEvent, TAggregateEventImplementation, TComponent, TComponentEventImplementation, TComponentEvent>
+        : EventiveComponent<TAggregate, TAggregateEvent, TAggregateEventImplementation, TComponent, TComponentEvent, TComponentEventImplementation>
         where TComponentEvent : class, TAggregateEvent
         where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
         where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>

@@ -22,7 +22,7 @@ public class RemovableEntityCollectionManager<TParent,
     where TEntityCreatedEvent : TEntityEvent
     where TEntityRemovedEvent : TEntityEvent
     where TEntityEventImplementation : TEntityEvent, TParentEventImplementation
-    where TEntity : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEventImplementation, TEntityEvent>
+    where TEntity : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEvent, TEntityEventImplementation>
     where TEntityEventIdGetterSetter :
     IGetSetAggregateEntityEventEntityId<TEntityId, TEntityEventImplementation, TEntityEvent>
 {

@@ -21,7 +21,7 @@ public class EntityCollectionManager<TParent,
     where TEntityEvent : class, TParentEvent
     where TEntityCreatedEvent : TEntityEvent
     where TEntityEventImplementation : TEntityEvent, TParentEventImplementation
-    where TEntity : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEventImplementation, TEntityEvent>
+    where TEntity : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEvent, TEntityEventImplementation>
     where TEntityEventIdGetterSetter : IGetAggregateEntityEventEntityId<TEntityEvent, TEntityId>
 {
     protected static readonly TEntityEventIdGetterSetter IdGetter = Constructor.For<TEntityEventIdGetterSetter>.DefaultConstructor.Instance();
