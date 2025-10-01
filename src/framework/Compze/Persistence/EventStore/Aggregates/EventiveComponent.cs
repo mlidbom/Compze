@@ -1,5 +1,4 @@
 ﻿using Compze.Messaging.Events;
-using Compze.SystemCE.ReflectionCE;
 using System;
 
 namespace Compze.Persistence.EventStore.Aggregates;
@@ -38,6 +37,21 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
     protected virtual void Publish(TComponentEventImplementation @event) => _raiseEventThroughParent(@event);
 
     IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEventImplementation, TComponentEvent>.RegisterEventAppliers() => RegisterEventAppliers();
+
+    public abstract class EcComponent<TEcComponent,
+                                      TEcComponentEventImplementation,
+                                      TEcComponentEvent> :
+        EventiveComponent<TComponent, TComponentEvent, TComponentEventImplementation, TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
+        where TEcComponentEvent : class, TComponentEvent
+        where TEcComponentEventImplementation : TComponentEventImplementation, TEcComponentEvent
+        where TEcComponent : EcComponent<TEcComponent, TEcComponentEventImplementation, TEcComponentEvent>
+    {
+        protected EcComponent(Action<TEcComponentEventImplementation> raiseEventThroughParent,
+                              IEventHandlerRegistrar<TEcComponentEvent> appliersRegistrar,
+                              bool registerEventAppliers)
+            : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers) {}
+    }
+
     protected IEventHandlerRegistrar<TComponentEvent> RegisterEventAppliers() => _eventAppliersEventDispatcher.Register();
 
     public abstract class EcEntity<TEntity,
