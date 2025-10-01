@@ -16,8 +16,7 @@ public abstract class EventiveEntity<TParent,
                                      TEntityEvent,
                                      TEntityCreatedEvent,
                                      TEntityEventIdGetterSetter>
-    : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEvent, TEntityEventImplementation>,
-      IEventiveInternals<TEntityEvent, TEntityEventImplementation>
+    : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEvent, TEntityEventImplementation>
     where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
     where TParentEvent : class, IAggregateEvent
     where TEntityId : struct
@@ -40,11 +39,6 @@ public abstract class EventiveEntity<TParent,
         RegisterEventAppliers()
            .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));
     }
-
-    void IEventiveInternals<TEntityEvent, TEntityEventImplementation>.ApplyEvent(TEntityEvent @event) => ApplyEvent(@event);
-    IEventHandlerRegistrar<TEntityEvent> IEventiveInternals<TEntityEvent, TEntityEventImplementation>.RegisterEventAppliers() => RegisterEventAppliers();
-
-    void IEventiveInternals<TEntityEvent, TEntityEventImplementation>.Publish(TEntityEventImplementation @event) => Publish(@event);
 
     protected override void Publish(TEntityEventImplementation @event)
     {
