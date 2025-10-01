@@ -3,11 +3,13 @@ using Compze.Messaging.Events;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 
-public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface> : IEventiveInternals<TAggregateEventImplementation, TAggregateEvent> where TWrapperEventImplementation : TWrapperEventInterface
-                                                                                                                                                                                                                     where TWrapperEventInterface : IAggregateWrapperEvent<TAggregateEvent>
-                                                                                                                                                                                                                     where TAggregate : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
-                                                                                                                                                                                                                     where TAggregateEvent : class, IAggregateEvent
-                                                                                                                                                                                                                     where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
+public partial class Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
+    : IEventiveInternals<TAggregateEventImplementation, TAggregateEvent>
+    where TWrapperEventImplementation : TWrapperEventInterface
+    where TWrapperEventInterface : IAggregateWrapperEvent<TAggregateEvent>
+    where TAggregate : Aggregate<TAggregate, TAggregateEventImplementation, TAggregateEvent, TWrapperEventImplementation, TWrapperEventInterface>
+    where TAggregateEvent : class, IAggregateEvent
+    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
 {
     public abstract class RemovableEntity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityRemovedEvent, TEntityEventIdGetterSetter>
         : Entity<TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>
