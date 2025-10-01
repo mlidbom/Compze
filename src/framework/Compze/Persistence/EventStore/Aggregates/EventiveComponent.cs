@@ -16,31 +16,24 @@ public abstract class EventiveComponent<TParent, TParentEvent, TParentEventImple
 
     readonly IMutableEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
 
-    readonly Action<TComponentEventImplementation> _raiseEventThroughParent;
     readonly TParent _parent;
 
     void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
-    protected EventiveComponent(TParent parent) : this(@event => parent.Publish(@event), parent.RegisterEventAppliers(), true)
+    protected EventiveComponent(TParent parent, bool registerEventAppliers = true)
     {
         _parent = parent;
-    }
-
-    internal EventiveComponent(Action<TComponentEventImplementation> raiseEventThroughParent, IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers)
-    {
-        _raiseEventThroughParent = raiseEventThroughParent;
-
-        if(registerEventAppliers)
+        if (registerEventAppliers)
         {
-            appliersRegistrar
-               .For<TComponentEvent>(ApplyEvent);
+            parent.RegisterEventAppliers()
+                  .For<TComponentEvent>(ApplyEvent);
         }
     }
 
     void IEventiveInternals<TComponentEventImplementation, TComponentEvent>.Publish(TComponentEventImplementation @event) => Publish(@event);
 
-    protected virtual void Publish(TComponentEventImplementation @event) => _raiseEventThroughParent(@event);
+    protected virtual void Publish(TComponentEventImplementation @event) => _parent.Publish(@event);
 
     IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEventImplementation, TComponentEvent>.RegisterEventAppliers() => RegisterEventAppliers();
 

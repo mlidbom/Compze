@@ -35,12 +35,7 @@ public abstract class EventiveEntity<TParent,
     TEntityId _id;
     public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
-    protected EventiveEntity(TParent aggregate)
-        : this(@event => aggregate.Publish(@event), aggregate.RegisterEventAppliers()) {}
-
-    protected EventiveEntity(Action<TEntityEventImplementation> raiseEventThroughParent,
-                             IEventHandlerRegistrar<TEntityEvent> appliersRegistrar)
-        : base(raiseEventThroughParent, appliersRegistrar, registerEventAppliers: false)
+    protected EventiveEntity(TParent aggregate): base(aggregate, false)
     {
         RegisterEventAppliers()
            .For<TEntityCreatedEvent>(e => _id = IdGetterSetter.GetId(e));
