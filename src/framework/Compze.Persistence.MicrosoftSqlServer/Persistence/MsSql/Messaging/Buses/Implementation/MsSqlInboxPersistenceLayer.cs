@@ -97,5 +97,5 @@ partial class MsSqlInboxPersistenceLayer(IMsSqlConnectionPool connectionFactory)
                    .ExecuteNonQuery());
    }
 
-   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).CaF();
+   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).caf();
 }

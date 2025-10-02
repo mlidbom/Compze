@@ -75,7 +75,7 @@ public class AggregateTests : UniversalTestBase
       receivedEvents[1].GetType().Should().Be<TriggeredEvent>();
    }
 
-   class CascadingEventsAggregate : Aggregate<CascadingEventsAggregate, AggregateEvent, IAggregateEvent>
+   class CascadingEventsAggregate : Aggregate<CascadingEventsAggregate, IAggregateEvent, AggregateEvent>
    {
       public CascadingEventsAggregate():base(TestingTimeSource.FrozenUtcNow())
       {

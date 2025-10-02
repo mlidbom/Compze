@@ -96,11 +96,13 @@ namespace Compze.Persistence.EventStore;
    AggregateEvent HydrateEvent(EventDataRow eventDataRowRow)
    {
       var @event = (AggregateEvent)_serializer.Deserialize(eventType: _typeMapper.GetType(new TypeId(eventDataRowRow.EventType)), json: eventDataRowRow.EventJson);
-      ((IMutableAggregateEvent)@event).SetAggregateId(eventDataRowRow.AggregateId);
-      ((IMutableAggregateEvent)@event).SetAggregateVersion(eventDataRowRow.AggregateVersion);
-      ((IMutableAggregateEvent)@event).SetMessageId(eventDataRowRow.EventId);
-      ((IMutableAggregateEvent)@event).SetUtcTimeStamp(eventDataRowRow.UtcTimeStamp);
-      return @event;
+#pragma warning disable CS0618 // Type or member is obsolete
+      ((IMutableAggregateEvent)@event).SetAggregateIdInternal(eventDataRowRow.AggregateId);
+      ((IMutableAggregateEvent)@event).SetAggregateVersionInternal(eventDataRowRow.AggregateVersion);
+      ((IMutableAggregateEvent)@event).SetMessageIdInternal(eventDataRowRow.EventId);
+      ((IMutableAggregateEvent)@event).SetUtcTimeStampInternal(eventDataRowRow.UtcTimeStamp);
+#pragma warning restore CS0618 // Type or member is obsolete
+        return @event;
    }
 
    AggregateEventWithRefactoringInformation[] GetAggregateEventsFromPersistenceLayer(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)

@@ -31,6 +31,6 @@ interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCo
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
       public TResult UseConnection<TResult>(Func<ICompzeMsSqlConnection, TResult> func) => _pool.Value.UseConnection(func);
-      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeMsSqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeMsSqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).caf();
    }
 }

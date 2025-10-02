@@ -18,7 +18,7 @@ interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<Npg
       NpgsqlConnection Connection { get; } = new(connectionString);
 
       public void Open() => Connection.Open();
-      public async Task OpenAsync() => await Connection.OpenAsync().CaF();
+      public async Task OpenAsync() => await Connection.OpenAsync().caf();
 
       DbCommand ICompzeDbConnection.CreateCommand() => CreateCommand();
       public NpgsqlCommand CreateCommand() => Connection.CreateCommand();

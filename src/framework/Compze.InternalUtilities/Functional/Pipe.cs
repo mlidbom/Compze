@@ -6,7 +6,20 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Functional;
 
-///<summary>Provides the ability to chain method calls rather than having to use separate lines and temporary variables.</summary>
+/// <summary>
+/// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.
+/// Think of these as "missing operators" for .NET types rather than traditional extension methods.
+/// 
+/// NAMING CONVENTION: All methods use lowercase naming breaking .NET conventions for two critical reasons:
+/// 
+/// 1. VISUAL DISTINCTION: Instantly recognizable as language-like features,
+///    not domain methods - similar to F#'s pipe-forward (|>) operator
+///    and LINQ query keywords (where, select).
+/// 
+/// 2. COLLISION AVOIDANCE: Since these are extensions on ALL types,
+///    avoiding name conflicts with existing methods is vital.
+///    Lowercase naming is the most effective strategy we found.
+/// </summary>
 static class Pipe
 {
    ///<summary>Takes the first value, applies <see cref="transform"/> and return the resulting value.</summary>
@@ -31,7 +44,7 @@ static class Pipe
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
    public static async Task<T> mutateAsync<T>(this T it, Func<T, Task> mutate)
    {
-      await mutate(it).CaF();
+      await mutate(it).caf();
       return it;
    }
 }

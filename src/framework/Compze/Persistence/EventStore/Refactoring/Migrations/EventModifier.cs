@@ -6,6 +6,7 @@ using Compze.Functional;
 using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.SystemCE.CollectionsCE.GenericCE;
 using Compze.SystemCE.LinqCE;
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace Compze.Persistence.EventStore.Refactoring.Migrations;
 
@@ -74,16 +75,18 @@ class EventModifier(Action<IReadOnlyList<EventModifier.RefactoredEvent>> eventsA
       _replacementEvents.ForEach(
          (e, index) =>
          {
-            ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersion(_inspectedEvent!.AggregateVersion + index);
+#pragma warning disable CS0618 // Type or member is obsolete
+             ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersionInternal(_inspectedEvent!.AggregateVersion + index);
 
-            e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.Replaces(_inspectedEvent.MessageId);
+             e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.Replaces(_inspectedEvent.MessageId);
             e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
-            ((IMutableAggregateEvent)e.NewEvent).SetAggregateId(_inspectedEvent.AggregateId);
-            ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStamp(_inspectedEvent.UtcTimeStamp);
+            ((IMutableAggregateEvent)e.NewEvent).SetAggregateIdInternal(_inspectedEvent.AggregateId);
+            ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStampInternal(_inspectedEvent.UtcTimeStamp);
          });
+#pragma warning restore CS0618 // Type or member is obsolete
 
-      CurrentNode = CurrentNode.Replace(replacementEvents);
+        CurrentNode = CurrentNode.Replace(replacementEvents);
       _eventsAddedCallback.Invoke(_replacementEvents);
    }
 
@@ -117,18 +120,19 @@ class EventModifier(Action<IReadOnlyList<EventModifier.RefactoredEvent>> eventsA
 
       _insertedEvents = insert.Select(@event => new RefactoredEvent(@event, new AggregateEventStorageInformation())).ToArray();
 
-      if(_inspectedEvent is EndOfAggregateHistoryEventPlaceHolder)
+#pragma warning disable CS0618 // Type or member is obsolete
+        if (_inspectedEvent is EndOfAggregateHistoryEventPlaceHolder)
       {
          _insertedEvents.ForEach(
             (e, index) =>
             {
-               ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersion(_inspectedEvent.AggregateVersion + index);
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersionInternal(_inspectedEvent.AggregateVersion + index);
 
                e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertAfter(_lastEventInActualStream!.MessageId);
                e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
-               ((IMutableAggregateEvent)e.NewEvent).SetAggregateId(_inspectedEvent.AggregateId);
-               ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStamp(_lastEventInActualStream.UtcTimeStamp);
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateIdInternal(_inspectedEvent.AggregateId);
+               ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStampInternal(_lastEventInActualStream.UtcTimeStamp);
             });
       }
       else
@@ -136,21 +140,21 @@ class EventModifier(Action<IReadOnlyList<EventModifier.RefactoredEvent>> eventsA
          _insertedEvents.ForEach(
             (e, index) =>
             {
-               ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersion(_inspectedEvent!.AggregateVersion + index);
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateVersionInternal(_inspectedEvent!.AggregateVersion + index);
 
                e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertBefore(_inspectedEvent.MessageId);
                e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
-               ((IMutableAggregateEvent)e.NewEvent).SetAggregateId(_inspectedEvent.AggregateId);
-               ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStamp(_inspectedEvent.UtcTimeStamp);
+               ((IMutableAggregateEvent)e.NewEvent).SetAggregateIdInternal(_inspectedEvent.AggregateId);
+               ((IMutableAggregateEvent)e.NewEvent).SetUtcTimeStampInternal(_inspectedEvent.UtcTimeStamp);
             });
       }
-
-      CurrentNode.ValuesFrom().ForEach((@event, _) => ((IMutableAggregateEvent)@event).SetAggregateVersion(@event.AggregateVersion + _insertedEvents.Length));
+      CurrentNode.ValuesFrom().ForEach((@event, _) => ((IMutableAggregateEvent)@event).SetAggregateVersionInternal(@event.AggregateVersion + _insertedEvents.Length));
 
       CurrentNode.AddBefore(insert);
       _eventsAddedCallback.Invoke(_insertedEvents);
-   }
+#pragma warning restore CS0618 // Type or member is obsolete
+    }
 
-   internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? [Assert.Result.NotNull(_inspectedEvent).then(_inspectedEvent)];
+    internal AggregateEvent[] MutatedHistory => Events?.ToArray() ?? [Assert.Result.NotNull(_inspectedEvent).then(_inspectedEvent)];
 }

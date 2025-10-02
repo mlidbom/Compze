@@ -1,11 +1,12 @@
-using System;
 using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Events;
 using Compze.Persistence.EventStore.Aggregates;
 using JetBrains.Annotations;
+using System;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 
-class Root : Aggregate<Root, RootEvent.Implementation.Root, RootEvent.IRoot>
+class Root : Aggregate<Root, RootEvent.IRoot, RootEvent.Implementation.Root>
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;
@@ -31,12 +32,13 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;
-   public Component(Root root) : base(root)
-   {
-      _entities = Entity.CreateSelfManagingCollection(this);
 
-      RegisterEventAppliers()
-        .For<RootEvent.Component.PropertyUpdated.Name>(e => Name = e.Name);
+   public Component(Root parent): base(parent)
+   {
+       _entities = Entity.CreateSelfManagingCollection(this);
+
+       RegisterEventAppliers()
+          .For<RootEvent.Component.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
    public IReadOnlyEntityCollection<Entity, int> Entities => _entities.Entities;
@@ -45,10 +47,10 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Component.Implementation.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootEvent.Component.Entity.Implementation.Created(++_instances, name));
 
-   [UsedImplicitly]public class Entity : RemovableNestedEntity<Entity,
+   [UsedImplicitly]public class Entity : RemovableEntity<Entity,
       int,
-      RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.IRoot,
+      RootEvent.Component.Entity.Implementation.Root,
       RootEvent.Component.Entity.Created,
       RootEvent.Component.Entity.Removed,
       RootEvent.Component.Entity.Implementation.Root.IdGetterSetter>
@@ -88,10 +90,10 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootEvent.Entity.Implementation.Removed());
 
-   public class RemovableNestedEntity : RemovableNestedEntity<RemovableNestedEntity,
+   public class RemovableNestedEntity : RemovableEntity<RemovableNestedEntity,
       int,
-      RootEvent.Entity.NestedEntity.Implementation.Root,
       RootEvent.Entity.NestedEntity.IRoot,
+      RootEvent.Entity.NestedEntity.Implementation.Root,
       RootEvent.Entity.NestedEntity.Created,
       RootEvent.Entity.NestedEntity.Removed,
       RootEvent.Entity.NestedEntity.Implementation.Root.IdGetterSetter>

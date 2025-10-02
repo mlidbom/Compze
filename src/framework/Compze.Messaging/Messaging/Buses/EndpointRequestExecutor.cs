@@ -21,22 +21,22 @@ public static class EndpointRequestExecutor
    public static void ExecuteClientRequest(this IEndpoint @this, Action<IRemoteHypermediaNavigator> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
    public static TResult ExecuteClientRequest<TResult>(this IEndpoint @this, Func<IRemoteHypermediaNavigator, TResult> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
    public static async Task<TResult> ExecuteClientRequestAsync<TResult>(this IEndpoint @this, Func<IRemoteHypermediaNavigator, Task<TResult>> request) =>
-      await @this.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(@this.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()).CaF()).CaF();
+      await @this.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(@this.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()).caf()).caf();
 
-   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<Task> request) =>await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request().CaF()).CaF();
+   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<Task> request) =>await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request().caf()).caf();
 
    public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<IRemoteHypermediaNavigator, Task> request) =>
-      await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(endpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()).CaF()).CaF();
+      await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(endpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()).caf()).caf();
 
    //Leverage the manual implementations above to enable running navigation specifications as requests
    public static TResult ExecuteClientRequest<TResult>(this IEndpoint @this, NavigationSpecification<TResult> navigation) => @this.ExecuteClientRequest(navigation.NavigateOn);
    public static void ExecuteClientRequest(this IEndpoint @this, NavigationSpecification navigation) => @this.ExecuteClientRequest(navigation.NavigateOn);
-   public static async Task<TResult> ExecuteRequestAsync<TResult>(this IEndpoint endpoint, NavigationSpecification<TResult> navigation) => await endpoint.ExecuteClientRequestAsync(navigation.NavigateOnAsync).CaF();
-   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, NavigationSpecification navigation) => await endpoint.ExecuteClientRequestAsync(navigation.NavigateOnAsync).CaF();
+   public static async Task<TResult> ExecuteRequestAsync<TResult>(this IEndpoint endpoint, NavigationSpecification<TResult> navigation) => await endpoint.ExecuteClientRequestAsync(navigation.NavigateOnAsync).caf();
+   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, NavigationSpecification navigation) => await endpoint.ExecuteClientRequestAsync(navigation.NavigateOnAsync).caf();
 
    //Leverage allow for turning it around and access the functionality from the navigation specification instead of from the endpoint. Tastes differ as to which is clearer...
    public static TResult ExecuteAsClientRequestOn<TResult>(this NavigationSpecification<TResult> navigationSpecification, IEndpoint endpoint) => endpoint.ExecuteClientRequest(navigationSpecification);
    public static void ExecuteAsClientRequestOn(this NavigationSpecification navigationSpecification, IEndpoint endpoint) => endpoint.ExecuteClientRequest(navigationSpecification);
-   public static async Task<TResult> ExecuteAsClientRequestOnAsync<TResult>(this NavigationSpecification<TResult> navigationSpecification, IEndpoint endpoint) => await endpoint.ExecuteRequestAsync(navigationSpecification).CaF();
-   public static async Task ExecuteAsClientRequestOnAsync(this NavigationSpecification navigationSpecification, IEndpoint endpoint) => await endpoint.ExecuteClientRequestAsync(navigationSpecification).CaF();
+   public static async Task<TResult> ExecuteAsClientRequestOnAsync<TResult>(this NavigationSpecification<TResult> navigationSpecification, IEndpoint endpoint) => await endpoint.ExecuteRequestAsync(navigationSpecification).caf();
+   public static async Task ExecuteAsClientRequestOnAsync(this NavigationSpecification navigationSpecification, IEndpoint endpoint) => await endpoint.ExecuteClientRequestAsync(navigationSpecification).caf();
 }

@@ -8,10 +8,10 @@ public abstract class AggregateWrapperEvent<TBaseEventInterface>(TBaseEventInter
 
 public interface IMutableAggregateEvent : IAggregateEvent
 {
-   void SetAggregateId(Guid aggregateId);
-   void SetAggregateVersion(int aggregateVersion);
-   void SetUtcTimeStamp(DateTime utcTimeStamp);
-   void SetMessageId(Guid messageId);
+   [Obsolete(InternalOnly.Message)] void SetAggregateIdInternal(Guid aggregateId);
+   [Obsolete(InternalOnly.Message)] void SetAggregateVersionInternal(int aggregateVersion);
+   [Obsolete(InternalOnly.Message)] void SetUtcTimeStampInternal(DateTime utcTimeStamp);
+   [Obsolete(InternalOnly.Message)] void SetMessageIdInternal(Guid messageId);
 }
 
 public abstract class AggregateEvent() : IMutableAggregateEvent
@@ -24,9 +24,9 @@ public abstract class AggregateEvent() : IMutableAggregateEvent
    public DateTime UtcTimeStamp { get; private set; } = DateTime.UtcNow; //Todo:bug: Should use timesource.
 
 #pragma warning disable CA1033 // We do not want these methods as part of the public interface of AggregateEvent.
-   void IMutableAggregateEvent.SetAggregateId(Guid aggregateId) => AggregateId = aggregateId;
-   void IMutableAggregateEvent.SetAggregateVersion(int aggregateVersion) => AggregateVersion = aggregateVersion;
-   void IMutableAggregateEvent.SetUtcTimeStamp(DateTime utcTimeStamp) => UtcTimeStamp = utcTimeStamp;
-   void IMutableAggregateEvent.SetMessageId(Guid messageId) => MessageId = messageId;
+   void IMutableAggregateEvent.SetAggregateIdInternal(Guid aggregateId) => AggregateId = aggregateId;
+   void IMutableAggregateEvent.SetAggregateVersionInternal(int aggregateVersion) => AggregateVersion = aggregateVersion;
+   void IMutableAggregateEvent.SetUtcTimeStampInternal(DateTime utcTimeStamp) => UtcTimeStamp = utcTimeStamp;
+   void IMutableAggregateEvent.SetMessageIdInternal(Guid messageId) => MessageId = messageId;
 #pragma warning restore CA1033
 }

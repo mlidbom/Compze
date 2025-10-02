@@ -56,7 +56,7 @@ public class Startup
 
       app.UseRouting();
 
-      app.Use(async (_, next) => await _clientEndpoint.ExecuteClientRequestAsync(async () => await next.Invoke().CaF()).CaF());
+      app.Use(async (_, next) => await _clientEndpoint.ExecuteClientRequestAsync(async () => await next.Invoke().caf()).caf());
 
       app.UseEndpoints(endpoints =>
       {

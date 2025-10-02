@@ -46,7 +46,7 @@ partial class PgSqlOutboxPersistenceLayer
                                                                      );
 
 
-                                                                 """).CaF();
+                                                                 """).caf();
       }
    }
 }

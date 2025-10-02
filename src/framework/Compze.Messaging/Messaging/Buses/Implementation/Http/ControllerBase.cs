@@ -23,7 +23,7 @@ abstract class ControllerBase(IRemotableMessageSerializer serializer, ITypeMappe
       var typeId = new TypeId(Guid.Parse(typeIdStr));
 
       using var reader = new StreamReader(HttpContext.Request.Body);
-      var queryJson = await reader.ReadToEndAsync().CaF();
+      var queryJson = await reader.ReadToEndAsync().caf();
 
       return new TransportMessage.InComing(queryJson, typeId, [], messageId, _typeMapper, Serializer);
    }

@@ -44,7 +44,9 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
          return SingleEventSequence(@event);
       }
 
-      ((IMutableAggregateEvent)@event).SetAggregateVersion(_aggregateVersion);
+#pragma warning disable CS0618 // Type or member is obsolete
+      ((IMutableAggregateEvent)@event).SetAggregateVersionInternal(_aggregateVersion);
+#pragma warning restore CS0618 // Type or member is obsolete
       _eventModifier.Reset(@event);
 
       for(var index = 0; index < _eventMigrators.Length; index++)
@@ -126,5 +128,7 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
 }
 
 sealed class EndOfAggregateHistoryEventPlaceHolder : AggregateEvent {
-   public EndOfAggregateHistoryEventPlaceHolder(Guid aggregateId, int i):base(aggregateId) => ((IMutableAggregateEvent)this).SetAggregateVersion(i);
+#pragma warning disable CS0618 // Type or member is obsolete
+    public EndOfAggregateHistoryEventPlaceHolder(Guid aggregateId, int i):base(aggregateId) => ((IMutableAggregateEvent)this).SetAggregateVersionInternal(i);
+#pragma warning restore CS0618 // Type or member is obsolete
 }

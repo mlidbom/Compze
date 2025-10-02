@@ -1,51 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-   <PropertyGroup>
-      <TargetFramework>net8.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
+	</PropertyGroup>
 
-   <PropertyGroup>
-      <RootNamespace>Compze</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
+	<PropertyGroup>
+		<RootNamespace>Compze</RootNamespace>
+		<NuGetAuditMode>direct</NuGetAuditMode>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+	</PropertyGroup>
 
-   <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
-         <PrivateAssets>all</PrivateAssets>
-      </PackageReference>
-   </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
 
-   <ItemGroup>
-     <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
-   </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+	</ItemGroup>
 
-   <ItemGroup>
-     <Folder Include="Persistence\EventStore\" />
-   </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Compze.Messaging" />
+		<InternalsVisibleTo Include="Compze.Testing" />
+		<InternalsVisibleTo Include="Compze.DependencyInjection" />
+		<InternalsVisibleTo Include="Compze.Serialization" />
+		<InternalsVisibleTo Include="Compze.Logging" />
+		<InternalsVisibleTo Include="Compze.DocumentDb" />
+		<InternalsVisibleTo Include="Compze.EventStore" />
+		<InternalsVisibleTo Include="Compze.Persistence" />
+		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+		<InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
+		<InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
+		<InternalsVisibleTo Include="Compze.Logging.Serilog" />
+		<InternalsVisibleTo Include="ScratchPad.Internals" />
+		<InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.Persistence.MySql" />
+		<InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+		<InternalsVisibleTo Include="Compze.Persistence.InMemory" />
+	</ItemGroup>
 
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Messaging" />
-      <InternalsVisibleTo Include="Compze.Testing" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection" />
-      <InternalsVisibleTo Include="Compze.Serialization" />
-      <InternalsVisibleTo Include="Compze.Logging" />
-      <InternalsVisibleTo Include="Compze.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Persistence" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
-      <InternalsVisibleTo Include="Compze.Logging.Serilog" />
-      <InternalsVisibleTo Include="ScratchPad.Internals" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-   </ItemGroup>
-
-</Project>
+</Project>	

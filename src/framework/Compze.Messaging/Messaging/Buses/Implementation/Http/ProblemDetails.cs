@@ -20,7 +20,7 @@ namespace Compze.Messaging.Buses.Implementation.Http;
    {
       try
       {
-         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().CaF()).NotNull();
+         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().caf()).NotNull();
       }
       catch(Exception)
       {

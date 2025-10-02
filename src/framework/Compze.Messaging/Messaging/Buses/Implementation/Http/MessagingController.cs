@@ -13,11 +13,11 @@ class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper ty
    [HttpPost(HttpConstants.Routes.Messaging.Event)]
    public async Task<IActionResult> Event()
    {
-      var incomingMessage = await CreateIncomingMessage().CaF();
+      var incomingMessage = await CreateIncomingMessage().caf();
       try
       {
          Storage.SaveIncomingMessage(incomingMessage);
-         await HandlerExecutionEngine.Enqueue(incomingMessage).CaF();
+         await HandlerExecutionEngine.Enqueue(incomingMessage).caf();
          return Ok();
       }
       catch(Exception exception)
@@ -29,12 +29,12 @@ class MessagingController(IRemotableMessageSerializer serializer, ITypeMapper ty
    [HttpPost(HttpConstants.Routes.Messaging.Command)]
    public async Task<IActionResult> Command()
    {
-      var incomingMessage = await CreateIncomingMessage().CaF();
+      var incomingMessage = await CreateIncomingMessage().caf();
 
       try
       {
          Storage.SaveIncomingMessage(incomingMessage);
-         await HandlerExecutionEngine.Enqueue(incomingMessage).CaF();
+         await HandlerExecutionEngine.Enqueue(incomingMessage).caf();
          return Ok();
       }
       catch(Exception exception)

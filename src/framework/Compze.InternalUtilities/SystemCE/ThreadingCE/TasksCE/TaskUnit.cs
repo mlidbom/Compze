@@ -7,7 +7,7 @@ static class TaskUnit
 {
    internal static async Task<Unit> AsUnit(this Task task)
    {
-      await task.CaF();
+      await task.caf();
       return Unit.Instance;
    }
 }

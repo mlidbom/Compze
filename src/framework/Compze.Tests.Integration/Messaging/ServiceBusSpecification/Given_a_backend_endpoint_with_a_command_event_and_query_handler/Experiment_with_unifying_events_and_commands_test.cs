@@ -136,7 +136,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
       }
    }
 
-   public class UserRegistrarAggregate : Aggregate<UserRegistrarAggregate, UserRegistrarEvent.Implementation.Root, UserRegistrarEvent.IRoot>
+   public class UserRegistrarAggregate : Aggregate<UserRegistrarAggregate, UserRegistrarEvent.IRoot, UserRegistrarEvent.Implementation.Root>
    {
       internal static Guid SingleId = Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED");
       internal static UserRegistrarAggregate Create()
@@ -153,7 +153,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
       internal static RegisterUserResult RegisterUser(IRemoteHypermediaNavigator navigator) => UserRegistrarCommand.RegisterUserCommand.Create().PostOn(navigator);
    }
 
-   public class UserAggregate : Aggregate<UserAggregate, UserEvent.Implementation.Root, UserEvent.IRoot>
+   public class UserAggregate : Aggregate<UserAggregate, UserEvent.IRoot, UserEvent.Implementation.Root>
    {
       UserAggregate() : base(DateTimeNowTimeSource.Instance)
          => RegisterEventAppliers()

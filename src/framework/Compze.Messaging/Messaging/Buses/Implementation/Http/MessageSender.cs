@@ -19,13 +19,13 @@ class MessageSender(IHttpApiClient httpClient, EndPointAddress remoteAddress, IT
    {
       var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
       _globalBusStateTracker.SendingMessageOnTransport(outGoingMessage);
-      await _client.PostAsync(outGoingMessage, command, new Uri($"{_remoteAddress}{HttpConstants.Routes.Messaging.Command}")).CaF();
+      await _client.PostAsync(outGoingMessage, command, new Uri($"{_remoteAddress}{HttpConstants.Routes.Messaging.Command}")).caf();
    }
 
    public async Task SendAsync(IExactlyOnceEvent @event)
    {
       var message = TransportMessage.OutGoing.Create(@event, _typeMapper, _serializer);
       _globalBusStateTracker.SendingMessageOnTransport(message);
-      await _client.PostAsync(message, @event, new Uri($"{_remoteAddress}{HttpConstants.Routes.Messaging.Event}")).CaF();
+      await _client.PostAsync(message, @event, new Uri($"{_remoteAddress}{HttpConstants.Routes.Messaging.Event}")).caf();
    }
 }

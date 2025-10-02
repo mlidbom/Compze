@@ -38,7 +38,7 @@ public partial class Fixture
       }
    }
 
-   protected class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.Implementation.Root, MyAggregateEvent.IRoot>
+   protected class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggregateEvent.Implementation.Root>
    {
       public MyAggregate() : base(new DateTimeNowTimeSource())
       {

@@ -1,11 +1,12 @@
-﻿using System;
-using Compze.GenericAbstractions.Time;
+﻿using Compze.GenericAbstractions.Time;
+using Compze.Messaging.Events;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using System;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local
@@ -64,13 +65,13 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    }
 
-   class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootEvent.Root, RootEvent.IRoot>(timeSource)
+   class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootEvent.IRoot, RootEvent.Root>(timeSource)
    {
-      public class AggComponent(Root aggregate) : Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(aggregate)
+      public class AggComponent(Root parent): Root.Component<AggComponent, RootEvent.Component.Root, RootEvent.Component.IRoot>(parent)
       {
          public string Public { get; set; } = string.Empty;
 
-         public class NestedAggComponent(AggComponent parent) : AggComponent.NestedComponent<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>(parent)
+         public class NestedAggComponent(AggComponent parent) : AggComponent.Component<NestedAggComponent, RootEvent.Component.NestedComponent.Root, RootEvent.Component.NestedComponent.IRoot>(parent)
          {
             public string Public { get; set; } = string.Empty;
          }
@@ -80,7 +81,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       {
          public string Public { get; set; }  = string.Empty;
 
-         public class EntNestedComp(AggEntity parent) : AggEntity.NestedComponent<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>(parent)
+         public class EntNestedComp(AggEntity parent) : AggEntity.Component<EntNestedComp, RootEvent.Entity.Component.Root, RootEvent.Entity.Component.IRoot>(parent)
          {
             public string Public2 { get; set; } = string.Empty;
          }

@@ -46,7 +46,7 @@ partial class MsSqlOutboxPersistenceLayer
 
                                             """);
 #pragma warning restore CA1849
-         await Task.CompletedTask.CaF();
+         await Task.CompletedTask.caf();
       }
    }
 }

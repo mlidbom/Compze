@@ -12,7 +12,7 @@ using Compze.Persistence.EventStore.Aggregates;
 namespace AccountManagement.Domain;
 
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
-class Account : Aggregate<Account, AccountEvent.Implementation.Root, AccountEvent.Root>, IAccountResourceData
+class Account : Aggregate<Account, AccountEvent.Root, AccountEvent.Implementation.Root>, IAccountResourceData
 {
    public Email Email { get; private set; } = null!;       //Never public setters on an aggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an aggregate. AssertInvariantsAreMet guarantees not null status.

@@ -31,6 +31,6 @@ interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySql
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
       public TResult UseConnection<TResult>(Func<ICompzeMySqlConnection, TResult> func) => _pool.Value.UseConnection(func);
-      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeMySqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).CaF();
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeMySqlConnection, Task<TResult>> func) => await _pool.Value.UseConnectionAsync(func).caf();
    }
 }
