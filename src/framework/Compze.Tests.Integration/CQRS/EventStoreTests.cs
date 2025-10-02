@@ -19,9 +19,11 @@ class SomeEvent : AggregateEvent, ISomeEvent
 {
    public SomeEvent(Guid aggregateId, int version) : base(aggregateId)
    {
-      ((IMutableAggregateEvent)this).SetAggregateVersion(version);
-      ((IMutableAggregateEvent)this).SetUtcTimeStamp(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
-   }
+#pragma warning disable CS0618 // Type or member is obsolete
+       ((IMutableAggregateEvent)this).SetAggregateVersionInternal(version);
+       ((IMutableAggregateEvent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
+#pragma warning restore CS0618 // Type or member is obsolete
+    }
 }
 
 public class EventStoreTests(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)

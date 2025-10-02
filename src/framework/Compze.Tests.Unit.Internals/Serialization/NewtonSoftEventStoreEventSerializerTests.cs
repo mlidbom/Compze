@@ -37,12 +37,14 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
          Test1 = test1;
          Test2 = test2;
 
-         ((IMutableAggregateEvent)this).SetAggregateVersion(aggregateVersion);
-         ((IMutableAggregateEvent)this).SetUtcTimeStamp(utcTimeStamp);
-      }
+#pragma warning disable CS0618 // Type or member is obsolete
+         ((IMutableAggregateEvent)this).SetAggregateVersionInternal(aggregateVersion);
+         ((IMutableAggregateEvent)this).SetUtcTimeStampInternal(utcTimeStamp);
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
 
-      // ReSharper disable once MemberCanBePrivate.Local
-      public string Test1 { [UsedImplicitly] get; private set; }
+        // ReSharper disable once MemberCanBePrivate.Local
+        public string Test1 { [UsedImplicitly] get; private set; }
       // ReSharper disable once MemberCanBePrivate.Local
       public string Test2 { [UsedImplicitly] get; private set; }
    }
@@ -59,7 +61,9 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
       var eventWithOnlySubclassValues = new TestEvent("Test1", "Test2");
-      ((IMutableAggregateEvent)eventWithOnlySubclassValues).SetUtcTimeStamp(DateTime.MinValue);
+#pragma warning disable CS0618 // Type or member is obsolete
+      ((IMutableAggregateEvent)eventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
+#pragma warning restore CS0618 // Type or member is obsolete
 
       var eventWithAllValuesJson = _eventSerializer.Serialize(eventWithAllValuesSet);
       var eventWithOnlySubclassValuesJson = _eventSerializer.Serialize(eventWithOnlySubclassValues);

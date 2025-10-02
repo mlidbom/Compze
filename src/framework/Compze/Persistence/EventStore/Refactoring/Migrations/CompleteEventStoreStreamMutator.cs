@@ -21,7 +21,9 @@ abstract class CompleteEventStoreStreamMutator
          {
             var version = _aggregateVersions.GetOrAddDefault(@event.AggregateId) + 1;
             _aggregateVersions[@event.AggregateId] = version;
-            ((IMutableAggregateEvent)@event).SetAggregateVersion(version);
+#pragma warning disable CS0618 // Type or member is obsolete
+            ((IMutableAggregateEvent)@event).SetAggregateVersionInternal(version);
+#pragma warning restore CS0618 // Type or member is obsolete
             yield return @event;
          }
       }

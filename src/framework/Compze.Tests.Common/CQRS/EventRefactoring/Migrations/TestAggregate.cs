@@ -44,7 +44,7 @@ namespace Compze.Tests.CQRS.EventRefactoring.Migrations
             if (GetIdBypassContractValidation() == Guid.Empty && events.First().AggregateId == Guid.Empty)
             {
                 SetIdBeVerySureYouKnowWhatYouAreDoing(Guid.NewGuid());
-                events.Cast<IMutableAggregateEvent>().First().SetAggregateId(Id);
+                events.Cast<IMutableAggregateEvent>().First().SetAggregateIdInternal(Id);
 #pragma warning restore 618
             }
 
@@ -76,7 +76,9 @@ namespace Compze.Tests.CQRS.EventRefactoring.Migrations
         public static TestAggregate FromEvents(IUtcTimeTimeSource timeSource, Guid? id, IEnumerable<Type> events)
         {
             var rootEvents = events.ToEvents();
-            rootEvents.Cast<IMutableAggregateEvent>().First().SetAggregateId(id ?? Guid.NewGuid());
+#pragma warning disable CS0618 // Type or member is obsolete
+            rootEvents.Cast<IMutableAggregateEvent>().First().SetAggregateIdInternal(id ?? Guid.NewGuid());
+#pragma warning restore CS0618 // Type or member is obsolete
             return new TestAggregate(timeSource, rootEvents);
         }
 

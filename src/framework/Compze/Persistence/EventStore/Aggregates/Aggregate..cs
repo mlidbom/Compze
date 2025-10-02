@@ -61,19 +61,20 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
 
         using(ScopedChange.Enter(onEnter: () => _reentrancyLevel++, onDispose: () => _reentrancyLevel--))
         {
-            ((IMutableAggregateEvent)theEvent).SetAggregateVersion(Version + 1);
-            ((IMutableAggregateEvent)theEvent).SetUtcTimeStamp(TimeSource.UtcNow);
+#pragma warning disable CS0618 // Type or member is obsolete
+            ((IMutableAggregateEvent)theEvent).SetAggregateVersionInternal(Version + 1);
+            ((IMutableAggregateEvent)theEvent).SetUtcTimeStampInternal(TimeSource.UtcNow);
             if(Version == 0)
             {
                 if(theEvent is not IAggregateCreatedEvent) throw new Exception($"The first published event {theEvent.GetType()} did not implement {nameof(IAggregateCreatedEvent)}. The first event an aggregate publishes must always implement {nameof(IAggregateCreatedEvent)}.");
                 if(theEvent.AggregateId == Guid.Empty) throw new Exception($"{nameof(IAggregateEvent.AggregateId)} was empty in {nameof(IAggregateCreatedEvent)}");
-                ((IMutableAggregateEvent)theEvent).SetAggregateVersion(1);
+                ((IMutableAggregateEvent)theEvent).SetAggregateVersionInternal(1);
             } else
             {
                 if(theEvent.AggregateId != Guid.Empty && theEvent.AggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise event for Aggregated: {theEvent.AggregateId} from Aggregate with Id: {Id}.");
-                ((IMutableAggregateEvent)theEvent).SetAggregateId(Id);
+                ((IMutableAggregateEvent)theEvent).SetAggregateIdInternal(Id);
             }
-
+#pragma warning restore CS0618 // Type or member is obsolete
             ApplyEvent(theEvent);
             _unCommittedEvents.Add(theEvent);
             _eventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromEventHandlers.Add(theEvent);
@@ -144,7 +145,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
         where TComponentEventImplementation : TAggregateEventImplementation, TComponentEvent
         where TComponent : Component<TComponent, TComponentEventImplementation, TComponentEvent>
     {
-        protected Component(TAggregate parent) : base(parent) { }
+        protected Component(TAggregate parent) : base(parent) {}
     }
 
     [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
