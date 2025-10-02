@@ -1,5 +1,4 @@
-﻿using Compze.Messaging;
-using Compze.Persistence.EventStore;
+﻿using Compze.Persistence.EventStore;
 using Compze.SystemCE;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,6 +10,7 @@ using Compze.SystemCE.ReflectionCE;
 using Compze.SystemCE.ReflectionCE.EmitCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Tessaging;
 
 namespace ScratchPad.ReflectionEmit;
 

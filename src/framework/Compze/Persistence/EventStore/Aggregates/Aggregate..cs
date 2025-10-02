@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Compze.Contracts;
 using Compze.DDD;
 using Compze.GenericAbstractions.Time;
-using Compze.Messaging.Events;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ReactiveCE;
+using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 
 namespace Compze.Persistence.EventStore.Aggregates;

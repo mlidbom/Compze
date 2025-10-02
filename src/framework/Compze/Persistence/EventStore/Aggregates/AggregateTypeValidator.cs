@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Compze.Messaging;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ReflectionCE;
+using Compze.Tessaging;
 using JetBrains.Annotations;
 
 namespace Compze.Persistence.EventStore.Aggregates;

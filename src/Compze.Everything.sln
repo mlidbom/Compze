@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.0.11018.127
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Messaging", "framework\Compze.Messaging\Compze.Messaging.csproj", "{3632254D-0C4A-4EB8-B388-4C99F8939584}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Tessaging", "framework\Compze.Messaging\Compze.Tessaging.csproj", "{3632254D-0C4A-4EB8-B388-4C99F8939584}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compze.Tests.Integration.Internals", "framework\Compze.Tests.Integration.Internals\Compze.Tests.Integration.Internals.csproj", "{4C78131D-DD7B-4C3E-B931-D4C6436EE09E}"
 EndProject
@@ -86,7 +86,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.InMemory
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence", "framework\Compze.Persistence\Compze.Persistence.csproj", "{F0B66C06-61DA-E5C3-8C98-84F2569EDEAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Eventive", "framework\Compze.Eventive\Compze.Eventive.csproj", "{B7AF6D05-B492-4019-A7F6-F908551699BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Teventive", "framework\Compze.Eventive\Compze.Teventive.csproj", "{B7AF6D05-B492-4019-A7F6-F908551699BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.SystemCE", "framework\Compze.SystemCE\Compze.SystemCE.csproj", "{64C75B3A-DE22-4640-BAE7-9FCE666892F6}"
 EndProject

@@ -1,9 +1,9 @@
 using System;
 using System.Text.RegularExpressions;
-using Compze.Messaging;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE;
+using Compze.Tessaging;
 using Newtonsoft.Json;
 
 namespace Compze.Serialization;

@@ -1,10 +1,10 @@
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
-using Compze.Messaging.Buses;
 using Compze.Persistence.DocumentDb;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Tessaging.Buses;
 
 namespace Compze.Persistence.Common.DependencyInjection;
 

@@ -1,8 +1,10 @@
-﻿using Compze.Messaging.Buses;
-using Compze.Persistence.EventStore;
+﻿using Compze.Persistence.EventStore;
 using Compze.SystemCE;
+using Compze.Tessaging.Buses;
 using static System.Console;
-using IEvent = Compze.Messaging.IEvent;
+using IEvent = Compze.Tessaging.IEvent;
+using Tessaging_IEvent = Compze.Tessaging.IEvent;
+
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable ArrangeTypeMemberModifiers
 
@@ -19,7 +21,7 @@ namespace Website.paradigms.semantic_events
    {
       class Unhelpful
       {
-         interface IName : IEvent;
+         interface IName : Tessaging_IEvent;
 
          public void IllustrateEventListening()
          {

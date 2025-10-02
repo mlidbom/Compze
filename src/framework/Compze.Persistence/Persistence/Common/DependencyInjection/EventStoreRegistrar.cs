@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
-using Compze.Messaging.Buses;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.EventStore.Refactoring.Migrations;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Tessaging.Buses;
 
 namespace Compze.Persistence.Common.DependencyInjection;
 

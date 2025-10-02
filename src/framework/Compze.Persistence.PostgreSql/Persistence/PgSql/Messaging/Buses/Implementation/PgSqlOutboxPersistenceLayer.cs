@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Messaging.Buses.Implementation;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE.LinqCE;
+using Compze.Tessaging.Buses.Implementation;
 using NpgsqlTypes;
-using MessageTable = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using MessageTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
 namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 

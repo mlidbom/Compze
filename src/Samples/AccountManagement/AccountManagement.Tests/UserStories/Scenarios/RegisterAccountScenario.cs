@@ -1,7 +1,7 @@
 using System;
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
-using Compze.Messaging.Buses;
+using Compze.Tessaging.Buses;
 
 namespace AccountManagement.UserStories.Scenarios;
 

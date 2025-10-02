@@ -1,6 +1,6 @@
 ﻿using System;
-using Compze.Messaging;
 using Compze.Persistence.EventStore;
+using Compze.Tessaging;
 
 namespace Compze.Serialization;
 

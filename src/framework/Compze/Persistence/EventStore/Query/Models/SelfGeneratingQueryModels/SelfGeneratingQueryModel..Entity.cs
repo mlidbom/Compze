@@ -1,7 +1,7 @@
 ﻿using Compze.Contracts;
-using Compze.Messaging.Events;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.SystemCE.ReflectionCE;
+using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 
 namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;

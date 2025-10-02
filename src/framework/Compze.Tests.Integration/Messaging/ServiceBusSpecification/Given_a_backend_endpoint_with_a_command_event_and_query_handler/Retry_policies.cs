@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Transactions;
-using Compze.Messaging.Buses;
+using Compze.Tessaging.Buses;
 using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Threading;
 using Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;

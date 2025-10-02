@@ -1,6 +1,6 @@
-﻿using Compze.Messaging;
-using Compze.Messaging.Events;
-using Compze.Persistence.EventStore;
+﻿using Compze.Persistence.EventStore;
+using Compze.Tessaging;
+using Compze.Tessaging.Teventive;
 using Compze.Testing;
 using NUnit.Framework;
 

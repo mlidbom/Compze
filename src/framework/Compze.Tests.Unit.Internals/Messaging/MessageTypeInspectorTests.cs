@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Messaging;
+using Compze.Tessaging;
 using Compze.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;

@@ -1,4 +1,4 @@
-﻿using Compze.Messaging.Events;
+﻿using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 
 namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;

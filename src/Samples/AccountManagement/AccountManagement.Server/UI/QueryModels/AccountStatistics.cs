@@ -3,10 +3,10 @@ using System.Threading;
 using AccountManagement.Domain.Events;
 using Compze.DependencyInjection;
 using Compze.Functional;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Hypermedia;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.UI.QueryModels;
 

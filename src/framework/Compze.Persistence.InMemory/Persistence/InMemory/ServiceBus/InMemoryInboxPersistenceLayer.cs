@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Messaging.Buses.Implementation;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.SystemCE.TransactionsCE;
+using Compze.Tessaging.Buses.Implementation;
+
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 

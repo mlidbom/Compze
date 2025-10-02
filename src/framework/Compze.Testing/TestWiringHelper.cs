@@ -1,10 +1,10 @@
 using System;
 using Compze.DependencyInjection;
 using Compze.Logging;
-using Compze.Messaging.Buses;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore;
+using Compze.Tessaging.Buses;
 using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 

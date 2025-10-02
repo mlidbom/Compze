@@ -1,5 +1,5 @@
-﻿using Compze.Messaging;
-using Compze.Messaging.Events;
+﻿using Compze.Tessaging;
+using Compze.Tessaging.Teventive;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.CQRS.EventHandling;

@@ -1,4 +1,4 @@
-﻿using Compze.Messaging;
+﻿using Compze.Tessaging;
 using JetBrains.Annotations;
 
 namespace AccountManagement.API;

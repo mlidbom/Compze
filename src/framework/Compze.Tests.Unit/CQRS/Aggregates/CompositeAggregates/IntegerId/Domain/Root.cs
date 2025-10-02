@@ -1,5 +1,4 @@
 using Compze.GenericAbstractions.Time;
-using Compze.Messaging.Events;
 using Compze.Persistence.EventStore.Aggregates;
 using JetBrains.Annotations;
 using System;

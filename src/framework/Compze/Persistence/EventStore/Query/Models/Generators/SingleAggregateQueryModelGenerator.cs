@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Compze.Functional;
-using Compze.Messaging.Events;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ReflectionCE;
+using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 
 namespace Compze.Persistence.EventStore.Query.Models.Generators;

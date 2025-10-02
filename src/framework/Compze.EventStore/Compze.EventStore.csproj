@@ -34,7 +34,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Messaging" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Persistence" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
    </ItemGroup>

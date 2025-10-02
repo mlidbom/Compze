@@ -1,11 +1,11 @@
 ﻿using Compze.DependencyInjection;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Buses.Implementation;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.InMemory.DocumentDB;
 using Compze.Persistence.InMemory.EventStore;
 using Compze.Persistence.InMemory.ServiceBus;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 
 namespace Compze.Persistence.InMemory.DependencyInjection;
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Messaging.Events;
+using Compze.Tessaging.Teventive;
 
 namespace Compze.Persistence.EventStore.Aggregates;
 

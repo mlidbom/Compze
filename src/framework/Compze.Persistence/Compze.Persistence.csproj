@@ -15,7 +15,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Compze\Compze.csproj" />
         <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
-        <ProjectReference Include="..\Compze.Messaging\Compze.Messaging.csproj" />
+        <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
     </ItemGroup>
 
     <ItemGroup>

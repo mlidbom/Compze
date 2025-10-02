@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using M = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using D = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using M = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using D = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
 namespace Compze.Persistence.MySql.Messaging.Buses.Implementation;
 

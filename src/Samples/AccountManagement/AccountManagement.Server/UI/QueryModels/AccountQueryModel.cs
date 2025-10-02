@@ -5,11 +5,11 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
-using Compze.Messaging;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Hypermedia;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.UI.QueryModels;
 

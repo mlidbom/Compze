@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Message =  Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
+using Message =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 

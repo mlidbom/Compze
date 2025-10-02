@@ -1,7 +1,7 @@
 ﻿using System;
-using Compze.Messaging.Buses;
 using Compze.Persistence.EventStore;
 using Compze.SystemCE;
+using Compze.Tessaging.Buses;
 using static System.Console;
 
 namespace Website.paradigms.semantic_events

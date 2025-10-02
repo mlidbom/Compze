@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
-using Compze.Messaging;
+using Compze.Tessaging;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Functional;
-using Compze.Messaging;
-using Compze.Messaging.Buses;
+using Compze.Tessaging;
+using Compze.Tessaging.Buses;
 using Newtonsoft.Json;
 
 namespace Compze.Persistence.DocumentDb;

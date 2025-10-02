@@ -6,8 +6,8 @@ using AccountManagement.Domain.Registration;
 using CommunityToolkit.Diagnostics;
 using Compze.Functional;
 using Compze.GenericAbstractions.Time;
-using Compze.Messaging.Hypermedia;
 using Compze.Persistence.EventStore.Aggregates;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.Domain;
 

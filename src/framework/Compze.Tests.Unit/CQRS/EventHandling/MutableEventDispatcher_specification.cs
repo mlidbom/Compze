@@ -1,5 +1,5 @@
-﻿using Compze.Messaging.Events;
-using Compze.Persistence.EventStore;
+﻿using Compze.Persistence.EventStore;
+using Compze.Tessaging.Teventive;
 using Compze.Testing.TestFrameworkExtensions.XUnit;
 using FluentAssertions;
 using Xunit;

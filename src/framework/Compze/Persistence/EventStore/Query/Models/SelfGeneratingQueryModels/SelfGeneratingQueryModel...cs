@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Compze.Contracts;
 using Compze.DDD;
-using Compze.Messaging.Events;
 using Compze.SystemCE.LinqCE;
+using Compze.Tessaging.Teventive;
 
 namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 

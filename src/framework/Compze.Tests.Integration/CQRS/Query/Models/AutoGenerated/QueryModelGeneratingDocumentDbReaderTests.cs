@@ -2,13 +2,13 @@
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
-using Compze.Messaging.Events;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
 using Compze.Persistence.EventStore.Query.Models.Generators;
 using Compze.Refactoring.Naming;
+using Compze.Tessaging.Teventive;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.SystemCE.TransactionsCE;

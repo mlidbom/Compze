@@ -4,10 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Compze.Messaging;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ReflectionCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Tessaging;
 
 namespace Compze.Refactoring.Naming;
 

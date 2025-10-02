@@ -1,5 +1,4 @@
 ﻿using Compze.Contracts;
-using Compze.Messaging.Events;
 using Compze.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 using System;

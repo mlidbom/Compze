@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Messaging;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Hypermedia;
+using Compze.Tessaging;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;

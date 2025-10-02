@@ -21,7 +21,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Messaging" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Logging" />
       <InternalsVisibleTo Include="Compze.DocumentDb" />
       <InternalsVisibleTo Include="Compze.EventStore" />

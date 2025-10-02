@@ -1,7 +1,7 @@
 ﻿using AccountManagement.API;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Hypermedia;
 using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;

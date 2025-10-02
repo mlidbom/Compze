@@ -1,11 +1,11 @@
 ﻿// ReSharper disable MemberCanBeMadeStatic.Global we want the fluid navigation to be composable with other APIs (AccountApi as a member property in a composite API for a composite UI etc) so static navigation is out.
 // ReSharper disable MemberCanBeMadeStatic.Local
 using System;
-using Compze.Messaging;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Hypermedia;
 using Compze.Persistence.InMemory.DependencyInjection;
 using Compze.SystemCE;
+using Compze.Tessaging;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.API;
 

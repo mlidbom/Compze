@@ -1,6 +1,6 @@
 ﻿using System;
 using Compze.DependencyInjection;
-using Compze.Messaging.Buses;
+using Compze.Tessaging.Buses;
 using Compze.Testing.Persistence;
 
 namespace Compze.Testing.Messaging.Buses;

@@ -1,4 +1,4 @@
-﻿using Compze.Messaging.Events;
+﻿using Compze.Tessaging.Teventive;
 
 namespace Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
 

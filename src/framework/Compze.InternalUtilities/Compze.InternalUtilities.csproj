@@ -22,7 +22,7 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Compze" />
         <InternalsVisibleTo Include="Compze.Testing" />
-        <InternalsVisibleTo Include="Compze.Messaging" />
+        <InternalsVisibleTo Include="Compze.Tessaging" />
         <InternalsVisibleTo Include="Compze.DependencyInjection" />
         <InternalsVisibleTo Include="Compze.Serialization" />
         <InternalsVisibleTo Include="Compze.Logging" />

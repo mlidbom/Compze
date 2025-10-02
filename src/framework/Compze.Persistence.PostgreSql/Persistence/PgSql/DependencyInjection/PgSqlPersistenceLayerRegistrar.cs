@@ -1,6 +1,4 @@
 ﻿using Compze.DependencyInjection;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Buses.Implementation;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.PgSql.DocumentDb;
@@ -9,6 +7,8 @@ using Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE.ConfigurationCE;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Testing.Persistence.PgSql;
 
 namespace Compze.Persistence.PgSql.DependencyInjection;

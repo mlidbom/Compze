@@ -1,9 +1,9 @@
 ﻿using System;
 using Compze.GenericAbstractions.Time;
-using Compze.Messaging;
-using Compze.Messaging.Hypermedia;
 using Compze.Persistence.EventStore;
 using Compze.Persistence.EventStore.Aggregates;
+using Compze.Tessaging;
+using Compze.Tessaging.Typermedia;
 using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global

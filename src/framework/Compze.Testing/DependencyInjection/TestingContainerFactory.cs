@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
-using Compze.Messaging.Buses;
+using Compze.Tessaging.Buses;
 using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Persistence;
 using JetBrains.Annotations;

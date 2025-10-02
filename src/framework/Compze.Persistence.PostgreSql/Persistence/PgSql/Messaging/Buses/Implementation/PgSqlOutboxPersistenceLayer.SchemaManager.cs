@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Message = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using Dispatch = Compze.Messaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Message = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using Dispatch = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
 namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 

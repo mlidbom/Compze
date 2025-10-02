@@ -17,7 +17,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Messaging" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Testing" />
       <InternalsVisibleTo Include="Compze.EventStore" />
       <InternalsVisibleTo Include="Compze.Persistence" />

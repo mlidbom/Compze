@@ -1,7 +1,7 @@
 ﻿using AccountManagement.API;
 using CommunityToolkit.Diagnostics;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Hypermedia;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.UserStories.Scenarios;
 

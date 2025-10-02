@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Messaging;
-using Compze.Messaging.Buses;
-using Compze.Messaging.Buses.Implementation;
 using Compze.Refactoring.Naming;
+using Compze.Tessaging;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 using Newtonsoft.Json;
 
 namespace Compze.Persistence.EventStore;

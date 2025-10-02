@@ -1,4 +1,4 @@
-﻿using Compze.Messaging.Buses;
+﻿using Compze.Tessaging.Buses;
 
 namespace AccountManagement.UI;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Messaging.Buses;
 using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Buses;
 using Compze.Testing.DependencyInjection;
 
 // ReSharper disable LocalizableElement
