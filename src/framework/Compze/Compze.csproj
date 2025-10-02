@@ -21,7 +21,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
-		<ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
+		<ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
