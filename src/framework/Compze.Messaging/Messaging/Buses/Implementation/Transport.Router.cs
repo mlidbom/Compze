@@ -48,15 +48,15 @@ partial class Transport
          {
             if(eventSubscribers.Count > 0)
             {
-               ThreadSafe.AddRangeToCopyAndReplace(ref _eventSubscriberRoutes, eventSubscribers);
+               OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _eventSubscriberRoutes, eventSubscribers);
                _eventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
             }
 
             if(commandHandlerRoutes.Count > 0)
-               ThreadSafe.AddRangeToCopyAndReplace(ref _commandHandlerRoutes, commandHandlerRoutes);
+               OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _commandHandlerRoutes, commandHandlerRoutes);
 
             if(queryHandlerRoutes.Count > 0)
-               ThreadSafe.AddRangeToCopyAndReplace(ref _queryHandlerRoutes, queryHandlerRoutes);
+               OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _queryHandlerRoutes, queryHandlerRoutes);
          }
       }
 
@@ -79,8 +79,11 @@ partial class Transport
                                     .Select(route => route.Connection)
                                     .ToArray();
 
+         using(_monitor.TakeUpdateLock())
+         {
+             OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventSubscriberRouteCache, @event.GetType(), subscriberConnections);
+         }
 
-         ThreadSafe.AddToCopyAndReplace(ref _eventSubscriberRouteCache, @event.GetType(), subscriberConnections);
          return subscriberConnections;
       }
 

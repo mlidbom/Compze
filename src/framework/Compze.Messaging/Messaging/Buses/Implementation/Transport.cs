@@ -30,7 +30,7 @@ partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMappe
 
       await clientConnection.Init().caf();
 
-      ThreadSafe.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 
       _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledMessageTypes);
    }

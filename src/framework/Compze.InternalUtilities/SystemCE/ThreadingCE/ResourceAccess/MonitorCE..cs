@@ -61,7 +61,7 @@ partial class MonitorCE
       lock(_timeoutLock)
       {
          var exception = new EnterLockTimeoutException(_timeout, _stackTraceFetchTimeout);
-         ThreadSafe.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
          throw exception;
       }
    }

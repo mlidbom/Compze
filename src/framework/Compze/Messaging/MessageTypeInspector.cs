@@ -36,7 +36,7 @@ partial class MessageTypeInspector
          if(!type.Is<IEvent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(IEvent).GetFullNameCompilable()}");
          if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to event interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
          AssertTypeIsValidInternal(type);
-         ThreadSafe.AddToCopyAndReplace(ref _successfullyInspectedSubscribableTypes, type);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _successfullyInspectedSubscribableTypes, type);
       });
    }
 
@@ -51,7 +51,7 @@ partial class MessageTypeInspector
 
          AssertTypeIsValidInternal(type);
 
-         ThreadSafe.AddToCopyAndReplace(ref _successfullyInspectedTypes, type);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _successfullyInspectedTypes, type);
       });
    }
 

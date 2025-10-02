@@ -30,8 +30,8 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
       _eventHandlers.TryGetValue(typeof(TEvent), out var currentEventSubscribers);
       currentEventSubscribers ??= new List<Action<IEvent>>();
 
-      ThreadSafe.AddToCopyAndReplace(ref _eventHandlers, typeof(TEvent), currentEventSubscribers.AddToCopy(@event => handler((TEvent)@event)));
-      ThreadSafe.AddToCopyAndReplace(ref _eventHandlerRegistrations, new EventHandlerRegistration(typeof(TEvent), registrar => registrar.For(handler)));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlers, typeof(TEvent), currentEventSubscribers.AddToCopy(@event => handler((TEvent)@event)));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlerRegistrations, new EventHandlerRegistration(typeof(TEvent), registrar => registrar.For(handler)));
       return this;
    });
 
@@ -44,7 +44,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
          throw new Exception($"{typeof(TCommand)} expects a result. You must register a method that returns a result.");
       }
 
-      ThreadSafe.AddToCopyAndReplace(ref _commandHandlers, typeof(TCommand), command => handler((TCommand)command));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _commandHandlers, typeof(TCommand), command => handler((TCommand)command));
       return this;
    });
 
@@ -52,7 +52,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
    {
       MessageInspector.AssertValid<TCommand>();
 
-      ThreadSafe.AddToCopyAndReplace(ref _commandHandlersReturningResults, typeof(TCommand), new CommandHandlerWithResultRegistration<TCommand, TResult>(handler));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _commandHandlersReturningResults, typeof(TCommand), new CommandHandlerWithResultRegistration<TCommand, TResult>(handler));
       return this;
    });
 
@@ -60,7 +60,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
    {
       MessageInspector.AssertValid<TQuery>();
 
-      ThreadSafe.AddToCopyAndReplace(ref _queryHandlers, typeof(TQuery), new QueryHandlerRegistration<TQuery, TResult>(handler));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _queryHandlers, typeof(TQuery), new QueryHandlerRegistration<TQuery, TResult>(handler));
       return this;
    });
 

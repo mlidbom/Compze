@@ -46,7 +46,7 @@ static class WrapperEventImplementationGenerator
    public static Func<IEvent, IWrapperEvent<IEvent>> ConstructorFor(Type wrappedEventType) =>
       Monitor.DoubleCheckedLocking(
          unlockedTryGetValue: () => _wrapperConstructors.GetValueOrDefault(wrappedEventType),
-         lockedSetValue: () => ThreadSafe.AddToCopyAndReplace(ref _wrapperConstructors, wrappedEventType, CreateConstructorFor(wrappedEventType))
+         lockedSetValue: () => OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _wrapperConstructors, wrappedEventType, CreateConstructorFor(wrappedEventType))
       );
 
    static Func<IEvent, IWrapperEvent<IEvent>> CreateConstructorFor(Type wrappedEventType)
@@ -112,7 +112,7 @@ static class WrapperEventImplementationGenerator
          return wrapperEventBuilder.CreateType().NotNull();
       });
 
-      ThreadSafe.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperEventType, genericWrapperEventType);
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperEventType, genericWrapperEventType);
 
       return genericWrapperEventType;
    }

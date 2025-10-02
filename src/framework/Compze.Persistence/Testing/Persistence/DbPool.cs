@@ -60,7 +60,7 @@ abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
                if(machineWide.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase))
                {
                   _log.Info($"Reserved pool database: {reservedDatabase.Name}");
-                  ThreadSafe.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
+                  OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
                }
             });
 

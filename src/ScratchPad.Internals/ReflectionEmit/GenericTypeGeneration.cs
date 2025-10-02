@@ -82,7 +82,7 @@ public class Example
             return wrapperEventBuilder.CreateType().NotNull();
          });
 
-         ThreadSafe.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperEventType, genericWrapperEventType);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperEventType, genericWrapperEventType);
 
          return genericWrapperEventType;
       });

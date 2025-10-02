@@ -25,8 +25,8 @@ class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
          if(_map.TryGetValue(type, out var value2))
             return value2;
 
-         ThreadSafe.AddToCopyAndReplace(ref _backMap, type);
-         ThreadSafe.AddToCopyAndReplace(ref _map, type, ServiceCount++);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _backMap, type);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _map, type, ServiceCount++);
          return ServiceCount - 1;
       }
    }
