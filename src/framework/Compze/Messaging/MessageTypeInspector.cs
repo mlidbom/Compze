@@ -20,7 +20,7 @@ partial class MessageTypeInspector
       new CannotBeBothEventAndQuery(),
       new CannotBeBothRemotableAndStrictlyLocal(),
       new CannotForbidAndRequireTransactionalSender(),
-      new AtMostOnceCommandDefaultConstructorMustNotSetADeduplicationId(),
+      new AtMostOnceCommandDefaultConstructorMustNotSetAMessageId(),
       new WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
    ];
 
@@ -118,7 +118,7 @@ partial class MessageTypeInspector
       }
    }
 
-   class AtMostOnceCommandDefaultConstructorMustNotSetADeduplicationId : MessageTypeDesignRule
+   class AtMostOnceCommandDefaultConstructorMustNotSetAMessageId : MessageTypeDesignRule
    {
       internal override void AssertFulfilledBy(Type type)
       {
