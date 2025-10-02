@@ -21,6 +21,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="Compze" />
+        <InternalsVisibleTo Include="Compze.Abstractions" />
         <InternalsVisibleTo Include="Compze.Testing" />
         <InternalsVisibleTo Include="Compze.Tessaging" />
         <InternalsVisibleTo Include="Compze.DependencyInjection" />
