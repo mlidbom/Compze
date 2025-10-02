@@ -17,18 +17,4 @@
 	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Compze" />
-		<InternalsVisibleTo Include="Compze.Serialization" />
-		<InternalsVisibleTo Include="Compze.DocumentDb" />
-		<InternalsVisibleTo Include="Compze.EventStore" />
-		<InternalsVisibleTo Include="Compze.Tessaging" />
-		<InternalsVisibleTo Include="Compze.Persistence" />
-		<InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-		<InternalsVisibleTo Include="Compze.Persistence.MySql" />
-		<InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
-		<InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-	</ItemGroup>
-
 </Project>
