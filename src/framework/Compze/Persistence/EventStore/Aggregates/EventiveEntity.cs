@@ -69,13 +69,15 @@ public abstract class EventiveEntity<TParent,
         {
             ManagedEntities = [];
             _parent = parent;
-            parent.RegisterEventAppliers()
+#pragma warning disable CS0618 // This is just the type of infrastructure code the methods are for
+            parent.RegisterEventAppliersInternal()
                .For<TEntityCreatedEvent>(e =>
                 {
                     var entity = Constructor.For<TEntity>.WithArguments<TParent>.Instance(parent);
                     ManagedEntities.Add(entity, IdGetter.GetId(e));
                 })
-               .For<TEntityEvent>(e => GetEntityAsEventiveInternals(e).ApplyEvent(e));
+               .For<TEntityEvent>(e => GetEntityAsEventiveInternals(e).ApplyEventInternal(e));
+#pragma warning restore CS0618
         }
 
         IEventiveInternals<TEntityEvent, TEntityEventImplementation> GetEntityAsEventiveInternals(TEntityEvent e) => ManagedEntities[IdGetter.GetId(e)];
@@ -84,7 +86,9 @@ public abstract class EventiveEntity<TParent,
 
         public TEntity AddByPublishing<TCreationEvent>(TCreationEvent creationEvent) where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent
         {
-            _parent.Publish(creationEvent);
+#pragma warning disable CS0618 // This is just the type of infrastructure code the methods are for
+            _parent.PublishInternal(creationEvent);
+#pragma warning restore CS0618
             var result = ManagedEntities.InCreationOrder[^1];
             return result;
         }

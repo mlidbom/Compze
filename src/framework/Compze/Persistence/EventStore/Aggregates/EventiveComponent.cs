@@ -23,7 +23,7 @@ public abstract class EventiveComponent<TParent,
 
     TParent _parent;
 
-    void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.ApplyEvent(TComponentEvent @event) => ApplyEvent(@event);
+    void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.ApplyEventInternal(TComponentEvent @event) => ApplyEvent(@event);
     protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
     protected EventiveComponent(TParent parent, bool registerEventAppliers = true)
@@ -31,16 +31,20 @@ public abstract class EventiveComponent<TParent,
         _parent = parent;
         if(registerEventAppliers)
         {
-            parent.RegisterEventAppliers()
+#pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
+            parent.RegisterEventAppliersInternal()
+#pragma warning restore CS0618
                   .For<TComponentEvent>(ApplyEvent);
         }
     }
 
-    void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.Publish(TComponentEventImplementation @event) => Publish(@event);
+    void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.PublishInternal(TComponentEventImplementation @event) => Publish(@event);
 
-    protected virtual void Publish(TComponentEventImplementation @event) => _parent.Publish(@event);
+#pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
+    protected virtual void Publish(TComponentEventImplementation @event) => _parent.PublishInternal(@event);
+#pragma warning restore CS0618
 
-    IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEvent, TComponentEventImplementation>.RegisterEventAppliers() => RegisterEventAppliers();
+    IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEvent, TComponentEventImplementation>.RegisterEventAppliersInternal() => RegisterEventAppliers();
 
     public abstract class Component<TEcComponent,
                                     TEcComponentEventImplementation,
