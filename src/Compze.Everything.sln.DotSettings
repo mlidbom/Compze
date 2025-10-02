@@ -13,6 +13,7 @@
 	
 	
 	<s:Boolean x:Key="/Default/CodeInspection/CodeAnnotations/NamespacesWithAnnotations/=Machine_002ESpecifications_002EAnnotations/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=repomix_002A_002Exml/@EntryIndexedValue">True</s:Boolean>
 	
 	
 	
