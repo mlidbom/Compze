@@ -27,7 +27,7 @@ public interface ICommand<out TResult> : ICommand, IHasReturnValue<TResult>;
 public interface IQuery<out TResult> : IHasReturnValue<TResult>;
 
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the query is sufficient to create the result. For such queries implement this interface. That way no network roundtrip etc is required to perform the query. Greatly enhancing performance</summary>
-interface ICreateMyOwnResultQuery<out TResult> : IQuery<TResult>
+public interface ICreateMyOwnResultQuery<out TResult> : IQuery<TResult>
 {
    TResult CreateResult();
 }
@@ -45,7 +45,7 @@ public interface IRemotableEvent : IRemotableMessage, IEvent;
 public interface IRemotableCommand : ICommand, IRemotableMessage;
 public interface IRemotableCommand<out TResult> : IRemotableCommand, ICommand<TResult>;
 public interface IRemotableQuery<out TResult> : IRemotableMessage, IQuery<TResult>;
-interface IRemotableCreateMyOwnResultQuery<out TResult> : IRemotableQuery<TResult>, ICreateMyOwnResultQuery<TResult>;
+public interface IRemotableCreateMyOwnResultQuery<out TResult> : IRemotableQuery<TResult>, ICreateMyOwnResultQuery<TResult>;
 
 //Todo: Is helping with clicking twice in UIs really core logic worth spending time before 1.0 on or should AtMostOnce simply be removed for now?
 ///<summary>A message that is guaranteed not to be delivered more than once. The <see cref="MessageId"/> is used by infrastructure to maintain this guarantee.
