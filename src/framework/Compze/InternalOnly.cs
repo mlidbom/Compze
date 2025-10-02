@@ -1,8 +1,8 @@
 ﻿namespace Compze;
 
-static class InternalOnly
+static class ObsoleteMessage
 {
-    internal const string Message = @"
+    internal const string ForInternalUseOnly = @"
 This methods breaks encapsulation. 
 The interface it is in should always be implemented using explicit interface implementation so that it is hidden from normal use of instances.
 It is for building infrastructure code, usually within the framework itself.

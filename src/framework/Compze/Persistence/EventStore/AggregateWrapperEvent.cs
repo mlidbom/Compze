@@ -8,10 +8,10 @@ public abstract class AggregateWrapperEvent<TBaseEventInterface>(TBaseEventInter
 
 public interface IMutableAggregateEvent : IAggregateEvent
 {
-   [Obsolete(InternalOnly.Message)] void SetAggregateIdInternal(Guid aggregateId);
-   [Obsolete(InternalOnly.Message)] void SetAggregateVersionInternal(int aggregateVersion);
-   [Obsolete(InternalOnly.Message)] void SetUtcTimeStampInternal(DateTime utcTimeStamp);
-   [Obsolete(InternalOnly.Message)] void SetMessageIdInternal(Guid messageId);
+   [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void SetAggregateIdInternal(Guid aggregateId);
+   [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void SetAggregateVersionInternal(int aggregateVersion);
+   [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void SetUtcTimeStampInternal(DateTime utcTimeStamp);
+   [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void SetMessageIdInternal(Guid messageId);
 }
 
 public abstract class AggregateEvent() : IMutableAggregateEvent

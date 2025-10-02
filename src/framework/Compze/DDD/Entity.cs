@@ -31,11 +31,11 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    }
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>
-   [Obsolete(InternalOnly.Message)]
+   [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
    protected void SetIdBeVerySureYouKnowWhatYouAreDoing(TKey id) => Id = id;
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
-   [Obsolete(InternalOnly.Message)]
+   [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
 #pragma warning disable CA1024 //No matter what the analyzer might think, this is not a good property.
    protected TKey GetIdBypassContractValidation() => _id;
 #pragma warning restore CA1024

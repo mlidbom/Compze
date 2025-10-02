@@ -7,7 +7,7 @@ public interface IEventiveInternals<in TEvent, in TEventImplementation>
     where TEventImplementation : AggregateEvent, TEvent
     where TEvent : class, IAggregateEvent
 {
-    [Obsolete(InternalOnly.Message)] void PublishInternal(TEventImplementation theEvent);
-    [Obsolete(InternalOnly.Message)] void ApplyEventInternal(TEvent @event);
-    [Obsolete(InternalOnly.Message)] IEventHandlerRegistrar<TEvent> RegisterEventAppliersInternal();
+    [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void PublishInternal(TEventImplementation theEvent);
+    [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void ApplyEventInternal(TEvent @event);
+    [Obsolete(ObsoleteMessage.ForInternalUseOnly)] IEventHandlerRegistrar<TEvent> RegisterEventAppliersInternal();
 }
