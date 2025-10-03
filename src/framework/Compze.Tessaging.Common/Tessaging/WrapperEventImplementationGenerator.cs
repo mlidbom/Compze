@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Compze.EventStore.Abstractions;
-using Compze.SystemCE;
-using Compze.SystemCE.ReflectionCE;
-using Compze.SystemCE.ReflectionCE.EmitCE;
-using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable UnusedTypeParameter : todo: We'll keep the unused stuff for reference for now. If it is not used during the refactoring of wrapped event dispatching, ditch it.
 // ReSharper disable UnusedMember.Global

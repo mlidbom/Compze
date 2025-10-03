@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.ExceptionServices;
 
-namespace Compze.SystemCE.ReactiveCE;
+namespace Compze.Utilities.SystemCE.ReactiveCE;
 
 class SimpleObserver<TEvent> : IObserver<TEvent>
 {

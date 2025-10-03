@@ -1,6 +1,7 @@
 ﻿using System;
-using Compze.Contracts;
 using Compze.SystemCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
 namespace Compze.Testing.Persistence;

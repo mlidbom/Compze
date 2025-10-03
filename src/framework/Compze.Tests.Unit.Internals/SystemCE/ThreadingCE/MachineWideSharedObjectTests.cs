@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Testing;
 using Compze.Testing.Threading;
+using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using JetBrains.Annotations;

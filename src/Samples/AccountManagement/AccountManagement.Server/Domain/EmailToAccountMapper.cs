@@ -1,9 +1,9 @@
 ﻿using AccountManagement.Domain.Events;
 using Compze;
-using Compze.Functional;
 using Compze.Persistence.DocumentDb;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Typermedia;
+using Compze.Utilities.Functional;
 using JetBrains.Annotations;
 using AccountLink = Compze.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
 

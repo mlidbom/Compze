@@ -6,10 +6,11 @@ using System.Transactions;
 using Compze.DDD.Abstractions;
 using Compze.DocumentDb.Abstractions;
 using Compze.Persistence.DocumentDb;
-using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.TransactionsCE;
-using static Compze.Contracts.Assert;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.DocumentDb;
 

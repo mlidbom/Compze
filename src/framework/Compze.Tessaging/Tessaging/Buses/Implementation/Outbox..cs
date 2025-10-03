@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Contracts;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Buses.Implementation;
 
@@ -30,9 +30,7 @@ partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage
 
          Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
          {
-            subscriberConnection.SendAsync(exactlyOnceEvent)
-                                 //Bug: this returns a task that must be awaited somehow.
-                                .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceEvent.MessageId));
+            TaskCE.ContinueAsynchronouslyOnDefaultScheduler(subscriberConnection.SendAsync(exactlyOnceEvent), task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceEvent.MessageId));
          }));
       }
    }

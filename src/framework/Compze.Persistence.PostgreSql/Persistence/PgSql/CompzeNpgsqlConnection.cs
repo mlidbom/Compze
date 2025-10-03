@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Threading.Tasks;
 using Compze.Persistence.Common.AdoCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
 namespace Compze.Persistence.PgSql;

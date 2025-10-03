@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 using JetBrains.Annotations;
 
 namespace Compze.DependencyInjection;

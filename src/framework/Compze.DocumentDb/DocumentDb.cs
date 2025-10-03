@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.Contracts;
 using Compze.DDD;
 using Compze.DDD.Abstractions;
 using Compze.DocumentDb.Abstractions;
-using Compze.Functional;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.DocumentDb;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.DocumentDb;
 

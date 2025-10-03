@@ -1,8 +1,8 @@
-﻿using Compze.Contracts;
-using Compze.EventStore.Abstractions;
-using Compze.SystemCE.ReflectionCE;
+﻿using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Teventive;
 using Compze.Teventive.Aggregates;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
 

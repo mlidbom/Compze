@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Persistence.Common.DependencyInjection;
-using Compze.SystemCE.LinqCE;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Typermedia;
 using Compze.Testing;
@@ -10,6 +9,7 @@ using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Persistence;
 using Compze.Testing.Threading;
+using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 

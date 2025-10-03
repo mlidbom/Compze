@@ -8,7 +8,6 @@ using System.Transactions;
 using Compze.DependencyInjection;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging;
 using Compze.Tessaging.Buses;
@@ -16,13 +15,16 @@ using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Performance;
 using Compze.Testing.SystemCE;
-using Compze.SystemCE.TransactionsCE;
 using Compze.Testing.Threading;
 using Compze.Testing.Transactions;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using Compze.EventStore.Abstractions;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 // ReSharper disable AccessToDisposedClosure
 

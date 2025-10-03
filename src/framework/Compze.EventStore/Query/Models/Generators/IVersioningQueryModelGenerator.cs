@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Functional;
+using Compze.Utilities.Functional;
 
 namespace Compze.EventStore.Query.Models.Generators;
 

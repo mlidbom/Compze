@@ -1,6 +1,6 @@
 ﻿using Compze.Persistence.MsSql.SystemExtensions;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.TransactionsCE;
 using Document = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Persistence.MsSql.DocumentDb;

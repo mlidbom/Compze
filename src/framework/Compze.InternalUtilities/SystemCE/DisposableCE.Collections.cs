@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.SystemCE;
+namespace Compze.Utilities.SystemCE;
 
 static class DisposableCECollections
 {

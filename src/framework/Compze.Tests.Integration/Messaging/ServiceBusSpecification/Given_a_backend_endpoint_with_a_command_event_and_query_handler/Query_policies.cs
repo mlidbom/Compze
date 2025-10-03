@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Compze.SystemCE.LinqCE;
 using Compze.Tessaging.Buses;
 using Compze.Testing.Threading;
 using Compze.Tests.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Messaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;

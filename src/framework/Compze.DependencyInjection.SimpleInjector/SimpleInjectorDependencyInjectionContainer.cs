@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Contracts;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 

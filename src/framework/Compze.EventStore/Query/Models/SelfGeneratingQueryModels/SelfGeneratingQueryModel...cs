@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.Contracts;
 using Compze.DDD.Abstractions;
 using Compze.EventStore.Abstractions;
-using Compze.SystemCE.LinqCE;
 using Compze.Tessaging.Teventive;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
 

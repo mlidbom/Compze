@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>Compze.InternalUtilities</RootNamespace>
+        <RootNamespace>Compze.Utilities</RootNamespace>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 

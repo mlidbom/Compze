@@ -1,8 +1,8 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Persistence.Common.AdoCE;
 

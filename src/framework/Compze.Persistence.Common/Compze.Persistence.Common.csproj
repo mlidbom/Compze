@@ -14,21 +14,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj"/>
-        <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj"/>
+        <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
+        <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Compze.DocumentDb"/>
-        <InternalsVisibleTo Include="Compze.EventStore"/>
-        <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer"/>
-        <InternalsVisibleTo Include="Compze.Persistence.MySql"/>
-        <InternalsVisibleTo Include="Compze.Persistence.PostgreSql"/>
-        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
-        <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
+        <InternalsVisibleTo Include="Compze.DocumentDb" />
+        <InternalsVisibleTo Include="Compze.EventStore" />
+        <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+        <InternalsVisibleTo Include="Compze.Persistence.MySql" />
+        <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+        <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Persistence\Common\"/>
+        <Folder Include="Persistence\Common\" />
     </ItemGroup>
 </Project>

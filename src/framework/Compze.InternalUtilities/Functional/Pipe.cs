@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Functional;
+namespace Compze.Utilities.Functional;
 
 /// <summary>
 /// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.

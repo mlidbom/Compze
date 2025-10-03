@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Buses.Implementation;
-using static Compze.Contracts.Assert;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Buses;
 

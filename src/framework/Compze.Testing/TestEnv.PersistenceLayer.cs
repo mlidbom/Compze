@@ -3,7 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Compze.SystemCE;
-using static Compze.Contracts.Assert;
+using Compze.Utilities.SystemCE;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Testing;
 

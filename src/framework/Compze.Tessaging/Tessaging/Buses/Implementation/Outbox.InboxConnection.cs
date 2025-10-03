@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Compze.Contracts;
-using Compze.Functional;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Buses.Http;
 using Compze.Tessaging.Buses.Implementation.Http;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.SystemCE;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

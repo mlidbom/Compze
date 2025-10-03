@@ -1,4 +1,4 @@
-﻿namespace Compze.SystemCE.ThreadingCE;
+﻿namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 class CombinationUsageGuard(params ISingleContextUseGuard[] usageGuards) : ISingleContextUseGuard
 {

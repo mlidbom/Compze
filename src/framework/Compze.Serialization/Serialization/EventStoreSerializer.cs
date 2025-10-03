@@ -2,8 +2,8 @@ using System;
 using System.Text.RegularExpressions;
 using Compze.EventStore.Abstractions;
 using Compze.Refactoring.Naming;
-using Compze.SystemCE;
 using Compze.Tessaging;
+using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 
 namespace Compze.Serialization;

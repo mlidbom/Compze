@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Compze.Contracts;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 
 namespace Compze.EventStore;

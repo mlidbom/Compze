@@ -4,10 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.DDD;
 using Compze.DDD.Abstractions;
-using Compze.Functional;
 using Compze.Persistence.DocumentDb;
-using Compze.SystemCE.ThreadingCE;
-using static Compze.Contracts.Assert;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.EventStore.Query.Models.Generators;
 

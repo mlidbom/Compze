@@ -1,7 +1,7 @@
 ﻿using System;
-using Compze.Contracts;
 using Compze.EventStore.Abstractions;
-using Compze.SystemCE.ReflectionCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 namespace Compze.Teventive.Aggregates;

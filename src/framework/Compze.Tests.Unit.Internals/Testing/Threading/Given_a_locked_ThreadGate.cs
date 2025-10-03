@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading;
 using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Testing;
 using Compze.Testing.Threading;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using FluentAssertions;
 using NUnit.Framework;
 

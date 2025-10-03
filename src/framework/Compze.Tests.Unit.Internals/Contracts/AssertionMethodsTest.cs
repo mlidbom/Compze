@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using Compze.Contracts;
+using Compze.Utilities.Contracts;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.Contracts;

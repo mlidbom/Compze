@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.SystemCE;
+namespace Compze.Utilities.SystemCE;
 
 public static class NullableCE
 {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.Functional;
 using Compze.Logging;
-using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

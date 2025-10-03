@@ -1,7 +1,7 @@
 ﻿using System;
-using Compze.Functional;
+using Compze.Utilities.Functional;
 
-namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 partial class MonitorCE
 {

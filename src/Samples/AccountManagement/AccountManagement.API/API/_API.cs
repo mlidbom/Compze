@@ -6,6 +6,7 @@ using Compze.SystemCE;
 using Compze.Tessaging;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Typermedia;
+using Compze.Utilities.SystemCE;
 
 namespace AccountManagement.API;
 

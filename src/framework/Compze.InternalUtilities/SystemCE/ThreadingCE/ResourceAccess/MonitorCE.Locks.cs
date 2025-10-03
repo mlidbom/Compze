@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 ///<summary>The monitor class exposes a less than inviting and easy to use API in my humble opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 partial class MonitorCE

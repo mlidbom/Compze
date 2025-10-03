@@ -8,6 +8,7 @@ using Compze.SystemCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Tests.Integration.Internals.Testing.Persistence;
+using Compze.Utilities.SystemCE;
 using NUnit.Framework;
 
 namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;

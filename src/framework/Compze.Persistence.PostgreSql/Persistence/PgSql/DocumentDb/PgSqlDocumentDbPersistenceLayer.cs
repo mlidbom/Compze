@@ -6,8 +6,8 @@ using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Npgsql;
 using Schema = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 

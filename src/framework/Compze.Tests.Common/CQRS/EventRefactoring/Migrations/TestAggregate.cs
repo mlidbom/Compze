@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.EventStore.Abstractions;
 using Compze.GenericAbstractions.Time;
 using Compze.Teventive.Aggregates;
-using Compze.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global

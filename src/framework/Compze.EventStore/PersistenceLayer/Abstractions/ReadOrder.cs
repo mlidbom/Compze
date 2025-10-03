@@ -3,8 +3,8 @@ using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using Compze.Contracts;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.EventStore.PersistenceLayer.Abstractions;
 

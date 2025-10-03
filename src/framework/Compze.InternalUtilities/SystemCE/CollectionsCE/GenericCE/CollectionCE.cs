@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.SystemCE.LinqCE;
-using static Compze.Contracts.Assert;
+using Compze.Utilities.SystemCE.LinqCE;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Extensions on <see cref="ICollection{T}"/></summary>
 static class CollectionCE

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 static class OnlyWithinLocksThreadingHelpers
 {

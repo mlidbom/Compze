@@ -4,12 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.GenericAbstractions.Time;
 using Compze.SystemCE;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

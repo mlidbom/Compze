@@ -4,6 +4,7 @@ using Compze.SystemCE.ThreadingCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using NUnit.Framework;
 

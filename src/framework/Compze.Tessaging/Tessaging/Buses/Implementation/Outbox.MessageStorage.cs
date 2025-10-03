@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Contracts;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

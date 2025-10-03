@@ -4,8 +4,6 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Linq;
-using Compze.Contracts;
-using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MsSql.SystemExtensions;
 using Compze.SystemCE;
@@ -13,6 +11,9 @@ using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 using Compze.EventStore;
 using Compze.EventStore.PersistenceLayer.Abstractions;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.Persistence.MsSql.EventStore;
 

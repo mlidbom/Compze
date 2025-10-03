@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.Contracts;
 using Compze.DDD.Abstractions;
 using Compze.EventStore.Abstractions;
 using Compze.GenericAbstractions.Time;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ReactiveCE;
 using Compze.Tessaging.Teventive;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ReactiveCE;
 using JetBrains.Annotations;
 
 namespace Compze.Teventive.Aggregates;

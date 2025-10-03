@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using Compze.SystemCE;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.GenericAbstractions.Time;
 

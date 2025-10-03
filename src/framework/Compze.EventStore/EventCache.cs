@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
-using Compze.Contracts;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Functional;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Compze.EventStore;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.Functional;
+using Compze.Utilities.Functional;
 
 namespace Compze.Testing.Threading;
 

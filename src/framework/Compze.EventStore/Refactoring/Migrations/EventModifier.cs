@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Functional;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.LinqCE;
+
 #pragma warning disable CS0618 // Type or member is obsolete
 
 namespace Compze.EventStore.Refactoring.Migrations;

@@ -1,8 +1,8 @@
 using System;
-using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PgSql.SystemExtensions;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase

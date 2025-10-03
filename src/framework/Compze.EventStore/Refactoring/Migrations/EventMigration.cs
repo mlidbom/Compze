@@ -1,6 +1,6 @@
 using System;
-using Compze.Contracts;
 using Compze.EventStore.Abstractions;
+using Compze.Utilities.Contracts;
 
 namespace Compze.EventStore.Refactoring.Migrations;
 

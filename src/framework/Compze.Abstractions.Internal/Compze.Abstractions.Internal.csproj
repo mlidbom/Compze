@@ -16,7 +16,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
 		<ProjectReference Include="..\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
-		<ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+		<ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

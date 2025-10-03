@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ReflectionCE;
-using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging;
 

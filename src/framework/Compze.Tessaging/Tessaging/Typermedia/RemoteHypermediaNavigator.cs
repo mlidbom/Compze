@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Buses.Implementation;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;

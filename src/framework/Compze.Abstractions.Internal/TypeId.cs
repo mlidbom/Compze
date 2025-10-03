@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Contracts;
+using Compze.Utilities.Contracts;
 
 // ReSharper disable ImpureMethodCallOnReadonlyValueField
 

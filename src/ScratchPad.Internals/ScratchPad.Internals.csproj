@@ -33,7 +33,7 @@
     <ItemGroup>
       <ProjectReference Include="..\framework\Compze.Abstractions\Compze.Abstractions.csproj" />
       <ProjectReference Include="..\framework\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
-      <ProjectReference Include="..\framework\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+      <ProjectReference Include="..\framework\Compze.InternalUtilities\Compze.Utilities.csproj" />
     </ItemGroup>
 
     <!--Remove when the bug causing this warning to appear has been fixed: https://github.com/microsoft/testfx/issues/3813 https://github.com/microsoft/testfx/pull/3891 -->

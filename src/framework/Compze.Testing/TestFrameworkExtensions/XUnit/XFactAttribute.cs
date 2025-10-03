@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Testing.TestFrameworkExtensions.XUnit;
 

@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Compze.Contracts;
+namespace Compze.Utilities.Contracts;
 
 partial class ContractAsserter(Func<string, Exception> createException)
 {

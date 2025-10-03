@@ -2,8 +2,8 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Serialization;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Buses.Http;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Buses.Implementation.Http;
 

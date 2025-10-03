@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.Contracts;
 using Compze.EventStore.Abstractions;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ReactiveCE;
-using Compze.SystemCE.ReflectionCE;
-using Compze.SystemCE.ThreadingCE;
-using static Compze.Contracts.Assert;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.EventStore;
 

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Contracts.Assert;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

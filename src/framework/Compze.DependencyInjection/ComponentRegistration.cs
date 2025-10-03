@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable UnusedMember.Global
 

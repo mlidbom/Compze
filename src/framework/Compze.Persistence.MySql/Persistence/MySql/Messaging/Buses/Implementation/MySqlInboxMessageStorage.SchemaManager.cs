@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Compze.Persistence.MySql.SystemExtensions;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using T =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Persistence.MySql.Messaging.Buses.Implementation;

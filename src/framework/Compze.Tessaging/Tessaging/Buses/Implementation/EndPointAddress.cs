@@ -1,4 +1,4 @@
-﻿using Compze.Contracts;
+﻿using Compze.Utilities.Contracts;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

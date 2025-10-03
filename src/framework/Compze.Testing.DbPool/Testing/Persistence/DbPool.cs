@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Compze.Contracts;
 using Compze.Logging;
 using Compze.SystemCE;
-using Compze.SystemCE.ReflectionCE;
 using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Testing.Persistence;
 

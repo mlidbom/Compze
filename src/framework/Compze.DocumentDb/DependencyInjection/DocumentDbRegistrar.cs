@@ -1,4 +1,3 @@
-using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DocumentDb.Abstractions;
 using Compze.GenericAbstractions.Time;
@@ -6,6 +5,7 @@ using Compze.Persistence.DocumentDb;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Buses;
+using Compze.Utilities.Contracts;
 
 namespace Compze.DocumentDb.DependencyInjection;
 

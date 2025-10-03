@@ -4,10 +4,10 @@ using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using CommunityToolkit.Diagnostics;
-using Compze.Functional;
 using Compze.GenericAbstractions.Time;
 using Compze.Teventive.Aggregates;
 using Compze.Tessaging.Typermedia;
+using Compze.Utilities.Functional;
 
 namespace AccountManagement.Domain;
 

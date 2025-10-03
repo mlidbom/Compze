@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 ///<summary>Thrown if the <see cref="SingleThreadUseGuard"/> detects a thread change.</summary>
 public class MultiThreadedUseException : InvalidOperationException

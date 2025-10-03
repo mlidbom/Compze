@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Compze.Configuration.Abstractions;
-using Compze.SystemCE;
+using Compze.Utilities.SystemCE;
 using Microsoft.Extensions.Configuration;
 
 namespace Compze.Configuration;

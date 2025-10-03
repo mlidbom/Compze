@@ -5,6 +5,7 @@ using System.Reflection;
 using Compze.Logging;
 using Compze.SystemCE;
 using Compze.Testing.Performance;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.Testing;
 

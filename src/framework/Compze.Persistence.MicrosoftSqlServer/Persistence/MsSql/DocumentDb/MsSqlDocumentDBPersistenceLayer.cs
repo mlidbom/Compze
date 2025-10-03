@@ -7,8 +7,8 @@ using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.MsSql.SystemExtensions;
 using Compze.SystemCE;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Schema = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Persistence.MsSql.DocumentDb;

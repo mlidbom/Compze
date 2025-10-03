@@ -1,4 +1,5 @@
 ﻿using Compze.SystemCE;
+using Compze.Utilities.SystemCE;
 using Npgsql;
 
 namespace Compze.Persistence;

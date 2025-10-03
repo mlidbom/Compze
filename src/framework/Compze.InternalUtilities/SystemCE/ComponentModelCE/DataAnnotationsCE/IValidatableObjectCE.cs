@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.ComponentModelCE.DataAnnotationsCE;
+namespace Compze.Utilities.SystemCE.ComponentModelCE.DataAnnotationsCE;
 
 ///<summary>Extensions for <see cref="IValidatableObject"/> intended to make type safe implementations easy.</summary>
 public static class ValidatableObjectCE

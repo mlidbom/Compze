@@ -4,10 +4,10 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 // ReSharper disable StaticMemberInGenericType
 

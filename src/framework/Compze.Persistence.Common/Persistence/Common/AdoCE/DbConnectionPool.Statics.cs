@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Persistence.Common.AdoCE;
 

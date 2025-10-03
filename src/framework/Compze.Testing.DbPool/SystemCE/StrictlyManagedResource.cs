@@ -3,9 +3,10 @@ using System.Diagnostics;
 using Compze.Configuration;
 using Compze.Configuration.Abstractions;
 using Compze.Logging;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ReflectionCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.SystemCE;
 

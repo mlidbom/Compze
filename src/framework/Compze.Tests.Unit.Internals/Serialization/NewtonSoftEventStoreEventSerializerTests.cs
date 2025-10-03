@@ -5,6 +5,7 @@ using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.SystemCE;
 using Compze.Testing;
+using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;

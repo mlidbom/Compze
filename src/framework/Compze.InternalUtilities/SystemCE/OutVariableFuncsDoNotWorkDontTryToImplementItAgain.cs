@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.SystemCE;
+namespace Compze.Utilities.SystemCE;
 
 // ReSharper disable once UnusedType.Global
 ///<summary>

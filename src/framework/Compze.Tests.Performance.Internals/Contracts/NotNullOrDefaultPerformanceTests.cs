@@ -1,8 +1,9 @@
 using Compze.SystemCE;
 using Compze.Testing;
 using Compze.Testing.Performance;
+using Compze.Utilities.SystemCE;
 using NUnit.Framework;
-using Assert = Compze.Contracts.Assert;
+using Assert = Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Performance.Internals.Contracts;
 

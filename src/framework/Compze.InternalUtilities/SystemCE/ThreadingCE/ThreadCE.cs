@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 static class ThreadCE
 {

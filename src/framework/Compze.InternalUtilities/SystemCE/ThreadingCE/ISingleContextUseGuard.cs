@@ -1,5 +1,5 @@
 ﻿
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 ///<summary>Implementations ensure that a component is only used within the allowed context. Such as a single thread, single http request etc.</summary>
 interface ISingleContextUseGuard

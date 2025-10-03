@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.Contracts;
 using Compze.DocumentDb.Abstractions;
 using Compze.SystemCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.DocumentDb;
 

@@ -1,4 +1,4 @@
-﻿using Compze.Functional;
+﻿using Compze.Utilities.Functional;
 
 namespace Compze.Logging;
 

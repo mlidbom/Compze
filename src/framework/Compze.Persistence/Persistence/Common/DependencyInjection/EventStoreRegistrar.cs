@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.EventStore;
 using Compze.EventStore.Abstractions;
@@ -12,6 +11,7 @@ using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Buses;
 using Compze.EventStore.PersistenceLayer.Abstractions;
+using Compze.Utilities.Contracts;
 
 namespace Compze.Persistence.Common.DependencyInjection;
 

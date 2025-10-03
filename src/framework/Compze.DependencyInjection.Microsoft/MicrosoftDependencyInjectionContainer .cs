@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Contracts;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;

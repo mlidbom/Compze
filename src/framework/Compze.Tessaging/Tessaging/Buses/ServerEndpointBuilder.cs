@@ -11,6 +11,7 @@ using Compze.Tessaging.Buses.Http;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Tessaging.Buses.Implementation.Http;
 using Compze.Tessaging.Typermedia;
+using Compze.Utilities.SystemCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 

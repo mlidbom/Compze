@@ -2,6 +2,7 @@
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Tessaging.Typermedia.Implementation;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Buses;

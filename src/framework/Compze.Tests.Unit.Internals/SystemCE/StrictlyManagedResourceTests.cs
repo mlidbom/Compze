@@ -1,6 +1,7 @@
 ﻿using System;
 using Compze.SystemCE;
 using Compze.Testing;
+using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -14,9 +15,9 @@ class StrictlyManagedResourceTests : UniversalTestBase
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {
-         Functional.Unit.From(() =>
+         Utilities.Functional.Unit.From(() =>
          {
-            _ = new StrictlyManagedResource<MyClass>();
+             _ = new StrictlyManagedResource<MyClass>();
          });
 
          Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)

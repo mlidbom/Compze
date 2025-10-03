@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Contracts;
-using Compze.SystemCE.ReflectionCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

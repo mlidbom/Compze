@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;

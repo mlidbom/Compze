@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

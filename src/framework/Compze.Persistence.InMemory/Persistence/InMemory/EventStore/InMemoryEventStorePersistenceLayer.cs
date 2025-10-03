@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.TransactionsCE;
 using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 
 namespace Compze.Persistence.InMemory.EventStore;

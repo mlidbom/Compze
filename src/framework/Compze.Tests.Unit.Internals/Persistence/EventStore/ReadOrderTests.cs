@@ -1,7 +1,8 @@
 ﻿using System;
 using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
 using Compze.Testing;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using NUnit.Framework;
 using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;

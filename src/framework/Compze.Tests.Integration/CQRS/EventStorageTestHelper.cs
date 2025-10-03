@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Compze.EventStore.Abstractions;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tests.Integration.CQRS;
 

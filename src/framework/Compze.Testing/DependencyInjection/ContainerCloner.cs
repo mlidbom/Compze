@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Testing.DependencyInjection;
 

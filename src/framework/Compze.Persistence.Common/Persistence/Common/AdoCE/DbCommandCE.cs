@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Contracts;
-using Compze.Functional;
 using Compze.Logging;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Persistence.Common.AdoCE;
 

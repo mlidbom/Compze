@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
 	  <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
 	  <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
 	</ItemGroup>

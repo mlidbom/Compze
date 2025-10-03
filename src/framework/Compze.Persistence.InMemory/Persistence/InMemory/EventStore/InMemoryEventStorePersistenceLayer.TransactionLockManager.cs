@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Transactions;
 using Compze.SystemCE;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Persistence.InMemory.EventStore;
 

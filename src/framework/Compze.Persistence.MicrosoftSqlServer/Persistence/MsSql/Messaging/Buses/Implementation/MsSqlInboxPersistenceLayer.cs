@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Contracts;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MsSql.SystemExtensions;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Buses.Implementation;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Schema =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Persistence.MsSql.Messaging.Buses.Implementation;

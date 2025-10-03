@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Compze.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 static class TaskCEExceptionHandling
 {

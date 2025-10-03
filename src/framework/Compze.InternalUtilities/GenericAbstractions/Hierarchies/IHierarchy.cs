@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Compze.GenericAbstractions.Hierarchies;
+namespace Compze.Utilities.GenericAbstractions.Hierarchies;
 
 /// <summary>
 /// Provides a minimal interface for representing a data type which

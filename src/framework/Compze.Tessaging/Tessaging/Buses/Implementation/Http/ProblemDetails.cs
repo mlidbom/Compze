@@ -3,7 +3,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Buses.Implementation.Http;

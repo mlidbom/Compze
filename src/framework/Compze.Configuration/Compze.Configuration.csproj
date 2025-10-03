@@ -30,7 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
 	</ItemGroup>
 
 </Project>

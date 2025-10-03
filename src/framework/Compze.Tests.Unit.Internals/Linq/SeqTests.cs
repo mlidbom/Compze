@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Compze.SystemCE.LinqCE;
 using Compze.Testing;
+using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
 
 namespace Compze.Tests.Unit.Internals.Linq;

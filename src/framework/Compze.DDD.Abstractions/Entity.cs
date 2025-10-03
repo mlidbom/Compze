@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Compze.Utilities.Contracts;
 
 namespace Compze.DDD.Abstractions;
 
@@ -25,8 +26,8 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
    /// <inheritdoc />
    public virtual TKey Id
    {
-      get => Compze.Contracts.Assert.Result.ReturnNotDefault(_id);
-      private set => _id = Compze.Contracts.Assert.Argument.ReturnNotDefault(value);
+      get => Assert.Result.ReturnNotDefault(_id);
+      private set => _id = Assert.Argument.ReturnNotDefault(value);
    }
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>

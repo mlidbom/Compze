@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Compze.SystemCE.LinqCE;
 using Compze.Tessaging.Typermedia.Implementation;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging;
 

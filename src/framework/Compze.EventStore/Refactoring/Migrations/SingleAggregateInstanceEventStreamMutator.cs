@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
 using Compze.EventStore;
 using Compze.EventStore.Abstractions;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.LinqCE;
 
 // ReSharper disable ForCanBeConvertedToForeach
 

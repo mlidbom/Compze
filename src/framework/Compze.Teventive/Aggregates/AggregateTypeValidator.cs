@@ -4,10 +4,10 @@ using System.Linq;
 using System.Reflection;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ReflectionCE;
 using Compze.Tessaging;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 namespace Compze.Teventive.Aggregates;

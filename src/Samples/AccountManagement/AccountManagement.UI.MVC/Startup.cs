@@ -1,8 +1,8 @@
 ﻿using AccountManagement.API;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Typermedia;
 using Compze.Testing.DependencyInjection;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

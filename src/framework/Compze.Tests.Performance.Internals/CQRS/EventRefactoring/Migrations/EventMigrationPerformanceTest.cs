@@ -7,13 +7,14 @@ using Compze.EventStore.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.GenericAbstractions.Time;
 using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Performance;
 using Compze.Tests.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using NUnit.Framework;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

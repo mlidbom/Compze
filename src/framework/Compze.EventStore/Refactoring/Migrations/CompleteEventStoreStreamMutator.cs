@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.EventStore.Abstractions;
-using Compze.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.EventStore.Refactoring.Migrations;
 

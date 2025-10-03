@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Compze.EventStore.Abstractions;
-using Compze.Functional;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ReflectionCE;
 using Compze.Tessaging.Teventive;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 namespace Compze.EventStore.Query.Models.Generators;

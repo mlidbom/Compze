@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.Logging;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
 namespace Compze.EventStore;

@@ -1,11 +1,12 @@
 ﻿    using System;
     using System.IO;
     using System.Text;
-    using Compze.Contracts;
-    using Compze.Functional;
     using Compze.Persistence;
     using Compze.Serialization;
-    using Compze.SystemCE.LinqCE;
+    using Compze.Utilities.Contracts;
+    using Compze.Utilities.Functional;
+    using Compze.Utilities.SystemCE;
+    using Compze.Utilities.SystemCE.LinqCE;
     using Newtonsoft.Json;
 
     namespace Compze.SystemCE.ThreadingCE;

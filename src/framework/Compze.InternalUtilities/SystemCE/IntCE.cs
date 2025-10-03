@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Compze.SystemCE;
+namespace Compze.Utilities.SystemCE;
 
 static class IntCE
 {

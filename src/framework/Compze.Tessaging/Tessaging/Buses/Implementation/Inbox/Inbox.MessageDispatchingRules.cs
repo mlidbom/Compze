@@ -1,4 +1,4 @@
-﻿using Compze.SystemCE.LinqCE;
+﻿using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

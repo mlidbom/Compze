@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Typermedia;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Buses;
 

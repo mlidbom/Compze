@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Compze.SystemCE;
+using Compze.Utilities.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
 

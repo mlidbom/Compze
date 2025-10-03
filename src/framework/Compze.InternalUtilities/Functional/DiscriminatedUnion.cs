@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Functional;
+namespace Compze.Utilities.Functional;
 
 static class DiscriminatedUnion
 {

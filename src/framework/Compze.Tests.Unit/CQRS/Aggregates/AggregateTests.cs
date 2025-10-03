@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Compze.EventStore.Abstractions;
 using Compze.GenericAbstractions.Time;
 using Compze.Teventive.Aggregates;
-using Compze.SystemCE.ReactiveCE;
 using Compze.Testing;
+using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
 using NUnit.Framework;
 

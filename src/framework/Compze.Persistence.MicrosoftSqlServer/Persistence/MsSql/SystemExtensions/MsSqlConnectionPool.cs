@@ -2,7 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Compze.Persistence.Common.AdoCE;
 using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Persistence.MsSql.SystemExtensions;

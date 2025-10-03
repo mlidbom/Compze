@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Persistence.DocumentDb;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.LinqCE;
+
 namespace Compze.Persistence.InMemory.DocumentDB;
 
 //Performance: Write tests to expose lack of Transactional locks and transactional overlay and then implement it.
