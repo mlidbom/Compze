@@ -1,5 +1,5 @@
 ﻿using Compze.EventStore.Abstractions;
-using Compze.Tessaging.Teventive;
+using Compze.Teventive.Abstractions;
 using Compze.Teventive.Aggregates;
 
 namespace Compze.EventStore.Query.Models.SelfGeneratingQueryModels;

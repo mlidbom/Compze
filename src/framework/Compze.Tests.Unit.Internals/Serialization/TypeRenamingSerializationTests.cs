@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Compze.Refactoring.Naming;
+using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Testing;
 using FluentAssertions;

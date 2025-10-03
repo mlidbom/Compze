@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
-using Compze.Refactoring.Naming;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;

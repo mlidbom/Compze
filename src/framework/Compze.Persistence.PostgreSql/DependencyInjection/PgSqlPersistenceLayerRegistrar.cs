@@ -1,17 +1,17 @@
-﻿using Compze.Configuration.Abstractions;
+﻿using Compze.Abstractions.Internal.Persistence.DocumentDb;
+using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.DocumentDb;
-using Compze.Persistence.PgSql.DocumentDb;
-using Compze.Persistence.PgSql.EventStore;
-using Compze.Persistence.PgSql.Messaging.Buses.Implementation;
-using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.DocumentDb;
+using Compze.Persistence.PostgreSql.EventStore;
+using Compze.Persistence.PostgreSql.Messaging.Buses.Implementation;
+using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Persistence.PostgreSql.Testing;
-using Compze.Refactoring.Naming;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Buses.Implementation;
 
-namespace Compze.Persistence.PgSql.DependencyInjection;
+namespace Compze.Persistence.PostgreSql.DependencyInjection;
 
 public static class PgSqlPersistenceLayerRegistrar
 {

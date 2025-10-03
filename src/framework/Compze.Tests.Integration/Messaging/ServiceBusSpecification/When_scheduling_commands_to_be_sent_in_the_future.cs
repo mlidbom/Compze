@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.GenericAbstractions.Time;
+using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.Tessaging;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Tessaging;
+using Compze.Tessaging.Tessaging.Buses;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;

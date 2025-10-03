@@ -5,11 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
-using Compze.Refactoring.Naming;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE;
-using Compze.Tessaging.Buses;
+
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Performance;
@@ -25,6 +23,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Tessaging.Buses;
 
 // ReSharper disable AccessToDisposedClosure
 

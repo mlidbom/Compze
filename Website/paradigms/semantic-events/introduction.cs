@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.EventStore.Abstractions;
-using Compze.SystemCE;
-using Compze.Tessaging.Buses;
+
+using Compze.Tessaging.Tessaging.Buses;
 using Compze.Utilities.SystemCE;
 using static System.Console;
 

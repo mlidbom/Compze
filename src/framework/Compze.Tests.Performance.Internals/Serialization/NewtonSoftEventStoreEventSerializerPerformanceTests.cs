@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Compze.Refactoring.Naming;
+using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Serialization.Abstractions;
-using Compze.SystemCE;
+
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Tests.Unit.Internals.Serialization;

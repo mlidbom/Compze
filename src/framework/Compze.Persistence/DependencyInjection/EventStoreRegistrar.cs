@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
+using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.Persistence.EventStore;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
 using Compze.EventStore;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
-using Compze.GenericAbstractions.Time;
-using Compze.Persistence.EventStore;
 using Compze.Teventive.Aggregates;
-using Compze.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.Tessaging.Buses;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Serialization.Abstractions;
+using Compze.Tessaging.Persistence.EventStore;
+using Compze.Tessaging.Tessaging.Buses;
 
 namespace Compze.Persistence.DependencyInjection;
 

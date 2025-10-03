@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.EventStore.Abstractions;
-using Compze.GenericAbstractions.Time;
 using Compze.Teventive.Aggregates;
 using Compze.Testing;
 using Compze.Utilities.SystemCE.ReactiveCE;

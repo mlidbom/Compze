@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.DependencyInjection;
 using Compze.EventStore.Abstractions;
-using Compze.GenericAbstractions.Time;
 using Compze.Teventive.Aggregates;
 using Compze.Tessaging;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Typermedia;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;
@@ -16,6 +14,9 @@ using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Persistence.DependencyInjection;
+using Compze.Tessaging.Tessaging;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Typermedia;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing

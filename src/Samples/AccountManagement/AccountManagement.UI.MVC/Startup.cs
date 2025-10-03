@@ -1,6 +1,6 @@
 ﻿using AccountManagement.API;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Typermedia;
 using Compze.Testing.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;

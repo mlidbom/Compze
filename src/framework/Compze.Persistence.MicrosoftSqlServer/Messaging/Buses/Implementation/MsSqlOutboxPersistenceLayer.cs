@@ -1,9 +1,9 @@
 ﻿using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
-using MessageTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using MessageTable = Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
 namespace Compze.Persistence.MicrosoftSqlServer.Messaging.Buses.Implementation;
 

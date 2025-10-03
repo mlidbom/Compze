@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Persistence.DocumentDb;
+namespace Compze.Abstractions.Internal.Persistence.DocumentDb;
 
 class NoSuchDocumentException : ArgumentOutOfRangeException
 {

@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.DocumentDb;
 using Compze.Persistence.MySql.SystemExtensions;
-using Compze.SystemCE;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using MySql.Data.MySqlClient;
-using Schema = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
+using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Persistence.MySql.DocumentDb;
 

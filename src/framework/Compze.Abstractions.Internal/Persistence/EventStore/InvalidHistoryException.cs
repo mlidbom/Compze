@@ -1,5 +1,5 @@
 ﻿using System;
 
-namespace Compze.Persistence.EventStore;
+namespace Compze.Abstractions.Internal.Persistence.EventStore;
 
 class InvalidHistoryException(Guid aggregateId) : Exception($"AggregateId: {aggregateId}");

@@ -1,6 +1,6 @@
 ﻿using System;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Buses.Implementation;
 using FluentAssertions;
 
 namespace Compze.Testing.Messaging.Buses;

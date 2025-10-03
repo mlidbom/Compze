@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.EventStore.Abstractions;
-using Compze.GenericAbstractions.Time;
 using Compze.Teventive.Aggregates;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;

@@ -4,12 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Compze.Abstractions.Internal;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.Refactoring.Naming;
+namespace Compze.Common.Refactoring.Naming;
 
 class TypeMapper : ITypeMapper, ITypeMappingRegistrar
 {

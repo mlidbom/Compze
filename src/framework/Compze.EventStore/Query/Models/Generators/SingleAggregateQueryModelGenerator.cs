@@ -2,7 +2,7 @@
 using System.Linq;
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common.Teventive;
-using Compze.Tessaging.Teventive;
+using Compze.Teventive.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;

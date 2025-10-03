@@ -7,8 +7,7 @@ using Compze.DDD;
 using Compze.DDD.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DocumentDb.Abstractions;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE;
+
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Tests.Persistence.DocumentDb;

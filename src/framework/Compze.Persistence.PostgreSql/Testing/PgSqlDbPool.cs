@@ -1,6 +1,6 @@
 using System;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Testing.DbPool;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;

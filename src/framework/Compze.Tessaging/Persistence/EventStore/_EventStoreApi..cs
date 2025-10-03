@@ -1,9 +1,9 @@
-﻿using Compze.EventStore.Abstractions;
-using System;
+﻿using System;
+using Compze.EventStore.Abstractions;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Compze.Persistence.EventStore;
+namespace Compze.Tessaging.Persistence.EventStore;
 
 public partial class EventStoreApi
 {

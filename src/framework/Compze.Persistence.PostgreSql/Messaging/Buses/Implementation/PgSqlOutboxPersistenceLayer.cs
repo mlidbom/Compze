@@ -1,14 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.PgSql.SystemExtensions;
-using Compze.Tessaging.Buses.Implementation;
+﻿using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
 using NpgsqlTypes;
-using MessageTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using MessageTable = Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.PostgreSql.Messaging.Buses.Implementation;
 
 partial class PgSqlOutboxPersistenceLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.EventStore.Abstractions;
-using Compze.Refactoring.Naming;
-using Compze.Tessaging;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Tessaging;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Newtonsoft.Json;
 
-namespace Compze.Persistence.EventStore;
+namespace Compze.Tessaging.Persistence.EventStore;
 
 public partial class EventStoreApi
 {

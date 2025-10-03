@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Compze.Logging;
 using JetBrains.Annotations;
 
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 interface ITaskRunner
 {

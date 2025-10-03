@@ -1,6 +1,6 @@
 ﻿using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common.Teventive;
-using Compze.Tessaging.Teventive;
+using Compze.Teventive.Abstractions;
 
 namespace Compze.Teventive.Aggregates;
 

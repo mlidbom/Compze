@@ -2,7 +2,7 @@
 using System.Threading;
 using Compze.Logging;
 
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 class ThreadExceptionHandler

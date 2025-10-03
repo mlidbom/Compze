@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.Common.AdoCE.Abstractions;
-using Compze.SystemCE;
+
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;

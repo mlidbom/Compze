@@ -1,15 +1,15 @@
-﻿using Compze.Configuration.Abstractions;
+﻿using Compze.Abstractions.Internal.Persistence.DocumentDb;
+using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.DocumentDb;
 using Compze.Persistence.MicrosoftSqlServer.DocumentDb;
 using Compze.Persistence.MicrosoftSqlServer.EventStore;
 using Compze.Persistence.MicrosoftSqlServer.Messaging.Buses.Implementation;
 using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
 using Compze.Persistence.MicrosoftSqlServer.Testing;
-using Compze.Refactoring.Naming;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Buses.Implementation;
 
 namespace Compze.Persistence.MicrosoftSqlServer.DependencyInjection;
 

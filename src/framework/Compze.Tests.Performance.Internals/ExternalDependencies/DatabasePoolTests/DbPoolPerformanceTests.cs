@@ -3,8 +3,8 @@ using Compze.DependencyInjection;
 using Compze.Logging;
 using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
 using Compze.Persistence.MySql.SystemExtensions;
-using Compze.Persistence.PgSql.SystemExtensions;
-using Compze.SystemCE;
+using Compze.Persistence.PostgreSql.SystemExtensions;
+
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Tests.Integration.Internals.Testing.Persistence;

@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using Npgsql;
 using Compze.Persistence.Common.AdoCE;
+using Npgsql;
 
-namespace Compze.Persistence.PgSql.SystemExtensions;
+namespace Compze.Persistence.PostgreSql.SystemExtensions;
 
 static class MyNpgsqlCommandExtensions
 {

@@ -6,10 +6,11 @@ using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Compze.Persistence.EventStore;
 using Compze.Tessaging;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Persistence.EventStore;
+using Compze.Tessaging.Tessaging;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Typermedia;
 
 namespace AccountManagement.UI.QueryModels;
 

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.DDD;
 using Compze.DDD.Abstractions;
 using Compze.Persistence.Common;
-using Compze.Persistence.DocumentDb;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using static Compze.Utilities.Contracts.Assert;

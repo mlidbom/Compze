@@ -1,6 +1,6 @@
 ﻿using System;
+using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.EventStore.Abstractions;
-using Compze.GenericAbstractions.Time;
 using Compze.Teventive.Aggregates;
 using JetBrains.Annotations;
 

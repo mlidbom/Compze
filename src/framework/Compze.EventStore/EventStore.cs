@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Abstractions.Internal;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.Logging;
-using Compze.Refactoring.Naming;
 using Compze.Serialization.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;

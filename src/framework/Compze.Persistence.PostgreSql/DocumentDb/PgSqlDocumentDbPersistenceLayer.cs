@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.DocumentDb;
-using Compze.Persistence.PgSql.SystemExtensions;
-using Compze.Persistence.PostgreSql;
-using Compze.SystemCE;
+using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Npgsql;
-using Schema = Compze.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
+using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Persistence.PgSql.DocumentDb;
+namespace Compze.Persistence.PostgreSql.DocumentDb;
 
 partial class PgSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {

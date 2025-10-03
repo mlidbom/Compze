@@ -5,8 +5,8 @@ using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.DocumentDb.DependencyInjection;
 using Compze.Persistence.DependencyInjection;
-using Compze.Persistence.EventStore;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Persistence.EventStore;
+using Compze.Tessaging.Tessaging.Buses;
 using Compze.Testing.Persistence;
 
 namespace AccountManagement;

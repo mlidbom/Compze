@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Logging;
 using Compze.Logging.Serilog;
-using Compze.SystemCE;
+
 using Compze.Testing.Logging.Serilog;
 using Compze.Utilities.SystemCE;
 using NUnit.Framework;

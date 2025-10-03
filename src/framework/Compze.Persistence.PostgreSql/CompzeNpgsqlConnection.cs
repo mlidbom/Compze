@@ -1,10 +1,9 @@
 using System.Data.Common;
-using System.Threading.Tasks;
 using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
-namespace Compze.Persistence.PgSql;
+namespace Compze.Persistence.PostgreSql;
 
 interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<NpgsqlCommand>
 {

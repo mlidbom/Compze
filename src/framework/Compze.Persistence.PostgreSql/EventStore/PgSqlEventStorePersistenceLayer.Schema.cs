@@ -1,10 +1,9 @@
 ﻿using Compze.Persistence.Common.AdoCE;
-using Compze.EventStore.PersistenceLayer;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 using Lock = Compze.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Compze.Persistence.PgSql.EventStore;
+namespace Compze.Persistence.PostgreSql.EventStore;
 
 partial class PgSqlEventStorePersistenceLayer
 {

@@ -1,7 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
+using Compze.Abstractions.Internal;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.EventStore.Abstractions;
-using Compze.Refactoring.Naming;
 using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE;

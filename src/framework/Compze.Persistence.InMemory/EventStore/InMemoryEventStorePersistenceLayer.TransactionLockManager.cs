@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Compze.SystemCE;
+
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;

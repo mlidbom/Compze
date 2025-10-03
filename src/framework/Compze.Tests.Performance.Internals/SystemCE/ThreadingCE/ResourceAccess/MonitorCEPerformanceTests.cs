@@ -1,6 +1,6 @@
 using System;
 using Compze.Logging;
-using Compze.SystemCE;
+
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Utilities.SystemCE;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Persistence.DocumentDb;
+namespace Compze.Abstractions.Internal.Persistence.DocumentDb;
 
 interface IDocumentDbPersistenceLayer
 {

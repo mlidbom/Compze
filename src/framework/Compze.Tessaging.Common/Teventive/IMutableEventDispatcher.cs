@@ -1,5 +1,5 @@
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Teventive;
+using Compze.Teventive.Abstractions;
 
 namespace Compze.Tessaging.Common.Teventive;
 

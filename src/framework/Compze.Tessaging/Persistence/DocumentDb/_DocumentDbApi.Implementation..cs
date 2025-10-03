@@ -1,11 +1,11 @@
 ﻿using System;
 using Compze.DocumentDb.Abstractions;
-using Compze.Tessaging;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Tessaging;
+using Compze.Tessaging.Tessaging.Buses;
 using Compze.Utilities.Functional;
 using Newtonsoft.Json;
 
-namespace Compze.Persistence.DocumentDb;
+namespace Compze.Tessaging.Persistence.DocumentDb;
 
 public partial class DocumentDbApi
 {

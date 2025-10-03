@@ -1,13 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.PgSql.SystemExtensions;
-using Compze.Tessaging.Buses.Implementation;
+﻿using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Schema =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
+using Schema =  Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Compze.Persistence.PgSql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.PostgreSql.Messaging.Buses.Implementation;
 
 partial class PgSqlInboxPersistenceLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IInboxPersistenceLayer
 {

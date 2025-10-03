@@ -3,8 +3,8 @@ using Compze.DependencyInjection;
 using Compze.Persistence.InMemory.DependencyInjection;
 using Compze.Persistence.MicrosoftSqlServer.DependencyInjection;
 using Compze.Persistence.MySql.DependencyInjection;
-using Compze.Persistence.PgSql.DependencyInjection;
-using Compze.Tessaging.Buses;
+using Compze.Persistence.PostgreSql.DependencyInjection;
+using Compze.Tessaging.Tessaging.Buses;
 
 namespace Compze.Testing.Persistence;
 

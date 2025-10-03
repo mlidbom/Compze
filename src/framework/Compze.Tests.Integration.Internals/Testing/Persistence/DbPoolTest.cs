@@ -5,7 +5,7 @@ using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
 using Compze.Persistence.MicrosoftSqlServer.Testing;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.MySql.Testing;
-using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Persistence.PostgreSql.Testing;
 using Compze.Testing;
 using Compze.Testing.DbPool;

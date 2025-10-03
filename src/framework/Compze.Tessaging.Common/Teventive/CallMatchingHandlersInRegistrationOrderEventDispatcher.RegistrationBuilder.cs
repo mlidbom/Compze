@@ -2,7 +2,7 @@
 
 using System;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Teventive;
+using Compze.Teventive.Abstractions;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType

@@ -1,11 +1,11 @@
 ﻿using AccountManagement.Domain.Events;
-using Compze;
-using Compze.Persistence.DocumentDb;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Persistence;
+using Compze.Tessaging.Persistence.DocumentDb;
+using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Tessaging.Typermedia;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
-using AccountLink = Compze.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
+using AccountLink = Compze.Tessaging.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
 
 namespace AccountManagement.Domain;
 

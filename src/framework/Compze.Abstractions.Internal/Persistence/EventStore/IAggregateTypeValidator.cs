@@ -1,4 +1,4 @@
-﻿namespace Compze.Persistence.EventStore;
+﻿namespace Compze.Abstractions.Internal.Persistence.EventStore;
 
 interface IAggregateTypeValidator
 {

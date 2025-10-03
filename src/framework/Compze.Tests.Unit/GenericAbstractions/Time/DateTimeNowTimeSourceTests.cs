@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.GenericAbstractions.Time;
+using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
