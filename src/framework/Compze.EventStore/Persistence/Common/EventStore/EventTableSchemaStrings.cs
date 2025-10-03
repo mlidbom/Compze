@@ -2,7 +2,7 @@
 
 namespace Compze.Persistence.Common.EventStore;
 
-static class EventTableSchemaStrings
+public static class EventTableSchemaStrings
 {
    public const string TableName = "Event";
 
@@ -28,7 +28,7 @@ static class EventTableSchemaStrings
    public const string Event = nameof(Event);
 }
 
-static class AggregateLockTableSchemaStrings
+public static class AggregateLockTableSchemaStrings
 {
    public const string TableName = "AggregateLock";
    public const string AggregateId = Event.AggregateId;
