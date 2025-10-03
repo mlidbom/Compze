@@ -13,10 +13,6 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\Compze\Compze.csproj" />
-   </ItemGroup>
-
-   <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
 
@@ -28,6 +24,11 @@
       <InternalsVisibleTo Include="Compze.Persistence" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
+     <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
 
 </Project>
