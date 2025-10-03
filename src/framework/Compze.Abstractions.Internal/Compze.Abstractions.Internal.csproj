@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="Compze" />
+		<InternalsVisibleTo Include="Compze.Common" />
 		<InternalsVisibleTo Include="Compze.Serialization" />
 		<InternalsVisibleTo Include="Compze.DocumentDb" />
 		<InternalsVisibleTo Include="Compze.EventStore" />
