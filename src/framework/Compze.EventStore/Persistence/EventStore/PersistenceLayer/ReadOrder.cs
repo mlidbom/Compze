@@ -107,4 +107,6 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public static bool operator <(ReadOrder left, ReadOrder right) => left.CompareTo(right) < 0;
    public static bool operator >(ReadOrder left, ReadOrder right) => left.CompareTo(right) > 0;
+   public static bool operator <=(ReadOrder left, ReadOrder right) => left.CompareTo(right) <= 0;
+   public static bool operator >=(ReadOrder left, ReadOrder right) => left.CompareTo(right) >= 0;
 }
