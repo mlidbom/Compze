@@ -28,6 +28,7 @@
         <InternalsVisibleTo Include="Compze.Persistence.MySql"/>
         <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer"/>
         <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+        <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     </ItemGroup>
 
 </Project>
