@@ -15,7 +15,7 @@ public class QueryModelGeneratingQueryModelReader(IEnumerable<IQueryModelGenerat
 {
    readonly ISingleContextUseGuard _usageGuard = new SingleThreadUseGuard();
    readonly IEnumerable<IQueryModelGenerator> _documentGenerators = documentGenerators;
-   readonly PolymorphicEntityCache _idMap = new();
+   readonly PolymorphicEntityIdMap _idMap = new();
 
    public virtual TValue Get<TValue>(object key)
    {

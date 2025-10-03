@@ -12,7 +12,8 @@ using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.DocumentDb;
 
-class PolymorphicEntityCache : IEnumerable<KeyValuePair<string, object>>
+///<summary>Tracks entities by converting the supplied id into a string and maintaining a dictionary from that string id to a list of instances to enable polymorphism</summary>
+class PolymorphicEntityIdMap : IEnumerable<KeyValuePair<string, object>>
 {
    readonly Dictionary<string, List<object>> _stringIdToInstance = new(StringComparer.InvariantCultureIgnoreCase);
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
