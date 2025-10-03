@@ -26,7 +26,7 @@ class EntityIdMap
 
     public void Remove(object id, Type documentType) => _monitor.Update(action: () =>
     {
-        if(!StringTypeKey.Create(id, documentType).pipe(_stringIdToInstance.Remove))
+        if(!StringTypeKey.Create(id, documentType)._(_stringIdToInstance.Remove))
             throw new NoSuchDocumentException(id, documentType);
     });
 
