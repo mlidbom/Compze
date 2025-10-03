@@ -20,5 +20,6 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Compze" />
 		<InternalsVisibleTo Include="Compze.DocumentDb" />
+		<InternalsVisibleTo Include="Compze.EventStore" />
 	</ItemGroup>
 </Project>
