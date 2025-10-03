@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Compze.Configuration;
+using Compze.Configuration.Abstractions;
 using Compze.Logging;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ReflectionCE;

@@ -1,4 +1,4 @@
-﻿using Compze.Configuration;
+﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 
 namespace Compze.Tessaging.Buses.Implementation;

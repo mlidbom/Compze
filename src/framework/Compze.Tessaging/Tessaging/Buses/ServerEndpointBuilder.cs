@@ -1,4 +1,5 @@
 ﻿using Compze.Configuration;
+using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.Configuration;
+using Compze.Configuration.Abstractions;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

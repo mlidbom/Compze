@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using Compze.Configuration.Abstractions;
+using Compze.SystemCE;
 using Microsoft.Extensions.Configuration;
 
-namespace Compze.SystemCE.ConfigurationCE;
+namespace Compze.Configuration;
 
 ///<summary>Fetches configuration variables from the application configuration file.</summary>
 class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton

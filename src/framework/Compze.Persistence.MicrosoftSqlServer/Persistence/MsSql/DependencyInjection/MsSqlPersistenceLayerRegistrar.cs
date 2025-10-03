@@ -1,4 +1,4 @@
-﻿using Compze.Configuration;
+﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore.PersistenceLayer;
