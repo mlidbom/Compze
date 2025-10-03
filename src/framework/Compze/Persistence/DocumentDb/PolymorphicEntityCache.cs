@@ -19,7 +19,7 @@ class EntityIdMap
         Argument.NotNull(value);
 
         var key = StringTypeKey.Create(id, value.GetType());
-        if(ContainsInternal(key)) throw new AttemptToSaveAlreadyPersistedValueException(id, value);
+        if(ContainsInternal(key)) throw new Exception($"Instance of {value.GetType().FullName} with Id: {key} is already present");
 
         _stringIdToInstance[key] = value;
     });
@@ -27,17 +27,17 @@ class EntityIdMap
     public void Remove(object id, Type documentType) => _monitor.Update(action: () =>
     {
         if(!StringTypeKey.Create(id, documentType)._(_stringIdToInstance.Remove))
-            throw new NoSuchDocumentException(id, documentType);
+            throw new Exception($"No object with id: {id} of type: {documentType.FullName} is present");
     });
 
     public IList<KeyValuePair<string, object>> GetAll() =>
         _monitor.Read(() => _stringIdToInstance
-                           .Select(pair => new KeyValuePair<string, object>(pair.Key.Id, pair.Value))
+                           .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
                            .ToList());
 
     internal bool Contains(Type type, object id) => _monitor.Read(func: () => ContainsInternal(StringTypeKey.Create(id, type)));
 
-    internal bool TryGet<T>(object id, [MaybeNullWhen(returnValue: false)] out T value)
+    internal bool TryGet<T>(object id, out T value)
     {
         using(_monitor.TakeUpdateLock())
         {
