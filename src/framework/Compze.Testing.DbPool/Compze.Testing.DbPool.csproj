@@ -22,13 +22,5 @@
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.2"/>
         <PackageReference Include="System.Threading.AccessControl" Version="9.0.9"/>
     </ItemGroup>
-    
-    <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Persistence.PostgreSql"/>
-        <InternalsVisibleTo Include="Compze.Persistence.MySql"/>
-        <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer"/>
-        <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-        <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-    </ItemGroup>
 
 </Project>

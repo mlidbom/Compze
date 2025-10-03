@@ -34,16 +34,5 @@
       <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
        <PackageReference Include="xunit" Version="2.9.3" />
    </ItemGroup>
-
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-      <InternalsVisibleTo Include="Compze.Tests.Common" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
-      <InternalsVisibleTo Include="ScratchPad.Internals" />
-   </ItemGroup>
     
 </Project>

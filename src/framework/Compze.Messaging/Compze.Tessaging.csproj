@@ -32,17 +32,4 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
    </ItemGroup>
-
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Testing" />
-      <InternalsVisibleTo Include="Compze.Persistence" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-   </ItemGroup>
-
 </Project>

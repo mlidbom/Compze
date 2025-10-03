@@ -41,13 +41,4 @@
         <NoWarn>CS0436</NoWarn>
     </PropertyGroup>
 
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="ScratchPad.Internals" />
-   </ItemGroup>
-
-
 </Project>

@@ -21,16 +21,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Teventive" />
-        <InternalsVisibleTo Include="Compze.Testing.DbPool" />
-        <InternalsVisibleTo Include="Compze.Tessaging" />
-        <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-        <InternalsVisibleTo Include="Compze.Persistence.PostgreSql"/>
-        <InternalsVisibleTo Include="Compze.Persistence.MySql"/>
-        <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
 	</ItemGroup>
 

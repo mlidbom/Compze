@@ -21,9 +21,4 @@
 		<PackageReference Include="Npgsql" Version="9.0.3" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-	</ItemGroup>
-
 </Project>

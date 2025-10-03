@@ -18,11 +18,4 @@
 		<ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
 		<ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
 	</ItemGroup>
-
-
-	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Tessaging" />
-		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-	</ItemGroup>
 </Project>
