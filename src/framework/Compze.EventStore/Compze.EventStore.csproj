@@ -16,6 +16,7 @@
       <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
       <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
       <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
+      <ProjectReference Include="..\Compze.Teventive.Abstractions\Compze.Teventive.Abstractions.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">

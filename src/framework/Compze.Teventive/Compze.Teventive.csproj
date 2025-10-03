@@ -19,6 +19,7 @@
       <ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
       <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
       <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
+      <ProjectReference Include="..\Compze.Teventive.Abstractions\Compze.Teventive.Abstractions.csproj" />
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Persistence" />
