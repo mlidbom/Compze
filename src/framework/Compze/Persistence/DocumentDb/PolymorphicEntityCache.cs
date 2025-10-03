@@ -18,41 +18,6 @@ class PolymorphicEntityIdMap
     readonly Dictionary<string, List<object>> _stringIdToInstance = new(StringComparer.InvariantCultureIgnoreCase);
     readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-    internal bool Contains(Type type, object id) => _monitor.Read(func: () => ContainsInternal(type, id));
-
-    bool ContainsInternal(Type type, object id) => TryGet(type, id, out _);
-
-    internal bool TryGet<T>(object id, [MaybeNullWhen(returnValue: false)] out T value)
-    {
-        using(_monitor.TakeUpdateLock())
-        {
-            if(TryGet(typeof(T), id, out var found))
-            {
-                value = (T)found;
-                return true;
-            }
-
-            value = default!;
-            return false;
-        }
-    }
-
-    bool TryGet(Type typeOfValue, object id, [NotNullWhen(returnValue: true)] out object? value)
-    {
-        var idString = GetIdStringRepresentation(id);
-        value = null;
-
-        if(!_stringIdToInstance.TryGetValue(idString, out var matchesId)) return false;
-
-        var found = matchesId.Where(typeOfValue.IsInstanceOfType).ToList();
-        if(!found.Any()) return false;
-
-        value = found.Single();
-        return true;
-    }
-
-    static string GetIdStringRepresentation(object id) => Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' ');
-
     public void Add<T>(object id, T value) => _monitor.Update(action: () =>
     {
         Argument.NotNull(value);
@@ -75,4 +40,39 @@ class PolymorphicEntityIdMap
     public IList<KeyValuePair<string, object>> GetAll() => _monitor.Read(
         func: () => _stringIdToInstance.SelectMany(selector: m => m.Value.Select(selector: inner => new KeyValuePair<string, object>(m.Key, inner)))
                                        .ToList());
+
+    internal bool Contains(Type type, object id) => _monitor.Read(func: () => ContainsInternal(type, id));
+
+    internal bool TryGet<T>(object id, [MaybeNullWhen(returnValue: false)] out T value)
+    {
+        using(_monitor.TakeUpdateLock())
+        {
+            if(TryGet(typeof(T), id, out var found))
+            {
+                value = (T)found;
+                return true;
+            }
+
+            value = default!;
+            return false;
+        }
+    }
+
+    bool ContainsInternal(Type type, object id) => TryGet(type, id, out _);
+
+    bool TryGet(Type typeOfValue, object id, [NotNullWhen(returnValue: true)] out object? value)
+    {
+        var idString = GetIdStringRepresentation(id);
+        value = null;
+
+        if(!_stringIdToInstance.TryGetValue(idString, out var matchesId)) return false;
+
+        var found = matchesId.Where(typeOfValue.IsInstanceOfType).ToList();
+        if(!found.Any()) return false;
+
+        value = found.Single();
+        return true;
+    }
+
+    static string GetIdStringRepresentation(object id) => Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' ');
 }
