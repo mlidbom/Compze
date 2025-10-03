@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Refactoring.Naming;
-using Compze.Serialization;
+using Compze.Serialization.Abstractions;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging.Abstractions;

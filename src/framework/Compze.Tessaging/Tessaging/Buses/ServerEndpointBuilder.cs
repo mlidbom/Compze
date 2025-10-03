@@ -5,6 +5,7 @@ using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Serialization.Abstractions;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging.Buses.Http;

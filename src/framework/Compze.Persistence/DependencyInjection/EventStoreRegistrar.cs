@@ -12,6 +12,7 @@ using Compze.Serialization;
 using Compze.Tessaging.Buses;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
+using Compze.Serialization.Abstractions;
 
 namespace Compze.Persistence.DependencyInjection;
 

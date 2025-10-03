@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compze.Refactoring.Naming;
-using Compze.Serialization;
+using Compze.Serialization.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

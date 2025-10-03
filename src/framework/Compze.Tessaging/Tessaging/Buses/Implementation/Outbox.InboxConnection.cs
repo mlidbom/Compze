@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Compze.Refactoring.Naming;
-using Compze.Serialization;
+using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Buses.Http;
 using Compze.Tessaging.Buses.Implementation.Http;

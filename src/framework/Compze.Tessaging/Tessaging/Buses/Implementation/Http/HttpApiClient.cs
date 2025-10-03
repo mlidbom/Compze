@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Compze.Serialization;
+using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Buses.Http;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 

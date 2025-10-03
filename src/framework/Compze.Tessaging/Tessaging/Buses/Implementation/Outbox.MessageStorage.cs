@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Refactoring.Naming;
-using Compze.Serialization;
+using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;

@@ -4,6 +4,7 @@ using Compze.GenericAbstractions.Time;
 using Compze.Persistence.DocumentDb;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Buses;
 using Compze.Utilities.Contracts;
 
