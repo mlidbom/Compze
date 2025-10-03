@@ -7,7 +7,7 @@ using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE.LinqCE;
 using Compze.Testing;
-using Compze.Testing.SystemCE.TransactionsCE;
+using Compze.SystemCE.TransactionsCE;
 using FluentAssertions;
 using NUnit.Framework;
 
