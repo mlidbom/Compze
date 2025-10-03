@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.SystemCE.ConfigurationCE;
+using Compze.Configuration;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;

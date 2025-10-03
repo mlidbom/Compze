@@ -1,4 +1,5 @@
-﻿using Compze.DependencyInjection;
+﻿using Compze.Configuration;
+using Compze.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.MySql.DocumentDb;
@@ -6,7 +7,6 @@ using Compze.Persistence.MySql.EventStore;
 using Compze.Persistence.MySql.Messaging.Buses.Implementation;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Refactoring.Naming;
-using Compze.SystemCE.ConfigurationCE;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Testing.Persistence.MySql;

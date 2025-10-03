@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using Compze.Configuration;
 using Compze.Logging;
-using Compze.SystemCE.ConfigurationCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ReflectionCE;
 using Compze.SystemCE.ThreadingCE.ResourceAccess;

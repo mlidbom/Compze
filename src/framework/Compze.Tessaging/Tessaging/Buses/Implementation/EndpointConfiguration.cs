@@ -1,5 +1,5 @@
-﻿using Compze.DependencyInjection;
-using Compze.SystemCE.ConfigurationCE;
+﻿using Compze.Configuration;
+using Compze.DependencyInjection;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

@@ -1,10 +1,10 @@
-﻿using Compze.DependencyInjection;
+﻿using Compze.Configuration;
+using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.SystemCE;
-using Compze.SystemCE.ConfigurationCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging.Buses.Http;
 using Compze.Tessaging.Buses.Implementation;
