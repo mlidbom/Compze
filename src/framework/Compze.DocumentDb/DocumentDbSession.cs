@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
-using Compze.Contracts;
-using Compze.DDD;
 using Compze.DDD.Abstractions;
+using Compze.Persistence.DocumentDb;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.TransactionsCE;
 using static Compze.Contracts.Assert;
 
-namespace Compze.Persistence.DocumentDb;
+namespace Compze.DocumentDb;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession

@@ -7,11 +7,12 @@ using Compze.DDD;
 using Compze.DDD.Abstractions;
 using Compze.Functional;
 using Compze.GenericAbstractions.Time;
+using Compze.Persistence.DocumentDb;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.SystemCE.CollectionsCE.GenericCE;
 
-namespace Compze.Persistence.DocumentDb;
+namespace Compze.DocumentDb;
 
 class DocumentDb : IDocumentDb
 {

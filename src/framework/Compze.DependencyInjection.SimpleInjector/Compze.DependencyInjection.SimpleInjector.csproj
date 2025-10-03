@@ -16,11 +16,6 @@
         <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
     </ItemGroup>
 
-
-    <ItemGroup>
-        <Folder Include="DependencyInjection\" />
-    </ItemGroup>
-
     <ItemGroup>
         <PackageReference Include="SimpleInjector" Version="5.5.0" />
     </ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.SystemCE;
 
-namespace Compze.Persistence.DocumentDb;
+namespace Compze.DocumentDb;
 
 partial class DocumentDbSession
 {
