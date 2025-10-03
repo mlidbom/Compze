@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze" />
+		<InternalsVisibleTo Include="Compze.Teventive" />
 		<InternalsVisibleTo Include="Compze.Common" />
 		<InternalsVisibleTo Include="Compze.Serialization" />
 		<InternalsVisibleTo Include="Compze.DocumentDb" />

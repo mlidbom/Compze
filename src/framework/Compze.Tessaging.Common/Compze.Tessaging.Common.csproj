@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze" />
+		<InternalsVisibleTo Include="Compze.Teventive" />
 		<InternalsVisibleTo Include="Compze.EventStore" />
 		<InternalsVisibleTo Include="Compze.Tessaging" />
 		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />

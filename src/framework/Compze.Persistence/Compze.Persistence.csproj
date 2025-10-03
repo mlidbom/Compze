@@ -14,7 +14,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
-        <ProjectReference Include="..\Compze\Compze.csproj" />
+        <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
         <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
         <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
     </ItemGroup>

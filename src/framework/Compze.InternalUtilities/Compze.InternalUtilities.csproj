@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Compze" />
+        <InternalsVisibleTo Include="Compze.Teventive" />
         <InternalsVisibleTo Include="Compze.Common" />
         <InternalsVisibleTo Include="Compze.Abstractions" />
         <InternalsVisibleTo Include="Compze.Abstractions.Internal" />

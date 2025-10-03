@@ -54,7 +54,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Integration", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Unit", "framework\Compze.Tests.Unit\Compze.Tests.Unit.csproj", "{0110A67F-C3F0-427C-95D9-DCC1ED03F520}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze", "framework\Compze\Compze.csproj", "{8237369C-913D-4788-BB9C-6E2727BF8CA9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Teventive", "framework\Compze.Teventive\Compze.Teventive.csproj", "{8237369C-913D-4788-BB9C-6E2727BF8CA9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.DependencyInjection", "framework\Compze.DependencyInjection\Compze.DependencyInjection.csproj", "{CF56ABFC-3187-4EE6-B7F5-A14882E29F57}"
 EndProject

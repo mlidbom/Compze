@@ -41,7 +41,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\src\framework\Compze.Messaging\Compze.Tessaging.csproj" />
-		<ProjectReference Include="..\src\framework\Compze\Compze.csproj" />
+		<ProjectReference Include="..\src\framework\Compze.Teventive\Compze.Teventive.csproj" />
 	</ItemGroup>
 
 </Project>

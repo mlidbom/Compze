@@ -18,7 +18,7 @@
       <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
       <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
       <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
-      <ProjectReference Include="..\Compze\Compze.csproj" />
+      <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
    </ItemGroup>
 
    <ItemGroup>

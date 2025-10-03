@@ -12,7 +12,7 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\Compze\Compze.csproj" />
+      <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
       <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
    </ItemGroup>
 
