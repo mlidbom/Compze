@@ -44,6 +44,7 @@
         <InternalsVisibleTo Include="Compze.Persistence.MySql" />
         <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
         <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
+        <InternalsVisibleTo Include="Compze.Tessaging.Common" />
     </ItemGroup>
 
 </Project>

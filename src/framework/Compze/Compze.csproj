@@ -24,6 +24,7 @@
 		<ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
 		<ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
 		<ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
+		<ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

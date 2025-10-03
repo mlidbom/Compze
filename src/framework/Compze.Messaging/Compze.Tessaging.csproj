@@ -18,6 +18,7 @@
 
    <ItemGroup>
       <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
       <ProjectReference Include="..\Compze\Compze.csproj" />
       <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
       <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
