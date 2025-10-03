@@ -1,6 +1,6 @@
 ﻿using System;
+using Compze.EventStore.Abstractions;
 using Compze.Logging;
-using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.SystemCE;

@@ -3,13 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.DependencyInjection;
-using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE.LinqCE;
 using Compze.Testing;
 using Compze.SystemCE.TransactionsCE;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.EventStore.Abstractions;
 
 namespace Compze.Tests.Integration.CQRS;
 

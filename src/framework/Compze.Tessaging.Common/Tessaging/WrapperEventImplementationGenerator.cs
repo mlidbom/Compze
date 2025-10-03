@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Compze.Persistence.EventStore;
+using Compze.EventStore.Abstractions;
 using Compze.SystemCE;
 using Compze.SystemCE.ReflectionCE;
 using Compze.SystemCE.ReflectionCE.EmitCE;

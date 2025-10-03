@@ -1,8 +1,8 @@
 ﻿using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer;
 using Compze.SystemCE.TransactionsCE;
-using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Compze.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
+using Event = Compze.EventStore.EventTableSchemaStrings;
+using Lock = Compze.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Persistence.PgSql.EventStore;
 

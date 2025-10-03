@@ -1,6 +1,6 @@
 ﻿using Compze.DependencyInjection;
+using Compze.EventStore.PersistenceLayer;
 using Compze.Persistence.DocumentDb;
-using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.InMemory.DocumentDB;
 using Compze.Persistence.InMemory.EventStore;
 using Compze.Persistence.InMemory.ServiceBus;

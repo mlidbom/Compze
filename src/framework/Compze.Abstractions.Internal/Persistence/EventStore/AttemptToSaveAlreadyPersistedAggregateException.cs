@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Compze.EventStore.Abstractions;
+using System;
 
 namespace Compze.Persistence.EventStore;
 

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using Compze.Contracts;
 using Compze.DependencyInjection;
+using Compze.EventStore;
+using Compze.EventStore.Abstractions;
+using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.Refactoring.Migrations;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Aggregates;
-using Compze.Persistence.EventStore.PersistenceLayer;
-using Compze.Persistence.EventStore.Refactoring.Migrations;
+using Compze.Teventive.Aggregates;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Buses;
@@ -47,7 +49,7 @@ public static class EventStoreRegistrar
                   .CreatedBy(() => new EventCache()),
          Scoped.For<IEventStore>()
                .CreatedBy((IEventStorePersistenceLayer persistenceLayer, ITypeMapper typeMapper, IEventStoreSerializer serializer, EventCache cache) =>
-                             new Persistence.EventStore.EventStore(persistenceLayer, typeMapper, serializer, cache, migrations())),
+                             new Compze.EventStore.EventStore(persistenceLayer, typeMapper, serializer, cache, migrations())),
          Scoped.For<IEventStoreUpdater, IEventStoreReader>()
                .CreatedBy((IEventStoreEventPublisher eventPublisher, IEventStore eventStore, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator) =>
                              new EventStoreUpdater(eventPublisher, eventStore, timeSource, aggregateTypeValidator)));

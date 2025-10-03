@@ -3,7 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Persistence.EventStore;
+using Compze.EventStore.Abstractions;
+
 
 // ReSharper disable StaticMemberInGenericType
 

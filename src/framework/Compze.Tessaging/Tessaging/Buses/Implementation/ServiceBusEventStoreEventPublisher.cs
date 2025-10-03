@@ -1,4 +1,5 @@
-﻿using Compze.Persistence.EventStore;
+﻿using Compze.EventStore.Abstractions;
+using Compze.Persistence.EventStore;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Buses.Implementation;

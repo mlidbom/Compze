@@ -1,7 +1,7 @@
 ﻿using System;
+using Compze.EventStore.Abstractions;
 using Compze.GenericAbstractions.Time;
-using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Aggregates;
+using Compze.Teventive.Aggregates;
 using Compze.Tessaging;
 using Compze.Tessaging.Typermedia;
 using JetBrains.Annotations;

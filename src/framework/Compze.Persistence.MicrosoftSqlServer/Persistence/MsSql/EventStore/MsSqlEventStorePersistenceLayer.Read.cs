@@ -6,8 +6,8 @@ using System.Data.SqlTypes;
 using System.Linq;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MsSql.SystemExtensions;
-using Compze.Persistence.EventStore.PersistenceLayer;
-using Event=Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
+using Event = Compze.EventStore.EventTableSchemaStrings;
+using Compze.EventStore.PersistenceLayer;
 
 namespace Compze.Persistence.MsSql.EventStore;
 

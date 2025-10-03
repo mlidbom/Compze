@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
+using Compze.EventStore.PersistenceLayer;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Npgsql;
 using NpgsqlTypes;
-using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
+using Event = Compze.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Persistence.PgSql.EventStore;
 

@@ -1,6 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
-using Compze.Persistence.EventStore;
+using Compze.EventStore.Abstractions;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE;
 using Compze.Tessaging;

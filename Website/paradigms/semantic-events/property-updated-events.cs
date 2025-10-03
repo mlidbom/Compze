@@ -1,4 +1,4 @@
-﻿using Compze.Persistence.EventStore;
+﻿using Compze.EventStore.Abstractions;
 using Compze.SystemCE;
 using Compze.Tessaging.Buses;
 using static System.Console;

@@ -1,7 +1,7 @@
 ﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
+using Compze.EventStore.PersistenceLayer;
 using Compze.Persistence.DocumentDb;
-using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.PgSql.DocumentDb;
 using Compze.Persistence.PgSql.EventStore;
 using Compze.Persistence.PgSql.Messaging.Buses.Implementation;

@@ -1,6 +1,6 @@
 using System;
 using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Aggregates;
+using Compze.Teventive.Aggregates;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using JetBrains.Annotations;
 

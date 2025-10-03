@@ -7,12 +7,12 @@ using System.Linq;
 using Compze.Contracts;
 using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.Common.EventStore;
-using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.MsSql.SystemExtensions;
 using Compze.SystemCE;
-using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
-using Event=Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
+using ReadOrder = Compze.EventStore.PersistenceLayer.ReadOrder;
+using Event = Compze.EventStore.EventTableSchemaStrings;
+using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore;
 
 namespace Compze.Persistence.MsSql.EventStore;
 

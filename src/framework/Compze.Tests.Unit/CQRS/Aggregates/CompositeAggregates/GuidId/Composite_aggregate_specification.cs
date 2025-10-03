@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Persistence.EventStore;
+using Compze.EventStore.Abstractions;
 using Compze.SystemCE.ReactiveCE;
 using Compze.Testing.TestFrameworkExtensions.XUnit;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;

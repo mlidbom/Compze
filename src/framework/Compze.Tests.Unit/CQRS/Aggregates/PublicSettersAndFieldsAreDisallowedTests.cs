@@ -1,6 +1,6 @@
-﻿using Compze.GenericAbstractions.Time;
-using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Aggregates;
+﻿using Compze.EventStore.Abstractions;
+using Compze.GenericAbstractions.Time;
+using Compze.Teventive.Aggregates;
 using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;

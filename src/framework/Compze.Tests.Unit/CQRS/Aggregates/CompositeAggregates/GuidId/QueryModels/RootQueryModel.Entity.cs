@@ -1,5 +1,5 @@
 using System;
-using Compze.Persistence.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using JetBrains.Annotations;
 

@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Compze.Persistence.EventStore;
+using Compze.EventStore.Abstractions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

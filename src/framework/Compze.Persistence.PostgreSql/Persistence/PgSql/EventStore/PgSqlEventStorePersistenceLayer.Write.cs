@@ -4,15 +4,15 @@ using System.Linq;
 using Compze.Contracts;
 using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.Common.EventStore;
-using Compze.Persistence.EventStore.PersistenceLayer;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
-using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
-using Event = Compze.Persistence.Common.EventStore.EventTableSchemaStrings;
-using Lock = Compze.Persistence.Common.EventStore.AggregateLockTableSchemaStrings;
+using ReadOrder = Compze.EventStore.PersistenceLayer.ReadOrder;
+using Event = Compze.EventStore.EventTableSchemaStrings;
+using Lock = Compze.EventStore.AggregateLockTableSchemaStrings;
+using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore;
 
 namespace Compze.Persistence.PgSql.EventStore;
 
