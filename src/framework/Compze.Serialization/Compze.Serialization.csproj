@@ -17,6 +17,17 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Compze.Tessaging"/>
+        <InternalsVisibleTo Include="Compze.Logging"/>
+        <InternalsVisibleTo Include="Compze.DocumentDb"/>
+        <InternalsVisibleTo Include="Compze.EventStore"/>
+        <InternalsVisibleTo Include="Compze.Persistence"/>
+        <InternalsVisibleTo Include="Compze.Testing.DbPool"/>
+        <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
+        <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj"/>
         <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj"/>
     </ItemGroup>

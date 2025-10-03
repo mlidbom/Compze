@@ -25,4 +25,8 @@
         <Folder Include="DependencyInjection\" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="Compze.Testing" />
+    </ItemGroup>
+
 </Project>

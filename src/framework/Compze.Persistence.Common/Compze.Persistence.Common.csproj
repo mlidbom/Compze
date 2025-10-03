@@ -16,4 +16,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Compze.Teventive" />
+		<InternalsVisibleTo Include="Compze.DocumentDb" />
+		<InternalsVisibleTo Include="Compze.EventStore" />
+	</ItemGroup>
 </Project>

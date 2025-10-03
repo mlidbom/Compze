@@ -22,4 +22,18 @@
    <ItemGroup>
      <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
    </ItemGroup>
+
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
+      <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Persistence" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
+   </ItemGroup>
 </Project>

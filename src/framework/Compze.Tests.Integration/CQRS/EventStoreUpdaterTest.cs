@@ -8,6 +8,7 @@ using System.Transactions;
 using Compze.DependencyInjection;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
+using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging;
@@ -20,9 +21,9 @@ using Compze.Testing.SystemCE.TransactionsCE;
 using Compze.Testing.Threading;
 using Compze.Testing.Transactions;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using JetBrains.Annotations;
 using NUnit.Framework;
-using Compze.SystemCE;
 
 // ReSharper disable AccessToDisposedClosure
 

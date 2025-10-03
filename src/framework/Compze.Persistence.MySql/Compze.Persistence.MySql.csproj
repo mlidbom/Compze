@@ -21,4 +21,9 @@
 		<PackageReference Include="MySql.Data" Version="9.4.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+	</ItemGroup>
+
 </Project>
