@@ -86,7 +86,7 @@ partial class DocumentDbSession : IDocumentDbSession
       stored.Where(document => !_idMap.Contains(typeof(TValue), document.Id))
             .ForEach(unloadedDocument => OnInitialLoad(unloadedDocument.Id, unloadedDocument));
 
-      var results = _idMap.Select(pair => pair.Value).OfType<TValue>().Where(candidate => idSet.Contains(candidate.Id)).ToArray();
+      var results = _idMap.GetAll().Select(pair => pair.Value).OfType<TValue>().Where(candidate => idSet.Contains(candidate.Id)).ToArray();
       var missingDocuments = idSet.Where(id => results.None(result => result.Id == id)).ToArray();
       if(missingDocuments.Any())
       {
@@ -176,7 +176,7 @@ partial class DocumentDbSession : IDocumentDbSession
       var stored = _backingStore.GetAll<T>();
       stored.Where(document => !_idMap.Contains(typeof(T), document.Id))
             .ForEach(unloadedDocument => OnInitialLoad(unloadedDocument.Id, unloadedDocument));
-      return _idMap.Select(pair => pair.Value).OfType<T>();
+      return _idMap.GetAll().Select(pair => pair.Value).OfType<T>();
    }
 
    public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _backingStore.GetAllIds<T>();

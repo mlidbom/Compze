@@ -13,7 +13,7 @@ using static Compze.Contracts.Assert;
 namespace Compze.Persistence.DocumentDb;
 
 ///<summary>Tracks entities by converting the supplied id into a string and maintaining a dictionary from that string id to a list of instances to enable polymorphism</summary>
-class PolymorphicEntityIdMap : IEnumerable<KeyValuePair<string, object>>
+class PolymorphicEntityIdMap
 {
     readonly Dictionary<string, List<object>> _stringIdToInstance = new(StringComparer.InvariantCultureIgnoreCase);
     readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
@@ -72,10 +72,7 @@ class PolymorphicEntityIdMap : IEnumerable<KeyValuePair<string, object>>
         if(removed.Count > 1) throw new Exception(message: "It really should be impossible to hit multiple documents with one Id, but apparently you just did it!");
     });
 
-    public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => _monitor.Read(
+    public IList<KeyValuePair<string, object>> GetAll() => _monitor.Read(
         func: () => _stringIdToInstance.SelectMany(selector: m => m.Value.Select(selector: inner => new KeyValuePair<string, object>(m.Key, inner)))
-                                       .ToList() //ToList is to make it thread safe...
-                                       .GetEnumerator());
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+                                       .ToList());
 }
