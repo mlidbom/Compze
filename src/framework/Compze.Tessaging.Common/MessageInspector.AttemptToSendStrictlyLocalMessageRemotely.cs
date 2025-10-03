@@ -1,7 +1,7 @@
-﻿using Compze.Tessaging.Abstractions;
-using System;
+﻿using System;
+using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging;
+namespace Compze.Tessaging.Common;
 
 static partial class MessageInspector
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace Compze.Tessaging.Typermedia.Implementation;
+namespace Compze.Tessaging.Common.Typermedia.Implementation;
 
 static class CommandValidator
 {

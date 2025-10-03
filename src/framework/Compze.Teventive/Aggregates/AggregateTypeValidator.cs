@@ -5,6 +5,7 @@ using System.Reflection;
 using Compze.Persistence.EventStore;
 using Compze.Refactoring.Naming;
 using Compze.Tessaging;
+using Compze.Tessaging.Common;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;

@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Tessaging.Teventive;
+namespace Compze.Tessaging.Common.Teventive;
 
 /// <summary>
 /// Calls all matching handlers in the order they were registered when an event is Dispatched.

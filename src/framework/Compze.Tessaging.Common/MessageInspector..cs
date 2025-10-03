@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Transactions;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Typermedia.Implementation;
+using Compze.Tessaging.Common.Typermedia.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Tessaging;
+namespace Compze.Tessaging.Common;
 
 static partial class MessageInspector
 {

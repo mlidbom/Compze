@@ -1,6 +1,7 @@
 ﻿using System;
 using Compze.Tessaging;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Common;
 using Compze.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;

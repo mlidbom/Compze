@@ -5,6 +5,8 @@ using System.Linq;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Common;
+using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Teventive;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;

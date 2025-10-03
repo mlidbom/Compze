@@ -1,6 +1,6 @@
 ﻿using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging;
+namespace Compze.Tessaging.Common;
 
 static class WrapperEvent
 {

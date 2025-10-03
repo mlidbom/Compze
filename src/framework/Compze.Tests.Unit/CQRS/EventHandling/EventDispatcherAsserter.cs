@@ -1,5 +1,5 @@
 ﻿using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Teventive;
+using Compze.Tessaging.Common.Teventive;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.CQRS.EventHandling;

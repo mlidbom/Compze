@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Compze.EventStore.Abstractions;
+using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Teventive;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;

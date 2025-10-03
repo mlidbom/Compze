@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Tessaging;
+namespace Compze.Tessaging.Common;
 
 static partial class MessageTypeInspector
 {

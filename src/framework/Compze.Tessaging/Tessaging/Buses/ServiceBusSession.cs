@@ -2,7 +2,8 @@
 using Compze.SystemCE.ThreadingCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Buses.Implementation;
-using Compze.Tessaging.Typermedia.Implementation;
+using Compze.Tessaging.Common;
+using Compze.Tessaging.Common.Typermedia.Implementation;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 

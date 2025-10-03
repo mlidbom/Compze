@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Abstractions;
-
+using Compze.Tessaging.Teventive;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Tessaging.Teventive;
+namespace Compze.Tessaging.Common.Teventive;
 
 /// <summary>
 /// Calls all matching handlers in the order they were registered when an event is Dispatched.

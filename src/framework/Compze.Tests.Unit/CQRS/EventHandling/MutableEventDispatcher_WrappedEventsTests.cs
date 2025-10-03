@@ -1,7 +1,7 @@
 ﻿using Compze.EventStore.Abstractions;
-using Compze.Tessaging;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Teventive;
+using Compze.Tessaging.Common;
+using Compze.Tessaging.Common.Teventive;
 using Compze.Testing;
 using NUnit.Framework;
 

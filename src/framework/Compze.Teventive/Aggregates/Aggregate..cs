@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Compze.DDD.Abstractions;
 using Compze.EventStore.Abstractions;
 using Compze.GenericAbstractions.Time;
+using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Teventive;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
