@@ -18,7 +18,10 @@
 
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Logging.Serilog" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+	   <InternalsVisibleTo Include="Compze.Testing" />
       <InternalsVisibleTo Include="Compze.EventStore" />
       <InternalsVisibleTo Include="Compze.Persistence" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
