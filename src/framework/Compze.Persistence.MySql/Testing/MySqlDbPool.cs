@@ -1,10 +1,11 @@
 using System;
 using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Testing.Persistence;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Testing.Persistence.MySql;
+namespace Compze.Persistence.MySql.Testing;
 
 sealed class MySqlDbPool : DbPool
 {
