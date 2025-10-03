@@ -15,7 +15,7 @@ public class QueryModelGeneratingQueryModelReader(IEnumerable<IQueryModelGenerat
 {
    readonly ISingleContextUseGuard _usageGuard = new SingleThreadUseGuard();
    readonly IEnumerable<IQueryModelGenerator> _documentGenerators = documentGenerators;
-   readonly EntityByIdAndTypeCache _idMap = new();
+   readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
 
    public virtual TValue Get<TValue>(object key)
    {
@@ -60,7 +60,7 @@ public class QueryModelGeneratingQueryModelReader(IEnumerable<IQueryModelGenerat
          throw new ArgumentException("You cannot query by id for an interface type. There is no guarantee of uniqueness");
       }
 
-      if (!requiresVersioning && _idMap.TryGet(key, out document) && documentType.IsInstanceOfType(document))
+      if (!requiresVersioning && _entitiesByIdAndType.TryGet(key, out document) && documentType.IsInstanceOfType(document))
       {
          return true;
       }
@@ -71,7 +71,7 @@ public class QueryModelGeneratingQueryModelReader(IEnumerable<IQueryModelGenerat
          document = returned.Value;
          if(!requiresVersioning)
          {
-            _idMap.Add(key, document);
+            _entitiesByIdAndType.Add(key, document);
          }
          return true;
       }

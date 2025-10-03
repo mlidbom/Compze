@@ -15,7 +15,7 @@ namespace Compze.Persistence.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
-   readonly EntityByIdAndTypeCache _idMap = new();
+   readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
 
    readonly IDocumentDb _backingStore;
    readonly ISingleContextUseGuard _usageGuard;
@@ -41,7 +41,7 @@ partial class DocumentDbSession : IDocumentDbSession
          throw new ArgumentException("You cannot query by id for an interface type. There is no guarantee of uniqueness");
       }
 
-      if(_idMap.TryGet(key, out value) && documentType.IsInstanceOfType(value))
+      if(_entitiesByIdAndType.TryGet(key, out value) && documentType.IsInstanceOfType(value))
       {
          return true;
       }
@@ -69,7 +69,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
    void OnInitialLoad(object key, object value)
    {
-      _idMap.Add(key, value);
+      _entitiesByIdAndType.Add(key, value);
       GetDocumentItem(key, value.GetType()).DocumentLoadedFromBackingStore(value);
    }
 
@@ -83,10 +83,10 @@ partial class DocumentDbSession : IDocumentDbSession
 
       var stored = _backingStore.GetAll<TValue>(idSet);
 
-      stored.Where(document => !_idMap.Contains(typeof(TValue), document.Id))
+      stored.Where(document => !_entitiesByIdAndType.Contains(typeof(TValue), document.Id))
             .ForEach(unloadedDocument => OnInitialLoad(unloadedDocument.Id, unloadedDocument));
 
-      var results = _idMap.GetAll().Select(pair => pair.Value).OfType<TValue>().Where(candidate => idSet.Contains(candidate.Id)).ToArray();
+      var results = _entitiesByIdAndType.GetAll().Select(pair => pair.Value).OfType<TValue>().Where(candidate => idSet.Contains(candidate.Id)).ToArray();
       var missingDocuments = idSet.Where(id => results.None(result => result.Id == id)).ToArray();
       if(missingDocuments.Any())
       {
@@ -128,7 +128,7 @@ partial class DocumentDbSession : IDocumentDbSession
       var documentItem = GetDocumentItem(id, value.GetType());
       documentItem.Save(value);
 
-      _idMap.Add(id, value);
+      _entitiesByIdAndType.Add(id, value);
       documentItem.CommitChangesToBackingStore();
    }
 
@@ -166,7 +166,7 @@ partial class DocumentDbSession : IDocumentDbSession
       var documentItem = GetDocumentItem(id, typeof(T));
       documentItem.Delete();
 
-      _idMap.Remove(id, typeof(T));
+      _entitiesByIdAndType.Remove(id, typeof(T));
       documentItem.CommitChangesToBackingStore();
    }
 
@@ -174,9 +174,9 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       _usageGuard.AssertNoContextChangeOccurred(this);
       var stored = _backingStore.GetAll<T>();
-      stored.Where(document => !_idMap.Contains(typeof(T), document.Id))
+      stored.Where(document => !_entitiesByIdAndType.Contains(typeof(T), document.Id))
             .ForEach(unloadedDocument => OnInitialLoad(unloadedDocument.Id, unloadedDocument));
-      return _idMap.GetAll().Select(pair => pair.Value).OfType<T>();
+      return _entitiesByIdAndType.GetAll().Select(pair => pair.Value).OfType<T>();
    }
 
    public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _backingStore.GetAllIds<T>();
