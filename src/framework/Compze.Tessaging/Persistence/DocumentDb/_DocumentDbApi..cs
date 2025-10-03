@@ -1,5 +1,7 @@
 ﻿using System;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
+
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
 namespace Compze.Persistence.DocumentDb;

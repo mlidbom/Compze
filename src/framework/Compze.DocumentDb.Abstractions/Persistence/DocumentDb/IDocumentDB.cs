@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 
 namespace Compze.Persistence.DocumentDb;
 

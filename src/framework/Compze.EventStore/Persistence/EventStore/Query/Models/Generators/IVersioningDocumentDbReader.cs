@@ -2,6 +2,7 @@ using Compze.DDD;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Compze.DDD.Abstractions;
 
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.DDD;
+namespace Compze.DDD.Abstractions;
 
 ///<summary>Base class for persistent entities with versioning information</summary>
 public class VersionedEntity<T> : Entity<T> where T : VersionedEntity<T>

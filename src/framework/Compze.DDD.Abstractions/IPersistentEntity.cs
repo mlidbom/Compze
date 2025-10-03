@@ -1,4 +1,4 @@
-namespace Compze.DDD;
+namespace Compze.DDD.Abstractions;
 
 /// <summary>
 /// Should be implemented by persistent* classes that represents entities in the Domain Driven Design sense of the word.

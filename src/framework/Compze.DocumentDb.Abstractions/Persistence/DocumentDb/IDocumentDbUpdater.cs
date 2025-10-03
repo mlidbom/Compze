@@ -1,5 +1,6 @@
 using System;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 
 namespace Compze.Persistence.DocumentDb;
 

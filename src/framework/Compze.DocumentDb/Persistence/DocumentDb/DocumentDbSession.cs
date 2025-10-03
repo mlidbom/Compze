@@ -5,6 +5,7 @@ using System.Linq;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.SystemCE.TransactionsCE;

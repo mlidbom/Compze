@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Compze.DDD;
+namespace Compze.DDD.Abstractions;
 
 /// <summary>
 /// Base class for any class that considers equality to be that the Ids for two instances are the same.

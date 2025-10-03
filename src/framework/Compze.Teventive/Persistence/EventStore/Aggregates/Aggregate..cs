@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Compze.Contracts;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 using Compze.GenericAbstractions.Time;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;

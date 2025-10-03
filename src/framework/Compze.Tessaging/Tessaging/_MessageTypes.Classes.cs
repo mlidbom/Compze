@@ -1,5 +1,6 @@
 ﻿using System;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 using Compze.Refactoring.Naming;
 using Compze.Tessaging.Buses.Implementation;
 using Newtonsoft.Json;

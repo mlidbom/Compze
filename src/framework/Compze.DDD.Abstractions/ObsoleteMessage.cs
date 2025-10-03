@@ -1,4 +1,4 @@
-namespace Compze;
+namespace Compze.DDD.Abstractions;
 
 public static class ObsoleteMessage
 {

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Contracts;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 using Compze.Functional;
 using Compze.GenericAbstractions.Time;
 using Compze.Refactoring.Naming;

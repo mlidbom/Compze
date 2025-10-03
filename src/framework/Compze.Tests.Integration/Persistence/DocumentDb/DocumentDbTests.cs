@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 using Compze.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.SystemCE;

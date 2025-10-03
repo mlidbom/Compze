@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.DDD;
+using Compze.DDD.Abstractions;
 using Compze.Functional;
 using Compze.Persistence.DocumentDb;
 using Compze.SystemCE.ThreadingCE;
