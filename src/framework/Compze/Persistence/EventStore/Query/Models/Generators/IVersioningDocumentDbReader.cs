@@ -1,11 +1,19 @@
+using Compze.DDD;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Compze.Persistence.DocumentDb;
 
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
-//review: Extending a DocumentDb interface within the EventStore project seems questionable.
-public interface IVersioningDocumentDbReader : IDocumentDbReader
+public interface IQueryModelReader
 {
-   bool TryGetVersion<TDocument>(object key, [MaybeNullWhen(false)]out TDocument document, int version);
+    TValue Get<TValue>(object key);
+    bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document);
+    IEnumerable<T> GetAll<T>(IEnumerable<Guid> ids) where T : IHasPersistentIdentity<Guid>;
+}
+
+public interface IVersioningQueryModelReader : IQueryModelReader
+{
+    bool TryGetVersion<TDocument>(object key, [MaybeNullWhen(false)]out TDocument document, int version);
    TValue GetVersion<TValue>(object key, int version);
 }

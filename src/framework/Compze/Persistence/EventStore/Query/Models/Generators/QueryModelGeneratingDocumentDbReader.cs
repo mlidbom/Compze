@@ -11,7 +11,7 @@ using static Compze.Contracts.Assert;
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class QueryModelGeneratingDocumentDbReader(IEnumerable<IQueryModelGenerator> documentGenerators) : IVersioningDocumentDbReader
+public class QueryModelGeneratingQueryModelReader(IEnumerable<IQueryModelGenerator> documentGenerators) : IVersioningQueryModelReader
 {
    readonly ISingleContextUseGuard _usageGuard = new SingleThreadUseGuard();
    readonly IEnumerable<IQueryModelGenerator> _documentGenerators = documentGenerators;
