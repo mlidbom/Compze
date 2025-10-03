@@ -15,7 +15,7 @@ namespace Compze.Persistence.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
-   readonly EntityIdMap _idMap = new();
+   readonly EntityByIdAndTypeCache _idMap = new();
 
    readonly IDocumentDb _backingStore;
    readonly ISingleContextUseGuard _usageGuard;

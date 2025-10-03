@@ -8,8 +8,8 @@ using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.DocumentDb;
 
-///<summary>Tracks entities by converting the supplied id into string and indexing objects by that string combined with the supplied type</summary>
-class EntityIdMap
+///<summary>Tracks entities by the combination of their ID and type</summary>
+class EntityByIdAndTypeCache
 {
     readonly Dictionary<StringTypeKey, object> _stringIdToInstance = new();
     readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
