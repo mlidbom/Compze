@@ -27,8 +27,4 @@
         <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
         <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Persistence\Common\" />
-    </ItemGroup>
 </Project>

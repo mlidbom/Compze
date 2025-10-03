@@ -1,8 +1,8 @@
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
-using Compze.Persistence.Common.AdoCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Persistence.Common.AdoCE.Abstractions;
 
 namespace Compze.Persistence.MsSql;
 

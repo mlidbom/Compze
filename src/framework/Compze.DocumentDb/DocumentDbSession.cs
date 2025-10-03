@@ -5,6 +5,7 @@ using System.Linq;
 using System.Transactions;
 using Compze.DDD.Abstractions;
 using Compze.DocumentDb.Abstractions;
+using Compze.Persistence.Common;
 using Compze.Persistence.DocumentDb;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.LinqCE;
