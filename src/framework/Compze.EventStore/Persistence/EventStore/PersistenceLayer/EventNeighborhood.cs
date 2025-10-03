@@ -1,6 +1,6 @@
 ﻿namespace Compze.Persistence.EventStore.PersistenceLayer;
 
-class EventNeighborhood
+public class EventNeighborhood
 {
    public ReadOrder EffectiveReadOrder { get; }
    public ReadOrder PreviousEventReadOrder { get; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Compze.Persistence.EventStore.PersistenceLayer;
 
-interface IEventStorePersistenceLayer
+public interface IEventStorePersistenceLayer
 {
    void SetupSchemaIfDatabaseUnInitialized();
 

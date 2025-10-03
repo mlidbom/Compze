@@ -8,7 +8,7 @@ using Compze.SystemCE.LinqCE;
 
 namespace Compze.Persistence.EventStore.PersistenceLayer;
 
-readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
+public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {
    readonly BigInteger _order;
    readonly BigInteger _offSet;
@@ -17,7 +17,7 @@ readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public static readonly ReadOrder Zero = new(0, 0);
 
-   internal static ReadOrder FromLong(long readOrder) => new(readOrder, 0);
+   public static ReadOrder FromLong(long readOrder) => new(readOrder, 0);
 
    static readonly BigInteger MaxOffset = BigInteger.Parse("1".PadRight(20, '0'), CultureInfo.InvariantCulture);
 

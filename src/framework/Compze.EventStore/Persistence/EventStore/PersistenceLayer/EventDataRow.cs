@@ -2,7 +2,7 @@
 
 namespace Compze.Persistence.EventStore.PersistenceLayer;
 
-class EventDataRow
+public class EventDataRow
 {
    public EventDataRow(IAggregateEvent @event, AggregateEventStorageInformation storageInformation, Guid eventType, string eventAsJson)
    {
@@ -55,7 +55,7 @@ class EventDataRow
    public Guid AggregateId { get; private set; }
    public DateTime UtcTimeStamp { get; private set; }
 
-   internal AggregateEventStorageInformation StorageInformation { get; private set; }
+   public AggregateEventStorageInformation StorageInformation { get; private set; }
 
    public override string ToString() => $"{nameof(StorageInformation.InsertedVersion)}{StorageInformation.InsertedVersion},{nameof(StorageInformation.EffectiveVersion)}{StorageInformation.EffectiveVersion}, {nameof(StorageInformation.ReadOrder)}{StorageInformation.ReadOrder}";
 }
