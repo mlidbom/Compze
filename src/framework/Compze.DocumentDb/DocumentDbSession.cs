@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using Compze.DDD.Abstractions;
+using Compze.DocumentDb.Abstractions;
 using Compze.Persistence.DocumentDb;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;

@@ -1,5 +1,6 @@
 using Compze.Contracts;
 using Compze.DependencyInjection;
+using Compze.DocumentDb.Abstractions;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.DocumentDb;
 using Compze.Refactoring.Naming;

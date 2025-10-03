@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Compze.DDD;
 using Compze.DDD.Abstractions;
 using Compze.DependencyInjection;
-using Compze.Persistence.DocumentDb;
+using Compze.DocumentDb.Abstractions;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
 using Compze.SystemCE.ThreadingCE;

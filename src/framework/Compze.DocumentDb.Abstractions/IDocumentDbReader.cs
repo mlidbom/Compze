@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.DDD;
 using Compze.DDD.Abstractions;
 
-namespace Compze.Persistence.DocumentDb;
+namespace Compze.DocumentDb.Abstractions;
 
 public interface IDocumentDbReader : IDisposable
 {

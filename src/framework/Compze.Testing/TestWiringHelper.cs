@@ -1,9 +1,9 @@
 using System;
 using Compze.DependencyInjection;
+using Compze.DocumentDb.Abstractions;
 using Compze.DocumentDb.DependencyInjection;
 using Compze.Logging;
 using Compze.Persistence.Common.DependencyInjection;
-using Compze.Persistence.DocumentDb;
 using Compze.Persistence.EventStore;
 using Compze.Tessaging.Buses;
 using Compze.Testing.DependencyInjection;

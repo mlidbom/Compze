@@ -5,6 +5,7 @@ using System.Linq;
 using Compze.Contracts;
 using Compze.DDD;
 using Compze.DDD.Abstractions;
+using Compze.DocumentDb.Abstractions;
 using Compze.Functional;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.DocumentDb;

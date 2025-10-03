@@ -1,4 +1,5 @@
 ﻿using System;
+using Compze.DocumentDb.Abstractions;
 using Compze.Functional;
 using Compze.Tessaging;
 using Compze.Tessaging.Buses;
