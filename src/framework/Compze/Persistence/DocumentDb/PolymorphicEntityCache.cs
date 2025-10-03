@@ -1,53 +1,49 @@
+using Compze.Functional;
+using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.Contracts;
-using Compze.Functional;
-using Compze.SystemCE.CollectionsCE.GenericCE;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.DocumentDb;
 
-///<summary>Tracks entities by converting the supplied id into a string and maintaining a dictionary from that string id to a list of instances to enable polymorphism</summary>
-class PolymorphicEntityIdMap
+///<summary>Tracks entities by converting the supplied id into string and indexing objects by that string combined with the supplied type</summary>
+class EntityIdMap
 {
-    readonly Dictionary<string, List<object>> _stringIdToInstance = new(StringComparer.InvariantCultureIgnoreCase);
+    readonly Dictionary<StringTypeKey, object> _stringIdToInstance = new();
     readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
     public void Add<T>(object id, T value) => _monitor.Update(action: () =>
     {
         Argument.NotNull(value);
 
-        var idString = GetIdStringRepresentation(id);
-        if(ContainsInternal(value.GetType(), idString)) throw new AttemptToSaveAlreadyPersistedValueException(id, value);
+        var key = StringTypeKey.Create(id, value.GetType());
+        if(ContainsInternal(key)) throw new AttemptToSaveAlreadyPersistedValueException(id, value);
 
-        _stringIdToInstance.GetOrAddDefault(idString).Add(value);
+        _stringIdToInstance[key] = value;
     });
 
     public void Remove(object id, Type documentType) => _monitor.Update(action: () =>
     {
         var idString = GetIdStringRepresentation(id);
-        var removed = _stringIdToInstance.GetOrAddDefault(idString).RemoveWhere(documentType.IsInstanceOfType);
-        if(removed.None()) throw new NoSuchDocumentException(id, documentType);
-
-        if(removed.Count > 1) throw new Exception(message: "It really should be impossible to hit multiple documents with one Id, but apparently you just did it!");
+        var key = new StringTypeKey(idString, documentType);
+        var removed = _stringIdToInstance.Remove(key);
+        if(!removed) throw new NoSuchDocumentException(id, documentType);
     });
 
-    public IList<KeyValuePair<string, object>> GetAll() => _monitor.Read(
-        func: () => _stringIdToInstance.SelectMany(selector: m => m.Value.Select(selector: inner => new KeyValuePair<string, object>(m.Key, inner)))
-                                       .ToList());
+    public IList<KeyValuePair<string, object>> GetAll() =>
+        _monitor.Read(() => _stringIdToInstance
+                           .Select(pair => new KeyValuePair<string, object>(pair.Key.Id, pair.Value))
+                           .ToList());
 
-    internal bool Contains(Type type, object id) => _monitor.Read(func: () => ContainsInternal(type, id));
+    internal bool Contains(Type type, object id) => _monitor.Read(func: () => ContainsInternal(StringTypeKey.Create(id, type)));
 
     internal bool TryGet<T>(object id, [MaybeNullWhen(returnValue: false)] out T value)
     {
         using(_monitor.TakeUpdateLock())
         {
-            if(TryGet(typeof(T), id, out var found))
+            if(TryGet(StringTypeKey.Create(id, typeof(T)), out var found))
             {
                 value = (T)found;
                 return true;
@@ -58,21 +54,27 @@ class PolymorphicEntityIdMap
         }
     }
 
-    bool ContainsInternal(Type type, object id) => TryGet(type, id, out _);
+    bool ContainsInternal(StringTypeKey key) => TryGet(key, out _);
 
-    bool TryGet(Type typeOfValue, object id, [NotNullWhen(returnValue: true)] out object? value)
-    {
-        var idString = GetIdStringRepresentation(id);
-        value = null;
-
-        if(!_stringIdToInstance.TryGetValue(idString, out var matchesId)) return false;
-
-        var found = matchesId.Where(typeOfValue.IsInstanceOfType).ToList();
-        if(!found.Any()) return false;
-
-        value = found.Single();
-        return true;
-    }
+    bool TryGet(StringTypeKey key, [NotNullWhen(returnValue: true)] out object? value) => _stringIdToInstance.TryGetValue(key, out value);
 
     static string GetIdStringRepresentation(object id) => Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' ');
+
+    readonly struct StringTypeKey : IEquatable<StringTypeKey>
+    {
+        public StringTypeKey(string id, Type documentType)
+        {
+            Id = id;
+            DocumentType = documentType;
+        }
+
+        internal static StringTypeKey Create(object id, Type type) => new(GetIdStringRepresentation(id), type);
+
+        public readonly string Id;
+        public readonly Type DocumentType;
+
+        public bool Equals(StringTypeKey other) => Id == other.Id && DocumentType == other.DocumentType;
+        public override bool Equals(object? obj) => obj is StringTypeKey other && Equals(other);
+        public override int GetHashCode() => HashCode.Combine(Id, DocumentType);
+    }
 }
