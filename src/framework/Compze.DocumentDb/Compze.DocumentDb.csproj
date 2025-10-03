@@ -6,7 +6,7 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>Compze</RootNamespace>
+      <RootNamespace>Compze.DocumentDb</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>

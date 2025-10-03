@@ -6,7 +6,7 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <PropertyGroup>
-      <RootNamespace>Compze</RootNamespace>
+      <RootNamespace>Compze.Persistence.InMemory</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />

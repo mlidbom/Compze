@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<RootNamespace>Compze</RootNamespace>
+		<RootNamespace>Compze.Abstractions</RootNamespace>
 		<NuGetAuditMode>direct</NuGetAuditMode>
 		<AnalysisLevel>latest-all</AnalysisLevel>
 		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>

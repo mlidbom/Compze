@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<RootNamespace>Compze</RootNamespace>
+		<RootNamespace>Compze.Tessaging.Abstractions</RootNamespace>
 		<NuGetAuditMode>direct</NuGetAuditMode>
 		<AnalysisLevel>latest-all</AnalysisLevel>
 		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
