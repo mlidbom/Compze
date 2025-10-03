@@ -1,13 +1,14 @@
 using System;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Testing.Persistence;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase
 
-namespace Compze.Testing.Persistence.PgSql;
+namespace Compze.Persistence.PostgreSql.Testing;
 
 sealed class PgSqlDbPool : DbPool
 {

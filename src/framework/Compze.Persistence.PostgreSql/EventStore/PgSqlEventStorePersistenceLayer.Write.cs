@@ -14,6 +14,7 @@ using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Persistence.PostgreSql;
 
 namespace Compze.Persistence.PgSql.EventStore;
 

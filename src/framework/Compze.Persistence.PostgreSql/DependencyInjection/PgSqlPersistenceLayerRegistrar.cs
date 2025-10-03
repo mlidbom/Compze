@@ -6,10 +6,10 @@ using Compze.Persistence.PgSql.DocumentDb;
 using Compze.Persistence.PgSql.EventStore;
 using Compze.Persistence.PgSql.Messaging.Buses.Implementation;
 using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.Testing;
 using Compze.Refactoring.Naming;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Buses.Implementation;
-using Compze.Testing.Persistence.PgSql;
 
 namespace Compze.Persistence.PgSql.DependencyInjection;
 

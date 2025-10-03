@@ -5,6 +5,7 @@ using System.Linq;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.PostgreSql;
 using Compze.SystemCE;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
