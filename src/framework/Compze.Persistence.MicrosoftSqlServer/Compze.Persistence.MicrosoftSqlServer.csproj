@@ -14,6 +14,7 @@
 		<ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
 		<ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
 		<ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+		<ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

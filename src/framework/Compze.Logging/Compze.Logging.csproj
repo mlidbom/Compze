@@ -21,6 +21,7 @@
       <InternalsVisibleTo Include="Compze.Logging.Serilog" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+       <InternalsVisibleTo Include="Compze.Testing.DbPool" />
 	   <InternalsVisibleTo Include="Compze.Testing" />
       <InternalsVisibleTo Include="Compze.EventStore" />
       <InternalsVisibleTo Include="Compze.Persistence" />

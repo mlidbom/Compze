@@ -5,9 +5,9 @@ using JetBrains.Annotations;
 
 namespace Compze.Testing.Persistence;
 
-partial class DbPool
+public partial class DbPool
 {
-   internal class Database
+   public class Database
    {
       public int Id { get; private set; }
       public bool IsReserved { get; private set; }

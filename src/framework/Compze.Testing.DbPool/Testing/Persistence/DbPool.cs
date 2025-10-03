@@ -12,7 +12,7 @@ using Compze.SystemCE.TransactionsCE;
 
 namespace Compze.Testing.Persistence;
 
-abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
+public abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
    static TimeSpan _reservationLength;

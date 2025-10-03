@@ -10,12 +10,12 @@
 
     namespace Compze.SystemCE.ThreadingCE;
 
-    class MachineWideSharedObject
+    public class MachineWideSharedObject
     {
        protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
     }
 
-    class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : new()
+    public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : new()
     {
        class ReferenceCountingWrapper
        {

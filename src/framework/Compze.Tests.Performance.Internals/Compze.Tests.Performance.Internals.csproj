@@ -20,6 +20,7 @@
    <ItemGroup>
       <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
       <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
       <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
       <ProjectReference Include="..\Compze.Tests.Integration.Internals\Compze.Tests.Integration.Internals.csproj" />

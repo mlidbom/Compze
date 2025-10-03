@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Testing.Persistence;
 
-partial class DbPool
+public partial class DbPool
 {
    [UsedImplicitly] protected class SharedState
    {

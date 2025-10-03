@@ -1,6 +1,6 @@
 ﻿namespace Compze.Logging;
 
-enum LogLevel
+public enum LogLevel
 {
    Error = 0,
    Warning = 1,
