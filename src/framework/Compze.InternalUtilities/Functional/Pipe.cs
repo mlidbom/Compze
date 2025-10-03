@@ -35,7 +35,7 @@ static class Pipe
    public static Unit then<TValue>(this TValue _, Action action) => Unit.From(action);
 
 
-    ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#</summary>
+    ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
     public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
 
     ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
