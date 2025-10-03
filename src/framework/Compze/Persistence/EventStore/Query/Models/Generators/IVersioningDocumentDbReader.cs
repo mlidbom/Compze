@@ -3,6 +3,7 @@ using Compze.Persistence.DocumentDb;
 
 namespace Compze.Persistence.EventStore.Query.Models.Generators;
 
+//review: Extending a DocumentDb interface within the EventStore project seems questionable.
 public interface IVersioningDocumentDbReader : IDocumentDbReader
 {
    bool TryGetVersion<TDocument>(object key, [MaybeNullWhen(false)]out TDocument document, int version);
