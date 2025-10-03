@@ -12,9 +12,9 @@ using static Compze.Contracts.Assert;
 
 namespace Compze.Persistence.DocumentDb;
 
-class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
+class PolymorphicEntityCache : IEnumerable<KeyValuePair<string, object>>
 {
-   readonly Dictionary<string, List<object>> _db = new(StringComparer.InvariantCultureIgnoreCase);
+   readonly Dictionary<string, List<object>> _stringIdToInstance = new(StringComparer.InvariantCultureIgnoreCase);
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
    internal bool Contains(Type type, object id) => _monitor.Read(() => ContainsInternal(type, id));
@@ -38,10 +38,10 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
 
    bool TryGet(Type typeOfValue, object id, [NotNullWhen(true)] out object? value)
    {
-      var idstring = GetIdString(id);
+      var idString = GetIdStringRepresentation(id);
       value = null;
 
-      if(!_db.TryGetValue(idstring, out var matchesId)) return false;
+      if(!_stringIdToInstance.TryGetValue(idString, out var matchesId)) return false;
 
       var found = matchesId.Where(typeOfValue.IsInstanceOfType).ToList();
       if(!found.Any()) return false;
@@ -50,25 +50,25 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
       return true;
    }
 
-   static string GetIdString(object id) => Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
+   static string GetIdStringRepresentation(object id) => Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
 
    public virtual void Add<T>(object id, T value) => _monitor.Update(() =>
    {
       Argument.NotNull(value);
 
-      var idString = GetIdString(id);
+      var idString = GetIdStringRepresentation(id);
       if(ContainsInternal(value.GetType(), idString))
       {
          throw new AttemptToSaveAlreadyPersistedValueException(id, value);
       }
 
-      _db.GetOrAddDefault(idString).Add(value);
+      _stringIdToInstance.GetOrAddDefault(idString).Add(value);
    });
 
    public void Remove(object id, Type documentType) => _monitor.Update(() =>
    {
-      var idString = GetIdString(id);
-      var removed = _db.GetOrAddDefault(idString).RemoveWhere(documentType.IsInstanceOfType);
+      var idString = GetIdStringRepresentation(id);
+      var removed = _stringIdToInstance.GetOrAddDefault(idString).RemoveWhere(documentType.IsInstanceOfType);
       if(removed.None())
       {
          throw new NoSuchDocumentException(id, documentType);
@@ -81,7 +81,7 @@ class MemoryObjectStore : IEnumerable<KeyValuePair<string, object>>
    });
 
    public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => _monitor.Read(
-      () => _db.SelectMany(m => m.Value.Select(inner => new KeyValuePair<string, object>(m.Key, inner)))
+      () => _stringIdToInstance.SelectMany(m => m.Value.Select(inner => new KeyValuePair<string, object>(m.Key, inner)))
                .ToList() //ToList is to make it thread safe...
                .GetEnumerator());
 
