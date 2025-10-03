@@ -1,39 +1,33 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <RootNamespace>Compze</RootNamespace>
-        <NuGetAuditMode>direct</NuGetAuditMode>
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
-        <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
-        <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
-        <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Serilog" Version="4.3.0" />
-        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-        <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-        <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-        <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-        <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
-        <InternalsVisibleTo Include="Compze.Persistence.MySql" />
-        <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-        <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-    </ItemGroup>
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <PropertyGroup>
+      <RootNamespace>Compze</RootNamespace>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
+      <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Serilog" Version="4.3.0" />
+      <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+      <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+      <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
+   </ItemGroup>
 </Project>

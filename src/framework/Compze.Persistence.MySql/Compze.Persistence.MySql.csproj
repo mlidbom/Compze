@@ -1,29 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-
-	</PropertyGroup>
-	<PropertyGroup>
-		<RootNamespace>Compze</RootNamespace>
-	</PropertyGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
-		<ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
-		<ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
-		<ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
-		<ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="MySql.Data" Version="9.4.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-	</ItemGroup>
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <PropertyGroup>
+      <RootNamespace>Compze</RootNamespace>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
+      <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="MySql.Data" Version="9.4.0" />
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+   </ItemGroup>
 </Project>

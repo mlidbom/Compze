@@ -1,38 +1,31 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
-
    <PropertyGroup>
       <RootNamespace>Compze</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
-
    <ItemGroup>
       <FrameworkReference Include="Microsoft.AspNetCore.App" />
    </ItemGroup>
-
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
       <ProjectReference Include="..\Compze.Common\Compze.Common.csproj" />
       <ProjectReference Include="..\Compze.Configuration\Compze.Configuration.csproj" />
       <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
       <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
       <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
-      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
    </ItemGroup>
-
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
    </ItemGroup>
-
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Testing" />
       <InternalsVisibleTo Include="Compze.Persistence" />
@@ -44,5 +37,4 @@
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
       <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
    </ItemGroup>
-
 </Project>

@@ -1,24 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
-
    <PropertyGroup>
       <RootNamespace>AccountManagement</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
-
    <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
-      <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
       <ProjectReference Include="..\AccountManagement.Server\AccountManagement.Server.csproj" />
       <ProjectReference Include="..\AccountManagement.UnitTests\AccountManagement.UnitTests.csproj" />
    </ItemGroup>
-    
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
@@ -29,29 +24,24 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-
    <ItemGroup>
       <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-
    <ItemGroup>
       <None Update="appsettings.json">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-
-    <PropertyGroup>
-        <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
-    </PropertyGroup>
-
+   <PropertyGroup>
+      <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+   </PropertyGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
    </ItemGroup>
-
 </Project>

@@ -1,24 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
       <NeutralLanguage>en</NeutralLanguage>
    </PropertyGroup>
-
    <PropertyGroup>
       <RootNamespace>AccountManagement</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
-
    <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\Compze.Messaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj" />
    </ItemGroup>
-
-
    <ItemGroup>
       <Compile Update="API\RegisterAccountCommandResources.Designer.cs">
          <DesignTime>True</DesignTime>
@@ -26,22 +21,16 @@
          <DependentUpon>RegisterAccountCommandResources.resx</DependentUpon>
       </Compile>
    </ItemGroup>
-
-
    <ItemGroup>
       <EmbeddedResource Update="API\RegisterAccountCommandResources.resx">
          <Generator>PublicResXFileCodeGenerator</Generator>
          <LastGenOutput>RegisterAccountCommandResources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
    </ItemGroup>
-
-
    <ItemGroup>
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
    </ItemGroup>
-
    <ItemGroup>
       <InternalsVisibleTo Include="AccountManagement.Server" />
    </ItemGroup>
-
 </Project>
