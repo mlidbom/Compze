@@ -26,9 +26,10 @@ public abstract class EventiveComponent<TParent,
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
     void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.ApplyEventInternal(TComponentEvent @event) => ApplyEvent(@event);
     void IEventiveInternals<TComponentEvent, TComponentEventImplementation>.PublishInternal(TComponentEventImplementation @event) => Publish(@event);
+    IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEvent, TComponentEventImplementation>.RegisterEventAppliersInternal() => RegisterEventAppliers();
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
 
-   protected void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
+   void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
 
     protected EventiveComponent(TParent parent, bool registerEventAppliers = true)
     {
@@ -45,8 +46,6 @@ public abstract class EventiveComponent<TParent,
 #pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
     protected virtual void Publish(TComponentEventImplementation @event) => _parent.PublishInternal(@event);
 #pragma warning restore CS0618
-
-    IEventHandlerRegistrar<TComponentEvent> IEventiveInternals<TComponentEvent, TComponentEventImplementation>.RegisterEventAppliersInternal() => RegisterEventAppliers();
 
     public abstract class Component<TEcComponent,
                                     TEcComponentEventImplementation,

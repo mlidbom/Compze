@@ -92,7 +92,6 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
     }
 
     protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventAppliersDispatcher.Register();
-    IEventHandlerRegistrar<TAggregateEvent> IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.RegisterEventAppliersInternal() => RegisterEventAppliers();
 
     // ReSharper disable once UnusedMember.Global todo: coverage
     protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventHandlers() => _eventHandlersDispatcher.Register();
@@ -119,6 +118,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Aggregates.
     void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.ApplyEventInternal(TAggregateEvent theEvent) => ApplyEvent(theEvent);
     void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.PublishInternal(TAggregateEventImplementation theEvent) => Publish(theEvent);
+    IEventHandlerRegistrar<TAggregateEvent> IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.RegisterEventAppliersInternal() => RegisterEventAppliers();
 
     IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
     IObservable<TAggregateEvent> IEventStored<TAggregateEvent>.EventStream => _eventStream;
