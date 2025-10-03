@@ -6,7 +6,7 @@ using System.Numerics;
 using Compze.Contracts;
 using Compze.SystemCE.LinqCE;
 
-namespace Compze.EventStore.PersistenceLayer;
+namespace Compze.EventStore.PersistenceLayer.Abstractions;
 
 public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {

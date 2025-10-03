@@ -1,5 +1,5 @@
 ﻿using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.InMemory.DocumentDB;
 using Compze.Persistence.InMemory.EventStore;

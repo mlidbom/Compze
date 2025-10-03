@@ -9,10 +9,10 @@ using Compze.Functional;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MsSql.SystemExtensions;
 using Compze.SystemCE;
-using ReadOrder = Compze.EventStore.PersistenceLayer.ReadOrder;
+using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using Event = Compze.EventStore.EventTableSchemaStrings;
-using Compze.EventStore.PersistenceLayer;
 using Compze.EventStore;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 
 namespace Compze.Persistence.MsSql.EventStore;
 

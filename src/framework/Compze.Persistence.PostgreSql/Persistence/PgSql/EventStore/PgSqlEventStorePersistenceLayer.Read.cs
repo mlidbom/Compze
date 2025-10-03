@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Npgsql;

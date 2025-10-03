@@ -1,6 +1,6 @@
 ﻿using Compze.EventStore.Abstractions;
 
-namespace Compze.EventStore.PersistenceLayer;
+namespace Compze.EventStore.PersistenceLayer.Abstractions;
 
 public class EventInsertionSpecification(IAggregateEvent @event, int insertedVersion, int effectiveVersion)
 {

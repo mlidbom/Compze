@@ -1,6 +1,6 @@
 ﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.DocumentDb;
 using Compze.Persistence.MsSql.DocumentDb;
 using Compze.Persistence.MsSql.EventStore;

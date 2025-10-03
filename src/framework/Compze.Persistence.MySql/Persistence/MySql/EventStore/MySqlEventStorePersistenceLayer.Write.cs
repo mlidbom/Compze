@@ -7,10 +7,10 @@ using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.SystemCE;
 using MySql.Data.MySqlClient;
-using ReadOrder = Compze.EventStore.PersistenceLayer.ReadOrder;
+using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using Event = Compze.EventStore.EventTableSchemaStrings;
-using Compze.EventStore.PersistenceLayer;
 using Compze.EventStore;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 
 namespace Compze.Persistence.MySql.EventStore;
 

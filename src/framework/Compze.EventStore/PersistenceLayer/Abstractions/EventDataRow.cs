@@ -1,7 +1,7 @@
 ﻿using Compze.EventStore.Abstractions;
 using System;
 
-namespace Compze.EventStore.PersistenceLayer;
+namespace Compze.EventStore.PersistenceLayer.Abstractions;
 
 public class EventDataRow
 {

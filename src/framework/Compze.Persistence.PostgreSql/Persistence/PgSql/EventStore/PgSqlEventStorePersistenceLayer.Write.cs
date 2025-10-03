@@ -8,11 +8,11 @@ using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
-using ReadOrder = Compze.EventStore.PersistenceLayer.ReadOrder;
+using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 using Lock = Compze.EventStore.AggregateLockTableSchemaStrings;
-using Compze.EventStore.PersistenceLayer;
 using Compze.EventStore;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 
 namespace Compze.Persistence.PgSql.EventStore;
 

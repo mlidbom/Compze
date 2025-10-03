@@ -4,11 +4,11 @@ using System.Linq;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.EventStore.Abstractions;
-using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.SystemCE;
 using Compze.SystemCE.LinqCE;
-using ReadOrder = Compze.EventStore.PersistenceLayer.ReadOrder;
+using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 
 namespace Compze.EventStore;
 

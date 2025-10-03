@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Compze.EventStore.PersistenceLayer;
+namespace Compze.EventStore.PersistenceLayer.Abstractions;
 
 public interface IEventStorePersistenceLayer
 {

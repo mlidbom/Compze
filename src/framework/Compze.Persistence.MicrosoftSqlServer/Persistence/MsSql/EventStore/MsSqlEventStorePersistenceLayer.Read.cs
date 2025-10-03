@@ -7,7 +7,7 @@ using System.Linq;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MsSql.SystemExtensions;
 using Event = Compze.EventStore.EventTableSchemaStrings;
-using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 
 namespace Compze.Persistence.MsSql.EventStore;
 

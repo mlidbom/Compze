@@ -4,7 +4,6 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.EventStore;
 using Compze.EventStore.Abstractions;
-using Compze.EventStore.PersistenceLayer;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.GenericAbstractions.Time;
 using Compze.Persistence.EventStore;
@@ -12,6 +11,7 @@ using Compze.Teventive.Aggregates;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Buses;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 
 namespace Compze.Persistence.Common.DependencyInjection;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Contracts;
 using Compze.EventStore.Abstractions;
-using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.Logging;
 using Compze.Refactoring.Naming;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.EventStore.PersistenceLayer;
+using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.SystemExtensions;
 using MySql.Data.MySqlClient;
