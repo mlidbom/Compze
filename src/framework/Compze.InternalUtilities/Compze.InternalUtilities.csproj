@@ -38,6 +38,7 @@
         <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
         <InternalsVisibleTo Include="Compze.Logging.Serilog" />
         <InternalsVisibleTo Include="ScratchPad.Internals" />
+        <InternalsVisibleTo Include="Compze.Persistence.Common" />
         <InternalsVisibleTo Include="Compze.Tests.Unit" />
         <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
         <InternalsVisibleTo Include="Compze.Persistence.MySql" />
