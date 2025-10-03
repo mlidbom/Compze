@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.SystemCE;
-using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Typermedia;
 using Compze.Testing;
 using Compze.Testing.Performance;

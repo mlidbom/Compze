@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.Logging;
 using Compze.SystemCE.ThreadingCE;
+using Compze.Tessaging.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 

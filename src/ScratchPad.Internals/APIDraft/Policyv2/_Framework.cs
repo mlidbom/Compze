@@ -3,6 +3,7 @@
 
 using System;
 using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 
 namespace Compze.Tests.Messaging.APIDraft.Policyv2;
 

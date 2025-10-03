@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Buses.Http;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 

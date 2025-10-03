@@ -1,6 +1,7 @@
 ﻿using System;
 using Compze.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Tessaging.Abstractions;
 using Compze.Utilities.Contracts;
 
 namespace Compze.Tessaging.Buses.Implementation;

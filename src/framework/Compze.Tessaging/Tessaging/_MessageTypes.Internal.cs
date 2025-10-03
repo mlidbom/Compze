@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using Compze.Refactoring.Naming;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Buses.Implementation;
 using Newtonsoft.Json;

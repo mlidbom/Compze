@@ -2,7 +2,7 @@
 
 // ReSharper disable UnusedTypeParameter
 
-namespace Compze.Tessaging;
+namespace Compze.Tessaging.Abstractions;
 
 public interface IMessage;
 

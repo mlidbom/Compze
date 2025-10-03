@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 
 namespace Compze.EventStore.Abstractions;
 

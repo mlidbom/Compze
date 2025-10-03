@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Compze.Tessaging.Abstractions;
+using System;
 
 namespace Compze.Tessaging.Buses.Implementation;
 

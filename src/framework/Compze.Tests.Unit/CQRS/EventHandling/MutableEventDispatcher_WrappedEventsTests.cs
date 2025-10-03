@@ -1,5 +1,6 @@
 ﻿using Compze.EventStore.Abstractions;
 using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Teventive;
 using Compze.Testing;
 using NUnit.Framework;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Persistence.Common.DependencyInjection;
+using Compze.Persistence.DependencyInjection;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Typermedia;
 using Compze.Testing;

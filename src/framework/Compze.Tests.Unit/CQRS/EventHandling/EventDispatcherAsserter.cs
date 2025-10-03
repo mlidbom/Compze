@@ -1,4 +1,4 @@
-﻿using Compze.Tessaging;
+﻿using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Teventive;
 using FluentAssertions;
 

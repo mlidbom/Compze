@@ -2,7 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using Compze.EventStore.Abstractions;
 using Compze.Refactoring.Naming;
-using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.EventStore.Abstractions;
 using Compze.GenericAbstractions.Time;
-using Compze.Persistence.Common.DependencyInjection;
 using Compze.Teventive.Aggregates;
 using Compze.Tessaging;
 using Compze.Tessaging.Buses;
@@ -16,6 +15,7 @@ using Compze.Testing.Messaging.Buses;
 using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.Persistence.DependencyInjection;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing

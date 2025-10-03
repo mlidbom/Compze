@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Tessaging.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;

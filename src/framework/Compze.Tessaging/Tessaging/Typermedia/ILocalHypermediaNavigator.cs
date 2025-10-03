@@ -1,4 +1,6 @@
-﻿namespace Compze.Tessaging.Typermedia;
+﻿using Compze.Tessaging.Abstractions;
+
+namespace Compze.Tessaging.Typermedia;
 
 ///<summary>Dispatches messages within a process.</summary>
 public interface ILocalHypermediaNavigator

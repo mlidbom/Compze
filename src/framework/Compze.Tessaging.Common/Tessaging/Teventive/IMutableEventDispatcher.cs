@@ -1,3 +1,5 @@
+using Compze.Tessaging.Abstractions;
+
 namespace Compze.Tessaging.Teventive;
 
 public interface IMutableEventDispatcher<in TEvent> : IEventDispatcher<TEvent>

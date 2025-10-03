@@ -3,8 +3,8 @@ using Compze.SystemCE;
 using Compze.Tessaging.Buses;
 using Compze.Utilities.SystemCE;
 using static System.Console;
-using IEvent = Compze.Tessaging.IEvent;
-using Tessaging_IEvent = Compze.Tessaging.IEvent;
+using IEvent = Compze.Tessaging.Abstractions.IEvent;
+using Tessaging_IEvent = Compze.Tessaging.Abstractions.IEvent;
 
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable ArrangeTypeMemberModifiers

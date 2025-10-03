@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;

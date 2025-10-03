@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.GenericAbstractions.Time;
-using Compze.Persistence.Common.DependencyInjection;
 using Compze.Persistence.DocumentDb;
 using Compze.Teventive.Aggregates;
 using Compze.Refactoring.Naming;
@@ -17,6 +16,7 @@ using NUnit.Framework;
 using Compze.EventStore.Query.Models.Generators;
 using Compze.EventStore.Abstractions;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Persistence.DependencyInjection;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

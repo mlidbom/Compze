@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Refactoring.Naming;
 using Compze.SystemCE.ThreadingCE;
+using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 

@@ -5,6 +5,7 @@ using Compze.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Buses.Http;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;

@@ -13,7 +13,7 @@ using Compze.Tessaging.Buses;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Persistence.Common.DependencyInjection;
+namespace Compze.Persistence.DependencyInjection;
 
 public static class EventStoreRegistrar
 {

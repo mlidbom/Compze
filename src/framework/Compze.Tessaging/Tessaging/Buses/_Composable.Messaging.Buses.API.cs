@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.Refactoring.Naming;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.Contracts;
 using Newtonsoft.Json;

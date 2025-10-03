@@ -1,4 +1,6 @@
-﻿namespace Compze.Tessaging;
+﻿using Compze.Tessaging.Abstractions;
+
+namespace Compze.Tessaging;
 
 static class WrapperEvent
 {

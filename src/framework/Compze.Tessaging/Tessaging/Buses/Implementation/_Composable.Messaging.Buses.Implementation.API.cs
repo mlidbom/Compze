@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Teventive;
 
 namespace Compze.Tessaging.Buses.Implementation;
