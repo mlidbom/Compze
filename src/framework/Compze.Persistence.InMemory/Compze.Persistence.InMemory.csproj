@@ -10,7 +10,7 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
-      <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
