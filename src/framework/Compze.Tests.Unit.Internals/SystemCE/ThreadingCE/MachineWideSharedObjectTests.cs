@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Testing;
+using Compze.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Testing.Threading;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;

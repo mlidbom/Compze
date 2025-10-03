@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Compze.Configuration;
 using Compze.Configuration.Abstractions;
 using Compze.Logging;
@@ -8,7 +7,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.SystemCE;
+namespace Compze.Testing.DbPool.SystemCE;
 
 static class StrictlyManagedResources
 {

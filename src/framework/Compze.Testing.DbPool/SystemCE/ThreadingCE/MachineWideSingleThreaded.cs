@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.AccessControl;
+﻿using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Threading;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using JetBrains.Annotations;
 
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Testing.DbPool.SystemCE.ThreadingCE;
 
 class MachineWideSingleThreaded
 {

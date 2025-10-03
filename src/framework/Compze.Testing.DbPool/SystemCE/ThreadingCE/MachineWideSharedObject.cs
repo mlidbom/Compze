@@ -1,15 +1,12 @@
-﻿    using System;
-    using System.IO;
-    using System.Text;
-    using Compze.Persistence;
-    using Compze.Serialization;
-    using Compze.Utilities.Contracts;
-    using Compze.Utilities.Functional;
-    using Compze.Utilities.SystemCE;
-    using Compze.Utilities.SystemCE.LinqCE;
-    using Newtonsoft.Json;
+﻿using System.Text;
+using Compze.Serialization;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Newtonsoft.Json;
 
-    namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Testing.DbPool.SystemCE.ThreadingCE;
 
     public class MachineWideSharedObject
     {

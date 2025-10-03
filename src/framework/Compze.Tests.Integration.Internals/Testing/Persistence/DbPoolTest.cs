@@ -8,6 +8,7 @@ using Compze.Persistence.MySql.Testing;
 using Compze.Persistence.PgSql.SystemExtensions;
 using Compze.Persistence.PostgreSql.Testing;
 using Compze.Testing;
+using Compze.Testing.DbPool;
 using Compze.Testing.Persistence;
 
 namespace Compze.Tests.Integration.Internals.Testing.Persistence;

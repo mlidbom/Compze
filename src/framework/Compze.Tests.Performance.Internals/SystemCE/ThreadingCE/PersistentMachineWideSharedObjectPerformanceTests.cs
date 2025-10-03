@@ -2,6 +2,7 @@
 using Compze.SystemCE;
 using Compze.SystemCE.ThreadingCE;
 using Compze.Testing;
+using Compze.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Testing.Performance;
 using Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE;

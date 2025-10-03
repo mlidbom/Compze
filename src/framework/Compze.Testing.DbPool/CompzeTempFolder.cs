@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using Compze.SystemCE.ThreadingCE;
+using Compze.Testing.DbPool.SystemCE.ThreadingCE;
 
-namespace Compze.Persistence;
+namespace Compze.Testing.DbPool;
 
 #pragma warning disable IDE0065
 using SPath = Path;

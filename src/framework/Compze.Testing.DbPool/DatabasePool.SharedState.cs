@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 using Compze.Utilities.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Compze.Testing.Persistence;
+namespace Compze.Testing.DbPool;
 
 public partial class DbPool
 {

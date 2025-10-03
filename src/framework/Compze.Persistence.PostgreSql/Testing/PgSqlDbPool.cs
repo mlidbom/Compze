@@ -1,7 +1,7 @@
 using System;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PgSql.SystemExtensions;
-using Compze.Testing.Persistence;
+using Compze.Testing.DbPool;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Npgsql;

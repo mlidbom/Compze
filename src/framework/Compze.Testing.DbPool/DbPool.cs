@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Compze.Logging;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE;
+using Compze.Testing.DbPool.SystemCE;
+using Compze.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -12,7 +8,7 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
-namespace Compze.Testing.Persistence;
+namespace Compze.Testing.DbPool;
 
 public abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {

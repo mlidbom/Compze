@@ -1,10 +1,8 @@
-﻿using System;
-using Compze.SystemCE;
-using Compze.Utilities.Contracts;
+﻿using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
-namespace Compze.Testing.Persistence;
+namespace Compze.Testing.DbPool;
 
 public partial class DbPool
 {
