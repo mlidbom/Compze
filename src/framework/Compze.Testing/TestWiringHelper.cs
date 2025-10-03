@@ -3,6 +3,7 @@ using Compze.DependencyInjection;
 using Compze.Logging;
 using Compze.Persistence.Common.DependencyInjection;
 using Compze.Persistence.DocumentDb;
+using Compze.Persistence.DocumentDb.DependencyInjection;
 using Compze.Persistence.EventStore;
 using Compze.Tessaging.Buses;
 using Compze.Testing.DependencyInjection;

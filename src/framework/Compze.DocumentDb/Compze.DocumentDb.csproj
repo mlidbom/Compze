@@ -13,16 +13,13 @@
    </PropertyGroup>
 
    <ItemGroup>
+      <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
       <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
    </ItemGroup>
 
    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <Folder Include="Persistence\" />
    </ItemGroup>
 
    <ItemGroup>
