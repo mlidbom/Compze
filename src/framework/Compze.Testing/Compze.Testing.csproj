@@ -37,6 +37,5 @@
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Unit" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="ScratchPad.Internals" />
    </ItemGroup>
 </Project>

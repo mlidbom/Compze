@@ -44,7 +44,6 @@
         <InternalsVisibleTo Include="Compze.Testing.DbPool" />
         <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
         <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-        <InternalsVisibleTo Include="Compze.Tests.Unit" />
         <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
         <InternalsVisibleTo Include="Compze.Teventive" />
         <InternalsVisibleTo Include="ScratchPad.Internals" />
