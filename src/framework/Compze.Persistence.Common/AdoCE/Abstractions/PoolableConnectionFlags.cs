@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE.Abstractions;
 
 [Flags] enum PoolableConnectionFlags
 {

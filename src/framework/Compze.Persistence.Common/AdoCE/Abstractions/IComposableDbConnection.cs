@@ -3,7 +3,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common.AdoCE.Abstractions;
 
 interface ICompzeDbConnection
 {
