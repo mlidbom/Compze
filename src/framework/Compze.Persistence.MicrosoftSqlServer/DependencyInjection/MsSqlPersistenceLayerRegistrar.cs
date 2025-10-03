@@ -2,16 +2,16 @@
 using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.DocumentDb;
-using Compze.Persistence.MsSql.DocumentDb;
-using Compze.Persistence.MsSql.EventStore;
-using Compze.Persistence.MsSql.Messaging.Buses.Implementation;
-using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSqlServer.DocumentDb;
+using Compze.Persistence.MicrosoftSqlServer.EventStore;
+using Compze.Persistence.MicrosoftSqlServer.Messaging.Buses.Implementation;
+using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+using Compze.Persistence.MicrosoftSqlServer.Testing;
 using Compze.Refactoring.Naming;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Buses.Implementation;
-using Compze.Testing.Persistence.MsSql;
 
-namespace Compze.Persistence.MsSql.DependencyInjection;
+namespace Compze.Persistence.MicrosoftSqlServer.DependencyInjection;
 
 public static class MsSqlPersistenceLayerRegistrar
 {

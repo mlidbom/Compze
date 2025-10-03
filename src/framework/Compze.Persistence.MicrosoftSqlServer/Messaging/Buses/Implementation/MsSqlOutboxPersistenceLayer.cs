@@ -1,13 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MsSql.SystemExtensions;
+﻿using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
 using MessageTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Persistence.MsSql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.MicrosoftSqlServer.Messaging.Buses.Implementation;
 
 partial class MsSqlOutboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MsSql.SystemExtensions;
+﻿using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Schema =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Compze.Persistence.MsSql.Messaging.Buses.Implementation;
+namespace Compze.Persistence.MicrosoftSqlServer.Messaging.Buses.Implementation;
 
 partial class MsSqlInboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IInboxPersistenceLayer
 {

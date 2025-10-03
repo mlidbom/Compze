@@ -1,10 +1,9 @@
 using System.Data.Common;
-using Microsoft.Data.SqlClient;
-using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Persistence.Common.AdoCE.Abstractions;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MsSql;
+namespace Compze.Persistence.MicrosoftSqlServer;
 
 interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlCommand>
 {

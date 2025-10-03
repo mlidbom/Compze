@@ -1,13 +1,10 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.Common.AdoCE.Abstractions;
-using Compze.SystemCE;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MsSql.SystemExtensions;
+namespace Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
 
 interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
 {

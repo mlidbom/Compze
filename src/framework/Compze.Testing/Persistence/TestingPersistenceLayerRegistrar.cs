@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.DependencyInjection;
 using Compze.Persistence.InMemory.DependencyInjection;
-using Compze.Persistence.MsSql.DependencyInjection;
+using Compze.Persistence.MicrosoftSqlServer.DependencyInjection;
 using Compze.Persistence.MySql.DependencyInjection;
 using Compze.Persistence.PgSql.DependencyInjection;
 using Compze.Tessaging.Buses;
