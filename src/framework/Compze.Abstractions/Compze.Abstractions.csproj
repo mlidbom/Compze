@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+	  <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

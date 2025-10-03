@@ -1,4 +1,4 @@
-﻿namespace Compze;
+namespace Compze;
 
 public static class ObsoleteMessage
 {

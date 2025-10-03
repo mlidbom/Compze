@@ -12,6 +12,7 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\..\..\framework\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj" />
    </ItemGroup>
    <ItemGroup>

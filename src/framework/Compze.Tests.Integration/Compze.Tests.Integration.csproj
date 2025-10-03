@@ -10,6 +10,7 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
       <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
    </ItemGroup>
    <ItemGroup>
