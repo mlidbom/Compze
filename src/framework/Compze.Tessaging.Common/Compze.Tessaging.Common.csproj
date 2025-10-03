@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -19,11 +19,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.EventStore" />
-		<InternalsVisibleTo Include="Compze.Tessaging" />
-		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-		<InternalsVisibleTo Include="Compze.Teventive" />
+      <InternalsVisibleTo Include="Compze.EventStore" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+      <InternalsVisibleTo Include="Compze.Teventive" />
 	</ItemGroup>
 
 </Project>

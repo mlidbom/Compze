@@ -16,7 +16,5 @@
       <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>
 </Project>

@@ -33,8 +33,5 @@
       <InternalsVisibleTo Include="Compze.Persistence.MySql" />
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Testing" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
    </ItemGroup>
 </Project>

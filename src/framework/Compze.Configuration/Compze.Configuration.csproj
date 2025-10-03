@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -21,13 +21,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-        <InternalsVisibleTo Include="Compze.Persistence.MySql"/>
-        <InternalsVisibleTo Include="Compze.Persistence.PostgreSql"/>
-        <InternalsVisibleTo Include="Compze.Tessaging" />
-        <InternalsVisibleTo Include="Compze.Testing.DbPool" />
-        <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-		<InternalsVisibleTo Include="Compze.Teventive" />
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql"/>
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql"/>
+      <InternalsVisibleTo Include="Compze.Tessaging" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
 	</ItemGroup>
 
 	<ItemGroup>

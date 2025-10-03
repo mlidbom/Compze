@@ -26,7 +26,5 @@
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Persistence" />
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
    </ItemGroup>
 </Project>

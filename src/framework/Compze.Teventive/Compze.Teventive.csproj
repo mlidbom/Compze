@@ -20,22 +20,6 @@
       <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.DependencyInjection" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
-      <InternalsVisibleTo Include="Compze.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Logging" />
-      <InternalsVisibleTo Include="Compze.Logging.Serilog" />
       <InternalsVisibleTo Include="Compze.Persistence" />
-      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Serialization" />
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Testing" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
    </ItemGroup>
 </Project>
