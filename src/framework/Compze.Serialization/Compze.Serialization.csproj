@@ -14,14 +14,14 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Logging" />
       <InternalsVisibleTo Include="Compze.DocumentDb" />
       <InternalsVisibleTo Include="Compze.EventStore" />
+      <InternalsVisibleTo Include="Compze.Logging" />
       <InternalsVisibleTo Include="Compze.Persistence" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Testing.DbPool" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
