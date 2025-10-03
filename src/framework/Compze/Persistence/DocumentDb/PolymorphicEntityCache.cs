@@ -26,10 +26,8 @@ class EntityIdMap
 
     public void Remove(object id, Type documentType) => _monitor.Update(action: () =>
     {
-        var idString = GetIdStringRepresentation(id);
-        var key = new StringTypeKey(idString, documentType);
-        var removed = _stringIdToInstance.Remove(key);
-        if(!removed) throw new NoSuchDocumentException(id, documentType);
+        if(!StringTypeKey.Create(id, documentType).pipe(_stringIdToInstance.Remove))
+            throw new NoSuchDocumentException(id, documentType);
     });
 
     public IList<KeyValuePair<string, object>> GetAll() =>
@@ -58,23 +56,9 @@ class EntityIdMap
 
     bool TryGet(StringTypeKey key, [NotNullWhen(returnValue: true)] out object? value) => _stringIdToInstance.TryGetValue(key, out value);
 
-    static string GetIdStringRepresentation(object id) => Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' ');
-
-    readonly struct StringTypeKey : IEquatable<StringTypeKey>
+    readonly record struct StringTypeKey(string Id, Type DocumentType)
     {
-        public StringTypeKey(string id, Type documentType)
-        {
-            Id = id;
-            DocumentType = documentType;
-        }
-
-        internal static StringTypeKey Create(object id, Type type) => new(GetIdStringRepresentation(id), type);
-
-        public readonly string Id;
-        public readonly Type DocumentType;
-
-        public bool Equals(StringTypeKey other) => Id == other.Id && DocumentType == other.DocumentType;
-        public override bool Equals(object? obj) => obj is StringTypeKey other && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(Id, DocumentType);
+        internal static StringTypeKey Create(object id, Type type) =>
+            new(Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
     }
 }
