@@ -12,6 +12,7 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
+      <ProjectReference Include="..\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
       <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
       <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
       <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
