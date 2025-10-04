@@ -89,9 +89,10 @@ Compze extends Hypermedia into Typermedia which is Hypermedia that:
 - **Can be in-memory and synchronous or remote and asynchronous** with the same interface
 - **Further encapsulates your domain**, exposing less implementation details than traditional services
 - **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**
-  - All domain logic, validation, and available actions are encapsulated in the .NET types returned by the API
-  - The UI only binds these types to UI components
+  - All domain logic, validation, and available actions can be encapsulated in the .NET types returned by the API
+  - The UI only binds these types to UI components without implementing any domain logic
   - Application behavior can be fully tested without any UI framework
+  - Changing the UI becames far less burdensome and does not risk changing domain logic
 
 #### Quick Example
 
