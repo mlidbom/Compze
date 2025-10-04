@@ -127,40 +127,6 @@ Once you've used APIs like this, how would you feel about an API that gives you 
 
 ---
 
-## Getting Started
-
-### Prerequisites
-- .NET 8.0 or later
-- Visual Studio 2022, Rider, or VS Code
-- (Optional) SQL Server, PostgreSQL, or MySQL for persistence testing
-
-### Quick Start
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/mlidbom/Compze.git
-   cd Compze
-   ```
-
-2. **Set up for development**
-   
-   See the [Development Setup Guide](DEVELOPMENT.md) for detailed instructions on configuring your environment, database connections, and running tests.
-
-3. **Explore the samples**
-   
-   Check out the `Samples/` directory for a demonstration of Compze's capabilities.
-
----
-
-## Features
-
-- **Event Sourcing & CQRS** - Event sourcing with Tevents
-- **Multiple Persistence Options** - Support for SQL Server, PostgreSQL and MySQL
-- **Dependency Injection** - Integration with Microsoft DI and SimpleInjector
-- **Type-Safe Event Routing** - Leverage C# type system for automatic event routing
-- **Aggregate Inheritance** - Model complex domains with greater ease
-
----
 
 ## Fledgling Documentation
 
@@ -170,22 +136,4 @@ Once you've used APIs like this, how would you feel about an API that gives you 
 
 ---
 
-## Contributing
-
-We welcome contributions! Whether it's:
-- 🐛 Bug reports
-- 💡 Feature suggestions  
-- 📝 Documentation improvements
-- 🔧 Code contributions
-
-Please feel free to open issues or submit pull requests.
-
----
-
-## License
-
-See [LICENSE.txt](LICENSE.txt) for details.
-
----
-
-**Built with ❤️ for developers who care about maintainability**
+**Built by and for developers who care about maintainability**
