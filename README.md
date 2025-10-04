@@ -67,8 +67,8 @@ interface IUserChangedEmail : IUserEmailPropertyUpdated;
 ```
 
 Now you can:
-- Listen to **all email updates** via `IUserEmailPropertyUpdated` - never needs to change
-- Listen to **registration events** via `IUserRegistered` - never needs to change
+- Listen to **all email updates** via `IUserEmailPropertyUpdated` - listeners never needs to change
+- Listen to **registration events** via `IUserRegistered` - listeners never needs to change
 - Add new ways to update email without touching existing code
 
 **Learn more:** [Semantic Events Documentation](https://compze.net/paradigms/semantic-events/definition.html)
