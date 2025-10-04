@@ -89,13 +89,14 @@ Compze extends Hypermedia into Typermedia which is Hypermedia that:
   - `Get`ting `Link`s
   - `Post`ing `Command`s
   - All with full type safety and autocomplete in your IDE
-- **Can be in-memory and synchronous or remote and asynchronous** with the same interface
 - **Further encapsulates your domain**, exposing less implementation details than traditional services
 - **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**
   - All domain logic, validation, and available actions can be encapsulated in the .NET types returned by the API
   - The UI only binds these types to UI components without implementing any domain logic
   - Application behavior can be fully tested without any UI framework
   - Changing the UI becomes far less burdensome and does not risk changing domain logic
+
+> **💡 Note:** All of the above benefits can be had with Typermedia APIs implemented **entirely in-memory and synchronously**. Distribution and asynchronous communication is entirely optional, not a requirement.
 
 #### Quick Example
 
