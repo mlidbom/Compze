@@ -16,7 +16,7 @@ Leveraging well-established C# features enables an event modeling paradigm which
 - **Enables subscribing to precisely the event you need**, while being guaranteed that when new events are added, inheriting the current event, you will receive those too without needing to change anything in your subscriber code
 
 
-> **💡 Note:** Teventive programming does **not** require event sourcing or asynchronous messaging. All benefits described above are available with **synchronous, in-memory communication**. Aggregates can be stored using traditional ORMs or any persistence mechanism you prefer. Event sourcing and async messaging are optional architectural choices, in no way prerequisites for leveraging Teventive programming.
+> **💡 Note:** Teventive programming does **not** require event sourcing or asynchronous messaging. All benefits described above are available with **synchronous, in-memory communication**. Aggregates can be stored using traditional ORMs or any persistence mechanism you prefer. Event sourcing and async messaging are in no way prerequisites for leveraging Teventive programming.
 
 > **💡 Note:** In memory performance overhead is negligible in the great majority of systems. Event dispatching comes down to looking up subscribers in a dictionary using a Type instance as the key.
 
