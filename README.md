@@ -1,9 +1,6 @@
 # Compze
 
-[![Gitter](https://badges.gitter.im/Composable4/Lobby.svg)](https://gitter.im/Composable4/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[Skype Chat](https://join.skype.com/awyeJlk3rVbu)
-
-**A .NET framework for building maintainable event-driven systems**
+**A .NET framework for building maintainable Teventive systems exposing Typermedia APIs**
 
 [📖 Documentation](http://compze.net/) | [🔧 Development Setup](DEVELOPMENT.md)
 
@@ -175,7 +172,7 @@ Compze/
 
 We welcome contributions! Whether it's:
 - 🐛 Bug reports
-- 💡 Feature suggestions
+- 💡 Feature suggestions  
 - 📝 Documentation improvements
 - 🔧 Code contributions
 
