@@ -18,6 +18,8 @@ Leveraging well-established C# features enables an event modeling paradigm which
 
 > **💡 Note:** Teventive programming does **not** require event sourcing or asynchronous messaging. All benefits described above are available with **synchronous, in-memory communication**. Aggregates can be stored using traditional ORMs or any persistence mechanism you prefer. Event sourcing and async messaging are optional architectural choices, in no way prerequisites for leveraging Teventive programming.
 
+> **💡 Note:** In memory performance overhead is negligible in the great majority of systems. Event dispatching comes down to looking up subscribers in a dictionary using a Type instance as the key.
+
 #### Core Concepts
 
 Tevents, type routed events, use the type system to declare their meaning in detail and unambiguously:
@@ -121,6 +123,8 @@ var userProfilePage = await httpBrowser.Get(user.ProfilePage);
 > **💡 Note:** A developer could write all of that whithout ever leaving their IDE. Autocomplete in the IDE makes the API browsable, not just at runtime, but as part of writing code. The same goes for the all of the functionality of a domain exposed through a Typermedia API, not just the simple example above.
 
 Once you've used APIs like this, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
+
+> **💡 Note:** In memory performance overhead is negligible in the great majority of systems. Message dispatching essentially comes down to a single lookup in a dictionary using a Type instance as the key.
 
 ---
 
