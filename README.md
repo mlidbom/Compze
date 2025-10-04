@@ -86,7 +86,7 @@ Compze extends hypermedia into Typermedia which:
   - All with full type safety and autocomplete in your IDE
 - **Further encapsulates your domain**, exposing less implementation details than traditional APIs
   - All domain logic, validation, and available actions can be encapsulated in the .NET types returned by the API
-  - The UI need only binds these types to UI components without implementing any domain logic
+  - The UI need only bind these types to UI components without implementing any domain logic
   - Application behavior can be fully tested without any UI framework
   - Changing the UI becomes far less burdensome and does not risk changing domain logic
 
