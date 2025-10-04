@@ -6,7 +6,7 @@ There are two areas where we feel the industry has been stuck in old models for 
 
 ### Teventive programming
 
-Leveraging well-established C# features enables an event modeling paradigm which:
+Leveraging .NET type compatibility enables an event modeling paradigm which:
 
 - **Gives unprecedented ability to understand domains** in terms of how events relate to each other
 - **Eliminates all need for manual event routing and type checking**
