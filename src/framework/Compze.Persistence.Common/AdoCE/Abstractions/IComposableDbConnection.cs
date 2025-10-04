@@ -30,20 +30,29 @@ interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
    async Task UseCommandAsync(Func<TCommand, Task> action)
    {
       var command = CreateCommand();
-      await using var command1 = command.caf();
+      //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then command would be ConfiguredAsyncDisposable, not TCommand
+      await using var _ = command.caf();
       await action(command).caf();
+   }
+
+   async Task<TResult> UseCommandAsync<TResult>(Func<TCommand, Task<TResult>> action)
+   {
+      var command = CreateCommand();
+      //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then command would be ConfiguredAsyncDisposable, not TCommand
+      await using var _ = command.caf();
+      return await action(command).caf();
    }
 
    int ExecuteNonQuery(string commandText) => UseCommand(command => command.ExecuteNonQuery(commandText));
 
-   async Task<int> ExecuteNonQueryAsync(string commandText) => await UseCommand(command => command.ExecuteNonQueryAsync(commandText)).caf();
+   async Task<int> ExecuteNonQueryAsync(string commandText) => await UseCommandAsync(async command => await command.ExecuteNonQueryAsync(commandText).caf()).caf();
 
    object? ExecuteScalar(string commandText) => UseCommand(command => command.ExecuteScalar(commandText));
 
    int PrepareAndExecuteNonQuery(string commandText) => UseCommand(command => command.PrepareAndExecuteNonQuery(commandText));
 
    async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>
-      await UseCommand(command => command.PrepareAndExecuteNonQueryAsync(commandText)).caf();
+      await UseCommandAsync(async command => await command.PrepareAndExecuteNonQueryAsync(commandText).caf()).caf();
 
    object? PrepareAndExecuteScalar(string commandText) => UseCommand(command => command.PrepareAndExecuteScalar(commandText));
 }

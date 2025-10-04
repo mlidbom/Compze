@@ -13,7 +13,7 @@ Leveraging .NET type compatibility enables an event modeling paradigm which:
 - **Enables subscribing to precisely the event you need**, while being guaranteed that when new events are added, inheriting the current event, you will receive those too without needing to change anything in your subscriber code
 
 
-> **💡 Note:** Teventive programming does **not** require event sourcing or asynchronous messaging. All benefits described above are available with **synchronous, in-memory communication**, and aggregates can be stored using any persistence mechanism you prefer, or not at all.
+> **💡 Note:** Teventive programming require neither event sourcing nor asynchronous messaging. All benefits described above are available with synchronous, in-memory communication, and aggregates can be stored using any persistence mechanism you prefer, or not at all.
 
 > **💡 Note:** In memory performance overhead is entirely negligible in the great majority of systems. Event dispatching comes down to looking up subscribers in a dictionary using a Type instance as the key.
 
@@ -36,7 +36,7 @@ interface IUserRegistered : IUserEvent, IAggregateCreatedEvent;
 interface IUserImported : IUserRegistered;
 ```
 
-Events are routed by **type compatibility**, including support for **generic covariance**:
+Events are routed by **type compatibility**
 
 ```csharp
 registrar
@@ -48,7 +48,7 @@ registrar
       Console.WriteLine($"User: {userImported.AggregateId} imported"));
 ```
 
-When an `IUserImported` event is published, **all three handlers** are called automatically because `IUserImported` is type-compatible with all registered handlers.
+When an `IUserImported` event is published, **all three handlers** are called, in registration order, since `IUserImported` is type-compatible with all registered handlers.
 
 #### Property Updates Without the Pain
 

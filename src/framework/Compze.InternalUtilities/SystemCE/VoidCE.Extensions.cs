@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE;
 
@@ -11,13 +12,6 @@ static class VoidCEExtensions
       {
          @this(param);
          return Unit.Instance;
-      };
-
-   internal static Func<TParam, Task<Unit>> AsUnitFunc<TParam>(this Func<TParam, Task> @this) =>
-      param =>
-      {
-         @this(param);
-         return Unit.InstanceTask;
       };
 
    internal static Func<Unit> AsUnitFunc(this Action @this) =>
