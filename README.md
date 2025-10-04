@@ -88,7 +88,10 @@ Compze extends Hypermedia into Typermedia which is Hypermedia that:
   - All with full type safety and autocomplete in your IDE
 - **Can be in-memory and synchronous or remote and asynchronous** with the same interface
 - **Further encapsulates your domain**, exposing less implementation details than traditional services
-- **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**, ideal for black box testing
+- **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**
+  - All domain logic, validation, and available actions are encapsulated in the .NET types returned by the API
+  - The UI only binds these types to UI components
+  - Application behavior can be fully tested without any UI framework
 
 #### Quick Example
 
