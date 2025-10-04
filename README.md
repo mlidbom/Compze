@@ -133,16 +133,6 @@ Once you've used APIs like this, how would you feel about an API that gives you 
 
 ---
 
-## Why Compze?
-
-In spite of these powerful paradigms being available to us today, countless event-driven applications are chock-full of code that leverages none of these possibilities, resulting in what can only be described as maintenance nightmares.
-
-It's essentially the event equivalent of working in C# while completely refusing to use generics and object-oriented programming. Surely we should not even need to argue that this is ill-advised?
-
-Compze provides the tools and patterns to build better systems.
-
----
-
 ## Getting Started
 
 ### Prerequisites
