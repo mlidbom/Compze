@@ -2,7 +2,7 @@
 
 **A .NET framework for building maintainable Teventive systems exposing Typermedia APIs**
 
-[📖 Documentation](http://compze.net/) | [🔧 Development Setup](DEVELOPMENT.md)
+[📖 Fledgeling Documentation](http://compze.net/) | [🔧 Development Setup](DEVELOPMENT.md)
 
 ---
 
