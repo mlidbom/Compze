@@ -1,10 +1,8 @@
 # Development Setup Guide
 
-This guide covers how to set up your development environment for working on Compze.
-
 ## Prerequisites
 
-- **Visual Studio 2022** or **JetBrains Rider** (recommended IDEs)
+- **Visual Studio 2022**, **JetBrains Rider** or VSCode
 - **Administrator access to a SQL database server** (optional, but recommended)
   - Microsoft SQL Server (default)
   - PostgreSQL
