@@ -2,7 +2,6 @@
 using Compze.Tessaging.Tessaging.Buses;
 using Compze.Utilities.SystemCE;
 using static System.Console;
-using IEvent = Compze.Tessaging.Abstractions.IEvent;
 using Tessaging_IEvent = Compze.Tessaging.Abstractions.IEvent;
 
 // ReSharper disable UnusedParameter.Local

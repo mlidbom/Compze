@@ -1,5 +1,4 @@
 using Compze.EventStore.Abstractions;
-using Compze.EventStore.Refactoring.Migrations;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.EventStore.Refactoring.Migrations;

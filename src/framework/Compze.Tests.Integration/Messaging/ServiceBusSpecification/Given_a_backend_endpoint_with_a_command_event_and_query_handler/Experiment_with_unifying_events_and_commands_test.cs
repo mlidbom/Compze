@@ -6,7 +6,6 @@ using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.DependencyInjection;
 using Compze.EventStore.Abstractions;
 using Compze.Teventive.Aggregates;
-using Compze.Tessaging;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Messaging.Buses;

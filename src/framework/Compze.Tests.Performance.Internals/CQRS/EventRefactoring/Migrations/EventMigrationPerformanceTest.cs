@@ -15,7 +15,6 @@ using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;

@@ -2,7 +2,6 @@ using System;
 using Compze.DependencyInjection;
 using Compze.Testing;
 using Compze.Testing.DbPool;
-using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
 

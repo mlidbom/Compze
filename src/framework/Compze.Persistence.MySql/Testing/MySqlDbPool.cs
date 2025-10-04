@@ -1,4 +1,3 @@
-using System;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Testing.DbPool;
 using Compze.Utilities.Functional;

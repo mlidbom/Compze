@@ -3,7 +3,6 @@ using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Tests.Persistence.DocumentDb;
 using FluentAssertions.Extensions;
-using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace Compze.Tests.Performance.Internals.Persistence.DocumentDb;

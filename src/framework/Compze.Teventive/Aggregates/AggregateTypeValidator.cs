@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Compze.Abstractions.Internal.Persistence.EventStore;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Tessaging;
 using Compze.Tessaging.Common;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;

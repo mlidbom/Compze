@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.Common.AdoCE.Abstractions;
 

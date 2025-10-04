@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using Compze.Persistence.Common.AdoCE;
 

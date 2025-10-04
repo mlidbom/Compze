@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.SystemExtensions;

@@ -1,5 +1,4 @@
 using System;
-using Compze.Teventive.Aggregates;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using JetBrains.Annotations;
 

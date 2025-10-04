@@ -1,4 +1,3 @@
-using System;
 using System.Transactions;
 using Compze.Persistence.MySql.SystemExtensions;
 using JetBrains.Annotations;

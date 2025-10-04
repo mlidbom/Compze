@@ -1,5 +1,4 @@
-﻿using System;
-using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+﻿using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
 using Compze.Persistence.MicrosoftSqlServer.Testing.Databases;
 using Compze.Testing.DbPool;
 using Microsoft.Data.SqlClient;

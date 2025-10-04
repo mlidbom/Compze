@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Compze.Persistence.Common.AdoCE;
+﻿using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Compze.Utilities.Contracts;

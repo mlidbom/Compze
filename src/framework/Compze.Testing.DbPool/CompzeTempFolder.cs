@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Compze.Testing.DbPool.SystemCE.ThreadingCE;
+﻿using Compze.Testing.DbPool.SystemCE.ThreadingCE;
 
 namespace Compze.Testing.DbPool;
 

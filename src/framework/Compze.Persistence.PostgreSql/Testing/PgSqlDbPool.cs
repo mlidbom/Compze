@@ -1,4 +1,3 @@
-using System;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Testing.DbPool;

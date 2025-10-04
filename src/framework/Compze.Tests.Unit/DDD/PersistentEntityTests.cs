@@ -1,5 +1,4 @@
 using System;
-using Compze.DDD;
 using Compze.DDD.Abstractions;
 using Compze.Testing;
 using NUnit.Framework;

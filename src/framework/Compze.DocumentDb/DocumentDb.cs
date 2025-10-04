@@ -6,7 +6,6 @@ using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.DDD;
 using Compze.DDD.Abstractions;
 using Compze.DocumentDb.Abstractions;
 using Compze.Serialization.Abstractions;

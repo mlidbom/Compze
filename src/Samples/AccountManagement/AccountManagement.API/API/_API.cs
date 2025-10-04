@@ -2,8 +2,6 @@
 // ReSharper disable MemberCanBeMadeStatic.Local
 using System;
 using Compze.Persistence.InMemory.DependencyInjection;
-
-using Compze.Tessaging;
 using Compze.Tessaging.Tessaging;
 using Compze.Tessaging.Tessaging.Buses;
 using Compze.Tessaging.Tessaging.Typermedia;

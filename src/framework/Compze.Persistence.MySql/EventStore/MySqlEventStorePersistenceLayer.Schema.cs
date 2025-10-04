@@ -1,5 +1,4 @@
 ﻿using Compze.Persistence.Common.AdoCE;
-using Compze.EventStore.PersistenceLayer;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
