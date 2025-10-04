@@ -8,7 +8,7 @@
 
 ## Ushering in Paradigm Shifts
 
-There are two areas where we feel the industry has been stuck in old models for more than a decade. Failing to realize and leverage the potential of paradigms that are already here. Paradigms which can fundamentally transform how we build systems for the better. Compze aims to help make these paradigms widely understood, accessible, and popular through tooling and documentation.
+There are two areas where we feel the industry has been stuck in old models for more than a decade. Implementing hypermedia and event-driven architectures as if modern C# language features and .NET runtime abilities did not exist. Compze aims to change that by introducing two paradigms that are improvements on old ones.
 
 ### Teventive programming
 
