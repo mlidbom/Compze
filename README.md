@@ -75,7 +75,7 @@ Now you can:
 
 ### 🌐 Typermedia APIs
 
-The most popular API in the world is a Hypermedia API. You're using it right now - it's called the World Wide Web. Can you imagine trying to use it without links and forms?
+The most popular API in the world is a Hypermedia API. You're using it right now - it's called the World Wide Web. Can you imagine trying to use it without links and forms? Instead being given an int or a string? Why do we build APIs like that?
 
 Compze extends Hypermedia into Typermedia which is Hypermedia which:
 
