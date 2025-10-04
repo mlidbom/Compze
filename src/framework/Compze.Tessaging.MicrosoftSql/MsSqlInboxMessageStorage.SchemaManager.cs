@@ -2,7 +2,7 @@ using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Message =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSql.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.MicrosoftSql;
 
 partial class MsSqlInboxPersistenceLayer
 {

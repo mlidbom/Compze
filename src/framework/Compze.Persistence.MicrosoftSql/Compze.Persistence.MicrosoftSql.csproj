@@ -12,6 +12,7 @@
       <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
       <ProjectReference Include="..\Compze.DocumentDb.MicrosoftSql\Compze.DocumentDb.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Compze.EventStore.MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
    </ItemGroup>

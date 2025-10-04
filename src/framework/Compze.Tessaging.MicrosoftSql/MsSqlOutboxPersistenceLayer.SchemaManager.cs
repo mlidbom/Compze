@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Message = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using D = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSql.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.MicrosoftSql;
 
 partial class MsSqlOutboxPersistenceLayer
 {
