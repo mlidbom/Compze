@@ -131,32 +131,13 @@ Compze provides the tools and patterns to build better systems.
 
 ---
 
-## Project Structure
-
-```
-Compze/
-├── src/                          # Source code
-│   └── framework/                # Core framework components
-│       ├── Compze.Abstractions/
-│       ├── Compze.DDD.Abstractions/
-│       ├── Compze.EventStore/
-│       ├── Compze.DocumentDb/
-│       └── ...                   # Additional components
-├── Samples/                      # Example projects
-├── Website/                      # Documentation website
-└── tools/                        # Build and development tools
-```
-
----
-
 ## Features
 
-- **Event Sourcing & CQRS** - Full support for event sourcing patterns with semantic events
-- **Multiple Persistence Options** - Support for SQL Server, PostgreSQL, MySQL, and in-memory storage
+- **Event Sourcing & CQRS** - Event sourcing with Tevents
+- **Multiple Persistence Options** - Support for SQL Server, PostgreSQL and MySQL
 - **Dependency Injection** - Integration with Microsoft DI and SimpleInjector
 - **Type-Safe Event Routing** - Leverage C# type system for automatic event routing
-- **Aggregate Inheritance** - Model complex domain hierarchies with confidence
-- **Reusable Components** - Build event-based components that can be shared across aggregates
+- **Aggregate Inheritance** - Model complex domains with greater ease
 
 ---
 
@@ -177,12 +158,6 @@ We welcome contributions! Whether it's:
 - 🔧 Code contributions
 
 Please feel free to open issues or submit pull requests.
-
----
-
-## Community
-
-- [Gitter Chat](https://gitter.im/Composable4/Lobby)
 
 ---
 
