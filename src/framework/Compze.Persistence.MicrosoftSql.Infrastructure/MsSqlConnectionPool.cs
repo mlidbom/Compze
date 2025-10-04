@@ -4,9 +4,9 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSql.SystemExtensions;
+namespace Compze.Persistence.MicrosoftSql.Infrastructure;
 
-interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
+internal interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
 {
    static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);

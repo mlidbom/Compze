@@ -3,7 +3,7 @@ using System.Data.SqlTypes;
 using Compze.EventStore;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;

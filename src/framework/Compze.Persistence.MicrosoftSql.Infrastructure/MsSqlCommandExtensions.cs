@@ -1,9 +1,9 @@
 using Compze.Persistence.Common.AdoCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSql.SystemExtensions;
+namespace Compze.Persistence.MicrosoftSql.Infrastructure;
 
-static class MsSqlCommandExtensions
+public static class MsSqlCommandExtensions
 {
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this SqlCommand @this, Func<SqlDataReader, T> select)
       => DbCommandCE.ExecuteReaderAndSelect(@this, select);

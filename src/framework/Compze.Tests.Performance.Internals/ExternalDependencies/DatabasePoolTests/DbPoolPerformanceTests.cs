@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.DependencyInjection;
 using Compze.Logging;
-using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.PostgreSql.SystemExtensions;
 

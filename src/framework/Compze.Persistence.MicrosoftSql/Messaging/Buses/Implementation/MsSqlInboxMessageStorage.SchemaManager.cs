@@ -1,4 +1,4 @@
-using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Message =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 

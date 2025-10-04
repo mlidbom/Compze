@@ -1,4 +1,4 @@
-using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Document = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;

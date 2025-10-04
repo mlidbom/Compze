@@ -1,13 +1,13 @@
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSql;
+namespace Compze.Persistence.MicrosoftSql.Infrastructure;
 
 //We will most likely want to make higher level policy based on this information, so let's start concentrating it here rather than spreading it everywhere.
-static class SqlExceptions
+public static class SqlExceptions
 {
-   internal static class MsSql
+   public static class MsSql
    {
       const int PrimaryKeyViolationSqlErrorNumber = 2627;
-      internal static bool IsPrimaryKeyViolation(SqlException e) => e.Number == PrimaryKeyViolationSqlErrorNumber;
+      public static bool IsPrimaryKeyViolation(SqlException e) => e.Number == PrimaryKeyViolationSqlErrorNumber;
    }
 }

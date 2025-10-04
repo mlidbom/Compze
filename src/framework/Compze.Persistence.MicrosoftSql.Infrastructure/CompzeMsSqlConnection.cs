@@ -3,9 +3,9 @@ using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSql;
+namespace Compze.Persistence.MicrosoftSql.Infrastructure;
 
-interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlCommand>
+internal interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlCommand>
 {
    internal static ICompzeMsSqlConnection Create(string connString) => new CompzeMsSqlConnection(connString);
 

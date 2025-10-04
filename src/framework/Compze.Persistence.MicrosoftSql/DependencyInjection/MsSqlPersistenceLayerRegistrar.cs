@@ -6,7 +6,7 @@ using Compze.DocumentDb.MicrosoftSql;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.MicrosoftSql.EventStore;
 using Compze.Persistence.MicrosoftSql.Messaging.Buses.Implementation;
-using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MicrosoftSql.Testing;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Buses.Implementation;
@@ -49,9 +49,7 @@ public static class MsSqlPersistenceLayerRegistrar
                   .CreatedBy((IMsSqlConnectionPool endpointSqlConnection) => new MsSqlInboxPersistenceLayer(endpointSqlConnection)));
 
       //DocumentDB
-      container.Register(
-         Singleton.For<IDocumentDbPersistenceLayer>()
-                  .CreatedBy((IMsSqlConnectionPool connectionProvider) => new MsSqlDocumentDbPersistenceLayer(connectionProvider)));
+      container.RegisterMsSqlDocumentDb();
 
       //Event store
       container.Register(

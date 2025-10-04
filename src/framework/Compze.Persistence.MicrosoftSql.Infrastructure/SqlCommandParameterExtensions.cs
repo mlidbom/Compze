@@ -1,9 +1,9 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSql.SystemExtensions;
+namespace Compze.Persistence.MicrosoftSql.Infrastructure;
 
-static class SqlCommandParameterExtensions
+public static class SqlCommandParameterExtensions
 {
    public static SqlCommand AddParameter(this SqlCommand @this, string name, int value) => AddParameter(@this, name, SqlDbType.Int, value);
    public static SqlCommand AddParameter(this SqlCommand @this, string name, Guid value) => AddParameter(@this, name, SqlDbType.UniqueIdentifier, value);
