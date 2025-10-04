@@ -1,28 +1,23 @@
-# Compze
-
-[![Gitter](https://badges.gitter.im/Composable4/Lobby.svg)](https://gitter.im/Composable4/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[Skype Chat](https://join.skype.com/awyeJlk3rVbu)
-
-**A .NET framework for building maintainable event-driven systems**
-
-[📖 Documentation](http://compze.net/) | [🔧 Development Setup](DEVELOPMENT.md)
-
----
-
-## Ushering in Paradigm Shifts
-
-There are two areas where the industry has been stuck in old models for more than a decade. Failing to realize and leverage the potential of paradigms that are already here. Paradigms which can fundamentally transform how we build systems for the better. Compze aims to help make these paradigms widely understood, accessible, and popular through developing tooling and writing comprehensive documentation.
+## Compze: Expressive domains through Teventive programming and Typermedia APIs
 
 ### Teventive programming
 
-Leveraging well-established C# features enables an event modeling paradigm which:
+Leveraging .NET type compatibility enables an event modeling paradigm which:
 
-- **Gives unprecedented ability to understand domains** in terms of how events relate to each other
+- **Gives unprecedented ability to express and understand domains**
+  - The event definitions declaritively describe your domain in great detail. Spending 30 minutes reading the event interfaces of a teventive domain may well tell you more about that domain than spending a week reading through the implementation code of a classically implemented domain, where such design aspects can only be found in the implementation details. 
 - **Eliminates all need for manual event routing and type checking**
 - **Dramatically reduces the number of event subscriptions needed**
 - **Enables modeling inheritance and composition** of event-based [aggregates](https://compze.net/docs/prerequisite-terms.html#aggregate) with elegant precision
 - **[Unifies fine-grained and coarse-grained events](https://compze.net/paradigms/semantic-events/property-updated-events.html)** - no more choosing between property-updated style events and domain events
 - **Enables subscribing to precisely the event you need**, while being guaranteed that when new events are added, inheriting the current event, you will receive those too without needing to change anything in your subscriber code
+
+
+> **💡 Note:** Teventive programming does **not** require event sourcing or asynchronous messaging. All benefits described above are available with **synchronous, in-memory communication**, and aggregates can be stored using any persistence mechanism you prefer, or not at all.
+
+> **💡 Note:** In memory performance overhead is entirely negligible in the great majority of systems. Event dispatching comes down to looking up subscribers in a dictionary using a Type instance as the key.
+
+> **💡 Note:** Unlike what one might expect, initial subscriber discovery is trivial and not error prone. It just comes down to Type.IsAssignableFrom.
 
 #### Core Concepts
 
@@ -46,11 +41,11 @@ Events are routed by **type compatibility**, including support for **generic cov
 ```csharp
 registrar
   .ForEvent<IUserEvent>(userEvent => 
-      WriteLine($"User: {userEvent.AggregateId} something happened"))
+      Console.WriteLine($"User: {userEvent.AggregateId} something happened"))
   .ForEvent<IUserRegistered>(userRegistered => 
-      WriteLine($"User: {userRegistered.AggregateId} registered"))
+      Console.WriteLine($"User: {userRegistered.AggregateId} registered"))
   .ForEvent<IUserImported>(userImported => 
-      WriteLine($"User: {userImported.AggregateId} imported"));
+      Console.WriteLine($"User: {userImported.AggregateId} imported"));
 ```
 
 When an `IUserImported` event is published, **all three handlers** are called automatically because `IUserImported` is type-compatible with all registered handlers.
@@ -70,42 +65,65 @@ interface IUserChangedEmail : IUserEmailPropertyUpdated;
 ```
 
 Now you can:
-- Listen to **all email updates** via `IUserEmailPropertyUpdated` - never needs to change
-- Listen to **registration events** via `IUserRegistered` - never needs to change
+- Listen to **all email updates** via `IUserEmailPropertyUpdated` - listeners never need to change
+- Listen to **registration events** via `IUserRegistered` - listeners never need to change
 - Add new ways to update email without touching existing code
 
 **Learn more:** [Semantic Events Documentation](https://compze.net/paradigms/semantic-events/definition.html)
 
 ### 🌐 Typermedia APIs
 
-The most popular API in the world is a Hypermedia API. You're using it right now - it's called the World Wide Web. Can you imagine trying to use it without links and forms?
+The most popular API in the world is a hypermedia API. You're using it right now - it's called the World Wide Web. Can you imagine trying to use it without links and forms? Instead being given an int or a string? Why do we build APIs like that?
 
-Compze extends Hypermedia into Typermedia which is Hypermedia which:
+Compze extends hypermedia into Typermedia which:
 
 - **Routes messages by .NET types** giving:
   - Zero configuration routing
   - A simple, already well-known programming model
-- **Can be fully explored** using a `Navigator`, browsed much like a website, by:
-  - `Get`ting `Link`s
-  - `Post`ing `Command`s
+- **Can be fully explored**,  browsed much like a website, by:
+  - Getting Links
+  - Posting Commands
   - All with full type safety and autocomplete in your IDE
-- **Can be in-memory or remote** with the same interface
-- **Further encapsulates your domain**, exposing less implementation details than traditional services
-- **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**, ideal for black box testing
+- **Further encapsulates your domain**, exposing less implementation details than traditional APIs
+  - All domain logic, validation, and available actions can be encapsulated in the .NET types returned by the API
+  - The UI need only binds these types to UI components without implementing any domain logic
+  - Application behavior can be fully tested without any UI framework
+  - Changing the UI becomes far less burdensome and does not risk changing domain logic
 
-Once you've used APIs like that, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
+> **💡 Note:** All of the above benefits can be had with Typermedia APIs implemented **entirely in-memory and synchronously**. Distribution and asynchronous communication is entirely optional, not a requirement.
 
-**Learn more:** [Typermedia Documentation](https://compze.net/paradigms/hypermedia-apis/introduction.html)
+> **💡 Note:** In memory performance overhead is negligible in the great majority of systems. Message dispatching essentially comes down to a single lookup in a dictionary using a Type instance as the key.
 
----
+#### Quick Example
 
-## Why Compze?
+```csharp
+//Set up a specification for how we want to navigate the API.
+var navigationToUserManagement = 
+    NavigationSpecification.Get(MyApi.StartPage) //Get startpage
+                           .Get(start => start.UserManagement);//Navigate to user management
 
-In spite of these powerful paradigms being available to us today, countless event-driven applications are shock full of code that leverages none of these possibilities, resulting in what can only be described as maintenance nightmares.
+//Execute the navigation spec using a browser. Since it is async we may safely assume this is 
+//a remote call, but the spec could just as well be executed synchronously in memory:
+var userManagementPage =  await navigationToUserManagement.NavigateAsyncUsing(httpBrowser);
+                                                  
 
-It's essentially the event equivalent of working in C# while completely refusing to use generics and object-oriented programming. Surely we should not even need to argue that this is ill-advised?
+//use the page to create a command
+var registerCommand = userManagementPage.Commands.RegisterUser();
+registerCommand.Email = email; //In a real app you would bind it to UI controls, not do this
+registerCommand.Password = password;
+registerCommand.RepeatedPassword = repeatedPassword;
 
-Compze provides the tools and patterns to build better systems.
+//Executes client side validation implemented in the command before posting it.
+//In a real app any validation errors would be caught and bound to the UI
+var user = await httpBrowser.Post(registerCommand); 
+
+var userProfilePage = await httpBrowser.Get(user.ProfilePage);
+
+//Profile page displayed in ui here
+```
+> **💡 Note:** A developer could write all of that whithout ever leaving their IDE. Autocomplete in the IDE makes the API browsable, not just at runtime, but as part of writing code. The same goes for the all of the functionality of a domain exposed through a Typermedia API, not just the simple example above.
+
+Once you've used APIs like this, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
 
 ---
 
@@ -130,43 +148,24 @@ Compze provides the tools and patterns to build better systems.
 
 3. **Explore the samples**
    
-   Check out the `Samples/` directory for example projects demonstrating Compze's capabilities.
-
----
-
-## Project Structure
-
-```
-Compze/
-├── src/                          # Source code
-│   └── framework/                # Core framework components
-│       ├── Compze.Abstractions/
-│       ├── Compze.DDD.Abstractions/
-│       ├── Compze.EventStore/
-│       ├── Compze.DocumentDb/
-│       └── ...                   # Additional components
-├── Samples/                      # Example projects
-├── Website/                      # Documentation website
-└── tools/                        # Build and development tools
-```
+   Check out the `Samples/` directory for a demonstration of Compze's capabilities.
 
 ---
 
 ## Features
 
-- **Event Sourcing & CQRS** - Full support for event sourcing patterns with semantic events
-- **Multiple Persistence Options** - Support for SQL Server, PostgreSQL, MySQL, and in-memory storage
+- **Event Sourcing & CQRS** - Event sourcing with Tevents
+- **Multiple Persistence Options** - Support for SQL Server, PostgreSQL and MySQL
 - **Dependency Injection** - Integration with Microsoft DI and SimpleInjector
 - **Type-Safe Event Routing** - Leverage C# type system for automatic event routing
-- **Aggregate Inheritance** - Model complex domain hierarchies with confidence
-- **Reusable Components** - Build event-based components that can be shared across aggregates
+- **Aggregate Inheritance** - Model complex domains with greater ease
 
 ---
 
-## Documentation
+## Fledgling Documentation
 
-- **[Full Documentation](http://compze.net/)**
-- **[Semantic Events Guide](https://compze.net/paradigms/semantic-events/definition.html)**
+- **[Project Site](http://compze.net/)**
+- **[Semantic Events](https://compze.net/paradigms/semantic-events/definition.html)**
 - **[Development Setup](DEVELOPMENT.md)**
 
 ---
@@ -175,17 +174,11 @@ Compze/
 
 We welcome contributions! Whether it's:
 - 🐛 Bug reports
-- 💡 Feature suggestions
+- 💡 Feature suggestions  
 - 📝 Documentation improvements
 - 🔧 Code contributions
 
 Please feel free to open issues or submit pull requests.
-
----
-
-## Community
-
-- [Gitter Chat](https://gitter.im/Composable4/Lobby)
 
 ---
 

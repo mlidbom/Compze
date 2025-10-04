@@ -73,15 +73,6 @@ This environment variable lets you adjust the expectations for the performance t
 
 **Example:** If you set it to `2.0`, performance tests are allowed to take 2.0 times as long to complete without failing.
 
-```powershell
-# PowerShell
-$env:COMPOSABLE_MACHINE_SLOWNESS = "2.0"
-```
-
-```bash
-# Bash
-export COMPOSABLE_MACHINE_SLOWNESS=2.0
-```
 
 ### Test Configuration Options
 
@@ -109,31 +100,8 @@ If performance tests are failing:
 2. Close other resource-intensive applications
 3. Check if background processes are affecting performance
 
-### Missing Dependencies
 
-Make sure all NuGet packages are restored:
-
-```powershell
-dotnet restore src/Compze.Everything.sln
-```
-
-## Project Structure
-
-The solution is organized as follows:
-
-```
-src/
-├── Compze.Everything.sln           # Main solution file
-├── framework/                      # Core framework projects
-│   ├── Compze.Abstractions/
-│   ├── Compze.EventStore/
-│   ├── Compze.DocumentDb/
-│   └── ...
-├── Samples/                        # Example projects
-└── tests/                          # Test projects
-```
-
-## Building the Documentation
+## Contributing Documentation
 
 The documentation website is in the `Website/` directory and uses DocFX.
 
@@ -143,14 +111,3 @@ See `Website/README.md` for instructions on building and running the documentati
 
 - [Main README](README.md)
 - [Project Website](http://compze.net/)
-- [Gitter Chat](https://gitter.im/Composable4/Lobby)
-- [Skype Chat](https://join.skype.com/awyeJlk3rVbu)
-
-## Getting Help
-
-If you run into issues:
-
-1. Check this guide first
-2. Search existing issues on GitHub
-3. Join our [Gitter chat](https://gitter.im/Composable4/Lobby) for community support
-4. Open a new issue with details about your problem
