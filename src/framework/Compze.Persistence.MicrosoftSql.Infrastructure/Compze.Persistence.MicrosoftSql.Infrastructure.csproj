@@ -17,6 +17,7 @@
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Common" />

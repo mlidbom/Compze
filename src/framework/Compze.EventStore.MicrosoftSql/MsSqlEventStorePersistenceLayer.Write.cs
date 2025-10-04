@@ -11,7 +11,7 @@ using Microsoft.Data.SqlClient;
 using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSql.EventStore;
+namespace Compze.EventStore.MicrosoftSql;
 
 partial class MsSqlEventStorePersistenceLayer
 {

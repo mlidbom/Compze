@@ -4,7 +4,7 @@ using Compze.Persistence.MicrosoftSql.Infrastructure;
 using JetBrains.Annotations;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSql.EventStore;
+namespace Compze.EventStore.MicrosoftSql;
 
 class MsSqlEventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
 {

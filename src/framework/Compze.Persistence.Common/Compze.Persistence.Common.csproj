@@ -22,6 +22,7 @@
         <InternalsVisibleTo Include="Compze.DocumentDb" />
         <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
         <InternalsVisibleTo Include="Compze.EventStore" />
+        <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
         <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
         <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
         <InternalsVisibleTo Include="Compze.Persistence.MySql" />

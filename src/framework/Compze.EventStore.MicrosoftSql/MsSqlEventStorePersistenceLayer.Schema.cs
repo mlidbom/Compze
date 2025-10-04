@@ -2,7 +2,7 @@ using Compze.Persistence.Common.AdoCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSql.EventStore;
+namespace Compze.EventStore.MicrosoftSql;
 
 partial class MsSqlEventStorePersistenceLayer
 {

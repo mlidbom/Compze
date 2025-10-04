@@ -6,7 +6,7 @@ using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSql.EventStore;
+namespace Compze.EventStore.MicrosoftSql;
 
 partial class MsSqlEventStorePersistenceLayer(MsSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {
