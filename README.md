@@ -1,8 +1,4 @@
-# Compze
-
-**Build maintainable Teventive systems exposing Typermedia APIs**
-
-There are two areas where we feel the industry has been stuck in old models for more than a decade. Implementing event-driven architectures and hypermedia APIs as if modern C# language features and .NET runtime abilities did not exist. Compze aims to change that by introducing two paradigms that are improvements on old ones.
+# Compze: Maintainable domains through Teventive programming and Typermedia APIs
 
 ### Teventive programming
 
