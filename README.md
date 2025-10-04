@@ -135,5 +135,3 @@ Once you've used APIs like this, how would you feel about an API that gives you 
 - **[Development Setup](DEVELOPMENT.md)**
 
 ---
-
-**Built by and for developers who care about maintainability**
