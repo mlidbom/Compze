@@ -1,4 +1,4 @@
-# Compze: Expressive domains through Teventive programming and Typermedia APIs
+## Compze: Expressive domains through Teventive programming and Typermedia APIs
 
 ### Teventive programming
 
