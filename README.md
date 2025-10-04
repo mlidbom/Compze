@@ -152,7 +152,7 @@ Once you've used APIs like this, how would you feel about an API that gives you 
 
 3. **Explore the samples**
    
-   Check out the `Samples/` directory for example projects demonstrating Compze's capabilities.
+   Check out the `Samples/` directory for a demonstration of Compze's capabilities.
 
 ---
 
