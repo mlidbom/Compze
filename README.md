@@ -48,7 +48,7 @@ registrar
       Console.WriteLine($"User: {userImported.AggregateId} imported"));
 ```
 
-When an `IUserImported` event is published, **all three handlers** are called automatically because `IUserImported` is type-compatible with all registered handlers.
+When an `IUserImported` event is published, **all three handlers** are called, in registration order, since `IUserImported` is type-compatible with all registered handlers.
 
 #### Property Updates Without the Pain
 
