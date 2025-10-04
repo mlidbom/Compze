@@ -85,14 +85,13 @@ Compze extends Hypermedia into Typermedia which is Hypermedia that:
 - **Routes messages by .NET types** giving:
   - Zero configuration routing
   - A simple, already well-known programming model
-- **Can be fully explored** using a `Navigator`, browsed much like a website, by:
-  - `Get`ting `Link`s
-  - `Post`ing `Command`s
+- **Can be fully explored**,  browsed much like a website, by:
+  - Getting Links
+  - Posting Commands
   - All with full type safety and autocomplete in your IDE
-- **Further encapsulates your domain**, exposing less implementation details than traditional services
-- **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**
+- **Further encapsulates your domain**, exposing less implementation details than traditional APIs
   - All domain logic, validation, and available actions can be encapsulated in the .NET types returned by the API
-  - The UI only binds these types to UI components without implementing any domain logic
+  - The UI need only binds these types to UI components without implementing any domain logic
   - Application behavior can be fully tested without any UI framework
   - Changing the UI becomes far less burdensome and does not risk changing domain logic
 
