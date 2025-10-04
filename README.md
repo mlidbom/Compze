@@ -92,7 +92,7 @@ Compze extends Hypermedia into Typermedia which is Hypermedia that:
   - All domain logic, validation, and available actions can be encapsulated in the .NET types returned by the API
   - The UI only binds these types to UI components without implementing any domain logic
   - Application behavior can be fully tested without any UI framework
-  - Changing the UI becames far less burdensome and does not risk changing domain logic
+  - Changing the UI becomes far less burdensome and does not risk changing domain logic
 
 #### Quick Example
 
