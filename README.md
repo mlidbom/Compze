@@ -43,11 +43,11 @@ Events are routed by **type compatibility**, including support for **generic cov
 ```csharp
 registrar
   .ForEvent<IUserEvent>(userEvent => 
-      WriteLine($"User: {userEvent.AggregateId} something happened"))
+      Console.WriteLine($"User: {userEvent.AggregateId} something happened"))
   .ForEvent<IUserRegistered>(userRegistered => 
-      WriteLine($"User: {userRegistered.AggregateId} registered"))
+      Console.WriteLine($"User: {userRegistered.AggregateId} registered"))
   .ForEvent<IUserImported>(userImported => 
-      WriteLine($"User: {userImported.AggregateId} imported"));
+      Console.WriteLine($"User: {userImported.AggregateId} imported"));
 ```
 
 When an `IUserImported` event is published, **all three handlers** are called automatically because `IUserImported` is type-compatible with all registered handlers.
@@ -90,7 +90,34 @@ Compze extends Hypermedia into Typermedia which is Hypermedia which:
 - **Further encapsulates your domain**, exposing less implementation details than traditional services
 - **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**, ideal for black box testing
 
-Once you've used APIs like that, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
+#### Quick Example
+
+```csharp
+//Set up a specification for how we want to navigate the API.
+var navigationToUserManagement = NavigationSpecification.Get(MyApi.StartPage) //Get startpage
+                                                        .Get(start => start.UserManagement);//Navigate to user management section
+
+//Execute the navigation spec using a browser. Since it is async we may safely assume this is a remote call, 
+//but the spec could just as well be executed synchronously in memory:
+var userManagementPage =  await navigationToUserManagement.NavigateAsyncUsing(httpBrowser);
+                                                  
+
+//use the page to create a command
+var registerCommand = userManagementPage.Commands.RegisterUser();
+registerCommand.Email = email; //In a real app you would bind it to UI controls, not do this
+registerCommand.Password = password;
+registerCommand.RepeatedPassword = repeatedPassword;
+
+//Executes client side validation implemented in the command before posting it.
+//In a real app any validation errors would be caught and bound to the UI
+var user = await httpBrowser.Post(registerCommand); 
+
+var userProfilePage = await httpBrowser.Get(user.ProfilePage);
+
+//Profile page displayed in ui here
+```
+
+Once you've used APIs like this, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
 
 **Learn more:** [Typermedia Documentation](https://compze.net/paradigms/hypermedia-apis/introduction.html)
 
