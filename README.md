@@ -125,7 +125,7 @@ var userProfilePage = await httpBrowser.Get(user.ProfilePage);
 
 //Profile page displayed in ui here
 ```
-> **💡 Note:** A developer could write all of that whithout ever leaving their IDE, Autocomplete in the IDE makes the API browsable, not just at runtime, but as part of writing code. The same goes for the all of the functionality of a domain exposed through a Typermedia API, not just the simple example above.
+> **💡 Note:** A developer could write all of that whithout ever leaving their IDE. Autocomplete in the IDE makes the API browsable, not just at runtime, but as part of writing code. The same goes for the all of the functionality of a domain exposed through a Typermedia API, not just the simple example above.
 
 Once you've used APIs like this, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
 
