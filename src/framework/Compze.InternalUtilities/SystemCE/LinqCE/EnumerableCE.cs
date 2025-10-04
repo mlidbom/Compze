@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.LinqCE;
+namespace Compze.Utilities.SystemCE.LinqCE;
 
 /// <summary/>
 public static partial class EnumerableCE

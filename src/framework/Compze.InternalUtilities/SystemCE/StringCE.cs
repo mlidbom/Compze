@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Compze.Functional;
+using Compze.Utilities.Functional;
 using JetBrains.Annotations;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE;
+namespace Compze.Utilities.SystemCE;
 
 ///<summary>Contains extensions on <see cref="string"/></summary>
 static class StringCE

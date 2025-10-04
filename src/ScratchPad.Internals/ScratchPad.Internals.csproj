@@ -12,8 +12,6 @@
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="8.7.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-        <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
-        <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
         <PackageReference Include="NUnit" Version="4.4.0" />
         <PackageReference Include="NUnit.Analyzers" Version="4.10.0">
             <PrivateAssets>all</PrivateAssets>
@@ -33,8 +31,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\framework\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
-      <ProjectReference Include="..\framework\Compze\Compze.csproj" />
+      <ProjectReference Include="..\framework\Compze.Abstractions\Compze.Abstractions.csproj" />
+      <ProjectReference Include="..\framework\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
+      <ProjectReference Include="..\framework\Compze.InternalUtilities\Compze.Utilities.csproj" />
     </ItemGroup>
 
     <!--Remove when the bug causing this warning to appear has been fixed: https://github.com/microsoft/testfx/issues/3813 https://github.com/microsoft/testfx/pull/3891 -->

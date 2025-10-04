@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Contracts;
+namespace Compze.Utilities.Contracts;
 
 static class Assert
 {

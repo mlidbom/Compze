@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
-using Compze.Refactoring.Naming;
+using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
+using Compze.Serialization.Abstractions;
+
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Tests.Unit.Internals.Serialization;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
 using NUnit.Framework;
 

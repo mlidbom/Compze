@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Compze.Functional;
+using Compze.Utilities.Functional;
 
-namespace Compze.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 static class TaskUnit
 {

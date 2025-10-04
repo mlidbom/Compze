@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Transactions;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.SystemCE.TransactionsCE;
+namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 ///<summary>Getting the code for participating in a transaction right is surprisingly tricky and the failures very hard to diagnose.
 /// Use this class for all our transaction participants so we only have to get it right once.</summary>

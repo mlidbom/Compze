@@ -1,6 +1,8 @@
-﻿using Compze.SystemCE;
+﻿
 using Compze.Testing;
+using Compze.Testing.DbPool.SystemCE;
 using Compze.Testing.Performance;
+using Compze.Utilities.SystemCE;
 using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo

@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Compze.Functional;
+using Compze.Utilities.Functional;
 
-namespace Compze.Contracts;
+namespace Compze.Utilities.Contracts;
 
 partial class ContractAsserter
 {

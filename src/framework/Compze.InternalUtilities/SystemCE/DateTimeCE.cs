@@ -1,8 +1,8 @@
 ﻿using System;
-using Compze.Contracts;
-using Compze.Functional;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
 
-namespace Compze.SystemCE;
+namespace Compze.Utilities.SystemCE;
 
 static class DateTimeCE
 {

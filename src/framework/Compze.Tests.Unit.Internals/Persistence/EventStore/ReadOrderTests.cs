@@ -1,10 +1,11 @@
 ﻿using System;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
+
 using Compze.Testing;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using NUnit.Framework;
-using ReadOrder = Compze.Persistence.EventStore.PersistenceLayer.ReadOrder;
+using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Persistence.EventStore;

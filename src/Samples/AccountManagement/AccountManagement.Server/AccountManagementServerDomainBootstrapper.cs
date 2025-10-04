@@ -3,9 +3,10 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Compze.Persistence.Common.DependencyInjection;
-using Compze.Persistence.EventStore;
+using Compze.DocumentDb.DependencyInjection;
+using Compze.Persistence.DependencyInjection;
 using Compze.Tessaging.Buses;
+using Compze.Tessaging.Persistence.EventStore;
 using Compze.Testing.Persistence;
 
 namespace AccountManagement;

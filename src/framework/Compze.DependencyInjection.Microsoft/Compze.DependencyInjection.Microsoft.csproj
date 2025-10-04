@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <RootNamespace>Compze</RootNamespace>
+        <RootNamespace>Compze.DependencyInjection.Microsoft</RootNamespace>
         <NuGetAuditMode>direct</NuGetAuditMode>
         <AnalysisLevel>latest-all</AnalysisLevel>
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -22,11 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="DependencyInjection\" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Testing" />
     </ItemGroup>
 
 </Project>

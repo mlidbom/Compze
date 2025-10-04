@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.DependencyInjection;
-using Compze.GenericAbstractions.Time;
-using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Refactoring.Migrations;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
+using Compze.EventStore.Abstractions;
+using Compze.EventStore.Refactoring.Migrations;
+
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Performance;
 using Compze.Tests.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
-using JetBrains.Annotations;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;

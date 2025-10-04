@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.ReflectionCE;
+namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
 static class TypeCE

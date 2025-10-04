@@ -1,4 +1,5 @@
-﻿using Compze.Persistence.EventStore;
+﻿using Compze.EventStore.Abstractions;
+
 // ReSharper disable All
 #pragma warning disable 414
 #pragma warning disable IDE0059 // Unnecessary assignment of a value

@@ -1,4 +1,4 @@
-using Compze.Persistence.EventStore.Aggregates;
+using Compze.Teventive.Aggregates;
 using JetBrains.Annotations;
 
 // ReSharper disable MemberHidesStaticFromOuterClass

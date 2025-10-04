@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Functional;
+namespace Compze.Utilities.Functional;
 
 /// <summary>
 /// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.
@@ -34,8 +34,12 @@ static class Pipe
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="Unit"/>.  Useful for chaining statements that return void.</summary>
    public static Unit then<TValue>(this TValue _, Action action) => Unit.From(action);
 
-   ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
-   public static T mutate<T>(this T it, Action<T> mutate)
+
+    ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
+    public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
+
+    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
+    public static T mutate<T>(this T it, Action<T> mutate)
    {
       mutate(it);
       return it;

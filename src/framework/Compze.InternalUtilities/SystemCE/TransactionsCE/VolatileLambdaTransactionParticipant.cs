@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Compze.Contracts;
-using Compze.Functional;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
 
-namespace Compze.SystemCE.TransactionsCE;
+namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
 {

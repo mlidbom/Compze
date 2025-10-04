@@ -1,7 +1,7 @@
 ﻿using System;
-using Compze.Contracts;
+using Compze.Utilities.Contracts;
 
-namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 static class MonitorCEExtensions
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.SystemCE.ReactiveCE;
+namespace Compze.Utilities.SystemCE.ReactiveCE;
 
 public static class ObservableCE
 {

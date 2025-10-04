@@ -1,7 +1,7 @@
 ﻿using System;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
-using Compze.Persistence.EventStore;
+using Compze.EventStore.Abstractions;
 using Newtonsoft.Json;
 
 // ReSharper disable MemberHidesStaticFromOuterClass

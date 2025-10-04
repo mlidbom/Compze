@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.SystemCE;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+
 using Compze.Testing.Threading;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.Testing.Threading;
 

@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
-using Compze.Persistence.EventStore;
-using Compze.Refactoring.Naming;
-using Compze.SystemCE.LinqCE;
 using Compze.Testing;
-using Compze.Testing.SystemCE.TransactionsCE;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.EventStore.Abstractions;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tests.Integration.CQRS;
 

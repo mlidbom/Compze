@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
@@ -6,7 +6,7 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>Compze</RootNamespace>
+      <RootNamespace>Compze.DependencyInjection</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -20,20 +20,17 @@
    </ItemGroup>
 
    <ItemGroup>
-     <ProjectReference Include="..\Compze.InternalUtilities\Compze.InternalUtilities.csproj" />
+     <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
    </ItemGroup>
 
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
       <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
+      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Testing" />
-      <InternalsVisibleTo Include="Compze.Persistence" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
-      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
    </ItemGroup>
 </Project>

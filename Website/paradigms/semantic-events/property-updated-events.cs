@@ -1,6 +1,6 @@
-﻿using Compze.Persistence.EventStore;
-using Compze.SystemCE;
+﻿using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Buses;
+using Compze.Utilities.SystemCE;
 using static System.Console;
 
 // ReSharper disable UnusedType.Global

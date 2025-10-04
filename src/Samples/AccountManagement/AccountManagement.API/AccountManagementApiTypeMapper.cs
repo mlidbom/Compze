@@ -1,4 +1,4 @@
-﻿using Compze.Refactoring.Naming;
+﻿using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging;
 
 namespace AccountManagement;

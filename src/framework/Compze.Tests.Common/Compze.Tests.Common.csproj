@@ -1,23 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
-	   <IsPackable>false</IsPackable>
+      <IsPackable>false</IsPackable>
    </PropertyGroup>
-
    <PropertyGroup>
       <RootNamespace>Compze.Tests</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
-
    <ItemGroup>
-      <ProjectReference Include="..\Compze\Compze.csproj" />
+      <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
       <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
    </ItemGroup>
-
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
@@ -31,23 +28,17 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-
-    <PropertyGroup>
-        <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
-        <NoWarn>CS0436</NoWarn>
-    </PropertyGroup>
-
+   <PropertyGroup>
+      <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+      <NoWarn>CS0436</NoWarn>
+   </PropertyGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tests.Integration" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="ScratchPad.Internals" />
    </ItemGroup>
-
-
 </Project>

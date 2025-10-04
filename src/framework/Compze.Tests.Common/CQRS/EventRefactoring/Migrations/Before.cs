@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Refactoring.Migrations;
-using Compze.SystemCE.LinqCE;
-using Compze.SystemCE.ReflectionCE;
+using Compze.EventStore.Abstractions;
+using Compze.EventStore.Refactoring.Migrations;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
 

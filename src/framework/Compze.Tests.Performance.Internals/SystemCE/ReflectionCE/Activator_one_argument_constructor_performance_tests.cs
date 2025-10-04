@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Reflection;
-using Compze.SystemCE;
-using Compze.SystemCE.ReflectionCE;
+
 using Compze.Testing;
 using Compze.Testing.Performance;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;

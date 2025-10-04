@@ -1,4 +1,4 @@
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 ///<summary>Base class that takes care of most of the complexity of implementing <see cref="ISingleContextUseGuard"/></summary>
 abstract class UsageGuard : ISingleContextUseGuard

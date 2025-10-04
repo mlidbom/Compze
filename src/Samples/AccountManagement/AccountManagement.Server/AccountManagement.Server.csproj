@@ -1,29 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
-
    <PropertyGroup>
       <RootNamespace>AccountManagement</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
-
    <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
-      <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
       <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
    </ItemGroup>
-
-
    <ItemGroup>
       <None Update="appsettings.json">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-
 </Project>

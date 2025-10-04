@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
@@ -6,23 +6,22 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <RootNamespace>Compze</RootNamespace>
+      <RootNamespace>Compze.DocumentDb</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
 
    <ItemGroup>
-       <ProjectReference Include="..\Compze\Compze.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.DocumentDb.Abstractions.csproj" />
+      <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
       <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
    </ItemGroup>
 
    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <Folder Include="Persistence\" />
    </ItemGroup>
 
    <ItemGroup>

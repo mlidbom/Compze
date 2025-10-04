@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
-using Compze.Functional;
 using Compze.Logging;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Testing.Threading;
 

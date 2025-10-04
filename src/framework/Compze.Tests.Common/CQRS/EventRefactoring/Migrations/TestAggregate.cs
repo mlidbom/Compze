@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.GenericAbstractions.Time;
-using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Aggregates;
-using Compze.SystemCE.ReflectionCE;
+using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.EventStore.Abstractions;
+using Compze.Teventive.Aggregates;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global

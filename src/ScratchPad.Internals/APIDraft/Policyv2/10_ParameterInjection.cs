@@ -1,7 +1,7 @@
 ﻿// ReSharper disable All
 #pragma warning disable //Review OK: This is API experimental code that is never ever used.
 
-namespace Compze.Tests.Messaging.APIDraft.Policyv2;
+namespace ScratchPad.APIDraft.Policyv2;
 
 // ReSharper disable once UnusedMember.Global
 public class ParameterInjection

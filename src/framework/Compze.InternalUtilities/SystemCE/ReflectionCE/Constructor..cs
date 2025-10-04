@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.ReflectionCE;
+namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 public static partial class Constructor
 {

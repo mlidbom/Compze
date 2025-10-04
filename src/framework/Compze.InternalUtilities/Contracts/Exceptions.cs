@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Contracts;
+namespace Compze.Utilities.Contracts;
 
 class InvariantViolatedException(string message) : Exception(message);
 class InvalidResultException(string message) : Exception(message);

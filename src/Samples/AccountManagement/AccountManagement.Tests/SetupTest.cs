@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using AccountManagement.API;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
-using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Tessaging.Buses;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using NUnit.Framework;
 
 namespace AccountManagement;

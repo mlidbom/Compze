@@ -2,7 +2,7 @@
 using System.Transactions;
 using JetBrains.Annotations;
 
-namespace Compze.SystemCE.TransactionsCE;
+namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 static class TransactionScopeCe
 {

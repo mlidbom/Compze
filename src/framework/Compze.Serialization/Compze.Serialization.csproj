@@ -1,33 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
-
    <PropertyGroup>
-      <RootNamespace>Compze</RootNamespace>
+      <RootNamespace>Compze.Serialization</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
-
-   <ItemGroup>
-      <ProjectReference Include="..\Compze\Compze.csproj" />
-   </ItemGroup>
-
    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
-
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Logging" />
       <InternalsVisibleTo Include="Compze.DocumentDb" />
       <InternalsVisibleTo Include="Compze.EventStore" />
+      <InternalsVisibleTo Include="Compze.Logging" />
       <InternalsVisibleTo Include="Compze.Persistence" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
    </ItemGroup>
-
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
+   </ItemGroup>
 </Project>

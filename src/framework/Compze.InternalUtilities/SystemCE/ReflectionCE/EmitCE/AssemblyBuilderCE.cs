@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1810 // Initialize reference type static fields inline
 
-namespace Compze.SystemCE.ReflectionCE.EmitCE;
+namespace Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
 
 static class AssemblyBuilderCE
 {

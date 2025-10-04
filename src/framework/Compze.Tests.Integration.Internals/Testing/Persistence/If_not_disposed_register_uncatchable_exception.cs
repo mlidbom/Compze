@@ -1,8 +1,9 @@
 ﻿using System;
 using Compze.DependencyInjection;
-using Compze.Functional;
-using Compze.SystemCE;
+
 using Compze.Testing;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;

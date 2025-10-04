@@ -1,8 +1,8 @@
 using System;
 using System.Linq.Expressions;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.LinqCE;
+namespace Compze.Utilities.SystemCE.LinqCE;
 
 ///<summary>Extracts member names from expressions</summary>
 static class ExpressionUtil

@@ -1,7 +1,7 @@
 ﻿using System;
-using Compze.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 interface IThreadShared<out TResource>
 {

@@ -1,14 +1,14 @@
 ﻿using System;
 using Compze.DependencyInjection;
-using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MsSql.SystemExtensions;
+using Compze.Persistence.Common.AdoCE.Abstractions;
+using Compze.Persistence.MicrosoftSql.Infrastructure;
+using Compze.Persistence.MicrosoftSql.Testing;
 using Compze.Persistence.MySql.SystemExtensions;
-using Compze.Persistence.PgSql.SystemExtensions;
+using Compze.Persistence.MySql.Testing;
+using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.Testing;
 using Compze.Testing;
-using Compze.Testing.Persistence;
-using Compze.Testing.Persistence.MsSql;
-using Compze.Testing.Persistence.MySql;
-using Compze.Testing.Persistence.PgSql;
+using Compze.Testing.DbPool;
 
 namespace Compze.Tests.Integration.Internals.Testing.Persistence;
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Functional;
+namespace Compze.Utilities.Functional;
 
 ///<summary>
 /// Methods useful for any type when used in a Linq context

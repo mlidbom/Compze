@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.Persistence.DocumentDb;
+using Compze.DocumentDb.Abstractions;
 using Compze.Testing;
 using JetBrains.Annotations;
 using NUnit.Framework;

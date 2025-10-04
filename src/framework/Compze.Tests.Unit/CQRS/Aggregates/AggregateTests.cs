@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Compze.GenericAbstractions.Time;
-using Compze.Persistence.EventStore;
-using Compze.Persistence.EventStore.Aggregates;
-using Compze.SystemCE.ReactiveCE;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
+using Compze.EventStore.Abstractions;
+using Compze.Teventive.Aggregates;
 using Compze.Testing;
+using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
 using NUnit.Framework;
 

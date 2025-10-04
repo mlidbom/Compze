@@ -1,9 +1,10 @@
 using System;
 using Compze.Logging;
-using Compze.SystemCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
+
 using Compze.Testing;
 using Compze.Testing.Performance;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using NUnit.Framework;
 
 // ReSharper disable UnusedMethodReturnValue.Local

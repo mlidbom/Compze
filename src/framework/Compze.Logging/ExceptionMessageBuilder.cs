@@ -5,8 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Compze.Serialization;
-using Compze.SystemCE;
-using Compze.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

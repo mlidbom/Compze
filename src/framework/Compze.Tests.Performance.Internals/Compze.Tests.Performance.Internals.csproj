@@ -1,31 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
-
    <PropertyGroup>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
-
    <ItemGroup>
       <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
-      <ProjectReference Include="..\Compze.Messaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
-      <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
       <ProjectReference Include="..\Compze.Tests.Integration.Internals\Compze.Tests.Integration.Internals.csproj" />
       <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
    </ItemGroup>
-
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
@@ -37,20 +30,17 @@
       </PackageReference>
       <PackageReference Include="NUnit3TestAdapter" Version="5.1.0" />
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-
    <ItemGroup>
       <None Update="appsettings.json">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-
-    <PropertyGroup>
-        <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
-        <NoWarn>CS0436</NoWarn>
-    </PropertyGroup>
-
+   <PropertyGroup>
+      <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+      <NoWarn>CS0436</NoWarn>
+   </PropertyGroup>
 </Project>

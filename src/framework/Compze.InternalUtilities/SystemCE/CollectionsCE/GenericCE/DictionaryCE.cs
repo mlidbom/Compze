@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using static Compze.Contracts.Assert;
+using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Helpers for working with dictionaries</summary>
 static class DictionaryCE

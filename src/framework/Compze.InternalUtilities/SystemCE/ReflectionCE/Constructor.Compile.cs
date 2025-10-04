@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Compze.SystemCE.ReflectionCE;
+namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 public static partial class Constructor
 {

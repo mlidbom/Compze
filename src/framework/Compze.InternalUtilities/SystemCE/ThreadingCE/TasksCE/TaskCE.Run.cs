@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 // ReSharper disable MethodSupportsCancellation
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler. We use our own factory instance that already specifies the Scheduler
 
-namespace Compze.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 static partial class TaskCE
 {

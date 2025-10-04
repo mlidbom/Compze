@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <RootNamespace>Compze</RootNamespace>
+        <RootNamespace>Compze.DependencyInjection.SimpleInjector</RootNamespace>
         <NuGetAuditMode>direct</NuGetAuditMode>
         <AnalysisLevel>latest-all</AnalysisLevel>
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
@@ -16,17 +16,12 @@
         <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
     </ItemGroup>
 
-
-    <ItemGroup>
-        <Folder Include="DependencyInjection\" />
-    </ItemGroup>
-
     <ItemGroup>
         <PackageReference Include="SimpleInjector" Version="5.5.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Testing" />
     </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 
 // ReSharper disable UnusedMember.Global
-namespace Compze.SystemCE;
+namespace Compze.Utilities.SystemCE;
 
 /// <summary>A collection of extensions to work with timespans</summary>
 static partial class TimeSpanCE

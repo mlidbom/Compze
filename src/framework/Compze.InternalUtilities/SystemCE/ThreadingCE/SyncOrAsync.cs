@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Contracts;
+using Compze.Utilities.Contracts;
 
-namespace Compze.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 static class SyncOrAsyncCE
 {

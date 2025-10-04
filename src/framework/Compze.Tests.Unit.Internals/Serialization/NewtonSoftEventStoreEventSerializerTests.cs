@@ -1,10 +1,12 @@
 ﻿using System;
+using Compze.Common.Refactoring.Naming;
+using Compze.EventStore.Abstractions;
 using Compze.Logging;
-using Compze.Persistence.EventStore;
-using Compze.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.SystemCE;
+using Compze.Serialization.Abstractions;
+
 using Compze.Testing;
+using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;

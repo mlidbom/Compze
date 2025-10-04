@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Contracts;
-using Compze.Functional;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
 
-namespace Compze.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Adds some convenience features to linked list</summary>
 static class LinkedListCE

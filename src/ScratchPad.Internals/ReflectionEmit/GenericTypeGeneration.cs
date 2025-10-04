@@ -1,16 +1,16 @@
-﻿using Compze.Persistence.EventStore;
-using Compze.SystemCE;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Compze.SystemCE.ReflectionCE;
-using Compze.SystemCE.ReflectionCE.EmitCE;
-using Compze.SystemCE.ThreadingCE;
-using Compze.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.Tessaging;
+using Compze.EventStore.Abstractions;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Tessaging.Abstractions;
 
 namespace ScratchPad.ReflectionEmit;
 
