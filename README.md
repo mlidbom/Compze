@@ -2,7 +2,7 @@
 
 **A .NET framework for building maintainable Teventive systems exposing Typermedia APIs**
 
-[📖 Fledgeling Documentation](http://compze.net/) | [🔧 Development Setup](DEVELOPMENT.md)
+[📖 Fledgling Documentation](http://compze.net/) | [🔧 Development Setup](DEVELOPMENT.md)
 
 ---
 
@@ -77,7 +77,7 @@ Now you can:
 
 The most popular API in the world is a Hypermedia API. You're using it right now - it's called the World Wide Web. Can you imagine trying to use it without links and forms? Instead being given an int or a string? Why do we build APIs like that?
 
-Compze extends Hypermedia into Typermedia which is Hypermedia which:
+Compze extends Hypermedia into Typermedia which is Hypermedia that:
 
 - **Routes messages by .NET types** giving:
   - Zero configuration routing
@@ -125,7 +125,7 @@ Once you've used APIs like this, how would you feel about an API that gives you 
 
 ## Why Compze?
 
-In spite of these powerful paradigms being available to us today, countless event-driven applications are shock full of code that leverages none of these possibilities, resulting in what can only be described as maintenance nightmares.
+In spite of these powerful paradigms being available to us today, countless event-driven applications are chock-full of code that leverages none of these possibilities, resulting in what can only be described as maintenance nightmares.
 
 It's essentially the event equivalent of working in C# while completely refusing to use generics and object-oriented programming. Surely we should not even need to argue that this is ill-advised?
 
