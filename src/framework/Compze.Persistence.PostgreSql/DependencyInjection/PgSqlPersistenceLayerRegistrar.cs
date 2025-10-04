@@ -5,7 +5,7 @@ using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.PostgreSql.DocumentDb;
 using Compze.Persistence.PostgreSql.EventStore;
-using Compze.Persistence.PostgreSql.Messaging.Buses.Implementation;
+using Compze.Persistence.PostgreSql.Tessaging.Buses.Implementation;
 using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Persistence.PostgreSql.Testing;
 using Compze.Tessaging.Buses;

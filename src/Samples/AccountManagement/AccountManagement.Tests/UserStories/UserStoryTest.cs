@@ -4,7 +4,7 @@ using AccountManagement.UserStories.Scenarios;
 using Compze.Tessaging.Buses;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
-using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Tessaging.Buses;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using NUnit.Framework;
 

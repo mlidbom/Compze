@@ -5,7 +5,7 @@ using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.MySql.DocumentDb;
 using Compze.Persistence.MySql.EventStore;
-using Compze.Persistence.MySql.Messaging.Buses.Implementation;
+using Compze.Persistence.MySql.Tessaging.Buses.Implementation;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.MySql.Testing;
 using Compze.Tessaging.Buses;

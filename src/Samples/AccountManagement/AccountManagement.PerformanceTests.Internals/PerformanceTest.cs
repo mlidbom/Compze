@@ -7,7 +7,7 @@ using AccountManagement.UserStories.Scenarios;
 using Compze.Tessaging.Buses;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
-using Compze.Testing.Messaging.Buses;
+using Compze.Testing.Tessaging.Buses;
 using Compze.Testing.Performance;
 using Compze.Testing.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;

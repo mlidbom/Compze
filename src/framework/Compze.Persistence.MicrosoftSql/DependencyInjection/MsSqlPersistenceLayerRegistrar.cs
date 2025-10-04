@@ -4,7 +4,7 @@ using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DocumentDb.MicrosoftSql;
 using Compze.EventStore.MicrosoftSql;
-using Compze.Persistence.MicrosoftSql.Messaging.Buses.Implementation;
+using Compze.Persistence.MicrosoftSql.Tessaging.Buses.Implementation;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MicrosoftSql.Testing;
 using Compze.Tessaging.Buses;
