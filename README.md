@@ -14,6 +14,8 @@ Leveraging .NET type compatibility enables an event modeling paradigm which:
 - **Enables modeling inheritance and composition** of event-based [aggregates](https://compze.net/docs/prerequisite-terms.html#aggregate) with elegant precision
 - **[Unifies fine-grained and coarse-grained events](https://compze.net/paradigms/semantic-events/property-updated-events.html)** - no more choosing between property-updated style events and domain events
 - **Enables subscribing to precisely the event you need**, while being guaranteed that when new events are added, inheriting the current event, you will receive those too without needing to change anything in your subscriber code
+- **The event definitions declaritively describe the structure of your domain in great detail**
+  - Spending 30 minutes reading the event interfaces of a teventive domain may well tell you more about that domain than spending a week reading through the implementation code of a classically implemented system, where such design aspects can only be found in the implementation details. 
 
 
 > **💡 Note:** Teventive programming does **not** require event sourcing or asynchronous messaging. All benefits described above are available with **synchronous, in-memory communication**, and aggregates can be stored using any persistence mechanism you prefer, or not at all.
