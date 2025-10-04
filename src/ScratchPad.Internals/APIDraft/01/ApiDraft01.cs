@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 #pragma warning disable //Review OK: This is API experimental code that is never ever used.
 
 //todo: Remove this draft API code after looking through it for ideas that are still useful
-namespace Compze.Tests.Messaging.APIDraft._01;
+namespace ScratchPad.APIDraft._01;
 
 class APIDraft01
 {

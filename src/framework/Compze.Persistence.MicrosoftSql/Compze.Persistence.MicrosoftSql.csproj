@@ -6,7 +6,7 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <PropertyGroup>
-      <RootNamespace>Compze.Persistence.MicrosoftSqlServer</RootNamespace>
+      <RootNamespace>Compze.Persistence.MicrosoftSql</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />

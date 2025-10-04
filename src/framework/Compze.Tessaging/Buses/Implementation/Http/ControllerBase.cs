@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation.Http;
+namespace Compze.Tessaging.Buses.Implementation.Http;
 
 abstract class ControllerBase(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : Controller
 {

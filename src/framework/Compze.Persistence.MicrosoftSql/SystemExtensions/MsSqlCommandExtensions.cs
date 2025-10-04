@@ -1,7 +1,7 @@
 using Compze.Persistence.Common.AdoCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+namespace Compze.Persistence.MicrosoftSql.SystemExtensions;
 
 static class MsSqlCommandExtensions
 {

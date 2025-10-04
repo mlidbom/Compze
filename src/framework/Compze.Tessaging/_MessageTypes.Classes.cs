@@ -2,14 +2,14 @@
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DDD.Abstractions;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation;
 using Newtonsoft.Json;
 
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace Compze.Tessaging.Tessaging;
+namespace Compze.Tessaging;
 
 public static partial class MessageTypes
 {

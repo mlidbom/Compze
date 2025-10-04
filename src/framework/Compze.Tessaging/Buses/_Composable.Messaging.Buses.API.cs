@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.Contracts;
 using Newtonsoft.Json;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 ///<summary>Dispatches messages between processes.</summary>
 public interface IServiceBusSession

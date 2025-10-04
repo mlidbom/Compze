@@ -2,13 +2,13 @@
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Tessaging.Buses.Http;
-using Compze.Tessaging.Tessaging.Buses.Implementation.Http;
+using Compze.Tessaging.Buses.Http;
+using Compze.Tessaging.Buses.Implementation.Http;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Outbox
 {

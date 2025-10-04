@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 class Endpoint : IEndpoint
 {

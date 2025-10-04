@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Tessaging.Common;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Tessaging.Typermedia;
+namespace Compze.Tessaging.Typermedia;
 
 //Todo: Build a pipeline to handle things like command validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
 [UsedImplicitly] class RemoteHypermediaNavigator(ITransport transport) : IRemoteHypermediaNavigator

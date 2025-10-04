@@ -1,5 +1,5 @@
 ﻿using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Tessaging.Tessaging;
+using Compze.Tessaging;
 
 namespace AccountManagement;
 

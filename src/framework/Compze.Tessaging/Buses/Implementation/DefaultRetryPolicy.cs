@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 class DefaultRetryPolicy
 {

@@ -1,9 +1,9 @@
 ﻿using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Tessaging.Common;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
-namespace Compze.Tessaging.Tessaging.Typermedia;
+namespace Compze.Tessaging.Typermedia;
 
 class LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry) : ILocalHypermediaNavigator
 {

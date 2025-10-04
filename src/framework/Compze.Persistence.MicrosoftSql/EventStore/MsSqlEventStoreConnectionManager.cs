@@ -1,9 +1,9 @@
 using System.Transactions;
-using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.SystemExtensions;
 using JetBrains.Annotations;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSqlServer.EventStore;
+namespace Compze.Persistence.MicrosoftSql.EventStore;
 
 class MsSqlEventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
 {

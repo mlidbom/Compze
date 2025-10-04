@@ -1,4 +1,4 @@
-﻿namespace Compze.Persistence.MicrosoftSqlServer.Testing.Databases;
+namespace Compze.Persistence.MicrosoftSql.Testing.Databases;
 
 static class MsSqlDatabaseHelpers
 {

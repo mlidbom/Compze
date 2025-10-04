@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 class InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) : Inbox.IMessageStorage
 {

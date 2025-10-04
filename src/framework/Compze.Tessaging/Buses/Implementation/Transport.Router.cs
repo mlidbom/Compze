@@ -7,7 +7,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Transport
 {

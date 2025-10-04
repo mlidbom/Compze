@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Outbox
 {

@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using Compze.Abstractions.Internal;
 using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 using Newtonsoft.Json;
 
-namespace Compze.Tessaging.Tessaging;
+namespace Compze.Tessaging;
 
 public static partial class MessageTypes
 {

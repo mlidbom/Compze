@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Compze.EventStore.Abstractions;
-using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Buses;
 using Compze.Utilities.SystemCE;
 using static System.Console;
 // ReSharper disable NotAccessedVariable

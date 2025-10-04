@@ -4,7 +4,7 @@ using Compze.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 [UsedImplicitly]partial class Inbox : IInbox, IAsyncDisposable
 {

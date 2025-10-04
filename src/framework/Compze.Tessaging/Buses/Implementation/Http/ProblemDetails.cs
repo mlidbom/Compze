@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation.Http;
+namespace Compze.Tessaging.Buses.Implementation.Http;
 
 [UsedImplicitly] class ProblemDetails
 {

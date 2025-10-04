@@ -1,10 +1,10 @@
 ﻿using System;
 using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.EventStore.Abstractions;
+using Compze.Tessaging;
 using Compze.Teventive.Aggregates;
 using Compze.Tessaging.Persistence;
-using Compze.Tessaging.Tessaging;
-using Compze.Tessaging.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia;
 using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global

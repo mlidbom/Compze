@@ -1,6 +1,6 @@
 ﻿using Compze.Utilities.Contracts;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 public record EndPointAddress
 {

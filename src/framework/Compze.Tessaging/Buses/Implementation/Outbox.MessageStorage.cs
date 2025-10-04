@@ -7,7 +7,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Outbox
 {

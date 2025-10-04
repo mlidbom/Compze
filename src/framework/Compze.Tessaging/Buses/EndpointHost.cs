@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.Logging;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 public class EndpointHost : IEndpointHost
 {

@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Compze.Common.Refactoring.Naming;
 using Compze.DependencyInjection;
 using Compze.Logging;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {

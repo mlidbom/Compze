@@ -8,8 +8,8 @@ using Compze.Persistence.MySql.EventStore;
 using Compze.Persistence.MySql.Messaging.Buses.Implementation;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.MySql.Testing;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 
 namespace Compze.Persistence.MySql.DependencyInjection;
 

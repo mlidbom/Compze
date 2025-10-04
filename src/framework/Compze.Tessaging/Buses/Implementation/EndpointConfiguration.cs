@@ -1,7 +1,7 @@
 ﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 public class EndpointConfiguration
 {

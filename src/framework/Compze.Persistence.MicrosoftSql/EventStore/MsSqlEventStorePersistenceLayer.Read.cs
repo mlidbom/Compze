@@ -2,11 +2,11 @@ using System.Data;
 using System.Data.SqlTypes;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.SystemExtensions;
 using Microsoft.Data.SqlClient;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSqlServer.EventStore;
+namespace Compze.Persistence.MicrosoftSql.EventStore;
 
 partial class MsSqlEventStorePersistenceLayer(MsSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {

@@ -16,7 +16,7 @@
       <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
       <ProjectReference Include="..\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.MicrosoftSqlServer\Compze.Persistence.MicrosoftSqlServer.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.MicrosoftSql\Compze.Persistence.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Compze.Persistence.MySql\Compze.Persistence.MySql.csproj" />
       <ProjectReference Include="..\Compze.Persistence.PostgreSql\Compze.Persistence.PostgreSql.csproj" />
    </ItemGroup>

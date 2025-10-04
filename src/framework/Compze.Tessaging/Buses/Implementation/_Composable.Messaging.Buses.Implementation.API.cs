@@ -5,7 +5,7 @@ using Compze.Abstractions.Internal;
 using Compze.Tessaging.Abstractions;
 using Compze.Teventive.Abstractions;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 interface IInbox
 {

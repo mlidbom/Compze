@@ -2,10 +2,10 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Serialization.Abstractions;
-using Compze.Tessaging.Tessaging.Buses.Http;
+using Compze.Tessaging.Buses.Http;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation.Http;
+namespace Compze.Tessaging.Buses.Implementation.Http;
 
 class HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer) : IHttpApiClient
 {

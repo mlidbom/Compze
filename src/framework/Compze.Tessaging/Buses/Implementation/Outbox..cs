@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, RealEndpointConfiguration configuration) : IOutbox
 {

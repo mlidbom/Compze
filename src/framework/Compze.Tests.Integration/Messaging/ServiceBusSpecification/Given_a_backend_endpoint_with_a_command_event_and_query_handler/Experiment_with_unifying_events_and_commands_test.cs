@@ -13,9 +13,9 @@ using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Persistence.DependencyInjection;
-using Compze.Tessaging.Tessaging;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Typermedia;
+using Compze.Tessaging;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace Compze.Tessaging.Tessaging.Buses.Http;
+namespace Compze.Tessaging.Buses.Http;
 
 interface IHttpClientFactoryCE
 {

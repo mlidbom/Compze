@@ -21,7 +21,7 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Compze.DocumentDb" />
         <InternalsVisibleTo Include="Compze.EventStore" />
-        <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+        <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
         <InternalsVisibleTo Include="Compze.Persistence.MySql" />
         <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
         <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />

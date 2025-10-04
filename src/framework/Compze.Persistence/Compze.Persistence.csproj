@@ -23,7 +23,7 @@
       <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSqlServer" />
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Persistence.MySql" />
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />

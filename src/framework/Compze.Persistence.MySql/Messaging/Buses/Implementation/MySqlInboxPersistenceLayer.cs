@@ -1,9 +1,9 @@
 ﻿using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.SystemExtensions;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Schema =  Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
+using Schema =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Persistence.MySql.Messaging.Buses.Implementation;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Compze.Configuration.Abstractions;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) : IEndpointRegistry
 {

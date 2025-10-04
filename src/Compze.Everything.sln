@@ -80,7 +80,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.PostgreS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.MySql", "framework\Compze.Persistence.MySql\Compze.Persistence.MySql.csproj", "{AB0E13E9-3626-4D23-B360-DC8FD560F432}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.MicrosoftSqlServer", "framework\Compze.Persistence.MicrosoftSqlServer\Compze.Persistence.MicrosoftSqlServer.csproj", "{8AE6507E-D02F-408A-8059-D76C3BF9FCA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.MicrosoftSql", "framework\Compze.Persistence.MicrosoftSql\Compze.Persistence.MicrosoftSql.csproj", "{8AE6507E-D02F-408A-8059-D76C3BF9FCA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.InMemory", "framework\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj", "{DA3EBD41-1CC5-4806-8A62-D59486482AC3}"
 EndProject

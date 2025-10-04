@@ -4,9 +4,9 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
-using Compze.Tessaging.Tessaging;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Typermedia;
+using Compze.Tessaging;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Typermedia;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI;

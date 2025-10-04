@@ -1,6 +1,6 @@
 ﻿using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Message =  Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
+using Message =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Persistence.PostgreSql.Messaging.Buses.Implementation;
 

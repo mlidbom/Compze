@@ -1,7 +1,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+namespace Compze.Persistence.MicrosoftSql.SystemExtensions;
 
 static class SqlCommandParameterExtensions
 {

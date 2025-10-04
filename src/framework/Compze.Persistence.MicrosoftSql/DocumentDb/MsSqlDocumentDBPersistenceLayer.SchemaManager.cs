@@ -1,9 +1,9 @@
-﻿using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.SystemExtensions;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Document = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSqlServer.DocumentDb;
+namespace Compze.Persistence.MicrosoftSql.DocumentDb;
 
 partial class MsSqlDocumentDbPersistenceLayer
 {

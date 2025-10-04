@@ -8,7 +8,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Inbox
 {

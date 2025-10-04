@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 static class EndpointBuilderTypeMapperHelper
 {

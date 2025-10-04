@@ -7,11 +7,11 @@ using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.DependencyInjection;
 using Compze.Testing.DependencyInjection;
 using Compze.Tests.CQRS.EventRefactoring.Migrations;
-using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.EventStore.Abstractions;
+using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 

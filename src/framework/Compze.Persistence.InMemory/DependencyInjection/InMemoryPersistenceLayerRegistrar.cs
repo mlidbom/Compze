@@ -4,8 +4,8 @@ using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.InMemory.DocumentDB;
 using Compze.Persistence.InMemory.EventStore;
 using Compze.Persistence.InMemory.ServiceBus;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 
 namespace Compze.Persistence.InMemory.DependencyInjection;
 

@@ -1,7 +1,7 @@
 using System;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {

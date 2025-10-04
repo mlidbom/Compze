@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 public static class EndpointRequestExecutor
 {

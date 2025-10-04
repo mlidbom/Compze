@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Compze.DependencyInjection;
 
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia;
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
-using CreatesItsOwnResultQuery = Compze.Tessaging.Tessaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Messaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
+using CreatesItsOwnResultQuery = Compze.Tessaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Messaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
 
 namespace Compze.Tests.Performance.Internals.Messaging.Hypermedia;
 

@@ -5,7 +5,7 @@ using Compze.DependencyInjection;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Inbox
 {

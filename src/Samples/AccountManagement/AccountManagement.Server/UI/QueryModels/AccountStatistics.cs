@@ -3,9 +3,9 @@ using System.Threading;
 using AccountManagement.Domain.Events;
 using Compze.DependencyInjection;
 using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.Buses;
 using Compze.Tessaging.Persistence.DocumentDb;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI.QueryModels;

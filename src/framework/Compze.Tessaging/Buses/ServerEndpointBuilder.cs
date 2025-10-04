@@ -8,17 +8,17 @@ using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.Serialization;
 using Compze.Serialization.Abstractions;
+using Compze.Tessaging.Buses.Http;
+using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation.Http;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.SystemCE.ThreadingCE;
-using Compze.Tessaging.Tessaging.Buses.Http;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
-using Compze.Tessaging.Tessaging.Buses.Implementation.Http;
-using Compze.Tessaging.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia;
 using Compze.Utilities.SystemCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 class ServerEndpointBuilder : IEndpointBuilder
 {

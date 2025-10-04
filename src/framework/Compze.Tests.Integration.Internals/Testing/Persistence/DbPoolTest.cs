@@ -1,8 +1,8 @@
 ﻿using System;
 using Compze.DependencyInjection;
 using Compze.Persistence.Common.AdoCE.Abstractions;
-using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
-using Compze.Persistence.MicrosoftSqlServer.Testing;
+using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Testing;
 using Compze.Persistence.MySql.SystemExtensions;
 using Compze.Persistence.MySql.Testing;
 using Compze.Persistence.PostgreSql.SystemExtensions;

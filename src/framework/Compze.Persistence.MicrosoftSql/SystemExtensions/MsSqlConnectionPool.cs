@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
+namespace Compze.Persistence.MicrosoftSql.SystemExtensions;
 
 interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
 {

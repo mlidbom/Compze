@@ -1,17 +1,17 @@
-﻿using Compze.Abstractions.Internal.Persistence.DocumentDb;
+using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.MicrosoftSqlServer.DocumentDb;
-using Compze.Persistence.MicrosoftSqlServer.EventStore;
-using Compze.Persistence.MicrosoftSqlServer.Messaging.Buses.Implementation;
-using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
-using Compze.Persistence.MicrosoftSqlServer.Testing;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Persistence.MicrosoftSql.DocumentDb;
+using Compze.Persistence.MicrosoftSql.EventStore;
+using Compze.Persistence.MicrosoftSql.Messaging.Buses.Implementation;
+using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Testing;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 
-namespace Compze.Persistence.MicrosoftSqlServer.DependencyInjection;
+namespace Compze.Persistence.MicrosoftSql.DependencyInjection;
 
 public static class MsSqlPersistenceLayerRegistrar
 {

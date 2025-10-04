@@ -1,9 +1,9 @@
-﻿using Compze.Persistence.MicrosoftSqlServer.SystemExtensions;
-using Compze.Persistence.MicrosoftSqlServer.Testing.Databases;
+using Compze.Persistence.MicrosoftSql.SystemExtensions;
+using Compze.Persistence.MicrosoftSql.Testing.Databases;
 using Compze.Testing.DbPool;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSqlServer.Testing;
+namespace Compze.Persistence.MicrosoftSql.Testing;
 
 class MsSqlDbPool : DbPool
 {

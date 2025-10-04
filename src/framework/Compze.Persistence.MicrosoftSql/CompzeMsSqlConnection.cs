@@ -3,7 +3,7 @@ using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSqlServer;
+namespace Compze.Persistence.MicrosoftSql;
 
 interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlCommand>
 {

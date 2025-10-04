@@ -1,10 +1,10 @@
 ﻿using System;
 using Compze.DependencyInjection;
 using Compze.Persistence.InMemory.DependencyInjection;
-using Compze.Persistence.MicrosoftSqlServer.DependencyInjection;
+using Compze.Persistence.MicrosoftSql.DependencyInjection;
 using Compze.Persistence.MySql.DependencyInjection;
 using Compze.Persistence.PostgreSql.DependencyInjection;
-using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Buses;
 
 namespace Compze.Testing.Persistence;
 

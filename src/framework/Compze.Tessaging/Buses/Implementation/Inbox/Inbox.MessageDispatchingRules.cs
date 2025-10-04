@@ -1,6 +1,6 @@
 ﻿using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 partial class Inbox
 {

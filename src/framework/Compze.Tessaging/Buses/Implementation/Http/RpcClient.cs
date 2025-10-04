@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Tessaging.Buses.Http;
+using Compze.Tessaging.Buses.Http;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation.Http;
+namespace Compze.Tessaging.Buses.Implementation.Http;
 
 class RpcClient(IHttpApiClient httpClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IGlobalBusStateTracker globalBusStateTracker) : IRpcClient
 {

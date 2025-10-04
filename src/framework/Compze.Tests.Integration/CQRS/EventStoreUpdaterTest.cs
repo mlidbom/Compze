@@ -23,7 +23,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Tessaging.Buses;
+using Compze.Tessaging.Buses;
 
 // ReSharper disable AccessToDisposedClosure
 

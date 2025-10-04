@@ -1,7 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 public class MessageHandlerRegistrarWithDependencyInjectionSupport
 {

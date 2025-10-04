@@ -1,10 +1,10 @@
 ﻿using System.Transactions;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Message = Compze.Tessaging.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageWithReceivers;
+using Message = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageWithReceivers;
 // ReSharper disable CollectionNeverQueried.Local
 
 namespace Compze.Persistence.InMemory.ServiceBus;

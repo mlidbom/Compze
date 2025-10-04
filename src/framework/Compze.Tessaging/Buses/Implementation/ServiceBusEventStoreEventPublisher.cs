@@ -3,7 +3,7 @@ using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 [UsedImplicitly] class ServiceBusEventStoreEventPublisher(IOutbox transport, IMessageHandlerRegistry handlerRegistry) : IEventStoreEventPublisher
 {

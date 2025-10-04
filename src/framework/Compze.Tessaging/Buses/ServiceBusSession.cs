@@ -1,12 +1,12 @@
 ﻿using System;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Buses.Implementation;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Typermedia.Implementation;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Tessaging.Buses;
+namespace Compze.Tessaging.Buses;
 
 [UsedImplicitly] class ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler) : IServiceBusSession
 {

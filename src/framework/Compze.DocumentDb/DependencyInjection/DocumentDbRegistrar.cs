@@ -5,8 +5,8 @@ using Compze.DependencyInjection;
 using Compze.DocumentDb.Abstractions;
 using Compze.Serialization;
 using Compze.Serialization.Abstractions;
+using Compze.Tessaging.Buses;
 using Compze.Tessaging.Persistence.DocumentDb;
-using Compze.Tessaging.Tessaging.Buses;
 using Compze.Utilities.Contracts;
 
 namespace Compze.DocumentDb.DependencyInjection;

@@ -8,8 +8,8 @@ using Compze.Persistence.PostgreSql.EventStore;
 using Compze.Persistence.PostgreSql.Messaging.Buses.Implementation;
 using Compze.Persistence.PostgreSql.SystemExtensions;
 using Compze.Persistence.PostgreSql.Testing;
-using Compze.Tessaging.Tessaging.Buses;
-using Compze.Tessaging.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Buses;
+using Compze.Tessaging.Buses.Implementation;
 
 namespace Compze.Persistence.PostgreSql.DependencyInjection;
 

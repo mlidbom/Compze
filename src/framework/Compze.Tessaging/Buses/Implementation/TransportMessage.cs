@@ -5,7 +5,7 @@ using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Tessaging.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.Buses.Implementation;
 
 static class TransportMessage
 {
