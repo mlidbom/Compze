@@ -12,6 +12,8 @@ There are two areas where we feel the industry has been stuck in old models for 
 
 ### Teventive programming
 
+> **💡 Important Note:** Teventive programming does **not** require event sourcing or asynchronous messaging. All benefits described below are available with **synchronous, in-memory communication**. Aggregates can be stored using traditional ORMs or any persistence mechanism you prefer. Event sourcing and async messaging are optional architectural choices that Compze supports, but they are not prerequisites for leveraging Teventive programming.
+
 Leveraging well-established C# features enables an event modeling paradigm which:
 
 - **Gives unprecedented ability to understand domains** in terms of how events relate to each other
