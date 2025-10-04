@@ -1,13 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.MicrosoftSql;
 using Compze.Persistence.MicrosoftSql.SystemExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Microsoft.Data.SqlClient;
 using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSql.DocumentDb;
+namespace Compze.DocumentDb.MicrosoftSql;
 
 partial class MsSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {

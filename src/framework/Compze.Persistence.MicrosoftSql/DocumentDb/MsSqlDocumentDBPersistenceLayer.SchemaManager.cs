@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Document = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Persistence.MicrosoftSql.DocumentDb;
+namespace Compze.DocumentDb.MicrosoftSql;
 
 partial class MsSqlDocumentDbPersistenceLayer
 {

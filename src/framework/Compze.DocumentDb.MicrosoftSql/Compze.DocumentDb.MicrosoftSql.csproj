@@ -10,4 +10,11 @@
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Persistence.MicrosoftSql\Compze.Persistence.MicrosoftSql.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+   </ItemGroup>
 </Project>
