@@ -36,7 +36,7 @@ interface IUserRegistered : IUserEvent, IAggregateCreatedEvent;
 interface IUserImported : IUserRegistered;
 ```
 
-Events are routed by **type compatibility**, including support for **generic covariance**:
+Events are routed by **type compatibility**
 
 ```csharp
 registrar
