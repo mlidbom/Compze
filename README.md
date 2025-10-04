@@ -20,6 +20,8 @@ Leveraging well-established C# features enables an event modeling paradigm which
 
 > **💡 Note:** In memory performance overhead is negligible in the great majority of systems. Event dispatching comes down to looking up subscribers in a dictionary using a Type instance as the key.
 
+> **Note: ** Unlike what one might expect, subscriber discovery is trivial and not error prone. It just comes down to Type.IsAssignableFrom.
+
 #### Core Concepts
 
 Tevents, type routed events, use the type system to declare their meaning in detail and unambiguously:
