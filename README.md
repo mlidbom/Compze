@@ -94,11 +94,12 @@ Compze extends Hypermedia into Typermedia which is Hypermedia that:
 
 ```csharp
 //Set up a specification for how we want to navigate the API.
-var navigationToUserManagement = NavigationSpecification.Get(MyApi.StartPage) //Get startpage
-                                                        .Get(start => start.UserManagement);//Navigate to user management section
+var navigationToUserManagement = 
+    NavigationSpecification.Get(MyApi.StartPage) //Get startpage
+                           .Get(start => start.UserManagement);//Navigate to user management section
 
-//Execute the navigation spec using a browser. Since it is async we may safely assume this is a remote call, 
-//but the spec could just as well be executed synchronously in memory:
+//Execute the navigation spec using a browser. Since it is async we may safely assume this is a remote 
+//call, but the spec could just as well be executed synchronously in memory:
 var userManagementPage =  await navigationToUserManagement.NavigateAsyncUsing(httpBrowser);
                                                   
 
