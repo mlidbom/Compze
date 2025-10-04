@@ -86,7 +86,7 @@ Compze extends Hypermedia into Typermedia which is Hypermedia which:
   - `Get`ting `Link`s
   - `Post`ing `Command`s
   - All with full type safety and autocomplete in your IDE
-- **Can be in-memory or remote** with the same interface
+- **Can be in-memory and synchronous or remote and asynchronous** with the same interface
 - **Further encapsulates your domain**, exposing less implementation details than traditional services
 - **Excellently suited for building a Just-Beneath-The-UI-Rendering-Layer**, ideal for black box testing
 
