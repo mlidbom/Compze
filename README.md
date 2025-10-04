@@ -129,8 +129,6 @@ var userProfilePage = await httpBrowser.Get(user.ProfilePage);
 
 Once you've used APIs like this, how would you feel about an API that gives you an `int` instead of an `ILink<User>`?
 
-**Learn more:** [Typermedia Documentation](https://compze.net/paradigms/hypermedia-apis/introduction.html)
-
 ---
 
 ## Getting Started
