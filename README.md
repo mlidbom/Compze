@@ -169,10 +169,10 @@ Compze provides the tools and patterns to build better systems.
 
 ---
 
-## Documentation
+## Fledgling Documentation
 
-- **[Full Documentation](http://compze.net/)**
-- **[Semantic Events Guide](https://compze.net/paradigms/semantic-events/definition.html)**
+- **[Project Site](http://compze.net/)**
+- **[Semantic Events](https://compze.net/paradigms/semantic-events/definition.html)**
 - **[Development Setup](DEVELOPMENT.md)**
 
 ---
