@@ -5,7 +5,7 @@ using Compze.DocumentDb.DependencyInjection;
 using Compze.EventStore.Abstractions;
 using Compze.Logging;
 using Compze.EventStore.DependencyInjection;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Compze.Tessaging.Buses;
 using Compze.Tessaging.Common;
+using Compze.Tessaging.Hosting;
 using Compze.Tests.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using FluentAssertions;

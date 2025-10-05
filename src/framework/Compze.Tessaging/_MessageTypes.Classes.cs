@@ -2,7 +2,7 @@
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DDD.Abstractions;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Hosting.Implementation;
 using Newtonsoft.Json;
 
 // ReSharper disable RedundantNameQualifier

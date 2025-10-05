@@ -10,7 +10,7 @@ using Compze.Persistence.InMemory.DependencyInjection;
 using Compze.Persistence.MicrosoftSql.DependencyInjection;
 using Compze.Persistence.MySql.DependencyInjection;
 using Compze.Persistence.PostgreSql.DependencyInjection;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.MicrosoftSql;
 using Compze.Tessaging.MySql;
 using Compze.Tessaging.PostgreSql;

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.EventStore.Abstractions;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Implementation;
 using Newtonsoft.Json;
 
 namespace Compze.Tessaging.Persistence.EventStore;

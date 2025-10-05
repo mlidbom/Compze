@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using Compze.Abstractions.Internal;
 using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Implementation;
 using Newtonsoft.Json;
 
 namespace Compze.Tessaging;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Transactions;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Testing.Tessaging.Buses;
 using Compze.Testing.Threading;
 using Compze.Testing.Transactions;

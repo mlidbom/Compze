@@ -1,7 +1,7 @@
 ﻿using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Message = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
-using Dispatch = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
+using Dispatch = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
 namespace Compze.Tessaging.PostgreSql;
 

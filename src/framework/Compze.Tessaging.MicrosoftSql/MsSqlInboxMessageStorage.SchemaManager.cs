@@ -1,6 +1,6 @@
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Message =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
+using Message =  Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 

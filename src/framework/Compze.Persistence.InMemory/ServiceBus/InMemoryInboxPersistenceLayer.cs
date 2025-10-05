@@ -1,5 +1,5 @@
 ﻿using System.Transactions;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 

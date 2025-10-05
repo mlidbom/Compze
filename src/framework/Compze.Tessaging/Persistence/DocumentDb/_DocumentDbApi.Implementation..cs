@@ -1,6 +1,6 @@
 ﻿using System;
 using Compze.DocumentDb.Abstractions;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Utilities.Functional;
 using Newtonsoft.Json;
 

@@ -1,5 +1,5 @@
 ﻿using AccountManagement.API;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia;
 using Compze.Testing.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;

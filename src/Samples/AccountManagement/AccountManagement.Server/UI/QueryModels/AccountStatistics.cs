@@ -3,7 +3,7 @@ using System.Threading;
 using AccountManagement.Domain.Events;
 using Compze.DependencyInjection;
 using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Tessaging.Typermedia;
 using Compze.Utilities.Functional;

@@ -1,5 +1,5 @@
 ﻿using AccountManagement.Domain.Events;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Tessaging.Typermedia;

@@ -1,7 +1,7 @@
 ﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.Persistence.MySql.Infrastructure;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Testing.DbPool.MySql;
 
 namespace Compze.Persistence.MySql.DependencyInjection;

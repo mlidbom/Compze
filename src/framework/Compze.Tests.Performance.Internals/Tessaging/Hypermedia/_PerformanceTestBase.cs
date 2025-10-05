@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compze.Tessaging;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;

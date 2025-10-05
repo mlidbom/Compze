@@ -14,7 +14,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia;
 
 // ReSharper disable MemberCanBeInternal for testing

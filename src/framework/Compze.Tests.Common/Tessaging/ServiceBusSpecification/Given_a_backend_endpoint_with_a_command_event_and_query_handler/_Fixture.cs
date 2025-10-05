@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.EventStore.DependencyInjection;
-using Compze.Tessaging.Buses;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Typermedia;
 using Compze.Testing;
