@@ -11,6 +11,7 @@ using Compze.Persistence.MicrosoftSql.DependencyInjection;
 using Compze.Persistence.MySql.DependencyInjection;
 using Compze.Persistence.PostgreSql.DependencyInjection;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.MicrosoftSql;
 using Compze.Tessaging.MySql;
 using Compze.Tessaging.PostgreSql;

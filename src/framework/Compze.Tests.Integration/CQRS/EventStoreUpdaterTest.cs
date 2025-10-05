@@ -24,6 +24,7 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Abstractions;
 
 // ReSharper disable AccessToDisposedClosure
 

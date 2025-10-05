@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Compze.Configuration.Abstractions;
+using Compze.Tessaging.Hosting.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Tessaging.Buses;

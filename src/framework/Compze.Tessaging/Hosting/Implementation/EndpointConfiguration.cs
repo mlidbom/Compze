@@ -1,5 +1,6 @@
 ﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
+using Compze.Tessaging.Hosting.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

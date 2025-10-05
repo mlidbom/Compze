@@ -7,6 +7,8 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Teventive;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Teventive.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;

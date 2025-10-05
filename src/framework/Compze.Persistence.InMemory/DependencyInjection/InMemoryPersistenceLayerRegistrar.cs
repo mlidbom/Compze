@@ -5,6 +5,7 @@ using Compze.Persistence.InMemory.DocumentDB;
 using Compze.Persistence.InMemory.EventStore;
 using Compze.Persistence.InMemory.ServiceBus;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 
 namespace Compze.Persistence.InMemory.DependencyInjection;

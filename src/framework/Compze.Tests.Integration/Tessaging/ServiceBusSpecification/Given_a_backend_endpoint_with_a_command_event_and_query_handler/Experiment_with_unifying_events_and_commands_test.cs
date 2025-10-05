@@ -15,6 +15,7 @@ using NUnit.Framework;
 using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Typermedia;
 using Compze.Typermedia.Abstractions;
 

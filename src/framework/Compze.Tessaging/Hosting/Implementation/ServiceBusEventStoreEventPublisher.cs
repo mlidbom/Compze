@@ -1,6 +1,7 @@
 ﻿using Compze.Abstractions.Internal.Persistence.EventStore;
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common;
+using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Implementation;
