@@ -12,7 +12,7 @@ namespace AccountManagement;
 
 public class AccountManagementServerDomainBootstrapper
 {
-   public IEndpoint RegisterWith(IEndpointHost host, Action<IEndpointBuilder>? configurePersistence = null)
+   public IEndpoint RegisterWith(IEndpointHost host)
    {
       return host.RegisterEndpoint(name: "AccountManagement",
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
@@ -20,22 +20,16 @@ public class AccountManagementServerDomainBootstrapper
                                    {
                                       AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
                                       DomainTypeMapper.MapTypes(builder.TypeMapper);
-                                      RegisterDomainComponents(builder, configurePersistence);
+                                      RegisterDomainComponents(builder);
                                       RegisterHandlers(builder);
                                    });
    }
 
-   static void RegisterDomainComponents(IEndpointBuilder builder, Action<IEndpointBuilder>? configurePersistence)
+   static void RegisterDomainComponents(IEndpointBuilder builder)
    {
-      // Allow the caller to configure persistence, or use default production configuration
-      if(configurePersistence != null)
-      {
-         configurePersistence(builder);
-      }
-      else
-      {
-         builder.RegisterPersistenceLayer();
-      }
+      // The persistence layer automatically switches between DbPool (testing) and 
+      // production connection string based on container.RunMode.IsTesting
+      builder.RegisterPersistenceLayer();
       builder.RegisterEventStore()
              .HandleAggregate<Account, AccountEvent.Root>();
 

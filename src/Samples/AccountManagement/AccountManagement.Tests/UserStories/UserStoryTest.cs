@@ -4,7 +4,6 @@ using AccountManagement.UserStories.Scenarios;
 using Compze.Tessaging.Buses;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
-using Compze.Testing.Persistence;
 using Compze.Testing.Tessaging.Buses;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using NUnit.Framework;
@@ -20,9 +19,7 @@ public abstract class UserStoryTest(string pluggableComponentsCombination) : Dup
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
       Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
-      new AccountManagementServerDomainBootstrapper().RegisterWith(
-         Host,
-         configurePersistence: builder => builder.RegisterCurrentTestsConfiguredPersistenceLayer());
+      new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterTestingEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
       await Host.StartAsync().caf();
    }
