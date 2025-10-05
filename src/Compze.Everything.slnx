@@ -1,0 +1,220 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="docs" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/framework/">
+    <Project Path="framework/Compze.Abstractions.Internal/Compze.Abstractions.Internal.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Abstractions/Compze.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Common/Compze.Common.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Configuration.Abstractions/Compze.Configuration.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Configuration/Compze.Configuration.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.DDD.Abstractions/Compze.DDD.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.DependencyInjection.Abstractions/Compze.DependencyInjection.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.DependencyInjection/Compze.DependencyInjection.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.DocumentDb.Abstractions/Compze.DocumentDb.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.DocumentDb.MicrosoftSql/Compze.DocumentDb.MicrosoftSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.DocumentDb.MySql/Compze.DocumentDb.MySql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.DocumentDb.PostgreSql/Compze.DocumentDb.PostgreSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.DocumentDb/Compze.DocumentDb.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.EventStore.Abstractions/Compze.EventStore.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore.MicrosoftSql/Compze.EventStore.MicrosoftSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore.MySql/Compze.EventStore.MySql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore.PostgreSql/Compze.EventStore.PostgreSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore/Compze.EventStore.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.InternalUtilities/Compze.Utilities.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Logging.Abstractions/Compze.Logging.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Logging.Serilog/Compze.Logging.Serilog.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Logging/Compze.Logging.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.Abstractions/Compze.Persistence.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.Common/Compze.Persistence.Common.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.InMemory/Compze.Persistence.InMemory.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.MicrosoftSql.DependencyInjection/Compze.Persistence.MicrosoftSql.DependencyInjection.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.MicrosoftSql.Infrastructure/Compze.Persistence.MicrosoftSql.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.MySql.DependencyInjection/Compze.Persistence.MySql.DependencyInjection.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.PostgreSql.DependencyInjection/Compze.Persistence.PostgreSql.DependencyInjection.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Persistence.PostgreSql.Infrastructure/Compze.Persistence.PostgreSql.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Serialization.Abstractions/Compze.Serialization.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Serialization/Compze.Serialization.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Tessaging.Common/Compze.Tessaging.Common.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Tessaging/Compze.Tessaging.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Testing.DbPool.MicrosoftSql/Compze.Testing.DbPool.MicrosoftSql.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Testing.DbPool.MySql/Compze.Testing.DbPool.MySql.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Testing.DbPool.PostgreSql/Compze.Testing.DbPool.PostgreSql.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Testing.DbPool/Compze.Testing.DbPool.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Testing/Compze.Testing.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Teventive.Abstractions/Compze.Teventive.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Teventive/Compze.Teventive.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Typermedia.Abstractions/Compze.Typermedia.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/framework/Tests/">
+    <Project Path="framework/Compze.TestInfrastructure/Compze.TestInfrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Tests.Common/Compze.Tests.Common.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Tests.Integration.Internals/Compze.Tests.Integration.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Tests.Integration/Compze.Tests.Integration.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Tests.Performance.Internals/Compze.Tests.Performance.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Tests.Unit.Internals/Compze.Tests.Unit.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="framework/Compze.Tests.Unit/Compze.Tests.Unit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Samples/">
+    <File Path="Samples/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/Samples/AccountManagement/">
+    <Project Path="Samples/AccountManagement/AccountManagement.API/AccountManagement.API.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement.Domain.Events/AccountManagement.Domain.Events.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement.PerformanceTests.Internals/AccountManagement.PerformanceTests.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement.Server/AccountManagement.Server.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement.Tests/AccountManagement.Tests.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement.UI.MVC/AccountManagement.UI.MVC.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement.UnitTests/AccountManagement.UnitTests.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="../README.md" />
+    <File Path="../Writing_documentation.md" />
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="framework/test-common-appsettings.json" />
+    <File Path="TestUsingPluggableComponentCombinations" />
+    <File Path="TestUsingPluggableComponentCombinations.example" />
+  </Folder>
+  <Project Path="../Website/Website.csproj">
+    <BuildType Solution="docs|Any CPU" Project="Debug" />
+  </Project>
+  <Project Path="ScratchPad.Internals/ScratchPad.Internals.csproj">
+    <BuildType Solution="docs|Any CPU" Project="Debug" />
+  </Project>
+</Solution>
