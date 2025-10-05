@@ -117,12 +117,10 @@ class ServerEndpointBuilder : IEndpointBuilder
             Singleton.For<EndpointConfiguration>().CreatedBy(() => Configuration),
             Singleton.For<IMessageHandlerRegistry, IMessageHandlerRegistrar, MessageHandlerRegistry>().CreatedBy(() => _registry),
             Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunner()),
-            Singleton.For<RealEndpointConfiguration>().CreatedBy((EndpointConfiguration conf, IConfigurationParameterProvider configurationParameterProvider)
-                                                                    => new RealEndpointConfiguration(conf, configurationParameterProvider)),
             Singleton.For<Outbox.IMessageStorage>()
                      .CreatedBy((IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
                                    => new Outbox.MessageStorage(persistenceLayer, typeMapper, serializer)),
-            Singleton.For<IOutbox>().CreatedBy((RealEndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
+            Singleton.For<IOutbox>().CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
                                                   => new Outbox(transport, messageStorage, configuration)),
             Singleton.For<IEventStoreEventPublisher>().CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
                                                                     => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)),

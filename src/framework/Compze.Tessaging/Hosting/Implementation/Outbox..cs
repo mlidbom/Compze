@@ -13,10 +13,10 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, RealEndpointConfiguration configuration) : IOutbox
+partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, EndpointConfiguration configuration) : IOutbox
 {
    readonly IMessageStorage _storage = messageStorage;
-   readonly RealEndpointConfiguration _configuration = configuration;
+   readonly EndpointConfiguration _configuration = configuration;
    readonly ITransport _transport = transport;
 
    public void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent)
