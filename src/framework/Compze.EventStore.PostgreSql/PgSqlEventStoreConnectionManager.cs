@@ -1,9 +1,9 @@
 using System.Transactions;
-using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.Infrastructure;
 using JetBrains.Annotations;
 using Npgsql;
 
-namespace Compze.Persistence.PostgreSql.EventStore;
+namespace Compze.EventStore.PostgreSql;
 
 class PgSqlEventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
 {

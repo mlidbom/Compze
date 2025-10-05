@@ -1,9 +1,9 @@
-﻿using Compze.Persistence.PostgreSql.SystemExtensions;
+﻿using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Document = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Persistence.PostgreSql.DocumentDb;
+namespace Compze.DocumentDb.PostgreSql;
 
 partial class PgSqlDocumentDbPersistenceLayer
 {

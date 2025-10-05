@@ -1,7 +1,7 @@
 using Compze.Persistence.Common.AdoCE;
 using Npgsql;
 
-namespace Compze.Persistence.PostgreSql.SystemExtensions;
+namespace Compze.Persistence.PostgreSql.Infrastructure;
 
 static class MyNpgsqlCommandExtensions
 {

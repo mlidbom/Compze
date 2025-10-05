@@ -1,9 +1,9 @@
-﻿using Compze.Persistence.PostgreSql.SystemExtensions;
+﻿using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Message = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using Dispatch = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Persistence.PostgreSql.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.PostgreSql;
 
 partial class PgSqlOutboxPersistenceLayer
 {

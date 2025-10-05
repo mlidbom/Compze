@@ -1,7 +1,7 @@
 using Compze.EventStore;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
@@ -11,7 +11,7 @@ using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 using Lock = Compze.EventStore.AggregateLockTableSchemaStrings;
 
-namespace Compze.Persistence.PostgreSql.EventStore;
+namespace Compze.EventStore.PostgreSql;
 
 //Performance: explore PgSql alternatives to commented out MSSql hints throughout the persistence layer.
 partial class PgSqlEventStorePersistenceLayer

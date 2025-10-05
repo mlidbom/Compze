@@ -1,12 +1,12 @@
 using System.Transactions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.Infrastructure;
 using Npgsql;
 using NpgsqlTypes;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Persistence.PostgreSql.EventStore;
+namespace Compze.EventStore.PostgreSql;
 
 partial class PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {

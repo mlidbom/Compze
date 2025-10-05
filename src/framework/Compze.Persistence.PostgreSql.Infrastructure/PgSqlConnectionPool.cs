@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
-namespace Compze.Persistence.PostgreSql.SystemExtensions;
+namespace Compze.Persistence.PostgreSql.Infrastructure;
 
 interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>
 {

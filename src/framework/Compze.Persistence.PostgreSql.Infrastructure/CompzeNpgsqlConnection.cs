@@ -3,7 +3,7 @@ using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
-namespace Compze.Persistence.PostgreSql;
+namespace Compze.Persistence.PostgreSql.Infrastructure;
 
 interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<NpgsqlCommand>
 {

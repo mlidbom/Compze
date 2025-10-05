@@ -9,11 +9,12 @@
       <RootNamespace>Compze.Persistence.PostgreSql</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.PostgreSql\Compze.DocumentDb.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.EventStore.PostgreSql\Compze.EventStore.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.PostgreSql\Compze.Tessaging.PostgreSql.csproj" />
       <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="Npgsql" Version="9.0.3" />
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />

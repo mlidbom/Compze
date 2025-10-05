@@ -1,15 +1,11 @@
-﻿using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Configuration.Abstractions;
+﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.PostgreSql.DocumentDb;
-using Compze.Persistence.PostgreSql.EventStore;
-using Compze.Persistence.PostgreSql.Tessaging.Buses.Implementation;
-using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.DocumentDb.PostgreSql;
+using Compze.EventStore.PostgreSql;
+using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Persistence.PostgreSql.Testing;
 using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.PostgreSql;
 
 namespace Compze.Persistence.PostgreSql.DependencyInjection;
 
@@ -39,24 +35,9 @@ public static class PgSqlPersistenceLayerRegistrar
                      .DelegateToParentServiceLocatorWhenCloning());
       }
 
-      //Service bus
-      container.Register(
-         Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()
-                  .CreatedBy((IPgSqlConnectionPool endpointSqlConnection) => new PgSqlOutboxPersistenceLayer(endpointSqlConnection)),
-         Singleton.For<IServiceBusPersistenceLayer.IInboxPersistenceLayer>()
-                  .CreatedBy((IPgSqlConnectionPool endpointSqlConnection) => new PgSqlInboxPersistenceLayer(endpointSqlConnection)));
-
-      //DocumentDB
-      container.Register(
-         Singleton.For<IDocumentDbPersistenceLayer>()
-                  .CreatedBy((IPgSqlConnectionPool connectionProvider) => new PgSqlDocumentDbPersistenceLayer(connectionProvider)));
-
-
-      //Event store
-      container.Register(
-         Singleton.For<PgSqlEventStoreConnectionManager>()
-                  .CreatedBy((IPgSqlConnectionPool sqlConnectionProvider) => new PgSqlEventStoreConnectionManager(sqlConnectionProvider)),
-         Singleton.For<IEventStorePersistenceLayer>()
-                  .CreatedBy((PgSqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new PgSqlEventStorePersistenceLayer(connectionManager)));
+      //Register individual components
+      container.RegisterPgSqlTessaging();
+      container.RegisterPgSqlDocumentDb();
+      container.RegisterPgSqlEventStore();
    }
 }

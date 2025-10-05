@@ -3,7 +3,7 @@ using Compze.DependencyInjection;
 using Compze.Logging;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure;
-using Compze.Persistence.PostgreSql.SystemExtensions;
+using Compze.Persistence.PostgreSql.Infrastructure;
 
 using Compze.Testing;
 using Compze.Testing.Performance;

@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
+      <ImplicitUsings>enable</ImplicitUsings>
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <PropertyGroup>
@@ -10,4 +11,13 @@
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+   </ItemGroup>
 </Project>
