@@ -32,5 +32,6 @@
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration" />
    </ItemGroup>
 </Project>
