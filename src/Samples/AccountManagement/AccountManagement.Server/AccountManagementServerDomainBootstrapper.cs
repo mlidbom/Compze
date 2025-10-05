@@ -5,6 +5,7 @@ using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.DocumentDb.DependencyInjection;
 using Compze.EventStore.DependencyInjection;
+using Compze.Persistence.MicrosoftSql.DependencyInjection;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Persistence.EventStore;
 
@@ -29,7 +30,7 @@ public class AccountManagementServerDomainBootstrapper
    {
       // The persistence layer automatically switches between DbPool (testing) and 
       // production connection string based on container.RunMode.IsTesting
-      builder.RegisterPersistenceLayer();
+      builder.Container.RegisterMsSqlPersistenceLayer(builder.Configuration.ConnectionStringName);
       builder.RegisterEventStore()
              .HandleAggregate<Account, AccountEvent.Root>();
 
