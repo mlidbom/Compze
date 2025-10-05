@@ -14,11 +14,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
 	</ItemGroup>
+
 
 	<ItemGroup>
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />

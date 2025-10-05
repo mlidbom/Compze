@@ -12,7 +12,6 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
-      <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
    </ItemGroup>
    <ItemGroup>

@@ -13,7 +13,6 @@
       <ProjectReference Include="..\Compze.DocumentDb.PostgreSql\Compze.DocumentDb.PostgreSql.csproj" />
       <ProjectReference Include="..\Compze.EventStore.PostgreSql\Compze.EventStore.PostgreSql.csproj" />
       <ProjectReference Include="..\Compze.Tessaging.PostgreSql\Compze.Tessaging.PostgreSql.csproj" />
-      <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
    </ItemGroup>
    <ItemGroup>

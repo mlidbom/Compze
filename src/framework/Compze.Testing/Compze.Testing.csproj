@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
@@ -11,10 +11,8 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.DocumentDb.Abstractions.csproj" />
       <ProjectReference Include="..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
       <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
-      <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
       <ProjectReference Include="..\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj" />
       <ProjectReference Include="..\Compze.Persistence.MicrosoftSql\Compze.Persistence.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Compze.Persistence.MySql\Compze.Persistence.MySql.csproj" />

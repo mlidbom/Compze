@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
@@ -11,6 +11,8 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\..\..\framework\Compze.DocumentDb\Compze.DocumentDb.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
       <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
    </ItemGroup>

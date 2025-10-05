@@ -31,7 +31,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\framework\Compze.Abstractions\Compze.Abstractions.csproj" />
       <ProjectReference Include="..\framework\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
       <ProjectReference Include="..\framework\Compze.InternalUtilities\Compze.Utilities.csproj" />
     </ItemGroup>

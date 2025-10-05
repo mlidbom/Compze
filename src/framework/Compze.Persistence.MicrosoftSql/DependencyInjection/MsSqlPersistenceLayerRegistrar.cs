@@ -1,5 +1,3 @@
-using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DocumentDb.MicrosoftSql;

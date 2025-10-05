@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
@@ -11,6 +11,9 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
+      <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
