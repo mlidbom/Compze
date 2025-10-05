@@ -33,7 +33,7 @@
 
    <ItemGroup>
       <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
-         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
    </ItemGroup>
 

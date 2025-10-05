@@ -31,7 +31,7 @@
    <ItemGroup>
       <Content Include="..\..\TestUsingPluggableComponentCombinations">
          <Link>TestUsingPluggableComponentCombinations</Link>
-         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
    </ItemGroup>
    <PropertyGroup>
