@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Compze.Abstractions;
 using Compze.Abstractions.GenericAbstractions.Time;
-using Compze.DDD.Abstractions;
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Teventive.Abstractions;

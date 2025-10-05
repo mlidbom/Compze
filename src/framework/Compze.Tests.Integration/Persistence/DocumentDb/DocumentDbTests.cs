@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.DDD.Abstractions;
+using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DocumentDb.Abstractions;
 

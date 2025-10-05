@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Compze.Abstractions;
 using Compze.Utilities.Contracts;
 
 namespace Compze.DDD.Abstractions;

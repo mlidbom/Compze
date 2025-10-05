@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Abstractions;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.DDD.Abstractions;
 using Compze.Persistence.Common;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE;

@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.DDD.Abstractions;
+using Compze.Abstractions;
 
 namespace Compze.EventStore.Abstractions;
 

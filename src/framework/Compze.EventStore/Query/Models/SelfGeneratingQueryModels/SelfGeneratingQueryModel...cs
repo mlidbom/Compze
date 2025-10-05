@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Compze.DDD.Abstractions;
+using Compze.Abstractions;
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Teventive.Abstractions;

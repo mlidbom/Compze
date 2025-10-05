@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.DDD.Abstractions;
+using Compze.Abstractions;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Persistence.DocumentDb;

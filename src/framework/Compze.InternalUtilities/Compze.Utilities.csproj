@@ -1,70 +1,71 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <RootNamespace>Compze.Utilities</RootNamespace>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<RootNamespace>Compze.Utilities</RootNamespace>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
 
-    <PropertyGroup>
-        <NuGetAuditMode>direct</NuGetAuditMode>
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    </PropertyGroup>
+	<PropertyGroup>
+		<NuGetAuditMode>direct</NuGetAuditMode>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
 
-    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Abstractions.Internal" />
-      <InternalsVisibleTo Include="Compze.DDD.Abstractions" />
-      <InternalsVisibleTo Include="Compze.Common" />
-      <InternalsVisibleTo Include="Compze.Configuration" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
-      <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
-      <InternalsVisibleTo Include="Compze.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
-      <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.EventStore.MySql" />
-      <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Hosting.Abstractions" />
-      <InternalsVisibleTo Include="Compze.Logging" />
-      <InternalsVisibleTo Include="Compze.Logging.Serilog" />
-      <InternalsVisibleTo Include="Compze.Persistence.Common" />
-      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.DependencyInjection" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Serialization" />
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Common" />
-      <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Testing" />
-      <InternalsVisibleTo Include="Compze.Testing.DbPool" />
-      <InternalsVisibleTo Include="Compze.Testing.DbPool.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Testing.DbPool.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Testing.DbPool.MySql" />
-      <InternalsVisibleTo Include="Compze.TestInfrastructure" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="Compze.Teventive" />
-      <InternalsVisibleTo Include="Compze.Typermedia.Abstractions" />
-      <InternalsVisibleTo Include="ScratchPad.Internals" />
-    </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Compze.Abstractions" />
+		<InternalsVisibleTo Include="Compze.Abstractions.Internal" />
+		<InternalsVisibleTo Include="Compze.DDD.Abstractions" />
+		<InternalsVisibleTo Include="Compze.Common" />
+		<InternalsVisibleTo Include="Compze.Configuration" />
+		<InternalsVisibleTo Include="Compze.DependencyInjection" />
+		<InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
+		<InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
+		<InternalsVisibleTo Include="Compze.DocumentDb" />
+		<InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
+		<InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
+		<InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.EventStore" />
+		<InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
+		<InternalsVisibleTo Include="Compze.EventStore.MySql" />
+		<InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.Hosting.Abstractions" />
+		<InternalsVisibleTo Include="Compze.Logging" />
+		<InternalsVisibleTo Include="Compze.Logging.Serilog" />
+		<InternalsVisibleTo Include="Compze.Persistence.Common" />
+		<InternalsVisibleTo Include="Compze.Persistence.InMemory" />
+		<InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
+		<InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
+		<InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
+		<InternalsVisibleTo Include="Compze.Persistence.PostgreSql.DependencyInjection" />
+		<InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
+		<InternalsVisibleTo Include="Compze.Serialization" />
+		<InternalsVisibleTo Include="Compze.Tessaging" />
+		<InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
+		<InternalsVisibleTo Include="Compze.Tessaging.Common" />
+		<InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
+		<InternalsVisibleTo Include="Compze.Tessaging.MySql" />
+		<InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.Testing" />
+		<InternalsVisibleTo Include="Compze.Testing.DbPool" />
+		<InternalsVisibleTo Include="Compze.Testing.DbPool.MicrosoftSql" />
+		<InternalsVisibleTo Include="Compze.Testing.DbPool.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.Testing.DbPool.MySql" />
+		<InternalsVisibleTo Include="Compze.TestInfrastructure" />
+		<InternalsVisibleTo Include="Compze.Tests.Integration" />
+		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+		<InternalsVisibleTo Include="Compze.Teventive" />
+		<InternalsVisibleTo Include="Compze.Typermedia.Abstractions" />
+		<InternalsVisibleTo Include="ScratchPad.Internals" />
+	</ItemGroup>
 
 </Project>

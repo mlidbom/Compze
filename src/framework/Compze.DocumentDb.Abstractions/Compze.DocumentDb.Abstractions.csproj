@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
+	  <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

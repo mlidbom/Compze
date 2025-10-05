@@ -1,7 +1,8 @@
 using System;
 using System.Diagnostics;
+using Compze.DDD.Abstractions;
 
-namespace Compze.DDD.Abstractions;
+namespace Compze.Abstractions;
 
 /// <summary>
 /// Simple base class for <see cref="IPersistentEntity"/>> that ensures a correct identity based <see cref="object.Equals(object)"/>, <see cref="object.GetHashCode"/>, and <see cref="IEquatable{T}"/>.

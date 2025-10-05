@@ -7,25 +7,28 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/framework/">
+  <Folder Name="/Compze.Abstractions/">
     <Project Path="framework/Compze.Abstractions.Internal/Compze.Abstractions.Internal.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="framework/Compze.Abstractions/Compze.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Common/">
     <Project Path="framework/Compze.Common/Compze.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Configuration/">
     <Project Path="framework/Compze.Configuration.Abstractions/Compze.Configuration.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="framework/Compze.Configuration/Compze.Configuration.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="framework/Compze.DDD.Abstractions/Compze.DDD.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
+  </Folder>
+  <Folder Name="/Compze.DependencyInjection/">
     <Project Path="framework/Compze.DependencyInjection.Abstractions/Compze.DependencyInjection.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
@@ -38,6 +41,8 @@
     <Project Path="framework/Compze.DependencyInjection/Compze.DependencyInjection.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.DocumentDb/">
     <Project Path="framework/Compze.DocumentDb.Abstractions/Compze.DocumentDb.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
@@ -53,6 +58,8 @@
     <Project Path="framework/Compze.DocumentDb/Compze.DocumentDb.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.EventStore/">
     <Project Path="framework/Compze.EventStore.Abstractions/Compze.EventStore.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
@@ -68,12 +75,13 @@
     <Project Path="framework/Compze.EventStore/Compze.EventStore.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Hosting/">
     <Project Path="framework/Compze.Hosting.Abstractions/Compze.Hosting.Abstractions.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
-    <Project Path="framework/Compze.InternalUtilities/Compze.Utilities.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
+  </Folder>
+  <Folder Name="/Compze.Logging/">
     <Project Path="framework/Compze.Logging.Abstractions/Compze.Logging.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
@@ -83,6 +91,8 @@
     <Project Path="framework/Compze.Logging/Compze.Logging.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Persistence/">
     <Project Path="framework/Compze.Persistence.Abstractions/Compze.Persistence.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
@@ -107,12 +117,16 @@
     <Project Path="framework/Compze.Persistence.PostgreSql.Infrastructure/Compze.Persistence.PostgreSql.Infrastructure.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Serialization/">
     <Project Path="framework/Compze.Serialization.Abstractions/Compze.Serialization.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="framework/Compze.Serialization/Compze.Serialization.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Tessaging/">
     <Project Path="framework/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
@@ -131,6 +145,8 @@
     <Project Path="framework/Compze.Tessaging/Compze.Tessaging.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Testing/">
     <Project Path="framework/Compze.Testing.DbPool.MicrosoftSql/Compze.Testing.DbPool.MicrosoftSql.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
@@ -146,10 +162,17 @@
     <Project Path="framework/Compze.Testing/Compze.Testing.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze.Teventive/">
     <Project Path="framework/Compze.Teventive.Abstractions/Compze.Teventive.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="framework/Compze.Teventive/Compze.Teventive.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/framework/">
+    <Project Path="framework/Compze.InternalUtilities/Compze.Utilities.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
     <Project Path="framework/Compze.Typermedia.Abstractions/Compze.Typermedia.Abstractions.csproj">
