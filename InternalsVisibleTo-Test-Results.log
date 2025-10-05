@@ -1,31 +1,37 @@
-Starting InternalsVisibleTo cleanup test at 10/03/2025 14:57:42
-Found 122 InternalsVisibleTo attributes to test
+Starting InternalsVisibleTo cleanup test at 10/05/2025 09:57:04
+Found 167 InternalsVisibleTo attributes to test
 Performing initial build test...
 Initial build successful
 Starting systematic testing of InternalsVisibleTo attributes...
-Testing: Compze.Common in Compze.Abstractions.Internal.csproj at line 22
+Testing: Compze.Common in Compze.Abstractions.Internal.csproj at line 23
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.DocumentDb in Compze.Abstractions.Internal.csproj at line 23
+Testing: Compze.DocumentDb in Compze.Abstractions.Internal.csproj at line 24
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.EventStore in Compze.Abstractions.Internal.csproj at line 24
+Testing: Compze.DocumentDb.MicrosoftSql in Compze.Abstractions.Internal.csproj at line 25
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence in Compze.Abstractions.Internal.csproj at line 25
+Testing: Compze.DocumentDb.MySql in Compze.Abstractions.Internal.csproj at line 26
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.InMemory in Compze.Abstractions.Internal.csproj at line 26
+Testing: Compze.DocumentDb.PostgreSql in Compze.Abstractions.Internal.csproj at line 27
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MicrosoftSqlServer in Compze.Abstractions.Internal.csproj at line 27
+Testing: Compze.EventStore in Compze.Abstractions.Internal.csproj at line 28
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MySql in Compze.Abstractions.Internal.csproj at line 28
+Testing: Compze.EventStore.MySql in Compze.Abstractions.Internal.csproj at line 29
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.PostgreSql in Compze.Abstractions.Internal.csproj at line 29
+Testing: Compze.EventStore.PostgreSql in Compze.Abstractions.Internal.csproj at line 30
+  ✓ REMOVED: Build succeeded without this attribute
+Testing: Compze.Persistence in Compze.Abstractions.Internal.csproj at line 31
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Serialization in Compze.Abstractions.Internal.csproj at line 30
+Testing: Compze.Persistence.InMemory in Compze.Abstractions.Internal.csproj at line 32
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tessaging in Compze.Abstractions.Internal.csproj at line 31
+Testing: Compze.Serialization in Compze.Abstractions.Internal.csproj at line 33
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Unit.Internals in Compze.Abstractions.Internal.csproj at line 32
+Testing: Compze.Tessaging in Compze.Abstractions.Internal.csproj at line 34
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Teventive in Compze.Abstractions.Internal.csproj at line 33
+Testing: Compze.Tessaging.MicrosoftSql in Compze.Abstractions.Internal.csproj at line 35
+  ✓ REMOVED: Build succeeded without this attribute
+Testing: Compze.Tests.Unit.Internals in Compze.Abstractions.Internal.csproj at line 36
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Teventive in Compze.Abstractions.Internal.csproj at line 37
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Tessaging in Compze.Common.csproj at line 17
   ✗ KEPT: Build failed without this attribute
@@ -33,7 +39,7 @@ Testing: Compze.Tests.Performance.Internals in Compze.Common.csproj at line 18
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Tests.Unit.Internals in Compze.Common.csproj at line 19
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MicrosoftSqlServer in Compze.Configuration.csproj at line 24
+Testing: Compze.Persistence.MicrosoftSql in Compze.Configuration.csproj at line 24
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Persistence.MySql in Compze.Configuration.csproj at line 25
   ✗ KEPT: Build failed without this attribute
@@ -51,7 +57,7 @@ Testing: Compze.DependencyInjection.SimpleInjector in Compze.DependencyInjection
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Persistence.InMemory in Compze.DependencyInjection.csproj at line 29
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MicrosoftSqlServer in Compze.DependencyInjection.csproj at line 30
+Testing: Compze.Persistence.MicrosoftSql in Compze.DependencyInjection.csproj at line 30
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Persistence.MySql in Compze.DependencyInjection.csproj at line 31
   ✗ KEPT: Build failed without this attribute
@@ -61,75 +67,99 @@ Testing: Compze.Tessaging in Compze.DependencyInjection.csproj at line 33
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Testing in Compze.DependencyInjection.csproj at line 34
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Testing in Compze.DependencyInjection.Microsoft.csproj at line 29
+Testing: Compze.Testing in Compze.DependencyInjection.Microsoft.csproj at line 25
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Testing in Compze.DependencyInjection.SimpleInjector.csproj at line 29
+Testing: Compze.Testing in Compze.DependencyInjection.SimpleInjector.csproj at line 24
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence in Compze.DocumentDb.csproj at line 29
+Testing: Compze.Tests.Unit.Internals in Compze.DocumentDb.csproj at line 28
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Unit.Internals in Compze.DocumentDb.csproj at line 30
+Testing: Compze.Persistence in Compze.EventStore.csproj at line 31
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence in Compze.EventStore.csproj at line 28
+Testing: Compze.Abstractions.Internal in Compze.Utilities.csproj at line 23
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Abstractions in Compze.InternalUtilities.csproj at line 23
+Testing: Compze.DDD.Abstractions in Compze.Utilities.csproj at line 24
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Abstractions.Internal in Compze.InternalUtilities.csproj at line 24
+Testing: Compze.Common in Compze.Utilities.csproj at line 25
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Common in Compze.InternalUtilities.csproj at line 25
+Testing: Compze.Configuration in Compze.Utilities.csproj at line 26
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Configuration in Compze.InternalUtilities.csproj at line 26
+Testing: Compze.DependencyInjection in Compze.Utilities.csproj at line 27
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.DependencyInjection in Compze.InternalUtilities.csproj at line 27
+Testing: Compze.DependencyInjection.Microsoft in Compze.Utilities.csproj at line 28
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.DependencyInjection.Microsoft in Compze.InternalUtilities.csproj at line 28
+Testing: Compze.DependencyInjection.SimpleInjector in Compze.Utilities.csproj at line 29
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.DependencyInjection.SimpleInjector in Compze.InternalUtilities.csproj at line 29
+Testing: Compze.DocumentDb in Compze.Utilities.csproj at line 30
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.DocumentDb in Compze.InternalUtilities.csproj at line 30
+Testing: Compze.DocumentDb.MicrosoftSql in Compze.Utilities.csproj at line 31
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.EventStore in Compze.InternalUtilities.csproj at line 31
+Testing: Compze.DocumentDb.MySql in Compze.Utilities.csproj at line 32
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Logging in Compze.InternalUtilities.csproj at line 32
+Testing: Compze.DocumentDb.PostgreSql in Compze.Utilities.csproj at line 33
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Logging.Serilog in Compze.InternalUtilities.csproj at line 33
+Testing: Compze.EventStore in Compze.Utilities.csproj at line 34
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence in Compze.InternalUtilities.csproj at line 34
+Testing: Compze.EventStore.MicrosoftSql in Compze.Utilities.csproj at line 35
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.Common in Compze.InternalUtilities.csproj at line 35
+Testing: Compze.EventStore.MySql in Compze.Utilities.csproj at line 36
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.InMemory in Compze.InternalUtilities.csproj at line 36
+Testing: Compze.EventStore.PostgreSql in Compze.Utilities.csproj at line 37
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MicrosoftSqlServer in Compze.InternalUtilities.csproj at line 37
+Testing: Compze.Logging in Compze.Utilities.csproj at line 38
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MySql in Compze.InternalUtilities.csproj at line 38
+Testing: Compze.Logging.Serilog in Compze.Utilities.csproj at line 39
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.PostgreSql in Compze.InternalUtilities.csproj at line 39
+Testing: Compze.Persistence in Compze.Utilities.csproj at line 40
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Serialization in Compze.InternalUtilities.csproj at line 40
+Testing: Compze.Persistence.Common in Compze.Utilities.csproj at line 41
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tessaging in Compze.InternalUtilities.csproj at line 41
+Testing: Compze.Persistence.InMemory in Compze.Utilities.csproj at line 42
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tessaging.Common in Compze.InternalUtilities.csproj at line 42
+Testing: Compze.Persistence.MicrosoftSql in Compze.Utilities.csproj at line 43
+  ✓ REMOVED: Build succeeded without this attribute
+Testing: Compze.Persistence.MicrosoftSql.Infrastructure in Compze.Utilities.csproj at line 44
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Testing in Compze.InternalUtilities.csproj at line 43
+Testing: Compze.Persistence.MySql in Compze.Utilities.csproj at line 45
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Testing.DbPool in Compze.InternalUtilities.csproj at line 44
+Testing: Compze.Persistence.MySql.Infrastructure in Compze.Utilities.csproj at line 46
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.InternalUtilities.csproj at line 45
+Testing: Compze.Persistence.PostgreSql in Compze.Utilities.csproj at line 47
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Performance.Internals in Compze.InternalUtilities.csproj at line 46
+Testing: Compze.Persistence.PostgreSql.Infrastructure in Compze.Utilities.csproj at line 48
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Unit.Internals in Compze.InternalUtilities.csproj at line 47
+Testing: Compze.Serialization in Compze.Utilities.csproj at line 49
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Teventive in Compze.InternalUtilities.csproj at line 48
+Testing: Compze.Tessaging in Compze.Utilities.csproj at line 50
   ✗ KEPT: Build failed without this attribute
-Testing: ScratchPad.Internals in Compze.InternalUtilities.csproj at line 49
+Testing: Compze.Tessaging.Common in Compze.Utilities.csproj at line 51
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tessaging.MicrosoftSql in Compze.Utilities.csproj at line 52
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tessaging.MySql in Compze.Utilities.csproj at line 53
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tessaging.PostgreSql in Compze.Utilities.csproj at line 54
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Testing in Compze.Utilities.csproj at line 55
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Testing.DbPool in Compze.Utilities.csproj at line 56
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration in Compze.Utilities.csproj at line 57
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Utilities.csproj at line 58
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Performance.Internals in Compze.Utilities.csproj at line 59
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Unit.Internals in Compze.Utilities.csproj at line 60
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Teventive in Compze.Utilities.csproj at line 61
+  ✗ KEPT: Build failed without this attribute
+Testing: ScratchPad.Internals in Compze.Utilities.csproj at line 62
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.EventStore in Compze.Logging.csproj at line 20
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Logging.Serilog in Compze.Logging.csproj at line 21
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence in Compze.Logging.csproj at line 22
+Testing: Compze.Persistence.Common in Compze.Logging.csproj at line 22
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Tessaging in Compze.Logging.csproj at line 23
   ✗ KEPT: Build failed without this attribute
@@ -143,44 +173,90 @@ Testing: Compze.Tests.Unit.Internals in Compze.Logging.csproj at line 27
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Testing in Compze.Logging.Serilog.csproj at line 24
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence in Compze.Tessaging.csproj at line 30
+Testing: Compze.DocumentDb in Compze.Persistence.Common.csproj at line 22
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.InMemory in Compze.Tessaging.csproj at line 31
+Testing: Compze.DocumentDb.MicrosoftSql in Compze.Persistence.Common.csproj at line 23
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MicrosoftSqlServer in Compze.Tessaging.csproj at line 32
+Testing: Compze.DocumentDb.MySql in Compze.Persistence.Common.csproj at line 24
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MySql in Compze.Tessaging.csproj at line 33
+Testing: Compze.DocumentDb.PostgreSql in Compze.Persistence.Common.csproj at line 25
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.PostgreSql in Compze.Tessaging.csproj at line 34
+Testing: Compze.EventStore in Compze.Persistence.Common.csproj at line 26
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Testing in Compze.Tessaging.csproj at line 35
+Testing: Compze.EventStore.MicrosoftSql in Compze.Persistence.Common.csproj at line 27
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MicrosoftSqlServer in Compze.Persistence.csproj at line 26
+Testing: Compze.EventStore.MySql in Compze.Persistence.Common.csproj at line 28
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MySql in Compze.Persistence.csproj at line 27
+Testing: Compze.EventStore.PostgreSql in Compze.Persistence.Common.csproj at line 29
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.PostgreSql in Compze.Persistence.csproj at line 28
+Testing: Compze.Persistence.MicrosoftSql in Compze.Persistence.Common.csproj at line 30
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.Persistence.csproj at line 29
+Testing: Compze.Persistence.MicrosoftSql.Infrastructure in Compze.Persistence.Common.csproj at line 31
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Performance.Internals in Compze.Persistence.csproj at line 30
+Testing: Compze.Persistence.MySql in Compze.Persistence.Common.csproj at line 32
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.DocumentDb in Compze.Persistence.Common.csproj at line 21
+Testing: Compze.Persistence.MySql.Infrastructure in Compze.Persistence.Common.csproj at line 33
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.EventStore in Compze.Persistence.Common.csproj at line 22
+Testing: Compze.Persistence.PostgreSql in Compze.Persistence.Common.csproj at line 34
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.Persistence.MicrosoftSqlServer.csproj at line 19
+Testing: Compze.Persistence.PostgreSql.Infrastructure in Compze.Persistence.Common.csproj at line 35
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Performance.Internals in Compze.Persistence.MicrosoftSqlServer.csproj at line 20
+Testing: Compze.Tessaging.MicrosoftSql in Compze.Persistence.Common.csproj at line 36
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.Persistence.MySql.csproj at line 19
+Testing: Compze.Tessaging.MySql in Compze.Persistence.Common.csproj at line 37
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Performance.Internals in Compze.Persistence.MySql.csproj at line 20
+Testing: Compze.Tessaging.PostgreSql in Compze.Persistence.Common.csproj at line 38
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.Persistence.PostgreSql.csproj at line 19
+Testing: Compze.Tests.Integration.Internals in Compze.Persistence.Common.csproj at line 39
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Performance.Internals in Compze.Persistence.PostgreSql.csproj at line 20
+Testing: Compze.Tests.Performance.Internals in Compze.Persistence.Common.csproj at line 40
   ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Persistence.MicrosoftSql.csproj at line 20
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Performance.Internals in Compze.Persistence.MicrosoftSql.csproj at line 21
+  ✓ REMOVED: Build succeeded without this attribute
+Testing: Compze.Persistence.MicrosoftSql in Compze.Persistence.MicrosoftSql.Infrastructure.csproj at line 18
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.DocumentDb.MicrosoftSql in Compze.Persistence.MicrosoftSql.Infrastructure.csproj at line 19
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.EventStore.MicrosoftSql in Compze.Persistence.MicrosoftSql.Infrastructure.csproj at line 20
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tessaging.MicrosoftSql in Compze.Persistence.MicrosoftSql.Infrastructure.csproj at line 21
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Persistence.MicrosoftSql.Infrastructure.csproj at line 22
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Performance.Internals in Compze.Persistence.MicrosoftSql.Infrastructure.csproj at line 23
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Persistence.MySql.csproj at line 20
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Persistence.MySql in Compze.Persistence.MySql.Infrastructure.csproj at line 18
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.DocumentDb.MySql in Compze.Persistence.MySql.Infrastructure.csproj at line 19
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.EventStore.MySql in Compze.Persistence.MySql.Infrastructure.csproj at line 20
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tessaging.MySql in Compze.Persistence.MySql.Infrastructure.csproj at line 21
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Persistence.MySql.Infrastructure.csproj at line 22
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Performance.Internals in Compze.Persistence.MySql.Infrastructure.csproj at line 23
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Persistence.PostgreSql.csproj at line 20
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Persistence.PostgreSql in Compze.Persistence.PostgreSql.Infrastructure.csproj at line 18
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.DocumentDb.PostgreSql in Compze.Persistence.PostgreSql.Infrastructure.csproj at line 19
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.EventStore.PostgreSql in Compze.Persistence.PostgreSql.Infrastructure.csproj at line 20
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tessaging.PostgreSql in Compze.Persistence.PostgreSql.Infrastructure.csproj at line 21
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Persistence.PostgreSql.Infrastructure.csproj at line 22
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Performance.Internals in Compze.Persistence.PostgreSql.Infrastructure.csproj at line 23
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Common in Compze.Persistence.PostgreSql.Infrastructure.csproj at line 24
+  ✓ REMOVED: Build succeeded without this attribute
 Testing: Compze.DocumentDb in Compze.Serialization.csproj at line 17
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.EventStore in Compze.Serialization.csproj at line 18
@@ -197,31 +273,45 @@ Testing: Compze.Tests.Performance.Internals in Compze.Serialization.csproj at li
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Tests.Unit.Internals in Compze.Serialization.csproj at line 24
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.EventStore in Compze.Tessaging.Common.csproj at line 22
+Testing: Compze.DocumentDb in Compze.Tessaging.csproj at line 33
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tessaging in Compze.Tessaging.Common.csproj at line 23
+Testing: Compze.Persistence in Compze.Tessaging.csproj at line 34
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.Tessaging.Common.csproj at line 24
+Testing: Compze.Persistence.InMemory in Compze.Tessaging.csproj at line 35
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Unit.Internals in Compze.Tessaging.Common.csproj at line 25
+Testing: Compze.Tessaging.MicrosoftSql in Compze.Tessaging.csproj at line 36
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Teventive in Compze.Tessaging.Common.csproj at line 26
+Testing: Compze.Tessaging.MySql in Compze.Tessaging.csproj at line 37
   ✗ KEPT: Build failed without this attribute
-Testing: AccountManagement.PerformanceTests.Internals in Compze.Testing.csproj at line 33
+Testing: Compze.Tessaging.PostgreSql in Compze.Tessaging.csproj at line 38
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Common in Compze.Testing.csproj at line 34
+Testing: Compze.Testing in Compze.Tessaging.csproj at line 39
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration in Compze.Testing.csproj at line 35
+Testing: Compze.EventStore in Compze.Tessaging.Common.csproj at line 24
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.Testing.csproj at line 36
+Testing: Compze.Tessaging in Compze.Tessaging.Common.csproj at line 25
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Performance.Internals in Compze.Testing.csproj at line 37
+Testing: Compze.Tests.Integration.Internals in Compze.Tessaging.Common.csproj at line 26
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Unit in Compze.Testing.csproj at line 38
+Testing: Compze.Tests.Unit.Internals in Compze.Tessaging.Common.csproj at line 27
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Unit.Internals in Compze.Testing.csproj at line 39
+Testing: Compze.Teventive in Compze.Tessaging.Common.csproj at line 28
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence.MicrosoftSqlServer in Compze.Testing.DbPool.csproj at line 27
+Testing: AccountManagement.PerformanceTests.Internals in Compze.Testing.csproj at line 34
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Common in Compze.Testing.csproj at line 35
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration in Compze.Testing.csproj at line 36
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Integration.Internals in Compze.Testing.csproj at line 37
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Performance.Internals in Compze.Testing.csproj at line 38
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Unit in Compze.Testing.csproj at line 39
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Tests.Unit.Internals in Compze.Testing.csproj at line 40
+  ✗ KEPT: Build failed without this attribute
+Testing: Compze.Persistence.MicrosoftSql in Compze.Testing.DbPool.csproj at line 27
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Persistence.MySql in Compze.Testing.DbPool.csproj at line 28
   ✗ KEPT: Build failed without this attribute
@@ -231,19 +321,19 @@ Testing: Compze.Tests.Performance.Internals in Compze.Testing.DbPool.csproj at l
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Tests.Unit.Internals in Compze.Testing.DbPool.csproj at line 31
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration in Compze.Tests.Common.csproj at line 39
+Testing: Compze.Tests.Integration in Compze.Tests.Common.csproj at line 40
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Integration.Internals in Compze.Tests.Common.csproj at line 40
+Testing: Compze.Tests.Integration.Internals in Compze.Tests.Common.csproj at line 41
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Tests.Performance.Internals in Compze.Tests.Common.csproj at line 41
+Testing: Compze.Tests.Performance.Internals in Compze.Tests.Common.csproj at line 42
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Tests.Performance.Internals in Compze.Tests.Integration.Internals.csproj at line 48
   ✗ KEPT: Build failed without this attribute
 Testing: Compze.Tests.Performance.Internals in Compze.Tests.Unit.Internals.csproj at line 41
   ✗ KEPT: Build failed without this attribute
-Testing: Compze.Persistence in Compze.Teventive.csproj at line 23
+Testing: Compze.Persistence in Compze.Teventive.csproj at line 25
   ✗ KEPT: Build failed without this attribute
-Testing: AccountManagement.Server in AccountManagement.API.csproj at line 34
+Testing: AccountManagement.Server in AccountManagement.API.csproj at line 35
   ✗ KEPT: Build failed without this attribute
 Testing: AccountManagement.PerformanceTests.Internals in AccountManagement.Tests.csproj at line 45
   ✗ KEPT: Build failed without this attribute
@@ -251,33 +341,39 @@ Testing: AccountManagement.PerformanceTests.Internals in AccountManagement.Tests
 ================================================================================
 INTERNALSVISIBLETO CLEANUP SUMMARY REPORT
 ================================================================================
-Test completed at: 10/03/2025 15:08:03
-Duration: 10.34 minutes
-Total attributes tested: 122
+Test completed at: 10/05/2025 10:13:03
+Duration: 15.99 minutes
+Total attributes tested: 167
 
 RESULTS:
-- Removed (unnecessary): 0
-- Kept (required): 122  
+- Removed (unnecessary): 5
+- Kept (required): 162  
 - Errors: 0
 
 REMOVED ATTRIBUTES (Build succeeded without them):
+  - Compze.Abstractions.Internal.csproj:30 - Compze.EventStore.PostgreSql
+  - Compze.Abstractions.Internal.csproj:35 - Compze.Tessaging.MicrosoftSql
+  - Compze.Utilities.csproj:43 - Compze.Persistence.MicrosoftSql
+  - Compze.Persistence.MicrosoftSql.csproj:21 - Compze.Tests.Performance.Internals
+  - Compze.Persistence.PostgreSql.Infrastructure.csproj:24 - Compze.Tests.Common
 KEPT ATTRIBUTES (Build failed without them):
-  - Compze.Abstractions.Internal.csproj:22 - Compze.Common
-  - Compze.Abstractions.Internal.csproj:23 - Compze.DocumentDb
-  - Compze.Abstractions.Internal.csproj:24 - Compze.EventStore
-  - Compze.Abstractions.Internal.csproj:25 - Compze.Persistence
-  - Compze.Abstractions.Internal.csproj:26 - Compze.Persistence.InMemory
-  - Compze.Abstractions.Internal.csproj:27 - Compze.Persistence.MicrosoftSqlServer
-  - Compze.Abstractions.Internal.csproj:28 - Compze.Persistence.MySql
-  - Compze.Abstractions.Internal.csproj:29 - Compze.Persistence.PostgreSql
-  - Compze.Abstractions.Internal.csproj:30 - Compze.Serialization
-  - Compze.Abstractions.Internal.csproj:31 - Compze.Tessaging
-  - Compze.Abstractions.Internal.csproj:32 - Compze.Tests.Unit.Internals
-  - Compze.Abstractions.Internal.csproj:33 - Compze.Teventive
+  - Compze.Abstractions.Internal.csproj:23 - Compze.Common
+  - Compze.Abstractions.Internal.csproj:24 - Compze.DocumentDb
+  - Compze.Abstractions.Internal.csproj:25 - Compze.DocumentDb.MicrosoftSql
+  - Compze.Abstractions.Internal.csproj:26 - Compze.DocumentDb.MySql
+  - Compze.Abstractions.Internal.csproj:27 - Compze.DocumentDb.PostgreSql
+  - Compze.Abstractions.Internal.csproj:28 - Compze.EventStore
+  - Compze.Abstractions.Internal.csproj:29 - Compze.EventStore.MySql
+  - Compze.Abstractions.Internal.csproj:31 - Compze.Persistence
+  - Compze.Abstractions.Internal.csproj:32 - Compze.Persistence.InMemory
+  - Compze.Abstractions.Internal.csproj:33 - Compze.Serialization
+  - Compze.Abstractions.Internal.csproj:34 - Compze.Tessaging
+  - Compze.Abstractions.Internal.csproj:36 - Compze.Tests.Unit.Internals
+  - Compze.Abstractions.Internal.csproj:37 - Compze.Teventive
   - Compze.Common.csproj:17 - Compze.Tessaging
   - Compze.Common.csproj:18 - Compze.Tests.Performance.Internals
   - Compze.Common.csproj:19 - Compze.Tests.Unit.Internals
-  - Compze.Configuration.csproj:24 - Compze.Persistence.MicrosoftSqlServer
+  - Compze.Configuration.csproj:24 - Compze.Persistence.MicrosoftSql
   - Compze.Configuration.csproj:25 - Compze.Persistence.MySql
   - Compze.Configuration.csproj:26 - Compze.Persistence.PostgreSql
   - Compze.Configuration.csproj:27 - Compze.Tessaging
@@ -286,71 +382,103 @@ KEPT ATTRIBUTES (Build failed without them):
   - Compze.DependencyInjection.csproj:27 - Compze.DependencyInjection.Microsoft
   - Compze.DependencyInjection.csproj:28 - Compze.DependencyInjection.SimpleInjector
   - Compze.DependencyInjection.csproj:29 - Compze.Persistence.InMemory
-  - Compze.DependencyInjection.csproj:30 - Compze.Persistence.MicrosoftSqlServer
+  - Compze.DependencyInjection.csproj:30 - Compze.Persistence.MicrosoftSql
   - Compze.DependencyInjection.csproj:31 - Compze.Persistence.MySql
   - Compze.DependencyInjection.csproj:32 - Compze.Persistence.PostgreSql
   - Compze.DependencyInjection.csproj:33 - Compze.Tessaging
   - Compze.DependencyInjection.csproj:34 - Compze.Testing
-  - Compze.DependencyInjection.Microsoft.csproj:29 - Compze.Testing
-  - Compze.DependencyInjection.SimpleInjector.csproj:29 - Compze.Testing
-  - Compze.DocumentDb.csproj:29 - Compze.Persistence
-  - Compze.DocumentDb.csproj:30 - Compze.Tests.Unit.Internals
-  - Compze.EventStore.csproj:28 - Compze.Persistence
-  - Compze.InternalUtilities.csproj:23 - Compze.Abstractions
-  - Compze.InternalUtilities.csproj:24 - Compze.Abstractions.Internal
-  - Compze.InternalUtilities.csproj:25 - Compze.Common
-  - Compze.InternalUtilities.csproj:26 - Compze.Configuration
-  - Compze.InternalUtilities.csproj:27 - Compze.DependencyInjection
-  - Compze.InternalUtilities.csproj:28 - Compze.DependencyInjection.Microsoft
-  - Compze.InternalUtilities.csproj:29 - Compze.DependencyInjection.SimpleInjector
-  - Compze.InternalUtilities.csproj:30 - Compze.DocumentDb
-  - Compze.InternalUtilities.csproj:31 - Compze.EventStore
-  - Compze.InternalUtilities.csproj:32 - Compze.Logging
-  - Compze.InternalUtilities.csproj:33 - Compze.Logging.Serilog
-  - Compze.InternalUtilities.csproj:34 - Compze.Persistence
-  - Compze.InternalUtilities.csproj:35 - Compze.Persistence.Common
-  - Compze.InternalUtilities.csproj:36 - Compze.Persistence.InMemory
-  - Compze.InternalUtilities.csproj:37 - Compze.Persistence.MicrosoftSqlServer
-  - Compze.InternalUtilities.csproj:38 - Compze.Persistence.MySql
-  - Compze.InternalUtilities.csproj:39 - Compze.Persistence.PostgreSql
-  - Compze.InternalUtilities.csproj:40 - Compze.Serialization
-  - Compze.InternalUtilities.csproj:41 - Compze.Tessaging
-  - Compze.InternalUtilities.csproj:42 - Compze.Tessaging.Common
-  - Compze.InternalUtilities.csproj:43 - Compze.Testing
-  - Compze.InternalUtilities.csproj:44 - Compze.Testing.DbPool
-  - Compze.InternalUtilities.csproj:45 - Compze.Tests.Integration.Internals
-  - Compze.InternalUtilities.csproj:46 - Compze.Tests.Performance.Internals
-  - Compze.InternalUtilities.csproj:47 - Compze.Tests.Unit.Internals
-  - Compze.InternalUtilities.csproj:48 - Compze.Teventive
-  - Compze.InternalUtilities.csproj:49 - ScratchPad.Internals
+  - Compze.DependencyInjection.Microsoft.csproj:25 - Compze.Testing
+  - Compze.DependencyInjection.SimpleInjector.csproj:24 - Compze.Testing
+  - Compze.DocumentDb.csproj:28 - Compze.Tests.Unit.Internals
+  - Compze.EventStore.csproj:31 - Compze.Persistence
+  - Compze.Utilities.csproj:23 - Compze.Abstractions.Internal
+  - Compze.Utilities.csproj:24 - Compze.DDD.Abstractions
+  - Compze.Utilities.csproj:25 - Compze.Common
+  - Compze.Utilities.csproj:26 - Compze.Configuration
+  - Compze.Utilities.csproj:27 - Compze.DependencyInjection
+  - Compze.Utilities.csproj:28 - Compze.DependencyInjection.Microsoft
+  - Compze.Utilities.csproj:29 - Compze.DependencyInjection.SimpleInjector
+  - Compze.Utilities.csproj:30 - Compze.DocumentDb
+  - Compze.Utilities.csproj:31 - Compze.DocumentDb.MicrosoftSql
+  - Compze.Utilities.csproj:32 - Compze.DocumentDb.MySql
+  - Compze.Utilities.csproj:33 - Compze.DocumentDb.PostgreSql
+  - Compze.Utilities.csproj:34 - Compze.EventStore
+  - Compze.Utilities.csproj:35 - Compze.EventStore.MicrosoftSql
+  - Compze.Utilities.csproj:36 - Compze.EventStore.MySql
+  - Compze.Utilities.csproj:37 - Compze.EventStore.PostgreSql
+  - Compze.Utilities.csproj:38 - Compze.Logging
+  - Compze.Utilities.csproj:39 - Compze.Logging.Serilog
+  - Compze.Utilities.csproj:40 - Compze.Persistence
+  - Compze.Utilities.csproj:41 - Compze.Persistence.Common
+  - Compze.Utilities.csproj:42 - Compze.Persistence.InMemory
+  - Compze.Utilities.csproj:44 - Compze.Persistence.MicrosoftSql.Infrastructure
+  - Compze.Utilities.csproj:45 - Compze.Persistence.MySql
+  - Compze.Utilities.csproj:46 - Compze.Persistence.MySql.Infrastructure
+  - Compze.Utilities.csproj:47 - Compze.Persistence.PostgreSql
+  - Compze.Utilities.csproj:48 - Compze.Persistence.PostgreSql.Infrastructure
+  - Compze.Utilities.csproj:49 - Compze.Serialization
+  - Compze.Utilities.csproj:50 - Compze.Tessaging
+  - Compze.Utilities.csproj:51 - Compze.Tessaging.Common
+  - Compze.Utilities.csproj:52 - Compze.Tessaging.MicrosoftSql
+  - Compze.Utilities.csproj:53 - Compze.Tessaging.MySql
+  - Compze.Utilities.csproj:54 - Compze.Tessaging.PostgreSql
+  - Compze.Utilities.csproj:55 - Compze.Testing
+  - Compze.Utilities.csproj:56 - Compze.Testing.DbPool
+  - Compze.Utilities.csproj:57 - Compze.Tests.Integration
+  - Compze.Utilities.csproj:58 - Compze.Tests.Integration.Internals
+  - Compze.Utilities.csproj:59 - Compze.Tests.Performance.Internals
+  - Compze.Utilities.csproj:60 - Compze.Tests.Unit.Internals
+  - Compze.Utilities.csproj:61 - Compze.Teventive
+  - Compze.Utilities.csproj:62 - ScratchPad.Internals
   - Compze.Logging.csproj:20 - Compze.EventStore
   - Compze.Logging.csproj:21 - Compze.Logging.Serilog
-  - Compze.Logging.csproj:22 - Compze.Persistence
+  - Compze.Logging.csproj:22 - Compze.Persistence.Common
   - Compze.Logging.csproj:23 - Compze.Tessaging
   - Compze.Logging.csproj:24 - Compze.Testing
   - Compze.Logging.csproj:25 - Compze.Testing.DbPool
   - Compze.Logging.csproj:26 - Compze.Tests.Performance.Internals
   - Compze.Logging.csproj:27 - Compze.Tests.Unit.Internals
   - Compze.Logging.Serilog.csproj:24 - Compze.Testing
-  - Compze.Tessaging.csproj:30 - Compze.Persistence
-  - Compze.Tessaging.csproj:31 - Compze.Persistence.InMemory
-  - Compze.Tessaging.csproj:32 - Compze.Persistence.MicrosoftSqlServer
-  - Compze.Tessaging.csproj:33 - Compze.Persistence.MySql
-  - Compze.Tessaging.csproj:34 - Compze.Persistence.PostgreSql
-  - Compze.Tessaging.csproj:35 - Compze.Testing
-  - Compze.Persistence.csproj:26 - Compze.Persistence.MicrosoftSqlServer
-  - Compze.Persistence.csproj:27 - Compze.Persistence.MySql
-  - Compze.Persistence.csproj:28 - Compze.Persistence.PostgreSql
-  - Compze.Persistence.csproj:29 - Compze.Tests.Integration.Internals
-  - Compze.Persistence.csproj:30 - Compze.Tests.Performance.Internals
-  - Compze.Persistence.Common.csproj:21 - Compze.DocumentDb
-  - Compze.Persistence.Common.csproj:22 - Compze.EventStore
-  - Compze.Persistence.MicrosoftSqlServer.csproj:19 - Compze.Tests.Integration.Internals
-  - Compze.Persistence.MicrosoftSqlServer.csproj:20 - Compze.Tests.Performance.Internals
-  - Compze.Persistence.MySql.csproj:19 - Compze.Tests.Integration.Internals
-  - Compze.Persistence.MySql.csproj:20 - Compze.Tests.Performance.Internals
-  - Compze.Persistence.PostgreSql.csproj:19 - Compze.Tests.Integration.Internals
-  - Compze.Persistence.PostgreSql.csproj:20 - Compze.Tests.Performance.Internals
+  - Compze.Persistence.Common.csproj:22 - Compze.DocumentDb
+  - Compze.Persistence.Common.csproj:23 - Compze.DocumentDb.MicrosoftSql
+  - Compze.Persistence.Common.csproj:24 - Compze.DocumentDb.MySql
+  - Compze.Persistence.Common.csproj:25 - Compze.DocumentDb.PostgreSql
+  - Compze.Persistence.Common.csproj:26 - Compze.EventStore
+  - Compze.Persistence.Common.csproj:27 - Compze.EventStore.MicrosoftSql
+  - Compze.Persistence.Common.csproj:28 - Compze.EventStore.MySql
+  - Compze.Persistence.Common.csproj:29 - Compze.EventStore.PostgreSql
+  - Compze.Persistence.Common.csproj:30 - Compze.Persistence.MicrosoftSql
+  - Compze.Persistence.Common.csproj:31 - Compze.Persistence.MicrosoftSql.Infrastructure
+  - Compze.Persistence.Common.csproj:32 - Compze.Persistence.MySql
+  - Compze.Persistence.Common.csproj:33 - Compze.Persistence.MySql.Infrastructure
+  - Compze.Persistence.Common.csproj:34 - Compze.Persistence.PostgreSql
+  - Compze.Persistence.Common.csproj:35 - Compze.Persistence.PostgreSql.Infrastructure
+  - Compze.Persistence.Common.csproj:36 - Compze.Tessaging.MicrosoftSql
+  - Compze.Persistence.Common.csproj:37 - Compze.Tessaging.MySql
+  - Compze.Persistence.Common.csproj:38 - Compze.Tessaging.PostgreSql
+  - Compze.Persistence.Common.csproj:39 - Compze.Tests.Integration.Internals
+  - Compze.Persistence.Common.csproj:40 - Compze.Tests.Performance.Internals
+  - Compze.Persistence.MicrosoftSql.csproj:20 - Compze.Tests.Integration.Internals
+  - Compze.Persistence.MicrosoftSql.Infrastructure.csproj:18 - Compze.Persistence.MicrosoftSql
+  - Compze.Persistence.MicrosoftSql.Infrastructure.csproj:19 - Compze.DocumentDb.MicrosoftSql
+  - Compze.Persistence.MicrosoftSql.Infrastructure.csproj:20 - Compze.EventStore.MicrosoftSql
+  - Compze.Persistence.MicrosoftSql.Infrastructure.csproj:21 - Compze.Tessaging.MicrosoftSql
+  - Compze.Persistence.MicrosoftSql.Infrastructure.csproj:22 - Compze.Tests.Integration.Internals
+  - Compze.Persistence.MicrosoftSql.Infrastructure.csproj:23 - Compze.Tests.Performance.Internals
+  - Compze.Persistence.MySql.csproj:20 - Compze.Tests.Integration.Internals
+  - Compze.Persistence.MySql.Infrastructure.csproj:18 - Compze.Persistence.MySql
+  - Compze.Persistence.MySql.Infrastructure.csproj:19 - Compze.DocumentDb.MySql
+  - Compze.Persistence.MySql.Infrastructure.csproj:20 - Compze.EventStore.MySql
+  - Compze.Persistence.MySql.Infrastructure.csproj:21 - Compze.Tessaging.MySql
+  - Compze.Persistence.MySql.Infrastructure.csproj:22 - Compze.Tests.Integration.Internals
+  - Compze.Persistence.MySql.Infrastructure.csproj:23 - Compze.Tests.Performance.Internals
+  - Compze.Persistence.PostgreSql.csproj:20 - Compze.Tests.Integration.Internals
+  - Compze.Persistence.PostgreSql.Infrastructure.csproj:18 - Compze.Persistence.PostgreSql
+  - Compze.Persistence.PostgreSql.Infrastructure.csproj:19 - Compze.DocumentDb.PostgreSql
+  - Compze.Persistence.PostgreSql.Infrastructure.csproj:20 - Compze.EventStore.PostgreSql
+  - Compze.Persistence.PostgreSql.Infrastructure.csproj:21 - Compze.Tessaging.PostgreSql
+  - Compze.Persistence.PostgreSql.Infrastructure.csproj:22 - Compze.Tests.Integration.Internals
+  - Compze.Persistence.PostgreSql.Infrastructure.csproj:23 - Compze.Tests.Performance.Internals
   - Compze.Serialization.csproj:17 - Compze.DocumentDb
   - Compze.Serialization.csproj:18 - Compze.EventStore
   - Compze.Serialization.csproj:19 - Compze.Logging
@@ -359,33 +487,44 @@ KEPT ATTRIBUTES (Build failed without them):
   - Compze.Serialization.csproj:22 - Compze.Testing.DbPool
   - Compze.Serialization.csproj:23 - Compze.Tests.Performance.Internals
   - Compze.Serialization.csproj:24 - Compze.Tests.Unit.Internals
-  - Compze.Tessaging.Common.csproj:22 - Compze.EventStore
-  - Compze.Tessaging.Common.csproj:23 - Compze.Tessaging
-  - Compze.Tessaging.Common.csproj:24 - Compze.Tests.Integration.Internals
-  - Compze.Tessaging.Common.csproj:25 - Compze.Tests.Unit.Internals
-  - Compze.Tessaging.Common.csproj:26 - Compze.Teventive
-  - Compze.Testing.csproj:33 - AccountManagement.PerformanceTests.Internals
-  - Compze.Testing.csproj:34 - Compze.Tests.Common
-  - Compze.Testing.csproj:35 - Compze.Tests.Integration
-  - Compze.Testing.csproj:36 - Compze.Tests.Integration.Internals
-  - Compze.Testing.csproj:37 - Compze.Tests.Performance.Internals
-  - Compze.Testing.csproj:38 - Compze.Tests.Unit
-  - Compze.Testing.csproj:39 - Compze.Tests.Unit.Internals
-  - Compze.Testing.DbPool.csproj:27 - Compze.Persistence.MicrosoftSqlServer
+  - Compze.Tessaging.csproj:33 - Compze.DocumentDb
+  - Compze.Tessaging.csproj:34 - Compze.Persistence
+  - Compze.Tessaging.csproj:35 - Compze.Persistence.InMemory
+  - Compze.Tessaging.csproj:36 - Compze.Tessaging.MicrosoftSql
+  - Compze.Tessaging.csproj:37 - Compze.Tessaging.MySql
+  - Compze.Tessaging.csproj:38 - Compze.Tessaging.PostgreSql
+  - Compze.Tessaging.csproj:39 - Compze.Testing
+  - Compze.Tessaging.Common.csproj:24 - Compze.EventStore
+  - Compze.Tessaging.Common.csproj:25 - Compze.Tessaging
+  - Compze.Tessaging.Common.csproj:26 - Compze.Tests.Integration.Internals
+  - Compze.Tessaging.Common.csproj:27 - Compze.Tests.Unit.Internals
+  - Compze.Tessaging.Common.csproj:28 - Compze.Teventive
+  - Compze.Testing.csproj:34 - AccountManagement.PerformanceTests.Internals
+  - Compze.Testing.csproj:35 - Compze.Tests.Common
+  - Compze.Testing.csproj:36 - Compze.Tests.Integration
+  - Compze.Testing.csproj:37 - Compze.Tests.Integration.Internals
+  - Compze.Testing.csproj:38 - Compze.Tests.Performance.Internals
+  - Compze.Testing.csproj:39 - Compze.Tests.Unit
+  - Compze.Testing.csproj:40 - Compze.Tests.Unit.Internals
+  - Compze.Testing.DbPool.csproj:27 - Compze.Persistence.MicrosoftSql
   - Compze.Testing.DbPool.csproj:28 - Compze.Persistence.MySql
   - Compze.Testing.DbPool.csproj:29 - Compze.Persistence.PostgreSql
   - Compze.Testing.DbPool.csproj:30 - Compze.Tests.Performance.Internals
   - Compze.Testing.DbPool.csproj:31 - Compze.Tests.Unit.Internals
-  - Compze.Tests.Common.csproj:39 - Compze.Tests.Integration
-  - Compze.Tests.Common.csproj:40 - Compze.Tests.Integration.Internals
-  - Compze.Tests.Common.csproj:41 - Compze.Tests.Performance.Internals
+  - Compze.Tests.Common.csproj:40 - Compze.Tests.Integration
+  - Compze.Tests.Common.csproj:41 - Compze.Tests.Integration.Internals
+  - Compze.Tests.Common.csproj:42 - Compze.Tests.Performance.Internals
   - Compze.Tests.Integration.Internals.csproj:48 - Compze.Tests.Performance.Internals
   - Compze.Tests.Unit.Internals.csproj:41 - Compze.Tests.Performance.Internals
-  - Compze.Teventive.csproj:23 - Compze.Persistence
-  - AccountManagement.API.csproj:34 - AccountManagement.Server
+  - Compze.Teventive.csproj:25 - Compze.Persistence
+  - AccountManagement.API.csproj:35 - AccountManagement.Server
   - AccountManagement.Tests.csproj:45 - AccountManagement.PerformanceTests.Internals
 Final verification build...
 ✓ Final verification build PASSED
 Cleaning up: Removing commented out InternalsVisibleTo attributes...
+  Cleaning: Compze.Abstractions.Internal.csproj
+  Cleaning: Compze.Utilities.csproj
+  Cleaning: Compze.Persistence.MicrosoftSql.csproj
+  Cleaning: Compze.Persistence.PostgreSql.Infrastructure.csproj
 Final cleanup build...
 ✓ Final cleanup build PASSED

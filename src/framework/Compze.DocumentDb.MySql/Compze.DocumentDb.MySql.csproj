@@ -17,7 +17,5 @@
       <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -14,13 +14,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Tessaging" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Common" />
-		<InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.MySql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
-		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
 	</ItemGroup>
 
 </Project>

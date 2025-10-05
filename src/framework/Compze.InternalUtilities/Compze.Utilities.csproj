@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -20,7 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Abstractions" />
       <InternalsVisibleTo Include="Compze.Abstractions.Internal" />
       <InternalsVisibleTo Include="Compze.DDD.Abstractions" />
       <InternalsVisibleTo Include="Compze.Common" />
@@ -41,7 +40,6 @@
       <InternalsVisibleTo Include="Compze.Persistence" />
       <InternalsVisibleTo Include="Compze.Persistence.Common" />
       <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Persistence.MySql" />
       <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
