@@ -12,7 +12,7 @@ using Compze.Testing.Tessaging.Buses;
 using Compze.Testing.Persistence;
 using FluentAssertions;
 using NUnit.Framework;
-using Compze.Persistence.DependencyInjection;
+using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Typermedia;

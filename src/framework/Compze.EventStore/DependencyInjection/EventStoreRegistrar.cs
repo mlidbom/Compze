@@ -15,7 +15,7 @@ using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Persistence.EventStore;
 
-namespace Compze.Persistence.DependencyInjection;
+namespace Compze.EventStore.DependencyInjection;
 
 public static class EventStoreRegistrar
 {

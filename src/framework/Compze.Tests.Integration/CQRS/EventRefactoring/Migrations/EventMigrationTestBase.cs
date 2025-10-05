@@ -8,7 +8,7 @@ using Compze.DependencyInjection;
 using Compze.EventStore;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
-using Compze.Persistence.DependencyInjection;
+using Compze.EventStore.DependencyInjection;
 using Compze.Persistence.Testing;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;

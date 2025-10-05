@@ -4,7 +4,7 @@ using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.DocumentDb.DependencyInjection;
-using Compze.Persistence.DependencyInjection;
+using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Testing.Persistence;
