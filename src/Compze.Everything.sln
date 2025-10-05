@@ -146,6 +146,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.Microsof
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.PostgreSql.Infrastructure", "framework\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj", "{5BCF65BD-85A8-4E7C-9E62-90BA471F766E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.TestInfrastructure", "framework\Compze.TestInfrastructure\Compze.TestInfrastructure.csproj", "{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1257,6 +1259,24 @@ Global
 		{5BCF65BD-85A8-4E7C-9E62-90BA471F766E}.Release|x64.Build.0 = Release|Any CPU
 		{5BCF65BD-85A8-4E7C-9E62-90BA471F766E}.Release|x86.ActiveCfg = Release|Any CPU
 		{5BCF65BD-85A8-4E7C-9E62-90BA471F766E}.Release|x86.Build.0 = Release|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Debug|x64.Build.0 = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Debug|x86.Build.0 = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.docs|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.docs|Any CPU.Build.0 = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.docs|x64.ActiveCfg = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.docs|x64.Build.0 = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.docs|x86.ActiveCfg = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.docs|x86.Build.0 = Debug|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Release|x64.ActiveCfg = Release|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Release|x64.Build.0 = Release|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1323,6 +1343,7 @@ Global
 		{A1234567-89AB-CDEF-0123-456789ABCDE9} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 		{F48CDE7E-8480-40A7-A3C5-4D7379E65035} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
 		{5BCF65BD-85A8-4E7C-9E62-90BA471F766E} = {AF41900C-BCBE-4D87-83C2-C1DCECA130E2}
+		{D5F85931-EE5D-46B8-A0AA-3BC1E720257A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {275B298E-4082-4323-8E00-FB580CDC1E06}

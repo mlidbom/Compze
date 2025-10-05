@@ -17,7 +17,7 @@ namespace Compze.Testing.TestFrameworkExtensions.XUnit;
 sealed class XFactAttribute : FactAttribute
 {
    const string XFactDiscovererFullTypeName = "Compze.Testing.TestFrameworkExtensions.XUnit.XFactDiscoverer";
-   const string XFactDiscovererAssembly = "Compze.Testing";
+   const string XFactDiscovererAssembly = "Compze.TestInfrastructure";
 
    static XFactAttribute()
    {
