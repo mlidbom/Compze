@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Compze.Abstractions.GenericAbstractions.Time;
-using Compze.Abstractions.Internal.Persistence.EventStore;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
 using Compze.EventStore;

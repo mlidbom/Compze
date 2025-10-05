@@ -8,6 +8,7 @@ using CommunityToolkit.Diagnostics;
 using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Hosting.Abstractions;
 using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Typermedia;

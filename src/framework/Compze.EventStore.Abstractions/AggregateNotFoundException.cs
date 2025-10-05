@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Abstractions.Internal.Persistence.EventStore;
+namespace Compze.EventStore.Abstractions;
 
 class AggregateNotFoundException(Guid aggregateId) :
    ArgumentOutOfRangeException($"Aggregate root with Id: {aggregateId} not found");

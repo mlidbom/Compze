@@ -2,6 +2,7 @@
 using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 using Compze.Teventive.Aggregates;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Typermedia;

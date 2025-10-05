@@ -1,7 +1,6 @@
 using Compze.EventStore.Abstractions;
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Internal.Persistence.EventStore;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 

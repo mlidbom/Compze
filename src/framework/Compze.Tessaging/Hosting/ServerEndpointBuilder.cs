@@ -1,11 +1,11 @@
 using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.Abstractions.Internal.GenericAbstractions.Time;
-using Compze.Abstractions.Internal.Persistence.EventStore;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Common.Refactoring.Naming;
 using Compze.Configuration;
 using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
+using Compze.EventStore.Abstractions;
 using Compze.Serialization;
 using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
@@ -59,6 +59,7 @@ class ServerEndpointBuilder : IEndpointBuilder
    {
       EventStoreApi.MapTypes(TypeMapper);
       MessageTypes.MapTypes(TypeMapper);
+      MessageTypesInternal.MapTypes(TypeMapper);
    }
 
    public ServerEndpointBuilder(IEndpointHost host, IGlobalBusStateTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)

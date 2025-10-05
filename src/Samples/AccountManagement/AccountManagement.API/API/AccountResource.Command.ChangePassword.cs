@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
 using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 using JetBrains.Annotations;
 
 namespace AccountManagement.API;

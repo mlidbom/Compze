@@ -5,6 +5,7 @@ using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Abstractions;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Tessaging.Buses;

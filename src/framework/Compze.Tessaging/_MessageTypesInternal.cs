@@ -4,6 +4,8 @@
 
 using System.Collections.Generic;
 using Compze.Abstractions.Internal;
+using Compze.Abstractions.Internal.Refactoring;
+using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
@@ -46,4 +48,11 @@ public static class MessageTypesInternal
 
     public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery((EndpointInformationQuery _, TypeMapper _, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
                                                                                                                                    new EndpointInformation(registry.HandledRemoteMessageTypeIds(), configuration));
+
+    internal static void MapTypes(ITypeMappingRegistrar typeMapper)
+    {
+        typeMapper
+           .MapTypeAndStandardCollectionTypes<MessageTypesInternal.EndpointInformationQuery>("D94259E4-7479-442C-99AE-D49C12CF8713")
+           .MapTypeAndStandardCollectionTypes<MessageTypesInternal.EndpointInformation>("2B598C6D-4893-4CB9-B4CE-7B705AD92DF9");
+    }
 }

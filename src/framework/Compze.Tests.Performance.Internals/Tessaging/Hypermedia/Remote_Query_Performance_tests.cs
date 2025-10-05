@@ -11,7 +11,7 @@ using Compze.Testing.Performance;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
-using CreatesItsOwnResultQuery = Compze.Tessaging.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
+using CreatesItsOwnResultQuery = Compze.Tessaging.Abstractions.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

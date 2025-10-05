@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Abstractions.GenericAbstractions.Time;
-using Compze.Abstractions.Internal.Persistence.EventStore;
 using Compze.EventStore.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
