@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -105,16 +106,23 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
       });
    }
 
-   public override void Dispose()
+   [SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "CA1063 reports 'Dispose should be public and sealed' but incorrectly flags the protected Dispose(bool) override instead of recognizing this sealed class already has a sealed public Dispose() inherited from the base class.")]
+   protected override void Dispose(bool disposing)
    {
-      Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
-      if(_isDisposed) return;
-      _isDisposed = true;
-      _serviceProvider?.Dispose();
-      _serviceProvider = null;
+      if (disposing)
+      {
+         Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
+         if(!_isDisposed)
+         {
+            _isDisposed = true;
+            _serviceProvider?.Dispose();
+            _serviceProvider = null;
+         }
+      }
+      base.Dispose(disposing);
    }
 
-   public override async ValueTask DisposeAsync()
+   protected override async ValueTask DisposeAsyncCore()
    {
       Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(!_isDisposed)
@@ -126,6 +134,6 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
          }
          _serviceProvider = null;
       }
-      await Task.CompletedTask.caf();
+      await base.DisposeAsyncCore().caf();
    }
 }
