@@ -7,13 +7,12 @@ using Compze.DocumentDb.DependencyInjection;
 using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.Persistence.EventStore;
-using Compze.Testing.Persistence;
 
 namespace AccountManagement;
 
 public class AccountManagementServerDomainBootstrapper
 {
-   public IEndpoint RegisterWith(IEndpointHost host)
+   public IEndpoint RegisterWith(IEndpointHost host, Action<IEndpointBuilder>? configurePersistence = null)
    {
       return host.RegisterEndpoint(name: "AccountManagement",
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
@@ -21,15 +20,22 @@ public class AccountManagementServerDomainBootstrapper
                                    {
                                       AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
                                       DomainTypeMapper.MapTypes(builder.TypeMapper);
-                                      RegisterDomainComponents(builder);
+                                      RegisterDomainComponents(builder, configurePersistence);
                                       RegisterHandlers(builder);
                                    });
    }
 
-   static void RegisterDomainComponents(IEndpointBuilder builder)
+   static void RegisterDomainComponents(IEndpointBuilder builder, Action<IEndpointBuilder>? configurePersistence)
    {
-      //todo: This is not in the right place.
-      builder.RegisterCurrentTestsConfiguredPersistenceLayer();
+      // Allow the caller to configure persistence, or use default production configuration
+      if(configurePersistence != null)
+      {
+         configurePersistence(builder);
+      }
+      else
+      {
+         builder.RegisterPersistenceLayer();
+      }
       builder.RegisterEventStore()
              .HandleAggregate<Account, AccountEvent.Root>();
 

@@ -19,7 +19,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
 
-   internal MicrosoftDependencyInjectionContainer(IRunMode runMode)
+   public MicrosoftDependencyInjectionContainer(IRunMode runMode)
    {
       RunMode = runMode;
       _services = new ServiceCollection();

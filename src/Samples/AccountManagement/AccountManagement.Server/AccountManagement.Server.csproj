@@ -12,7 +12,8 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\framework\Compze.DocumentDb\Compze.DocumentDb.csproj" />
-      <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.Persistence.MicrosoftSql\Compze.Persistence.MicrosoftSql.csproj" />
       <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
    </ItemGroup>
    <ItemGroup>

@@ -14,7 +14,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
 {
    readonly Container _container;
    readonly List<ComponentRegistration> _registeredComponents = [];
-   internal SimpleInjectorDependencyInjectionContainer(IRunMode runMode)
+   public SimpleInjectorDependencyInjectionContainer(IRunMode runMode)
    {
       RunMode = runMode;
       _container = new Container();
