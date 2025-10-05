@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.DependencyInjection;
 using Compze.DocumentDb.MicrosoftSql;
 using Compze.DocumentDb.MySql;
@@ -12,6 +12,7 @@ using Compze.Persistence.MySql.DependencyInjection;
 using Compze.Persistence.PostgreSql.DependencyInjection;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Tessaging.MicrosoftSql;
 using Compze.Tessaging.MySql;
 using Compze.Tessaging.PostgreSql;

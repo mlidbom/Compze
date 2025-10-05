@@ -35,6 +35,7 @@
       <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.EventStore.MySql" />
       <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Hosting.Abstractions" />
       <InternalsVisibleTo Include="Compze.Logging" />
       <InternalsVisibleTo Include="Compze.Logging.Serilog" />
       <InternalsVisibleTo Include="Compze.Persistence.Common" />

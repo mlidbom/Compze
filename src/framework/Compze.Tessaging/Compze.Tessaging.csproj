@@ -18,6 +18,7 @@
         <ProjectReference Include="..\Compze.Configuration\Compze.Configuration.csproj" />
         <ProjectReference Include="..\Compze.DDD.Abstractions\Compze.DDD.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.DocumentDb.Abstractions.csproj" />
+        <ProjectReference Include="..\Compze.Hosting.Abstractions\Compze.Hosting.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
         <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
         <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />

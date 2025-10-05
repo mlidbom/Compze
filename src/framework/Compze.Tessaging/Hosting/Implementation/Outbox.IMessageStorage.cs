@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.UI;
@@ -10,6 +10,7 @@ using Compze.EventStore.MicrosoftSql;
 using Compze.Persistence.MicrosoftSql.DependencyInjection;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Tessaging.MicrosoftSql;
 using Compze.Tessaging.Persistence.EventStore;
 

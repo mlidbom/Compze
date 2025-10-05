@@ -1,4 +1,4 @@
-﻿using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.Abstractions.Internal.Persistence.EventStore;
 using Compze.Abstractions.Internal.Refactoring.Naming;
@@ -9,6 +9,7 @@ using Compze.DependencyInjection;
 using Compze.Serialization;
 using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Http;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;

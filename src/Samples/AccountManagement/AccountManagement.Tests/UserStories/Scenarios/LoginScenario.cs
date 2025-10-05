@@ -1,6 +1,7 @@
-﻿using AccountManagement.API;
+using AccountManagement.API;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 

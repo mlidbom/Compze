@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Testing.Tessaging.Buses;
 using Compze.Testing.Persistence;
 using JetBrains.Annotations;

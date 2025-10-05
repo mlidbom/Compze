@@ -7,6 +7,7 @@ using Compze.Serialization;
 using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Utilities.Contracts;
 

@@ -7,6 +7,7 @@ using Compze.Logging;
 using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Testing.DependencyInjection;
 using JetBrains.Annotations;
 
