@@ -141,8 +141,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
    [Test]
    public void CallingSaveWithAnInteraceAsTypeParameterDoesNotExplode()
    {
-      IPersistentEntity<Guid> user1 = new User { Email = "user1" };
-      IPersistentEntity<Guid> user2 = new User { Email = "user2" };
+      IPersistentEntity user1 = new User { Email = "user1" };
+      IPersistentEntity user2 = new User { Email = "user2" };
 
       UseInTransactionalScope((reader, updater) =>
       {
@@ -506,8 +506,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
       UseInTransactionalScope((_, updater) =>
       {
-         updater.Save<IPersistentEntity<Guid>>(user);
-         updater.Save<IPersistentEntity<Guid>>(dog);
+         updater.Save<IPersistentEntity>(user);
+         updater.Save<IPersistentEntity>(dog);
       });
 
       UseInScope(reader =>

@@ -5,13 +5,13 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Persistence.DocumentDb;
 
-class Dog : IPersistentEntity<Guid>
+class Dog : IPersistentEntity
 {
    public Guid Id { get; set; }
    public string Name { get; [UsedImplicitly] set; } = "John Doe Doggy";
 }
 
-class Person : Entity<Person>
+class Person : PersistentEntity<Person>
 {
    public Person() {}
    public Person(Guid id): base(id) {}

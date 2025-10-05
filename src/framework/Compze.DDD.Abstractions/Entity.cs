@@ -5,7 +5,9 @@ using Compze.Utilities.Contracts;
 namespace Compze.DDD.Abstractions;
 
 /// <summary>
-/// Base class for any class that considers equality to be that the Ids for two instances are the same.
+/// Base class for any class that considers equality to be that the Ids for two instances are the same,
+/// this includes transient entities that exists only in memory and thus this class does not carry the <see cref="Guid"/> only
+/// Ids requirement of <see cref="IPersistentEntity"/>.
 /// 
 /// It provides implementations of  <see cref="object.Equals(object)"/>, <see cref="object.GetHashCode"/>, and <see cref="IEquatable{T}"/>.
 /// 
@@ -74,34 +76,50 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity
 }
 
 /// <summary>
-/// Simple base class for Entities that ensures a correct identity based <see cref="object.Equals(object)"/>, <see cref="object.GetHashCode"/>, and <see cref="IEquatable{T}"/>.
-/// 
-/// This class uses <see cref="Guid"/>s as Ids because it is the only built-in .Net type the developers are
-/// aware of which can, in practice, guarantee for a system that an PersistentEntity will have a globally unique immutable identity
-/// from the moment of instantiation and through any number of persisting-loading cycles. That in turn is an
+/// Simple base class for <see cref="IPersistentEntity"/>> that ensures a correct identity based <see cref="object.Equals(object)"/>, <see cref="object.GetHashCode"/>, and <see cref="IEquatable{T}"/>.
+///
+/// IMPORTANT NOTE:
+/// This class, and Compze as a whole, allows ONLY <see cref="Guid"/>s Ids for persistent entities:
+/// Any application requiring other types of Ids for user display, use of id's from other systems etc.
+/// must manage those as surrogate keys themselves.
+///
+/// Rationale:
+/// First:
+/// It is the only built-in .Net type the developers are aware of which can, in practice, guarantee
+/// for a system that a persistent entity will have a globally unique immutable identity
+/// from the moment of creation and through any number of persisting-loading cycles. That in turn is an
 /// absolute requirement for a correct implementation of <see cref="object.Equals(object)"/>,
 /// <see cref="object.GetHashCode"/>, and <see cref="IEquatable{TEntity}"/>.
+///
+/// Second:
+/// In distributed system, where clients send commands to create new
+/// Entities, any type but a Guid requires error-prone and complex coordination between the client and
+/// server to ensure uniqueness and that the client will know the identity of the created Entity in advance.
+/// This creates an explosion of complexity, not only in implementing frameworks,
+/// but also in the applications themselves.
+///
+/// Managing a separate surrogate sequential key does not entail all this complexity.
 /// </summary>
 // ReSharper disable once NotResolvedInText
 [DebuggerDisplay("{GetType().Name} Id={Id}")]
-public class Entity<TEntity> : Entity<TEntity, Guid>, IPersistentEntity<Guid>, IEquatable<TEntity> where TEntity : Entity<TEntity>
+public class PersistentEntity<TEntity> : Entity<TEntity, Guid>, IPersistentEntity, IEquatable<TEntity> where TEntity : PersistentEntity<TEntity>
 {
    /// <summary>
    /// Creates an instance using the supplied <paramref name="id"/> as the Id.
    /// </summary>
-   protected Entity(Guid id):base(id)
+   protected PersistentEntity(Guid id):base(id)
    {
    }
 
    /// <summary>
    /// Creates a new instance with an automatically generated Id
    /// </summary>
-   protected Entity():base(Guid.NewGuid())
+   protected PersistentEntity():base(Guid.NewGuid())
    {
    }
 
    ///<summary>True if both instances have the same ID</summary>
-   public static bool operator ==(Entity<TEntity>? lhs, Entity<TEntity>? rhs)
+   public static bool operator ==(PersistentEntity<TEntity>? lhs, PersistentEntity<TEntity>? rhs)
    {
       if (ReferenceEquals(lhs, rhs))
       {
@@ -112,7 +130,7 @@ public class Entity<TEntity> : Entity<TEntity, Guid>, IPersistentEntity<Guid>, I
    }
 
    ///<summary>True if both instances do not have the same ID</summary>
-   public static bool operator !=(Entity<TEntity> lhs, Entity<TEntity> rhs) => !(lhs == rhs);
+   public static bool operator !=(PersistentEntity<TEntity> lhs, PersistentEntity<TEntity> rhs) => !(lhs == rhs);
 
    public new bool Equals(TEntity? other) => base.Equals(other);
    // ReSharper disable once RedundantOverriddenMember If I remove this I get another worse warning...

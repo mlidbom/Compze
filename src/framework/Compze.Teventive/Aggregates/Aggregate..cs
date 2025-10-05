@@ -26,7 +26,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
 }
 
 public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, TWrapperEventInterface, TWrapperEventImplementation> :
-    VersionedEntity<TAggregate>,
+    VersionedPersistentEntity<TAggregate>,
     IEventStored<TAggregateEvent>,
     IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>
     where TWrapperEventImplementation : TWrapperEventInterface

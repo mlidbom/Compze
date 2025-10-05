@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
 
-public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : VersionedEntity<TQueryModel>
+public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : VersionedPersistentEntity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
    where TAggregateEvent : class, IAggregateEvent
 {

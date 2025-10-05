@@ -12,7 +12,7 @@ namespace Compze.Tests.Unit.DDD;
 [TestFixture]
 public class PersistentEntityTests : UniversalTestBase
 {
-   class Person : Entity<Person>
+   class Person : PersistentEntity<Person>
    {
       public Person()
       {
