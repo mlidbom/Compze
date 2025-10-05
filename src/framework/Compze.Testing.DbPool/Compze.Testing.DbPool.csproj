@@ -24,9 +24,9 @@
     </ItemGroup>
     
     <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool.MySql" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
     </ItemGroup>

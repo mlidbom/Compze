@@ -1,15 +1,14 @@
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.PostgreSql.Infrastructure;
-using Compze.Testing.DbPool;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase
 
-namespace Compze.Persistence.PostgreSql.Testing;
+namespace Compze.Testing.DbPool.PostgreSql;
 
-sealed class PgSqlDbPool : DbPool
+internal sealed class PgSqlDbPool : DbPool
 {
    readonly IPgSqlConnectionPool _masterConnectionPool;
 

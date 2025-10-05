@@ -3,9 +3,9 @@ using Compze.DependencyInjection;
 using Compze.DocumentDb.MySql;
 using Compze.EventStore.MySql;
 using Compze.Persistence.MySql.Infrastructure;
-using Compze.Persistence.MySql.Testing;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.MySql;
+using Compze.Testing.DbPool.MySql;
 
 namespace Compze.Persistence.MySql.DependencyInjection;
 

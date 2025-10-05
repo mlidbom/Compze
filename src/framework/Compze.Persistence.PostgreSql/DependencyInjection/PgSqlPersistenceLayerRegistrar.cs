@@ -3,9 +3,9 @@ using Compze.DependencyInjection;
 using Compze.DocumentDb.PostgreSql;
 using Compze.EventStore.PostgreSql;
 using Compze.Persistence.PostgreSql.Infrastructure;
-using Compze.Persistence.PostgreSql.Testing;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.PostgreSql;
+using Compze.Testing.DbPool.PostgreSql;
 
 namespace Compze.Persistence.PostgreSql.DependencyInjection;
 

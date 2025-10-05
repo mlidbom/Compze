@@ -6,16 +6,18 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <PropertyGroup>
-      <RootNamespace>Compze.Persistence.MicrosoftSql</RootNamespace>
+      <RootNamespace>Compze.Testing.DbPool.MicrosoftSql</RootNamespace>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
       <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
-      <ProjectReference Include="..\Compze.DocumentDb.MicrosoftSql\Compze.DocumentDb.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\Compze.EventStore.MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\Compze.Testing.DbPool.MicrosoftSql\Compze.Testing.DbPool.MicrosoftSql.csproj" />
    </ItemGroup>
    <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>
 </Project>

@@ -2,13 +2,13 @@
 using Compze.DependencyInjection;
 using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
-using Compze.Persistence.MicrosoftSql.Testing;
 using Compze.Persistence.MySql.Infrastructure;
-using Compze.Persistence.MySql.Testing;
 using Compze.Persistence.PostgreSql.Infrastructure;
-using Compze.Persistence.PostgreSql.Testing;
 using Compze.Testing;
 using Compze.Testing.DbPool;
+using Compze.Testing.DbPool.MicrosoftSql;
+using Compze.Testing.DbPool.MySql;
+using Compze.Testing.DbPool.PostgreSql;
 
 namespace Compze.Tests.Integration.Internals.Testing.Persistence;
 

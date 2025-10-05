@@ -3,9 +3,9 @@ using Compze.DependencyInjection;
 using Compze.DocumentDb.MicrosoftSql;
 using Compze.EventStore.MicrosoftSql;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
-using Compze.Persistence.MicrosoftSql.Testing;
 using Compze.Tessaging.Buses;
 using Compze.Tessaging.MicrosoftSql;
+using Compze.Testing.DbPool.MicrosoftSql;
 
 namespace Compze.Persistence.MicrosoftSql.DependencyInjection;
 

@@ -33,6 +33,9 @@
       <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Testing.DbPool.MySql" />
       <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
       <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />

@@ -1,12 +1,11 @@
 using Compze.Persistence.MySql.Infrastructure;
-using Compze.Testing.DbPool;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql.Testing;
+namespace Compze.Testing.DbPool.MySql;
 
-sealed class MySqlDbPool : DbPool
+internal sealed class MySqlDbPool : DbPool
 {
    readonly IMySqlConnectionPool _masterConnectionPool;
 

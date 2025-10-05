@@ -1,11 +1,10 @@
 using Compze.Persistence.MicrosoftSql.Infrastructure;
-using Compze.Persistence.MicrosoftSql.Testing.Databases;
-using Compze.Testing.DbPool;
+using Compze.Testing.DbPool.MicrosoftSql.Databases;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Persistence.MicrosoftSql.Testing;
+namespace Compze.Testing.DbPool.MicrosoftSql;
 
-class MsSqlDbPool : DbPool
+internal class MsSqlDbPool : DbPool
 {
    readonly string _masterConnectionString;
    readonly IMsSqlConnectionPool _masterConnectionPool;
