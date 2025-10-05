@@ -10,13 +10,12 @@ using SimpleInjector.Lifestyles;
 namespace Compze.DependencyInjection.SimpleInjector;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator, IServiceLocatorKernel
+public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel
 {
    readonly Container _container;
-   readonly List<ComponentRegistration> _registeredComponents = [];
-   public SimpleInjectorDependencyInjectionContainer(IRunMode runMode)
+   
+   public SimpleInjectorDependencyInjectionContainer(IRunMode runMode) : base(runMode)
    {
-      RunMode = runMode;
       _container = new Container();
       _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
@@ -29,10 +28,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
       };
    }
 
-   public IRunMode RunMode { get; }
-   public void Register(params ComponentRegistration[] registrations)
+   protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
-      _registeredComponents.AddRange(registrations);
 
       foreach(var componentRegistration in registrations)
       {
@@ -80,11 +77,9 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
       };
    }
 
-   public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
-
    bool _verified;
 
-   IServiceLocator IDependencyInjectionContainer.ServiceLocator
+   public override IServiceLocator ServiceLocator
    {
       get
       {
@@ -102,11 +97,9 @@ public sealed class SimpleInjectorDependencyInjectionContainer : IDependencyInje
    public TComponent[] ResolveAll<TComponent>() where TComponent : class => _container.GetAllInstances<TComponent>().ToArray();
    IDisposable IServiceLocator.BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
 
+   public override void Dispose() => _container.Dispose();
 
-
-   public void Dispose() => _container.Dispose();
-
-   public async ValueTask DisposeAsync() => await _container.DisposeAsync().caf();
+   public override ValueTask DisposeAsync() => _container.DisposeAsync();
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>() => _container.GetInstance<TComponent>();
 }

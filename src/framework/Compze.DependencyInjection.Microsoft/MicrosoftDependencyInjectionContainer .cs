@@ -10,26 +10,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjectionContainer, IServiceLocator, IServiceLocatorKernel
+public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel
 {
    readonly IServiceCollection _services;
-   readonly List<ComponentRegistration> _registeredComponents = [];
    ServiceProvider? _serviceProvider;
    bool _isDisposed;
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
 
-   public MicrosoftDependencyInjectionContainer(IRunMode runMode)
+   public MicrosoftDependencyInjectionContainer(IRunMode runMode) : base(runMode)
    {
-      RunMode = runMode;
       _services = new ServiceCollection();
    }
 
-   public IRunMode RunMode { get; }
-
-   public void Register(params ComponentRegistration[] registrations)
+   protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
-      _registeredComponents.AddRange(registrations);
 
       foreach(var componentRegistration in registrations)
       {
@@ -62,9 +57,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
       }
    }
 
-   public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
-
-   public IServiceLocator ServiceLocator
+   public override IServiceLocator ServiceLocator
    {
       get
       {
@@ -112,7 +105,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
       });
    }
 
-   public void Dispose()
+   public override void Dispose()
    {
       Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(_isDisposed) return;
@@ -121,7 +114,7 @@ public sealed class MicrosoftDependencyInjectionContainer : IDependencyInjection
       _serviceProvider = null;
    }
 
-   public async ValueTask DisposeAsync()
+   public override async ValueTask DisposeAsync()
    {
       Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(!_isDisposed)

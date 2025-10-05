@@ -13,12 +13,7 @@ static class Application
 {
    public static async Task Main()
    {
-      var host = EndpointHost.Production.Create(runMode =>
-      {
-         IDependencyInjectionContainer container = new SimpleInjectorDependencyInjectionContainer(runMode);
-         container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
-         return container;
-      });
+      var host = EndpointHost.Production.Create(runMode => new SimpleInjectorDependencyInjectionContainer(runMode));
       await using var host2 = host.caf();
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
       await host.StartAsync().caf();
