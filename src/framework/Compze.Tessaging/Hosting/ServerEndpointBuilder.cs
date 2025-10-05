@@ -10,6 +10,7 @@ using Compze.Serialization;
 using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Http;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
