@@ -13,6 +13,11 @@
       <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\Compze.TestInfrastructure\Compze.TestInfrastructure.csproj" />
    </ItemGroup>
+	<ItemGroup>
+		<Content Include="..\test-common-appsettings.json" Link="appsettings.json" >
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
@@ -29,11 +34,6 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="xunit" Version="2.9.3" />
-   </ItemGroup>
-   <ItemGroup>
-      <None Update="appsettings.json">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
    </ItemGroup>
    <PropertyGroup>
       <NoWarn>CS0436</NoWarn>
