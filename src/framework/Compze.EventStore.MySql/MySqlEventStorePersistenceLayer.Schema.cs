@@ -2,7 +2,7 @@
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Persistence.MySql.EventStore;
+namespace Compze.EventStore.MySql;
 
 partial class MySqlEventStorePersistenceLayer
 {

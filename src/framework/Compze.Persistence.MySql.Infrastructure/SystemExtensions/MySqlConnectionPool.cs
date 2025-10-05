@@ -5,9 +5,9 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql.SystemExtensions;
+namespace Compze.Persistence.MySql.Infrastructure;
 
-interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
+internal interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
 {
    static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);

@@ -9,11 +9,12 @@
       <RootNamespace>Compze.Persistence.MySql</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Compze.Persistence.MySql.Infrastructure\Compze.Persistence.MySql.Infrastructure.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.MySql\Compze.DocumentDb.MySql.csproj" />
+      <ProjectReference Include="..\Compze.EventStore.MySql\Compze.EventStore.MySql.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.MySql\Compze.Tessaging.MySql.csproj" />
       <ProjectReference Include="..\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="MySql.Data" Version="9.4.0" />
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />

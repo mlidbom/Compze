@@ -1,9 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql;
+namespace Compze.Persistence.MySql.Infrastructure;
 
 //We will most likely want to make higher level policy based on this information, so let's start concentrating it here rather than spreading it everywhere.
-static class SqlExceptions
+internal static class SqlExceptions
 {
    internal static class MySql
    {

@@ -1,11 +1,11 @@
 using System.Transactions;
-using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.Infrastructure;
 using JetBrains.Annotations;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql.EventStore;
+namespace Compze.EventStore.MySql;
 
-class MySqlEventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
+internal class MySqlEventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
 {
    readonly IMySqlConnectionPool _connectionPool = sqlConnectionPool;
 

@@ -1,5 +1,5 @@
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.Infrastructure;
 
 using MySql.Data.MySqlClient;
 using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
@@ -10,7 +10,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Persistence.MySql.EventStore;
+namespace Compze.EventStore.MySql;
 
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the persistence layer.
 partial class MySqlEventStorePersistenceLayer

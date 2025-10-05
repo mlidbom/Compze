@@ -1,12 +1,12 @@
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.Infrastructure;
 using MySql.Data.MySqlClient;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Persistence.MySql.EventStore;
+namespace Compze.EventStore.MySql;
 
-partial class MySqlEventStorePersistenceLayer(MySqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
+internal partial class MySqlEventStorePersistenceLayer(MySqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {
    readonly MySqlEventStoreConnectionManager _connectionManager = connectionManager;
 

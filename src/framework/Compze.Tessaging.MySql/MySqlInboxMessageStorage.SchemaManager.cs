@@ -1,8 +1,8 @@
-﻿using Compze.Persistence.MySql.SystemExtensions;
+﻿using Compze.Persistence.MySql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using T =  Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Compze.Persistence.MySql.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.MySql;
 
 partial class MySqlInboxPersistenceLayer
 {

@@ -1,9 +1,9 @@
-﻿using Compze.Persistence.MySql.SystemExtensions;
+﻿using Compze.Persistence.MySql.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using M = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using D = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Persistence.MySql.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.MySql;
 
 partial class MySqlOutboxPersistenceLayer
 {

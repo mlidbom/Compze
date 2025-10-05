@@ -1,15 +1,11 @@
-﻿using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Configuration.Abstractions;
+﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.MySql.DocumentDb;
-using Compze.Persistence.MySql.EventStore;
-using Compze.Persistence.MySql.Tessaging.Buses.Implementation;
-using Compze.Persistence.MySql.SystemExtensions;
+using Compze.DocumentDb.MySql;
+using Compze.EventStore.MySql;
+using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Testing;
 using Compze.Tessaging.Buses;
-using Compze.Tessaging.Buses.Implementation;
+using Compze.Tessaging.MySql;
 
 namespace Compze.Persistence.MySql.DependencyInjection;
 
@@ -40,23 +36,12 @@ public static class MySqlPersistenceLayerRegistrar
       }
 
       //Service bus
-      container.Register(
-         Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()
-                  .CreatedBy((IMySqlConnectionPool endpointSqlConnection) => new MySqlOutboxPersistenceLayer(endpointSqlConnection)),
-         Singleton.For<IServiceBusPersistenceLayer.IInboxPersistenceLayer>()
-                  .CreatedBy((IMySqlConnectionPool endpointSqlConnection) => new MySqlInboxPersistenceLayer(endpointSqlConnection)));
+      container.RegisterMySqlTessaging();
 
       //DocumentDB
-      container.Register(
-         Singleton.For<IDocumentDbPersistenceLayer>()
-                  .CreatedBy((IMySqlConnectionPool connectionProvider) => new MySqlDocumentDbPersistenceLayer(connectionProvider)));
-
+      container.RegisterMySqlDocumentDb();
 
       //Event store
-      container.Register(
-         Singleton.For<MySqlEventStoreConnectionManager>()
-                  .CreatedBy((IMySqlConnectionPool sqlConnectionProvider) => new MySqlEventStoreConnectionManager(sqlConnectionProvider)),
-         Singleton.For<IEventStorePersistenceLayer>()
-                  .CreatedBy((MySqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new MySqlEventStorePersistenceLayer(connectionManager)));
+      container.RegisterMySqlEventStore();
    }
 }

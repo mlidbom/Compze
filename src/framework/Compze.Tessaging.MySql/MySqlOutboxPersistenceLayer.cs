@@ -1,13 +1,13 @@
 ﻿using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.Infrastructure;
 using Compze.Tessaging.Buses.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
 using MessageTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Tessaging.Buses.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Persistence.MySql.Tessaging.Buses.Implementation;
+namespace Compze.Tessaging.MySql;
 
-partial class MySqlOutboxPersistenceLayer(IMySqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
+internal partial class MySqlOutboxPersistenceLayer(IMySqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
 

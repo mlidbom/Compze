@@ -3,9 +3,9 @@ using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql;
+namespace Compze.Persistence.MySql.Infrastructure;
 
-interface ICompzeMySqlConnection : IPoolableConnection, ICompzeDbConnection<MySqlCommand>
+internal interface ICompzeMySqlConnection : IPoolableConnection, ICompzeDbConnection<MySqlCommand>
 {
    internal static ICompzeMySqlConnection Create(string connString) => new CompzeMySqlConnection(connString);
 

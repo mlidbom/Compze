@@ -1,15 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.MySql.SystemExtensions;
+using Compze.Persistence.MySql.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using MySql.Data.MySqlClient;
 using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Persistence.MySql.DocumentDb;
+namespace Compze.DocumentDb.MySql;
 
-partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
+internal partial class MySqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {
    readonly IMySqlConnectionPool _connectionPool;
    readonly SchemaManager _schemaManager;
