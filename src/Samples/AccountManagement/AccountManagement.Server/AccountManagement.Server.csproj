@@ -12,7 +12,6 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\framework\Compze.DocumentDb\Compze.DocumentDb.csproj" />
-      <ProjectReference Include="..\..\..\framework\Compze.Persistence\Compze.Persistence.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Testing\Compze.Testing.csproj" />
       <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
    </ItemGroup>

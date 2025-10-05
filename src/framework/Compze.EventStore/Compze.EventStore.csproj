@@ -30,6 +30,5 @@
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence" />
    </ItemGroup>
 </Project>

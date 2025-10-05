@@ -32,7 +32,6 @@
     <ItemGroup>
       <InternalsVisibleTo Include="Compze.DocumentDb" />
       <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Persistence" />
       <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
       <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Tessaging.MySql" />

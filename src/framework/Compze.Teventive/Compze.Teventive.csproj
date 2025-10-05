@@ -23,6 +23,5 @@
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Persistence" />
    </ItemGroup>
 </Project>

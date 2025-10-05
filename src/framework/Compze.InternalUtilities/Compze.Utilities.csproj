@@ -37,7 +37,6 @@
       <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Logging" />
       <InternalsVisibleTo Include="Compze.Logging.Serilog" />
-      <InternalsVisibleTo Include="Compze.Persistence" />
       <InternalsVisibleTo Include="Compze.Persistence.Common" />
       <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
