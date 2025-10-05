@@ -31,11 +31,6 @@ namespace Compze.DDD.Abstractions;
 /// <see cref="object.GetHashCode"/>, and <see cref="IEquatable{TEntity}"/>.
 ///
 /// Third:
-/// Historical database performance concerns are mostly eliminated by using Guid.CreateVersion7,
-/// this creates time ordered Guids that eliminate index fragmenting and buffer issues in databases using Guid primary keys.
-/// Compze uses Guid.CreateVersion7 internally and clients should do the same if they generate the IDs themselves
-///
-/// Fourth:
 /// Guids enable guaranteed traceability of entities. Search for a Guid in a log, database, or code, and you
 /// are guaranteed to find all references to that entity and ONLY to that entity, a major advantage when debugging.
 /// </summary>
