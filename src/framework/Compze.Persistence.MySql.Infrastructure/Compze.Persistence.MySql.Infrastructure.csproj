@@ -16,7 +16,7 @@
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Testing.DbPool.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
       <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
       <InternalsVisibleTo Include="Compze.EventStore.MySql" />
       <InternalsVisibleTo Include="Compze.Tessaging.MySql" />

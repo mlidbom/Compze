@@ -14,9 +14,9 @@
       <ProjectReference Include="..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
       <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.MicrosoftSql\Compze.Persistence.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.MySql\Compze.Persistence.MySql.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.PostgreSql\Compze.Persistence.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.DependencyInjection\Compze.Persistence.MicrosoftSql.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.MySql.DependencyInjection\Compze.Persistence.MySql.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.PostgreSql.DependencyInjection\Compze.Persistence.PostgreSql.DependencyInjection.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.0" />

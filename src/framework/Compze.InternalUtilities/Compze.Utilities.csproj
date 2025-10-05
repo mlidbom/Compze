@@ -40,9 +40,9 @@
       <InternalsVisibleTo Include="Compze.Persistence.Common" />
       <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
       <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.DependencyInjection" />
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Serialization" />
       <InternalsVisibleTo Include="Compze.Tessaging" />

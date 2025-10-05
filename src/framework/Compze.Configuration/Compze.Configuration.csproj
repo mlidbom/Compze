@@ -19,9 +19,9 @@
 
 
 	<ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.DependencyInjection" />
+      <InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.DependencyInjection" />
       <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Testing.DbPool" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />

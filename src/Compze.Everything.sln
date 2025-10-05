@@ -77,11 +77,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Tests.Common", "fram
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Utilities", "framework\Compze.InternalUtilities\Compze.Utilities.csproj", "{056FBD08-F60E-48CE-90E7-CEF7457F1EE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.PostgreSql", "framework\Compze.Persistence.PostgreSql\Compze.Persistence.PostgreSql.csproj", "{1F205BF0-899E-44FF-A014-0E1FA04B34A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.PostgreSql.DependencyInjection", "framework\Compze.Persistence.PostgreSql.DependencyInjection\Compze.Persistence.PostgreSql.DependencyInjection.csproj", "{1F205BF0-899E-44FF-A014-0E1FA04B34A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.MySql", "framework\Compze.Persistence.MySql\Compze.Persistence.MySql.csproj", "{AB0E13E9-3626-4D23-B360-DC8FD560F432}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.MySql.DependencyInjection", "framework\Compze.Persistence.MySql.DependencyInjection\Compze.Persistence.MySql.DependencyInjection.csproj", "{AB0E13E9-3626-4D23-B360-DC8FD560F432}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.MicrosoftSql", "framework\Compze.Persistence.MicrosoftSql\Compze.Persistence.MicrosoftSql.csproj", "{8AE6507E-D02F-408A-8059-D76C3BF9FCA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.MicrosoftSql.DependencyInjection", "framework\Compze.Persistence.MicrosoftSql.DependencyInjection\Compze.Persistence.MicrosoftSql.DependencyInjection.csproj", "{8AE6507E-D02F-408A-8059-D76C3BF9FCA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compze.Persistence.InMemory", "framework\Compze.Persistence.InMemory\Compze.Persistence.InMemory.csproj", "{DA3EBD41-1CC5-4806-8A62-D59486482AC3}"
 EndProject
