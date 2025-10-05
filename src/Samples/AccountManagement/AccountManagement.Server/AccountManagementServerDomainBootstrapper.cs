@@ -4,9 +4,12 @@ using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.DocumentDb.DependencyInjection;
+using Compze.DocumentDb.MicrosoftSql;
 using Compze.EventStore.DependencyInjection;
+using Compze.EventStore.MicrosoftSql;
 using Compze.Persistence.MicrosoftSql.DependencyInjection;
 using Compze.Tessaging.Buses;
+using Compze.Tessaging.MicrosoftSql;
 using Compze.Tessaging.Persistence.EventStore;
 
 namespace AccountManagement;
@@ -28,9 +31,12 @@ public class AccountManagementServerDomainBootstrapper
 
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {
-      // The persistence layer automatically switches between DbPool (testing) and 
-      // production connection string based on container.RunMode.IsTesting
-      builder.Container.RegisterMsSqlPersistenceLayer(builder.Configuration.ConnectionStringName);
+      var connectionStringName = builder.Configuration.ConnectionStringName;
+      builder.Container.RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+      builder.Container.RegisterMsSqlDocumentDb();
+      builder.Container.RegisterMsSqlEventStore();
+      builder.Container.RegisterMsSqlTessaging();
+      
       builder.RegisterEventStore()
              .HandleAggregate<Account, AccountEvent.Root>();
 

@@ -1,21 +1,20 @@
 ﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
-using Compze.DocumentDb.MySql;
-using Compze.EventStore.MySql;
 using Compze.Persistence.MySql.Infrastructure;
 using Compze.Tessaging.Buses;
-using Compze.Tessaging.MySql;
 using Compze.Testing.DbPool.MySql;
 
 namespace Compze.Persistence.MySql.DependencyInjection;
 
 public static class MySqlPersistenceLayerRegistrar
 {
-   public static void RegisterMySqlPersistenceLayer(this IEndpointBuilder @this) =>
-      @this.Container.RegisterMySqlPersistenceLayer(@this.Configuration.ConnectionStringName);
+   internal static void RegisterMySqlConnectionPoolIfNotAlreadyRegistered(this IEndpointBuilder @this) =>
+      @this.Container.RegisterMySqlConnectionPoolIfNotAlreadyRegistered(@this.Configuration.ConnectionStringName);
 
-   public static void RegisterMySqlPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
+   public static void RegisterMySqlConnectionPoolIfNotAlreadyRegistered(this IDependencyInjectionContainer container, string connectionStringName)
    {
+      if(container.IsRegistered<IMySqlConnectionPool>()) return;
+
       //Connection management
       if(container.RunMode.IsTesting)
       {
@@ -34,14 +33,5 @@ public static class MySqlPersistenceLayerRegistrar
                      .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMySqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                      .DelegateToParentServiceLocatorWhenCloning());
       }
-
-      //Service bus
-      container.RegisterMySqlTessaging();
-
-      //DocumentDB
-      container.RegisterMySqlDocumentDb();
-
-      //Event store
-      container.RegisterMySqlEventStore();
    }
 }

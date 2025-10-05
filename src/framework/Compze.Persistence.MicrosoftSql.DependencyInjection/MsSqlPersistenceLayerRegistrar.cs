@@ -1,22 +1,20 @@
 using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
-using Compze.DocumentDb.MicrosoftSql;
-using Compze.EventStore.MicrosoftSql;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Tessaging.Buses;
-using Compze.Tessaging.MicrosoftSql;
 using Compze.Testing.DbPool.MicrosoftSql;
 
 namespace Compze.Persistence.MicrosoftSql.DependencyInjection;
 
 public static class MsSqlPersistenceLayerRegistrar
 {
-   public static void RegisterMsSqlPersistenceLayer(this IEndpointBuilder @this) =>
-      @this.Container.RegisterMsSqlPersistenceLayer(@this.Configuration.ConnectionStringName);
+   internal static void RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(this IEndpointBuilder @this) =>
+      @this.Container.RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(@this.Configuration.ConnectionStringName);
 
-   //todo: does the fact that we register all this stuff using a connectionStringName mean that, using named components, we could easily have multiple registrations as long as they use different connectionStrings
-   public static void RegisterMsSqlPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
+   public static void RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(this IDependencyInjectionContainer container, string connectionStringName)
    {
+      if(container.IsRegistered<IMsSqlConnectionPool>()) return;
+
       //Connection management
       if(container.RunMode.IsTesting)
       {
@@ -35,15 +33,5 @@ public static class MsSqlPersistenceLayerRegistrar
                      .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMsSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                      .DelegateToParentServiceLocatorWhenCloning());
       }
-
-
-      //Service bus
-      container.RegisterMsSqlTessaging();
-
-      //DocumentDB
-      container.RegisterMsSqlDocumentDb();
-
-      //Event store
-      container.RegisterMsSqlEventStore();
    }
 }

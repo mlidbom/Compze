@@ -14,6 +14,9 @@
       <ProjectReference Include="..\..\..\framework\Compze.DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\..\..\framework\Compze.Persistence.MicrosoftSql.DependencyInjection\Compze.Persistence.MicrosoftSql.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.DocumentDb.MicrosoftSql\Compze.DocumentDb.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.EventStore.MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\..\..\framework\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.MicrosoftSql.csproj" />
       <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
    </ItemGroup>
    <ItemGroup>

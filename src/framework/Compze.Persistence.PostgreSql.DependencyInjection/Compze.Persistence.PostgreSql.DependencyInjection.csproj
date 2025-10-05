@@ -9,10 +9,9 @@
       <RootNamespace>Compze.Persistence.PostgreSql</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
       <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
-      <ProjectReference Include="..\Compze.DocumentDb.PostgreSql\Compze.DocumentDb.PostgreSql.csproj" />
-      <ProjectReference Include="..\Compze.EventStore.PostgreSql\Compze.EventStore.PostgreSql.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging.PostgreSql\Compze.Tessaging.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\Compze.Testing.DbPool.PostgreSql\Compze.Testing.DbPool.PostgreSql.csproj" />
    </ItemGroup>
    <ItemGroup>

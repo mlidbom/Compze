@@ -1,21 +1,20 @@
 ﻿using Compze.Configuration.Abstractions;
 using Compze.DependencyInjection;
-using Compze.DocumentDb.PostgreSql;
-using Compze.EventStore.PostgreSql;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Tessaging.Buses;
-using Compze.Tessaging.PostgreSql;
 using Compze.Testing.DbPool.PostgreSql;
 
 namespace Compze.Persistence.PostgreSql.DependencyInjection;
 
 public static class PgSqlPersistenceLayerRegistrar
 {
-   public static void RegisterPgSqlPersistenceLayer(this IEndpointBuilder @this) =>
-      @this.Container.RegisterPgSqlPersistenceLayer(@this.Configuration.ConnectionStringName);
+   internal static void RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(this IEndpointBuilder @this) =>
+      @this.Container.RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(@this.Configuration.ConnectionStringName);
 
-   public static void RegisterPgSqlPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
+   public static void RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(this IDependencyInjectionContainer container, string connectionStringName)
    {
+      if(container.IsRegistered<IPgSqlConnectionPool>()) return;
+
       //Connection management
       if(container.RunMode.IsTesting)
       {
@@ -34,10 +33,5 @@ public static class PgSqlPersistenceLayerRegistrar
                      .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IPgSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                      .DelegateToParentServiceLocatorWhenCloning());
       }
-
-      //Register individual components
-      container.RegisterPgSqlTessaging();
-      container.RegisterPgSqlDocumentDb();
-      container.RegisterPgSqlEventStore();
    }
 }

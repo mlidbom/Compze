@@ -17,6 +17,15 @@
       <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.DependencyInjection\Compze.Persistence.MicrosoftSql.DependencyInjection.csproj" />
       <ProjectReference Include="..\Compze.Persistence.MySql.DependencyInjection\Compze.Persistence.MySql.DependencyInjection.csproj" />
       <ProjectReference Include="..\Compze.Persistence.PostgreSql.DependencyInjection\Compze.Persistence.PostgreSql.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.MicrosoftSql\Compze.DocumentDb.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\Compze.EventStore.MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.MySql\Compze.DocumentDb.MySql.csproj" />
+      <ProjectReference Include="..\Compze.EventStore.MySql\Compze.EventStore.MySql.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.MySql\Compze.Tessaging.MySql.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.PostgreSql\Compze.DocumentDb.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.EventStore.PostgreSql\Compze.EventStore.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.PostgreSql\Compze.Tessaging.PostgreSql.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.0" />

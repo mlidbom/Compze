@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection;
@@ -9,6 +10,7 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    IRunMode RunMode { get; }
    void Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
+   bool IsRegistered<TService>() => RegisteredComponents().Any(c => c.ServiceTypes.Contains(typeof(TService)));
    IServiceLocator ServiceLocator { get; }
 
    void RegisterToHandleServiceResolutionFor(IServiceCollection services)

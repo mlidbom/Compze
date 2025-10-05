@@ -1,4 +1,3 @@
-using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.MySql.Infrastructure;
@@ -13,6 +12,6 @@ public static class MySqlEventStoreRegistrar
          Singleton.For<MySqlEventStoreConnectionManager>()
                   .CreatedBy((IMySqlConnectionPool sqlConnectionProvider) => new MySqlEventStoreConnectionManager(sqlConnectionProvider)),
          Singleton.For<IEventStorePersistenceLayer>()
-                  .CreatedBy((MySqlEventStoreConnectionManager connectionManager, ITypeMapper _) => new MySqlEventStorePersistenceLayer(connectionManager)));
+                  .CreatedBy((MySqlEventStoreConnectionManager connectionManager) => new MySqlEventStorePersistenceLayer(connectionManager)));
    }
 }
