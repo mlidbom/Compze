@@ -14,6 +14,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
+		<ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
 		<ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
 		<ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
 	</ItemGroup>
@@ -21,6 +23,10 @@
 	<ItemGroup>
 		<PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Compze.Tessaging" />
 	</ItemGroup>
 
 </Project>

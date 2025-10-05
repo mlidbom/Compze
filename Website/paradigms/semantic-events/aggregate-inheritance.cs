@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Compze.EventStore.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Hosting;
 using Compze.Utilities.SystemCE;
 using static System.Console;

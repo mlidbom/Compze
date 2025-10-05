@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.EventStore.Abstractions;
+using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Implementation;
 using Newtonsoft.Json;

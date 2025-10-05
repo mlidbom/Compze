@@ -1,8 +1,6 @@
 using System;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Hosting.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Abstractions;
+namespace Compze.Hosting.Abstractions;
 
 public interface ITestingEndpointHost : IEndpointHost
 {
