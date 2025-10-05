@@ -129,7 +129,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
                                          .Concat(_queryHandlers.Keys)
                                          .Concat(_eventHandlerRegistrations.Select(reg => reg.Type))
                                          .Where(messageType => messageType.Implements<IRemotableMessage>())
-                                         .Where(messageType => !messageType.Implements<MessageTypes.Internal.IMessage>())
+                                         .Where(messageType => !messageType.Implements<MessageTypesInternal.IMessage>())
                                          .ToHashSet();
 
       var remoteResultTypes = _commandHandlersReturningResults

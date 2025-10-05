@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Tessaging;
 
-public static partial class MessageTypes
+public static class MessageTypes
 {
    public static class StrictlyLocal
    {
@@ -132,7 +132,7 @@ public static partial class MessageTypes
    {
       typeMapper
         .MapTypeAndStandardCollectionTypes<IRemotableEvent>("1E0DB1B4-71A6-4D2E-901F-E238ABA30B63")
-        .MapTypeAndStandardCollectionTypes<MessageTypes.Internal.EndpointInformationQuery>("D94259E4-7479-442C-99AE-D49C12CF8713")
-        .MapTypeAndStandardCollectionTypes<MessageTypes.Internal.EndpointInformation>("2B598C6D-4893-4CB9-B4CE-7B705AD92DF9");
+        .MapTypeAndStandardCollectionTypes<MessageTypesInternal.EndpointInformationQuery>("D94259E4-7479-442C-99AE-D49C12CF8713")
+        .MapTypeAndStandardCollectionTypes<MessageTypesInternal.EndpointInformation>("2B598C6D-4893-4CB9-B4CE-7B705AD92DF9");
    }
 }

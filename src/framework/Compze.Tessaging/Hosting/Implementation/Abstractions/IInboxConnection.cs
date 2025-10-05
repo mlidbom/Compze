@@ -6,7 +6,7 @@ namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
 
 interface IInboxConnection : IDisposable
 {
-    MessageTypes.Internal.EndpointInformation EndpointInformation { get; }
+    MessageTypesInternal.EndpointInformation EndpointInformation { get; }
     Task SendAsync(IExactlyOnceEvent @event);
     Task SendAsync(IExactlyOnceCommand command);
 

@@ -44,7 +44,7 @@ class ServerEndpointBuilder : IEndpointBuilder
    {
       SetupContainer();
       SetupInternalTypeMap();
-      MessageTypes.Internal.RegisterHandlers(RegisterHandlers);
+      MessageTypesInternal.RegisterHandlers(RegisterHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<IGlobalBusStateTracker>(),
