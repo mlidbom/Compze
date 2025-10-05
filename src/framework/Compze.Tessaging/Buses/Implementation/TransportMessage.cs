@@ -80,7 +80,7 @@ static class TransportMessage
 
       public static OutGoing Create(IRemotableMessage message, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
-         var messageId = (message as IAtMostOnceMessage)?.MessageId ?? Guid.NewGuid();
+         var messageId = (message as IAtMostOnceMessage)?.MessageId ?? Guid.CreateVersion7();
          var body = serializer.SerializeMessage(message);
          return new OutGoing(typeMapper.GetId(message.GetType()), messageId, body, message is IExactlyOnceMessage);
       }

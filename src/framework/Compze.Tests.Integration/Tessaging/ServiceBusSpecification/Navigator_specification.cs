@@ -106,7 +106,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
       public static RegisterUserCommand Create(string name) => new()
                                                                {
                                                                   Name = name,
-                                                                  MessageId = Guid.NewGuid()
+                                                                  MessageId = Guid.CreateVersion7()
                                                                };
 
       public string Name { get; private set; } = "";

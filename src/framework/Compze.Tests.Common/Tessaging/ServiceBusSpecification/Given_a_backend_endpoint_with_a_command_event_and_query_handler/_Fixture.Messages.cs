@@ -63,7 +63,7 @@ public partial class Fixture
 
       internal static MyCreateAggregateCommand Create() => new()
                                                            {
-                                                              MessageId = Guid.NewGuid(),
+                                                              MessageId = Guid.CreateVersion7(),
                                                               AggregateId = Guid.NewGuid()
                                                            };
 
@@ -87,7 +87,7 @@ public partial class Fixture
    protected class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
    {
       MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-      internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.NewGuid()};
+      internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.CreateVersion7()};
    }
    protected class MyCommandResult;
 }

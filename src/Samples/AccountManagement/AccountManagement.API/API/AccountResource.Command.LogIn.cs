@@ -13,7 +13,7 @@ public partial class AccountResource
    {
       public partial class LogIn() : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
       {
-         public static LogIn Create() => new() {MessageId = Guid.NewGuid()};
+         public static LogIn Create() => new() {MessageId = Guid.CreateVersion7()};
 
          [Required] [Email] public string Email { get; set; } = string.Empty;
          [Required] public string Password { get; set; } = string.Empty;

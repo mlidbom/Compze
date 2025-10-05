@@ -17,7 +17,7 @@ public partial class AccountResource
          public static Register Create() => new()
                                             {
                                                AccountId = Guid.NewGuid(),
-                                               MessageId = Guid.NewGuid()
+                                               MessageId = Guid.CreateVersion7()
                                             };
 
          //Note the use of a custom validation attributes.
@@ -36,7 +36,7 @@ public partial class AccountResource
 
          internal Register WithValues(Guid accountId, string email, string password) => new()
                                                                                         {
-                                                                                           MessageId = Guid.NewGuid(),
+                                                                                           MessageId = Guid.CreateVersion7(),
                                                                                            AccountId = accountId,
                                                                                            Email = email,
                                                                                            Password = password

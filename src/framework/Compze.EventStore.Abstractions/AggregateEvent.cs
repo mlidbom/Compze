@@ -6,7 +6,7 @@ public abstract class AggregateEvent() : IMutableAggregateEvent
 {
     protected AggregateEvent(Guid aggregateId) : this() => AggregateId = aggregateId;
 
-    public Guid MessageId { get; private set; } = Guid.NewGuid();
+    public Guid MessageId { get; private set; } = Guid.CreateVersion7();
     public int AggregateVersion { get; private set; }
     public Guid AggregateId { get; private set; }
     public DateTime UtcTimeStamp { get; private set; } = DateTime.UtcNow; //Todo:bug: Should use timesource.
