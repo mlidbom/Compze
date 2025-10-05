@@ -10,11 +10,6 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-   </ItemGroup>
-   <ItemGroup>
       <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
       <ProjectReference Include="..\Compze.Tests.Integration.Internals\Compze.Tests.Integration.Internals.csproj" />
       <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
