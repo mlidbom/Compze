@@ -16,6 +16,7 @@ using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing

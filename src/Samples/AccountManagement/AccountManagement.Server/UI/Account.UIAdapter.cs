@@ -7,6 +7,7 @@ using AccountManagement.Domain.Registration;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI;

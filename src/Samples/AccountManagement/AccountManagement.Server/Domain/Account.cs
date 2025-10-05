@@ -6,6 +6,7 @@ using AccountManagement.Domain.Registration;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.GenericAbstractions.Time;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using Compze.Teventive.Aggregates;
 using Compze.Utilities.Functional;
 

@@ -5,6 +5,7 @@ using Compze.DependencyInjection;
 
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Utilities.SystemCE;

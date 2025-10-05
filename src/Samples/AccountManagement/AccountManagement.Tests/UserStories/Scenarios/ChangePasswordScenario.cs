@@ -2,6 +2,7 @@
 using CommunityToolkit.Diagnostics;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 

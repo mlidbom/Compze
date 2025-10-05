@@ -5,6 +5,7 @@ using Compze.Tessaging;
 using Compze.Teventive.Aggregates;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global

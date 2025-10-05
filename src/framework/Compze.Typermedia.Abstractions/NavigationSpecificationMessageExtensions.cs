@@ -2,7 +2,7 @@
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Typermedia;
+namespace Compze.Typermedia.Abstractions;
 
 public static class NavigationSpecificationMessageExtensions
 {

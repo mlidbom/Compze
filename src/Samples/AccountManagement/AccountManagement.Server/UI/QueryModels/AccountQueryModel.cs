@@ -10,6 +10,7 @@ using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 
 namespace AccountManagement.UI.QueryModels;
 

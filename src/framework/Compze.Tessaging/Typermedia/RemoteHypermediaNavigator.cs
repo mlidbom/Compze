@@ -2,6 +2,7 @@
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Typermedia.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 

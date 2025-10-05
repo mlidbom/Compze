@@ -3,6 +3,7 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
 using AccountLink = Compze.Tessaging.Persistence.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;

@@ -5,6 +5,7 @@ using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Tessaging.Buses;

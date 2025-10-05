@@ -5,6 +5,7 @@ using Compze.Persistence.InMemory.DependencyInjection;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using Compze.Utilities.SystemCE;
 
 namespace AccountManagement.API;

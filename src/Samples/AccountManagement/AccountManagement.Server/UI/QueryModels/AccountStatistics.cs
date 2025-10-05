@@ -6,6 +6,7 @@ using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Tessaging.Typermedia;
+using Compze.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI.QueryModels;
