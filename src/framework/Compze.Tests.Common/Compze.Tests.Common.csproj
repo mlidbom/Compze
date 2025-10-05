@@ -16,6 +16,7 @@
       <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
       <PackageReference Include="FluentAssertions" Version="8.7.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
       <PackageReference Include="NUnit" Version="4.4.0" />
