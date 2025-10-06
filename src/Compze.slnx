@@ -113,11 +113,6 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/" />
-  <Folder Name="/Compze/Tessaging/Persistence/Abstractions/">
-    <Project Path="Compze/Tessaging/Persistence/Abstractions/Compze.Persistence.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-  </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/InMemory/">
     <Project Path="Compze/Tessaging/Persistence/InMemory/Compze.Tessaging.Persistence.InMemory.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
