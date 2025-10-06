@@ -14,7 +14,7 @@
    <ItemGroup>
       <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
       <ProjectReference Include="..\Compze.EventStore\Compze.EventStore.csproj" />
-      <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">

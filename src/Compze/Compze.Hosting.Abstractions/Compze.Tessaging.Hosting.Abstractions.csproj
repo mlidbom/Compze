@@ -15,7 +15,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
-		<ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+		<ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
 		<ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
 		<ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
 	</ItemGroup>

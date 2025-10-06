@@ -16,11 +16,11 @@
     <ItemGroup>
         <ProjectReference Include="..\Compze.Common\Compze.Common.csproj" />
         <ProjectReference Include="..\Compze.Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
-        <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.DocumentDb.Abstractions.csproj" />
+        <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.Utilities.DocumentDb.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.Hosting.Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
-        <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+        <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
         <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
         <ProjectReference Include="..\Compze.Teventive.Abstractions\Compze.Teventive.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.Typermedia.Abstractions\Compze.Typermedia.Abstractions.csproj" />

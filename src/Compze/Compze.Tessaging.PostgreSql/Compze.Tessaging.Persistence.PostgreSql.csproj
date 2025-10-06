@@ -6,14 +6,15 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <PropertyGroup>
-      <RootNamespace>Compze.DocumentDb.MicrosoftSql</RootNamespace>
+      <RootNamespace>Compze.Tessaging.PostgreSql</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
-      <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
    </ItemGroup>
    <ItemGroup>
    </ItemGroup>

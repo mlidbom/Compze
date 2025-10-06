@@ -11,10 +11,10 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\Compze\Compze.DocumentDb\Compze.DocumentDb.csproj" />
-      <ProjectReference Include="..\..\..\Compze\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference Include="..\..\..\Compze\Compze.DocumentDb\Compze.Utilities.DocumentDb.csproj" />
+      <ProjectReference Include="..\..\..\Compze\Compze.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\..\..\Compze\Compze.Persistence.MicrosoftSql.DependencyInjection\Compze.Tessaging.Hosting.Persistence.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\..\Compze\Compze.DocumentDb.MicrosoftSql\Compze.DocumentDb.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\..\..\Compze\Compze.DocumentDb.MicrosoftSql\Compze.Utilities.DocumentDb.MicrosoftSql.csproj" />
       <ProjectReference Include="..\..\..\Compze\Compze.EventStore.MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
       <ProjectReference Include="..\..\..\Compze\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.Persistence.MicrosoftSql.csproj" />
       <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />

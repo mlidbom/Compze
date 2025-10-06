@@ -13,7 +13,7 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
-      <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
    </ItemGroup>
    <ItemGroup>
    </ItemGroup>

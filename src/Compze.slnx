@@ -82,16 +82,19 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Compze/Tessaging/Persistence/">
+  <Folder Name="/Compze/Tessaging/Persistence/" />
+  <Folder Name="/Compze/Tessaging/Persistence/Abstractions/">
     <Project Path="Compze/Compze.Persistence.Abstractions/Compze.Persistence.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze/Tessaging/Persistence/Common/">
     <Project Path="Compze/Compze.Persistence.Common/Compze.Persistence.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/InMemory/">
-    <Project Path="Compze/Compze.Persistence.InMemory/Compze.Persistence.InMemory.csproj">
+    <Project Path="Compze/Compze.Persistence.InMemory/Compze.Tessaging.Persistence.InMemory.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
@@ -106,7 +109,7 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/PostgreSql/">
-    <Project Path="Compze/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj">
+    <Project Path="Compze/Compze.Tessaging.PostgreSql/Compze.Tessaging.Persistence.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
@@ -142,24 +145,24 @@
   </Folder>
   <Folder Name="/Compze/Utilities/" />
   <Folder Name="/Compze/Utilities/DependencyInjection/">
-    <Project Path="Compze/Compze.DependencyInjection.Abstractions/Compze.DependencyInjection.Abstractions.csproj">
+    <Project Path="Compze/Compze.DependencyInjection.Abstractions/Compze.Utilities.DependencyInjection.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj">
+    <Project Path="Compze/Compze.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Compze/Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj">
+    <Project Path="Compze/Compze.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Compze/Compze.DependencyInjection/Compze.DependencyInjection.csproj">
+    <Project Path="Compze/Compze.DependencyInjection/Compze.Utilities.DependencyInjection.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Utilities/DocumentDb/">
-    <Project Path="Compze/Compze.DocumentDb.Abstractions/Compze.DocumentDb.Abstractions.csproj">
+    <Project Path="Compze/Compze.DocumentDb.Abstractions/Compze.Utilities.DocumentDb.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Compze.DocumentDb.MicrosoftSql/Compze.DocumentDb.MicrosoftSql.csproj">
+    <Project Path="Compze/Compze.DocumentDb.MicrosoftSql/Compze.Utilities.DocumentDb.MicrosoftSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="Compze/Compze.DocumentDb.MySql/Compze.DocumentDb.MySql.csproj">
@@ -168,7 +171,7 @@
     <Project Path="Compze/Compze.DocumentDb.PostgreSql/Compze.DocumentDb.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Compze.DocumentDb/Compze.DocumentDb.csproj">
+    <Project Path="Compze/Compze.DocumentDb/Compze.Utilities.DocumentDb.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>

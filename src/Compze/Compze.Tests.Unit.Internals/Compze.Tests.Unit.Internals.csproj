@@ -10,11 +10,11 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb\Compze.Utilities.DocumentDb.csproj" />
       <ProjectReference Include="..\Compze.TestInfrastructure\Compze.TestInfrastructure.csproj" />
    </ItemGroup>
 	<ItemGroup>
-		<Content Include="..\test-common-appsettings.json" Link="appsettings.json" >
+		<Content Include="..\test-common-appsettings.json" Link="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
