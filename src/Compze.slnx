@@ -9,7 +9,7 @@
   </Configurations>
   <Folder Name="/Compze/" />
   <Folder Name="/Compze/Abstractions/">
-    <Project Path="Compze/Abstractions/Compze.Abstractions.Internal.csproj">
+    <Project Path="Compze/Abstractions/Internals/Compze.Abstractions.Internal.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="Compze/Abstractions/Compze.Abstractions.csproj">
@@ -219,7 +219,7 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="Tests/TestInfrastructure/Compze.TestInfrastructure.csproj">
+    <Project Path="Tests/Compze.TestInfrastructure.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
     <Project Path="Tests/Common/Compze.Tests.Common.csproj">

@@ -1,38 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-   <PropertyGroup>
-      <RootNamespace>Compze.Testing</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-      <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Utilities.Logging.Serilog.csproj" />
-      <ProjectReference Include="..\Compze.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-      <PackageReference Include="FluentAssertions" Version="8.7.0" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-      <PackageReference Include="NUnit" Version="4.4.0" />
-      <PackageReference Include="Serilog" Version="4.3.0" />
-      <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-      <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-      <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-      <PackageReference Include="xunit" Version="2.9.3" />
-   </ItemGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Common" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.Testing</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Common\**" />
+    <Compile Remove="Integration\**" />
+    <Compile Remove="Integration.Internals\**" />
+    <Compile Remove="Performance.Internals\**" />
+    <Compile Remove="Unit\**" />
+    <Compile Remove="Unit.Internals\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
+    <ProjectReference Include="..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="FluentAssertions" Version="8.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NUnit" Version="4.4.0" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Common" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration" />
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+  </ItemGroup>
 </Project>

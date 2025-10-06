@@ -1,32 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<RootNamespace>Compze.Hosting.Abstractions</RootNamespace>
-		<NuGetAuditMode>direct</NuGetAuditMode>
-		<AnalysisLevel>latest-all</AnalysisLevel>
-		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
-		<ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-		<ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.SystemExtensions.csproj" />
-		<ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-	</ItemGroup>
-
-	<ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.Hosting.Abstractions</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Abstractions\Internals\Compze.Abstractions.Internal.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+    <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Tessaging" />
+  </ItemGroup>
 </Project>

@@ -1,43 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-    <PropertyGroup>
-        <RootNamespace>Compze.Tessaging</RootNamespace>
-        <NuGetAuditMode>direct</NuGetAuditMode>
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    </PropertyGroup>
-    <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Compze.Common\Compze.Common.csproj" />
-        <ProjectReference Include="..\Compze.Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
-        <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
-        <ProjectReference Include="..\Compze.Hosting.Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-        <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
-        <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
-        <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-        <ProjectReference Include="..\Compze.Logging\Compze.Utilities.Logging.csproj" />
-        <ProjectReference Include="..\Compze.Teventive.Abstractions\Compze.Teventive.Abstractions.csproj" />
-        <ProjectReference Include="..\Compze.Typermedia.Abstractions\Compze.Typermedia.Abstractions.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-        <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
-    </ItemGroup>
-    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.InMemory" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.Tessaging</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <Compile Remove="Common\**" />
+    <Compile Remove="Teventive\**" />
+    <Compile Remove="Hosting\Abstractions\**" />
+    <Compile Remove="Hosting\Configuration\**" />
+    <Compile Remove="Hosting\Persistence\**" />
+    <Compile Remove="Hosting\Testing\**" />
+    <Compile Remove="Persistence\Abstractions\**" />
+    <Compile Remove="Persistence\Common\**" />
+    <Compile Remove="Persistence\InMemory\**" />
+    <Compile Remove="Persistence\MicrosoftSql\**" />
+    <Compile Remove="Persistence\MySql\**" />
+    <Compile Remove="Persistence\PostgreSql\**" />
+    <Compile Remove="Typermedia\Abstractions\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Compze.Common.csproj" />
+    <ProjectReference Include="Hosting\Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
+    <ProjectReference Include="..\Persistence\DocumentDb\Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
+    <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
+    <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
+    <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
+    <ProjectReference Include="..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
+    <ProjectReference Include="Teventive\Abstractions\Compze.Teventive.Abstractions.csproj" />
+    <ProjectReference Include="Typermedia\Abstractions\Compze.Typermedia.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.InMemory" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+  </ItemGroup>
 </Project>

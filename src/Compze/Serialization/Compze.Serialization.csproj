@@ -1,30 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-   <PropertyGroup>
-      <RootNamespace>Compze.Serialization</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-   <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-   </ItemGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Utilities.Logging" />
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-   </ItemGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.Abstractions.Internal\Compze.Abstractions.Internal.csproj" />
-      <ProjectReference Include="..\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.Serialization</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Utilities.Logging" />
+    <InternalsVisibleTo Include="Compze.Tessaging" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Abstractions\Internals\Compze.Abstractions.Internal.csproj" />
+    <ProjectReference Include="..\Tessaging\Teventive\EventStore\Abstractions\Compze.EventStore.Abstractions.csproj" />
+    <ProjectReference Include="..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
+  </ItemGroup>
 </Project>

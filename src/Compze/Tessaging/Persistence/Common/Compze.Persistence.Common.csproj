@@ -1,42 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <RootNamespace>Compze.Persistence.Common</RootNamespace>
-        <NuGetAuditMode>direct</NuGetAuditMode>
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.SystemExtensions.csproj" />
-        <ProjectReference Include="..\Compze.Logging\Compze.Utilities.Logging.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.EventStore.MySql" />
-      <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.Persistence.Common</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
+    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.EventStore.MySql" />
+    <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
+    <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
+    <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+  </ItemGroup>
 </Project>

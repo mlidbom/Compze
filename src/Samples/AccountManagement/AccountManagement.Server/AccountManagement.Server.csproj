@@ -1,27 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-   <PropertyGroup>
-      <RootNamespace>AccountManagement</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\..\..\Compze\Compze.DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-      <ProjectReference Include="..\..\..\Compze\Compze.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-      <ProjectReference Include="..\..\..\Compze\Compze.Persistence.MicrosoftSql.DependencyInjection\Compze.Tessaging.Hosting.Persistence.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\..\Compze\Compze.DocumentDb.MicrosoftSql\Compze.Persistence.DocumentDb.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\..\Compze\Compze.EventStore.MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\..\Compze\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.Persistence.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-      <None Update="appsettings.json">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>AccountManagement</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Tessaging\Hosting\Persistence\MicrosoftSql\Compze.Tessaging.Hosting.Persistence.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Persistence\DocumentDb\MicrosoftSql\Compze.Persistence.DocumentDb.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Tessaging\Teventive\EventStore\MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Tessaging\Persistence\MicrosoftSql\Compze.Tessaging.Persistence.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\AccountManagement.Domain.Events\AccountManagement.Domain.Events.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

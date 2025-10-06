@@ -1,32 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-
-   <PropertyGroup>
-      <RootNamespace>Compze.Logging</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
-      <InternalsVisibleTo Include="Compze.Persistence.Common" />
-      <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
-      <InternalsVisibleTo Include="Compze.TestInfrastructure" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-   </ItemGroup>
-
-
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.Logging</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <Compile Remove="Serilog\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
+    <InternalsVisibleTo Include="Compze.Persistence.Common" />
+    <InternalsVisibleTo Include="Compze.Tessaging" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
+    <InternalsVisibleTo Include="Compze.TestInfrastructure" />
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+  </ItemGroup>
 </Project>

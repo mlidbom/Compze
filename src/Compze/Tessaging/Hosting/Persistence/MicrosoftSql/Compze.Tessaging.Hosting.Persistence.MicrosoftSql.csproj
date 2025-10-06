@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <ImplicitUsings>enable</ImplicitUsings>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-   <PropertyGroup>
-      <RootNamespace>Compze.Persistence.MicrosoftSql</RootNamespace>
-   </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\Compze.Testing.DbPool.MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.Persistence.MicrosoftSql</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\MicrosoftSql\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Compze.Tessaging.csproj" />
+    <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool.MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
 </Project>

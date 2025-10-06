@@ -1,24 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-   <PropertyGroup>
-      <RootNamespace>Compze.EventStore</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
-      <ProjectReference Include="..\Compze.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
-      <ProjectReference Include="..\Compze.Teventive.Abstractions\Compze.Teventive.Abstractions.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.EventStore</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <Compile Remove="MicrosoftSql\**" />
+    <Compile Remove="MySql\**" />
+    <Compile Remove="PostgreSql\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+    <ProjectReference Include="Abstractions\Compze.EventStore.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
+    <ProjectReference Include="..\..\Persistence\Common\Compze.Persistence.Common.csproj" />
+    <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
+    <ProjectReference Include="..\Compze.Teventive.csproj" />
+    <ProjectReference Include="..\Abstractions\Compze.Teventive.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
 </Project>

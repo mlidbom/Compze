@@ -1,30 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-
-   <PropertyGroup>
-      <RootNamespace>Compze.DocumentDb</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
-      <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-   </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Compze.DocumentDb</RootNamespace>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <Compile Remove="MicrosoftSql\**" />
+    <Compile Remove="MySql\**" />
+    <Compile Remove="PostgreSql\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Tessaging\Compze.Tessaging.csproj" />
+    <ProjectReference Include="..\..\Tessaging\Persistence\Common\Compze.Persistence.Common.csproj" />
+    <ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+  </ItemGroup>
 </Project>
