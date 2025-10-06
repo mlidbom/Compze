@@ -50,14 +50,6 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Compze/Serialization/">
-    <Project Path="framework/Compze.Serialization.Abstractions/Compze.Serialization.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="framework/Compze.Serialization/Compze.Serialization.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
   <Folder Name="/Compze/SystemExtensions/">
     <Project Path="framework/Compze.InternalUtilities/Compze.Utilities.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
@@ -176,6 +168,14 @@
     </Project>
     <Project Path="framework/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tessaging/Serialization/">
+    <Project Path="framework/Compze.Serialization.Abstractions/Compze.Serialization.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.Serialization/Compze.Serialization.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Tessaging/Teventive/">
