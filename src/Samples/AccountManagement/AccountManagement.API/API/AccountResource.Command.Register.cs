@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
 using Compze.Tessaging;
+using Compze.Tessaging.Abstractions;
 using JetBrains.Annotations;
 // ReSharper disable MemberCanBeMadeStatic.Global Because we want these members to be accessed through the fluent API we don't want to make them static.
 
@@ -17,7 +18,7 @@ public partial class AccountResource
          public static Register Create() => new()
                                             {
                                                AccountId = Guid.NewGuid(),
-                                               MessageId = Guid.NewGuid()
+                                               MessageId = Guid.CreateVersion7()
                                             };
 
          //Note the use of a custom validation attributes.
@@ -36,7 +37,7 @@ public partial class AccountResource
 
          internal Register WithValues(Guid accountId, string email, string password) => new()
                                                                                         {
-                                                                                           MessageId = Guid.NewGuid(),
+                                                                                           MessageId = Guid.CreateVersion7(),
                                                                                            AccountId = accountId,
                                                                                            Email = email,
                                                                                            Password = password

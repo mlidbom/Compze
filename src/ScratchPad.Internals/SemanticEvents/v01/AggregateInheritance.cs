@@ -1,4 +1,4 @@
-﻿using Compze.EventStore.Abstractions;
+﻿using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable All
 #pragma warning disable IDE0059 // Unnecessary assignment of a value

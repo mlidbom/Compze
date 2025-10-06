@@ -1,0 +1,43 @@
+using Compze.Abstractions.Internal.Persistence.DocumentDb;
+using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Abstractions.Internal.Time;
+using Compze.Persistence.DocumentDb.Abstractions;
+using Compze.Serialization;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Persistence.DocumentDb;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
+
+namespace Compze.Persistence.DocumentDb.DependencyInjection;
+
+public static class DocumentDbRegistrar
+{
+   public static DocumentDbRegistrationBuilder RegisterDocumentDb(this IEndpointBuilder @this)
+      => @this.Container.RegisterDocumentDb(@this.Configuration.ConnectionStringName);
+
+   public static DocumentDbRegistrationBuilder RegisterDocumentDb(this IDependencyInjectionContainer @this, string connectionName)
+   {
+      Assert.Argument.NotNullEmptyOrWhitespace(connectionName);
+
+      @this.Register(Singleton.For<IDocumentDbSerializer>()
+                              .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
+
+      @this.Register(Scoped.For<IDocumentDb>()
+                           .CreatedBy((IDocumentDbPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer)
+                                         => new DocumentDb(timeSource, serializer, typeMapper, persistenceLayer)));
+
+      @this.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
+                           .CreatedBy((IDocumentDb documentDb) => new DocumentDbSession(documentDb)));
+
+      return new DocumentDbRegistrationBuilder();
+   }
+}
+
+public class DocumentDbRegistrationBuilder
+{
+   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   {
+      DocumentDbApi.HandleDocumentType<TDocument>(registrar);
+      return this;
+   }
+}

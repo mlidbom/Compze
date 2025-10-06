@@ -1,0 +1,17 @@
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Utilities.DependencyInjection;
+
+namespace Compze.Tessaging.Teventive.EventStore.MySql;
+
+public static class MySqlEventStoreRegistrar
+{
+   public static void RegisterMySqlEventStore(this IDependencyInjectionContainer container)
+   {
+      container.Register(
+         Singleton.For<MySqlEventStoreConnectionManager>()
+                  .CreatedBy((IMySqlConnectionPool sqlConnectionProvider) => new MySqlEventStoreConnectionManager(sqlConnectionProvider)),
+         Singleton.For<IEventStorePersistenceLayer>()
+                  .CreatedBy((MySqlEventStoreConnectionManager connectionManager) => new MySqlEventStorePersistenceLayer(connectionManager)));
+   }
+}

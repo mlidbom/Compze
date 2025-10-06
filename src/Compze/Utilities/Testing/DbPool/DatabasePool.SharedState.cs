@@ -1,0 +1,43 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using Compze.Utilities.SystemCE.LinqCE;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
+
+namespace Compze.Utilities.Testing.DbPool;
+
+public partial class DbPool
+{
+   [UsedImplicitly] protected class SharedState
+   {
+      [JsonProperty]
+      List<Database> _databases = [];
+
+      IEnumerable<Database> UnReserved => _databases.Where(db => !db.IsReserved)
+                                                     //Reusing recently used databases helps performance in a pretty big way, disk cache, connection pool etc.
+                                                    .OrderByDescending(db => db.ReservationExpirationTime);
+
+      IEnumerable<Database> CleanUnReserved => UnReserved.Where(db => db.IsClean);
+
+      internal bool TryReserve(string reservationName, Guid poolId, TimeSpan reservationLength, [NotNullWhen(true)] out Database? reserved)
+      {
+         CollectGarbage();
+
+         reserved = CleanUnReserved.FirstOrDefault() ?? UnReserved.FirstOrDefault();
+         if(reserved == null && _databases.Count < NumberOfDatabases)
+         {
+            _databases.Add(new Database(_databases.Count + 1));
+            reserved = CleanUnReserved.FirstOrDefault() ?? UnReserved.FirstOrDefault();
+         }
+
+         reserved?.Reserve(reservationName, poolId, reservationLength);
+         return reserved != null;
+      }
+
+      void CollectGarbage() => _databases.Where(db => db.ShouldBeReleased)
+                                         .ForEach(db => db.Release());
+
+      internal void ReleaseReservationsFor(Guid poolId) => DatabasesReservedBy(poolId).ForEach(db => db.Release());
+
+      IReadOnlyList<Database> DatabasesReservedBy(Guid poolId) => _databases.Where(db => db.IsReserved && db.ReservedByPoolId == poolId).ToList();
+   }
+}

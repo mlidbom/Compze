@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Compze.Common.csproj" />
+    <ProjectReference Include="Hosting\Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
+    <ProjectReference Include="..\Persistence\DocumentDb\Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
+    <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
+    <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
+    <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
+    <ProjectReference Include="..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
+    <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
+    <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.InMemory" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <None Remove="Abstractions\**" />
+    <Content Remove="Abstractions\**" />
+    <Compile Remove="Common\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <None Remove="Common\**" />
+    <Content Remove="Common\**" />
+    <Compile Remove="Hosting\Abstractions\**" />
+    <EmbeddedResource Remove="Hosting\Abstractions\**" />
+    <None Remove="Hosting\Abstractions\**" />
+    <Content Remove="Hosting\Abstractions\**" />
+    <Compile Remove="Hosting\Configuration\**" />
+    <EmbeddedResource Remove="Hosting\Configuration\**" />
+    <None Remove="Hosting\Configuration\**" />
+    <Content Remove="Hosting\Configuration\**" />
+    <Compile Remove="Hosting\Configuration\Abstractions\**" />
+    <EmbeddedResource Remove="Hosting\Configuration\Abstractions\**" />
+    <None Remove="Hosting\Configuration\Abstractions\**" />
+    <Content Remove="Hosting\Configuration\Abstractions\**" />
+    <Compile Remove="Hosting\Persistence\MicrosoftSql\**" />
+    <EmbeddedResource Remove="Hosting\Persistence\MicrosoftSql\**" />
+    <None Remove="Hosting\Persistence\MicrosoftSql\**" />
+    <Content Remove="Hosting\Persistence\MicrosoftSql\**" />
+    <Compile Remove="Hosting\Persistence\MySql\**" />
+    <EmbeddedResource Remove="Hosting\Persistence\MySql\**" />
+    <None Remove="Hosting\Persistence\MySql\**" />
+    <Content Remove="Hosting\Persistence\MySql\**" />
+    <Compile Remove="Hosting\Persistence\PostgreSql\**" />
+    <EmbeddedResource Remove="Hosting\Persistence\PostgreSql\**" />
+    <None Remove="Hosting\Persistence\PostgreSql\**" />
+    <Content Remove="Hosting\Persistence\PostgreSql\**" />
+    <Compile Remove="Hosting\Testing\**" />
+    <EmbeddedResource Remove="Hosting\Testing\**" />
+    <None Remove="Hosting\Testing\**" />
+    <Content Remove="Hosting\Testing\**" />
+    <Compile Remove="Persistence\InMemory\**" />
+    <EmbeddedResource Remove="Persistence\InMemory\**" />
+    <None Remove="Persistence\InMemory\**" />
+    <Content Remove="Persistence\InMemory\**" />
+    <Compile Remove="Persistence\MicrosoftSql\**" />
+    <EmbeddedResource Remove="Persistence\MicrosoftSql\**" />
+    <None Remove="Persistence\MicrosoftSql\**" />
+    <Content Remove="Persistence\MicrosoftSql\**" />
+    <Compile Remove="Persistence\MySql\**" />
+    <EmbeddedResource Remove="Persistence\MySql\**" />
+    <None Remove="Persistence\MySql\**" />
+    <Content Remove="Persistence\MySql\**" />
+    <Compile Remove="Persistence\PostgreSql\**" />
+    <EmbeddedResource Remove="Persistence\PostgreSql\**" />
+    <None Remove="Persistence\PostgreSql\**" />
+    <Content Remove="Persistence\PostgreSql\**" />
+    <Compile Remove="Teventive\**" />
+    <EmbeddedResource Remove="Teventive\**" />
+    <None Remove="Teventive\**" />
+    <Content Remove="Teventive\**" />
+    <Compile Remove="Teventive\Abstractions\**" />
+    <EmbeddedResource Remove="Teventive\Abstractions\**" />
+    <None Remove="Teventive\Abstractions\**" />
+    <Content Remove="Teventive\Abstractions\**" />
+    <Compile Remove="Teventive\EventStore\**" />
+    <EmbeddedResource Remove="Teventive\EventStore\**" />
+    <None Remove="Teventive\EventStore\**" />
+    <Content Remove="Teventive\EventStore\**" />
+    <Compile Remove="Teventive\EventStore\Abstractions\**" />
+    <EmbeddedResource Remove="Teventive\EventStore\Abstractions\**" />
+    <None Remove="Teventive\EventStore\Abstractions\**" />
+    <Content Remove="Teventive\EventStore\Abstractions\**" />
+    <Compile Remove="Teventive\EventStore\MicrosoftSql\**" />
+    <EmbeddedResource Remove="Teventive\EventStore\MicrosoftSql\**" />
+    <None Remove="Teventive\EventStore\MicrosoftSql\**" />
+    <Content Remove="Teventive\EventStore\MicrosoftSql\**" />
+    <Compile Remove="Teventive\EventStore\MySql\**" />
+    <EmbeddedResource Remove="Teventive\EventStore\MySql\**" />
+    <None Remove="Teventive\EventStore\MySql\**" />
+    <Content Remove="Teventive\EventStore\MySql\**" />
+    <Compile Remove="Teventive\EventStore\PostgreSql\**" />
+    <EmbeddedResource Remove="Teventive\EventStore\PostgreSql\**" />
+    <None Remove="Teventive\EventStore\PostgreSql\**" />
+    <Content Remove="Teventive\EventStore\PostgreSql\**" />
+    <Compile Remove="Typermedia\Abstractions\**" />
+    <EmbeddedResource Remove="Typermedia\Abstractions\**" />
+    <None Remove="Typermedia\Abstractions\**" />
+    <Content Remove="Typermedia\Abstractions\**" />
+  </ItemGroup>
+</Project>

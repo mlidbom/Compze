@@ -1,11 +1,11 @@
 ﻿using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
-using Compze.DDD.Abstractions;
+using Compze.Abstractions;
 using Newtonsoft.Json;
 
 namespace AccountManagement.API;
 
-public partial class AccountResource : Entity<AccountResource>
+public partial class AccountResource : PersistentEntity<AccountResource>
 {
 #pragma warning disable IDE0051 // Remove unused private members
    [JsonConstructor]AccountResource(Email email, Password password, AccountCommands commands)

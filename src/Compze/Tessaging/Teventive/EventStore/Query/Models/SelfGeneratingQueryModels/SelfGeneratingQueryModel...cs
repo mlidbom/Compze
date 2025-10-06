@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using Compze.Abstractions;
+using Compze.Tessaging.Common.Teventive;
+using Compze.Tessaging.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.LinqCE;
+
+namespace Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
+
+public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : VersionedPersistentEntity<TQueryModel>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
+   where TAggregateEvent : class, IAggregateEvent
+{
+   //Yes empty. Id should be assigned by an action, and it should be obvious that the aggregate in invalid until that happens
+   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TAggregateEvent).IsInterface);
+
+   readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventDispatcher = new();
+
+   protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventDispatcher.Register();
+
+   public void ApplyEvent(TAggregateEvent theEvent)
+   {
+      if(theEvent is IAggregateCreatedEvent)
+      {
+#pragma warning disable 618 //Review OK: This is precisely the type of internal code this is supposed to use this "obsolete" method.
+         SetIdBeVerySureYouKnowWhatYouAreDoing(theEvent.AggregateId);
+#pragma warning restore 618
+      }
+
+      Version = theEvent.AggregateVersion;
+      _eventDispatcher.Dispatch(theEvent);
+   }
+
+   public bool HandlesEvent(TAggregateEvent @event) => _eventDispatcher.Handles(@event);
+
+   public void LoadFromHistory(IEnumerable<IAggregateEvent> history)
+   {
+      Assert.State.Is(Version == 0);
+      history.ForEach(theEvent => ApplyEvent((TAggregateEvent)theEvent));
+      AssertInvariantsAreMet();
+   }
+
+   protected virtual void AssertInvariantsAreMet(){}
+}

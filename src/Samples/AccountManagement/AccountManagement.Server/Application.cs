@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Buses;
-using Compze.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting;
+using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable LocalizableElement
@@ -12,7 +12,7 @@ static class Application
 {
    public static async Task Main()
    {
-      var host = EndpointHost.Production.Create(TestingContainerFactory.Create);
+      var host = EndpointHost.Production.Create(runMode => new SimpleInjectorDependencyInjectionContainer(runMode));
       await using var host2 = host.caf();
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
       await host.StartAsync().caf();

@@ -1,6 +1,0 @@
-namespace Compze.Teventive.Aggregates;
-
-public interface IGetAggregateEntityEventEntityId<in TEvent, out TEntityId>
-{
-   TEntityId GetId(TEvent @event);
-}

@@ -1,13 +1,18 @@
-﻿using System;
+using System;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Compze.DocumentDb.DependencyInjection;
-using Compze.Persistence.DependencyInjection;
-using Compze.Tessaging.Buses;
+using Compze.Persistence.DocumentDb.DependencyInjection;
+using Compze.Persistence.DocumentDb.MicrosoftSql;
+using Compze.Tessaging.Hosting;
+using Compze.Persistence.MicrosoftSql;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
 using Compze.Tessaging.Persistence.EventStore;
-using Compze.Testing.Persistence;
+using Compze.Tessaging.Persistence.MicrosoftSql;
+using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
+using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 namespace AccountManagement;
 
@@ -28,8 +33,12 @@ public class AccountManagementServerDomainBootstrapper
 
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {
-      //todo: This is not in the right place.
-      builder.RegisterCurrentTestsConfiguredPersistenceLayer();
+      var connectionStringName = builder.Configuration.ConnectionStringName;
+      builder.Container.RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+      builder.Container.RegisterMsSqlDocumentDb();
+      builder.Container.RegisterMsSqlEventStore();
+      builder.Container.RegisterMsSqlTessaging();
+      
       builder.RegisterEventStore()
              .HandleAggregate<Account, AccountEvent.Root>();
 
