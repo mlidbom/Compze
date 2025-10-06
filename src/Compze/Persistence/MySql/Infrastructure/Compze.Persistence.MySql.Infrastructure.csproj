@@ -18,7 +18,7 @@
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
-    <InternalsVisibleTo Include="Compze.EventStore.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MySql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />

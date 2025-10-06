@@ -12,7 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
     <InternalsVisibleTo Include="Compze.Teventive" />
   </ItemGroup>
   <ItemGroup>

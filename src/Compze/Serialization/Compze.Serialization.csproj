@@ -18,7 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
-    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
     <InternalsVisibleTo Include="Compze.Utilities.Logging" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
@@ -27,7 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
-    <ProjectReference Include="..\Tessaging\Teventive\EventStore\Abstractions\Compze.EventStore.Abstractions.csproj" />
+    <ProjectReference Include="..\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
   </ItemGroup>
 </Project>

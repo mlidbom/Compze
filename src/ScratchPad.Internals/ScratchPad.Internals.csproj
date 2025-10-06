@@ -28,7 +28,7 @@
     <PackageReference Include="xunit" Version="2.9.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Compze\Tessaging\Teventive\EventStore\Abstractions\Compze.EventStore.Abstractions.csproj" />
+    <ProjectReference Include="..\Compze\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
   </ItemGroup>
   <ItemGroup>

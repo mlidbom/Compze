@@ -31,10 +31,10 @@
       <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
       <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.EventStore.MySql" />
-      <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MySql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Abstractions" />
       <InternalsVisibleTo Include="Compze.Utilities.Logging" />
       <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />

@@ -6,14 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Compze.EventStore.PostgreSql</RootNamespace>
+    <RootNamespace>Compze.EventStore.MicrosoftSql</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Persistence\PostgreSql\Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
-    <ProjectReference Include="..\Compze.EventStore.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\MicrosoftSql\Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -18,13 +18,13 @@
     <ProjectReference Include="..\Persistence\MySql\Compze.Tessaging.Hosting.Persistence.MySql.csproj" />
     <ProjectReference Include="..\Persistence\PostgreSql\Compze.Tessaging.Hosting.Persistence.PostgreSql.csproj" />
     <ProjectReference Include="..\..\..\Persistence\DocumentDb\MicrosoftSql\Compze.Persistence.DocumentDb.MicrosoftSql.csproj" />
-    <ProjectReference Include="..\..\Teventive\EventStore\MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\..\Teventive\EventStore\MicrosoftSql\Compze.Tessaging.Teventive.EventStore.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Persistence\MicrosoftSql\Compze.Tessaging.Persistence.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\..\Persistence\DocumentDb\MySql\Compze.Persistence.DocumentDb.MySql.csproj" />
-    <ProjectReference Include="..\..\Teventive\EventStore\MySql\Compze.EventStore.MySql.csproj" />
+    <ProjectReference Include="..\..\Teventive\EventStore\MySql\Compze.Tessaging.Teventive.EventStore.MySql.csproj" />
     <ProjectReference Include="..\..\Persistence\MySql\Compze.Tessaging.Persistence.MySql.csproj" />
     <ProjectReference Include="..\..\..\Persistence\DocumentDb\PostgreSql\Compze.Persistence.DocumentDb.PostgreSql.csproj" />
-    <ProjectReference Include="..\..\Teventive\EventStore\PostgreSql\Compze.EventStore.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\Teventive\EventStore\PostgreSql\Compze.Tessaging.Teventive.EventStore.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Persistence\PostgreSql\Compze.Tessaging.Persistence.PostgreSql.csproj" />
   </ItemGroup>
   <ItemGroup>

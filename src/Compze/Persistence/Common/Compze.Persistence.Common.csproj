@@ -19,10 +19,10 @@
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.EventStore" />
-    <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.EventStore.MySql" />
-    <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
     <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
     <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />

@@ -9,7 +9,7 @@
     <RootNamespace>Compze.Persistence.InMemory</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Teventive\EventStore\Compze.EventStore.csproj" />
+    <ProjectReference Include="..\..\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
   </ItemGroup>
   <ItemGroup>

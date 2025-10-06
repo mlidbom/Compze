@@ -17,7 +17,7 @@
     <ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
     <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
     <InternalsVisibleTo Include="Compze.Persistence.Common" />
     <InternalsVisibleTo Include="Compze.Tessaging" />

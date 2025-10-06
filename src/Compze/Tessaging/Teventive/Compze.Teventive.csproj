@@ -25,6 +25,6 @@
     <ProjectReference Include="Abstractions\Compze.Teventive.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
   </ItemGroup>
 </Project>

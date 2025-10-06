@@ -11,12 +11,12 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.EventStore.Abstractions.csproj" />
+    <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
     <ProjectReference Include="..\Teventive\Abstractions\Compze.Teventive.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.EventStore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />

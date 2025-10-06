@@ -142,19 +142,19 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/EventStore/">
-    <Project Path="Compze/Tessaging/Teventive/EventStore/Abstractions/Compze.EventStore.Abstractions.csproj">
+    <Project Path="Compze/Tessaging/Teventive/EventStore/Abstractions/Compze.Tessaging.Teventive.EventStore.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Tessaging/Teventive/EventStore/MicrosoftSql/Compze.EventStore.MicrosoftSql.csproj">
+    <Project Path="Compze/Tessaging/Teventive/EventStore/MicrosoftSql/Compze.Tessaging.Teventive.EventStore.MicrosoftSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Tessaging/Teventive/EventStore/MySql/Compze.EventStore.MySql.csproj">
+    <Project Path="Compze/Tessaging/Teventive/EventStore/MySql/Compze.Tessaging.Teventive.EventStore.MySql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Tessaging/Teventive/EventStore/PostgreSql/Compze.EventStore.PostgreSql.csproj">
+    <Project Path="Compze/Tessaging/Teventive/EventStore/PostgreSql/Compze.Tessaging.Teventive.EventStore.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.EventStore.csproj">
+    <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.EventStore.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
