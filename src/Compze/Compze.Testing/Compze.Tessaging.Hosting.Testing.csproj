@@ -37,12 +37,8 @@
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
-      <InternalsVisibleTo Include="Compze.TestInfrastructure" />
-      <InternalsVisibleTo Include="Compze.Tests.Common" />
       <InternalsVisibleTo Include="Compze.Tests.Integration" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
    </ItemGroup>
 </Project>

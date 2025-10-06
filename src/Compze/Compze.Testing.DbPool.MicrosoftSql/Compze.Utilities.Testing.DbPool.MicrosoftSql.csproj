@@ -18,6 +18,5 @@
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>
 </Project>

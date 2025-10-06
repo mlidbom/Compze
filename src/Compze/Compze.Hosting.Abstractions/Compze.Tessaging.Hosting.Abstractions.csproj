@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Tessaging" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
 	</ItemGroup>
 
 </Project>

@@ -15,6 +15,5 @@
       <ProjectReference Include="..\Compze.Testing.DbPool.PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
    </ItemGroup>
 </Project>

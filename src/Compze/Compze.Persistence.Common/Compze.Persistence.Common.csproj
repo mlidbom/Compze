@@ -27,11 +27,8 @@
       <InternalsVisibleTo Include="Compze.EventStore.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.EventStore.MySql" />
       <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />
       <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.DependencyInjection" />
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />

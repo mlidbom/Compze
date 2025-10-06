@@ -15,6 +15,5 @@
       <ProjectReference Include="..\Compze.Testing.DbPool.MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
    </ItemGroup>
 </Project>

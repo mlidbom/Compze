@@ -1,7 +1,7 @@
 # Test-InternalsVisibleTo.ps1
 # Script to test which InternalsVisibleTo attributes are actually needed
 param(
-    [string]$SolutionPath = "C:\Dev\Compze\src\Compze.Everything.slnx",
+    [string]$SolutionPath = "C:\Dev\Compze\src\Compze.slnx",
     [string]$LogFile = "C:\Dev\Compze\InternalsVisibleTo-Test-Results.log"
 )
 
