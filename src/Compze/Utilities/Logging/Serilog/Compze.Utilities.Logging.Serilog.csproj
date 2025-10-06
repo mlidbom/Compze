@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Compze.Logging.Serilog</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>

@@ -5,7 +5,6 @@
     <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Compze.DocumentDb.Abstractions</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>

@@ -5,9 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>Compze.Persistence.MicrosoftSql.Infrastructure</RootNamespace>
-  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Compze.Persistence.Common.csproj" />
   </ItemGroup>

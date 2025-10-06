@@ -4,7 +4,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Compze.DependencyInjection.Microsoft</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
