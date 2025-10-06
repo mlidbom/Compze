@@ -22,8 +22,8 @@
     <ProjectReference Include="..\..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
     <ProjectReference Include="..\..\..\Persistence\Common\Compze.Persistence.Common.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\Compze.Teventive.csproj" />
-    <ProjectReference Include="..\Abstractions\Compze.Teventive.Abstractions.csproj" />
+    <ProjectReference Include="..\Compze.Tessaging.Teventive.csproj" />
+    <ProjectReference Include="..\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

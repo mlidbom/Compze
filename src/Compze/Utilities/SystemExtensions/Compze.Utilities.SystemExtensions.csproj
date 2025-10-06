@@ -59,8 +59,8 @@
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="Compze.Teventive" />
-      <InternalsVisibleTo Include="Compze.Typermedia.Abstractions" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Typermedia.Abstractions" />
       <InternalsVisibleTo Include="ScratchPad.Internals" />
 	</ItemGroup>
 

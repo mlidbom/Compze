@@ -13,7 +13,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-    <InternalsVisibleTo Include="Compze.Teventive" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Abstractions\Compze.Abstractions.csproj" />

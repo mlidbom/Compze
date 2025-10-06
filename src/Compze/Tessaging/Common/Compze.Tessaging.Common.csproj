@@ -13,13 +13,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-    <ProjectReference Include="..\Teventive\Abstractions\Compze.Teventive.Abstractions.csproj" />
+    <ProjectReference Include="..\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Teventive" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
   </ItemGroup>
 </Project>

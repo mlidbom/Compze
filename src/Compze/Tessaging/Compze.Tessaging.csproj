@@ -38,8 +38,8 @@
     <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
     <ProjectReference Include="..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
-    <ProjectReference Include="Teventive\Abstractions\Compze.Teventive.Abstractions.csproj" />
-    <ProjectReference Include="Typermedia\Abstractions\Compze.Typermedia.Abstractions.csproj" />
+    <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
+    <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />

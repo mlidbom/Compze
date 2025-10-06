@@ -26,6 +26,6 @@
     <InternalsVisibleTo Include="Compze.Serialization" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Teventive" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
   </ItemGroup>
 </Project>

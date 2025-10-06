@@ -134,10 +134,10 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/">
-    <Project Path="Compze/Tessaging/Teventive/Abstractions/Compze.Teventive.Abstractions.csproj">
+    <Project Path="Compze/Tessaging/Teventive/Abstractions/Compze.Tessaging.Teventive.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Tessaging/Teventive/Compze.Teventive.csproj">
+    <Project Path="Compze/Tessaging/Teventive/Compze.Tessaging.Teventive.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
@@ -159,7 +159,7 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Typermedia/">
-    <Project Path="Compze/Tessaging/Typermedia/Abstractions/Compze.Typermedia.Abstractions.csproj">
+    <Project Path="Compze/Tessaging/Typermedia/Abstractions/Compze.Tessaging.Typermedia.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
