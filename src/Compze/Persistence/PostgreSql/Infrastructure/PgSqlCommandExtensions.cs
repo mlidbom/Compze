@@ -1,4 +1,4 @@
-using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.Common;
 using Npgsql;
 
 namespace Compze.Persistence.PostgreSql.Infrastructure;

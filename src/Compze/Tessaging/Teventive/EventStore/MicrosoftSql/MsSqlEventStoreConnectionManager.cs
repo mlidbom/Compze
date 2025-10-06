@@ -1,5 +1,4 @@
 using System.Transactions;
-using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using JetBrains.Annotations;
 using Microsoft.Data.SqlClient;

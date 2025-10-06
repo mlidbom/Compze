@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.Common;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;

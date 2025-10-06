@@ -1,5 +1,5 @@
-using Compze.Persistence.Common.AdoCE;
-using Compze.Persistence.Common.AdoCE.Abstractions;
+using Compze.Persistence.Common;
+using Compze.Persistence.Common.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;

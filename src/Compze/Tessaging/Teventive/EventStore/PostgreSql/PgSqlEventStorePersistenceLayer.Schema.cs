@@ -1,4 +1,4 @@
-﻿using Compze.Persistence.Common.AdoCE;
+﻿using Compze.Persistence.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 using Lock = Compze.EventStore.AggregateLockTableSchemaStrings;

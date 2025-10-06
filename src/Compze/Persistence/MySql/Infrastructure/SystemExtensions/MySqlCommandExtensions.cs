@@ -1,4 +1,4 @@
-using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.Common;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Persistence.MySql.Infrastructure.SystemExtensions;

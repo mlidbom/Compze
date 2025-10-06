@@ -1,6 +1,6 @@
 using Compze.EventStore;
 using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.Common;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;

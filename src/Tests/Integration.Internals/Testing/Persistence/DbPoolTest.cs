@@ -1,6 +1,6 @@
 ﻿using System;
 using Compze.DependencyInjection;
-using Compze.Persistence.Common.AdoCE.Abstractions;
+using Compze.Persistence.Common.Abstractions;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;

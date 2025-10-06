@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Persistence.Common.AdoCE.Abstractions;
+using Compze.Persistence.Common.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
@@ -12,7 +12,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common;
 
 abstract partial class DbConnectionManager<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>

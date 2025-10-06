@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Persistence.Common.AdoCE.Abstractions;
+namespace Compze.Persistence.Common.Abstractions;
 
 interface IDbConnectionPool<out TConnection, out TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>

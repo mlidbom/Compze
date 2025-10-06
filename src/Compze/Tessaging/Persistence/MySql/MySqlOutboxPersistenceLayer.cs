@@ -1,4 +1,4 @@
-﻿using Compze.Persistence.Common.AdoCE;
+﻿using Compze.Persistence.Common;
 using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Tessaging.Hosting.Implementation;

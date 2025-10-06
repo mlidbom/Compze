@@ -1,4 +1,4 @@
-using Compze.Persistence.Common.AdoCE;
+using Compze.Persistence.Common;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Persistence.MicrosoftSql.Infrastructure;
