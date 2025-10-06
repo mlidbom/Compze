@@ -18,7 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
     <ProjectReference Include="..\..\Tessaging\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\..\Tessaging\Persistence\Common\Compze.Persistence.Common.csproj" />
+    <ProjectReference Include="..\Common\Compze.Persistence.Common.csproj" />
     <ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
   </ItemGroup>
   <ItemGroup>

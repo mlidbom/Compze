@@ -20,7 +20,7 @@
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="Abstractions\Compze.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
-    <ProjectReference Include="..\..\Persistence\Common\Compze.Persistence.Common.csproj" />
+    <ProjectReference Include="..\..\..\Persistence\Common\Compze.Persistence.Common.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\Compze.Teventive.csproj" />
     <ProjectReference Include="..\Abstractions\Compze.Teventive.Abstractions.csproj" />

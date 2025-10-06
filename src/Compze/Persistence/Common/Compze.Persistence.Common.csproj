@@ -11,8 +11,8 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-    <ProjectReference Include="..\..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
+    <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+    <ProjectReference Include="..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />

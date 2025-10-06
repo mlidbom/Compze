@@ -9,7 +9,7 @@
     <RootNamespace>Compze.Persistence.PostgreSql.Infrastructure</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Tessaging\Persistence\Common\Compze.Persistence.Common.csproj" />
+    <ProjectReference Include="..\Common\Compze.Persistence.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.3" />
