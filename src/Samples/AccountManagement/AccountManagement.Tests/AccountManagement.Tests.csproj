@@ -29,7 +29,7 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup>
-	   <Content Include="..\..\..\framework\test-common-appsettings.json" Link="appsettings.json" >
+	   <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json" >
 		   <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	   </Content>
 	   <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">

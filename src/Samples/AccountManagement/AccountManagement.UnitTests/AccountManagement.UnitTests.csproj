@@ -13,7 +13,7 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\Compze.TestInfrastructure\Compze.TestInfrastructure.csproj" />
+      <ProjectReference Include="..\..\..\Compze\Compze.TestInfrastructure\Compze.TestInfrastructure.csproj" />
       <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
    </ItemGroup>
 

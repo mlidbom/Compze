@@ -40,7 +40,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\src\framework\Compze.Tessaging\Compze.Tessaging.csproj" />
+		<ProjectReference Include="..\..\Compze\Compze.Tessaging\Compze.Tessaging.csproj" />
 	</ItemGroup>
 
 </Project>
