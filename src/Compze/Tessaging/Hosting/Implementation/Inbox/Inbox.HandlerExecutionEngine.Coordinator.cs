@@ -16,7 +16,7 @@ partial class Inbox
    partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all message type specific responsibilities into the message class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(IGlobalBusStateTracker globalStateTracker, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry messageHandlerRegistry)
+      partial class Coordinator(IMessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry messageHandlerRegistry)
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly IMessageStorage _messageStorage = messageStorage;
@@ -42,10 +42,10 @@ partial class Inbox
 
          void Failed(HandlerExecutionTask queuedMessageInformation, Exception exception) => _implementation.Update(implementation => implementation.Failed(queuedMessageInformation, exception));
 
-         class NonThreadsafeImplementation(IGlobalBusStateTracker globalStateTracker) : IExecutingMessagesSnapshot
+         class NonThreadsafeImplementation(IMessagesInFlightTracker globalStateTracker) : IExecutingMessagesSnapshot
          {
             const int MaxConcurrentlyExecutingHandlers = 20;
-            readonly IGlobalBusStateTracker _globalStateTracker = globalStateTracker;
+            readonly IMessagesInFlightTracker _globalStateTracker = globalStateTracker;
 
 
             //performance: Split waiting messages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional query

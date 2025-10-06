@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-class GlobalBusStateTracker : IGlobalBusStateTracker
+class MessagesInFlightTracker : IMessagesInFlightTracker
 {
    readonly IThreadShared<NonThreadSafeImplementation> _implementation = ThreadShared.WithDefaultTimeout(new NonThreadSafeImplementation());
 
@@ -58,7 +58,7 @@ class GlobalBusStateTracker : IGlobalBusStateTracker
    }
 }
 
-class NullOpGlobalBusStateTracker : IGlobalBusStateTracker
+class NullOpMessagesInFlightTracker : IMessagesInFlightTracker
 {
    public IReadOnlyList<Exception> GetExceptions() => [];
    public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) { }

@@ -31,7 +31,7 @@ class Endpoint : IEndpoint
    readonly EndpointConfiguration _configuration;
    public bool IsRunning { get; private set; }
    public Endpoint(IServiceLocator serviceLocator,
-                   IGlobalBusStateTracker globalStateTracker,
+                   IMessagesInFlightTracker globalStateTracker,
                    ITransport transport,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
@@ -47,7 +47,7 @@ class Endpoint : IEndpoint
    public IServiceLocator ServiceLocator { get; }
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
-   readonly IGlobalBusStateTracker _globalStateTracker;
+   readonly IMessagesInFlightTracker _globalStateTracker;
    readonly ITransport _transport;
    readonly IEndpointRegistry _endpointRegistry;
 

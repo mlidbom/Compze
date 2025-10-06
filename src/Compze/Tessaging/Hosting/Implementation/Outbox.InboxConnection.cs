@@ -13,11 +13,11 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 partial class Outbox
 {
-   internal class InboxConnection(IGlobalBusStateTracker globalBusStateTracker, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient) : IInboxConnection
+   internal class InboxConnection(IMessagesInFlightTracker messagesInFlightTracker, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient) : IInboxConnection
    {
       MessageTypesInternal.EndpointInformation? _endpointInformation = null;
-      readonly IRpcClient _rpcClient = new RpcClient(httpApiClient, remoteAddress, typeMapper, serializer, globalBusStateTracker);
-      readonly IMessageSender _messageSender = new MessageSender(httpApiClient, remoteAddress, typeMapper, serializer, globalBusStateTracker);
+      readonly IRpcClient _rpcClient = new RpcClient(httpApiClient, remoteAddress, typeMapper, serializer, messagesInFlightTracker);
+      readonly IMessageSender _messageSender = new MessageSender(httpApiClient, remoteAddress, typeMapper, serializer, messagesInFlightTracker);
 
       public MessageTypesInternal.EndpointInformation EndpointInformation => Assert.State.Is(_endpointInformation != null, () => $"{nameof(Init)} must be called before {nameof(EndpointInformation)} can be accessed")
                                                                                       .then(_endpointInformation!);

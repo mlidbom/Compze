@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Implementation;
 
 namespace Compze.Tessaging.Hosting;
 
-interface IGlobalBusStateTracker
+interface IMessagesInFlightTracker
 {
     IReadOnlyList<Exception> GetExceptions();
 

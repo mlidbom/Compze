@@ -15,9 +15,9 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient) : ITransport, IDisposable
+partial class Transport(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient) : ITransport, IDisposable
 {
-   readonly IGlobalBusStateTracker _globalBusStateTracker = globalBusStateTracker;
+   readonly IMessagesInFlightTracker _messagesInFlightTracker = messagesInFlightTracker;
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableMessageSerializer _serializer = serializer;
    readonly IHttpApiClient _httpApiClient = httpApiClient;
@@ -29,7 +29,7 @@ partial class Transport(IGlobalBusStateTracker globalBusStateTracker, ITypeMappe
    public async Task ConnectAsync(EndPointAddress remoteEndpointAdress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.InboxConnection(_globalBusStateTracker, remoteEndpointAdress, _typeMapper, _serializer, _httpApiClient);
+      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAdress, _typeMapper, _serializer, _httpApiClient);
 
       await clientConnection.Init().caf();
 

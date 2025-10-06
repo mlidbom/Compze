@@ -12,7 +12,7 @@ partial class Inbox
 {
    // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
    internal partial class HandlerExecutionEngine(
-      IGlobalBusStateTracker globalStateTracker,
+      IMessagesInFlightTracker globalStateTracker,
       IMessageHandlerRegistry handlerRegistry,
       IServiceLocator serviceLocator,
       IMessageStorage storage,

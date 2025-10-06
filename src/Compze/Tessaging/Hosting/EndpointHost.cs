@@ -18,13 +18,13 @@ public class EndpointHost : IEndpointHost
    readonly Func<IRunMode, IDependencyInjectionContainer> _containerFactory;
    bool _disposed;
    protected IList<IEndpoint> Endpoints { get; } = [];
-   internal IGlobalBusStateTracker GlobalBusStateTracker;
+   internal IMessagesInFlightTracker MessagesInFlightTracker;
 
    protected EndpointHost(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory)
    {
       _mode = mode;
       _containerFactory = containerFactory;
-      GlobalBusStateTracker = new NullOpGlobalBusStateTracker();
+      MessagesInFlightTracker = new NullOpMessagesInFlightTracker();
    }
 
    public static class Production
@@ -36,7 +36,7 @@ public class EndpointHost : IEndpointHost
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
-      using var builder = new ServerEndpointBuilder(this, GlobalBusStateTracker, _containerFactory(_mode), configuration);
+      using var builder = new ServerEndpointBuilder(this, MessagesInFlightTracker, _containerFactory(_mode), configuration);
       setup(builder);
 
       var endpoint = builder.Build();

@@ -28,7 +28,7 @@ class ServerEndpointBuilder : IEndpointBuilder
    public IDependencyInjectionContainer Container { get; }
 
    public ITypeMappingRegistrar TypeMapper => _typeMapper;
-   readonly IGlobalBusStateTracker _globalStateTracker;
+   readonly IMessagesInFlightTracker _globalStateTracker;
    readonly MessageHandlerRegistry _registry;
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
@@ -42,7 +42,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       MessageTypesInternal.RegisterHandlers(RegisterHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
-                                  serviceLocator.Resolve<IGlobalBusStateTracker>(),
+                                  serviceLocator.Resolve<IMessagesInFlightTracker>(),
                                   serviceLocator.Resolve<ITransport>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
@@ -57,7 +57,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       MessageTypesInternal.MapTypes(TypeMapper);
    }
 
-   public ServerEndpointBuilder(IEndpointHost host, IGlobalBusStateTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
+   public ServerEndpointBuilder(IEndpointHost host, IMessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
    {
       _host = host;
       Container = container;
@@ -97,10 +97,10 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Container.Register(
          Singleton.For<ITypeMappingRegistrar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
-         Singleton.For<IGlobalBusStateTracker>().CreatedBy(() => _globalStateTracker),
+         Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker),
          Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
-         Singleton.For<ITransport>().CreatedBy((IGlobalBusStateTracker globalBusStateTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
-                                                  => new Transport(globalBusStateTracker, typeMapper, serializer, httpApiClient)),
+         Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
+                                                  => new Transport(messagesInFlightTracker, typeMapper, serializer, httpApiClient)),
          Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
          Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()),
          Singleton.For<IHttpApiClient>().CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer))
@@ -122,7 +122,7 @@ class ServerEndpointBuilder : IEndpointBuilder
             Singleton.For<IEventStoreEventPublisher>().CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
                                                                     => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)),
             Singleton.For<Inbox.IMessageStorage>().CreatedBy((IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => new InboxMessageStorage(persistenceLayer)),
-            Singleton.For<Inbox.HandlerExecutionEngine>().CreatedBy((IGlobalBusStateTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
+            Singleton.For<Inbox.HandlerExecutionEngine>().CreatedBy((IMessagesInFlightTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
                                                                        => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
             Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransport transport)
                                                  => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, transport)),

@@ -17,7 +17,7 @@ namespace Compze.Tessaging.Hosting;
 public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
    readonly List<Exception> _expectedExceptions = [];
-   public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => GlobalBusStateTracker = new GlobalBusStateTracker();
+   public TestingEndpointHostBase(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : base(mode, containerFactory) => MessagesInFlightTracker = new MessagesInFlightTracker();
 
    public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
                                                                    .Select(it => it.Address!)
@@ -71,5 +71,5 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
       }
    }
 
-   List<Exception> GetThrownExceptions() => GlobalBusStateTracker.GetExceptions().ToList();
+   List<Exception> GetThrownExceptions() => MessagesInFlightTracker.GetExceptions().ToList();
 }
