@@ -1,9 +1,20 @@
 # Test-InternalsVisibleTo.ps1
 # Script to test which InternalsVisibleTo attributes are actually needed
 param(
-    [string]$SolutionPath = "C:\Dev\Compze\src\Compze.slnx",
-    [string]$LogFile = "C:\Dev\Compze\InternalsVisibleTo-Test-Results.log"
+    [string]$SolutionPath,
+    [string]$LogFile
 )
+
+# Determine the workspace root (parent of DevScripts folder)
+$WorkspaceRoot = Split-Path -Parent $PSScriptRoot
+
+# Set default values if not provided
+if (-not $SolutionPath) {
+    $SolutionPath = "$WorkspaceRoot\src\Compze.slnx"
+}
+if (-not $LogFile) {
+    $LogFile = "$WorkspaceRoot\InternalsVisibleTo-Test-Results.log"
+}
 
 # Initialize logging
 $logPath = $LogFile
@@ -22,8 +33,28 @@ $results = @{
 Write-Host "Finding all InternalsVisibleTo attributes..." -ForegroundColor Yellow
 $internalsVisibleToMatches = @()
 
-# Get all .csproj files (excluding nCrunchTemp files)
-$csprojFiles = Get-ChildItem -Path "C:\Dev\Compze" -Recurse -Filter "*.csproj" | Where-Object { $_.Name -notlike "nCrunchTemp*" }
+# Parse the .slnx file to get all project paths
+Write-Host "Reading projects from solution file: $SolutionPath" -ForegroundColor Yellow
+[xml]$slnxContent = Get-Content $SolutionPath
+$solutionDir = Split-Path -Parent $SolutionPath
+
+# Get all project paths from the solution
+$projectPaths = $slnxContent.Solution.Folder.Project.Path
+if ($projectPaths) {
+    $csprojFiles = $projectPaths | ForEach-Object {
+        $projectPath = Join-Path $solutionDir $_
+        if (Test-Path $projectPath) {
+            Get-Item $projectPath
+        } else {
+            Write-Warning "Project file not found: $projectPath"
+        }
+    }
+} else {
+    Write-Error "No projects found in solution file"
+    exit 1
+}
+
+Write-Host "Found $($csprojFiles.Count) projects in solution" -ForegroundColor Cyan
 
 foreach ($file in $csprojFiles) {
     $lines = Get-Content $file.FullName

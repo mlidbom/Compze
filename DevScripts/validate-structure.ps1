@@ -4,7 +4,9 @@
 # 2. Nested projects one level down: Compze/A/B/C/ may contain Compze.A.B.C.D.csproj in Compze/A/B/C/D/
 # 3. File system structure to filename matching: Compze.A.B.C.D.csproj must be in directory Compze/A/B/C/D/
 
-$srcRoot = "c:\Dev\Compze\src"
+# Determine the workspace root (parent of DevScripts folder)
+$WorkspaceRoot = Split-Path -Parent $PSScriptRoot
+$srcRoot = "$WorkspaceRoot\src"
 $violations = @()
 
 # Get all .csproj files in Compze directory
