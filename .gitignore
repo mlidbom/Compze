@@ -3,8 +3,12 @@
 obj
 test-results
 
+*.dll
+*.nupkg
+*.deps.json
 *.cache
 *.suo
+*.pdb
 *.user
 *TraceLog.xml
 *.resharper
@@ -40,4 +44,6 @@ nCrunchTemp*
 /src/Websites/Website/_site/
 
 repomix*.xml
-
+*.runtimeconfig.json
+**/Debug/net*.*/**
+**/Release/net*.*/**
