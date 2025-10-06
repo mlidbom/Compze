@@ -15,11 +15,6 @@
     <ProjectReference Include="..\..\Logging\Compze.Utilities.Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="MicrosoftSql\**" />
-    <Compile Remove="MySql\**" />
-    <Compile Remove="PostgreSql\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
   </ItemGroup>
@@ -29,5 +24,21 @@
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="MicrosoftSql\**" />
+    <EmbeddedResource Remove="MicrosoftSql\**" />
+    <None Remove="MicrosoftSql\**" />
+    <Content Remove="MicrosoftSql\**" />
+    <Compile Remove="MySql\**" />
+    <EmbeddedResource Remove="MySql\**" />
+    <None Remove="MySql\**" />
+    <Content Remove="MySql\**" />
+    <Compile Remove="PostgreSql\**" />
+    <EmbeddedResource Remove="PostgreSql\**" />
+    <None Remove="PostgreSql\**" />
+    <Content Remove="PostgreSql\**" />
   </ItemGroup>
 </Project>

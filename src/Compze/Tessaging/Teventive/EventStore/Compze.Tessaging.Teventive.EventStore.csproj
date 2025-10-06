@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -11,12 +11,6 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <Compile Remove="MicrosoftSql\**" />
-    <Compile Remove="MySql\**" />
-    <Compile Remove="PostgreSql\**" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
@@ -26,5 +20,25 @@
     <ProjectReference Include="..\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <None Remove="Abstractions\**" />
+    <Content Remove="Abstractions\**" />
+    <Compile Remove="MicrosoftSql\**" />
+    <EmbeddedResource Remove="MicrosoftSql\**" />
+    <None Remove="MicrosoftSql\**" />
+    <Content Remove="MicrosoftSql\**" />
+    <Compile Remove="MySql\**" />
+    <EmbeddedResource Remove="MySql\**" />
+    <None Remove="MySql\**" />
+    <Content Remove="MySql\**" />
+    <Compile Remove="PostgreSql\**" />
+    <EmbeddedResource Remove="PostgreSql\**" />
+    <None Remove="PostgreSql\**" />
+    <Content Remove="PostgreSql\**" />
   </ItemGroup>
 </Project>

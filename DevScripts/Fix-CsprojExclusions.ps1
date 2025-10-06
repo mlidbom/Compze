@@ -93,7 +93,6 @@ foreach ($csprojFile in $allCsprojFiles) {
     } | Select-Object -Unique | Sort-Object
     
     $content = Get-Content $csprojFile.FullName -Raw
-    $originalContent = $content
     
     # Build the patterns we need
     $patterns = $subdirsToExclude | ForEach-Object { "$_\**" }

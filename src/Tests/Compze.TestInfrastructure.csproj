@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -10,14 +10,6 @@
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Common\**" />
-    <Compile Remove="Integration\**" />
-    <Compile Remove="Integration.Internals\**" />
-    <Compile Remove="Performance.Internals\**" />
-    <Compile Remove="Unit\**" />
-    <Compile Remove="Unit.Internals\**" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
     <ProjectReference Include="..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
@@ -42,5 +34,33 @@
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Common\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <None Remove="Common\**" />
+    <Content Remove="Common\**" />
+    <Compile Remove="Integration.Internals\**" />
+    <EmbeddedResource Remove="Integration.Internals\**" />
+    <None Remove="Integration.Internals\**" />
+    <Content Remove="Integration.Internals\**" />
+    <Compile Remove="Integration\**" />
+    <EmbeddedResource Remove="Integration\**" />
+    <None Remove="Integration\**" />
+    <Content Remove="Integration\**" />
+    <Compile Remove="Performance.Internals\**" />
+    <EmbeddedResource Remove="Performance.Internals\**" />
+    <None Remove="Performance.Internals\**" />
+    <Content Remove="Performance.Internals\**" />
+    <Compile Remove="Unit.Internals\**" />
+    <EmbeddedResource Remove="Unit.Internals\**" />
+    <None Remove="Unit.Internals\**" />
+    <Content Remove="Unit.Internals\**" />
+    <Compile Remove="Unit\**" />
+    <EmbeddedResource Remove="Unit\**" />
+    <None Remove="Unit\**" />
+    <Content Remove="Unit\**" />
   </ItemGroup>
 </Project>

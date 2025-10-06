@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -11,10 +11,6 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <Compile Remove="EventStore\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -26,5 +22,33 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <None Remove="Abstractions\**" />
+    <Content Remove="Abstractions\**" />
+    <Compile Remove="EventStore\**" />
+    <EmbeddedResource Remove="EventStore\**" />
+    <None Remove="EventStore\**" />
+    <Content Remove="EventStore\**" />
+    <Compile Remove="EventStore\Abstractions\**" />
+    <EmbeddedResource Remove="EventStore\Abstractions\**" />
+    <None Remove="EventStore\Abstractions\**" />
+    <Content Remove="EventStore\Abstractions\**" />
+    <Compile Remove="EventStore\MicrosoftSql\**" />
+    <EmbeddedResource Remove="EventStore\MicrosoftSql\**" />
+    <None Remove="EventStore\MicrosoftSql\**" />
+    <Content Remove="EventStore\MicrosoftSql\**" />
+    <Compile Remove="EventStore\MySql\**" />
+    <EmbeddedResource Remove="EventStore\MySql\**" />
+    <None Remove="EventStore\MySql\**" />
+    <Content Remove="EventStore\MySql\**" />
+    <Compile Remove="EventStore\PostgreSql\**" />
+    <EmbeddedResource Remove="EventStore\PostgreSql\**" />
+    <None Remove="EventStore\PostgreSql\**" />
+    <Content Remove="EventStore\PostgreSql\**" />
   </ItemGroup>
 </Project>

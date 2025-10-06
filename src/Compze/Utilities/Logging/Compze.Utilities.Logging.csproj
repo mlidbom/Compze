@@ -10,10 +10,6 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <Compile Remove="Serilog\**" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -26,5 +22,17 @@
     <InternalsVisibleTo Include="Compze.TestInfrastructure" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <None Remove="Abstractions\**" />
+    <Content Remove="Abstractions\**" />
+    <Compile Remove="Serilog\**" />
+    <EmbeddedResource Remove="Serilog\**" />
+    <None Remove="Serilog\**" />
+    <Content Remove="Serilog\**" />
   </ItemGroup>
 </Project>

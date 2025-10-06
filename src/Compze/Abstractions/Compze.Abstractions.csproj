@@ -11,9 +11,14 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Internal\**" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Internal\**" />
+    <EmbeddedResource Remove="Internal\**" />
+    <None Remove="Internal\**" />
+    <Content Remove="Internal\**" />
   </ItemGroup>
 </Project>

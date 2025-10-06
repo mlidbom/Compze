@@ -10,11 +10,6 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <Compile Remove="Microsoft\**" />
-    <Compile Remove="SimpleInjector\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
       <PrivateAssets>all</PrivateAssets>
@@ -33,5 +28,21 @@
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tests.Integration" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <None Remove="Abstractions\**" />
+    <Content Remove="Abstractions\**" />
+    <Compile Remove="Microsoft\**" />
+    <EmbeddedResource Remove="Microsoft\**" />
+    <None Remove="Microsoft\**" />
+    <Content Remove="Microsoft\**" />
+    <Compile Remove="SimpleInjector\**" />
+    <EmbeddedResource Remove="SimpleInjector\**" />
+    <None Remove="SimpleInjector\**" />
+    <Content Remove="SimpleInjector\**" />
   </ItemGroup>
 </Project>
