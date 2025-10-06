@@ -98,7 +98,7 @@
     <Project Path="Compze/Tessaging/Hosting/Persistence/MySql/Compze.Tessaging.Hosting.Persistence.MySql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Tessaging/Hosting/Persistence/PostgreSql/Compze.Tessaging.Hosting.Persistence.DependencyInjection.csproj">
+    <Project Path="Compze/Tessaging/Hosting/Persistence/PostgreSql/Compze.Tessaging.Hosting.Persistence.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
@@ -242,7 +242,7 @@
     </Project>
   </Folder>
   <Folder Name="/Websites/">
-    <Project Path="WebSites/Website/Website.csproj">
+    <Project Path="Websites/Website/Website.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>

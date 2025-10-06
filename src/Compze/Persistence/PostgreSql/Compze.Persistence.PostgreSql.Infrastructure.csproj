@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.DependencyInjection" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
     <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />

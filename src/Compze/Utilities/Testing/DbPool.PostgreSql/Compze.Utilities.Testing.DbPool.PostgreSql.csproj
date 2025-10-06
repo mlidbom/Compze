@@ -16,7 +16,7 @@
     <ProjectReference Include="..\..\..\Persistence\PostgreSql\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.DependencyInjection" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
   </ItemGroup>
 </Project>

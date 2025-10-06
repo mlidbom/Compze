@@ -16,7 +16,7 @@
     <ProjectReference Include="..\..\Persistence\InMemory\Compze.Tessaging.Persistence.InMemory.csproj" />
     <ProjectReference Include="..\Persistence\MicrosoftSql\Compze.Tessaging.Hosting.Persistence.MicrosoftSql.csproj" />
     <ProjectReference Include="..\Persistence\MySql\Compze.Tessaging.Hosting.Persistence.MySql.csproj" />
-    <ProjectReference Include="..\Persistence\PostgreSql\Compze.Tessaging.Hosting.Persistence.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Persistence\PostgreSql\Compze.Tessaging.Hosting.Persistence.PostgreSql.csproj" />
     <ProjectReference Include="..\..\..\Persistence\DocumentDb\MicrosoftSql\Compze.Persistence.DocumentDb.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Teventive\EventStore\MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Persistence\MicrosoftSql\Compze.Tessaging.Persistence.MicrosoftSql.csproj" />
