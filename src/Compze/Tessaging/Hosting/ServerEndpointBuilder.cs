@@ -1,5 +1,5 @@
-using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Abstractions.Internal.Time;
 using Compze.Common.Refactoring.Naming;
 using Compze.Configuration;
 using Compze.DependencyInjection;

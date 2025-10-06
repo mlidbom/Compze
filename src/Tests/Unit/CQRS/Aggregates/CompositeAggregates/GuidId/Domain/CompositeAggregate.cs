@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Internal.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.Time;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using Compze.Teventive;
 

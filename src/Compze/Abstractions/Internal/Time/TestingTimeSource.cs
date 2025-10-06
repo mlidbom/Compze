@@ -2,7 +2,7 @@
 using System.Globalization;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Abstractions.Internal.GenericAbstractions.Time;
+namespace Compze.Abstractions.Internal.Time;
 
 /// <summary> Just statically returns whatever value was assigned.</summary>
 public class TestingTimeSource : IUtcTimeTimeSource

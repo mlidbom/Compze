@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Abstractions.Internal.GenericAbstractions.Time;
+namespace Compze.Abstractions.Internal.Time;
 
 ///<summary>Simply returns DateTime.Now or DateTime.UtcNow</summary>
 public class DateTimeNowTimeSource : IUtcTimeTimeSource

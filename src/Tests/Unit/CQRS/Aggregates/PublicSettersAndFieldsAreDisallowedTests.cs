@@ -4,7 +4,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using System;
-using Compze.Abstractions.Internal.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.Time;
 using Compze.Teventive;
 
 // ReSharper disable MemberHidesStaticFromOuterClass

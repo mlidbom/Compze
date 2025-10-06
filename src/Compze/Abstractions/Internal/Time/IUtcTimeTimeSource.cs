@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Abstractions.Internal.GenericAbstractions.Time;
+namespace Compze.Abstractions.Internal.Time;
 
 ///<summary>
 /// Provides the service of telling what the current UTC time is.

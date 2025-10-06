@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.Time;
 using Compze.DependencyInjection;
 using Compze.Testing.DependencyInjection;
 using Compze.Tests.CQRS.EventRefactoring.Migrations;

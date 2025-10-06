@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Abstractions.Internal.Time;
 using Compze.DependencyInjection;
 using Compze.EventStore.Abstractions;
 using Compze.EventStore.Query.Models.Generators;
