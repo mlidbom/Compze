@@ -22,6 +22,11 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Persistence/" />
+  <Folder Name="/Compze/Persistence/Common/">
+    <Project Path="Compze/Tessaging/Persistence/Common/Compze.Persistence.Common.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+  </Folder>
   <Folder Name="/Compze/Persistence/DocumentDb/">
     <Project Path="Compze/Persistence/DocumentDb/Abstractions/Compze.Persistence.DocumentDb.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
@@ -110,11 +115,6 @@
   <Folder Name="/Compze/Tessaging/Persistence/" />
   <Folder Name="/Compze/Tessaging/Persistence/Abstractions/">
     <Project Path="Compze/Tessaging/Persistence/Abstractions/Compze.Persistence.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Persistence/Common/">
-    <Project Path="Compze/Tessaging/Persistence/Common/Compze.Persistence.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
