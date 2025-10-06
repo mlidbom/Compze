@@ -32,12 +32,12 @@
         <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
     </ItemGroup>
     <ItemGroup>
-      <InternalsVisibleTo Include="Compze.DocumentDb" />
+      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
       <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Persistence.InMemory" />
-      <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.InMemory" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     </ItemGroup>
 </Project>

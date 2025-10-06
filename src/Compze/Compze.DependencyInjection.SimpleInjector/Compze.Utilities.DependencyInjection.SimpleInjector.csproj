@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     </ItemGroup>
 
 </Project>

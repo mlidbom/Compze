@@ -21,7 +21,7 @@
       <ProjectReference Include="..\Compze.Logging\Compze.Utilities.Logging.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Testing" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
       <InternalsVisibleTo Include="Compze.TestInfrastructure" />
    </ItemGroup>
 </Project>

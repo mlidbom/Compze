@@ -15,11 +15,11 @@
       <PackageReference Include="Npgsql" Version="9.0.3" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Testing.DbPool.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.DependencyInjection" />
-      <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.DependencyInjection" />
+      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
       <InternalsVisibleTo Include="Compze.EventStore.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>

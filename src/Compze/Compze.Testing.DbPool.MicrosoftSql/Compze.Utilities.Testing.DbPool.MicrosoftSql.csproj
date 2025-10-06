@@ -16,7 +16,7 @@
       <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.DependencyInjection" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>

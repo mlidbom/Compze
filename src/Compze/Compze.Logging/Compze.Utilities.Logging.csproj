@@ -18,11 +18,11 @@
 
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.EventStore" />
-      <InternalsVisibleTo Include="Compze.Logging.Serilog" />
+      <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
       <InternalsVisibleTo Include="Compze.Persistence.Common" />
       <InternalsVisibleTo Include="Compze.Tessaging" />
-      <InternalsVisibleTo Include="Compze.Testing" />
-      <InternalsVisibleTo Include="Compze.Testing.DbPool" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
       <InternalsVisibleTo Include="Compze.TestInfrastructure" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />

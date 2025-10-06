@@ -15,11 +15,11 @@
       <PackageReference Include="MySql.Data" Version="9.4.0" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Testing.DbPool.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
-      <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />
+      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
       <InternalsVisibleTo Include="Compze.EventStore.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>

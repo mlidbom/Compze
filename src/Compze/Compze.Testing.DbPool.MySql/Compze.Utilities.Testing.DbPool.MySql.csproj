@@ -16,7 +16,7 @@
       <ProjectReference Include="..\Compze.Persistence.MySql.Infrastructure\Compze.Persistence.MySql.Infrastructure.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>
