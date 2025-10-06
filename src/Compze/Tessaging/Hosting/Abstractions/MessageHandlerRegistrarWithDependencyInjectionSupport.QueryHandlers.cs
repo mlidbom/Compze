@@ -1,8 +1,7 @@
 using System;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
 
-namespace Compze.Tessaging.Hosting;
+namespace Compze.Tessaging.Hosting.Abstractions;
 
 public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {
