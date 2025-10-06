@@ -1,7 +1,6 @@
 using System;
 using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Persistence.DocumentDb.DependencyInjection;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;

@@ -1,6 +1,5 @@
 ﻿using System;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;

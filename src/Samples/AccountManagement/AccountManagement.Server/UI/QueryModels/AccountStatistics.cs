@@ -5,7 +5,6 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;

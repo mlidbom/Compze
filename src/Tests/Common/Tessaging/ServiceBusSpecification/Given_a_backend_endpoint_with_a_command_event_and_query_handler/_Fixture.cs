@@ -9,7 +9,6 @@ using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
-using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Testing;
 using Compze.Testing.Threading;

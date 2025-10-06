@@ -5,8 +5,6 @@ using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.Persistence.DocumentDb.DependencyInjection;
 using Compze.Persistence.DocumentDb.MicrosoftSql;
-using Compze.Tessaging.Hosting;
-using Compze.Persistence.MicrosoftSql;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Http.DependencyInjection;
 using Compze.Tessaging.Hosting.Persistence.MicrosoftSql;

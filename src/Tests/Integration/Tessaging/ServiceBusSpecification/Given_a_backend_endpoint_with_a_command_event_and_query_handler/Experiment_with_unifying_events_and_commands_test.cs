@@ -6,7 +6,6 @@ using Compze.Abstractions.Internal.Time;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
-using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
@@ -17,7 +16,6 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
-using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 

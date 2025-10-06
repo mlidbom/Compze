@@ -1,7 +1,6 @@
 ﻿using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using NUnit.Framework;

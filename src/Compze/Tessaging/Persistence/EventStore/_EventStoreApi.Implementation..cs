@@ -6,7 +6,6 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Newtonsoft.Json;
 

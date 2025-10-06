@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
-using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;

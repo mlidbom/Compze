@@ -1,4 +1,3 @@
-using System;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
 using Compze.Common.Refactoring.Naming;

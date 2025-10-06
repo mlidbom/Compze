@@ -1,11 +1,9 @@
 ﻿using System;
 using Compze.Abstractions.Internal.Time;
-using Compze.Tessaging;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Abstractions;
 using JetBrains.Annotations;
 

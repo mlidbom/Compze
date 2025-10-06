@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;

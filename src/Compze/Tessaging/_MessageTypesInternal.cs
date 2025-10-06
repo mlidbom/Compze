@@ -10,7 +10,6 @@ using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Newtonsoft.Json;
 
