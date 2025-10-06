@@ -17,7 +17,7 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
     <InternalsVisibleTo Include="Compze.Utilities.Logging" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Http" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />

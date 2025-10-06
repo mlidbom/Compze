@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Http.DependencyInjection;
+using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -34,7 +34,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          builder =>
          {
-            builder.Container.RegisterHttpTransport();
+            builder.Container.RegisterAspNetCoreTransport();
             builder.RegisterCurrentTestsConfiguredPersistenceLayer();
             builder.RegisterHandlers
                    .ForQuery((GetUserQuery query) => queryResults.Single(result => result.Name == query.Name))

@@ -24,7 +24,7 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
     <InternalsVisibleTo Include="Compze.Serialization" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Http" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
   </ItemGroup>

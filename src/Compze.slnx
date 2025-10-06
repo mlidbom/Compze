@@ -86,7 +86,7 @@
     <Project Path="Compze/Tessaging/Hosting/Abstractions/Compze.Tessaging.Hosting.Abstractions.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
-    <Project Path="Compze/Tessaging/Hosting/Http/Compze.Tessaging.Hosting.Http.csproj">
+    <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>

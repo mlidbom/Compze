@@ -4,11 +4,11 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Tessaging.Hosting.Http.DependencyInjection;
+namespace Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 
-public static class HttpTransportRegistrar
+public static class AspNetCoreTransportRegistrar
 {
-    public static void RegisterHttpTransport(this IDependencyInjectionContainer container)
+    public static void RegisterAspNetCoreTransport(this IDependencyInjectionContainer container)
     {
         container.Register(
             Singleton.For<IInboxTransport>()

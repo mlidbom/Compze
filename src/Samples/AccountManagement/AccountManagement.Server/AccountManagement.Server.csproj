@@ -12,7 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\..\Compze\Tessaging\Hosting\Http\Compze.Tessaging.Hosting.Http.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
     <ProjectReference Include="..\..\..\Compze\Tessaging\Hosting\Persistence\MicrosoftSql\Compze.Tessaging.Hosting.Persistence.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\..\Compze\Persistence\DocumentDb\MicrosoftSql\Compze.Persistence.DocumentDb.MicrosoftSql.csproj" />

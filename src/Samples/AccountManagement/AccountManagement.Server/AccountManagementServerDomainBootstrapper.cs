@@ -6,7 +6,7 @@ using AccountManagement.UI.QueryModels;
 using Compze.Persistence.DocumentDb.DependencyInjection;
 using Compze.Persistence.DocumentDb.MicrosoftSql;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Http.DependencyInjection;
+using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Persistence.MicrosoftSql;
@@ -23,7 +23,7 @@ public class AccountManagementServerDomainBootstrapper
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
                                    setup: builder =>
                                    {
-                                      builder.Container.RegisterHttpTransport();
+                                      builder.Container.RegisterAspNetCoreTransport();
                                       AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
                                       DomainTypeMapper.MapTypes(builder.TypeMapper);
                                       RegisterDomainComponents(builder);

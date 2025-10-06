@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Http.DependencyInjection;
+using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace Compze.Tessaging.Hosting.Http;
+namespace Compze.Tessaging.Hosting.AspNetCore;
 
 class InternalControllerFeatureProvider : ControllerFeatureProvider
 {
