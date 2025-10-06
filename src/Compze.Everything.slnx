@@ -89,23 +89,6 @@
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
-  <Folder Name="/Tessaging/EventStore/">
-    <Project Path="framework/Compze.EventStore.Abstractions/Compze.EventStore.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="framework/Compze.EventStore.MicrosoftSql/Compze.EventStore.MicrosoftSql.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="framework/Compze.EventStore.MySql/Compze.EventStore.MySql.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="framework/Compze.EventStore.PostgreSql/Compze.EventStore.PostgreSql.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="framework/Compze.EventStore/Compze.EventStore.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
   <Folder Name="/Tessaging/Hosting/">
     <Project Path="framework/Compze.Hosting.Abstractions/Compze.Hosting.Abstractions.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
@@ -183,6 +166,23 @@
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="framework/Compze.Teventive/Compze.Teventive.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tessaging/Teventive/EventStore/">
+    <Project Path="framework/Compze.EventStore.Abstractions/Compze.EventStore.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore.MicrosoftSql/Compze.EventStore.MicrosoftSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore.MySql/Compze.EventStore.MySql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore.PostgreSql/Compze.EventStore.PostgreSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="framework/Compze.EventStore/Compze.EventStore.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
