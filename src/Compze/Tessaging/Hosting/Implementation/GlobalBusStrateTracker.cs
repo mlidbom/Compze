@@ -17,7 +17,7 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
    public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) => _implementation.Update(implementation => implementation.SendingMessageOnTransport(transportMessage));
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) =>
-      _implementation.Await(timeoutOverride ?? 5.Seconds(), implementation => implementation.InflightMessages.Count == 0);
+      _implementation.Await(timeoutOverride ?? 5.Seconds(), implementation => implementation.InFlightMessages.Count == 0);
 
    public void DoneWith(Guid messageId, Exception? exception) =>
       _implementation.Update(implementation => implementation.DoneWith(messageId, exception));
@@ -29,7 +29,7 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
 
    class NonThreadSafeImplementation
    {
-      internal readonly Dictionary<Guid, InFlightMessage> InflightMessages = [];
+      internal readonly Dictionary<Guid, InFlightMessage> InFlightMessages = [];
 
       readonly List<Exception> _busExceptions = [];
 
@@ -37,7 +37,7 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
 
       public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage)
       {
-         var inFlightMessage = InflightMessages.GetOrAdd(transportMessage.Id, () => new InFlightMessage());
+         var inFlightMessage = InFlightMessages.GetOrAdd(transportMessage.Id, () => new InFlightMessage());
          inFlightMessage.RemainingReceivers++;
       }
 
@@ -48,11 +48,11 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
             _busExceptions.Add(exception);
          }
 
-         var inFlightMessage = InflightMessages[messageId];
+         var inFlightMessage = InFlightMessages[messageId];
          inFlightMessage.RemainingReceivers--;
          if(inFlightMessage.RemainingReceivers == 0)
          {
-            InflightMessages.Remove(messageId);
+            InFlightMessages.Remove(messageId);
          }
       }
    }
