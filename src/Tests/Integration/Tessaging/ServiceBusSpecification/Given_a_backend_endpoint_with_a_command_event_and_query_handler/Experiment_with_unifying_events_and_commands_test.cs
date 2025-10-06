@@ -10,6 +10,7 @@ using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Http.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -44,6 +45,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
          builder =>
          {
+            builder.Container.RegisterHttpTransport();
             builder.RegisterCurrentTestsConfiguredPersistenceLayer();
             builder.Container.RegisterEventStore(builder.Configuration.ConnectionStringName);
 
@@ -83,7 +85,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 
    [Test] public void Can_register_user_and_fetch_user_resource()
    {
-      var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() =>  UserRegistrarAggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
+      var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() => UserRegistrarAggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
 
       var user = _clientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() => RemoteNavigator.Get(registrationResult.UserLink));
 
@@ -91,8 +93,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
       user.History.Count().Should().Be(1);
    }
 
-
-   [TearDown]public async Task TeardownAsync() => await _host.DisposeAsync();
+   [TearDown] public async Task TeardownAsync() => await _host.DisposeAsync();
 
    public static class UserEvent
    {
@@ -120,13 +121,14 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 
          RegisterUserCommand() : base(DeduplicationIdHandling.Reuse) {}
 
-         internal static RegisterUserCommand Create() => new() { MessageId =  Guid.CreateVersion7()};
+         internal static RegisterUserCommand Create() => new() { MessageId = Guid.CreateVersion7() };
       }
    }
 
    public static class UserRegistrarEvent
    {
       public interface IRoot : IAggregateEvent;
+
       public static class Implementation
       {
          public class Root : AggregateEvent, IRoot
@@ -142,6 +144,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
    public class UserRegistrarAggregate : Aggregate<UserRegistrarAggregate, UserRegistrarEvent.IRoot, UserRegistrarEvent.Implementation.Root>
    {
       internal static Guid SingleId = Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED");
+
       internal static UserRegistrarAggregate Create()
       {
          var registrar = new UserRegistrarAggregate();

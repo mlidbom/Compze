@@ -4,6 +4,7 @@ using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Http.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -32,6 +33,7 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
          builder =>
          {
+            builder.Container.RegisterHttpTransport();
             builder.RegisterCurrentTestsConfiguredPersistenceLayer();
             builder.RegisterHandlers
                    .ForQuery((MyRemoteQuery _) => new MyQueryResult())

@@ -21,7 +21,7 @@ public abstract class UserStoryTest(string pluggableComponentsCombination) : Dup
    {
       Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
-      _clientEndpoint = Host.RegisterTestingEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
+      _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
       await Host.StartAsync().caf();
    }
 

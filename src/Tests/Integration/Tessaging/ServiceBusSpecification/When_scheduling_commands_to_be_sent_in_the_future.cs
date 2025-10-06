@@ -5,6 +5,7 @@ using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Http.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -32,6 +33,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
          new EndpointId(Guid.Parse("17ED9DF9-33A8-4DF8-B6EC-6ED97AB2030B")),
          builder =>
          {
+            builder.Container.RegisterHttpTransport();
             builder.RegisterCurrentTestsConfiguredPersistenceLayer();
             builder.RegisterHandlers.ForCommand<ScheduledCommand>(_ => _receivedCommandGate.AwaitPassThrough());
 

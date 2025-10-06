@@ -14,7 +14,7 @@ public class SetupTest(string pluggableComponentsCombination) : DuplicateByPlugg
    {
       var host = TestingEndpointHost.Create(TestingContainerFactory.Create);
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
-      host.RegisterTestingEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
+      host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       await host.StartAsync().caf();
       await host.DisposeAsync().caf();
    }

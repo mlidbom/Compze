@@ -11,6 +11,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Http\Compze.Tessaging.Hosting.Http.csproj" />
     <ProjectReference Include="..\Compze.TestInfrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,5 @@
 using System;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Http.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Utilities.DependencyInjection;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -10,6 +8,4 @@ public class TestingEndpointHost(IRunMode mode, Func<IRunMode, IDependencyInject
 {
    public static ITestingEndpointHost Create(Func<IRunMode, IDependencyInjectionContainer> containerFactory)
       => new TestingEndpointHost(new RunMode(isTesting: true), containerFactory);
-
-   internal override void ExtraEndpointConfiguration(IEndpointBuilder builder) => builder.Container.RegisterHttpTransport();
 }
