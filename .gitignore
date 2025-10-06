@@ -47,3 +47,4 @@ repomix*.xml
 *.runtimeconfig.json
 **/Debug/net*.*/**
 **/Release/net*.*/**
+/InternalsVisibleTo-Test-Results.log
