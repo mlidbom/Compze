@@ -1,8 +1,8 @@
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.DependencyInjection;
 using Compze.Persistence.PostgreSql.Infrastructure;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.DocumentDb.PostgreSql;
+namespace Compze.Persistence.DocumentDb.PostgreSql;
 
 public static class PgSqlDocumentDbRegistrar
 {

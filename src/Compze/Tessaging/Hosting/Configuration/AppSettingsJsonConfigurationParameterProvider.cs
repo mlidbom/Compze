@@ -3,7 +3,7 @@ using System.IO;
 using Compze.Utilities.SystemCE;
 using Microsoft.Extensions.Configuration;
 
-namespace Compze.Configuration;
+namespace Compze.Tessaging.Hosting.Configuration;
 
 ///<summary>Fetches configuration variables from the application configuration file.</summary>
 class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton

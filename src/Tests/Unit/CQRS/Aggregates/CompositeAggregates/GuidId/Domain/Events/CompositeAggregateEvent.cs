@@ -1,6 +1,5 @@
 using System;
-using Compze.EventStore.Abstractions;
-
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier

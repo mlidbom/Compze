@@ -1,14 +1,14 @@
-using Compze.Logging;
-using Compze.Testing.DbPool.SystemCE;
-using Compze.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Testing.DbPool.SystemCE;
+using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
-namespace Compze.Testing.DbPool;
+namespace Compze.Utilities.Testing.DbPool;
 
 public abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {

@@ -1,8 +1,8 @@
-using Compze.DependencyInjection;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Tessaging.PostgreSql;
+namespace Compze.Tessaging.Persistence.PostgreSql;
 
 public static class PgSqlTessagingRegistrar
 {

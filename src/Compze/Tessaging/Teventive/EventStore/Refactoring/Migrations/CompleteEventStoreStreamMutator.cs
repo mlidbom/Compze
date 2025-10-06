@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
-namespace Compze.EventStore.Refactoring.Migrations;
+namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 abstract class CompleteEventStoreStreamMutator
 {

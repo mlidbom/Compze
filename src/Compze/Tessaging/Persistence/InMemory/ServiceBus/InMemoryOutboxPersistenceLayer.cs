@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessageWithReceivers;
 // ReSharper disable CollectionNeverQueried.Local
 
-namespace Compze.Persistence.InMemory.ServiceBus;
+namespace Compze.Tessaging.Persistence.InMemory.ServiceBus;
 
 class InMemoryOutboxPersistenceLayer : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {

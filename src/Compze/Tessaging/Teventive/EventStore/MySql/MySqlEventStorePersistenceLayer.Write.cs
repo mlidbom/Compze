@@ -1,17 +1,15 @@
-using Compze.Persistence.MySql.Infrastructure;
-
-using MySql.Data.MySqlClient;
-using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
-using Event = Compze.EventStore.EventTableSchemaStrings;
-using Compze.EventStore;
-using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common;
+using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using MySql.Data.MySqlClient;
+using ReadOrder = Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions.ReadOrder;
+using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
 
-namespace Compze.EventStore.MySql;
+namespace Compze.Tessaging.Teventive.EventStore.MySql;
 
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the persistence layer.
 partial class MySqlEventStorePersistenceLayer

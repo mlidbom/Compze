@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.EventStore;
+namespace Compze.Tessaging.Teventive.EventStore;
 
 public class EventDuplicateKeyException(Exception sqlException) : Exception("""
                                                                             A duplicate key exception occurred while persisting new events. 

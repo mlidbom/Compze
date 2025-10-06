@@ -1,7 +1,7 @@
-﻿using Compze.EventStore.Abstractions;
-using System;
+﻿using System;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
-namespace Compze.EventStore.PersistenceLayer.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 
 public class EventDataRow
 {

@@ -1,21 +1,20 @@
 using System;
-using Compze.DependencyInjection;
-using Compze.DocumentDb.MicrosoftSql;
-using Compze.DocumentDb.MySql;
-using Compze.DocumentDb.PostgreSql;
-using Compze.EventStore.MicrosoftSql;
-using Compze.EventStore.MySql;
-using Compze.EventStore.PostgreSql;
-using Compze.Persistence.InMemory.DependencyInjection;
-using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
-using Compze.Persistence.MicrosoftSql;
-using Compze.Persistence.MySql;
-using Compze.Tessaging.MicrosoftSql;
-using Compze.Tessaging.MySql;
-using Compze.Tessaging.PostgreSql;
+using Compze.Persistence.DocumentDb.MicrosoftSql;
+using Compze.Persistence.DocumentDb.MySql;
+using Compze.Persistence.DocumentDb.PostgreSql;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
+using Compze.Tessaging.Hosting.Persistence.MySql;
+using Compze.Tessaging.Persistence.InMemory.DependencyInjection;
+using Compze.Tessaging.Persistence.MicrosoftSql;
+using Compze.Tessaging.Persistence.MySql;
+using Compze.Tessaging.Persistence.PostgreSql;
+using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
+using Compze.Tessaging.Teventive.EventStore.MySql;
+using Compze.Tessaging.Teventive.EventStore.PostgreSql;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Testing.Persistence;
+namespace Compze.Tessaging.Hosting.Testing.Persistence;
 
 public static class TestingPersistenceLayerRegistrar
 {

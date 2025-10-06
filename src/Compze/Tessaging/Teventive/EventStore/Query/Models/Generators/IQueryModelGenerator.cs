@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Utilities.Functional;
 
-namespace Compze.EventStore.Query.Models.Generators;
+namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;
 
 public interface IQueryModelGenerator;
 

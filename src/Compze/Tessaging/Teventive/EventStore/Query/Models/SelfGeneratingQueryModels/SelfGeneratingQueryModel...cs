@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Compze.Abstractions;
-using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common.Teventive;
-using Compze.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
+namespace Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
 
 public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : VersionedPersistentEntity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>

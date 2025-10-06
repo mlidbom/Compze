@@ -6,7 +6,7 @@ using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase
 
-namespace Compze.Testing.DbPool.PostgreSql;
+namespace Compze.Utilities.Testing.DbPool.PostgreSql;
 
 internal sealed class PgSqlDbPool : DbPool
 {

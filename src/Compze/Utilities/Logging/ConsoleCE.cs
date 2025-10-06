@@ -2,7 +2,7 @@
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.Logging;
+namespace Compze.Utilities.Logging;
 
 static class ConsoleCE
 {

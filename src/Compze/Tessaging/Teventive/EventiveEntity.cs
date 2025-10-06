@@ -1,10 +1,10 @@
 ﻿using System;
-using Compze.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Compze.Teventive;
+namespace Compze.Tessaging.Teventive;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class EventiveEntity<TParent,

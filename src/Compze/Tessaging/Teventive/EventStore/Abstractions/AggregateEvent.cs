@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.EventStore.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 public abstract class AggregateEvent() : IMutableAggregateEvent
 {

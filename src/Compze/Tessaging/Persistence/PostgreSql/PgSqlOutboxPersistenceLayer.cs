@@ -6,7 +6,7 @@ using NpgsqlTypes;
 using MessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.PostgreSql;
+namespace Compze.Tessaging.Persistence.PostgreSql;
 
 partial class PgSqlOutboxPersistenceLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {

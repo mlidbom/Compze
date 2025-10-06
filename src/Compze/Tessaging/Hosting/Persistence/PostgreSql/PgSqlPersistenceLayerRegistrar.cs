@@ -1,10 +1,10 @@
-using Compze.Configuration;
-using Compze.DependencyInjection;
-using Compze.Hosting.Abstractions;
 using Compze.Persistence.PostgreSql.Infrastructure;
-using Compze.Testing.DbPool.PostgreSql;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Configuration;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.Testing.DbPool.PostgreSql;
 
-namespace Compze.Persistence.PostgreSql;
+namespace Compze.Tessaging.Hosting.Persistence.PostgreSql;
 
 public static class PgSqlPersistenceLayerRegistrar
 {

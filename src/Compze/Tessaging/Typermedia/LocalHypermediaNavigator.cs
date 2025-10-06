@@ -1,7 +1,7 @@
 ﻿using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Typermedia;

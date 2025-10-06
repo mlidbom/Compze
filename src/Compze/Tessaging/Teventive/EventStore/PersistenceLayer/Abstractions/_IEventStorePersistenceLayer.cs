@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Compze.EventStore.PersistenceLayer.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 
 public interface IEventStorePersistenceLayer
 {

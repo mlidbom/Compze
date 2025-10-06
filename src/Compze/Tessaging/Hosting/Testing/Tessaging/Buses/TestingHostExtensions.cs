@@ -1,10 +1,9 @@
 using System;
-using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using FluentAssertions;
 
-namespace Compze.Testing.Tessaging.Buses;
+namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public static class TestingHostExtensions
 {

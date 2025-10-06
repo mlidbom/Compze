@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Compze.Testing.DbPool;
+namespace Compze.Utilities.Testing.DbPool;
 
 public partial class DbPool
 {

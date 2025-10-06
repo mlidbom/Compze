@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.DependencyInjection;
-using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 

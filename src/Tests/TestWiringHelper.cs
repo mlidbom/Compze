@@ -1,13 +1,13 @@
 using System;
-using Compze.DependencyInjection;
-using Compze.DocumentDb.Abstractions;
-using Compze.DocumentDb.DependencyInjection;
-using Compze.EventStore.Abstractions;
-using Compze.Logging;
-using Compze.EventStore.DependencyInjection;
+using Compze.Persistence.DocumentDb.Abstractions;
+using Compze.Persistence.DocumentDb.DependencyInjection;
 using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
-using Compze.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.Logging;
 using JetBrains.Annotations;
 
 namespace Compze.Testing;

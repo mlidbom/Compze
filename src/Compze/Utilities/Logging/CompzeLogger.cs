@@ -2,7 +2,7 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace Compze.Logging;
+namespace Compze.Utilities.Logging;
 
 static class CompzeLogger
 {

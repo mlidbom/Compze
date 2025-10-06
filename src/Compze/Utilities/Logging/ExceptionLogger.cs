@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Logging;
+namespace Compze.Utilities.Logging;
 
 static class ExceptionLogger
 {

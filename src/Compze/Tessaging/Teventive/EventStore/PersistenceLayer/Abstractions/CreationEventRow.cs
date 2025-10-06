@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.EventStore.PersistenceLayer.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 
 public class CreationEventRow(Guid aggregateId, Guid typeId)
 {

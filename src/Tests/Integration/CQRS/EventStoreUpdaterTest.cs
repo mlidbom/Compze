@@ -6,25 +6,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.DependencyInjection;
-
 using Compze.Testing;
-using Compze.Testing.DependencyInjection;
-using Compze.Testing.Performance;
 using Compze.Testing.SystemCE;
 using Compze.Testing.Threading;
 using Compze.Testing.Transactions;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
-using Compze.EventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Utilities.DependencyInjection;
 
 // ReSharper disable AccessToDisposedClosure
 

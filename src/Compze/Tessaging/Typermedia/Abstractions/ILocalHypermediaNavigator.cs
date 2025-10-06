@@ -1,6 +1,6 @@
 ﻿using Compze.Tessaging.Abstractions;
 
-namespace Compze.Typermedia.Abstractions;
+namespace Compze.Tessaging.Typermedia.Abstractions;
 
 ///<summary>Dispatches messages within a process.</summary>
 public interface ILocalHypermediaNavigator

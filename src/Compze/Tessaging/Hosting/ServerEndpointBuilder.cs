@@ -1,20 +1,20 @@
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
 using Compze.Common.Refactoring.Naming;
-using Compze.Configuration;
-using Compze.DependencyInjection;
-using Compze.EventStore.Abstractions;
 using Compze.Serialization;
-using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Configuration;
 using Compze.Tessaging.Hosting.Http;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Typermedia;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)

@@ -1,8 +1,8 @@
-using Compze.DependencyInjection;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Tessaging.MicrosoftSql;
+namespace Compze.Tessaging.Persistence.MicrosoftSql;
 
 public static class MsSqlTessagingRegistrar
 {

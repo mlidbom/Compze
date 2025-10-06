@@ -1,6 +1,6 @@
 ﻿using System;
-using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 namespace Compze.Serialization;
 

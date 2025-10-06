@@ -2,19 +2,16 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
-using Compze.DependencyInjection;
-using Compze.EventStore;
-using Compze.EventStore.Abstractions;
-using Compze.EventStore.Refactoring.Migrations;
 using Compze.Serialization;
-using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Utilities.Contracts;
-using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Persistence.EventStore;
-using Compze.Teventive;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.EventStore.DependencyInjection;
+namespace Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 
 public static class EventStoreRegistrar
 {
@@ -50,7 +47,7 @@ public static class EventStoreRegistrar
                   .CreatedBy(() => new EventCache()),
          Scoped.For<IEventStore>()
                .CreatedBy((IEventStorePersistenceLayer persistenceLayer, ITypeMapper typeMapper, IEventStoreSerializer serializer, EventCache cache) =>
-                             new Compze.EventStore.EventStore(persistenceLayer, typeMapper, serializer, cache, migrations())),
+                             new EventStore(persistenceLayer, typeMapper, serializer, cache, migrations())),
          Scoped.For<IEventStoreUpdater, IEventStoreReader>()
                .CreatedBy((IEventStoreEventPublisher eventPublisher, IEventStore eventStore, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator) =>
                              new EventStoreUpdater(eventPublisher, eventStore, timeSource, aggregateTypeValidator)));

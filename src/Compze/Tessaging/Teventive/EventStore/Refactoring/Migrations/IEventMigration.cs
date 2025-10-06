@@ -1,7 +1,7 @@
-using Compze.EventStore.Abstractions;
 using System;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
-namespace Compze.EventStore.Refactoring.Migrations;
+namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 ///<summary>Defines an identity for migration of events into other events. Creates </summary>
 public interface IEventMigration

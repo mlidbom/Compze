@@ -1,8 +1,8 @@
-using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.EventStore.MicrosoftSql;
+namespace Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 public static class MsSqlEventStoreRegistrar
 {

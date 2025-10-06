@@ -5,7 +5,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Schema =  Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.MicrosoftSql;
+namespace Compze.Tessaging.Persistence.MicrosoftSql;
 
 partial class MsSqlInboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IInboxPersistenceLayer
 {

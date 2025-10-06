@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Compze.Abstractions.Internal;
 using Compze.Tessaging.Abstractions;
-using Compze.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
 

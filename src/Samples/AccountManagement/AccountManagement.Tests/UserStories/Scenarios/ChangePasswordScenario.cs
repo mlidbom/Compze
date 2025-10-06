@@ -1,9 +1,9 @@
 using AccountManagement.API;
 using CommunityToolkit.Diagnostics;
 using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Typermedia;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Testing.TestFrameworkExtensions.XUnit;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;

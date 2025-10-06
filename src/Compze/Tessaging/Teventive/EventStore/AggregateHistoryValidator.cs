@@ -1,10 +1,10 @@
-using Compze.EventStore.Abstractions;
 using System;
 using System.Collections.Generic;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 
-namespace Compze.EventStore;
+namespace Compze.Tessaging.Teventive.EventStore;
 
 static class AggregateHistoryValidator
 {

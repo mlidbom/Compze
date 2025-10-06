@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Compze.EventStore.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 public interface IEventStore : IDisposable
 {

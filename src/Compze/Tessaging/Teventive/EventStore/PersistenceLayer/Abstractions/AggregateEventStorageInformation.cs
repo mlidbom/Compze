@@ -1,4 +1,4 @@
-﻿namespace Compze.EventStore.PersistenceLayer.Abstractions;
+﻿namespace Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 
 public class AggregateEventStorageInformation
 {

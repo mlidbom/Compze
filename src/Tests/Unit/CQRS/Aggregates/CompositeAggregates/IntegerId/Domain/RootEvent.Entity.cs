@@ -1,4 +1,4 @@
-using Compze.Teventive;
+using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 
 // ReSharper disable MemberHidesStaticFromOuterClass

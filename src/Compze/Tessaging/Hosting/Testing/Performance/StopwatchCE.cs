@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
-namespace Compze.Testing.Performance;
+namespace Compze.Tessaging.Hosting.Testing.Performance;
 
 ///<summary>Extensions to the Stopwatch class and related functionality.</summary>
 static class StopwatchCE

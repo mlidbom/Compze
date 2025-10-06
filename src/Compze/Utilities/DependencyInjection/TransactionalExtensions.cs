@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using JetBrains.Annotations;
 
-namespace Compze.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection;
 
 public static class ServiceLocatorTransactionRunner
 {

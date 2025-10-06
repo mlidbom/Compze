@@ -1,9 +1,9 @@
 ﻿using System;
 using Compze.Common.Refactoring.Naming;
-using Compze.EventStore.Abstractions;
-using Compze.Logging;
 using Compze.Serialization;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Testing;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;

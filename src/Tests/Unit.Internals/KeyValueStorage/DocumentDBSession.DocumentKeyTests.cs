@@ -1,4 +1,4 @@
-﻿using Compze.DocumentDb;
+﻿using Compze.Persistence.DocumentDb;
 using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;

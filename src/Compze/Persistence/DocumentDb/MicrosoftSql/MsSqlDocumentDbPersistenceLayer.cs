@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Microsoft.Data.SqlClient;
 using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
-namespace Compze.DocumentDb.MicrosoftSql;
+namespace Compze.Persistence.DocumentDb.MicrosoftSql;
 
 internal partial class MsSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
 {

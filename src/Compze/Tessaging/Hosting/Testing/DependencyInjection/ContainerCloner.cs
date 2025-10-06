@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.DependencyInjection;
-using Compze.DependencyInjection.Microsoft;
-using Compze.DependencyInjection.SimpleInjector;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Microsoft;
+using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Testing.DependencyInjection;
+namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
 static class ContainerCloner
 {

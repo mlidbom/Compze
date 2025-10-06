@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Utilities.Functional;
 
-namespace Compze.Logging;
+namespace Compze.Utilities.Logging;
 
 #pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
 

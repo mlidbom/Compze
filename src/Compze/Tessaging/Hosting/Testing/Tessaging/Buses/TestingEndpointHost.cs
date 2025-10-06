@@ -1,10 +1,9 @@
 using System;
-using Compze.DependencyInjection;
-using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
-using Compze.Testing.Persistence;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Testing.Tessaging.Buses;
+namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public class TestingEndpointHost(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory) : TestingEndpointHostBase(mode, containerFactory)
 {

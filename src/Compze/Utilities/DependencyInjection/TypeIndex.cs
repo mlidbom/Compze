@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection;
 
 class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
-using Compze.EventStore.Abstractions;
-using Compze.EventStore.PersistenceLayer.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
@@ -11,7 +11,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Compze.EventStore;
+namespace Compze.Tessaging.Teventive.EventStore;
 
 public interface IEventCache
 {

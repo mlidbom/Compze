@@ -9,7 +9,7 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.EventStore.Query.Models.Generators;
+namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class QueryModelGeneratingQueryModelReader(IEnumerable<IQueryModelGenerator> documentGenerators) : IVersioningQueryModelReader

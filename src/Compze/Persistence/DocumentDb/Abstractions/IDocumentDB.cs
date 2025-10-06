@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
 
-namespace Compze.DocumentDb.Abstractions;
+namespace Compze.Persistence.DocumentDb.Abstractions;
 
 public interface IDocumentDb
 {

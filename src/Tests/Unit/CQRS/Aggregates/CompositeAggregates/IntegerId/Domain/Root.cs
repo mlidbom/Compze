@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using System;
 using Compze.Abstractions.Internal.Time;
-using Compze.Teventive;
+using Compze.Tessaging.Teventive;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 

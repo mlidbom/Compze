@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Compze.EventStore.Abstractions;
-using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.EventStore.Refactoring.Migrations;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
+using ReadOrder = Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 
-namespace Compze.EventStore;
+namespace Compze.Tessaging.Teventive.EventStore;
 
 partial class EventStore
 {

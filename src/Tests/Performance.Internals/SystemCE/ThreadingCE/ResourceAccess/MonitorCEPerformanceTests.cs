@@ -1,8 +1,8 @@
 using System;
-using Compze.Logging;
-
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Testing;
-using Compze.Testing.Performance;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using NUnit.Framework;

@@ -1,6 +1,6 @@
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 
-namespace Compze.Testing.DbPool.MicrosoftSql.Databases;
+namespace Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
 
 static class MsSqlDatabaseHelpers
 {

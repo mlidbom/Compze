@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Internal.Time;
 
-namespace Compze.EventStore.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 public interface IEventStored
 {

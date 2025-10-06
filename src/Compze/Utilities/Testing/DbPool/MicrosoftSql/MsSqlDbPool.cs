@@ -1,8 +1,8 @@
 using Compze.Persistence.MicrosoftSql.Infrastructure;
-using Compze.Testing.DbPool.MicrosoftSql.Databases;
+using Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Testing.DbPool.MicrosoftSql;
+namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
 internal class MsSqlDbPool : DbPool
 {

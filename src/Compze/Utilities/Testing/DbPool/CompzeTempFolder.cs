@@ -1,6 +1,6 @@
-﻿using Compze.Testing.DbPool.SystemCE.ThreadingCE;
+﻿using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
-namespace Compze.Testing.DbPool;
+namespace Compze.Utilities.Testing.DbPool;
 
 #pragma warning disable IDE0065
 using SPath = Path;

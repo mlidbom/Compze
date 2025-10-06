@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using Dispatch = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.PostgreSql;
+namespace Compze.Tessaging.Persistence.PostgreSql;
 
 partial class PgSqlOutboxPersistenceLayer
 {

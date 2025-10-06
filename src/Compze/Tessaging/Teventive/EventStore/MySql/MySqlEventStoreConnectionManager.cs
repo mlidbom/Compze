@@ -4,7 +4,7 @@ using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using JetBrains.Annotations;
 using MySql.Data.MySqlClient;
 
-namespace Compze.EventStore.MySql;
+namespace Compze.Tessaging.Teventive.EventStore.MySql;
 
 internal class MySqlEventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
 {

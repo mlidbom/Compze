@@ -1,12 +1,11 @@
 ﻿using Compze.Persistence.Common;
-using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Schema =  Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.MySql;
+namespace Compze.Tessaging.Persistence.MySql;
 
 internal partial class MySqlInboxPersistenceLayer(IMySqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IInboxPersistenceLayer
 {

@@ -1,6 +1,6 @@
-﻿using Compze.EventStore.Abstractions;
-using Compze.Tessaging.Common;
+﻿using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Implementation;

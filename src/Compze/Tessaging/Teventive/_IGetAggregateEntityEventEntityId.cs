@@ -1,4 +1,4 @@
-namespace Compze.Teventive;
+namespace Compze.Tessaging.Teventive;
 
 public interface IGetAggregateEntityEventEntityId<in TEvent, out TEntityId>
 {

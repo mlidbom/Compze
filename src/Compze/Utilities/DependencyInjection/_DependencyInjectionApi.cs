@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Compze.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection;
 
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {

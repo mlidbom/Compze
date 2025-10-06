@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Compze.DependencyInjection;
+using Compze.Utilities.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;

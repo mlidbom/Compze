@@ -3,7 +3,7 @@ using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Persistence.InMemory.DocumentDB;
+namespace Compze.Tessaging.Persistence.InMemory.DocumentDB;
 
 //Performance: Write tests to expose lack of Transactional locks and transactional overlay and then implement it.
 class InMemoryDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer

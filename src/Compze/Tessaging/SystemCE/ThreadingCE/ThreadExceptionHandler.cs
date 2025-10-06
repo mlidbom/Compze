@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Compze.Logging;
+using Compze.Utilities.Logging;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 

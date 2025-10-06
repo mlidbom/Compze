@@ -2,7 +2,7 @@ using System;
 using Compze.Utilities.Contracts;
 using Newtonsoft.Json;
 
-namespace Compze.Hosting.Abstractions;
+namespace Compze.Tessaging.Hosting.Abstractions;
 
 public record EndpointId
 {

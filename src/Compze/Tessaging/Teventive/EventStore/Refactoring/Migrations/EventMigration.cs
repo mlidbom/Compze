@@ -1,8 +1,8 @@
 using System;
-using Compze.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Contracts;
 
-namespace Compze.EventStore.Refactoring.Migrations;
+namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 public abstract class EventMigration<TMigratedAggregateEventHierarchyRootInterface> : IEventMigration
    where TMigratedAggregateEventHierarchyRootInterface : IAggregateEvent

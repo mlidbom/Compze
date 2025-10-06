@@ -2,8 +2,9 @@
 using System.Linq;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Testing;
-using Compze.Testing.Performance;
 using Compze.Tests.Unit.Internals.Serialization;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;

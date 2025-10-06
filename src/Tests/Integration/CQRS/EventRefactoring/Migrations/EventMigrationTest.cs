@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
-using Compze.DependencyInjection;
-using Compze.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tests.CQRS.EventRefactoring.Migrations;
 using FluentAssertions;
 using NUnit.Framework;
-using Compze.EventStore.Refactoring.Migrations;
-using Compze.EventStore.Abstractions;
 using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 

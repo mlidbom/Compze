@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Logging;
+using Compze.Utilities.Logging;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Typermedia.Abstractions;
+namespace Compze.Tessaging.Typermedia.Abstractions;
 
 public interface IRemoteHypermediaNavigator
 {

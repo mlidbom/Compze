@@ -4,12 +4,12 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
-using Compze.Hosting.Abstractions;
 using Compze.Tessaging;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Typermedia;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI;

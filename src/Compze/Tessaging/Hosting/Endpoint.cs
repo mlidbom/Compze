@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.DependencyInjection;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using static Compze.Utilities.Contracts.Assert;
 

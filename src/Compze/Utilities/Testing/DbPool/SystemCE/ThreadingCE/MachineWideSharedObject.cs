@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
 
-namespace Compze.Testing.DbPool.SystemCE.ThreadingCE;
+namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
     public class MachineWideSharedObject
     {

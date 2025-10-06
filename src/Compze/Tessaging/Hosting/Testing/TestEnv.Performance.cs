@@ -2,12 +2,11 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using Compze.Logging;
-
-using Compze.Testing.Performance;
+using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Testing;
+namespace Compze.Tessaging.Hosting.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 static partial class TestEnv

@@ -1,4 +1,4 @@
-﻿namespace Compze.DependencyInjection;
+﻿namespace Compze.Utilities.DependencyInjection;
 
 class RunMode(bool isTesting) : IRunMode
 {

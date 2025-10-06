@@ -1,15 +1,14 @@
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
-using Compze.DependencyInjection;
-using Compze.DocumentDb.Abstractions;
+using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Serialization;
-using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.DocumentDb.DependencyInjection;
+namespace Compze.Persistence.DocumentDb.DependencyInjection;
 
 public static class DocumentDbRegistrar
 {

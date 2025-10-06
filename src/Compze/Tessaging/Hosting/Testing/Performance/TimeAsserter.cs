@@ -1,14 +1,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Logging;
-
 using Compze.Utilities.Contracts;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
-namespace Compze.Testing.Performance;
+namespace Compze.Tessaging.Hosting.Testing.Performance;
 
 static class TimeAsserter
 {

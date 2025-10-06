@@ -1,14 +1,13 @@
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.InMemory.DocumentDB;
-using Compze.Persistence.InMemory.EventStore;
-using Compze.Persistence.InMemory.ServiceBus;
-using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Tessaging.Persistence.InMemory.DocumentDB;
+using Compze.Tessaging.Persistence.InMemory.EventStore;
+using Compze.Tessaging.Persistence.InMemory.ServiceBus;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Persistence.InMemory.DependencyInjection;
+namespace Compze.Tessaging.Persistence.InMemory.DependencyInjection;
 
 public static class InMemoryPersistenceLayerRegistrar
 {

@@ -1,6 +1,6 @@
 ﻿using Compze.Utilities.Functional;
 
-namespace Compze.Logging;
+namespace Compze.Utilities.Logging;
 
 // ReSharper disable UnusedMember.Global : These functions are very useful for debugging but only used occasionally. Let's keep them around for now.
 // ReSharper disable UnusedType.Global

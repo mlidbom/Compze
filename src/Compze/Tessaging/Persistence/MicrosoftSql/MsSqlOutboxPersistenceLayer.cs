@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using MessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.MicrosoftSql;
+namespace Compze.Tessaging.Persistence.MicrosoftSql;
 
 partial class MsSqlOutboxPersistenceLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusPersistenceLayer.IOutboxPersistenceLayer
 {

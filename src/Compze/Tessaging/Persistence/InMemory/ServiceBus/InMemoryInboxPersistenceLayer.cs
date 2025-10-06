@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
-namespace Compze.Persistence.InMemory.ServiceBus;
+namespace Compze.Tessaging.Persistence.InMemory.ServiceBus;
 
 class InMemoryInboxPersistenceLayer : IServiceBusPersistenceLayer.IInboxPersistenceLayer
 {

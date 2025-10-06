@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
-using Compze.Hosting.Abstractions;
 using Compze.Serialization;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Http;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 

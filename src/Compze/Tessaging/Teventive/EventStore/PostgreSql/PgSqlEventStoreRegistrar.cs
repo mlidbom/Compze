@@ -1,8 +1,8 @@
-using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.PostgreSql.Infrastructure;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.EventStore.PostgreSql;
+namespace Compze.Tessaging.Teventive.EventStore.PostgreSql;
 
 public static class PgSqlEventStoreRegistrar
 {

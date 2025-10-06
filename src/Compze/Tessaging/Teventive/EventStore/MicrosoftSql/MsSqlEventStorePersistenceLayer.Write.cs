@@ -1,17 +1,16 @@
 using System.Data;
 using System.Data.SqlTypes;
-using Compze.EventStore;
-using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.SqlClient;
-using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
-using Event = Compze.EventStore.EventTableSchemaStrings;
+using ReadOrder = Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions.ReadOrder;
+using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
 
-namespace Compze.EventStore.MicrosoftSql;
+namespace Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 partial class MsSqlEventStorePersistenceLayer
 {

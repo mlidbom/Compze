@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.DependencyInjection;
-
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Typermedia;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Testing;
-using Compze.Testing.Performance;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;

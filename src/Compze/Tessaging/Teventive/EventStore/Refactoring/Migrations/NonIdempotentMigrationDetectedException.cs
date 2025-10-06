@@ -1,5 +1,5 @@
 ﻿using System;
 
-namespace Compze.EventStore.Refactoring.Migrations;
+namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 public class NonIdempotentMigrationDetectedException : Exception;

@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
-using Compze.Configuration;
-using Compze.Logging;
+using Compze.Tessaging.Hosting.Configuration;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.Testing.DbPool.SystemCE;
+namespace Compze.Utilities.Testing.DbPool.SystemCE;
 
 static class StrictlyManagedResources
 {

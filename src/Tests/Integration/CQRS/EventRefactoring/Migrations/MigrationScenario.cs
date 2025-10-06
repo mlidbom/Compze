@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Compze.EventStore.Refactoring.Migrations;
+using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 

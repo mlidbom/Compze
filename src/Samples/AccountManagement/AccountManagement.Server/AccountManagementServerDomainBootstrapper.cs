@@ -3,15 +3,16 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Compze.DocumentDb.DependencyInjection;
-using Compze.DocumentDb.MicrosoftSql;
-using Compze.EventStore.DependencyInjection;
-using Compze.EventStore.MicrosoftSql;
+using Compze.Persistence.DocumentDb.DependencyInjection;
+using Compze.Persistence.DocumentDb.MicrosoftSql;
 using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
 using Compze.Persistence.MicrosoftSql;
-using Compze.Tessaging.MicrosoftSql;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
 using Compze.Tessaging.Persistence.EventStore;
+using Compze.Tessaging.Persistence.MicrosoftSql;
+using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
+using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 namespace AccountManagement;
 

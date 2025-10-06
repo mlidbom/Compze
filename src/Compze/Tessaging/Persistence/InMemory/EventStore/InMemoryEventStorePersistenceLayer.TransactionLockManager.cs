@@ -1,11 +1,10 @@
 ﻿using System.Transactions;
-
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
-namespace Compze.Persistence.InMemory.EventStore;
+namespace Compze.Tessaging.Persistence.InMemory.EventStore;
 
 partial class InMemoryEventStorePersistenceLayer
 {

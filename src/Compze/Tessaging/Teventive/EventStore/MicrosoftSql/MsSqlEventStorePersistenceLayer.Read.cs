@@ -1,12 +1,12 @@
 using System.Data;
 using System.Data.SqlTypes;
-using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Microsoft.Data.SqlClient;
-using Event = Compze.EventStore.EventTableSchemaStrings;
+using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
 
-namespace Compze.EventStore.MicrosoftSql;
+namespace Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 partial class MsSqlEventStorePersistenceLayer(MsSqlEventStoreConnectionManager connectionManager) : IEventStorePersistenceLayer
 {

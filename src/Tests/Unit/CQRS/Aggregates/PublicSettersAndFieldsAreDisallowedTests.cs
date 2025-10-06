@@ -1,11 +1,11 @@
-﻿using Compze.EventStore.Abstractions;
-using Compze.Testing;
+﻿using Compze.Testing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using System;
 using Compze.Abstractions.Internal.Time;
-using Compze.Teventive;
+using Compze.Tessaging.Teventive;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local

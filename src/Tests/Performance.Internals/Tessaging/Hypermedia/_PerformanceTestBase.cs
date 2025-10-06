@@ -2,14 +2,14 @@ using System;
 using System.Threading.Tasks;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Testing;
-using Compze.Testing.DependencyInjection;
-using Compze.Testing.Tessaging.Buses;
-using Compze.Testing.Persistence;
 using NUnit.Framework;
 
 //ncrunch: no coverage start

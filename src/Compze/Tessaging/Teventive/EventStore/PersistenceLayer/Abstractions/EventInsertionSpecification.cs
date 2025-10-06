@@ -1,6 +1,6 @@
-﻿using Compze.EventStore.Abstractions;
+﻿using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
-namespace Compze.EventStore.PersistenceLayer.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 
 public class EventInsertionSpecification(IAggregateEvent @event, int insertedVersion, int effectiveVersion)
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Utilities.Functional;
 
-namespace Compze.Logging;
+namespace Compze.Utilities.Logging;
 
 interface ILogger
 {

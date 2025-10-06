@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using NUnit.Framework;
-using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
+using ReadOrder = Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Persistence.EventStore;

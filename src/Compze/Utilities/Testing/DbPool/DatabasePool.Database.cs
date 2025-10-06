@@ -2,7 +2,7 @@
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
-namespace Compze.Testing.DbPool;
+namespace Compze.Utilities.Testing.DbPool;
 
 public partial class DbPool
 {

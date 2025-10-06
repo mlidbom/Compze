@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Compze.Teventive;
+namespace Compze.Tessaging.Teventive;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 public sealed class AllowPublicSettersAttribute : Attribute;

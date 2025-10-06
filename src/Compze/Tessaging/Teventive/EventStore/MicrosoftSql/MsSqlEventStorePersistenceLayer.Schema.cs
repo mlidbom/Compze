@@ -1,8 +1,8 @@
 using Compze.Persistence.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Event = Compze.EventStore.EventTableSchemaStrings;
+using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
 
-namespace Compze.EventStore.MicrosoftSql;
+namespace Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 partial class MsSqlEventStorePersistenceLayer
 {

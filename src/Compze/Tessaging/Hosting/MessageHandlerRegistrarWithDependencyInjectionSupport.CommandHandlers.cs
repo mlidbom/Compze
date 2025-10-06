@@ -1,6 +1,6 @@
 using System;
 using Compze.Tessaging.Abstractions;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 
 namespace Compze.Tessaging.Hosting;
 

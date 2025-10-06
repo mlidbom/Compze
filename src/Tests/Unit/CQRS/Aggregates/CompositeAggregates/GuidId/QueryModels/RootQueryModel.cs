@@ -1,5 +1,5 @@
 using System;
-using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;

@@ -1,13 +1,13 @@
 using System;
 using System.Threading;
 using AccountManagement.Domain.Events;
-using Compze.DependencyInjection;
-using Compze.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Persistence.DocumentDb;
+using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI.QueryModels;

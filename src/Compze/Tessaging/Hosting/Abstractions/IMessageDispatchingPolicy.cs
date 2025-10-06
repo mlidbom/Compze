@@ -1,3 +1,3 @@
-namespace Compze.Hosting.Abstractions;
+namespace Compze.Tessaging.Hosting.Abstractions;
 
 interface IMessageDispatchingPolicy;

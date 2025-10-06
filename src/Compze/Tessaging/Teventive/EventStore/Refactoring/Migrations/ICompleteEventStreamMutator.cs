@@ -1,7 +1,7 @@
-using Compze.EventStore.Abstractions;
 using System.Collections.Generic;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
-namespace Compze.EventStore.Refactoring.Migrations;
+namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 interface ICompleteEventStreamMutator
 {

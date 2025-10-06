@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Abstractions;
 
-namespace Compze.EventStore.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 public interface IMutableAggregateEvent : IAggregateEvent
 {

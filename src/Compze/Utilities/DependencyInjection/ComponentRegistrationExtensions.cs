@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection;
 
 public static class ComponentRegistrationExtensions
 {

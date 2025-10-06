@@ -1,4 +1,3 @@
-using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 

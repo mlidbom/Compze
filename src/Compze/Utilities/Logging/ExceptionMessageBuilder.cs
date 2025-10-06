@@ -10,7 +10,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Compze.Logging;
+namespace Compze.Utilities.Logging;
 
 static class ExceptionMessageBuilder
 {

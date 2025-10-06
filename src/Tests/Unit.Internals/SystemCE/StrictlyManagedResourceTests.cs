@@ -1,8 +1,8 @@
 ﻿using System;
 
 using Compze.Testing;
-using Compze.Testing.DbPool.SystemCE;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.DbPool.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;

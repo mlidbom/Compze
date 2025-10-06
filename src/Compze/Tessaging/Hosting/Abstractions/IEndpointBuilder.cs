@@ -1,8 +1,8 @@
 using System;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.DependencyInjection;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Hosting.Abstractions;
+namespace Compze.Tessaging.Hosting.Abstractions;
 
 public interface IEndpointBuilder : IDisposable
 {

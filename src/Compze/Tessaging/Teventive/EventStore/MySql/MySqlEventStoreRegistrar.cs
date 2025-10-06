@@ -1,9 +1,8 @@
-using Compze.DependencyInjection;
-using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.EventStore.MySql;
+namespace Compze.Tessaging.Teventive.EventStore.MySql;
 
 public static class MySqlEventStoreRegistrar
 {

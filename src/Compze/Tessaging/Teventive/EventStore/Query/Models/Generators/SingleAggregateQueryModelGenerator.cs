@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common.Teventive;
-using Compze.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Compze.EventStore.Query.Models.Generators;
+namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewModel, TEvent, TSession>

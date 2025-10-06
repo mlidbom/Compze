@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Typermedia.Abstractions;
+namespace Compze.Tessaging.Typermedia.Abstractions;
 
 public abstract class NavigationSpecification
 {

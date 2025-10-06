@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Compze.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection;
 
 /// <summary>
 /// Abstract base class for dependency injection container implementations.

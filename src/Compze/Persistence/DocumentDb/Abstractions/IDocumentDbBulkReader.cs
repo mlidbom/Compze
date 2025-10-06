@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions;
 
-namespace Compze.DocumentDb.Abstractions;
+namespace Compze.Persistence.DocumentDb.Abstractions;
 
 public interface IDocumentDbBulkReader : IDocumentDbReader
 {

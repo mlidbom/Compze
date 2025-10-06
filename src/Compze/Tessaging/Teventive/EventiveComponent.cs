@@ -1,8 +1,8 @@
-﻿using Compze.EventStore.Abstractions;
-using Compze.Tessaging.Common.Teventive;
-using Compze.Teventive.Abstractions;
+﻿using Compze.Tessaging.Common.Teventive;
+using Compze.Tessaging.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
-namespace Compze.Teventive;
+namespace Compze.Tessaging.Teventive;
 
 public abstract class EventiveComponent<TParent,
                                         TParentEvent,

@@ -1,10 +1,10 @@
-using Compze.Configuration;
-using Compze.DependencyInjection;
-using Compze.Hosting.Abstractions;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
-using Compze.Testing.DbPool.MySql;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Configuration;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.Testing.DbPool.MySql;
 
-namespace Compze.Persistence.MySql;
+namespace Compze.Tessaging.Hosting.Persistence.MySql;
 
 public static class MySqlPersistenceLayerRegistrar
 {

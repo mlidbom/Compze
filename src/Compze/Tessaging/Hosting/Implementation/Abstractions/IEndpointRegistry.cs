@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Compze.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
 

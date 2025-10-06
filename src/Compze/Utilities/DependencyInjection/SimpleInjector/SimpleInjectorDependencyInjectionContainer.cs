@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
-namespace Compze.DependencyInjection.SimpleInjector;
+namespace Compze.Utilities.DependencyInjection.SimpleInjector;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel

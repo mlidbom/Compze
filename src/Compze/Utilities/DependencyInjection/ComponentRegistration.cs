@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable UnusedMember.Global
 
-namespace Compze.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection;
 
 public static class Singleton
 {

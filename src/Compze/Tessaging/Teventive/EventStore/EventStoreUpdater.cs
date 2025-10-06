@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Abstractions.Internal.Time;
-using Compze.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.EventStore;
+namespace Compze.Tessaging.Teventive.EventStore;
 
 class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 {

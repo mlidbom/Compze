@@ -1,9 +1,8 @@
-using Compze.DependencyInjection;
-using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.Tessaging.MySql;
+namespace Compze.Tessaging.Persistence.MySql;
 
 public static class MySqlTessagingRegistrar
 {

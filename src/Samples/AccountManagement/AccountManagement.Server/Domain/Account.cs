@@ -5,9 +5,9 @@ using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Internal.Time;
+using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Typermedia;
-using Compze.Teventive;
-using Compze.Typermedia.Abstractions;
+using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.Domain;

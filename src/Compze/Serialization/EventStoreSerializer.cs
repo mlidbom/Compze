@@ -2,8 +2,8 @@ using System;
 using System.Text.RegularExpressions;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 

@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.EventStore.Abstractions;
-using Compze.EventStore.PersistenceLayer.Abstractions;
-using Compze.EventStore.Refactoring.Migrations;
-using Compze.Logging;
 using Compze.Serialization;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
-namespace Compze.EventStore;
+namespace Compze.Tessaging.Teventive.EventStore;
 
 [UsedImplicitly]partial class EventStore : IEventStore
 {

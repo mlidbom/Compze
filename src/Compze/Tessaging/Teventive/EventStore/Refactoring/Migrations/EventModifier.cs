@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.EventStore.Abstractions;
-using Compze.EventStore.PersistenceLayer.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
@@ -10,7 +10,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
-namespace Compze.EventStore.Refactoring.Migrations;
+namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 //Yes this class has quite a bit of code that looks overly complex. Like it could be simplified a lot.
 //What you are seeing is likely optimizations. Please do not change this class for reasons of readability unless you do thorough performance testing and verify that no performance is lost.

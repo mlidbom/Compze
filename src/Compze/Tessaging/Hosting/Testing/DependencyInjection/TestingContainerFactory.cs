@@ -1,15 +1,14 @@
 using System;
 using System.Threading.Tasks;
-using Compze.DependencyInjection;
-using Compze.DependencyInjection.Microsoft;
-using Compze.DependencyInjection.SimpleInjector;
-using Compze.Tessaging.Hosting;
-using Compze.Hosting.Abstractions;
-using Compze.Testing.Tessaging.Buses;
-using Compze.Testing.Persistence;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Microsoft;
+using Compze.Utilities.DependencyInjection.SimpleInjector;
 using JetBrains.Annotations;
 
-namespace Compze.Testing.DependencyInjection;
+namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
 public static class TestingContainerFactory
 {

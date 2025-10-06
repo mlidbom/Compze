@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Abstractions;
-using Compze.DependencyInjection;
-using Compze.DocumentDb.Abstractions;
-
+using Compze.Persistence.DocumentDb.Abstractions;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Testing;
-using Compze.Testing.DependencyInjection;
 using Compze.Tests.Persistence.DocumentDb;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;

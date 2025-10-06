@@ -1,10 +1,10 @@
-using Compze.Configuration;
-using Compze.DependencyInjection;
-using Compze.Hosting.Abstractions;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
-using Compze.Testing.DbPool.MicrosoftSql;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Configuration;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
-namespace Compze.Persistence.MicrosoftSql;
+namespace Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
 
 public static class MsSqlPersistenceLayerRegistrar
 {

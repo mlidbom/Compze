@@ -1,7 +1,7 @@
-using Compze.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.EventStore.Refactoring.Migrations;
+namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 class AssertMigrationsAreIdempotentEventModifier : IEventModifier, IStaticInstancePropertySingleton
 {

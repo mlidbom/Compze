@@ -1,8 +1,8 @@
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
-using Compze.DependencyInjection;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
+using Compze.Utilities.DependencyInjection;
 
-namespace Compze.DocumentDb.MicrosoftSql;
+namespace Compze.Persistence.DocumentDb.MicrosoftSql;
 
 public static class MsSqlDocumentDbRegistrar
 {
