@@ -9,6 +9,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Tessaging\Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
     <ProjectReference Include="Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
     <ProjectReference Include="..\..\Tessaging\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\Common\Compze.Persistence.Common.csproj" />

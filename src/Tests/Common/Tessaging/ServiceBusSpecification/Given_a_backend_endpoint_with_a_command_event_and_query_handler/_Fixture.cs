@@ -8,6 +8,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Persistence;
+using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Testing;
@@ -69,7 +70,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
                    .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) =>
                     {
                        MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough();
-                       navigator.Execute(new CompzeApi().EventStore.Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update();
+                       navigator.Execute(new EventStoreApi().Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update();
                     })
                    .ForEvent((IMyExactlyOnceEvent _) => EventHandlerThreadGate.AwaitPassThrough())
                    .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())

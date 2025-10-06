@@ -12,7 +12,6 @@
 <ItemGroup>
     <ProjectReference Include="..\Common\Compze.Common.csproj" />
     <ProjectReference Include="Hosting\Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
-    <ProjectReference Include="..\Persistence\DocumentDb\Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
     <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
     <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
     <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
@@ -25,7 +24,6 @@
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
@@ -128,5 +126,8 @@
     <EmbeddedResource Remove="Typermedia\Abstractions\**" />
     <None Remove="Typermedia\Abstractions\**" />
     <Content Remove="Typermedia\Abstractions\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Persistence\DocumentDb\" />
   </ItemGroup>
 </Project>

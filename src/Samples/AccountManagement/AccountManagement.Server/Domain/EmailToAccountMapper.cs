@@ -1,8 +1,8 @@
 ﻿using AccountManagement.Domain.Events;
+using Compze.Persistence.DocumentDb;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Persistence;
-using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
@@ -12,7 +12,7 @@ namespace AccountManagement.Domain;
 
 [UsedImplicitly] class EmailToAccountMapper
 {
-   static DocumentDbApi DocumentDb => new CompzeApi().DocumentDb;
+   static DocumentDbApi DocumentDb => new();
 
    internal static void UpdateMappingWhenEmailChanges(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForEvent(
       (AccountEvent.PropertyUpdated.Email emailUpdated, ILocalHypermediaNavigator navigator) =>

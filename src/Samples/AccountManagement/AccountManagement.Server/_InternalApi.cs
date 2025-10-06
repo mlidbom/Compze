@@ -13,7 +13,7 @@ namespace AccountManagement;
 
 static class InternalApi
 {
-   static CompzeApi CompzeApi => new();
+   static EventStoreApi EventStore => new EventStoreApi();
    internal static Query Queries => new();
    internal static Command Commands => new();
    internal static AccountQueryModel.Api AccountQueryModel => new();
@@ -22,11 +22,11 @@ static class InternalApi
    {
       internal TryGetByEmailQuery TryGetByEmail(Email email) => new(email);
 
-      internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => CompzeApi.EventStore.Queries.GetForUpdate<Account>(id);
+      internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => EventStore.Queries.GetForUpdate<Account>(id);
 
-      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => CompzeApi.EventStore.Queries.GetReadOnlyCopy<Account>(id);
+      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => EventStore.Queries.GetReadOnlyCopy<Account>(id);
 
-      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => CompzeApi.EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
+      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
       internal class TryGetByEmailQuery : IStrictlyLocalQuery<TryGetByEmailQuery, Option<Account>>
       {
@@ -42,6 +42,6 @@ static class InternalApi
 
    internal class Command
    {
-      internal EventStoreApi.CommandApi.SaveAggregate<Account> Save(Account account) => CompzeApi.EventStore.Commands.Save(account);
+      internal EventStoreApi.CommandApi.SaveAggregate<Account> Save(Account account) => EventStore.Commands.Save(account);
    }
 }

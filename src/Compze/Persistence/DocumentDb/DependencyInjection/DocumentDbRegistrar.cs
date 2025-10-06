@@ -4,7 +4,6 @@ using Compze.Abstractions.Internal.Time;
 using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 

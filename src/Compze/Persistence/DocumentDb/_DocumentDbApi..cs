@@ -3,7 +3,7 @@ using Compze.Abstractions;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Compze.Tessaging.Persistence.DocumentDb;
+namespace Compze.Persistence.DocumentDb;
 
 public partial class DocumentDbApi
 {

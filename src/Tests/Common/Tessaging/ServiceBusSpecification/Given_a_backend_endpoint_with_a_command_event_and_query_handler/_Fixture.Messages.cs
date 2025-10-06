@@ -2,6 +2,7 @@
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Persistence;
+using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;
@@ -53,7 +54,7 @@ public partial class Fixture
       {
          var created = new MyAggregate();
          created.Publish(new MyAggregateEvent.Implementation.Created(id));
-         bus.Execute(new CompzeApi().EventStore.Commands.Save(created));
+         bus.Execute(new EventStoreApi().Commands.Save(created));
       }
    }
 
