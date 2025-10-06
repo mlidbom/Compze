@@ -13,7 +13,7 @@
    <ItemGroup>
       <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
-      <ProjectReference Include="..\Compze.Testing\Compze.Testing.csproj" />
+      <ProjectReference Include="..\Compze.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />

@@ -14,7 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Compze.Configuration\Compze.Configuration.csproj" />
+        <ProjectReference Include="..\Compze.Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
         <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
     </ItemGroup>
 

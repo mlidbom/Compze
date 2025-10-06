@@ -8,44 +8,77 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Compze/" />
-  <Folder Name="/Compze/Tessaging/" />
-  <Folder Name="/Compze/Tessaging/Abstractions/">
+  <Folder Name="/Compze/Abstractions/">
     <Project Path="Compze/Compze.Abstractions.Internal/Compze.Abstractions.Internal.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="Compze/Compze.Abstractions/Compze.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
+  </Folder>
+  <Folder Name="/Compze/Common/">
+    <Project Path="Compze/Compze.Common/Compze.Common.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Persistence/" />
+  <Folder Name="/Compze/Persistence/MicrosoftSql/">
+    <Project Path="Compze/Compze.Persistence.MicrosoftSql.Infrastructure/Compze.Persistence.MicrosoftSql.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Persistence/MySql/">
+    <Project Path="Compze/Compze.Persistence.MySql.Infrastructure/Compze.Persistence.MySql.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Persistence/PostgreSql/">
+    <Project Path="Compze/Compze.Persistence.PostgreSql.Infrastructure/Compze.Persistence.PostgreSql.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tessaging/">
+    <Project Path="Compze/Compze.Tessaging/Compze.Tessaging.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tessaging/Abstractions/">
     <Project Path="Compze/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Common/">
-    <Project Path="Compze/Compze.Common/Compze.Common.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
     <Project Path="Compze/Compze.Tessaging.Common/Compze.Tessaging.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
-  <Folder Name="/Compze/Tessaging/Hosting/">
-    <Project Path="Compze/Compze.Hosting.Abstractions/Compze.Hosting.Abstractions.csproj">
+  <Folder Name="/Compze/Tessaging/Hosting/" />
+  <Folder Name="/Compze/Tessaging/Hosting/Abstractions/">
+    <Project Path="Compze/Compze.Hosting.Abstractions/Compze.Tessaging.Hosting.Abstractions.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-    <Project Path="Compze/Compze.Tessaging/Compze.Tessaging.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/Configuration/">
-    <Project Path="Compze/Compze.Configuration.Abstractions/Compze.Configuration.Abstractions.csproj">
+    <Project Path="Compze/Compze.Configuration.Abstractions/Compze.Tessaging.Hosting.Configuration.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-    <Project Path="Compze/Compze.Configuration/Compze.Configuration.csproj">
+    <Project Path="Compze/Compze.Configuration/Compze.Tessaging.Hosting.Configuration.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tessaging/Hosting/Persistence/">
+    <Project Path="Compze/Compze.Persistence.MicrosoftSql.DependencyInjection/Compze.Tessaging.Hosting.Persistence.MicrosoftSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="Compze/Compze.Persistence.MySql.DependencyInjection/Compze.Tessaging.Hosting.Persistence.MySql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="Compze/Compze.Persistence.PostgreSql.DependencyInjection/Compze.Tessaging.Hosting.Persistence.DependencyInjection.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/Testing/">
-    <Project Path="Compze/Compze.Testing/Compze.Testing.csproj">
+    <Project Path="Compze/Compze.Testing/Compze.Tessaging.Hosting.Testing.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
@@ -63,41 +96,18 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/MicrosoftSql/">
-    <Project Path="Compze/Compze.Persistence.MicrosoftSql.DependencyInjection/Compze.Persistence.MicrosoftSql.DependencyInjection.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="Compze/Compze.Persistence.MicrosoftSql.Infrastructure/Compze.Persistence.MicrosoftSql.Infrastructure.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-    <Project Path="Compze/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj">
+    <Project Path="Compze/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.Persistence.MicrosoftSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/MySql/">
-    <Project Path="Compze/Compze.Persistence.MySql.DependencyInjection/Compze.Persistence.MySql.DependencyInjection.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="Compze/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj">
+    <Project Path="Compze/Compze.Tessaging.MySql/Compze.Tessaging.Persistence.MySql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/PostgreSql/">
-    <Project Path="Compze/Compze.Persistence.PostgreSql.DependencyInjection/Compze.Persistence.PostgreSql.DependencyInjection.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="Compze/Compze.Persistence.PostgreSql.Infrastructure/Compze.Persistence.PostgreSql.Infrastructure.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
     <Project Path="Compze/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Serialization/">
-    <Project Path="Compze/Compze.Serialization.Abstractions/Compze.Serialization.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
-    <Project Path="Compze/Compze.Serialization/Compze.Serialization.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/">
@@ -170,6 +180,14 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
     <Project Path="Compze/Compze.Logging/Compze.Logging.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Utilities/Serialization/">
+    <Project Path="Compze/Compze.Serialization.Abstractions/Compze.Serialization.Abstractions.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="Compze/Compze.Serialization/Compze.Serialization.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>

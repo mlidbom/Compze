@@ -15,9 +15,9 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Compze.Common\Compze.Common.csproj" />
-        <ProjectReference Include="..\Compze.Configuration\Compze.Configuration.csproj" />
+        <ProjectReference Include="..\Compze.Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
         <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.DocumentDb.Abstractions.csproj" />
-        <ProjectReference Include="..\Compze.Hosting.Abstractions\Compze.Hosting.Abstractions.csproj" />
+        <ProjectReference Include="..\Compze.Hosting.Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
         <ProjectReference Include="..\Compze.Tessaging.Common\Compze.Tessaging.Common.csproj" />
         <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
