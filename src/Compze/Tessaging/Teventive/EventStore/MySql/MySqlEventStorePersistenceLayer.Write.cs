@@ -6,6 +6,7 @@ using ReadOrder = Compze.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 using Compze.EventStore;
 using Compze.EventStore.PersistenceLayer.Abstractions;
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;

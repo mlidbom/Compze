@@ -1,11 +1,10 @@
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.Common.AdoCE.Abstractions;
-
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql.Infrastructure;
+namespace Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 
 internal interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
 {

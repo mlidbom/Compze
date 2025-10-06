@@ -1,6 +1,6 @@
-using Compze.Teventive.Aggregates;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using System;
+using Compze.Teventive;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 

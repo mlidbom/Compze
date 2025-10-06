@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.Contracts;

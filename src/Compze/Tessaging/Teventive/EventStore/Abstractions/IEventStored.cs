@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 
 namespace Compze.EventStore.Abstractions;
 

@@ -3,8 +3,6 @@ using Compze.Common.Refactoring.Naming;
 using Compze.EventStore.Abstractions;
 using Compze.Logging;
 using Compze.Serialization;
-using Compze.Serialization.Abstractions;
-
 using Compze.Testing;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;

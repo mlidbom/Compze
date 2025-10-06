@@ -3,6 +3,7 @@ using Compze.DependencyInjection;
 using Compze.Persistence.Common.AdoCE.Abstractions;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure;
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Testing;
 using Compze.Testing.DbPool;

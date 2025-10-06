@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Serialization.Abstractions;
+using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.Contracts;
 

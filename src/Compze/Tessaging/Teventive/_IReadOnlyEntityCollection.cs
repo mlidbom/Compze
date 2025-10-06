@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Teventive.Aggregates;
+namespace Compze.Teventive;
 
 public interface IReadOnlyEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity>
 {

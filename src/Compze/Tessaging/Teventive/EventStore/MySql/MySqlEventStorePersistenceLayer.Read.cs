@@ -1,6 +1,7 @@
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.Infrastructure;
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using MySql.Data.MySqlClient;
 using Event = Compze.EventStore.EventTableSchemaStrings;
 

@@ -1,6 +1,5 @@
 using AccountManagement.API;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Typermedia;
 using Compze.Typermedia.Abstractions;

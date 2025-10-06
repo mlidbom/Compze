@@ -7,10 +7,9 @@ using Compze.DocumentDb.DependencyInjection;
 using Compze.DocumentDb.MicrosoftSql;
 using Compze.EventStore.DependencyInjection;
 using Compze.EventStore.MicrosoftSql;
-using Compze.Persistence.MicrosoftSql.DependencyInjection;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
+using Compze.Persistence.MicrosoftSql;
 using Compze.Tessaging.MicrosoftSql;
 using Compze.Tessaging.Persistence.EventStore;
 

@@ -2,7 +2,7 @@
 using Compze.Tessaging.Common.Teventive;
 using Compze.Teventive.Abstractions;
 
-namespace Compze.Teventive.Aggregates;
+namespace Compze.Teventive;
 
 public abstract class EventiveComponent<TParent,
                                         TParentEvent,

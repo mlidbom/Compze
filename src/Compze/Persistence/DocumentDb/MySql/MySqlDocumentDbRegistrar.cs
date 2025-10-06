@@ -1,6 +1,7 @@
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.DependencyInjection;
 using Compze.Persistence.MySql.Infrastructure;
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 
 namespace Compze.DocumentDb.MySql;
 

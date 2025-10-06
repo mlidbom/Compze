@@ -5,7 +5,6 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;

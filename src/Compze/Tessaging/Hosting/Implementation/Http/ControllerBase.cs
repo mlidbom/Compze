@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Serialization.Abstractions;
+using Compze.Serialization;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Mvc;

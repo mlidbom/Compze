@@ -2,8 +2,6 @@
 using System.Linq;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.Serialization.Abstractions;
-
 using Compze.Testing;
 using Compze.Testing.Performance;
 using Compze.Tests.Unit.Internals.Serialization;

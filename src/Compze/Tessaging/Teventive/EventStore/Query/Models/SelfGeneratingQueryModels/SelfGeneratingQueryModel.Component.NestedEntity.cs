@@ -1,6 +1,6 @@
 ﻿using Compze.EventStore.Abstractions;
+using Compze.Teventive;
 using Compze.Teventive.Abstractions;
-using Compze.Teventive.Aggregates;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 

@@ -1,6 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.Persistence.MySql.Infrastructure;
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 
 namespace Compze.EventStore.MySql;
 

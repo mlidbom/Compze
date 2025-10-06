@@ -3,7 +3,7 @@ using Compze.Abstractions;
 using Compze.EventStore.Abstractions;
 using Compze.Teventive.Abstractions;
 
-namespace Compze.Teventive.Aggregates;
+namespace Compze.Teventive;
 
 public interface IEventiveInternals<in TEvent, in TEventImplementation>
     where TEventImplementation : AggregateEvent, TEvent

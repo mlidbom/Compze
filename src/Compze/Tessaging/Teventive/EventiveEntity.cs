@@ -4,7 +4,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Compze.Teventive.Aggregates;
+namespace Compze.Teventive;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class EventiveEntity<TParent,

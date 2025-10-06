@@ -1,9 +1,8 @@
 using System;
 using System.Diagnostics;
-using Compze.Abstractions;
 using Compze.Utilities.Contracts;
 
-namespace Compze.DDD.Abstractions;
+namespace Compze.Abstractions;
 
 /// <summary>
 /// Base class for any class that considers equality to be that the Ids for two instances are the same,

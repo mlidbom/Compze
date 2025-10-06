@@ -1,7 +1,7 @@
 using System.Data;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql.Infrastructure;
+namespace Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 
 internal static class MySqlCommandParameterExtensions
 {

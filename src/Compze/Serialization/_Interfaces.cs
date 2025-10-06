@@ -2,7 +2,7 @@
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Serialization.Abstractions;
+namespace Compze.Serialization;
 
 interface IJsonSerializer
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Implementation;
 
-namespace Compze.Tessaging.Hosting.Abstractions;
+namespace Compze.Tessaging.Hosting;
 
 interface IGlobalBusStateTracker
 {

@@ -1,12 +1,10 @@
-using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.DependencyInjection;
 using Compze.DocumentDb.Abstractions;
 using Compze.Serialization;
-using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Persistence.DocumentDb;
 using Compze.Utilities.Contracts;

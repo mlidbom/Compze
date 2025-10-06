@@ -7,7 +7,7 @@ using Compze.EventStore.Abstractions;
 using Compze.EventStore.PersistenceLayer.Abstractions;
 using Compze.EventStore.Refactoring.Migrations;
 using Compze.Logging;
-using Compze.Serialization.Abstractions;
+using Compze.Serialization;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;

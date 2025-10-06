@@ -1,6 +1,6 @@
 ﻿using Compze.EventStore.Abstractions;
 
-namespace Compze.Teventive.Aggregates;
+namespace Compze.Teventive;
 
 public abstract class EventiveRemovableEntity<TParent,
                                               TParentEvent,

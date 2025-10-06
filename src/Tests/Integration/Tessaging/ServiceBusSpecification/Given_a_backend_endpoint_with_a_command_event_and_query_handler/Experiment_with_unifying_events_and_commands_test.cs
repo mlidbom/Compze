@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.DependencyInjection;
 using Compze.EventStore.Abstractions;
-using Compze.Teventive.Aggregates;
 using Compze.Testing;
 using Compze.Testing.DependencyInjection;
 using Compze.Testing.Tessaging.Buses;
@@ -15,10 +14,10 @@ using NUnit.Framework;
 using Compze.EventStore.DependencyInjection;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Typermedia;
+using Compze.Teventive;
 using Compze.Typermedia.Abstractions;
 
 // ReSharper disable MemberCanBeInternal for testing

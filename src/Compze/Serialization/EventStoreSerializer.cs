@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.EventStore.Abstractions;
-using Compze.Serialization.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;

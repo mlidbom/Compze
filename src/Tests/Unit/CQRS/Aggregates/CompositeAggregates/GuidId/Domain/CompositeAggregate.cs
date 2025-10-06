@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.GenericAbstractions.Time;
-using Compze.Teventive.Aggregates;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Teventive;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 

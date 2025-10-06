@@ -1,7 +1,7 @@
 ﻿using System;
-using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.EventStore.Abstractions;
-using Compze.Teventive.Aggregates;
+using Compze.Teventive;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates;

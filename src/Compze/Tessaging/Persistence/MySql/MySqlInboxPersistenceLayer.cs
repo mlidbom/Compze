@@ -1,5 +1,6 @@
 ﻿using Compze.Persistence.Common.AdoCE;
 using Compze.Persistence.MySql.Infrastructure;
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;

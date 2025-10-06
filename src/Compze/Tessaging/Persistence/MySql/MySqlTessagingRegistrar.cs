@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.Persistence.MySql.Infrastructure;
+using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Tessaging.Hosting.Implementation;
 
 namespace Compze.Tessaging.MySql;

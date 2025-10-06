@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Compze.Common.Refactoring.Naming;
 using Compze.DependencyInjection;
 using Compze.Logging;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;

@@ -1,7 +1,7 @@
-using MySql.Data.MySqlClient;
 using Compze.Persistence.Common.AdoCE;
+using MySql.Data.MySqlClient;
 
-namespace Compze.Persistence.MySql.Infrastructure;
+namespace Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 
 internal static class MyMySqlCommandExtensions
 {

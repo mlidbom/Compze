@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Compze.Abstractions;
-using Compze.Abstractions.GenericAbstractions.Time;
+using Compze.Abstractions.Internal.GenericAbstractions.Time;
 using Compze.EventStore.Abstractions;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Teventive.Abstractions;
@@ -11,7 +11,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using JetBrains.Annotations;
 
-namespace Compze.Teventive.Aggregates;
+namespace Compze.Teventive;
 
 //Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]. Really? If you don't intend to inherit from the Aggregate, what good is it to set the last two type parameters so anything else?
 public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation> : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, IAggregateWrapperEvent<TAggregateEvent>, AggregateWrapperEvent<TAggregateEvent>>
