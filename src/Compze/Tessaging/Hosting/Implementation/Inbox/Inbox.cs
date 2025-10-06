@@ -13,30 +13,30 @@ namespace Compze.Tessaging.Hosting.Implementation;
    readonly HandlerExecutionEngine _handlerExecutionEngine;
 
    readonly IMessageStorage _storage;
-   readonly AspNetHost _aspNetHost;
+   readonly IInboxTransport _transport;
 
-   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, IMessageStorage messageStorage, IDependencyInjectionContainer container, AspNetHost aspNetHost)
+   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransport transport)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = messageStorage;
-      _aspNetHost = aspNetHost;
+      _transport = transport;
    }
 
-   public EndPointAddress Address => new(aspNetAddress: _aspNetHost.Address);
+   public EndPointAddress Address => new(aspNetAddress: _transport.Address);
 
    public async Task StartAsync()
    {
       _handlerExecutionEngine.Start();
       var storageStartTask = _storage.StartAsync();
-      await Task.WhenAll(storageStartTask, _aspNetHost.StartAsync()).caf();
+      await Task.WhenAll(storageStartTask, _transport.StartAsync()).caf();
    }
 
-   public async Task StopAsync() => await _aspNetHost.StopAsync().caf();
+   public async Task StopAsync() => await _transport.StopAsync().caf();
 
    public async ValueTask DisposeAsync()
    {
       _handlerExecutionEngine.Stop();
       await StopAsync().caf();
-      await _aspNetHost.DisposeAsync().caf();
+      await _transport.DisposeAsync().caf();
    }
 }

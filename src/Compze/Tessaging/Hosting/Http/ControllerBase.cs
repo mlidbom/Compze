@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Tessaging.Hosting.Implementation;
+using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.Hosting.Implementation.Http;
+namespace Compze.Tessaging.Hosting.Http;
 
 abstract class ControllerBase(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : Controller
 {

@@ -82,9 +82,11 @@
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
-  <Folder Name="/Compze/Tessaging/Hosting/" />
-  <Folder Name="/Compze/Tessaging/Hosting/Abstractions/">
+  <Folder Name="/Compze/Tessaging/Hosting/">
     <Project Path="Compze/Tessaging/Hosting/Abstractions/Compze.Tessaging.Hosting.Abstractions.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="Compze/Tessaging/Hosting/Http/Compze.Tessaging.Hosting.Http.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Compze.Tessaging.Hosting.Implementation;
+namespace Compze.Tessaging.Hosting.Http.DependencyInjection;
 
 static class ControllerRegistrationValidator
 {

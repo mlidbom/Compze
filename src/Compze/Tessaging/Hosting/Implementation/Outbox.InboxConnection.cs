@@ -3,7 +3,6 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Http;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.Contracts;

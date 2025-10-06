@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Http;
+namespace Compze.Tessaging.Hosting.Implementation.Http;
 
 interface IRpcClient
 {

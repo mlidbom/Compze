@@ -32,6 +32,15 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
       return RegisterEndpoint(name, endpointId, setup);
    }
 
+   public override IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup)
+   {
+      return base.RegisterEndpoint(name, id, builder =>
+      {
+         ExtraEndpointConfiguration(builder);
+         setup(builder);
+      });
+   }
+
    public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
       RegisterClientEndpoint(builder =>
       {

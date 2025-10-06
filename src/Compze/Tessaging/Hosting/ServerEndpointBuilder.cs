@@ -1,3 +1,4 @@
+using System;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
 using Compze.Common.Refactoring.Naming;
@@ -5,7 +6,6 @@ using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Configuration;
-using Compze.Tessaging.Hosting.Http;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
@@ -125,13 +125,8 @@ class ServerEndpointBuilder : IEndpointBuilder
             Singleton.For<Inbox.IMessageStorage>().CreatedBy((IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => new InboxMessageStorage(persistenceLayer)),
             Singleton.For<Inbox.HandlerExecutionEngine>().CreatedBy((IGlobalBusStateTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
                                                                        => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
-            Scoped.For<RpcController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
-                                                     => new RpcController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
-            Scoped.For<TessagingController>().CreatedBy((IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage)
-                                                           => new TessagingController(serializer, typeMapper, handlerExecutionEngine, messageStorage)),
-            Singleton.For<Inbox.AspNetHost>().CreatedBy((IServiceLocator serviceLocator, IDependencyInjectionContainer container) => new Inbox.AspNetHost(serviceLocator, container)),
-            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, Inbox.AspNetHost aspNetHost)
-                                                 => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, aspNetHost)),
+            Singleton.For<IInbox>().CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransport transport)
+                                                 => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, transport)),
             Singleton.For<CommandScheduler>().CreatedBy((IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) => new CommandScheduler(transport, timeSource, taskRunner)),
             Scoped.For<IServiceBusSession>().CreatedBy((IOutbox outbox, CommandScheduler commandScheduler) => new ServiceBusSession(outbox, commandScheduler)),
             Scoped.For<ILocalHypermediaNavigator>().CreatedBy((IMessageHandlerRegistry messageHandlerRegistry) => new LocalHypermediaNavigator(messageHandlerRegistry))

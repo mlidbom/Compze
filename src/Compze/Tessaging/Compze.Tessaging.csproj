@@ -9,10 +9,7 @@
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-  <ItemGroup>
+<ItemGroup>
     <ProjectReference Include="..\Common\Compze.Common.csproj" />
     <ProjectReference Include="Hosting\Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
     <ProjectReference Include="..\Persistence\DocumentDb\Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
@@ -38,6 +35,7 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Http" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
@@ -50,6 +48,10 @@
     <EmbeddedResource Remove="Common\**" />
     <None Remove="Common\**" />
     <Content Remove="Common\**" />
+        <Compile Remove="Hosting\Http\**" />
+    <EmbeddedResource Remove="Hosting\Http\**" />
+    <None Remove="Hosting\Http\**" />
+    <Content Remove="Hosting\Http\**" />
     <Compile Remove="Hosting\Abstractions\**" />
     <EmbeddedResource Remove="Hosting\Abstractions\**" />
     <None Remove="Hosting\Abstractions\**" />
