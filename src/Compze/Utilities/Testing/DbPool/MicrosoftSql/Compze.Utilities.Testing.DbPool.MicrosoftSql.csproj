@@ -6,17 +6,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Compze.Testing.DbPool.PostgreSql</RootNamespace>
+    <RootNamespace>Compze.Testing.DbPool.MicrosoftSql</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-    <ProjectReference Include="..\..\..\Persistence\PostgreSql\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\MicrosoftSql\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
   </ItemGroup>
 </Project>

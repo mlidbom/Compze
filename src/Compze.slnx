@@ -194,18 +194,19 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Compze/Utilities/Testing/">
-    <Project Path="Compze/Utilities/Testing/DbPool.MicrosoftSql/Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-    <Project Path="Compze/Utilities/Testing/DbPool.MySql/Compze.Utilities.Testing.DbPool.MySql.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-    <Project Path="Compze/Utilities/Testing/DbPool.PostgreSql/Compze.Utilities.Testing.DbPool.PostgreSql.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
+  <Folder Name="/Compze/Utilities/Testing/" />
+  <Folder Name="/Compze/Utilities/Testing/DbPool/">
     <Project Path="Compze/Utilities/Testing/DbPool/Compze.Utilities.Testing.DbPool.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="Compze/Utilities/Testing/DbPool/MicrosoftSql/Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="Compze/Utilities/Testing/DbPool/MySql/Compze.Utilities.Testing.DbPool.MySql.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="Compze/Utilities/Testing/DbPool/PostgreSql/Compze.Utilities.Testing.DbPool.PostgreSql.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Experimenting/">

@@ -15,6 +15,11 @@
     <ProjectReference Include="..\..\Logging\Compze.Utilities.Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="MicrosoftSql\**" />
+    <Compile Remove="MySql\**" />
+    <Compile Remove="PostgreSql\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
   </ItemGroup>

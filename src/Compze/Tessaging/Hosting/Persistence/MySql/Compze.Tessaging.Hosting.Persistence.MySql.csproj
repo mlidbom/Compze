@@ -12,7 +12,7 @@
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\..\..\Persistence\MySql\Compze.Persistence.MySql.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool.MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
+    <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

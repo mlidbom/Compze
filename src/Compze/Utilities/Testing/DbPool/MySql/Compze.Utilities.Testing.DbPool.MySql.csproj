@@ -12,8 +12,8 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-    <ProjectReference Include="..\..\..\Persistence\MySql\Compze.Persistence.MySql.Infrastructure.csproj" />
+    <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\MySql\Compze.Persistence.MySql.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />
