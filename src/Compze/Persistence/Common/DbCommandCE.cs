@@ -10,7 +10,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Persistence.Common.AdoCE;
+namespace Compze.Persistence.Common;
 
 static class DbCommandCE
 {
