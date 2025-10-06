@@ -10,7 +10,7 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.DocumentDb\Compze.Utilities.DocumentDb.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb\Compze.Persistence.DocumentDb.csproj" />
       <ProjectReference Include="..\Compze.TestInfrastructure\Compze.TestInfrastructure.csproj" />
    </ItemGroup>
 	<ItemGroup>

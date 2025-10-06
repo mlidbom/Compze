@@ -18,7 +18,7 @@
       <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
+      <ProjectReference Include="..\Compze.Logging\Compze.Utilities.Logging.csproj" />
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Testing" />

@@ -15,7 +15,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
-	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
+	  <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.SystemExtensions.csproj" />
 	  <ProjectReference Include="..\Compze.Teventive.Abstractions\Compze.Teventive.Abstractions.csproj" />
 	</ItemGroup>
 

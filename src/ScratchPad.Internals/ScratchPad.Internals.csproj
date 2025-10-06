@@ -32,7 +32,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Compze\Compze.EventStore.Abstractions\Compze.EventStore.Abstractions.csproj" />
-      <ProjectReference Include="..\Compze\Compze.InternalUtilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze\Compze.InternalUtilities\Compze.Utilities.SystemExtensions.csproj" />
     </ItemGroup>
 
     <ItemGroup>

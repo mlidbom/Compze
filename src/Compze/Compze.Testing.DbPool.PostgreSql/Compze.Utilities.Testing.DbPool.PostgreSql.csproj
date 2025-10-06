@@ -6,17 +6,17 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <PropertyGroup>
-      <RootNamespace>Compze.Testing.DbPool.MySql</RootNamespace>
+      <RootNamespace>Compze.Testing.DbPool.PostgreSql</RootNamespace>
       <NuGetAuditMode>direct</NuGetAuditMode>
       <AnalysisLevel>latest-all</AnalysisLevel>
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Testing.DbPool.csproj" />
-      <ProjectReference Include="..\Compze.Persistence.MySql.Infrastructure\Compze.Persistence.MySql.Infrastructure.csproj" />
+      <ProjectReference Include="..\Compze.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
+      <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Persistence.MySql.DependencyInjection" />
+      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.DependencyInjection" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
    </ItemGroup>

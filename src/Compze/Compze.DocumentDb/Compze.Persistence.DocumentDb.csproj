@@ -13,7 +13,7 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.Utilities.DocumentDb.Abstractions.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.Abstractions\Compze.Persistence.DocumentDb.Abstractions.csproj" />
       <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\Compze.Persistence.Common\Compze.Persistence.Common.csproj" />
       <ProjectReference Include="..\Compze.Serialization\Compze.Serialization.csproj" />

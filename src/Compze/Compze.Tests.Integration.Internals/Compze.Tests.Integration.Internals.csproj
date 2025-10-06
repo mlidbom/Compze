@@ -11,9 +11,9 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
-      <ProjectReference Include="..\Compze.Testing.DbPool.MicrosoftSql\Compze.Testing.DbPool.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\Compze.Testing.DbPool.PostgreSql\Compze.Testing.DbPool.PostgreSql.csproj" />
-      <ProjectReference Include="..\Compze.Testing.DbPool.MySql\Compze.Testing.DbPool.MySql.csproj" />
+      <ProjectReference Include="..\Compze.Testing.DbPool.MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\Compze.Testing.DbPool.PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.Testing.DbPool.MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
@@ -35,7 +35,7 @@
       <PackageReference Include="xunit" Version="2.9.3" />
    </ItemGroup>
 	<ItemGroup>
-		<Content Include="..\test-common-appsettings.json" Link="appsettings.json" >
+		<Content Include="..\test-common-appsettings.json" Link="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<None Include="..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">

@@ -12,7 +12,7 @@
       <ProjectReference Include="..\Compze.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
       <ProjectReference Include="..\Compze.Persistence.PostgreSql.Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
       <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\Compze.Testing.DbPool.PostgreSql\Compze.Testing.DbPool.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.Testing.DbPool.PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />

@@ -11,8 +11,8 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.DocumentDb\Compze.Utilities.DocumentDb.csproj" />
-      <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb\Compze.Persistence.DocumentDb.csproj" />
+      <ProjectReference Include="..\Compze.Logging.Serilog\Compze.Utilities.Logging.Serilog.csproj" />
       <ProjectReference Include="..\Compze.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>

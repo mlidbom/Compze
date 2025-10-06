@@ -14,8 +14,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.csproj" />
-        <ProjectReference Include="..\Compze.Logging\Compze.Logging.csproj" />
+        <ProjectReference Include="..\Compze.InternalUtilities\Compze.Utilities.SystemExtensions.csproj" />
+        <ProjectReference Include="..\Compze.Logging\Compze.Utilities.Logging.csproj" />
     </ItemGroup>
 
     <ItemGroup>

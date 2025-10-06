@@ -17,13 +17,13 @@
       <ProjectReference Include="..\Compze.Persistence.MicrosoftSql.DependencyInjection\Compze.Tessaging.Hosting.Persistence.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Compze.Persistence.MySql.DependencyInjection\Compze.Tessaging.Hosting.Persistence.MySql.csproj" />
       <ProjectReference Include="..\Compze.Persistence.PostgreSql.DependencyInjection\Compze.Tessaging.Hosting.Persistence.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Compze.DocumentDb.MicrosoftSql\Compze.Utilities.DocumentDb.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.MicrosoftSql\Compze.Persistence.DocumentDb.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Compze.EventStore.MicrosoftSql\Compze.EventStore.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.Persistence.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\Compze.DocumentDb.MySql\Compze.DocumentDb.MySql.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.MySql\Compze.Persistence.DocumentDb.MySql.csproj" />
       <ProjectReference Include="..\Compze.EventStore.MySql\Compze.EventStore.MySql.csproj" />
       <ProjectReference Include="..\Compze.Tessaging.MySql\Compze.Tessaging.Persistence.MySql.csproj" />
-      <ProjectReference Include="..\Compze.DocumentDb.PostgreSql\Compze.DocumentDb.PostgreSql.csproj" />
+      <ProjectReference Include="..\Compze.DocumentDb.PostgreSql\Compze.Persistence.DocumentDb.PostgreSql.csproj" />
       <ProjectReference Include="..\Compze.EventStore.PostgreSql\Compze.EventStore.PostgreSql.csproj" />
       <ProjectReference Include="..\Compze.Tessaging.PostgreSql\Compze.Tessaging.Persistence.PostgreSql.csproj" />
    </ItemGroup>
