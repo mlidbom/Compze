@@ -11,7 +11,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Abstractions\Internals\Compze.Abstractions.Internal.csproj" />
+    <ProjectReference Include="..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
     <ProjectReference Include="..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>

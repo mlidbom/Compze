@@ -12,7 +12,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MicrosoftSql\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\MicrosoftSql\Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>
   <ItemGroup>

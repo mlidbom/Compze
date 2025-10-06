@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\..\..\Persistence\MicrosoftSql\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\MicrosoftSql\Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
   </ItemGroup>

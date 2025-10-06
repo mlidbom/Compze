@@ -11,7 +11,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Internals\**" />
+    <Compile Remove="Internal\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />

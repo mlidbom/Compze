@@ -9,7 +9,7 @@
   </Configurations>
   <Folder Name="/Compze/" />
   <Folder Name="/Compze/Abstractions/">
-    <Project Path="Compze/Abstractions/Internals/Compze.Abstractions.Internal.csproj">
+    <Project Path="Compze/Abstractions/Internal/Compze.Abstractions.Internal.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="Compze/Abstractions/Compze.Abstractions.csproj">
@@ -45,17 +45,17 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Persistence/MicrosoftSql/">
-    <Project Path="Compze/Persistence/MicrosoftSql/Compze.Persistence.MicrosoftSql.Infrastructure.csproj">
+    <Project Path="Compze/Persistence/MicrosoftSql/Infrastructure/Compze.Persistence.MicrosoftSql.Infrastructure.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Persistence/MySql/">
-    <Project Path="Compze/Persistence/MySql/Compze.Persistence.MySql.Infrastructure.csproj">
+    <Project Path="Compze/Persistence/MySql/Infrastructure/Compze.Persistence.MySql.Infrastructure.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Compze/Persistence/PostgreSql/">
-    <Project Path="Compze/Persistence/PostgreSql/Compze.Persistence.PostgreSql.Infrastructure.csproj">
+    <Project Path="Compze/Persistence/PostgreSql/Infrastructure/Compze.Persistence.PostgreSql.Infrastructure.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>

@@ -12,7 +12,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Persistence\MySql\Compze.Persistence.MySql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\MySql\Infrastructure\Compze.Persistence.MySql.Infrastructure.csproj" />
     <ProjectReference Include="..\Compze.EventStore.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>

@@ -9,7 +9,7 @@
     <RootNamespace>Compze.Persistence.MicrosoftSql.Infrastructure</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Compze.Persistence.Common.csproj" />
+    <ProjectReference Include="..\..\Common\Compze.Persistence.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />

@@ -17,6 +17,6 @@
     <InternalsVisibleTo Include="Compze.Tessaging" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Abstractions\Internals\Compze.Abstractions.Internal.csproj" />
+    <ProjectReference Include="..\..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
   </ItemGroup>
 </Project>

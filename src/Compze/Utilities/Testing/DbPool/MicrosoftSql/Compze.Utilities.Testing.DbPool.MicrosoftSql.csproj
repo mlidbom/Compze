@@ -13,7 +13,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
-    <ProjectReference Include="..\..\..\..\Persistence\MicrosoftSql\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\MicrosoftSql\Infrastructure\Compze.Persistence.MicrosoftSql.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MicrosoftSql" />

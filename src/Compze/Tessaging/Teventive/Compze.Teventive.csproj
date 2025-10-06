@@ -20,7 +20,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Abstractions\Internals\Compze.Abstractions.Internal.csproj" />
+    <ProjectReference Include="..\..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
     <ProjectReference Include="..\Common\Compze.Tessaging.Common.csproj" />
     <ProjectReference Include="Abstractions\Compze.Teventive.Abstractions.csproj" />
   </ItemGroup>

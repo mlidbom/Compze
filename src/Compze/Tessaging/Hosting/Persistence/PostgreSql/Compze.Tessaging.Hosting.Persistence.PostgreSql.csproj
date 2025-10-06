@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\..\..\Persistence\PostgreSql\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Persistence\PostgreSql\Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
   </ItemGroup>
