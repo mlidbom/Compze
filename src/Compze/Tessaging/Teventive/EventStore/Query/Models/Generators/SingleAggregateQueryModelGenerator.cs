@@ -19,7 +19,7 @@ public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewMode
    where TEvent : class, IAggregateEvent
    where TViewModel : class, ISingleAggregateQueryModel
 {
-   readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> _eventDispatcher = new();
+   readonly IMutableEventDispatcher<TEvent> _eventDispatcher = IMutableEventDispatcher<TEvent>.New();
    readonly TSession _session;
    protected TViewModel? Model { get; private set; }
 

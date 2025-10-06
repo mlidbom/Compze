@@ -16,7 +16,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
    //Yes empty. Id should be assigned by an action, and it should be obvious that the aggregate in invalid until that happens
    protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TAggregateEvent).IsInterface);
 
-   readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventDispatcher = new();
+   readonly IMutableEventDispatcher<TAggregateEvent> _eventDispatcher = IMutableEventDispatcher<TAggregateEvent>.New();
 
    protected IEventHandlerRegistrar<TAggregateEvent> RegisterEventAppliers() => _eventDispatcher.Register();
 

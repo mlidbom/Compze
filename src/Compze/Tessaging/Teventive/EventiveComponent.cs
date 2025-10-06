@@ -20,7 +20,7 @@ public abstract class EventiveComponent<TParent,
 {
     static EventiveComponent() => AggregateTypeValidator<TComponent, TComponentEventImplementation, TComponentEvent>.AssertStaticStructureIsValid();
 
-    readonly IMutableEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = new CallMatchingHandlersInRegistrationOrderEventDispatcher<TComponentEvent>();
+    readonly IMutableEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = IMutableEventDispatcher<TComponentEvent>.New();
 
     TParent _parent;
 

@@ -49,8 +49,8 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
     }
 
     readonly List<IAggregateEvent> _unCommittedEvents = [];
-    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventAppliersDispatcher = new();
-    readonly CallMatchingHandlersInRegistrationOrderEventDispatcher<TAggregateEvent> _eventHandlersDispatcher = new();
+    readonly IMutableEventDispatcher<TAggregateEvent> _eventAppliersDispatcher = IMutableEventDispatcher<TAggregateEvent>.New();
+    readonly IMutableEventDispatcher<TAggregateEvent> _eventHandlersDispatcher = IMutableEventDispatcher<TAggregateEvent>.New();
 
     int _reentrancyLevel;
     bool _applyingEvents;

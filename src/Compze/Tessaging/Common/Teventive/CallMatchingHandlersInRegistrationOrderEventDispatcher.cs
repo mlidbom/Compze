@@ -44,7 +44,7 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : I
       }
    }
 
-   public bool Handles(IAggregateEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
+   public bool Handles(TEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
 
    Action<IEvent>[] GetHandlers(Type type, bool validateHandlerExists = true)
    {
