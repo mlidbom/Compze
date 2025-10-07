@@ -9,6 +9,7 @@ using Compze.Abstractions;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -18,10 +19,14 @@ class TypeMapper : ITypeMapper
 {
    static readonly IThreadShared<MappingState> State = ThreadShared.WithDefaultTimeout<MappingState>();
 
-   public TypeId GetId(Type type)
+   static TypeMapper()
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+      AppDomain.CurrentDomain.AssemblyLoad += (a, b) => EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+   }
 
+   public TypeId GetId(Type type)
+   {
       return State.Read(state =>
       {
          if(state.TypeToTypeIdMap.TryGetValue(type, out var typeId))
@@ -29,14 +34,12 @@ class TypeMapper : ITypeMapper
             return typeId;
          }
 
-         throw BuildExceptionDescribingHowToAddMissingMappings(type);
+         throw BuildExceptionDescribingHowToAddMissingMappings([type]);
       });
    }
 
    public Type GetType(TypeId typeId)
    {
-      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
-
       return State.Read(state =>
       {
          if(state.TypeIdToTypeMap.TryGetValue(typeId, out var type))
@@ -50,29 +53,27 @@ class TypeMapper : ITypeMapper
 
    public bool TryGetType(TypeId typeId, [NotNullWhen(true)] out Type? type)
    {
-      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
       type = State.Read(state => state.TypeIdToTypeMap.GetValueOrDefault(typeId));
       return type != null;
    }
 
    public IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type)
    {
-      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
-
       var found = State.Read(state => state
                                      .TypeToTypeIdMap
                                      .Keys
                                      .Where(type.IsAssignableFrom)
                                      .Select(matchingType => state.TypeToTypeIdMap[matchingType])
                                      .ToArray());
-      if(!found.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(type);
+      if(!found.Any()) throw BuildExceptionDescribingHowToAddMissingMappings([type]);
       return found;
    }
 
-   public void AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings)
+   public void AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Update(state =>
    {
-      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
-   }
+      var missing = typesThatRequireMappings.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
+      if(missing.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(missing);
+   });
 
    static void AssertTypeValidForMapping(Type type)
    {
@@ -330,18 +331,24 @@ class TypeMapper : ITypeMapper
       return code.ToString();
    }
 
-   static Exception BuildExceptionDescribingHowToAddMissingMappings(Type missingType)
+   static Exception BuildExceptionDescribingHowToAddMissingMappings(IReadOnlyList<Type> missingTypes)
    {
       var fixMessage = new StringBuilder();
+
+      var firstType = missingTypes.First();
+      var missingInTheSameAssembly = missingTypes.TakeWhile(it => it.Assembly == firstType.Assembly).ToList();
 
       fixMessage.AppendLine(CultureInfo.InvariantCulture,
                             $"""
 
                              In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
-                             Some such required type mappings are missing. For convenience you can simply paste in the code below into the file {MappingFileName} in the root of the defining the type:
+                             Some such required type mappings are missing. For convenience you can simply paste in the code below into the file {MappingFileName} in the root of the project defining the type:
                              """);
 
-      fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(new Guid(\"{Guid.NewGuid()}\"), typeof({missingType.GetFullNameCompilable()}));");
+      foreach(var missingType in missingInTheSameAssembly)
+      {
+         fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(new Guid(\"{Guid.NewGuid()}\"), typeof({missingType.GetFullNameCompilable()}));");
+      }
 
       fixMessage.Append(Environment.NewLine).AppendLine();
 

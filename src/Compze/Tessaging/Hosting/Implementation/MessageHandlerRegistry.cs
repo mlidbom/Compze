@@ -133,6 +133,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
 
       var remoteResultTypes = _commandHandlersReturningResults
                              .Where(handler => handler.Key.Implements<IRemotableMessage>())
+                             .Where(handler => handler.Value.ReturnValueType.Implements<IRemotableMessage>())
                              .Select(handler => handler.Value.ReturnValueType)
                              .ToList();
 
