@@ -126,10 +126,4 @@ public static class MessageTypes
          }
       }
    }
-
-   internal static void MapTypes(ITypeMappingRegistrar typeMapper)
-   {
-      typeMapper
-        .MapTypeAndStandardCollectionTypes<IRemotableEvent>("1E0DB1B4-71A6-4D2E-901F-E238ABA30B63");
-   }
 }

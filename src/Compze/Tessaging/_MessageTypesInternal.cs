@@ -46,11 +46,4 @@ public static class MessageTypesInternal
 
     public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery((EndpointInformationQuery _, TypeMapper _, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
                                                                                                                                    new EndpointInformation(registry.HandledRemoteMessageTypeIds(), configuration));
-
-    internal static void MapTypes(ITypeMappingRegistrar typeMapper)
-    {
-        typeMapper
-           .MapTypeAndStandardCollectionTypes<MessageTypesInternal.EndpointInformationQuery>("D94259E4-7479-442C-99AE-D49C12CF8713")
-           .MapTypeAndStandardCollectionTypes<MessageTypesInternal.EndpointInformation>("2B598C6D-4893-4CB9-B4CE-7B705AD92DF9");
-    }
 }

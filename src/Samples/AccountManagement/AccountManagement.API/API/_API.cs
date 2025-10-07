@@ -55,7 +55,5 @@ public class AccountApi : IStaticInstancePropertySingleton
    public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
    {
       builder.RegisterInMemoryPersistenceLayer();
-
-      AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
    }
 }

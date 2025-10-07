@@ -38,7 +38,6 @@ class ServerEndpointBuilder : IEndpointBuilder
    public IEndpoint Build()
    {
       SetupContainer();
-      SetupInternalTypeMap();
       MessageTypesInternal.RegisterHandlers(RegisterHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
@@ -48,13 +47,6 @@ class ServerEndpointBuilder : IEndpointBuilder
                                   Configuration);
       _builtSuccessfully = true;
       return endpoint;
-   }
-
-   void SetupInternalTypeMap()
-   {
-      EventStoreApi.MapTypes(TypeMapper);
-      MessageTypes.MapTypes(TypeMapper);
-      MessageTypesInternal.MapTypes(TypeMapper);
    }
 
    public ServerEndpointBuilder(IEndpointHost host, IMessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
