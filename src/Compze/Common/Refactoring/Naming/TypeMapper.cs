@@ -396,9 +396,9 @@ class TypeMapper : ITypeMapper
 
       code.AppendLine("using System;");
       code.AppendLine();
+      code.AppendLine(CultureInfo.InvariantCulture, $"// ReSharper disable All");
       code.AppendLine(CultureInfo.InvariantCulture, $"namespace {rootNamespace};");
       code.AppendLine();
-      code.AppendLine(CultureInfo.InvariantCulture, $"// ReSharper disable All");
       code.AppendLine(CultureInfo.InvariantCulture, $"#pragma warning disable IDE1006,IDE0001,IDE0002,IDE0003,IDE0004,IDE0005,IDE0055,CA1050,CA1707,CA1716");
       code.AppendLine();
       code.AppendLine(CultureInfo.InvariantCulture, $"/// <summary>");
