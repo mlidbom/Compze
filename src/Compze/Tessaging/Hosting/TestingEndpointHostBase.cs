@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
@@ -24,6 +23,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
                                                                    .ToList();
 
    void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride));
+
    public IEndpoint RegisterTestingEndpoint(string? name = null, EndpointId? id = null, Action<IEndpointBuilder>? setup = null)
    {
       var endpointId = id ?? new EndpointId(Guid.NewGuid());
@@ -33,11 +33,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    }
 
    public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
-      RegisterClientEndpoint(builder =>
-      {
-         Endpoints.Select(otherEndpoint => otherEndpoint.ServiceLocator.Resolve<TypeMapper>())
-                  .ForEach(otherTypeMapper => ((TypeMapper)builder.TypeMapper).IncludeMappingsFrom(otherTypeMapper));
-      });
+      RegisterClientEndpoint(builder => {});
 
    public TException AssertThrown<TException>() where TException : Exception
    {
@@ -53,12 +49,13 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    }
 
    bool _disposed;
+
    protected override async ValueTask DisposeAsync(bool disposing)
    {
       if(!_disposed)
       {
          _disposed = true;
-         this.Log().LogAndSuppressExceptions(() => WaitForEndpointsToBeAtRest(timeoutOverride:5.Seconds()));
+         this.Log().LogAndSuppressExceptions(() => WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds()));
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 

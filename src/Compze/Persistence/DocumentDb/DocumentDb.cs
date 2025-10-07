@@ -12,6 +12,7 @@ using Compze.Serialization;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Persistence.DocumentDb;
 
@@ -125,7 +126,10 @@ class DocumentDb : IDocumentDb
       (TDocument)Assert.Result.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));
 
    IReadOnlySet<Guid> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
-   IReadOnlySet<Guid> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type).Select(typeId => typeId.GuidValue).ToHashSet();
+   IReadOnlySet<Guid> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
+                                                                 .Select(typeId => typeId.GuidValue)
+                                                                 .ToHashSet()
+                                                                 .assert(ids => ids.Any(), it => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 
    Type GetTypeFromId(TypeId id) => _typeMapper.GetType(id);
 }

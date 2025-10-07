@@ -49,23 +49,6 @@ public class EventStoreUpdaterTest(string pluggableComponentsCombination) : Dupl
 
       _serviceLocator.Resolve<IMessageHandlerRegistrar>()
                      .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
-
-      _serviceLocator.Resolve<ITypeMappingRegistrar>()
-                     .Map<User>("2cfabb11-5e5a-494d-898f-8bfc654544eb")
-                     .Map<IUserEvent>("0727c209-2f49-46ab-a56b-a1332415a895")
-                     .Map<MigratedAfterUserChangedEmailEvent>("9ff42a12-f28c-447a-8aa1-79e6f685fa41")
-                     .Map<MigratedBeforeUserRegisteredEvent>("3338e1d4-3839-4f63-9248-ea4dd30c8348")
-                     .Map<MigratedReplaceUserChangedPasswordEvent>("45db6370-f7e7-4eb8-b792-845485d86295")
-                     .Map<UserChangedEmail>("40ae1f6d-5f95-4c60-ac5f-21a3d1c85de9")
-                     .Map<UserChangedPassword>("0b3b57f6-fd69-4da1-bb52-15033495f044")
-                     .Map<UserEvent>("fa71e035-571d-4231-bd65-e667c138ec36")
-                     .Map<UserRegistered>("03265864-8e1d-4eb7-a7a9-63dfc2b965de")
-                     .Map<IMigratedAfterUserChangedEmailEvent>("4ed567a3-724a-48d5-80f2-58978ca66922")
-                     .Map<IMigratedBeforeUserRegisteredEvent>("dbe74932-9a8d-4977-8f85-d55de7711f26")
-                     .Map<IMigratedReplaceUserChangedPasswordEvent>("798d793d-1866-41e5-8d59-26bf285dfc80")
-                     .Map<IUserChangedEmail>("27cfff73-9f21-4835-83d1-fbb4d58419e3")
-                     .Map<IUserChangedPassword>("9ee2f0e9-af5c-469b-8b85-7eda6a856b81")
-                     .Map<IUserRegistered>("6a9b3276-cedc-4dae-a15c-4d386c935a48");
    }
 
    [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync();

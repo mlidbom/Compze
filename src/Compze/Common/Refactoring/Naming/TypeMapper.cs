@@ -2,76 +2,79 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using Compze.Abstractions;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Common.Refactoring.Naming;
 
-class TypeMapper : ITypeMapper, ITypeMappingRegistrar
+class TypeMapper : ITypeMapper
 {
-   readonly IThreadShared<State> _state = ThreadShared.WithDefaultTimeout<State>();
+   static readonly IThreadShared<MappingState> State = ThreadShared.WithDefaultTimeout<MappingState>();
 
-   public TypeId GetId(Type type) => _state.Update(state =>
+   static TypeMapper()
    {
-      if(state.TypeToTypeIdMap.TryGetValue(type, out var typeId))
-      {
-         return typeId;
-      }
+      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+      AppDomain.CurrentDomain.AssemblyLoad += (a, b) => EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+   }
 
-      throw BuildExceptionDescribingHowToAddMissingMappings([type]);
-   });
-
-   public Type GetType(TypeId typeId) => _state.Update(state =>
+   public TypeId GetId(Type type)
    {
-      if(state.TypeIdToTypeMap.TryGetValue(typeId, out var type))
+      return State.Read(state =>
       {
-         return type;
-      }
+         if(state.TypeToTypeIdMap.TryGetValue(type, out var typeId))
+         {
+            return typeId;
+         }
 
-      throw new Exception($"Could not find type for {nameof(TypeId)}: {typeId}");
-   });
+         throw BuildExceptionDescribingHowToAddMissingMappings([type]);
+      });
+   }
+
+   public Type GetType(TypeId typeId)
+   {
+      return State.Read(state =>
+      {
+         if(state.TypeIdToTypeMap.TryGetValue(typeId, out var type))
+         {
+            return type;
+         }
+
+         throw new Exception($"Could not find type for {nameof(TypeId)}: {typeId}");
+      });
+   }
 
    public bool TryGetType(TypeId typeId, [NotNullWhen(true)] out Type? type)
    {
-      type = _state.Update(state => state.TypeIdToTypeMap.TryGetValue(typeId, out var innerType) ? innerType : null);
-
+      type = State.Read(state => state.TypeIdToTypeMap.GetValueOrDefault(typeId));
       return type != null;
    }
 
    public IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type)
    {
-      return _state.Update(state => state
-                                   .TypeToTypeIdMap
-                                   .Keys
-                                   .Where(type.IsAssignableFrom)
-                                   .Select(matchingType => state.TypeToTypeIdMap[matchingType])
-                                   .ToArray());
+      var found = State.Read(state => state
+                                     .TypeToTypeIdMap
+                                     .Keys
+                                     .Where(type.IsAssignableFrom)
+                                     .Select(matchingType => state.TypeToTypeIdMap[matchingType])
+                                     .ToArray());
+      if(!found.Any()) throw BuildExceptionDescribingHowToAddMissingMappings([type]);
+      return found;
    }
 
-   public void AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => _state.Update(state =>
+   public void AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Update(state =>
    {
-      var typesWithMissingMappings = typesThatRequireMappings.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
-      if(typesWithMissingMappings.Any())
-      {
-         throw BuildExceptionDescribingHowToAddMissingMappings(typesWithMissingMappings);
-      }
+      var missing = typesThatRequireMappings.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
+      if(missing.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(missing);
    });
-
-   public void IncludeMappingsFrom(TypeMapper other) => _state.Update(state => other._state.Update(state.IncludeMappingsFrom));
-
-   public ITypeMappingRegistrar Map<TType>(Guid typeIdGuid)
-   {
-      _state.Update(state => state.Map(typeof(TType), new TypeId(typeIdGuid)));
-      return this;
-   }
-
-   public ITypeMappingRegistrar Map<TType>(string typeGuid) => Map<TType>(Guid.Parse(typeGuid));
 
    static void AssertTypeValidForMapping(Type type)
    {
@@ -84,9 +87,291 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistrar
       }
    }
 
-   static Exception BuildExceptionDescribingHowToAddMissingMappings(List<Type> typesWithMissingMappings)
+   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => State.Update(state =>
    {
-      typesWithMissingMappings = typesWithMissingMappings.Distinct().OrderBy(type => type.GetFullNameCompilable()).ToList();
+      var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
+
+      foreach(var assembly in unHandledAssemblies)
+      {
+         {
+            if(state.CheckedAssemblies.Contains(assembly))
+            {
+               return;
+            }
+
+            try
+            {
+               CheckAssemblyForRequiredMappings(assembly, state);
+               state.CheckedAssemblies.Add(assembly);
+            }
+            finally
+            {
+               state.CheckedAssemblies.Add(assembly);
+            }
+         }
+      }
+   });
+
+   static void CheckAssemblyForRequiredMappings(Assembly assembly, MappingState state)
+   {
+      var typesRequiringMapping = GetTypesRequiringMapping(assembly);
+      if(!typesRequiringMapping.Any()) return;
+      var assemblyName = assembly.GetName().Name;
+      var rootNamespace = assemblyName;
+      var autoGeneratedTypeName = $"{rootNamespace}.AutoGeneratedCurrentAssemblyTypeMapperForRefactoringSupport";
+
+      var autoGeneratedType = assembly.GetType(autoGeneratedTypeName);
+
+      if(autoGeneratedType == null) throw BuildExceptionDescribingHowToAddMissingMappings(assembly);
+
+      var instance = Activator.CreateInstance(autoGeneratedType);
+      var method = autoGeneratedType.GetMethod("MapTypesForCurrentAssembly", BindingFlags.Public | BindingFlags.Instance);
+
+      if(method != null && instance != null)
+      {
+         void MapAction(Guid guid, Type type) => state.Map(type, new TypeId(guid));
+         method.Invoke(instance, [(Action<Guid, Type>)MapAction]);
+      }
+
+      var typesWithMissingMappings = typesRequiringMapping.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
+      if(typesWithMissingMappings.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(assembly);
+   }
+
+   static bool IsAssemblyWeShouldExamine(Assembly assembly)
+   {
+      if(assembly.IsDynamic || assembly.FullName == null) return false;
+
+      const string compzeAssemblyNamesStart = "Compze.";
+
+      if(assembly.FullName.StartsWith(compzeAssemblyNamesStart, StringComparison.Ordinal))
+         return true;
+
+      if(assembly.GetReferencedAssemblies().Any(name => name.Name != null && name.Name.StartsWith(compzeAssemblyNamesStart, StringComparison.Ordinal)))
+         return true;
+
+      return false;
+   }
+
+   static ISet<Type> GetTypesRequiringMapping(Assembly assembly)
+   {
+      if(!IsAssemblyWeShouldExamine(assembly)) return new HashSet<Type>();
+      var types = new HashSet<Type>();
+
+      // Get all types defined in the assembly
+      var definedTypes = assembly.GetTypes()
+                                 .Where(type => !type.IsGenericParameter)
+                                 .Where(it => !it.IsOpenGenericType())
+                                 .ToList();
+
+      // Add non-generic types and generic type definitions that need mapping
+      foreach(var type in definedTypes)
+      {
+         if(ShouldMapType(type))
+         {
+            types.Add(type);
+            // Also add the array type for each mapped type
+            types.Add(type.MakeArrayType());
+         }
+      }
+
+      // Find all closed generic type instantiations used in this assembly
+      foreach(var definedType in definedTypes)
+      {
+         // Check properties
+         foreach(var property in definedType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+         {
+            CollectClosedGenericTypes(property.PropertyType, assembly, types);
+         }
+
+         // Check fields
+         foreach(var field in definedType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+         {
+            CollectClosedGenericTypes(field.FieldType, assembly, types);
+         }
+
+         // Check methods (parameters and return types)
+         foreach(var method in definedType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+         {
+            CollectClosedGenericTypes(method.ReturnType, assembly, types);
+            foreach(var parameter in method.GetParameters())
+            {
+               CollectClosedGenericTypes(parameter.ParameterType, assembly, types);
+            }
+         }
+
+         // Check base type
+         if(definedType.BaseType != null)
+         {
+            CollectClosedGenericTypes(definedType.BaseType, assembly, types);
+         }
+
+         // Check interfaces
+         foreach(var interfaceType in definedType.GetInterfaces())
+         {
+            CollectClosedGenericTypes(interfaceType, assembly, types);
+         }
+      }
+
+      return types.OrderBy(type => type.GetFullNameCompilable()).ToHashSet();
+   }
+
+   static void CollectClosedGenericTypes(Type type, Assembly targetAssembly, HashSet<Type> collectedTypes)
+   {
+      // If this is a closed generic type (generic but not a generic type definition)
+      if(type.IsGenericType && !type.IsGenericTypeDefinition)
+      {
+         // Check if any of the type arguments are defined in the target assembly
+         var typeArguments = type.GetGenericArguments();
+         var hasTypeArgumentFromTargetAssembly = typeArguments.Any(arg =>
+                                                                      !arg.IsGenericParameter && arg.Assembly == targetAssembly);
+
+         if(hasTypeArgumentFromTargetAssembly && ShouldMapType(type))
+         {
+            collectedTypes.Add(type);
+         }
+
+         // Recursively check type arguments for nested generics
+         foreach(var typeArg in typeArguments)
+         {
+            if(!typeArg.IsGenericParameter)
+            {
+               CollectClosedGenericTypes(typeArg, targetAssembly, collectedTypes);
+            }
+         }
+      }
+
+      // Check if the type itself is generic and recurse
+      if(type.IsArray)
+      {
+         CollectClosedGenericTypes(type.GetElementType()!, targetAssembly, collectedTypes);
+      }
+   }
+
+   static bool ShouldMapType(Type type)
+   {
+      // Don't map open generic type definitions or generic parameters
+      if(type.IsGenericTypeDefinition || type.IsGenericParameter)
+      {
+         return false;
+      }
+
+      // Only map non-abstract types, or abstract types that are IRemotableEvent
+      if(type.IsAbstract && !typeof(IRemotableEvent).IsAssignableFrom(type))
+      {
+         return false;
+      }
+
+      // Map if it's an IMessage or implements IHasPersistentIdentity<>
+      return typeof(IMessage).IsAssignableFrom(type) ||
+             type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasPersistentIdentity<>));
+   }
+
+   const string MappingClassName = "AutoGeneratedCurrentAssemblyTypeMapperForRefactoringSupport";
+   const string MappingFileName = $"{MappingClassName}.cs";
+   const int MaxDirectoryLevelsToSearchUp = 4;
+
+   static string? TryFindProjectFileAndCreateMapping(Assembly assembly)
+   {
+      var assemblyLocation = assembly.Location;
+      if(string.IsNullOrEmpty(assemblyLocation)) return null;
+
+      var assemblyName = assembly.GetName().Name;
+      if(string.IsNullOrEmpty(assemblyName)) return null;
+
+      var assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
+      if(string.IsNullOrEmpty(assemblyDirectory)) return null;
+
+      var projectFile = FindProjectFile(assemblyDirectory, assemblyName);
+      if(projectFile == null) return null;
+
+      var projectDirectory = Path.GetDirectoryName(projectFile);
+      if(string.IsNullOrEmpty(projectDirectory)) return null;
+
+      var mappingFilePath = Path.Combine(projectDirectory, MappingFileName);
+      var rootNamespace = assemblyName;
+
+      var allTypesRequiringMapping = GetTypesRequiringMapping(assembly);
+      var existingMappings = State.Read(state => allTypesRequiringMapping
+                                                .Where(type => state.TypeToTypeIdMap.ContainsKey(type))
+                                                .ToDictionary(type => type, type => state.TypeToTypeIdMap[type]));
+
+      var mappingCode = GenerateAutoGeneratedClassCode(rootNamespace, allTypesRequiringMapping, existingMappings);
+      File.WriteAllText(mappingFilePath, mappingCode);
+
+      return mappingFilePath;
+   }
+
+   static string? FindProjectFile(string startDirectory, string assemblyName)
+   {
+      var projectFileName = $"{assemblyName}.csproj";
+      var currentDirectory = startDirectory;
+
+      // Walk up the directory tree up to MaxDirectoryLevelsToSearchUp levels
+      for(var level = 0; level < MaxDirectoryLevelsToSearchUp; level++)
+      {
+         if(string.IsNullOrEmpty(currentDirectory)) break;
+
+         var projectFilePath = Path.Combine(currentDirectory, projectFileName);
+         if(File.Exists(projectFilePath)) return projectFilePath;
+
+         var parentDirectory = Directory.GetParent(currentDirectory)?.FullName;
+         if(parentDirectory == currentDirectory || parentDirectory == null) break;
+
+         currentDirectory = parentDirectory;
+      }
+
+      // If not found after walking up, search down from the highest level reached
+      if(!string.IsNullOrEmpty(currentDirectory))
+      {
+         var foundFile = SearchDirectoryTreeForProjectFile(currentDirectory, projectFileName);
+         if(foundFile != null) return foundFile;
+      }
+
+      return null;
+   }
+
+   static string? SearchDirectoryTreeForProjectFile(string rootDirectory, string projectFileName)
+   {
+      try
+      {
+         // Check current directory first
+         var projectFilePath = Path.Combine(rootDirectory, projectFileName);
+         if(File.Exists(projectFilePath)) return projectFilePath;
+
+         // Search subdirectories
+         foreach(var directory in Directory.GetDirectories(rootDirectory))
+         {
+            var foundFile = SearchDirectoryTreeForProjectFile(directory, projectFileName);
+            if(foundFile != null) return foundFile;
+         }
+      }
+      catch
+      {
+         // Ignore access denied or other filesystem errors during search
+      }
+
+      return null;
+   }
+
+   static Exception BuildExceptionDescribingHowToAddMissingMappings(Assembly assembly)
+   {
+      // Try to automatically find the project file and create the mapping
+      var createdFilePath = TryFindProjectFileAndCreateMapping(assembly);
+      if(createdFilePath != null)
+      {
+         return new Exception($"Type mappings were automatically generated for assembly: {assembly.GetName().Name} at: {createdFilePath}. Please rebuild the project and try again.");
+      }
+
+      // Fallback to the original exception message with manual instructions
+      var assemblyName = assembly.GetName().Name;
+      var rootNamespace = assemblyName;
+
+      var allTypesRequiringMapping = GetTypesRequiringMapping(assembly);
+
+      // Get existing mappings for types in this assembly from the current TypeMapper state
+      var existingMappings = State.Read(state => allTypesRequiringMapping
+                                                .Where(type => state.TypeToTypeIdMap.ContainsKey(type))
+                                                .ToDictionary(type => type, type => state.TypeToTypeIdMap[type]));
 
       var fixMessage = new StringBuilder();
 
@@ -94,20 +379,80 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistrar
                             $"""
 
                              In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
-                             Some such required type mappings are missing. For convenience you can simply paste in the code below:
+                             Some such required type mappings are missing for assembly: {assemblyName}
+
+                             Please create a file named '{MappingFileName}' in the root folder of the project '{assemblyName}' with the following content:
+
                              """);
 
-      typesWithMissingMappings.ForEach(type => fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}   .{MapMethodCallforType(type)}"));
-
-      fixMessage.Append(';').AppendLine().AppendLine();
+      fixMessage.AppendLine(GenerateAutoGeneratedClassCode(rootNamespace, allTypesRequiringMapping, existingMappings));
 
       return new Exception(fixMessage.ToString());
    }
 
-   class State
+   static string GenerateAutoGeneratedClassCode(string? rootNamespace, ISet<Type> typesToMap, Dictionary<Type, TypeId> existingMappings)
+   {
+      var code = new StringBuilder();
+
+      code.AppendLine("using System;");
+      code.AppendLine();
+      code.AppendLine(CultureInfo.InvariantCulture, $"// ReSharper disable All");
+      code.AppendLine(CultureInfo.InvariantCulture, $"namespace {rootNamespace};");
+      code.AppendLine();
+      code.AppendLine(CultureInfo.InvariantCulture, $"#pragma warning disable IDE1006,IDE0001,IDE0002,IDE0003,IDE0004,IDE0005,IDE0055,CA1050,CA1707,CA1716");
+      code.AppendLine();
+      code.AppendLine(CultureInfo.InvariantCulture, $"/// <summary>");
+      code.AppendLine(CultureInfo.InvariantCulture, $"/// This file is automatically generated. Do not edit manually.");
+      code.AppendLine(CultureInfo.InvariantCulture, $"/// Regenerate by running the application when type mappings are missing.");
+      code.AppendLine(CultureInfo.InvariantCulture, $"/// </summary>");
+      code.AppendLine(CultureInfo.InvariantCulture, $"public sealed class {MappingClassName}");
+      code.AppendLine("{");
+      code.AppendLine("   public void MapTypesForCurrentAssembly(Action<Guid, Type> map)");
+      code.AppendLine("   {");
+
+      foreach(var type in typesToMap)
+      {
+         var guid = existingMappings.TryGetValue(type, out var typeId)
+                       ? typeId.GuidValue.ToString()
+                       : Guid.NewGuid().ToString();
+         code.AppendLine(CultureInfo.InvariantCulture, $"      map(new Guid(\"{guid}\"), typeof({type.GetFullNameCompilable()}));");
+      }
+
+      code.AppendLine("   }");
+      code.AppendLine("}");
+
+      return code.ToString();
+   }
+
+   static Exception BuildExceptionDescribingHowToAddMissingMappings(IReadOnlyList<Type> missingTypes)
+   {
+      var fixMessage = new StringBuilder();
+
+      var firstType = missingTypes[0];
+      var missingInTheSameAssembly = missingTypes.TakeWhile(it => it.Assembly == firstType.Assembly).ToList();
+
+      fixMessage.AppendLine(CultureInfo.InvariantCulture,
+                            $"""
+
+                             In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
+                             Some such required type mappings are missing. For convenience you can simply paste in the code below into the file {MappingFileName} in the root of the project defining the type:
+                             """);
+
+      foreach(var missingType in missingInTheSameAssembly)
+      {
+         fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(new Guid(\"{Guid.NewGuid()}\"), typeof({missingType.GetFullNameCompilable()}));");
+      }
+
+      fixMessage.Append(Environment.NewLine).AppendLine();
+
+      return new Exception(fixMessage.ToString());
+   }
+
+   class MappingState
    {
       public readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       public readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
+      public readonly HashSet<Assembly> CheckedAssemblies = [];
 
       internal void Map(Type type, TypeId typeId)
       {
@@ -128,9 +473,5 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistrar
          TypeIdToTypeMap.Add(typeId, type);
          TypeToTypeIdMap.Add(type, typeId);
       }
-
-      public void IncludeMappingsFrom(State otherState) => otherState.TypeToTypeIdMap.ForEach(pair => Map(pair.Key, pair.Value));
    }
-
-   static string MapMethodCallforType(Type type) => $"""{nameof(ITypeMappingRegistrar.Map)}<{type.GetFullNameCompilable()}>("{Guid.NewGuid()}")""";
 }

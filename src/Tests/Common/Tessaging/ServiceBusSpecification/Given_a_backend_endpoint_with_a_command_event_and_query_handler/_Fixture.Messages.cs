@@ -19,7 +19,7 @@ namespace Compze.Tests.Tessaging.ServiceBusSpecification.Given_a_backend_endpoin
 
 public partial class Fixture
 {
-   protected static class MyAggregateEvent
+   protected internal static class MyAggregateEvent
    {
       public interface IRoot : IAggregateEvent;
       public interface Created : IRoot, IAggregateCreatedEvent;
@@ -40,7 +40,7 @@ public partial class Fixture
       }
    }
 
-   protected class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggregateEvent.Implementation.Root>
+   protected internal class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggregateEvent.Implementation.Root>
    {
       public MyAggregate() : base(new DateTimeNowTimeSource())
       {
@@ -58,7 +58,7 @@ public partial class Fixture
       }
    }
 
-   protected class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+   protected internal class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
    {
       MyCreateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
 
@@ -71,24 +71,24 @@ public partial class Fixture
       public Guid AggregateId { get; set; }
    }
 
-   protected class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+   protected internal class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
    {
       [UsedImplicitly] MyUpdateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
       public MyUpdateAggregateCommand(Guid aggregateId) : base(DeduplicationIdHandling.Create) => AggregateId = aggregateId;
       public Guid AggregateId { get; private set; }
    }
 
-   protected class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
+   protected internal class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 
-   protected interface IMyExactlyOnceEvent : IAggregateEvent;
-   protected class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
-   protected class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
-   protected class MyQueryResult;
+   protected internal interface IMyExactlyOnceEvent : IAggregateEvent;
+   protected internal class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
+   protected internal class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
+   protected internal class MyQueryResult;
 
-   protected class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
+   protected internal class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
    {
       MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
       internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.CreateVersion7()};
    }
-   protected class MyCommandResult;
+   protected internal class MyCommandResult;
 }

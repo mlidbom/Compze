@@ -49,7 +49,7 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
       interface IForbidAndRequireTransactionalSender : IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction;
       [Test] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
 
-      [UsedImplicitly] class AtMostOnceCommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaCommand
+      [UsedImplicitly] internal class AtMostOnceCommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaCommand
       {
          public Guid MessageId { get; } = Guid.NewGuid();
       }

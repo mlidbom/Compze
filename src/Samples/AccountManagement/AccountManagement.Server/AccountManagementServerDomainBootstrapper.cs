@@ -24,8 +24,6 @@ public class AccountManagementServerDomainBootstrapper
                                    setup: builder =>
                                    {
                                       builder.Container.RegisterAspNetCoreTransport();
-                                      AccountManagementApiTypeMapper.MapTypes(builder.TypeMapper);
-                                      DomainTypeMapper.MapTypes(builder.TypeMapper);
                                       RegisterDomainComponents(builder);
                                       RegisterHandlers(builder);
                                    });

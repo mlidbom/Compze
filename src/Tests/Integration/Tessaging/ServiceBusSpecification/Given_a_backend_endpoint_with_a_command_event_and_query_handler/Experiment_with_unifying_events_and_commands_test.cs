@@ -55,21 +55,6 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
                        store.Save(UserAggregate.Register(command));
                        return new RegisterUserResult(command.UserId);
                     });
-
-            builder.TypeMapper
-                   .Map<GetUserQuery>("f9163a11-c6b6-4d2f-88e4-fd476b95dc07")
-                   .Map<UserRegistrarCommand.RegisterUserCommand>("99ab8e1f-ce88-4070-becc-7967d65de172")
-                   .Map<UserAggregate>("4281ba68-a3ce-4a9a-82fc-be71d6155fbc")
-                   .Map<UserRegistrarAggregate>("732f0613-ee94-4d03-a479-9e5b69dc0e69")
-                   .Map<UserRegistrarEvent.Implementation.Created>("0e97953f-57f5-4252-8dec-a31c9a387dac")
-                   .Map<UserRegistrarEvent.Implementation.Root>("1849d406-9af4-481f-a475-395e9112ac4a")
-                   .Map<UserRegistrarEvent.IRoot>("20033612-88c5-422b-9632-d4d3cbcaff45")
-                   .Map<UserEvent.Implementation.Root>("05f0f69f-c29a-49c0-8cea-62286f5a1816")
-                   .Map<UserEvent.Implementation.UserRegisteredEvent>("5eac2b7a-014a-4783-9b19-4f0f975028f4")
-                   .Map<UserEvent.IRoot>("ff9f3cae-7377-4865-a623-f11436dad926")
-                   .Map<UserEvent.IUserRegistered>("1b5e0128-ab76-4026-a6d7-4f2ffa4d82cd")
-                   .Map<RegisterUserResult>("940adbc5-ef68-436a-90c2-ac4f000ec377")
-                   .Map<UserResource>("9f621299-22d9-4888-81f1-0e9ebc09625c");
          });
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();

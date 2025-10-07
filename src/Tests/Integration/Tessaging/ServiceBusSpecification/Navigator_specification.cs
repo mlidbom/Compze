@@ -44,14 +44,6 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
                        queryResults.Add(new UserResource(command.Name));
                        return new UserRegisteredConfirmationResource(command.Name);
                     });
-
-            builder.TypeMapper
-                   .Map<GetUserQuery>("44b8b0b6-fe09-4e3b-a22c-8d09bd51dbb0")
-                   .Map<RegisterUserCommand>("ed799a31-0de9-41ae-ae7a-421438f2d857")
-                   .Map<UserApiStartPageQuery>("4367ec6e-ddbc-42ea-91ad-9af1e6e4e29a")
-                   .Map<UserRegisteredConfirmationResource>("c60604b2-2917-450b-bcbf-7d023065c005")
-                   .Map<UserApiStartPage>("10b699df-35ac-430b-acb5-131df3cec5e1")
-                   .Map<UserResource>("7e2c57ef-e079-4615-a402-1a76c70b5b0b");
          });
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
@@ -85,23 +77,23 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
       (await userResource).Name.Should().Be("new-user-name");
    }
 
-   class UserApiStartPage
+   protected internal class UserApiStartPage
    {
       public static UserApiStartPageQuery Self => new();
       public RegisterUserCommand RegisterUser(string userName) => RegisterUserCommand.Create(userName);
    }
 
-   protected class GetUserQuery(string name) : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
+   protected internal class GetUserQuery(string name) : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
    {
       public string Name { get; private set; } = name;
    }
 
-   protected class UserResource(string name)
+   protected internal class UserResource(string name)
    {
       public string Name { get; private set; } = name;
    }
 
-   protected class RegisterUserCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<UserRegisteredConfirmationResource>
+   protected internal class RegisterUserCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<UserRegisteredConfirmationResource>
    {
       RegisterUserCommand() : base(DeduplicationIdHandling.Reuse) {}
 
@@ -114,11 +106,11 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
       public string Name { get; private set; } = "";
    }
 
-   protected class UserRegisteredConfirmationResource(string name)
+   protected internal class UserRegisteredConfirmationResource(string name)
    {
       public GetUserQuery User => new(Name);
       public string Name { get; } = name;
    }
 
-   class UserApiStartPageQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserApiStartPage>;
+   protected internal class UserApiStartPageQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserApiStartPage>;
 }

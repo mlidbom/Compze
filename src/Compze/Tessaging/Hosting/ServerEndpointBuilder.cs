@@ -27,7 +27,6 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    public IDependencyInjectionContainer Container { get; }
 
-   public ITypeMappingRegistrar TypeMapper => _typeMapper;
    readonly IMessagesInFlightTracker _globalStateTracker;
    readonly MessageHandlerRegistry _registry;
    readonly IEndpointHost _host;
@@ -38,7 +37,6 @@ class ServerEndpointBuilder : IEndpointBuilder
    public IEndpoint Build()
    {
       SetupContainer();
-      SetupInternalTypeMap();
       MessageTypesInternal.RegisterHandlers(RegisterHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
@@ -48,13 +46,6 @@ class ServerEndpointBuilder : IEndpointBuilder
                                   Configuration);
       _builtSuccessfully = true;
       return endpoint;
-   }
-
-   void SetupInternalTypeMap()
-   {
-      EventStoreApi.MapTypes(TypeMapper);
-      MessageTypes.MapTypes(TypeMapper);
-      MessageTypesInternal.MapTypes(TypeMapper);
    }
 
    public ServerEndpointBuilder(IEndpointHost host, IMessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
@@ -96,7 +87,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       Container.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
 
       Container.Register(
-         Singleton.For<ITypeMappingRegistrar, ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
+         Singleton.For<ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
          Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker),
          Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
          Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
