@@ -77,8 +77,6 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistrar
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
    }
 
-   public void IncludeMappingsFrom(TypeMapper other) => _state.Update(state => other._state.Update(state.IncludeMappingsFrom));
-
    public ITypeMappingRegistrar Map<TType>(Guid typeIdGuid)
    {
       _state.Update(state => state.Map(typeof(TType), new TypeId(typeIdGuid)));
@@ -386,7 +384,5 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistrar
          TypeIdToTypeMap.Add(typeId, type);
          TypeToTypeIdMap.Add(type, typeId);
       }
-
-      public void IncludeMappingsFrom(State otherState) => otherState.TypeToTypeIdMap.ForEach(pair => Map(pair.Key, pair.Value));
    }
 }

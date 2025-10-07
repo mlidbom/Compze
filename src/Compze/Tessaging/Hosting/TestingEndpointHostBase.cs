@@ -35,8 +35,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
       RegisterClientEndpoint(builder =>
       {
-         Endpoints.Select(otherEndpoint => otherEndpoint.ServiceLocator.Resolve<TypeMapper>())
-                  .ForEach(otherTypeMapper => ((TypeMapper)builder.TypeMapper).IncludeMappingsFrom(otherTypeMapper));
+         Endpoints.Select(otherEndpoint => otherEndpoint.ServiceLocator.Resolve<TypeMapper>());
       });
 
    public TException AssertThrown<TException>() where TException : Exception
