@@ -335,7 +335,7 @@ class TypeMapper : ITypeMapper
    {
       var fixMessage = new StringBuilder();
 
-      var firstType = missingTypes.First();
+      var firstType = missingTypes[0];
       var missingInTheSameAssembly = missingTypes.TakeWhile(it => it.Assembly == firstType.Assembly).ToList();
 
       fixMessage.AppendLine(CultureInfo.InvariantCulture,
