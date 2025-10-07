@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Microsoft.Data.SqlClient;
@@ -122,7 +124,7 @@ internal partial class MsSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceL
                            .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IEnumerable<Guid> acceptableTypeIds) => "IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n";
+   static string TypeInClause(IReadOnlySet<Guid> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any()).then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 
