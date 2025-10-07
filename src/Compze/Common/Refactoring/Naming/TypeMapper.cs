@@ -14,7 +14,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Common.Refactoring.Naming;
 
-class TypeMapper : ITypeMapper, ITypeMappingRegistrar
+class TypeMapper : ITypeMapper
 {
    static readonly IThreadShared<State> _state = ThreadShared.WithDefaultTimeout<State>();
    static readonly HashSet<Assembly> _checkedAssemblies = [];
@@ -74,14 +74,6 @@ class TypeMapper : ITypeMapper, ITypeMappingRegistrar
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
    }
-
-   public ITypeMappingRegistrar Map<TType>(Guid typeIdGuid)
-   {
-      _state.Update(state => state.Map(typeof(TType), new TypeId(typeIdGuid)));
-      return this;
-   }
-
-   public ITypeMappingRegistrar Map<TType>(string typeGuid) => Map<TType>(Guid.Parse(typeGuid));
 
    static void AssertTypeValidForMapping(Type type)
    {
