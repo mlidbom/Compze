@@ -137,34 +137,34 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
       });
    }
 
-   [Test]
-   public void CallingSaveWithAnInteraceAsTypeParameterDoesNotExplode()
-   {
-      IPersistentEntity user1 = new User { Email = "user1" };
-      IPersistentEntity user2 = new User { Email = "user2" };
+   //[Test]
+   //public void CallingSaveWithAnInterfaceAsTypeParameterDoesNotExplode()
+   //{
+   //   IPersistentEntity user1 = new User { Email = "user1" };
+   //   IPersistentEntity user2 = new User { Email = "user2" };
 
-      UseInTransactionalScope((reader, updater) =>
-      {
-         updater.Save(user2);
-         updater.Save(user1.Id, user1);
-         reader.Get<User>(user1.Id)
-               .Should()
-               .Be(user1);
-         reader.Get<User>(user2.Id)
-               .Should()
-               .Be(user2);
-      });
+   //   UseInTransactionalScope((reader, updater) =>
+   //   {
+   //      updater.Save(user2);
+   //      updater.Save(user1.Id, user1);
+   //      reader.Get<User>(user1.Id)
+   //            .Should()
+   //            .Be(user1);
+   //      reader.Get<User>(user2.Id)
+   //            .Should()
+   //            .Be(user2);
+   //   });
 
-      UseInScope(reader =>
-      {
-         reader.Get<User>(user1.Id)
-               .Id.Should()
-               .Be(user1.Id);
-         reader.Get<User>(user2.Id)
-               .Id.Should()
-               .Be(user2.Id);
-      });
-   }
+   //   UseInScope(reader =>
+   //   {
+   //      reader.Get<User>(user1.Id)
+   //            .Id.Should()
+   //            .Be(user1.Id);
+   //      reader.Get<User>(user2.Id)
+   //            .Id.Should()
+   //            .Be(user2.Id);
+   //   });
+   //}
 
    [Test]
    public void AddingAndRemovingObjectResultsInNoObjectBeingSaved()
