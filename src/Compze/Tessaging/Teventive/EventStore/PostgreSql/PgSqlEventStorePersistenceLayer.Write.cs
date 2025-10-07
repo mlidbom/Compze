@@ -51,7 +51,7 @@ partial class PgSqlEventStorePersistenceLayer
                                     .AddMediumTextParameter(Event.Event, data.EventJson)
                                     .AddParameter(Event.ReadOrder, NpgsqlDbType.Varchar, data.StorageInformation.ReadOrder?.ToString() ?? new ReadOrder().ToString())
                                     .AddParameter(Event.EffectiveVersion, NpgsqlDbType.Integer, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Event.TargetEvent, NpgsqlDbType.Varchar, data.StorageInformation.RefactoringInformation?.TargetEvent.ToString())
+                                    .AddNullableParameter(Event.TargetEvent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetEvent)
                                     .AddNullableParameter(Event.RefactoringType, NpgsqlDbType.Smallint, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .PrepareStatement()
                                     .ExecuteNonQuery());

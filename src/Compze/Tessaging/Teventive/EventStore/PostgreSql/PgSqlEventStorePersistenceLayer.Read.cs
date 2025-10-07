@@ -44,11 +44,11 @@ partial class PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager c
                                 ReadOrder = ReadOrder.Parse(eventReader.GetString(10)),
                                 InsertedVersion = eventReader.GetInt32(9),
                                 EffectiveVersion = eventReader.GetInt32(3),
-                                RefactoringInformation = (eventReader[7] as string, eventReader[8] as short?)switch
+                                RefactoringInformation = (eventReader.IsDBNull(7) ? (Guid?)null : eventReader.GetGuid(7), eventReader[8] as short?)switch
                                 {
                                    (null, null) => null,
                                    // ReSharper disable PatternAlwaysOfType
-                                   (string targetEvent, short type) => new AggregateEventRefactoringInformation(Guid.Parse(targetEvent), (AggregateEventRefactoringType)type),
+                                   (Guid targetEvent, short type) => new AggregateEventRefactoringInformation(targetEvent, (AggregateEventRefactoringType)type),
                                    // ReSharper restore PatternAlwaysOfType
                                    (_, _) => throw new Exception("Should not be possible to get here")
                                 }
