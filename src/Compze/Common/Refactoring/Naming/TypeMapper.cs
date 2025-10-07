@@ -16,14 +16,13 @@ namespace Compze.Common.Refactoring.Naming;
 
 class TypeMapper : ITypeMapper
 {
-   static readonly IThreadShared<State> _state = ThreadShared.WithDefaultTimeout<State>();
-   static readonly HashSet<Assembly> _checkedAssemblies = [];
+   static readonly IThreadShared<MappingState> State = ThreadShared.WithDefaultTimeout<MappingState>();
 
    public TypeId GetId(Type type)
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
 
-      return _state.Read(state =>
+      return State.Read(state =>
       {
          if(state.TypeToTypeIdMap.TryGetValue(type, out var typeId))
          {
@@ -38,7 +37,7 @@ class TypeMapper : ITypeMapper
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
 
-      return _state.Read(state =>
+      return State.Read(state =>
       {
          if(state.TypeIdToTypeMap.TryGetValue(typeId, out var type))
          {
@@ -52,7 +51,7 @@ class TypeMapper : ITypeMapper
    public bool TryGetType(TypeId typeId, [NotNullWhen(true)] out Type? type)
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
-      type = _state.Read(state => state.TypeIdToTypeMap.GetValueOrDefault(typeId));
+      type = State.Read(state => state.TypeIdToTypeMap.GetValueOrDefault(typeId));
       return type != null;
    }
 
@@ -60,12 +59,12 @@ class TypeMapper : ITypeMapper
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
 
-      var found = _state.Read(state => state
-                                      .TypeToTypeIdMap
-                                      .Keys
-                                      .Where(type.IsAssignableFrom)
-                                      .Select(matchingType => state.TypeToTypeIdMap[matchingType])
-                                      .ToArray());
+      var found = State.Read(state => state
+                                     .TypeToTypeIdMap
+                                     .Keys
+                                     .Where(type.IsAssignableFrom)
+                                     .Select(matchingType => state.TypeToTypeIdMap[matchingType])
+                                     .ToArray());
       if(!found.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(type);
       return found;
    }
@@ -86,33 +85,32 @@ class TypeMapper : ITypeMapper
       }
    }
 
-   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings()
+   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => State.Update(state =>
    {
-      var missingCurrentlyLoadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(_checkedAssemblies);
+      var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
 
-      foreach(var assembly in missingCurrentlyLoadedAssemblies)
+      foreach(var assembly in unHandledAssemblies)
       {
-         lock(_checkedAssemblies)
          {
-            if(_checkedAssemblies.Contains(assembly))
+            if(state.CheckedAssemblies.Contains(assembly))
             {
-               continue;
+               return;
             }
 
             try
             {
-               CheckAssemblyForRequiredMappings(assembly);
-               _checkedAssemblies.Add(assembly);
+               CheckAssemblyForRequiredMappings(assembly, state);
+               state.CheckedAssemblies.Add(assembly);
             }
             finally
             {
-               _checkedAssemblies.Add(assembly);
+               state.CheckedAssemblies.Add(assembly);
             }
          }
       }
-   }
+   });
 
-   static void CheckAssemblyForRequiredMappings(Assembly assembly)
+   static void CheckAssemblyForRequiredMappings(Assembly assembly, MappingState state)
    {
       var typesRequiringMapping = GetTypesRequiringMapping(assembly);
       if(!typesRequiringMapping.Any()) return;
@@ -129,11 +127,11 @@ class TypeMapper : ITypeMapper
 
       if(method != null && instance != null)
       {
-         void MapAction(Guid guid, Type type) => _state.Update(state => state.Map(type, new TypeId(guid)));
+         void MapAction(Guid guid, Type type) => state.Map(type, new TypeId(guid));
          method.Invoke(instance, [(Action<Guid, Type>)MapAction]);
       }
 
-      var typesWithMissingMappings = typesRequiringMapping.Where(type => !_state.Read(state => state.TypeToTypeIdMap.ContainsKey(type))).ToList();
+      var typesWithMissingMappings = typesRequiringMapping.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
       if(typesWithMissingMappings.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(assembly);
    }
 
@@ -277,9 +275,9 @@ class TypeMapper : ITypeMapper
       var allTypesRequiringMapping = GetTypesRequiringMapping(assembly);
 
       // Get existing mappings for types in this assembly from the current TypeMapper state
-      var existingMappings = _state.Read(state => allTypesRequiringMapping
-                                                 .Where(type => state.TypeToTypeIdMap.ContainsKey(type))
-                                                 .ToDictionary(type => type, type => state.TypeToTypeIdMap[type]));
+      var existingMappings = State.Read(state => allTypesRequiringMapping
+                                                .Where(type => state.TypeToTypeIdMap.ContainsKey(type))
+                                                .ToDictionary(type => type, type => state.TypeToTypeIdMap[type]));
 
       var fixMessage = new StringBuilder();
 
@@ -350,10 +348,11 @@ class TypeMapper : ITypeMapper
       return new Exception(fixMessage.ToString());
    }
 
-   class State
+   class MappingState
    {
       public readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       public readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
+      public readonly HashSet<Assembly> CheckedAssemblies = [];
 
       internal void Map(Type type, TypeId typeId)
       {
