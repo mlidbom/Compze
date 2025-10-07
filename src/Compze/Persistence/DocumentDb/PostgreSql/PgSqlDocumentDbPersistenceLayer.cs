@@ -52,8 +52,7 @@ partial class PgSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
                                             """)
                            .AddVarcharParameter(Schema.Id, 500, idString)
                            .PrepareStatement()
-                            //Todo: There is a GetGuid method. But it cannot read the text value. How do I use it? Same for all other Guid usages in PgSql
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(Guid.Parse(reader.GetString(1)), reader.GetString(0))));
+                           .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(1), reader.GetString(0))));
       if(documents.Count < 1)
       {
          document = null;
@@ -118,7 +117,7 @@ partial class PgSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
                                                                                AND {Schema.Id} IN('
                                             """ + ids.Select(id => id.ToString()).Join("','") + "')")
                            .PrepareStatement() //Performance: Does this work in Npgsql when there are no parameters? Should we have parameters?
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
+                           .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
    public IReadOnlyList<IDocumentDbPersistenceLayer.ReadRow> GetAll(IReadOnlySet<Guid> acceptableTypes)
@@ -127,7 +126,7 @@ partial class PgSqlDocumentDbPersistenceLayer : IDocumentDbPersistenceLayer
       return _connectionPool.UseCommand(
          command => command.SetCommandText($"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
                            .PrepareStatement() //Performance: Does this work in Npgsql when there are no parameters? Should we have parameters?
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
+                           .ExecuteReaderAndSelect(reader => new IDocumentDbPersistenceLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
    static string TypeInClause(IEnumerable<Guid> acceptableTypeIds) => "IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n";

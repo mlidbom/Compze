@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Teventive.EventStore.PostgreSql;
 
 partial class PgSqlEventStorePersistenceLayer
 {
-   const string PgSqlGuidType = "CHAR(36)";
+   const string PgSqlGuidType = "UUID";
    bool _initialized;
 
    public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>

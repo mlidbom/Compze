@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Persistence.PostgreSql;
 
 partial class PgSqlOutboxPersistenceLayer
 {
-   const string PgSqlGuidType = "CHAR(36)";
+   const string PgSqlGuidType = "UUID";
    static class SchemaManager
    {
       public static async Task EnsureTablesExistAsync(IPgSqlConnectionPool connectionFactory)

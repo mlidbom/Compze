@@ -32,11 +32,11 @@ partial class PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager c
    static EventDataRow ReadDataRow(NpgsqlDataReader eventReader)
    {
       return new EventDataRow(
-         eventType: Guid.Parse(eventReader.GetString(0)),
+         eventType: eventReader.GetGuid(0),
          eventJson: eventReader.GetString(1),
-         eventId: Guid.Parse(eventReader.GetString(4)),
+         eventId: eventReader.GetGuid(4),
          aggregateVersion: eventReader.GetInt32(3),
-         aggregateId: Guid.Parse(eventReader.GetString(2)),
+         aggregateId: eventReader.GetGuid(2),
          //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
          utcTimeStamp: DateTime.SpecifyKind(eventReader.GetDateTime(5), DateTimeKind.Utc),
          storageInformation: new AggregateEventStorageInformation
@@ -146,6 +146,6 @@ partial class PgSqlEventStorePersistenceLayer(PgSqlEventStoreConnectionManager c
                                                                                       ORDER BY {Event.ReadOrder} ASC
                                                                                       """)
                                                                      .PrepareStatement()
-                                                                     .ExecuteReaderAndSelect(reader => new CreationEventRow(aggregateId: Guid.Parse(reader.GetString(0)), typeId: Guid.Parse(reader.GetString(1)))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationEventRow(aggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
    }
 }
