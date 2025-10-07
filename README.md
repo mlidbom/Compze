@@ -24,13 +24,7 @@ Leveraging .NET type compatibility enables an event modeling paradigm which:
 Tevents, type routed events, use the type system to declare their meaning in detail and unambiguously:
 
 ```csharp
-public interface IEvent;
-
-public interface IAggregateEvent : IEvent
-{
-   Guid AggregateId { get; }
-}
-
+//IAggregateEvent and IAggregateCreatedEvent are framework provided
 interface IUserEvent : IAggregateEvent;
 interface IUserRegistered : IUserEvent, IAggregateCreatedEvent;
 interface IUserImported : IUserRegistered;
