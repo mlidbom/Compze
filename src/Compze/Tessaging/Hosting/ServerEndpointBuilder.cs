@@ -69,7 +69,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       //Universal stuff here
       Container.Register()
                .TimeSource()
-               .ConfigFileReading()
+               .JSonAppConfigFileConfigurationParameterProvider()
                .TypeMapper();
 
       //Only endpoint stuff after here

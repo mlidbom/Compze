@@ -5,7 +5,6 @@ namespace Compze.Tessaging.Hosting.Configuration;
 
 static class TessagingHostingConfigurationWiring
 {
-   public static IDependencyRegistrar ConfigFileReading(this IDependencyRegistrar @this)
-      => @this.Register(Singleton.For<IConfigurationParameterProvider>()
-                                 .CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
+   public static IDependencyRegistrar JSonAppConfigFileConfigurationParameterProvider(this IDependencyRegistrar @this)
+      => @this.Register(AppSettingsJsonConfigurationParameterProvider.RegisterWith);
 }
