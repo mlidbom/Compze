@@ -18,9 +18,10 @@ partial class Outbox : IOutbox
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)
    {
-      registrar.Register(Singleton.For<IOutbox>().CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
-                                                               => new Outbox(transport, messageStorage, configuration)));
-      registrar.Register(Outbox.MessageStorage.RegisterWith);
+      registrar.Register(Singleton.For<IOutbox>()
+                                  .CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
+                                                => new Outbox(transport, messageStorage, configuration)));
+      registrar.Register(MessageStorage.RegisterWith);
    }
 
    readonly IMessageStorage _storage;
