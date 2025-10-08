@@ -23,6 +23,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 // ReSharper disable AccessToDisposedClosure
 

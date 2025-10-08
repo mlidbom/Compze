@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Testing;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 

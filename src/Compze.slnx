@@ -7,7 +7,11 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/Compze/" />
+  <Folder Name="/Compze/">
+    <Project Path="Compze/Wiring/Compze.Wiring.csproj" Id="f00c57dd-e01d-4af3-b35d-aa658512cbfc">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
+  </Folder>
   <Folder Name="/Compze/Abstractions/">
     <Project Path="Compze/Abstractions/Internal/Compze.Abstractions.Internal.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
@@ -167,9 +171,6 @@
   </Folder>
   <Folder Name="/Compze/Utilities/" />
   <Folder Name="/Compze/Utilities/DependencyInjection/">
-    <Project Path="Compze/Utilities/DependencyInjection/Abstractions/Compze.Utilities.DependencyInjection.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
     <Project Path="Compze/Utilities/DependencyInjection/Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>

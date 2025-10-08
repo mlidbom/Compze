@@ -1,4 +1,4 @@
-using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Abstractions;
 

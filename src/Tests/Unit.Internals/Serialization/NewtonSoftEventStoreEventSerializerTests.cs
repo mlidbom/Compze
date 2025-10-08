@@ -17,7 +17,7 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
 {
    IEventStoreSerializer _eventSerializer;
 
-   [OneTimeSetUp] public void SetupTask() => _eventSerializer = new EventStoreSerializer(new TypeMapper());
+   [OneTimeSetUp] public void SetupTask() => _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);
 
    internal class TestEvent : AggregateEvent
    {

@@ -6,6 +6,7 @@ using Compze.Tessaging.Persistence.InMemory.EventStore;
 using Compze.Tessaging.Persistence.InMemory.ServiceBus;
 using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Persistence.InMemory.DependencyInjection;
 

@@ -7,6 +7,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI.QueryModels;

@@ -4,6 +4,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
 using JetBrains.Annotations;

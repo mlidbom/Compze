@@ -5,7 +5,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
-using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using JetBrains.Annotations;
 

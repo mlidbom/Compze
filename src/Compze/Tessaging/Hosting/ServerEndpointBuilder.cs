@@ -13,7 +13,9 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Tessaging.Wiring;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
@@ -22,7 +24,6 @@ namespace Compze.Tessaging.Hosting;
 
 class ServerEndpointBuilder : IEndpointBuilder
 {
-   readonly TypeMapper _typeMapper;
    bool _builtSuccessfully;
 
    public IDependencyInjectionContainer Container { get; }
@@ -56,9 +57,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Configuration = configuration;
 
-      _typeMapper = new TypeMapper();
-
-      _registry = new MessageHandlerRegistry(_typeMapper);
+      _registry = new MessageHandlerRegistry(TypeMapper.Instance);
       RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.ServiceLocator));
    }
 
@@ -66,6 +65,15 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    void SetupContainer()
    {
+      // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+      Container.RegisterTimeSource();
+
+      Container.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
+      Container.Register(Singleton.For<ITypeMapper, TypeMapper>().Instance(TypeMapper.Instance));
+
+      //Universal stuff here
+
+      //Only endpoint stuff after here
       //todo: Find cleaner way of doing this.
       if(_host is IEndpointRegistry endpointRegistry)
       {
@@ -75,28 +83,21 @@ class ServerEndpointBuilder : IEndpointBuilder
          Container.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
       }
 
-      // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-      if(Container.RunMode == RunMode.Production)
-      {
-         Container.Register(Singleton.For<IUtcTimeTimeSource>().CreatedBy(() => new DateTimeNowTimeSource()).DelegateToParentServiceLocatorWhenCloning());
-      } else
-      {
-         Container.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>().CreatedBy(() => TestingTimeSource.FollowingSystemClock).DelegateToParentServiceLocatorWhenCloning());
-      }
-
-      Container.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
-
+      //Transport
       Container.Register(
-         Singleton.For<ITypeMapper, TypeMapper>().CreatedBy(() => _typeMapper).DelegateToParentServiceLocatorWhenCloning(),
          Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker),
-         Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
-         Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
-                                                  => new Transport(messagesInFlightTracker, typeMapper, serializer, httpApiClient)),
+                         Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
+                         Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
+                                                                  => new Transport(messagesInFlightTracker, typeMapper, serializer, httpApiClient)));
+
+      //This is a client, isn't it?
+      Container.Register(
          Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
          Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()),
          Singleton.For<IHttpApiClient>().CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer))
       );
 
+      //Only real endpoint stuff after here
       if(!Configuration.IsPureClientEndpoint)
       {
          Container.Register(

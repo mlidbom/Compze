@@ -1,4 +1,6 @@
-﻿namespace Compze.Utilities.DependencyInjection;
+﻿using Compze.Utilities.DependencyInjection.Abstractions;
+
+namespace Compze.Utilities.DependencyInjection;
 
 class RunMode(bool isTesting) : IRunMode
 {

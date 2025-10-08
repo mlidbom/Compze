@@ -1,6 +1,7 @@
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Persistence.DocumentDb.MicrosoftSql;
 

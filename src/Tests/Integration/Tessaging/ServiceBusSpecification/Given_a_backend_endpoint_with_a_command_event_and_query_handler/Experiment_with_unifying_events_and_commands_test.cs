@@ -18,6 +18,7 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing

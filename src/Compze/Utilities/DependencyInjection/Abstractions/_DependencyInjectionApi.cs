@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Compze.Utilities.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection.Abstractions;
 
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
@@ -33,14 +33,17 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
    TComponent[] ResolveAll<TComponent>() where TComponent : class;
    IDisposable BeginScope();
 }
+
 interface IServiceLocatorKernel
 {
    TComponent Resolve<TComponent>() where TComponent : class;
 }
+
 public interface IRunMode
 {
    bool IsTesting { get; }
 }
+
 public enum PersistenceLayer
 {
    MicrosoftSqlServer,
@@ -48,11 +51,13 @@ public enum PersistenceLayer
    MySql,
    PostgreSql
 }
+
 public enum DIContainer
 {
    SimpleInjector,
    Microsoft
 }
+
 enum Lifestyle
 {
    Singleton,

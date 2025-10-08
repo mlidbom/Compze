@@ -10,6 +10,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tests.Integration.CQRS;
 

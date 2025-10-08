@@ -13,7 +13,7 @@ using Compze.Tessaging.Persistence.PostgreSql;
 using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 using Compze.Tessaging.Teventive.EventStore.MySql;
 using Compze.Tessaging.Teventive.EventStore.PostgreSql;
-using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Testing.Persistence;
 

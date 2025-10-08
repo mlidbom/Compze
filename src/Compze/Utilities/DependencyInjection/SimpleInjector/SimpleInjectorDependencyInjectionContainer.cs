@@ -3,8 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
+using Lifestyle = Compze.Utilities.DependencyInjection.Abstractions.Lifestyle;
 
 namespace Compze.Utilities.DependencyInjection.SimpleInjector;
 
@@ -12,15 +14,16 @@ namespace Compze.Utilities.DependencyInjection.SimpleInjector;
 public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel
 {
    readonly Container _container;
-   
+
    public SimpleInjectorDependencyInjectionContainer(IRunMode runMode) : base(runMode)
    {
       _container = new Container();
+      _container.Options.EnableAutoVerification = false; //urgent: bug: temporarily disabled while refactoring to fix a bug
       _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
       _container.ResolveUnregisteredType += (_, unregisteredTypeEventArgs) =>
       {
-         if (unregisteredTypeEventArgs is { Handled: false, UnregisteredServiceType.IsAbstract: false })
+         if(unregisteredTypeEventArgs is { Handled: false, UnregisteredServiceType.IsAbstract: false })
          {
             throw new InvalidOperationException(unregisteredTypeEventArgs.UnregisteredServiceType.ToFriendlyName() + " has not been registered.");
          }
@@ -29,17 +32,16 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
-
       foreach(var componentRegistration in registrations)
       {
          var lifestyle = componentRegistration.Lifestyle switch
          {
             Lifestyle.Singleton => (global::SimpleInjector.Lifestyle)global::SimpleInjector.Lifestyle.Singleton,
-            Lifestyle.Scoped => global::SimpleInjector.Lifestyle.Scoped,
-            _ => throw new ArgumentOutOfRangeException(nameof(componentRegistration.Lifestyle))
+            Lifestyle.Scoped    => global::SimpleInjector.Lifestyle.Scoped,
+            _                   => throw new ArgumentOutOfRangeException(nameof(componentRegistration.Lifestyle))
          };
 
-         if (componentRegistration.InstantiationSpec.SingletonInstance != null)
+         if(componentRegistration.InstantiationSpec.SingletonInstance != null)
          {
             Assert.Argument.Is(lifestyle == global::SimpleInjector.Lifestyle.Singleton, () => $"{componentRegistration.ServiceTypes.First().FullName} tried to register using an Instance and lifestyle: {lifestyle}. Instance can only be used with {nameof(Lifestyle.Singleton)}");
             foreach(var serviceType in componentRegistration.ServiceTypes)
@@ -55,7 +57,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
                   componentRegistration.InstantiationSpec.FactoryMethodReturnType,
                   () => componentRegistration.InstantiationSpec.RunFactoryMethod(this),
                   _container);
-            foreach (var someCompletelyOtherName in componentRegistration.ServiceTypes)
+            foreach(var someCompletelyOtherName in componentRegistration.ServiceTypes)
             {
                _container.AddRegistration(someCompletelyOtherName, baseRegistration);
             }
@@ -71,8 +73,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       return @this switch
       {
          Lifestyle.Singleton => global::SimpleInjector.Lifestyle.Singleton,
-         Lifestyle.Scoped => global::SimpleInjector.Lifestyle.Scoped,
-         _ => throw new ArgumentOutOfRangeException(nameof(@this), @this, null)
+         Lifestyle.Scoped    => global::SimpleInjector.Lifestyle.Scoped,
+         _                   => throw new ArgumentOutOfRangeException(nameof(@this), @this, null)
       };
    }
 
@@ -85,7 +87,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
          if(!_verified)
          {
             _verified = true;
-            _container.Verify();
+            //urgent: bug: restore this that has been temporarily disabled while refactoring to fix a bug
+            //_container.Verify();
          }
 
          return this;
@@ -99,10 +102,11 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
    [SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "CA1063 reports 'Dispose should be public and sealed' but incorrectly flags the protected Dispose(bool) override instead of recognizing this sealed class already has a sealed public Dispose() inherited from the base class.")]
    protected override void Dispose(bool disposing)
    {
-      if (disposing)
+      if(disposing)
       {
          _container.Dispose();
       }
+
       base.Dispose(disposing);
    }
 

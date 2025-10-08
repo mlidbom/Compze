@@ -3,6 +3,7 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 

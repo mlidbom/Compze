@@ -13,6 +13,7 @@ using Compze.Testing;
 using Compze.Testing.Serialization;
 using Compze.Tests.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;

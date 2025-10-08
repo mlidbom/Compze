@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -43,5 +43,8 @@
     <EmbeddedResource Remove="SimpleInjector\**" />
     <None Remove="SimpleInjector\**" />
     <Content Remove="SimpleInjector\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abstractions\_DependencyInjectionApi.cs" />
   </ItemGroup>
 </Project>

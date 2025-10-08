@@ -1,6 +1,7 @@
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Persistence.PostgreSql;
 

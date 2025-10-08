@@ -2,6 +2,7 @@ using System;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Testing;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using FluentAssertions;
 using NUnit.Framework;
 

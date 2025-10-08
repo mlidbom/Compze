@@ -1,6 +1,6 @@
 using System;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool;
 using FluentAssertions;
 using NUnit.Framework;

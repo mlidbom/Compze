@@ -17,7 +17,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
 {
    IEventStoreSerializer _eventSerializer;
 
-   [OneTimeSetUp] public void SetupTask() => _eventSerializer = new EventStoreSerializer(new TypeMapper());
+   [OneTimeSetUp] public void SetupTask() => _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);
 
    [Test] public void Should_roundtrip_simple_event_1000_times_in_15_milliseconds()
    {

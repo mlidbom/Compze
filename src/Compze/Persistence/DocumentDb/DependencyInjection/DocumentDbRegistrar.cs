@@ -6,6 +6,7 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Persistence.DocumentDb.DependencyInjection;
 

@@ -10,6 +10,7 @@ using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 
