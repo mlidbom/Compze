@@ -1,8 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using JetBrains.Annotations;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
@@ -15,6 +17,11 @@ interface ITaskRunner
 
 [UsedImplicitly] class TaskRunner : ITaskRunner, IDisposable
 {
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunner()));
+
+   TaskRunner() {}
+
    public void RunSwallowAndLogExceptions(string taskName, Action task)
    {
       Task.Run(() =>

@@ -95,17 +95,14 @@ class ServerEndpointBuilder : IEndpointBuilder
       //Only real endpoint stuff after here
       if(!Configuration.IsPureClientEndpoint)
       {
+         Container.Register().Register(TaskRunner.RegisterWith,
+                                       Outbox.RegisterWith);
+
          Container.Register(
             Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => Container),
             Singleton.For<EndpointId>().CreatedBy(() => Configuration.Id),
             Singleton.For<EndpointConfiguration>().CreatedBy(() => Configuration),
             Singleton.For<IMessageHandlerRegistry, IMessageHandlerRegistrar, MessageHandlerRegistry>().CreatedBy(() => _registry),
-            Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunner()),
-            Singleton.For<Outbox.IMessageStorage>()
-                     .CreatedBy((IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-                                   => new Outbox.MessageStorage(persistenceLayer, typeMapper, serializer)),
-            Singleton.For<IOutbox>().CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
-                                                  => new Outbox(transport, messageStorage, configuration)),
             Singleton.For<IEventStoreEventPublisher>().CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
                                                                     => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)),
             Singleton.For<Inbox.IMessageStorage>().CreatedBy((IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) => new InboxMessageStorage(persistenceLayer)),
