@@ -92,7 +92,7 @@ class ServerEndpointBuilder : IEndpointBuilder
                  .CommandScheduler()
                  .ServiceBusEventStoreEventPublisher()
                  .ServiceBusSession()
-                 .LocalHypermediaNavigator();
+                 .InProcessHypermediaNavigator();
 
          Container.Register(
             Singleton.For<IDependencyInjectionContainer>().Instance(Container),

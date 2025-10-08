@@ -12,7 +12,7 @@ static partial class MessageInspector
 
                                                            Rationale: 
                                                            When accessing services on a bus it is very important to understand whether or not the service you are accessing will behave transactionally or not. 
-                                                           If you make a mistake with regards to this you are likely to end up intermittent bugs resulting in corrupt data. 
+                                                           If you make a mistake with regards to this you are likely to end up with intermittent bugs resulting in corrupted data. 
                                                            Such bugs are notoriously hard both to debug and to reproduce at all.
 
                                                            In order to minimize your risk of encountering such problems we have runtime validations detecting if your usage of transactions in combination with services make sense.
@@ -29,4 +29,13 @@ static partial class MessageInspector
 
                                                            """;
    }
+
+   public class MissingTransactionException(IMessage message) :
+      TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.") {}
+
+   public class TransactionPresentException(IMessage message) :
+      TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.") {}
+
+   public class MissingMessageIdException(IMessage message) :
+      ArgumentException($"{nameof(IAtMostOnceMessage.MessageId)} was Guid.Empty for message of type: {message.GetType().FullName}") {}
 }

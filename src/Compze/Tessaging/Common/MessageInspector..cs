@@ -25,11 +25,11 @@ static partial class MessageInspector
          case IStrictlyLocalMessage strictlyLocalMessage:
             throw new AttemptToSendStrictlyLocalMessageRemotelyException(strictlyLocalMessage);
          case IMustBeSentTransactionally when Transaction.Current == null:
-            throw new TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.");
+            throw new MissingTransactionException(message);
          case ICannotBeSentRemotelyFromWithinTransaction when Transaction.Current != null:
-            throw new TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.");
+            throw new TransactionPresentException(message);
          case IAtMostOnceMessage atMostOnce when atMostOnce.MessageId == Guid.Empty:
-            throw new Exception($"{nameof(IAtMostOnceMessage.MessageId)} was Guid.Empty for message of type: {message.GetType().FullName}");
+            throw new MissingMessageIdException(message);
       }
 #pragma warning restore IDE0010
    }
@@ -38,7 +38,8 @@ static partial class MessageInspector
    {
       CommonAssertions(message);
 
-      if(message is IMustBeSentTransactionally && Transaction.Current == null) throw new TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.");
+      if(message is IMustBeSentTransactionally && Transaction.Current == null)
+         throw new MissingTransactionException(message);
    }
 
    static void CommonAssertions(IMessage message)
