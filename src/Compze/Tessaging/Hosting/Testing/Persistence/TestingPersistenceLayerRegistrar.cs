@@ -20,14 +20,27 @@ namespace Compze.Tessaging.Hosting.Testing.Persistence;
 
 public static class TestingPersistenceLayerRegistrar
 {
-   public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IEndpointBuilder @this) => RegisterCurrentTestsConfiguredPersistenceLayer(@this.Container, @this.Configuration.ConnectionStringName);
+   public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IEndpointBuilder @this)
+      => @this.Container.Register().CurrentTestsConfiguredPersistenceLayer(@this.Configuration.ConnectionStringName);
+
+   public static IDependencyRegistrar NewDbPoolPersistenceLayer(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterCurrentTestsConfiguredPersistenceLayer(Guid.NewGuid().ToString());
+      return registrar;
+   }
+
+   public static IDependencyRegistrar CurrentTestsConfiguredPersistenceLayer(this IDependencyRegistrar registrar, string connectionStringName)
+   {
+      registrar.Container().RegisterCurrentTestsConfiguredPersistenceLayer(connectionStringName);
+      return registrar;
+   }
 
    public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
    {
       switch(TestEnv.PersistenceLayer.Current)
       {
          case PersistenceLayer.MicrosoftSqlServer:
-            container.RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+            container.RegisterMsSqlConnectionPool(connectionStringName);
             container.RegisterMsSqlDocumentDb();
             container.RegisterMsSqlEventStore();
             container.RegisterMsSqlTessaging();

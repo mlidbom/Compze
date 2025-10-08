@@ -14,6 +14,12 @@ public static class InMemoryPersistenceLayerRegistrar
 {
    public static void RegisterInMemoryPersistenceLayer(this IEndpointBuilder @this) => @this.Container.RegisterInMemoryPersistenceLayer(@this.Configuration.ConnectionStringName);
 
+   public static IDependencyRegistrar InMemoryPersistenceLayer(this IDependencyRegistrar registrar)
+   {
+        registrar.Container().RegisterInMemoryPersistenceLayer("");
+        return registrar;
+    }
+
    public static void RegisterInMemoryPersistenceLayer(this IDependencyInjectionContainer container, string _)
    {
       //DocumentDB

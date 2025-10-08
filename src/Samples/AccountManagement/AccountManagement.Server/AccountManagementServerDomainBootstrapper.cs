@@ -32,7 +32,7 @@ public class AccountManagementServerDomainBootstrapper
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {
       var connectionStringName = builder.Configuration.ConnectionStringName;
-      builder.Container.RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+      builder.Container.RegisterMsSqlConnectionPool(connectionStringName);
       builder.Container.RegisterMsSqlDocumentDb();
       builder.Container.RegisterMsSqlEventStore();
       builder.Container.RegisterMsSqlTessaging();

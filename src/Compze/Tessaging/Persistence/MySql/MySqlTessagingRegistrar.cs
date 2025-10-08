@@ -7,7 +7,13 @@ namespace Compze.Tessaging.Persistence.MySql;
 
 public static class MySqlTessagingRegistrar
 {
-   public static void RegisterMySqlTessaging(this IDependencyInjectionContainer container)
+   public static IDependencyRegistrar RegisterMySqlTessaging(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterMySqlTessaging();
+      return registrar;
+    }
+
+    public static void RegisterMySqlTessaging(this IDependencyInjectionContainer container)
    {
       container.Register(
          Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()

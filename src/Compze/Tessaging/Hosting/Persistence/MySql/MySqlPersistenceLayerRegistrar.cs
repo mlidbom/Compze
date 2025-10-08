@@ -12,7 +12,13 @@ public static class MySqlPersistenceLayerRegistrar
    internal static void RegisterMySqlConnectionPoolIfNotAlreadyRegistered(this IEndpointBuilder @this) =>
       @this.Container.RegisterMySqlConnectionPoolIfNotAlreadyRegistered(@this.Configuration.ConnectionStringName);
 
-   public static void RegisterMySqlConnectionPoolIfNotAlreadyRegistered(this IDependencyInjectionContainer container, string connectionStringName)
+   public static IDependencyRegistrar RegisterMySqlPersistenceLayer(this IDependencyRegistrar registrar, string connectionStringName)
+   {
+      registrar.Container().RegisterMySqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+      return registrar;
+    }
+
+    public static void RegisterMySqlConnectionPoolIfNotAlreadyRegistered(this IDependencyInjectionContainer container, string connectionStringName)
    {
       if(container.IsRegistered<IMySqlConnectionPool>()) return;
 

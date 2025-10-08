@@ -12,7 +12,13 @@ public static class PgSqlPersistenceLayerRegistrar
    internal static void RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(this IEndpointBuilder @this) =>
       @this.Container.RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(@this.Configuration.ConnectionStringName);
 
-   public static void RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(this IDependencyInjectionContainer container, string connectionStringName)
+   public static IDependencyRegistrar PgSqlConnectionPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar, string connectionStringName)
+   {
+        registrar.Container().RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+        return registrar;
+    }
+
+    public static void RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(this IDependencyInjectionContainer container, string connectionStringName)
    {
       if(container.IsRegistered<IPgSqlConnectionPool>()) return;
 

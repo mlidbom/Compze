@@ -7,6 +7,12 @@ namespace Compze.Persistence.DocumentDb.MicrosoftSql;
 
 public static class MsSqlDocumentDbRegistrar
 {
+   public static IDependencyRegistrar MsSqlDocumentDb(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterMsSqlDocumentDb();
+      return registrar;
+   }
+
    public static void RegisterMsSqlDocumentDb(this IDependencyInjectionContainer container)
    {
       container.Register(

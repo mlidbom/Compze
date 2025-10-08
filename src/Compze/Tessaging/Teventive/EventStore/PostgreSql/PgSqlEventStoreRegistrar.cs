@@ -7,7 +7,13 @@ namespace Compze.Tessaging.Teventive.EventStore.PostgreSql;
 
 public static class PgSqlEventStoreRegistrar
 {
-   public static void RegisterPgSqlEventStore(this IDependencyInjectionContainer container)
+   public static IDependencyRegistrar PgSqlEventStore(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterPgSqlEventStore();
+      return registrar;
+    }
+
+    public static void RegisterPgSqlEventStore(this IDependencyInjectionContainer container)
    {
       container.Register(
          Singleton.For<PgSqlEventStoreConnectionManager>()

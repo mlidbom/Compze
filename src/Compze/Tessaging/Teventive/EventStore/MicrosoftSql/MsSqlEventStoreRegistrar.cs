@@ -7,6 +7,12 @@ namespace Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 public static class MsSqlEventStoreRegistrar
 {
+   public static IDependencyRegistrar MsSqlEventStore(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterMsSqlEventStore();
+      return registrar;
+   }
+
    public static void RegisterMsSqlEventStore(this IDependencyInjectionContainer container)
    {
       container.Register(

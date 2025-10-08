@@ -7,7 +7,13 @@ namespace Compze.Tessaging.Teventive.EventStore.MySql;
 
 public static class MySqlEventStoreRegistrar
 {
-   public static void RegisterMySqlEventStore(this IDependencyInjectionContainer container)
+   public static IDependencyRegistrar MySqlEventStore(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterMySqlEventStore();
+      return registrar;
+    }
+
+    public static void RegisterMySqlEventStore(this IDependencyInjectionContainer container)
    {
       container.Register(
          Singleton.For<MySqlEventStoreConnectionManager>()

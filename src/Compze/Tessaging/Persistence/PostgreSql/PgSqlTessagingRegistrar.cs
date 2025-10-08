@@ -7,7 +7,13 @@ namespace Compze.Tessaging.Persistence.PostgreSql;
 
 public static class PgSqlTessagingRegistrar
 {
-   public static void RegisterPgSqlTessaging(this IDependencyInjectionContainer container)
+   public static IDependencyRegistrar RegisterPgSqlTessaging(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterPgSqlTessaging();
+      return registrar;
+    }
+
+    public static void RegisterPgSqlTessaging(this IDependencyInjectionContainer container)
    {
       container.Register(
          Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()

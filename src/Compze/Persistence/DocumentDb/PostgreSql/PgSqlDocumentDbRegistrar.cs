@@ -7,7 +7,13 @@ namespace Compze.Persistence.DocumentDb.PostgreSql;
 
 public static class PgSqlDocumentDbRegistrar
 {
-   public static void RegisterPgSqlDocumentDb(this IDependencyInjectionContainer container)
+   public static IDependencyRegistrar PgSqlDocumentDb(this IDependencyRegistrar registrar)
+   {
+      registrar.Container().RegisterPgSqlDocumentDb();
+      return registrar;
+    }
+
+    public static void RegisterPgSqlDocumentDb(this IDependencyInjectionContainer container)
    {
       container.Register(
          Singleton.For<IDocumentDbPersistenceLayer>()
