@@ -40,7 +40,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
 {
    bool ShouldDelegateToParentWhenCloning { get; set; }
 
-   internal ComponentRegistration<TService> DelegateToParentServiceLocatorWhenCloning()
+   public ComponentRegistration<TService> DelegateToParentServiceLocatorWhenCloning()
    {
       Assert.State.Is(Lifestyle == Lifestyle.Singleton, () => "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
       ShouldDelegateToParentWhenCloning = true;

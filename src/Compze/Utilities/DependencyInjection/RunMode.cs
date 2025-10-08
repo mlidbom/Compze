@@ -2,7 +2,8 @@
 
 namespace Compze.Utilities.DependencyInjection;
 
-class RunMode(bool isTesting) : IRunMode
+//Todo: Doubtful about this being a public class living in utilities. Feels halfway Compze internal?
+public class RunMode(bool isTesting) : IRunMode
 {
    bool IRunMode.IsTesting { get; } = isTesting;
 

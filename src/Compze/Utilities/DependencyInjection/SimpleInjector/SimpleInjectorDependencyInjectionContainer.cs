@@ -30,7 +30,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       };
    }
 
-   protected override void RegisterInContainer(ComponentRegistration[] registrations)
+   protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
       foreach(var componentRegistration in registrations)
       {
@@ -66,7 +66,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
             throw new Exception($"Invalid {nameof(InstantiationSpec)}");
          }
       }
-   }
+      return this;
+    }
 
    static global::SimpleInjector.Lifestyle GetSimpleInjectorLifestyle(Lifestyle @this)
    {

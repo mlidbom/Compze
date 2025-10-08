@@ -8,7 +8,7 @@ public class SingletonRegistrationWithoutInstantiationSpec<TService> : Component
 {
    internal SingletonRegistrationWithoutInstantiationSpec(IEnumerable<Type> serviceTypes) : base(Lifestyle.Singleton, serviceTypes) {}
 
-   internal ComponentRegistration<TService> Instance(TService instance)
+   public ComponentRegistration<TService> Instance(TService instance)
    {
       AssertImplementsAllServices(instance.GetType());
       return new ComponentRegistration<TService>(Lifestyle.Singleton, ServiceTypes, InstantiationSpec.FromInstance(instance));

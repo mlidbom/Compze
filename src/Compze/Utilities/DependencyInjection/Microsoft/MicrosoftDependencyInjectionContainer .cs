@@ -24,7 +24,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
       _services = new ServiceCollection();
    }
 
-   protected override void RegisterInContainer(ComponentRegistration[] registrations)
+   protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
 
       foreach(var componentRegistration in registrations)
@@ -56,6 +56,8 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
             }
          }
       }
+
+      return this;
    }
 
    public override IServiceLocator ServiceLocator

@@ -8,7 +8,7 @@ namespace Compze.Utilities.DependencyInjection.Abstractions;
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
    IRunMode RunMode { get; }
-   void Register(params ComponentRegistration[] registrations);
+   IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    bool IsRegistered<TService>() => RegisteredComponents().Any(c => c.ServiceTypes.Contains(typeof(TService)));
    IServiceLocator ServiceLocator { get; }

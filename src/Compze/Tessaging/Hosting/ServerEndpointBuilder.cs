@@ -1,6 +1,7 @@
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
 using Compze.Common.Refactoring.Naming;
+using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
@@ -13,7 +14,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Tessaging.Wiring;
+using Compze.Wiring;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
@@ -66,10 +67,9 @@ class ServerEndpointBuilder : IEndpointBuilder
    void SetupContainer()
    {
       // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-      Container.RegisterTimeSource();
-
-      Container.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
-      Container.Register(Singleton.For<ITypeMapper, TypeMapper>().Instance(TypeMapper.Instance));
+      Container.RegisterTimeSource()
+               .RegisterConfigFileReading()
+               .RegisterTypeMapper();
 
       //Universal stuff here
 

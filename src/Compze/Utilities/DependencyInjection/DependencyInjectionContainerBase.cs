@@ -24,17 +24,17 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    /// Template method that validates and registers components.
    /// Ensures validation always happens before calling the container-specific registration logic.
    /// </summary>
-   public void Register(params ComponentRegistration[] registrations)
+   public IDependencyInjectionContainer Register(params ComponentRegistration[] registrations)
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
-      RegisterInContainer(registrations);
+      return RegisterInContainer(registrations);
    }
 
    /// <summary>
    /// Container-specific registration logic. Called after validation and tracking.
    /// </summary>
-   protected abstract void RegisterInContainer(ComponentRegistration[] registrations);
+   protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
