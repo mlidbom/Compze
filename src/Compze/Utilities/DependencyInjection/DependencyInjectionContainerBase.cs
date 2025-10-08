@@ -31,10 +31,12 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       return RegisterInContainer(registrations);
    }
 
-   /// <summary>
-   /// Container-specific registration logic. Called after validation and tracking.
-   /// </summary>
-   protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
+   public IDependencyRegistrar Register() => new DependencyRegistrar(this);
+
+    /// <summary>
+    /// Container-specific registration logic. Called after validation and tracking.
+    /// </summary>
+    protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
@@ -80,7 +82,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          {
             var existingRegistration = _registeredComponents
                .FirstOrDefault(existing => existing.ServiceTypes.Contains(serviceType));
-            
+
             if(existingRegistration != null)
             {
                throw new InvalidOperationException(
@@ -91,4 +93,17 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          }
       }
    }
+}
+
+internal class DependencyRegistrar(IDependencyInjectionContainer container) : IDependencyRegistrar
+{
+   readonly IDependencyInjectionContainer _container = container;
+
+   public IDependencyRegistrar Register(params ComponentRegistration[] registrations)
+   {
+      _container.Register(registrations);
+      return this;
+   }
+
+   public IRunMode RunMode => _container.RunMode;
 }

@@ -5,9 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Abstractions;
 
+public interface IDependencyRegistrar
+{
+   IDependencyRegistrar Register(params ComponentRegistration[] registrations);
+   IRunMode RunMode { get; }
+}
+
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
    IRunMode RunMode { get; }
+   IDependencyRegistrar Register();
    IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    bool IsRegistered<TService>() => RegisteredComponents().Any(c => c.ServiceTypes.Contains(typeof(TService)));

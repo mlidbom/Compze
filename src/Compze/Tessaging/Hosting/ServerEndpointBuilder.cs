@@ -67,9 +67,10 @@ class ServerEndpointBuilder : IEndpointBuilder
    void SetupContainer()
    {
       // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-      Container.RegisterTimeSource()
-               .RegisterConfigFileReading()
-               .RegisterTypeMapper();
+      Container.Register()
+               .TimeSource()
+               .ConfigFileReading()
+               .TypeMapper();
 
       //Universal stuff here
 

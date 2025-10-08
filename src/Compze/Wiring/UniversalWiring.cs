@@ -6,7 +6,7 @@ namespace Compze.Wiring;
 
 internal static class UniversalWiring
 {
-   public static IDependencyInjectionContainer RegisterTimeSource(this IDependencyInjectionContainer @this)
+   public static IDependencyRegistrar TimeSource(this IDependencyRegistrar @this)
    {
       if(@this.RunMode == RunMode.Production)
       {
