@@ -44,7 +44,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    public TAggregate Get<TAggregate>(Guid aggregateId) where TAggregate : class, IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
       if(!DoTryGet(aggregateId, out TAggregate? result))
       {
          throw new AggregateNotFoundException(aggregateId);
@@ -56,7 +56,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    public bool TryGet<TAggregate>(Guid aggregateId, [MaybeNullWhen(false)] out TAggregate aggregate) where TAggregate : class, IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
       return DoTryGet(aggregateId, out aggregate);
    }
 
@@ -70,7 +70,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
       Argument.IsGreaterThan(version, 0);
 
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
 
       var history = GetHistory(aggregateId);
       if(history.None())
@@ -91,7 +91,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    public void Save<TAggregate>(TAggregate aggregate) where TAggregate : class, IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
 
       aggregate.Commit(events =>
       {
@@ -117,7 +117,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
    void OnAggregateEvent(IAggregateEvent @event)
    {
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
       if(!_idMap.ContainsKey(@event.AggregateId))
       {
          throw new Exception($"Got event from aggregate that is not tracked! Id: {@event.AggregateId}");
@@ -135,7 +135,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
    public void Dispose()
    {
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
       _disposableResources.ForEach(resource => resource.Dispose());
       _store.Dispose();
    }

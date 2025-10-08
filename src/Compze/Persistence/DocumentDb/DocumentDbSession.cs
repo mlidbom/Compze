@@ -21,48 +21,40 @@ partial class DocumentDbSession : IDocumentDbSession
 {
    class ContextEnsuringWrapper : IDocumentDbSession
    {
-      readonly UsageGuard<DocumentDbSession> _wrapped;
-      readonly VolatileLambdaTransactionParticipant _transactionParticipant;
+      readonly UsageGuard<DocumentDbSession> _guarded;
 
       public ContextEnsuringWrapper(DocumentDbSession wrapped)
       {
-         _wrapped = new UsageGuard<DocumentDbSession>(wrapped,
-                                                      new CombinationUsageGuard(new SingleThreadUseGuard(wrapped),
-                                                                                new SingleTransactionUsageGuard(wrapped))
-                                                                              );
-         _transactionParticipant = new(EnlistmentOptions.EnlistDuringPrepareRequired, onPrepare: _wrapped.Wrapped.FlushChanges);
+         _guarded = new UsageGuard<DocumentDbSession>(wrapped,
+                                                      new CombinationUsageGuard(
+                                                         new SingleThreadUseGuard(wrapped),
+                                                         new SingleTransactionUsageGuard(wrapped),
+                                                         new EnlistInAmbientTransactionUsageGuard(() => _guarded!.Wrapped.FlushChanges())));
       }
 
-      DocumentDbSession Wrapped
-      {
-         get
-         {
-            _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-            return _wrapped.Wrapped;
-         }
-      }
+      DocumentDbSession Guarded => _guarded.Wrapped;
 
-      public void Dispose() => Wrapped.Dispose();
+      public void Dispose() => Guarded.Dispose();
 
-      public TValue Get<TValue>(object key) => Wrapped.Get<TValue>(key);
+      public TValue Get<TValue>(object key) => Guarded.Get<TValue>(key);
 
-      public bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => Wrapped.TryGet(key, out document);
+      public bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => Guarded.TryGet(key, out document);
 
-      public IEnumerable<T> GetAll<T>(IEnumerable<Guid> ids) where T : IHasPersistentIdentity<Guid> => Wrapped.GetAll<T>(ids);
+      public IEnumerable<T> GetAll<T>(IEnumerable<Guid> ids) where T : IHasPersistentIdentity<Guid> => Guarded.GetAll<T>(ids);
 
-      public IEnumerable<T> GetAll<T>() where T : IHasPersistentIdentity<Guid> => Wrapped.GetAll<T>();
+      public IEnumerable<T> GetAll<T>() where T : IHasPersistentIdentity<Guid> => Guarded.GetAll<T>();
 
-      public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => Wrapped.GetAllIds<T>();
+      public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => Guarded.GetAllIds<T>();
 
-      public TValue GetForUpdate<TValue>(object key) => Wrapped.GetForUpdate<TValue>(key);
+      public TValue GetForUpdate<TValue>(object key) => Guarded.GetForUpdate<TValue>(key);
 
-      public void Save<TValue>(object id, TValue value) => Wrapped.Save(id, value);
+      public void Save<TValue>(object id, TValue value) => Guarded.Save(id, value);
 
-      public void Delete<TEntity>(object id) => Wrapped.Delete<TEntity>(id);
+      public void Delete<TEntity>(object id) => Guarded.Delete<TEntity>(id);
 
-      public void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Wrapped.Save(entity);
+      public void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Guarded.Save(entity);
 
-      public void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Wrapped.Delete(entity);
+      public void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Guarded.Delete(entity);
    }
 
    public static void RegisterWith(IDependencyRegistrar registrar) =>

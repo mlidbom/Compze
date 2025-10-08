@@ -26,7 +26,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
 
    public virtual TValue Get<TValue>(object key)
    {
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
       if(TryGet(key, out TValue? value))
       {
          return Result.ReturnNotNull(value);
@@ -37,7 +37,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
 
    public virtual TValue GetVersion<TValue>(object key, int version)
    {
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
       if(TryGetVersion(key, out TValue? value, version))
       {
          return Result.ReturnNotNull(value);
@@ -51,7 +51,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
    public virtual bool TryGetVersion<TDocument>(object key, [MaybeNullWhen(false)] out TDocument document, int version = -1)
    {
       var requiresVersioning = version > 0;
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
 
       document = default;
 
@@ -107,7 +107,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
 
    public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IHasPersistentIdentity<Guid>
    {
-      _usageGuard.AssertUseValid();
+      _usageGuard.EnsureAccessValid();
       return ids.Select(id => Get<TValue>(id)).ToList();
    }
 

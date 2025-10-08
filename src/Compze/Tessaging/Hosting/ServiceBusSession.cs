@@ -36,7 +36,7 @@ namespace Compze.Tessaging.Hosting;
 
    void RunAssertions(IExactlyOnceCommand command)
    {
-      _contextGuard.AssertUseValid();
+      _contextGuard.EnsureAccessValid();
       MessageInspector.AssertValidToSendRemote(command);
       CommandValidator.AssertCommandIsValid(command);
    }

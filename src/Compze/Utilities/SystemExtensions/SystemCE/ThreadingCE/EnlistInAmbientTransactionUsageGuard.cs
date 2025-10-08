@@ -11,5 +11,5 @@ class EnlistInAmbientTransactionUsageGuard : IUsageGuard
    public EnlistInAmbientTransactionUsageGuard(Action flushCallback)
       => _transactionParticipant = new(EnlistmentOptions.EnlistDuringPrepareRequired, onPrepare: flushCallback);
 
-   public void AssertUseValid() => _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
+   public void EnsureAccessValid() => _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 }

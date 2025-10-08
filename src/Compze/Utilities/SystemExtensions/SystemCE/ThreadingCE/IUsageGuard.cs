@@ -2,11 +2,11 @@
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
-///<summary>Implementations ensure that a component is only used within the allowed context. Such as a single thread, single http request etc.</summary>
+///<summary>Implementations ensure that any preconditions for using an object are fulfilled, and throws an exception if it could not successfully do so.</summary>
 interface IUsageGuard
 {
-   ///<summary>Implementations throw an exception if the context has changed.</summary>
-   void AssertUseValid();
+   ///<summary>Implementations throw an exception if the guard could not guarantee the preconditions.</summary>
+   void EnsureAccessValid();
 }
 
 class UsageGuard<TWrapped> where TWrapped : notnull
@@ -24,7 +24,7 @@ class UsageGuard<TWrapped> where TWrapped : notnull
    {
       get
       {
-         _guard.AssertUseValid();
+         _guard.EnsureAccessValid();
          return _wrapped;
       }
    }

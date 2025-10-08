@@ -48,7 +48,7 @@ class LocalHypermediaNavigator : ILocalHypermediaNavigator
 
    void CommonAssertion(IMessage message)
    {
-      _contextGuard.AssertUseValid();
+      _contextGuard.EnsureAccessValid();
       MessageInspector.AssertValidToExecuteLocally(message);
    }
 }

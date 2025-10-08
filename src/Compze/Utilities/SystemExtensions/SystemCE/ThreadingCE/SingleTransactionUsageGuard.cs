@@ -8,7 +8,7 @@ class SingleTransactionUsageGuard : IUsageGuard
    readonly object _guarded;
    public SingleTransactionUsageGuard(object guarded) => _guarded = guarded;
 
-   public void AssertUseValid()
+   public void EnsureAccessValid()
    {
       _transaction ??= Transaction.Current;
       if(Transaction.Current != null && Transaction.Current != _transaction)
