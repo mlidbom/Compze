@@ -1,7 +1,5 @@
 ﻿using System;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Wiring;
 using FluentAssertions;

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Testing;
 using Compze.Utilities.DependencyInjection;

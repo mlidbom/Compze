@@ -1,7 +1,6 @@
 ﻿using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;

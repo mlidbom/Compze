@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-#pragma warning disable IDE0130
+﻿#pragma warning disable IDE0130
 namespace System;
 #pragma warning restore IDE0130
 

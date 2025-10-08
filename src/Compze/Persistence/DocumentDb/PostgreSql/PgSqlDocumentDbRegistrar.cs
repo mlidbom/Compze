@@ -2,7 +2,6 @@ using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using System.ComponentModel;
 
 namespace Compze.Persistence.DocumentDb.PostgreSql;
 

@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Abstractions.Internal.Time;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Teventive.EventStore.DependencyInjection;

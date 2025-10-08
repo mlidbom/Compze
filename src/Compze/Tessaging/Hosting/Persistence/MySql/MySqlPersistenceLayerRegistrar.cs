@@ -1,5 +1,4 @@
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Configuration;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

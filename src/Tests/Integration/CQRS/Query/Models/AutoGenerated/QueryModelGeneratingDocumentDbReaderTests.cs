@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Teventive;

@@ -1,6 +1,4 @@
-﻿using Compze.Utilities.GenericAbstractions.Wrappers;
-
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+﻿namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 ///<summary>Implementations ensure that any preconditions for using an object are fulfilled, and throws an exception if it could not successfully do so.</summary>
 interface IUsageGuard

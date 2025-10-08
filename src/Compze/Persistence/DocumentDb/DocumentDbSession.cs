@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Transactions;
 using Compze.Abstractions;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common;
@@ -11,7 +10,6 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.TransactionsCE;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Persistence.DocumentDb;

@@ -1,5 +1,4 @@
 ﻿using System;
-using Compze.Utilities.Functional;
 using Serilog;
 
 #pragma warning disable CA2254 //We are implementing a wrapper around the logger, so complaining that we are not using a constant expression is not helpful

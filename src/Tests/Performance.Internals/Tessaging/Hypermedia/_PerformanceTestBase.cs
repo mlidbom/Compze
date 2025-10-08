@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;

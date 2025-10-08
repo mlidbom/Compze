@@ -1,5 +1,3 @@
-using Compze.Utilities.DependencyInjection.Abstractions;
-
 namespace Compze.Tessaging.Hosting.Abstractions;
 
 public class EndpointConfiguration
