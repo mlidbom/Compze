@@ -23,16 +23,42 @@ public static class TestingPersistenceLayerRegistrar
    public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IEndpointBuilder @this)
       => @this.Container.Register().CurrentTestsConfiguredPersistenceLayer(@this.Configuration.ConnectionStringName);
 
-   public static IDependencyRegistrar NewDbPoolPersistenceLayer(this IDependencyRegistrar registrar)
+   public static IDependencyRegistrar NewDbPoolPersistenceLayer(this IDependencyRegistrar register)
    {
-      registrar.Container().RegisterCurrentTestsConfiguredPersistenceLayer(Guid.NewGuid().ToString());
-      return registrar;
+      register.CurrentTestsConfiguredPersistenceLayer(Guid.NewGuid().ToString());
+      return register;
    }
 
-   public static IDependencyRegistrar CurrentTestsConfiguredPersistenceLayer(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IDependencyRegistrar CurrentTestsConfiguredPersistenceLayer(this IDependencyRegistrar register, string connectionStringName)
    {
-      registrar.Container().RegisterCurrentTestsConfiguredPersistenceLayer(connectionStringName);
-      return registrar;
+      switch(TestEnv.PersistenceLayer.Current)
+      {
+         case PersistenceLayer.MicrosoftSqlServer:
+            register.MsSqlConnectionPool(connectionStringName);
+            register.MsSqlDocumentDb();
+            register.MsSqlEventStore();
+            register.MsSqlTessaging();
+            break;
+         case PersistenceLayer.MySql:
+            register.MySqlConnectionPool(connectionStringName);
+            register.MySqlDocumentDb();
+            register.MySqlEventStore();
+            register.MySqlTessaging();
+            break;
+         case PersistenceLayer.PostgreSql:
+            register.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+            register.PgSqlDocumentDb();
+            register.PgSqlEventStore();
+            register.RegisterPgSqlTessaging();
+            break;
+         case PersistenceLayer.Memory:
+            register.InMemoryPersistenceLayer();
+            break;
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+
+      return register;
    }
 
    public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)

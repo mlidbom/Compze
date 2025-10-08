@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Persistence.MicrosoftSql;
 
 public static class MsSqlTessagingRegistrar
 {
-   public static IDependencyRegistrar RegisterMsSqlTessaging(this IDependencyRegistrar registrar)
+   public static IDependencyRegistrar MsSqlTessaging(this IDependencyRegistrar registrar)
    {
       registrar.Container().RegisterMsSqlTessaging();
       return registrar;

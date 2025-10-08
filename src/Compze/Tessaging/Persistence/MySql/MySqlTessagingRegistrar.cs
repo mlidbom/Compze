@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Persistence.MySql;
 
 public static class MySqlTessagingRegistrar
 {
-   public static IDependencyRegistrar RegisterMySqlTessaging(this IDependencyRegistrar registrar)
+   public static IDependencyRegistrar MySqlTessaging(this IDependencyRegistrar registrar)
    {
       registrar.Container().RegisterMySqlTessaging();
       return registrar;
