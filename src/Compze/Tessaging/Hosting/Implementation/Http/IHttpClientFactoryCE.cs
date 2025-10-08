@@ -10,13 +10,19 @@ interface IHttpClientFactoryCE
    HttpClient CreateClient();
 }
 
+static class HttpClientFactoryCERegistrar
+{
+   internal static IDependencyRegistrar HttpClientFactoryCE(this IDependencyRegistrar registrar)
+      => registrar.Register(Http.HttpClientFactoryCE.RegisterWith);
+}
+
 class HttpClientFactoryCE : IHttpClientFactoryCE
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)
       => registrar.Register(
          Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()));
 
-   private HttpClientFactoryCE(){}
+   private HttpClientFactoryCE() {}
 
    public HttpClient CreateClient() => new(Handler, disposeHandler: false);
 

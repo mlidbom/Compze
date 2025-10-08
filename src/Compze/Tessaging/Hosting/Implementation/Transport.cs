@@ -17,6 +17,12 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
+internal static class TransportRegistrar
+{
+   internal static IDependencyRegistrar Transport(this IDependencyRegistrar registrar)
+      => registrar.Register(Implementation.Transport.RegisterWith);
+}
+
 partial class Transport : ITransport, IDisposable
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)
@@ -86,7 +92,6 @@ partial class Transport : ITransport, IDisposable
    });
 
    bool _disposed;
-
 
    public void Dispose()
    {

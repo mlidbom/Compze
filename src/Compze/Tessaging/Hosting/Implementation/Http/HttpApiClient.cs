@@ -9,6 +9,12 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation.Http;
 
+static class HttpApiClientRegistrar
+{
+   internal static IDependencyRegistrar HttpApiClient(this IDependencyRegistrar registrar)
+      => registrar.Register(Http.HttpApiClient.RegisterWith);
+}
+
 class HttpApiClient : IHttpApiClient
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)

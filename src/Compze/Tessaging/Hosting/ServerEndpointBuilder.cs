@@ -84,15 +84,13 @@ class ServerEndpointBuilder : IEndpointBuilder
       }
 
       //Transport
-      register.RemotableMessageSerializer();
+      register.RemotableMessageSerializer()
+              .Transport()
+              .RemoteHypermediaNavigator()
+              .HttpClientFactoryCE()
+              .HttpApiClient();
 
-      Container.Register().Register(Transport.RegisterWith,
-                                    RemoteHypermediaNavigator.RegisterWith,
-                                    HttpClientFactoryCE.RegisterWith,
-                                    HttpApiClient.RegisterWith);
-
-      Container.Register(
-         Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
+      Container.Register(Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
       //Only real endpoint stuff after here
       if(!Configuration.IsPureClientEndpoint)

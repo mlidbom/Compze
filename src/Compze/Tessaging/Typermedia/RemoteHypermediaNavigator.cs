@@ -10,6 +10,13 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;
 
+
+static class RemoteHypermediaNavigatorRegistrar
+{
+   internal static IDependencyRegistrar RemoteHypermediaNavigator(this IDependencyRegistrar registrar)
+      => registrar.Register(Typermedia.RemoteHypermediaNavigator.RegisterWith);
+}
+
 //Todo: Build a pipeline to handle things like command validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
 [UsedImplicitly] class RemoteHypermediaNavigator : IRemoteHypermediaNavigator
 {

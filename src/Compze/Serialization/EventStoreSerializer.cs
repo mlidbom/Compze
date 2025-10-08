@@ -96,7 +96,7 @@ class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerial
 
 static class RemotableMessageSerializerRegistrar
 {
-   internal static void RemotableMessageSerializer(this IDependencyRegistrar registrar)
+   internal static IDependencyRegistrar RemotableMessageSerializer(this IDependencyRegistrar registrar)
       => registrar.Register(Serialization.RemotableMessageSerializer.RegisterWith);
 }
 
