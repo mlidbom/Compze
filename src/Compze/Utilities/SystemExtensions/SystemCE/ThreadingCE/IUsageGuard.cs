@@ -1,20 +1,20 @@
-﻿using System;
+﻿using Compze.Utilities.GenericAbstractions.Wrappers;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 ///<summary>Implementations ensure that a component is only used within the allowed context. Such as a single thread, single http request etc.</summary>
-interface ISingleContextUseGuard
+interface IUsageGuard
 {
    ///<summary>Implementations throw an exception if the context has changed.</summary>
-   void AssertNoContextChangeOccurred(object guarded);
+   void AssertUseValid();
 }
 
-class SingleContextUseGuard<TWrapped> where TWrapped : notnull
+class UsageGuard<TWrapped> where TWrapped : notnull
 {
    readonly TWrapped _wrapped;
-   readonly ISingleContextUseGuard _guard;
+   readonly IUsageGuard _guard;
 
-   public SingleContextUseGuard(TWrapped wrapped, ISingleContextUseGuard guard)
+   public UsageGuard(TWrapped wrapped, IUsageGuard guard)
    {
       _wrapped = wrapped;
       _guard = guard;
@@ -24,7 +24,7 @@ class SingleContextUseGuard<TWrapped> where TWrapped : notnull
    {
       get
       {
-         _guard.AssertNoContextChangeOccurred(_wrapped);
+         _guard.AssertUseValid();
          return _wrapped;
       }
    }

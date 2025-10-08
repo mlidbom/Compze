@@ -6,10 +6,16 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Typermedia;
 
-class LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry) : ILocalHypermediaNavigator
+class LocalHypermediaNavigator : ILocalHypermediaNavigator
 {
-   readonly IMessageHandlerRegistry _handlerRegistry = handlerRegistry;
-   readonly ISingleContextUseGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
+   readonly IMessageHandlerRegistry _handlerRegistry;
+   readonly IUsageGuard _contextGuard;
+
+   public LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry)
+   {
+      _handlerRegistry = handlerRegistry;
+      _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
+   }
 
    public TResult Execute<TResult>(IStrictlyLocalCommand<TResult> command)
    {
@@ -42,7 +48,7 @@ class LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry) : ILocal
 
    void CommonAssertion(IMessage message)
    {
-      _contextGuard.AssertNoContextChangeOccurred(this);
+      _contextGuard.AssertUseValid();
       MessageInspector.AssertValidToExecuteLocally(message);
    }
 }

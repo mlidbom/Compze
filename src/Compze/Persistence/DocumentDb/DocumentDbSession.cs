@@ -19,13 +19,29 @@ namespace Compze.Persistence.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
-   class ContextEnsuringWrapper(DocumentDbSession wrapped) : IDocumentDbSession
+   class ContextEnsuringWrapper : IDocumentDbSession
    {
-      readonly SingleContextUseGuard<DocumentDbSession> _wrapped = new(wrapped,
-                                                                       new CombinationUsageGuard(new SingleThreadUseGuard(),
-                                                                                                 new SingleTransactionUsageGuard()));
+      readonly UsageGuard<DocumentDbSession> _wrapped;
+      readonly VolatileLambdaTransactionParticipant _transactionParticipant;
 
-      DocumentDbSession Wrapped => _wrapped.Wrapped;
+      public ContextEnsuringWrapper(DocumentDbSession wrapped)
+      {
+         _wrapped = new UsageGuard<DocumentDbSession>(wrapped,
+                                                      new CombinationUsageGuard(new SingleThreadUseGuard(wrapped),
+                                                                                new SingleTransactionUsageGuard(wrapped))
+                                                                              );
+         _transactionParticipant = new(EnlistmentOptions.EnlistDuringPrepareRequired, onPrepare: _wrapped.Wrapped.FlushChanges);
+      }
+
+      DocumentDbSession Wrapped
+      {
+         get
+         {
+            _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
+            return _wrapped.Wrapped;
+         }
+      }
+
       public void Dispose() => Wrapped.Dispose();
 
       public TValue Get<TValue>(object key) => Wrapped.Get<TValue>(key);
@@ -59,17 +75,12 @@ partial class DocumentDbSession : IDocumentDbSession
 
    readonly IDictionary<DocumentKey, DocumentItem> _handledDocuments = new Dictionary<DocumentKey, DocumentItem>();
 
-   DocumentDbSession(IDocumentDb backingStore)
-   {
-      _backingStore = backingStore;
-      _transactionParticipant = new VolatileLambdaTransactionParticipant(EnlistmentOptions.EnlistDuringPrepareRequired, onPrepare: FlushChanges);
-   }
+   DocumentDbSession(IDocumentDb backingStore) => _backingStore = backingStore;
 
    public virtual bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => TryGetInternal(key, typeof(TValue), out document, useUpdateLock: false);
 
    bool TryGetInternal<TValue>(object key, Type documentType, [MaybeNullWhen(false)] out TValue value, bool useUpdateLock)
    {
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       if(documentType.IsInterface)
       {
          throw new ArgumentException("You cannot query by id for an interface type. There is no guarantee of uniqueness");
@@ -112,7 +123,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IHasPersistentIdentity<Guid>
    {
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       var idSet = ids.ToHashSet(); //Avoid multiple enumerations.
 
       var stored = _backingStore.GetAll<TValue>(idSet);
@@ -132,7 +142,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual TValue Get<TValue>(object key)
    {
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       if(TryGet(key, out TValue? value)) return Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
@@ -140,7 +149,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    TValue GetInternal<TValue>(object key, bool useUpdateLock)
    {
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Result.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
@@ -149,7 +157,6 @@ partial class DocumentDbSession : IDocumentDbSession
    public virtual void Save<TValue>(object id, TValue value)
    {
       Argument.NotNull(value);
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
       if(TryGetInternal(id, value.GetType(), out TValue? _, useUpdateLock: false))
       {
@@ -165,8 +172,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid>
    {
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-
       if(entity.Id.Equals(Guid.Empty))
       {
          throw new DocumentIdIsEmptyGuidException();
@@ -175,17 +180,10 @@ partial class DocumentDbSession : IDocumentDbSession
       Save(entity.Id, entity);
    }
 
-   public virtual void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid>
-   {
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-
-      Delete<TEntity>(entity.Id);
-   }
+   public virtual void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Delete<TEntity>(entity.Id);
 
    public virtual void Delete<T>(object id)
    {
-      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
-
       if(!TryGet(id, out T? _))
       {
          throw new NoSuchDocumentException(id, typeof(T));
@@ -215,6 +213,5 @@ partial class DocumentDbSession : IDocumentDbSession
    readonly Guid _id = Guid.NewGuid();
    readonly Dictionary<Type, Dictionary<string, string>> _persistentValues = new();
 
-   readonly VolatileLambdaTransactionParticipant _transactionParticipant;
    void FlushChanges() => _handledDocuments.ForEach(p => p.Value.CommitChangesToBackingStore());
 }

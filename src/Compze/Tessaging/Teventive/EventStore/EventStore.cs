@@ -43,7 +43,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
       _migrationFactories = migrations.ToList();
 
-      _usageGuard = new SingleThreadUseGuard();
+      _usageGuard = new SingleThreadUseGuard(this);
       _cache = cache;
       _persistenceLayer = persistenceLayer;
    }
@@ -54,7 +54,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
    IReadOnlyList<IAggregateEvent> GetAggregateHistoryInternal(Guid aggregateId, bool takeWriteLock)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();
 
       var cachedAggregateHistory = _cache.Get(aggregateId);
@@ -130,7 +130,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
    public void StreamEvents(int batchSize, Action<IReadOnlyList<IAggregateEvent>> handleEvents)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();
 
       var batches = StreamEvents(batchSize)
@@ -144,7 +144,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
    public void SaveSingleAggregateEvents(IReadOnlyList<IAggregateEvent> aggregateEvents)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();
 
       var aggregateId = aggregateEvents[0].AggregateId;
@@ -178,7 +178,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
    public void DeleteAggregate(Guid aggregateId)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();
       _cache.Remove(aggregateId);
       _persistenceLayer.DeleteAggregate(aggregateId);
@@ -187,7 +187,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
    public IEnumerable<Guid> StreamAggregateIdsInCreationOrder(Type? eventBaseType = null)
    {
       Assert.Argument.Is(eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventBaseType));
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
 
       _persistenceLayer.SetupSchemaIfDatabaseUnInitialized();
       return _persistenceLayer.ListAggregateIdsInCreationOrder()

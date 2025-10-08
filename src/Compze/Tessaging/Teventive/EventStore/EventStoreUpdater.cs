@@ -20,7 +20,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    readonly IEventStore _store;
    readonly IAggregateTypeValidator _aggregateTypeValidator;
    readonly IDictionary<Guid, IEventStored> _idMap = new Dictionary<Guid, IEventStored>();
-   readonly ISingleContextUseGuard _usageGuard;
+   readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
    IUtcTimeTimeSource TimeSource { get; set; }
 
@@ -34,7 +34,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    {
       Argument.NotNull(eventStoreEventPublisher).NotNull(store).NotNull(timeSource);
 
-      _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(), new SingleTransactionUsageGuard());
+      _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(this), new SingleTransactionUsageGuard(this));
       _eventStoreEventPublisher = eventStoreEventPublisher;
       _store = store;
       _aggregateTypeValidator = aggregateTypeValidator;
@@ -44,7 +44,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    public TAggregate Get<TAggregate>(Guid aggregateId) where TAggregate : class, IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       if(!DoTryGet(aggregateId, out TAggregate? result))
       {
          throw new AggregateNotFoundException(aggregateId);
@@ -56,7 +56,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    public bool TryGet<TAggregate>(Guid aggregateId, [MaybeNullWhen(false)] out TAggregate aggregate) where TAggregate : class, IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       return DoTryGet(aggregateId, out aggregate);
    }
 
@@ -70,7 +70,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
       Argument.IsGreaterThan(version, 0);
 
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
 
       var history = GetHistory(aggregateId);
       if(history.None())
@@ -91,7 +91,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    public void Save<TAggregate>(TAggregate aggregate) where TAggregate : class, IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
 
       aggregate.Commit(events =>
       {
@@ -117,7 +117,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
    void OnAggregateEvent(IAggregateEvent @event)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       if(!_idMap.ContainsKey(@event.AggregateId))
       {
          throw new Exception($"Got event from aggregate that is not tracked! Id: {@event.AggregateId}");
@@ -135,7 +135,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
    public void Dispose()
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _usageGuard.AssertUseValid();
       _disposableResources.ForEach(resource => resource.Dispose());
       _store.Dispose();
    }
@@ -168,7 +168,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
          return true;
       } else
       {
-         aggregate = default;
+         aggregate = null;
          return false;
       }
    }

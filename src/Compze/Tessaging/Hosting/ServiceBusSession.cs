@@ -9,11 +9,18 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting;
 
-[UsedImplicitly] class ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler) : IServiceBusSession
+[UsedImplicitly] class ServiceBusSession : IServiceBusSession
 {
-   readonly IOutbox _transport = transport;
-   readonly CommandScheduler _commandScheduler = commandScheduler;
-   readonly ISingleContextUseGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
+   readonly IOutbox _transport;
+   readonly CommandScheduler _commandScheduler;
+   readonly IUsageGuard _contextGuard;
+
+   public ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler)
+   {
+      _transport = transport;
+      _commandScheduler = commandScheduler;
+      _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
+   }
 
    public void Send(IExactlyOnceCommand command)
    {
@@ -29,7 +36,7 @@ namespace Compze.Tessaging.Hosting;
 
    void RunAssertions(IExactlyOnceCommand command)
    {
-      _contextGuard.AssertNoContextChangeOccurred(this);
+      _contextGuard.AssertUseValid();
       MessageInspector.AssertValidToSendRemote(command);
       CommandValidator.AssertCommandIsValid(command);
    }
