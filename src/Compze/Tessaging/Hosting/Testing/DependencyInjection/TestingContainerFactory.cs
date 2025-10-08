@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Configuration;
+using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Testing.Persistence;
-using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
@@ -16,16 +18,17 @@ public static class TestingContainerFactory
 {
    public static IServiceLocator CreateServiceLocatorForTesting([InstantHandle] Action<IDependencyRegistrar> setup)
    {
-      var host = TestingEndpointHost.Create(Create);
-      var endpoint = host.RegisterTestingEndpoint(setup: builder =>
-      {
-         builder.RegisterCurrentTestsConfiguredPersistenceLayer();
-         setup(builder.Container.Register());
-         //Hack to get the host to be disposed by the container when the container is disposed.
-         builder.Container.Register(Singleton.For<TestingEndpointHostDisposer>().CreatedBy(() => new TestingEndpointHostDisposer(host)).DelegateToParentServiceLocatorWhenCloning());
-      });
+      var container = Create(RunMode.Testing);
+      container.Register()
+               .TimeSource()
+               .TypeMapper()
+               .DummyConfigurationParameterProvider()
+               .CurrentTestsConfiguredPersistenceLayer()
+               .MessageHandlerRegistry()
+               .InMemoryEventStoreEventPublisher();
+      setup(container.Register());
 
-      return endpoint.ServiceLocator;
+      return container.ServiceLocator;
    }
 
    public static IDependencyInjectionContainer Create(IRunMode runMode)
@@ -46,4 +49,16 @@ public static class TestingContainerFactory
       readonly ITestingEndpointHost _host = host;
       public async ValueTask DisposeAsync() => await _host.DisposeAsync();
    }
+}
+
+static class DummyConfigurationParameterProviderRegistrar
+{
+   internal static IDependencyRegistrar DummyConfigurationParameterProvider(this IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
+                                     .CreatedBy(() => new DummyConfigurationParameterProvider()));
+}
+
+class DummyConfigurationParameterProvider : IConfigurationParameterProvider
+{
+   public string GetString(string parameterName, string? valueIfMissing = null) => throw new NotImplementedException();
 }

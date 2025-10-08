@@ -1,6 +1,6 @@
 ﻿namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
 
-interface IEventStoreEventPublisher
+public interface IEventStoreEventPublisher
 {
    void Publish(IAggregateEvent anEvent);
 }

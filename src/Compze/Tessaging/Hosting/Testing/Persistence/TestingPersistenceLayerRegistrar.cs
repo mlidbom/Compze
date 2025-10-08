@@ -29,6 +29,9 @@ public static class TestingPersistenceLayerRegistrar
       return register;
    }
 
+   public static IDependencyRegistrar CurrentTestsConfiguredPersistenceLayer(this IDependencyRegistrar register) =>
+      register.CurrentTestsConfiguredPersistenceLayer(Guid.NewGuid().ToString());
+
    public static IDependencyRegistrar CurrentTestsConfiguredPersistenceLayer(this IDependencyRegistrar register, string connectionStringName)
    {
       switch(TestEnv.PersistenceLayer.Current)

@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Globalization;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Abstractions.Internal.Time;
+
+static class TestingTimeSourceRegistrar
+{
+   internal static IDependencyRegistrar TestingTimeSource(this IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>()
+                                     .CreatedBy(() => new TestingTimeSource()));
+}
 
 /// <summary> Just statically returns whatever value was assigned.</summary>
 public class TestingTimeSource : IUtcTimeTimeSource
 {
    DateTime? _freezeAt;
-
 
    ///<summary>Returns a timesource that will continually return the time that it was created at as the current time.</summary>
    internal static TestingTimeSource FollowingSystemClock => new();

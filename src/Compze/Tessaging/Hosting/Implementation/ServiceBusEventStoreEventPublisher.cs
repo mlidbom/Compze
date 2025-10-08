@@ -20,12 +20,12 @@ static class ServiceBusEventStoreEventPublisherRegistrar
                                      .CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
                                                    => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)));
 
-   readonly IOutbox _transport;
+   readonly IOutbox _outbox;
    readonly IMessageHandlerRegistry _handlerRegistry;
 
-   public ServiceBusEventStoreEventPublisher(IOutbox transport, IMessageHandlerRegistry handlerRegistry)
+   public ServiceBusEventStoreEventPublisher(IOutbox outbox, IMessageHandlerRegistry handlerRegistry)
    {
-      _transport = transport;
+      _outbox = outbox;
       _handlerRegistry = handlerRegistry;
    }
 
@@ -33,6 +33,6 @@ static class ServiceBusEventStoreEventPublisherRegistrar
    {
       MessageInspector.AssertValidToSendRemote(@event);
       _handlerRegistry.CreateEventDispatcher().Dispatch(@event);
-      _transport.PublishTransactionally(@event);
+      _outbox.PublishTransactionally(@event);
    }
 }

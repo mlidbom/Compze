@@ -7,6 +7,13 @@ using System.IO;
 
 namespace Compze.Tessaging.Hosting.Configuration;
 
+static class AppSettingsJsonConfigurationParameterProviderRegistrar
+{
+   public static IDependencyRegistrar JSonAppConfigFileConfigurationParameterProvider(this IDependencyRegistrar @this)
+      => @this.Register(AppSettingsJsonConfigurationParameterProvider.RegisterWith);
+}
+
+
 ///<summary>Fetches configuration variables from the application configuration file.</summary>
 class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton
 {

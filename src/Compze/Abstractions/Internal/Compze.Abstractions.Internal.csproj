@@ -29,5 +29,6 @@
 		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
 		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
+		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
 	</ItemGroup>
 </Project>

@@ -19,6 +19,7 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
