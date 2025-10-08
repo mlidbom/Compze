@@ -18,7 +18,6 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
    public SimpleInjectorDependencyInjectionContainer(IRunMode runMode) : base(runMode)
    {
       _container = new Container();
-      _container.Options.EnableAutoVerification = false; //urgent: bug: temporarily disabled while refactoring to fix a bug
       _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
       _container.ResolveUnregisteredType += (_, unregisteredTypeEventArgs) =>
@@ -88,8 +87,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
          if(!_verified)
          {
             _verified = true;
-            //urgent: bug: restore this that has been temporarily disabled while refactoring to fix a bug
-            //_container.Verify();
+            _container.Verify();
          }
 
          return this;
