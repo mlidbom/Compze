@@ -34,28 +34,9 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
    IDisposable BeginScope();
 }
 
-interface IServiceLocatorKernel
-{
-   TComponent Resolve<TComponent>() where TComponent : class;
-}
-
 public interface IRunMode
 {
    bool IsTesting { get; }
-}
-
-public enum PersistenceLayer
-{
-   MicrosoftSqlServer,
-   Memory,
-   MySql,
-   PostgreSql
-}
-
-public enum DIContainer
-{
-   SimpleInjector,
-   Microsoft
 }
 
 enum Lifestyle

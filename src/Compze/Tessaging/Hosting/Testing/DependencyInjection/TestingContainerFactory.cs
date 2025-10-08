@@ -7,6 +7,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
+using Compze.Wiring;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;

@@ -10,6 +10,7 @@ using Compze.Utilities.Testing.DbPool;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
+using Compze.Wiring;
 
 namespace Compze.Tests.Integration.Internals.Testing.Persistence;
 

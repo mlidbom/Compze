@@ -13,12 +13,12 @@ static partial class TestEnv
    ///<summary>Persistence layer members</summary>
    public static class PersistenceLayer
    {
-      public static Utilities.DependencyInjection.Abstractions.PersistenceLayer Current
+      public static Compze.Wiring.PersistenceLayer Current
       {
          get
          {
             var storageProviderName = FindDimensions.Match(GetTestName()).Groups[1].Value;
-            if(Enum.TryParse(storageProviderName, out Utilities.DependencyInjection.Abstractions.PersistenceLayer provider)) return provider;
+            if(Enum.TryParse(storageProviderName, out Compze.Wiring.PersistenceLayer provider)) return provider;
 
 #pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
             throw new Exception($"Failed to parse PersistenceLayerProvider from test environment. Value was: {storageProviderName}");
@@ -30,11 +30,11 @@ static partial class TestEnv
          =>
             Current switch
             {
-               Utilities.DependencyInjection.Abstractions.PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-               Utilities.DependencyInjection.Abstractions.PersistenceLayer.Memory             => SelectValue(memory, nameof(memory)),
-               Utilities.DependencyInjection.Abstractions.PersistenceLayer.MySql              => SelectValue(mySql, nameof(mySql)),
-               Utilities.DependencyInjection.Abstractions.PersistenceLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
-               _                                                                 => throw new ArgumentOutOfRangeException()
+               Compze.Wiring.PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
+               Compze.Wiring.PersistenceLayer.Memory             => SelectValue(memory, nameof(memory)),
+               Compze.Wiring.PersistenceLayer.MySql              => SelectValue(mySql, nameof(mySql)),
+               Compze.Wiring.PersistenceLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
+               _                                                 => throw new ArgumentOutOfRangeException()
             };
 
       [return:NotNull]static TValue SelectValue<TValue>(TValue value, string provider)
@@ -62,12 +62,12 @@ static partial class TestEnv
    static readonly Regex FindDimensions = new("""\("(.*)\:(.*)"\)""", RegexOptions.Compiled);
    public static class DIContainer
    {
-      public static Utilities.DependencyInjection.Abstractions.DIContainer Current
+      public static Compze.Wiring.DIContainer Current
       {
          get
          {
             var containerName = FindDimensions.Match(GetTestName()).Groups[2].Value;
-            if(!Enum.TryParse(containerName, out Utilities.DependencyInjection.Abstractions.DIContainer provider))
+            if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
             {
 #pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
                throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");
