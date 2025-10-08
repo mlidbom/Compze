@@ -34,22 +34,22 @@ public static class TestingPersistenceLayerRegistrar
       switch(TestEnv.PersistenceLayer.Current)
       {
          case PersistenceLayer.MicrosoftSqlServer:
-            register.MsSqlConnectionPool(connectionStringName);
-            register.MsSqlDocumentDb();
-            register.MsSqlEventStore();
-            register.MsSqlTessaging();
+            register.MsSqlConnectionPool(connectionStringName)
+                    .MsSqlDocumentDb()
+                    .MsSqlEventStore()
+                    .MsSqlTessaging();
             break;
          case PersistenceLayer.MySql:
-            register.MySqlConnectionPool(connectionStringName);
-            register.MySqlDocumentDb();
-            register.MySqlEventStore();
-            register.MySqlTessaging();
+            register.MySqlConnectionPool(connectionStringName)
+                    .MySqlDocumentDb()
+                    .MySqlEventStore()
+                    .MySqlTessaging();
             break;
          case PersistenceLayer.PostgreSql:
-            register.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
-            register.PgSqlDocumentDb();
-            register.PgSqlEventStore();
-            register.RegisterPgSqlTessaging();
+            register.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
+                    .PgSqlDocumentDb()
+                    .PgSqlEventStore()
+                    .PgSqlTessaging();
             break;
          case PersistenceLayer.Memory:
             register.InMemoryPersistenceLayer();
@@ -59,35 +59,5 @@ public static class TestingPersistenceLayerRegistrar
       }
 
       return register;
-   }
-
-   public static void RegisterCurrentTestsConfiguredPersistenceLayer(this IDependencyInjectionContainer container, string connectionStringName)
-   {
-      switch(TestEnv.PersistenceLayer.Current)
-      {
-         case PersistenceLayer.MicrosoftSqlServer:
-            container.RegisterMsSqlConnectionPool(connectionStringName);
-            container.RegisterMsSqlDocumentDb();
-            container.RegisterMsSqlEventStore();
-            container.RegisterMsSqlTessaging();
-            break;
-         case PersistenceLayer.MySql:
-            container.RegisterMySqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
-            container.RegisterMySqlDocumentDb();
-            container.RegisterMySqlEventStore();
-            container.RegisterMySqlTessaging();
-            break;
-         case PersistenceLayer.PostgreSql:
-            container.RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
-            container.RegisterPgSqlDocumentDb();
-            container.RegisterPgSqlEventStore();
-            container.RegisterPgSqlTessaging();
-            break;
-         case PersistenceLayer.Memory:
-            container.RegisterInMemoryPersistenceLayer(connectionStringName);
-            break;
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
    }
 }

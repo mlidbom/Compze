@@ -7,18 +7,10 @@ namespace Compze.Tessaging.Persistence.MicrosoftSql;
 
 public static class MsSqlTessagingRegistrar
 {
-   public static IDependencyRegistrar MsSqlTessaging(this IDependencyRegistrar registrar)
-   {
-      registrar.Container().RegisterMsSqlTessaging();
-      return registrar;
-   }
-
-   public static void RegisterMsSqlTessaging(this IDependencyInjectionContainer container)
-   {
-      container.Register(
+   public static IDependencyRegistrar MsSqlTessaging(this IDependencyRegistrar registrar) =>
+      registrar.Register(
          Singleton.For<IServiceBusPersistenceLayer.IOutboxPersistenceLayer>()
                   .CreatedBy((IMsSqlConnectionPool endpointSqlConnection) => new MsSqlOutboxPersistenceLayer(endpointSqlConnection)),
          Singleton.For<IServiceBusPersistenceLayer.IInboxPersistenceLayer>()
                   .CreatedBy((IMsSqlConnectionPool endpointSqlConnection) => new MsSqlInboxPersistenceLayer(endpointSqlConnection)));
-   }
 }

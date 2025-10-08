@@ -9,24 +9,16 @@ namespace Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
 
 public static class MsSqlPersistenceLayerRegistrar
 {
-   internal static void RegisterMsSqlConnectionPool(this IEndpointBuilder @this) =>
-      @this.Container.RegisterMsSqlConnectionPool(@this.Configuration.ConnectionStringName);
-
    public static IDependencyRegistrar MsSqlConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
    {
-      registrar.Container().RegisterMsSqlConnectionPool(connectionStringName);
-      return registrar;
-   }
-
-   public static void RegisterMsSqlConnectionPool(this IDependencyInjectionContainer container, string connectionStringName)
-   {
-      if(container.RunMode.IsTesting)
+      if(registrar.RunMode.IsTesting)
       {
-         container.Register().DbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
+         registrar.DbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
       } else
       {
-         container.Register().MsSqlProductionConnectionPool(connectionStringName);
+         registrar.MsSqlProductionConnectionPool(connectionStringName);
       }
+      return registrar;
    }
 
    public static IDependencyRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IDependencyRegistrar registrar)

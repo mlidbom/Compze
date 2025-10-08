@@ -7,16 +7,8 @@ namespace Compze.Persistence.DocumentDb.MySql;
 
 public static class MySqlDocumentDbRegistrar
 {
-   public static IDependencyRegistrar MySqlDocumentDb(this IDependencyRegistrar registrar)
-   {
-      registrar.Container().RegisterMySqlDocumentDb();
-      return registrar;
-    }
-
-    public static void RegisterMySqlDocumentDb(this IDependencyInjectionContainer container)
-   {
-      container.Register(
+   public static IDependencyRegistrar MySqlDocumentDb(this IDependencyRegistrar registrar) =>
+      registrar.Register(
          Singleton.For<IDocumentDbPersistenceLayer>()
                   .CreatedBy((IMySqlConnectionPool connectionProvider) => new MySqlDocumentDbPersistenceLayer(connectionProvider)));
-   }
 }
