@@ -30,7 +30,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
    readonly IDictionary<DocumentKey, DocumentItem> _handledDocuments = new Dictionary<DocumentKey, DocumentItem>();
 
-   public DocumentDbSession(IDocumentDb backingStore)
+   DocumentDbSession(IDocumentDb backingStore)
    {
       _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(), new SingleTransactionUsageGuard());
       _backingStore = backingStore;

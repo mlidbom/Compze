@@ -114,5 +114,7 @@ internal class DependencyRegistrar(IDependencyInjectionContainer container) : ID
       return this;
    }
 
+   public IDependencyInjectionContainer Container() => _container;
+
    public IRunMode RunMode => _container.RunMode;
 }

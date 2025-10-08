@@ -1,15 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Transactions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Transactions;
 
 namespace Compze.Tessaging.Teventive.EventStore;
 
@@ -20,6 +22,17 @@ public interface IEventCache
 
 class EventCache : IDisposable, IEventCache
 {
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(
+         Singleton.For<EventCache, IEventCache>()
+                  .CreatedBy(() => new EventCache()));
+
+   EventCache()
+   {
+      _internalCache = new MemoryCache(new MemoryCacheOptions());
+      _transactionalOverlay = new TransactionalOverlay(this);
+   }
+
    class TransactionalOverlay(EventCache eventCache)
    {
       readonly EventCache _parent = eventCache;
@@ -100,12 +113,6 @@ class EventCache : IDisposable, IEventCache
    }
 
    readonly TransactionalOverlay _transactionalOverlay;
-
-   public EventCache()
-   {
-      _internalCache = new MemoryCache(new MemoryCacheOptions());
-      _transactionalOverlay = new TransactionalOverlay(this);
-   }
 
    void AcceptTransactionResult(Dictionary<Guid, Entry> overlay)
    {

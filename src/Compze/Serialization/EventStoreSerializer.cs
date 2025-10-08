@@ -67,11 +67,17 @@ class RenamingDecorator(ITypeMapper typeMapper)
 }
 
 
-class EventStoreSerializer(ITypeMapper typeMapper) : IEventStoreSerializer
+class EventStoreSerializer : IEventStoreSerializer
 {
    internal static readonly JsonSerializerSettings JsonSettings = Serialization.JsonSettings.SqlEventStoreSerializerSettings;
 
-   readonly RenamingSupportingJsonSerializer _serializer = new(JsonSettings, typeMapper);
+   readonly RenamingSupportingJsonSerializer _serializer;
+
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(
+         Singleton.For<IEventStoreSerializer>()
+                  .CreatedBy((ITypeMapper typeMapper) => new EventStoreSerializer(typeMapper)));
+   internal EventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
 
    public string Serialize(AggregateEvent @event) => _serializer.Serialize(@event);
    public IAggregateEvent Deserialize(Type eventType, string json) => (IAggregateEvent)_serializer.Deserialize(eventType, json);

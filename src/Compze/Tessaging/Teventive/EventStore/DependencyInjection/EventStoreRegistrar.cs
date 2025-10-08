@@ -19,39 +19,39 @@ public static class EventStoreRegistrar
    static readonly IEventMigration[] EmptyMigrationsArray = [];
 
    public static EventStoreRegistrationBuilder RegisterEventStore(this IEndpointBuilder @this) => @this.RegisterEventStore(EmptyMigrationsArray);
+
    public static EventStoreRegistrationBuilder RegisterEventStore(this IEndpointBuilder @this, IReadOnlyList<IEventMigration> migrations)
    {
-      @this.Container.RegisterEventStore(@this.Configuration.ConnectionStringName, migrations);
+      @this.Container.Register().EventStore(@this.Configuration.ConnectionStringName, migrations);
       return new EventStoreRegistrationBuilder(@this.RegisterHandlers);
    }
 
-   public static void RegisterEventStore(this IDependencyInjectionContainer @this, string connectionName) =>
-      @this.RegisterEventStore(connectionName, EmptyMigrationsArray);
+   public static IDependencyRegistrar EventStore(this IDependencyRegistrar registrar, string connectionName) =>
+      registrar.EventStore(connectionName, EmptyMigrationsArray);
 
-   public static void RegisterEventStore(this IDependencyInjectionContainer @this,
-                                         string connectionName,
-                                         IReadOnlyList<IEventMigration> migrations) =>
-      @this.RegisterEventStoreForFlexibleTesting(connectionName, () => migrations);
+   public static IDependencyRegistrar EventStore(this IDependencyRegistrar @this,
+                                                 string connectionName,
+                                                 IReadOnlyList<IEventMigration> migrations) =>
+      @this.EventStoreForFlexibleTesting(connectionName, () => migrations);
 
-   public static void RegisterEventStoreForFlexibleTesting(this IDependencyInjectionContainer @this,
-                                                           string connectionName,
-                                                           Func<IReadOnlyList<IEventMigration>> migrations)
+   public static IDependencyRegistrar EventStoreForFlexibleTesting(this IDependencyRegistrar registrar,
+                                                                   string connectionName,
+                                                                   Func<IReadOnlyList<IEventMigration>> migrations)
    {
       Assert.Argument.NotNullEmptyOrWhitespace(connectionName);
 
-      @this.Register(
-         Singleton.For<IAggregateTypeValidator>()
-                  .CreatedBy((ITypeMapper typeMapper) => new AggregateTypeValidator(typeMapper)),
-         Singleton.For<IEventStoreSerializer>()
-                  .CreatedBy((ITypeMapper typeMapper) => new EventStoreSerializer(typeMapper)),
-         Singleton.For<EventCache, IEventCache>()
-                  .CreatedBy(() => new EventCache()),
-         Scoped.For<IEventStore>()
-               .CreatedBy((IEventStorePersistenceLayer persistenceLayer, ITypeMapper typeMapper, IEventStoreSerializer serializer, EventCache cache) =>
-                             new EventStore(persistenceLayer, typeMapper, serializer, cache, migrations())),
+      Teventive.EventStore.EventStore.RegisterWith(registrar, migrations);
+
+      registrar.Register(AggregateTypeValidator.RegisterWith,
+                         EventStoreSerializer.RegisterWith,
+                         EventCache.RegisterWith);
+
+      registrar.Register(
          Scoped.For<IEventStoreUpdater, IEventStoreReader>()
                .CreatedBy((IEventStoreEventPublisher eventPublisher, IEventStore eventStore, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator) =>
                              new EventStoreUpdater(eventPublisher, eventStore, timeSource, aggregateTypeValidator)));
+
+      return registrar;
    }
 }
 

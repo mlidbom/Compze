@@ -177,7 +177,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
    {
       var serviceLocator = TestingContainerFactory.CreateServiceLocatorForTesting(
          endpointBuilder =>
-            endpointBuilder.Container.RegisterEventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsfactory));
+            endpointBuilder.Container.Register().EventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsfactory));
 
       return serviceLocator;
    }

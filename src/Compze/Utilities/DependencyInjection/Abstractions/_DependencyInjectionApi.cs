@@ -9,6 +9,7 @@ public interface IDependencyRegistrar
 {
    IDependencyRegistrar Register(params ComponentRegistration[] registrations);
    IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods);
+   IDependencyInjectionContainer Container();
    IRunMode RunMode { get; }
 }
 

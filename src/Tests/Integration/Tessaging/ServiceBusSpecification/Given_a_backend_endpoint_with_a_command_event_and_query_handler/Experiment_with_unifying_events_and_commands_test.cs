@@ -46,7 +46,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
          {
             builder.Container.RegisterAspNetCoreTransport();
             builder.RegisterCurrentTestsConfiguredPersistenceLayer();
-            builder.Container.RegisterEventStore(builder.Configuration.ConnectionStringName);
+            builder.Container.Register().EventStore(builder.Configuration.ConnectionStringName);
 
             builder.RegisterHandlers
                    .ForEvent((UserEvent.IUserRegistered _) => {})

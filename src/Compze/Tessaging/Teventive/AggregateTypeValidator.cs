@@ -5,6 +5,8 @@ using System.Reflection;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -68,9 +70,14 @@ static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
                                                                                     .ToList();
 }
 
-[UsedImplicitly] class AggregateTypeValidator(ITypeMapper typeMapper) : IAggregateTypeValidator
+[UsedImplicitly] class AggregateTypeValidator : IAggregateTypeValidator
 {
-   readonly ITypeMapper _typeMapper = typeMapper;
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IAggregateTypeValidator>()
+                                     .CreatedBy((ITypeMapper typeMapper) => new AggregateTypeValidator(typeMapper)));
+
+   readonly ITypeMapper _typeMapper;
+   AggregateTypeValidator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
 
    public void AssertIsValid<TAggregate>() => ValidatorFor<TAggregate>.AssertValid(_typeMapper);
 
