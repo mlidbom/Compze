@@ -14,6 +14,12 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
+static class OutboxRegistrar
+{
+   internal static IDependencyRegistrar Outbox(this IDependencyRegistrar registrar)
+      => registrar.Register(Implementation.Outbox.RegisterWith);
+}
+
 partial class Outbox : IOutbox
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)

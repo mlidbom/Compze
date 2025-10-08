@@ -1,22 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Compze.Abstractions.Internal.Time;
+﻿using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
+static class CommandSchedulerRegistrar
+{
+   internal static IDependencyRegistrar CommandScheduler(this IDependencyRegistrar registrar)
+      => registrar.Register(Implementation.CommandScheduler.RegisterWith);
+}
+
 class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) : IDisposable
 {
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<CommandScheduler>()
+                                     .CreatedBy((IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner)
+                                                   => new CommandScheduler(transport, timeSource, taskRunner)));
+
    readonly IOutbox _transport = transport;
    readonly IUtcTimeTimeSource _timeSource = timeSource;
    readonly ITaskRunner _taskRunner = taskRunner;

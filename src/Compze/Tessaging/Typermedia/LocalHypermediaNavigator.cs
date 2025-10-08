@@ -2,12 +2,25 @@
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Typermedia;
 
+static class LocalHypermediaNavigatorRegistrar
+{
+   internal static IDependencyRegistrar LocalHypermediaNavigator(this IDependencyRegistrar registrar)
+      => registrar.Register(Typermedia.LocalHypermediaNavigator.RegisterWith);
+}
+
 class LocalHypermediaNavigator : ILocalHypermediaNavigator
 {
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Scoped.For<ILocalHypermediaNavigator>()
+                                  .CreatedBy((IMessageHandlerRegistry messageHandlerRegistry)
+                                                => new LocalHypermediaNavigator(messageHandlerRegistry)));
+
    readonly IMessageHandlerRegistry _handlerRegistry;
    readonly IUsageGuard _contextGuard;
 

@@ -15,6 +15,12 @@ interface ITaskRunner
    void RunSwallowAndLogExceptions(string taskName, Action task);
 }
 
+static class TaskRunnerRegistrar
+{
+   internal static IDependencyRegistrar TaskRunner(this IDependencyRegistrar registrar)
+      => registrar.Register(ThreadingCE.TaskRunner.RegisterWith);
+}
+
 [UsedImplicitly] class TaskRunner : ITaskRunner, IDisposable
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)

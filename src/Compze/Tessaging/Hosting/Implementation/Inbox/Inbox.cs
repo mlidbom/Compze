@@ -2,14 +2,35 @@
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-[UsedImplicitly]partial class Inbox : IInbox, IAsyncDisposable
+static class InboxRegistrar
 {
+   internal static IDependencyRegistrar Inbox(this IDependencyRegistrar registrar)
+      => registrar.Register(Implementation.Inbox.RegisterWith);
+}
+
+[UsedImplicitly] partial class Inbox : IInbox, IAsyncDisposable
+{
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(
+         Singleton.For<Inbox.IMessageStorage>()
+                  .CreatedBy((IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer)
+                                => new InboxMessageStorage(persistenceLayer)),
+         Singleton.For<Inbox.HandlerExecutionEngine>()
+                  .CreatedBy((IMessagesInFlightTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
+                                => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
+         Singleton.For<IInbox>()
+                  .CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransport transport)
+                                => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, transport))
+      );
+
    readonly HandlerExecutionEngine _handlerExecutionEngine;
 
    readonly IMessageStorage _storage;
