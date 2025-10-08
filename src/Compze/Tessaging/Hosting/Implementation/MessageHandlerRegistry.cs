@@ -114,7 +114,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
    {
       if(_commandHandlersReturningResults.TryGetValue(command.GetType(), out var handler))
       {
-         return actualQuery => (TResult)handler.HandlerMethod(actualQuery);
+         return actualCommand => (TResult)handler.HandlerMethod(actualCommand);
       }
 
       throw new NoHandlerException(command.GetType());
