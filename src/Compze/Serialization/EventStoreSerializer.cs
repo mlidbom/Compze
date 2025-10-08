@@ -15,6 +15,7 @@ class RenamingSupportingJsonSerializer : IJsonSerializer
 {
    readonly JsonSerializerSettings _jsonSettings;
    readonly RenamingDecorator _renamingDecorator;
+
    protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, ITypeMapper typeMapper)
    {
       _jsonSettings = jsonSettings;
@@ -41,7 +42,8 @@ class RenamingDecorator(ITypeMapper typeMapper)
 
    static readonly OptimizedLazy<Regex> FindTypeNames = new(() => new Regex("""
                                                                             "\$type"\: "([^"]*)"
-                                                                            """, RegexOptions.Compiled));
+                                                                            """,
+                                                                            RegexOptions.Compiled));
 
    public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
 
@@ -66,7 +68,6 @@ class RenamingDecorator(ITypeMapper typeMapper)
    }
 }
 
-
 class EventStoreSerializer : IEventStoreSerializer
 {
    internal static readonly JsonSerializerSettings JsonSettings = Serialization.JsonSettings.SqlEventStoreSerializerSettings;
@@ -77,6 +78,7 @@ class EventStoreSerializer : IEventStoreSerializer
       => registrar.Register(
          Singleton.For<IEventStoreSerializer>()
                   .CreatedBy((ITypeMapper typeMapper) => new EventStoreSerializer(typeMapper)));
+
    internal EventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
 
    public string Serialize(AggregateEvent @event) => _serializer.Serialize(@event);
@@ -92,9 +94,15 @@ class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerial
                                      .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
 }
 
-class RemotableMessageSerializer(ITypeMapper typeMapper) : IRemotableMessageSerializer
+class RemotableMessageSerializer : IRemotableMessageSerializer
 {
-   readonly RenamingSupportingJsonSerializer _serializer = new(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
+   readonly RenamingSupportingJsonSerializer _serializer;
+
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IRemotableMessageSerializer>()
+                                     .CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)));
+
+   RemotableMessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
 
    public string SerializeResponse(object response) => _serializer.Serialize(response);
    public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);

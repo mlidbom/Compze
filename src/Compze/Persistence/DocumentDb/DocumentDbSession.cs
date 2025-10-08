@@ -19,6 +19,10 @@ namespace Compze.Persistence.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
+   public static void RegisterWith(IDependencyRegistrar registrar) =>
+      registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
+                               .CreatedBy((IDocumentDb documentDb) => new ContextEnsuringWrapper(new DocumentDbSession(documentDb))));
+
    class ContextEnsuringWrapper : IDocumentDbSession
    {
       readonly UsageGuard<DocumentDbSession> _guarded;
@@ -56,10 +60,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
       public void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Guarded.Delete(entity);
    }
-
-   public static void RegisterWith(IDependencyRegistrar registrar) =>
-      registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
-                               .CreatedBy((IDocumentDb documentDb) => new ContextEnsuringWrapper(new DocumentDbSession(documentDb))));
 
    readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
 

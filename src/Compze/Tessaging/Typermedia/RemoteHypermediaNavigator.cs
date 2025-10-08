@@ -3,15 +3,22 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;
 
 //Todo: Build a pipeline to handle things like command validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
-[UsedImplicitly] class RemoteHypermediaNavigator(ITransport transport) : IRemoteHypermediaNavigator
+[UsedImplicitly] class RemoteHypermediaNavigator : IRemoteHypermediaNavigator
 {
-   readonly ITransport _transport = transport;
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Scoped.For<IRemoteHypermediaNavigator>()
+                                  .CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)));
+
+   readonly ITransport _transport;
+   public RemoteHypermediaNavigator(ITransport transport) { _transport = transport; }
 
    public void Post(IAtMostOnceHypermediaCommand command) => PostAsync(command).WaitUnwrappingException();
 
@@ -37,6 +44,7 @@ namespace Compze.Tessaging.Typermedia;
 
       return await GetAsyncAfterFastPathOptimization(query).caf();
    }
+
    async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transport.GetAsync(query).caf();
 
    TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableQuery<TResult> query) => GetAsync(query).ResultUnwrappingException();

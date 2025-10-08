@@ -66,13 +66,11 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    void SetupContainer()
    {
-      // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+      //Universal stuff here
       Container.Register()
                .TimeSource()
                .ConfigFileReading()
                .TypeMapper();
-
-      //Universal stuff here
 
       //Only endpoint stuff after here
       //todo: Find cleaner way of doing this.
@@ -85,18 +83,14 @@ class ServerEndpointBuilder : IEndpointBuilder
       }
 
       //Transport
-      Container.Register(
-         Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker),
-                         Singleton.For<IRemotableMessageSerializer>().CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)),
-                         Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
-                                                                  => new Transport(messagesInFlightTracker, typeMapper, serializer, httpApiClient)));
+      Container.Register().Register(RemotableMessageSerializer.RegisterWith,
+                                    Transport.RegisterWith,
+                                    RemoteHypermediaNavigator.RegisterWith,
+                                    HttpClientFactoryCE.RegisterWith,
+                                    HttpApiClient.RegisterWith);
 
-      //This is a client, isn't it?
       Container.Register(
-         Scoped.For<IRemoteHypermediaNavigator>().CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)),
-         Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()),
-         Singleton.For<IHttpApiClient>().CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer))
-      );
+         Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
       //Only real endpoint stuff after here
       if(!Configuration.IsPureClientEndpoint)
