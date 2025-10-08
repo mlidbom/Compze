@@ -38,7 +38,7 @@ static class AccountStatistics
    }
 
    static void MaintainStatisticsWhenRelevantEventsAreReceived(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForEvent(
-      (AccountEvent.Root @event, ILocalHypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
+      (AccountEvent.Root @event, IInProcessHypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
 
@@ -60,7 +60,7 @@ static class AccountStatistics
       readonly Lock _lock = new Lock();
       bool _isInitialized;
       readonly DocumentDbApi _documentDbApi = new();
-      public void EnsureInitialized(ILocalHypermediaNavigator navigator)
+      public void EnsureInitialized(IInProcessHypermediaNavigator navigator)
       {
          lock(_lock)
          {

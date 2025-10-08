@@ -46,7 +46,7 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountEve
       public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
 
       static void Get(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-         (MessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> query, ILocalHypermediaNavigator navigator) =>
+         (MessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> query, IInProcessHypermediaNavigator navigator) =>
             new AccountQueryModel(navigator.Execute(new EventStoreApi().Queries.GetHistory<AccountEvent.Root>(query.EntityId))));
    }
 }

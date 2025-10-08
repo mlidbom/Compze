@@ -20,7 +20,7 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
    protected IEndpoint ServerEndpoint { get; set; }
    public IEndpoint ClientEndpoint { get; set; }
    protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
-   protected ILocalHypermediaNavigator LocalNavigator => ServerEndpoint.ServiceLocator.Resolve<ILocalHypermediaNavigator>();
+   protected IInProcessHypermediaNavigator InProcessNavigator => ServerEndpoint.ServiceLocator.Resolve<IInProcessHypermediaNavigator>();
 
    [SetUp] public async Task Setup()
    {

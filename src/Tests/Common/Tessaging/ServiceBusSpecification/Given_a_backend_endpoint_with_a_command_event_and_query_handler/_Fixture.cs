@@ -60,12 +60,12 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
 
             builder.RegisterHandlers
                    .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
-                   .ForCommand((MyCreateAggregateCommand command, ILocalHypermediaNavigator navigator) =>
+                   .ForCommand((MyCreateAggregateCommand command, IInProcessHypermediaNavigator navigator) =>
                     {
                        MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough();
                        MyAggregate.Create(command.AggregateId, navigator);
                     })
-                   .ForCommand((MyUpdateAggregateCommand command, ILocalHypermediaNavigator navigator) =>
+                   .ForCommand((MyUpdateAggregateCommand command, IInProcessHypermediaNavigator navigator) =>
                     {
                        MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough();
                        navigator.Execute(new EventStoreApi().Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update();

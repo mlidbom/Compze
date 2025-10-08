@@ -49,7 +49,7 @@ public partial class Fixture
 
       internal void Update() => Publish(new MyAggregateEvent.Implementation.Updated());
 
-      internal static void Create(Guid id, ILocalHypermediaNavigator bus)
+      internal static void Create(Guid id, IInProcessHypermediaNavigator bus)
       {
          var created = new MyAggregate();
          created.Publish(new MyAggregateEvent.Implementation.Created(id));
