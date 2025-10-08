@@ -42,16 +42,10 @@ public static class EventStoreRegistrar
 
       Teventive.EventStore.EventStore.RegisterWith(registrar, migrations);
 
-      registrar.Register(AggregateTypeValidator.RegisterWith,
-                         EventStoreSerializer.RegisterWith,
-                         EventCache.RegisterWith);
-
-      registrar.Register(
-         Scoped.For<IEventStoreUpdater, IEventStoreReader>()
-               .CreatedBy((IEventStoreEventPublisher eventPublisher, IEventStore eventStore, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator) =>
-                             new EventStoreUpdater(eventPublisher, eventStore, timeSource, aggregateTypeValidator)));
-
-      return registrar;
+      return registrar.Register(AggregateTypeValidator.RegisterWith,
+                                EventStoreSerializer.RegisterWith,
+                                EventCache.RegisterWith,
+                                EventStoreUpdater.RegisterWith);
    }
 }
 

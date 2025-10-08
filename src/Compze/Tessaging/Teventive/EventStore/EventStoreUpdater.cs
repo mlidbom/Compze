@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Compze.Abstractions.Internal.Time;
+﻿using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.EventStore;
@@ -22,7 +24,13 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    readonly List<IDisposable> _disposableResources = [];
    IUtcTimeTimeSource TimeSource { get; set; }
 
-   public EventStoreUpdater(IEventStoreEventPublisher eventStoreEventPublisher, IEventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(
+         Scoped.For<IEventStoreUpdater, IEventStoreReader>()
+               .CreatedBy((IEventStoreEventPublisher eventPublisher, IEventStore eventStore, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator) =>
+                             new EventStoreUpdater(eventPublisher, eventStore, timeSource, aggregateTypeValidator)));
+
+   EventStoreUpdater(IEventStoreEventPublisher eventStoreEventPublisher, IEventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)
    {
       Argument.NotNull(eventStoreEventPublisher).NotNull(store).NotNull(timeSource);
 
@@ -37,14 +45,15 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
       _usageGuard.AssertNoContextChangeOccurred(this);
-      if (!DoTryGet(aggregateId, out TAggregate? result))
+      if(!DoTryGet(aggregateId, out TAggregate? result))
       {
          throw new AggregateNotFoundException(aggregateId);
       }
+
       return result;
    }
 
-   public bool TryGet<TAggregate>(Guid aggregateId, [MaybeNullWhen(false)]out TAggregate aggregate) where TAggregate : class, IEventStored
+   public bool TryGet<TAggregate>(Guid aggregateId, [MaybeNullWhen(false)] out TAggregate aggregate) where TAggregate : class, IEventStored
    {
       _aggregateTypeValidator.AssertIsValid<TAggregate>();
       _usageGuard.AssertNoContextChangeOccurred(this);
@@ -86,11 +95,12 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
 
       aggregate.Commit(events =>
       {
-         if (aggregate.Version > 0 && events.None() || events.Any() && events.Min(e => e.AggregateVersion) > 1)
+         if(aggregate.Version > 0 && events.None() || events.Any() && events.Min(e => e.AggregateVersion) > 1)
          {
             throw new AttemptToSaveAlreadyPersistedAggregateException(aggregate);
          }
-         if (aggregate.Version == 0 && events.None())
+
+         if(aggregate.Version == 0 && events.None())
          {
             throw new AttemptToSaveEmptyAggregateException(aggregate);
          }
@@ -112,6 +122,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
       {
          throw new Exception($"Got event from aggregate that is not tracked! Id: {@event.AggregateId}");
       }
+
       _store.SaveSingleAggregateEvents([@event]);
       _eventStoreEventPublisher.Publish(@event);
    }
@@ -129,35 +140,33 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
       _store.Dispose();
    }
 
-
    public override string ToString() => $"{_id}: {GetType().FullName}";
    readonly Guid _id = Guid.NewGuid();
 
-   public IReadOnlyList<IAggregateEvent> GetHistory(Guid aggregateId) => GetHistoryInternal(aggregateId, takeWriteLock:false);
+   public IReadOnlyList<IAggregateEvent> GetHistory(Guid aggregateId) => GetHistoryInternal(aggregateId, takeWriteLock: false);
 
    IReadOnlyList<IAggregateEvent> GetHistoryInternal(Guid aggregateId, bool takeWriteLock) =>
       takeWriteLock
          ? _store.GetAggregateHistoryForUpdate(aggregateId)
          : _store.GetAggregateHistory(aggregateId);
 
-   bool DoTryGet<TAggregate>(Guid aggregateId, [NotNullWhen(true)]out TAggregate? aggregate) where TAggregate : class, IEventStored
+   bool DoTryGet<TAggregate>(Guid aggregateId, [NotNullWhen(true)] out TAggregate? aggregate) where TAggregate : class, IEventStored
    {
-      if (_idMap.TryGetValue(aggregateId, out var eventStored))
+      if(_idMap.TryGetValue(aggregateId, out var eventStored))
       {
          aggregate = (TAggregate)eventStored;
          return true;
       }
 
       var history = GetHistoryInternal(aggregateId, takeWriteLock: true).ToList();
-      if (history.Any())
+      if(history.Any())
       {
          aggregate = CreateInstance<TAggregate>();
          aggregate.LoadFromHistory(history);
          _idMap.Add(aggregateId, aggregate);
          _disposableResources.Add(aggregate.EventStream.Subscribe(OnAggregateEvent));
          return true;
-      }
-      else
+      } else
       {
          aggregate = default;
          return false;
