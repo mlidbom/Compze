@@ -8,6 +8,7 @@ namespace Compze.Utilities.DependencyInjection.Abstractions;
 public interface IDependencyRegistrar
 {
    IDependencyRegistrar Register(params ComponentRegistration[] registrations);
+   IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods);
    IRunMode RunMode { get; }
 }
 

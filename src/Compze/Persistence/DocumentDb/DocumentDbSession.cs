@@ -7,6 +7,8 @@ using Compze.Abstractions;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common;
 using Compze.Persistence.DocumentDb.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
@@ -17,6 +19,10 @@ namespace Compze.Persistence.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
+   public static void RegisterWith(IDependencyRegistrar registrar) =>
+      registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
+                               .CreatedBy((IDocumentDb documentDb) => new DocumentDbSession(documentDb)));
+
    readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
 
    readonly IDocumentDb _backingStore;

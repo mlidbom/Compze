@@ -19,15 +19,10 @@ public static class DocumentDbRegistrar
    {
       Assert.Argument.NotNullEmptyOrWhitespace(connectionName);
 
-      @this.Register(Singleton.For<IDocumentDbSerializer>()
-                              .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
-
-      @this.Register(Scoped.For<IDocumentDb>()
-                           .CreatedBy((IDocumentDbPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer)
-                                         => new DocumentDb(timeSource, serializer, typeMapper, persistenceLayer)));
-
-      @this.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
-                           .CreatedBy((IDocumentDb documentDb) => new DocumentDbSession(documentDb)));
+      var registrar = @this.Register()
+                           .Register(DocumentDbSerializer.RegisterWith,
+                                     DocumentDb.RegisterWith,
+                                     DocumentDbSession.RegisterWith);
 
       return new DocumentDbRegistrationBuilder();
    }

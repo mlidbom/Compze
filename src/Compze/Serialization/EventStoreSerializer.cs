@@ -4,6 +4,8 @@ using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 
@@ -75,7 +77,14 @@ class EventStoreSerializer(ITypeMapper typeMapper) : IEventStoreSerializer
    public IAggregateEvent Deserialize(Type eventType, string json) => (IAggregateEvent)_serializer.Deserialize(eventType, json);
 }
 
-class DocumentDbSerializer(ITypeMapper typeMapper) : RenamingSupportingJsonSerializer(JsonSettings.SqlEventStoreSerializerSettings, typeMapper), IDocumentDbSerializer;
+class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
+{
+   DocumentDbSerializer(ITypeMapper typeMapper) : base(JsonSettings.SqlEventStoreSerializerSettings, typeMapper) {}
+
+   public static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IDocumentDbSerializer>()
+                                     .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
+}
 
 class RemotableMessageSerializer(ITypeMapper typeMapper) : IRemotableMessageSerializer
 {

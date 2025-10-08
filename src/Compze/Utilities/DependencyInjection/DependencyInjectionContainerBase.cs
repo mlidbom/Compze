@@ -105,5 +105,14 @@ internal class DependencyRegistrar(IDependencyInjectionContainer container) : ID
       return this;
    }
 
+   public IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods)
+   {
+      foreach(var registrationMethod in registrationMethods)
+      {
+         registrationMethod(this);
+      }
+      return this;
+   }
+
    public IRunMode RunMode => _container.RunMode;
 }
