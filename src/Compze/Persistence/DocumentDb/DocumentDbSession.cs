@@ -19,22 +19,49 @@ namespace Compze.Persistence.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
+   class ContextEnsuringWrapper(DocumentDbSession wrapped) : IDocumentDbSession
+   {
+      readonly SingleContextUseGuard<DocumentDbSession> _wrapped = new(wrapped,
+                                                                       new CombinationUsageGuard(new SingleThreadUseGuard(),
+                                                                                                 new SingleTransactionUsageGuard()));
+
+      DocumentDbSession Wrapped => _wrapped.Wrapped;
+      public void Dispose() => Wrapped.Dispose();
+
+      public TValue Get<TValue>(object key) => Wrapped.Get<TValue>(key);
+
+      public bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => Wrapped.TryGet(key, out document);
+
+      public IEnumerable<T> GetAll<T>(IEnumerable<Guid> ids) where T : IHasPersistentIdentity<Guid> => Wrapped.GetAll<T>(ids);
+
+      public IEnumerable<T> GetAll<T>() where T : IHasPersistentIdentity<Guid> => Wrapped.GetAll<T>();
+
+      public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => Wrapped.GetAllIds<T>();
+
+      public TValue GetForUpdate<TValue>(object key) => Wrapped.GetForUpdate<TValue>(key);
+
+      public void Save<TValue>(object id, TValue value) => Wrapped.Save(id, value);
+
+      public void Delete<TEntity>(object id) => Wrapped.Delete<TEntity>(id);
+
+      public void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Wrapped.Save(entity);
+
+      public void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Wrapped.Delete(entity);
+   }
+
    public static void RegisterWith(IDependencyRegistrar registrar) =>
       registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
-                               .CreatedBy((IDocumentDb documentDb) => new DocumentDbSession(documentDb)));
+                               .CreatedBy((IDocumentDb documentDb) => new ContextEnsuringWrapper(new DocumentDbSession(documentDb))));
 
    readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
 
    readonly IDocumentDb _backingStore;
-   readonly ISingleContextUseGuard _usageGuard;
 
    readonly IDictionary<DocumentKey, DocumentItem> _handledDocuments = new Dictionary<DocumentKey, DocumentItem>();
 
    DocumentDbSession(IDocumentDb backingStore)
    {
-      _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(), new SingleTransactionUsageGuard());
       _backingStore = backingStore;
-
       _transactionParticipant = new VolatileLambdaTransactionParticipant(EnlistmentOptions.EnlistDuringPrepareRequired, onPrepare: FlushChanges);
    }
 
@@ -42,7 +69,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    bool TryGetInternal<TValue>(object key, Type documentType, [MaybeNullWhen(false)] out TValue value, bool useUpdateLock)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       if(documentType.IsInterface)
       {
@@ -86,7 +112,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IHasPersistentIdentity<Guid>
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
+      _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       var idSet = ids.ToHashSet(); //Avoid multiple enumerations.
 
       var stored = _backingStore.GetAll<TValue>(idSet);
@@ -106,7 +132,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual TValue Get<TValue>(object key)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       if(TryGet(key, out TValue? value)) return Result.ReturnNotNull(value);
 
@@ -115,7 +140,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    TValue GetInternal<TValue>(object key, bool useUpdateLock)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Result.ReturnNotNull(value);
 
@@ -125,7 +149,6 @@ partial class DocumentDbSession : IDocumentDbSession
    public virtual void Save<TValue>(object id, TValue value)
    {
       Argument.NotNull(value);
-      _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
       if(TryGetInternal(id, value.GetType(), out TValue? _, useUpdateLock: false))
@@ -142,7 +165,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid>
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
       if(entity.Id.Equals(Guid.Empty))
@@ -155,7 +177,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid>
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
       Delete<TEntity>(entity.Id);
@@ -163,7 +184,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual void Delete<T>(object id)
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
       _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
       if(!TryGet(id, out T? _))
@@ -180,7 +200,6 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public virtual IEnumerable<T> GetAll<T>() where T : IHasPersistentIdentity<Guid>
    {
-      _usageGuard.AssertNoContextChangeOccurred(this);
       var stored = _backingStore.GetAll<T>();
       stored.Where(document => !_entitiesByIdAndType.Contains(typeof(T), document.Id))
             .ForEach(unloadedDocument => OnInitialLoad(unloadedDocument.Id, unloadedDocument));
@@ -189,7 +208,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
    public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _backingStore.GetAllIds<T>();
 
-   public virtual void Dispose() => _usageGuard.AssertNoContextChangeOccurred(this);
+   public virtual void Dispose() {}
 
    public override string ToString() => $"{_id}: {GetType().FullName}";
 
