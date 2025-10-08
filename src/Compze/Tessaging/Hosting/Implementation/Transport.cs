@@ -41,10 +41,10 @@ partial class Transport : ITransport, IDisposable
    readonly Router _router;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
 
-   public async Task ConnectAsync(EndPointAddress remoteEndpointAdress)
+   public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAdress, _typeMapper, _serializer, _httpApiClient);
+      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _httpApiClient);
 
       await clientConnection.Init().caf();
 
