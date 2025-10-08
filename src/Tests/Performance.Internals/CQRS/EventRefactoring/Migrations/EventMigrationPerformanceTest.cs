@@ -41,7 +41,7 @@ public class EventMigrationPerformanceTest(string pluggableComponentsCombination
       _history = _aggregate.History.Cast<AggregateEvent>().ToList();
 
       _currentMigrations = Enumerable.Empty<IEventMigration>().ToList();
-      _container = CreateServiceLocatorForEventStoreType(migrationsfactory: () => _currentMigrations);
+      _container = CreateServiceLocatorForEventStoreType(migrationsFactory: () => _currentMigrations);
 
       _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<IEventStore>().SaveSingleAggregateEvents(_history));
    }

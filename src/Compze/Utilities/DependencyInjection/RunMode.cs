@@ -8,4 +8,5 @@ public class RunMode(bool isTesting) : IRunMode
    bool IRunMode.IsTesting { get; } = isTesting;
 
    public static readonly IRunMode Production = new RunMode(isTesting: false);
+   public static readonly IRunMode Testing = new RunMode(isTesting: true);
 }

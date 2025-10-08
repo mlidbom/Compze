@@ -40,16 +40,12 @@ static class TestWiringHelper
    internal static IDocumentDbSession DocumentDbSession(this IServiceLocator @this)
       => @this.Resolve<IDocumentDbSession>();
 
-   static void RegisterTestingDocumentDb(this IDependencyInjectionContainer @this) => @this.Register().DocumentDb();
-
-   static void RegisterTestingEventStore(this IDependencyInjectionContainer @this) => @this.Register().EventStore(EventStoreConnectionStringName);
-
-   internal static IServiceLocator SetupTestingServiceLocator([InstantHandle] Action<IEndpointBuilder>? configureContainer = null) =>
+   internal static IServiceLocator SetupTestingServiceLocator([InstantHandle] Action<IDependencyRegistrar>? configureContainer = null) =>
       CompzeLogger.For(typeof(TestWiringHelper)).ExceptionsAndRethrow(() =>
-                                                                   TestingContainerFactory.CreateServiceLocatorForTesting(container =>
+                                                                   TestingContainerFactory.CreateServiceLocatorForTesting(register =>
                                                                    {
-                                                                      container.Container.RegisterTestingDocumentDb();
-                                                                      container.Container.RegisterTestingEventStore();
-                                                                      configureContainer?.Invoke(container);
+                                                                      register.DocumentDb();
+                                                                      register.EventStore(EventStoreConnectionStringName);
+                                                                      configureContainer?.Invoke(register);
                                                                    }));
 }

@@ -14,13 +14,13 @@ namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
 public static class TestingContainerFactory
 {
-   public static IServiceLocator CreateServiceLocatorForTesting([InstantHandle] Action<IEndpointBuilder> setup)
+   public static IServiceLocator CreateServiceLocatorForTesting([InstantHandle] Action<IDependencyRegistrar> setup)
    {
       var host = TestingEndpointHost.Create(Create);
       var endpoint = host.RegisterTestingEndpoint(setup: builder =>
       {
          builder.RegisterCurrentTestsConfiguredPersistenceLayer();
-         setup(builder);
+         setup(builder.Container.Register());
          //Hack to get the host to be disposed by the container when the container is disposed.
          builder.Container.Register(Singleton.For<TestingEndpointHostDisposer>().CreatedBy(() => new TestingEndpointHostDisposer(host)).DelegateToParentServiceLocatorWhenCloning());
       });
