@@ -124,13 +124,13 @@ partial class Inbox
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
                      commandHandler((IAtMostOnceHypermediaCommand)message);
-                     return Unit.Instance; //Todo:Properly handle commands with and without return values
+                     return unit.Value; //Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.ExactlyOnceCommand => message =>
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
                      commandHandler((IExactlyOnceCommand)message);
-                     return Unit.Instance;//Todo:Properly handle commands with and without return values
+                     return unit.Value;//Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.NonTransactionalQuery => actualMessage =>
                   {

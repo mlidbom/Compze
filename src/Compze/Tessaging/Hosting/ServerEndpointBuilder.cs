@@ -66,6 +66,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    void SetupContainer()
    {
+      var register = Container.Register();
       //Universal stuff here
       Container.Register()
                .TimeSource()
@@ -83,8 +84,9 @@ class ServerEndpointBuilder : IEndpointBuilder
       }
 
       //Transport
-      Container.Register().Register(RemotableMessageSerializer.RegisterWith,
-                                    Transport.RegisterWith,
+      register.RemotableMessageSerializer();
+
+      Container.Register().Register(Transport.RegisterWith,
                                     RemoteHypermediaNavigator.RegisterWith,
                                     HttpClientFactoryCE.RegisterWith,
                                     HttpApiClient.RegisterWith);

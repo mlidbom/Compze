@@ -17,7 +17,7 @@ class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(plugg
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {
-         Unit.From(() =>
+         unit.From(() =>
          {
             _ = CreatePool();
          });

@@ -16,9 +16,9 @@ class StrictlyManagedResourceTests : UniversalTestBase
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {
-         Utilities.Functional.Unit.From(() =>
+         unit.From(() =>
          {
-             _ = new StrictlyManagedResource<MyClass>();
+            _ = new StrictlyManagedResource<MyClass>();
          });
 
          Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.LinqCE;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Abstractions;
@@ -8,7 +10,11 @@ namespace Compze.Utilities.DependencyInjection.Abstractions;
 public interface IDependencyRegistrar
 {
    IDependencyRegistrar Register(params ComponentRegistration[] registrations);
-   IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods);
+
+   IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods)
+      => registrationMethods.ForEach(it => it(this))
+                            .then(this);
+
    IDependencyInjectionContainer Container();
    IRunMode RunMode { get; }
 }

@@ -1,4 +1,5 @@
-﻿using Compze.Utilities.Functional;
+﻿using System;
+using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Logging;
 
@@ -7,28 +8,28 @@ namespace Compze.Utilities.Logging;
 
 interface ILevelLogger
 {
-   Unit Log(string message);
+   unit Log(string message);
 }
 
 abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
    protected readonly ILogger Logger = logger;
-   public abstract Unit Log(string message);
+   public abstract unit Log(string message);
 }
 
 class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override Unit Log(string message) => Logger.Debug(message);
+   public override unit Log(string message) => Logger.Debug(message);
 }
 
 class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override Unit Log(string message) => Logger.Info(message);
+   public override unit Log(string message) => Logger.Info(message);
 }
 
 class WarningLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override Unit Log(string message) => Logger.Warning(message);
+   public override unit Log(string message) => Logger.Warning(message);
 }
 
 static class LevelLoggerILoggerExtensions

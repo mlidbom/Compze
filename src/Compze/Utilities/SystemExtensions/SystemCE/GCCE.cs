@@ -6,7 +6,7 @@ namespace Compze.Utilities.SystemCE;
 // ReSharper disable once InconsistentNaming
 static class GCCE
 {
-   internal static Unit ForceFullGcAllGenerationsAndWaitForFinalizers() => Unit.From(() =>
+   internal static unit ForceFullGcAllGenerationsAndWaitForFinalizers() => unit.From(() =>
    {
       GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
       GC.WaitForFullGCComplete();

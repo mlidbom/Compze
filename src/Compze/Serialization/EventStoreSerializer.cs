@@ -94,6 +94,12 @@ class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerial
                                      .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
 }
 
+static class RemotableMessageSerializerRegistrar
+{
+   internal static void RemotableMessageSerializer(this IDependencyRegistrar registrar)
+      => registrar.Register(Serialization.RemotableMessageSerializer.RegisterWith);
+}
+
 class RemotableMessageSerializer : IRemotableMessageSerializer
 {
    readonly RenamingSupportingJsonSerializer _serializer;

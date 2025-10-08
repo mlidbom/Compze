@@ -16,53 +16,53 @@ class ConsoleLogger : ILogger
    public static ILogger Create(Type type) => new ConsoleLogger(type);
    public ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type) { _logLevel = level };
 
-   public Unit Error(Exception exception, string? message)
+   public unit Error(Exception exception, string? message)
    {
       if(_logLevel >= LogLevel.Error)
       {
          ConsoleCE.WriteLine(ExceptionMessageBuilder.BuildExceptionLogMessage(exception, _type, message));
       }
 
-      return Unit.Instance;
+      return unit.Value;
    }
 
-   public Unit Warning(string message)
+   public unit Warning(string message)
    {
       if(_logLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
 
-      return Unit.Instance;
+      return unit.Value;
    }
 
-   public Unit Warning(Exception exception, string message)
+   public unit Warning(Exception exception, string message)
    {
       if(_logLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}, \n: Exception: {exception}");
       }
 
-      return Unit.Instance;
+      return unit.Value;
    }
 
-   public Unit Info(string message)
+   public unit Info(string message)
    {
       if(_logLevel >= LogLevel.Info)
       {
          ConsoleCE.WriteLine($"INFO:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
 
-      return Unit.Instance;
+      return unit.Value;
    }
 
-   public Unit Debug(string message)
+   public unit Debug(string message)
    {
       if(_logLevel >= LogLevel.Debug)
       {
          ConsoleCE.WriteLine($"DEBUG:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
 
-      return Unit.Instance;
+      return unit.Value;
    }
 }

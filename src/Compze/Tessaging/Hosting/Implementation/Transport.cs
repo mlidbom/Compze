@@ -102,5 +102,5 @@ partial class Transport : ITransport, IDisposable
       }
    }
 
-   Unit AssertRunning() => Assert.State.Is(_running, () => "not running").then(Unit.Instance);
+   unit AssertRunning() => Assert.State.Is(_running, () => "not running").then(unit.Value);
 }
