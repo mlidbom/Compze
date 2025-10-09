@@ -70,6 +70,12 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
+   public object Resolve(Type serviceType)
+   {
+      Assert.State.IsNotDisposed(_isDisposed, this);
+      return CurrentProvider().GetRequiredService(serviceType);
+   }
+
    public TComponent[] ResolveAll<TComponent>() where TComponent : class
    {
       Assert.State.IsNotDisposed(_isDisposed, this);

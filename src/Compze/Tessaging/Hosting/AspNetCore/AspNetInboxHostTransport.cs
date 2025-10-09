@@ -70,15 +70,15 @@ public class AspNetInboxTransport : IInboxTransport
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      _container.RegisterToHandleServiceResolutionFor(builder.Services);
+      //We need to use our container or things go haywire.
+      builder.Services.AddSingleton<IControllerActivator>(new CompzeControllerActivator(_serviceLocator));
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
 
-      app.Services.AssertAllControllersCanBeInstantiated(_serviceLocator);
-
+      // Create a scope in our container for each request
       app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
 
       await app.StartAsync().caf();
