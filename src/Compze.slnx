@@ -244,13 +244,13 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/Infrastructure/">
-    <Project Path="Tests/Compze.Tests.Infrastructure.csproj">
+    <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
-    <Project Path="Tests/NUnit/Compze.Tests.Infrastructure.NUnit.csproj">
+    <Project Path="Tests/Infrastructure/NUnit/Compze.Tests.Infrastructure.NUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Tests/XUnit/Compze.Tests.Infrastructure.XUnit.csproj">
+    <Project Path="Tests/Infrastructure/XUnit/Compze.Tests.Infrastructure.XUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
