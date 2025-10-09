@@ -5,6 +5,7 @@ using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Integration.Internals.DependencyInjection;
 
@@ -15,15 +16,15 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
    {
       var container = TestingContainerFactory.Create(RunMode.Testing);
 
-      var exception = Assert.Throws<InvalidLifeStyleCombinationException>(() =>
+      var exception = Invoking(() =>
       {
          container.Register(
             Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
             Singleton.For<ISingletonService>().CreatedBy((IScopedService scoped) => new SingletonServiceDependingOnScoped(scoped))
          );
-      });
+      }).Should().Throw<InvalidLifeStyleCombinationException>().Which;
 
-      exception!.Message.Should().Contain("Invalid lifestyle combination");
+      exception.Message.Should().Contain("Invalid lifestyle combination");
       exception.Message.Should().Contain("Singleton");
       exception.Message.Should().Contain("Scoped"); ;
    }

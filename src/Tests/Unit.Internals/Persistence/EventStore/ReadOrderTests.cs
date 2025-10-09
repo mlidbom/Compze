@@ -124,7 +124,7 @@ namespace Compze.Tests.Unit.Internals.Persistence.EventStore;
       var rangeStart = ReadOrder.Parse("1.9999999999999999997");
       var rangeEnd = ReadOrder.Parse("2.0000000000000000003");
 
-      Assert.Throws<ArgumentException>(() => ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 6, rangeStart: rangeStart, rangeEnd: rangeEnd));
+      Invoking(() => ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 6, rangeStart: rangeStart, rangeEnd: rangeEnd)).Should().Throw<ArgumentException>();
    }
 
    static ReadOrder Create(long order, long offset) => ReadOrder.Parse($"{order}.{offset:D19}");

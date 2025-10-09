@@ -44,11 +44,11 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
         {
             var loadedUser = reader.Get<User>(user.Id);
 
-            Assert.That(loadedUser.Id, Is.EqualTo(user.Id));
-            Assert.That(loadedUser.Email, Is.EqualTo(user.Email));
-            Assert.That(loadedUser.Password, Is.EqualTo(user.Password));
+            loadedUser.Id.Should().Be(user.Id);
+            loadedUser.Email.Should().Be(user.Email);
+            loadedUser.Password.Should().Be(user.Password);
 
-            Assert.That(loadedUser.Address, Is.EqualTo(user.Address));
+            loadedUser.Address.Should().Be(user.Address);
         });
     }
 
@@ -104,7 +104,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
             var fetchedWithGetAll = reader.GetAll<User>(ids)
                                         .ToArray();
 
-            fetchedIndividually.ForEach((user, index) => Assert.That(user, Is.SameAs(fetchedWithGetAll[index])));
+            fetchedIndividually.ForEach((user, index) => user.Should().BeSameAs(fetchedWithGetAll[index]));
         });
     }
 
@@ -131,11 +131,11 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
         {
             var loadedUser = updater.GetForUpdate<User>(user.Id);
 
-            Assert.That(loadedUser.Id, Is.EqualTo(user.Id));
-            Assert.That(loadedUser.Email, Is.EqualTo(user.Email));
-            Assert.That(loadedUser.Password, Is.EqualTo(user.Password));
+            loadedUser.Id.Should().Be(user.Id);
+            loadedUser.Email.Should().Be(user.Email);
+            loadedUser.Password.Should().Be(user.Password);
 
-            Assert.That(loadedUser.Address, Is.EqualTo(user.Address));
+            loadedUser.Address.Should().Be(user.Address);
         });
     }
 
@@ -341,7 +341,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
         {
             var loaded1 = reader.Get<User>(user.Id);
             var loaded2 = reader.Get<User>(user.Id);
-            Assert.That(loaded1, Is.SameAs(loaded2));
+            loaded1.Should().BeSameAs(loaded2);
         });
     }
 
@@ -356,8 +356,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
             var loaded1 = reader.Get<User>(user.Id);
             var loaded2 = reader.Get<User>(user.Id);
-            Assert.That(loaded1, Is.SameAs(loaded2));
-            Assert.That(loaded1, Is.SameAs(user));
+            loaded1.Should().BeSameAs(loaded2);
+            loaded1.Should().BeSameAs(user);
         });
     }
 
@@ -372,7 +372,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
         UseInScope(reader =>
         {
             var loadedUser = reader.Get<HashSet<User>>(user.Id);
-            Assert.That(loadedUser.Count, Is.EqualTo(1));
+            loadedUser.Count.Should().Be(1);
         });
     }
 
@@ -394,9 +394,9 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
         UseInScope(reader =>
         {
             var loadedUser = reader.Get<User>(user.Id);
-            Assert.That(loadedUser.People.Count, Is.EqualTo(1));
+            loadedUser.People.Count.Should().Be(1);
             var loadedUserInSet = loadedUser.People.Single();
-            Assert.That(loadedUserInSet.Id, Is.EqualTo(userInSet.Id));
+            loadedUserInSet.Id.Should().Be(userInSet.Id);
         });
     }
 
@@ -481,7 +481,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
         UseInScope(reader =>
         {
             var loadedUser = reader.Get<User>(user.Id);
-            Assert.That(loadedUser.Password, Is.EqualTo("NewPassword"));
+            loadedUser.Password.Should().Be("NewPassword");
         });
     }
 
@@ -516,10 +516,10 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
             var loadedDog = reader.Get<Dog>(dog.Id);
             var loadedUser = reader.Get<User>(dog.Id);
 
-            Assert.That(loadedDog.Name, Is.EqualTo(dog.Name));
-            Assert.That(loadedUser.Email, Is.EqualTo(user.Email));
-            Assert.That(loadedDog.Id, Is.EqualTo(user.Id));
-            Assert.That(loadedUser.Id, Is.EqualTo(user.Id));
+            loadedDog.Name.Should().Be(dog.Name);
+            loadedUser.Email.Should().Be(user.Email);
+            loadedDog.Id.Should().Be(user.Id);
+            loadedUser.Id.Should().Be(user.Id);
         });
     }
 
@@ -537,8 +537,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
         using (ServiceLocator.BeginScope())
         {
-            Assert.That(ServiceLocator.DocumentDbBulkReader().GetAll<Dog>().ToList(), Has.Count.EqualTo(2));
-            Assert.That(ServiceLocator.DocumentDbBulkReader().GetAll<User>().ToList(), Has.Count.EqualTo(2));
+            ServiceLocator.DocumentDbBulkReader().GetAll<Dog>().ToList().Should().HaveCount(2);
+            ServiceLocator.DocumentDbBulkReader().GetAll<User>().ToList().Should().HaveCount(2);
         }
     }
 
@@ -558,14 +558,14 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
         var user = new User();
 
-        Assert.Throws<MultiThreadedUseException>(() => session.Get<User>(Guid.NewGuid()));
-        Assert.Throws<MultiThreadedUseException>(() => session.GetAll<User>());
-        Assert.Throws<MultiThreadedUseException>(() => session.Save(user, user.Id));
-        Assert.Throws<MultiThreadedUseException>(() => session.Delete(user));
-        Assert.Throws<MultiThreadedUseException>(() => session.Dispose());
-        Assert.Throws<MultiThreadedUseException>(() => session.Save(new User()));
-        Assert.Throws<MultiThreadedUseException>(() => session.TryGet(Guid.NewGuid(), out user));
-        Assert.Throws<MultiThreadedUseException>(() => session.Delete(user));
+        Invoking(() => session.Get<User>(Guid.NewGuid())).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.GetAll<User>()).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Save(user, user.Id)).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Delete(user)).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Dispose()).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Save(new User())).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.TryGet(Guid.NewGuid(), out user)).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Delete(user)).Should().Throw<MultiThreadedUseException>();
     }
 
 
@@ -583,8 +583,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
         UseInScope(reader =>
         {
-            Assert.That(reader.Get<Person>(user1.Id), Is.EqualTo(user1));
-            Assert.That(reader.Get<Person>(person1.Id), Is.EqualTo(person1));
+            reader.Get<Person>(user1.Id).Should().Be(user1);
+            reader.Get<Person>(person1.Id).Should().Be(person1);
         });
     }
 
@@ -604,9 +604,9 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
         {
             var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().ToList();
 
-            Assert.That(people, Has.Count.EqualTo(2));
-            Assert.That(people, Contains.Item(user1));
-            Assert.That(people, Contains.Item(person1));
+            people.Should().HaveCount(2);
+            people.Should().Contain(user1);
+            people.Should().Contain(person1);
         }
     }
 
@@ -632,8 +632,8 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
 
             var people = reader.GetAll<User>([user1.Id]);
 
-            Assert.That(people.ToList(), Has.Count.EqualTo(1));
-            Assert.That(people, Contains.Item(user1));
+            people.ToList().Should().HaveCount(1);
+            people.Should().Contain(user1);
         });
     }
 

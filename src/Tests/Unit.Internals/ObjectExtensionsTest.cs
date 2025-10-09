@@ -3,6 +3,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.Functional;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals;
 
@@ -10,5 +11,5 @@ namespace Compze.Tests.Unit.Internals;
 public class ObjectExtensionsTest : UniversalTestBase
 {
    [Test]
-   public void RepeatShouldCreateSequenceOfLengthEqualToParameter() => Assert.That(12.Repeat(10).Count(), Is.EqualTo(10));
+   public void RepeatShouldCreateSequenceOfLengthEqualToParameter() => 12.Repeat(10).Count().Should().Be(10);
 }

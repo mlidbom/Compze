@@ -5,6 +5,7 @@ using Compze.Utilities.GenericAbstractions.Hierarchies;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 
@@ -51,8 +52,8 @@ public class HierarchyTests : UniversalTestBase
                   };
 
       var flattened = EnumerableCE.Create(root1, root2).FlattenHierarchy(root => root.Children).ToList();
-      Assert.That(flattened.Count, Is.EqualTo(10));            //Ensures no duplicates
-      Assert.That(flattened.Distinct().Count(), Is.EqualTo(10)); //Ensures all objects are there.
+      flattened.Count.Should().Be(10);            //Ensures no duplicates
+      flattened.Distinct().Count().Should().Be(10); //Ensures all objects are there.
    }
 
    class Person : IHierarchy<Person>
@@ -81,7 +82,7 @@ public class HierarchyTests : UniversalTestBase
                                  }
                    };
       var familyRegister = family.Flatten().ToList();
-      Assert.That(familyRegister.Count, Is.EqualTo(5), "Should have 5 persons in the list");
-      Assert.That(familyRegister.Count, Is.EqualTo(5), "Should have 5 unique persons in the list");
+      familyRegister.Count.Should().Be(5, "Should have 5 persons in the list");
+      familyRegister.Count.Should().Be(5, "Should have 5 unique persons in the list");
    }
 }

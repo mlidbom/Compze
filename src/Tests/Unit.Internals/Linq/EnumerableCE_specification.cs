@@ -3,6 +3,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 
@@ -12,54 +13,54 @@ public class EnumerableCE_specification : UniversalTestBase
    [Test]
    public void UntilShouldHaveLastElementEqualToArgumentMinusStepSizeWhenSteppingByOneOreMinusOne()
    {
-      Assert.That(1.Until(12).Last(), Is.EqualTo(12 - 1));
-      Assert.That(1.By(1).Until(12).Last(), Is.EqualTo(12 - 1));
-      Assert.That((-1).By(-1).Until(-12).Last(), Is.EqualTo(-12 - -1));
+      1.Until(12).Last().Should().Be(12 - 1);
+      1.By(1).Until(12).Last().Should().Be(12 - 1);
+      (-1).By(-1).Until(-12).Last().Should().Be(-12 - -1);
    }
 
    [Test]
    public void UntilShouldStopEnumeratingAtValueBeforeGuard()
    {
-      Assert.That((-1).By(-2).Until(-7).Last(), Is.EqualTo(-5));
-      Assert.That((-1).By(2).Until(7).Last(), Is.EqualTo(5));
+      (-1).By(-2).Until(-7).Last().Should().Be(-5);
+      (-1).By(2).Until(7).Last().Should().Be(5);
 
-      Assert.That((-2).By(3).Until(6).Last(), Is.EqualTo(4));
-      Assert.That(2.By(3).Until(6).Last(), Is.EqualTo(5));
+      (-2).By(3).Until(6).Last().Should().Be(4);
+      2.By(3).Until(6).Last().Should().Be(5);
    }
 
    [Test]
    public void ThroughShouldHaveLastElementEqualToArgument()
    {
-      Assert.That(1.Through(12).Last(), Is.EqualTo(12));
-      Assert.That(1.By(1).Through(12).Last(), Is.EqualTo(12));
-      Assert.That((-1).By(-1).Through(-12).Last(), Is.EqualTo(-12));
+      1.Through(12).Last().Should().Be(12);
+      1.By(1).Through(12).Last().Should().Be(12);
+      (-1).By(-1).Through(-12).Last().Should().Be(-12);
    }
 
    [Test]
    public void ThroughShouldHaveCountEqualToToMinusFromPlus1()
    {
-      Assert.That(12.Through(20).Count(), Is.EqualTo(20 - 12 + 1));
-      Assert.That(12.By(1).Through(20).Count(), Is.EqualTo(20 - 12 + 1));
-      Assert.That((-12).By(-1).Through(-20).Count(), Is.EqualTo(20 - 12 + 1));
+      12.Through(20).Count().Should().Be(20 - 12 + 1);
+      12.By(1).Through(20).Count().Should().Be(20 - 12 + 1);
+      (-12).By(-1).Through(-20).Count().Should().Be(20 - 12 + 1);
    }
 
    [Test]
    public void StepSizeShouldIterateFromImplicitParameter()
    {
-      Assert.That(12.By(2).Through(int.MaxValue).First(), Is.EqualTo(12));
-      Assert.That((-12).By(-2).Through(-int.MaxValue).First(), Is.EqualTo(-12));
+      12.By(2).Through(int.MaxValue).First().Should().Be(12);
+      (-12).By(-2).Through(-int.MaxValue).First().Should().Be(-12);
    }
 
 
    [Test]
    public void StepSizeShouldStepByStepsize()
    {
-      Assert.That(12.By(2).Through(int.MaxValue).ElementAt(1), Is.EqualTo(14));
-      Assert.That(12.By(3).Through(int.MaxValue).ElementAt(1), Is.EqualTo(15));
-      Assert.That(12.By(3).Through(int.MaxValue).ElementAt(2), Is.EqualTo(18));
+      12.By(2).Through(int.MaxValue).ElementAt(1).Should().Be(14);
+      12.By(3).Through(int.MaxValue).ElementAt(1).Should().Be(15);
+      12.By(3).Through(int.MaxValue).ElementAt(2).Should().Be(18);
 
-      Assert.That((-12).By(-2).Through(-int.MaxValue).ElementAt(1), Is.EqualTo(-14));
-      Assert.That((-12).By(-3).Through(-int.MaxValue).ElementAt(1), Is.EqualTo(-15));
-      Assert.That((-12).By(-3).Through(-int.MaxValue).ElementAt(2), Is.EqualTo(-18));
+      (-12).By(-2).Through(-int.MaxValue).ElementAt(1).Should().Be(-14);
+      (-12).By(-3).Through(-int.MaxValue).ElementAt(1).Should().Be(-15);
+      (-12).By(-3).Through(-int.MaxValue).ElementAt(2).Should().Be(-18);
    }
 }

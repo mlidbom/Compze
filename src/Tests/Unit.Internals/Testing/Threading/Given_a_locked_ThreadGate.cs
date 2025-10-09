@@ -8,6 +8,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -16,7 +17,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
 [TestFixture] public class Given_a_locked_ThreadGate : UniversalTestBase
 {
    [Test] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
-      => Assert.Throws<AwaitingConditionTimeoutException>(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough());
+      => Invoking(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough()).Should().Throw<AwaitingConditionTimeoutException>();
 
    public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {

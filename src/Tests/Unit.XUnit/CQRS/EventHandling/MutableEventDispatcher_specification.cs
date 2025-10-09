@@ -4,6 +4,7 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using Xunit;
+using static FluentAssertions.FluentActions;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable IDE0051 //Review OK: unused private members are intentional in this test.
@@ -50,7 +51,7 @@ public static class MutableEventDispatcher_specification
          }
 
          [XFact] public void when_dispatching_an_unhandled_event_that_is_not_ignored_an_exception_is_thrown() =>
-            Assert.ThrowsAny<EventUnhandledException>(() => _dispatcher.Dispatch(new UnHandledUserEvent()));
+            FluentActions.Invoking(() => _dispatcher.Dispatch(new UnHandledUserEvent())).Should().Throw<EventUnhandledException>();
 
          public class when_dispatching_an_IUserCreatedEvent : with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_event_type
          {

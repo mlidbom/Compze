@@ -29,14 +29,14 @@ public class Failure_tests(string pluggableComponentsCombination) : NUnitFixture
    [Test] public void If_query_handler_throws_Query_throws()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      var exception = Assert.Catch(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())));
-      Assert.That(exception, Is.Not.Null);
+      var exception = FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery()))).Should().Throw<Exception>().Which;
+      exception.Should().NotBeNull();
    }
 
    public override async Task TearDownAsync()
    {
-      var exception = Assert.CatchAsync(async () => await Host.DisposeAsync());
-      Assert.That(exception, Is.Not.Null);
+      var exception = await FluentActions.Invoking(async () => await Host.DisposeAsync()).Should().ThrowAsync<Exception>();
+      exception.Which.Should().NotBeNull();
       await base.TearDownAsync();
    }
 

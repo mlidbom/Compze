@@ -5,6 +5,8 @@ using Compze.Tests.Infrastructure;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using FluentAssertions;
+using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Tessaging;
 
@@ -13,8 +15,8 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
 
 [TestFixture] public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
 {
-   static void AssertInvalidForSending<TMessage>() => Assert.Throws<MessageTypeInspector.MessageTypeDesignViolationException>(MessageInspector.AssertValid<TMessage>);
-   static void AssertInvalidForSubscription<TMessage>() => Assert.Throws<MessageTypeInspector.MessageTypeDesignViolationException>(MessageInspector.AssertValidForSubscription<TMessage>);
+   static void AssertInvalidForSending<TMessage>() => Invoking(MessageInspector.AssertValid<TMessage>).Should().Throw<MessageTypeInspector.MessageTypeDesignViolationException>();
+   static void AssertInvalidForSubscription<TMessage>() => Invoking(MessageInspector.AssertValidForSubscription<TMessage>).Should().Throw<MessageTypeInspector.MessageTypeDesignViolationException>();
 
    [TestFixture] public class Inspecting_type_for_subscription_ : UniversalTestBase
    {

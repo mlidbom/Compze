@@ -3,6 +3,7 @@ using Compze.Abstractions;
 using Compze.Tests.Infrastructure;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using FluentAssertions;
 
 namespace Compze.Tests.Unit.DDD;
 
@@ -52,8 +53,8 @@ public class PersistentEntityTests : UniversalTestBase
    {
       var lhs = new Person();
       var rhs = new Person(lhs.Id);
-      Assert.That(lhs.GetHashCode(), Is.EqualTo(rhs.GetHashCode()));
-      Assert.That(lhs.GetHashCode() == rhs.GetHashCode(), Is.True);
+      lhs.GetHashCode().Should().Be(rhs.GetHashCode());
+      (lhs.GetHashCode() == rhs.GetHashCode()).Should().BeTrue();
    }
 
 
@@ -61,9 +62,9 @@ public class PersistentEntityTests : UniversalTestBase
    public void ComparisonWithRhsNullReturnsFalse()
    {
       var lhs = new Person();
-      Assert.That(lhs.Equals(null!), Is.False);
+      lhs.Equals(null!).Should().BeFalse();
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-      Assert.That(lhs == null, Is.False);
+      (lhs == null).Should().BeFalse();
    }
 
    [Test]
@@ -71,7 +72,7 @@ public class PersistentEntityTests : UniversalTestBase
    {
       var rhs = new Person();
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-      Assert.That(null == rhs, Is.False);
+      (null == rhs).Should().BeFalse();
    }
 
    [Test]
@@ -80,24 +81,24 @@ public class PersistentEntityTests : UniversalTestBase
       Person? rhs = null;
       Person? lhs = null;
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-      Assert.That(rhs == lhs, Is.True);
+      (rhs == lhs).Should().BeTrue();
    }
 
    static void AssertAreEqual(Person lhs, Person rhs)
    {
-      Assert.That(lhs, Is.EqualTo(rhs));
-      Assert.That(lhs.Equals(rhs), Is.True);
-      Assert.That(Equals(lhs, rhs), Is.True);
-      Assert.That(lhs == rhs, Is.True);
-      Assert.That(lhs != rhs, Is.Not.True);
+      lhs.Should().Be(rhs);
+      lhs.Equals(rhs).Should().BeTrue();
+      Equals(lhs, rhs).Should().BeTrue();
+      (lhs == rhs).Should().BeTrue();
+      (lhs != rhs).Should().BeFalse();
    }
 
    static void AssertAreNotEqual(Person lhs, Person rhs)
    {
-      Assert.That(lhs, Is.Not.EqualTo(rhs));
-      Assert.That(lhs.Equals(rhs), Is.Not.True);
-      Assert.That(Equals(lhs, rhs), Is.Not.True);
-      Assert.That(lhs == rhs, Is.Not.True);
-      Assert.That(lhs != rhs, Is.True);
+      lhs.Should().NotBe(rhs);
+      lhs.Equals(rhs).Should().BeFalse();
+      Equals(lhs, rhs).Should().BeFalse();
+      (lhs == rhs).Should().BeFalse();
+      (lhs != rhs).Should().BeTrue();
    }
 }
