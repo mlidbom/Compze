@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Abstractions;
 
