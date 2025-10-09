@@ -111,7 +111,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    }
 }
 
-internal class DependencyRegistrar(IDependencyInjectionContainer container) : IDependencyRegistrar
+class DependencyRegistrar(IDependencyInjectionContainer container) : IDependencyRegistrar
 {
    readonly IDependencyInjectionContainer _container = container;
 
