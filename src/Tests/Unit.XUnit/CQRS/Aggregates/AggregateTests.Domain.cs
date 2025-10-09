@@ -82,10 +82,19 @@ class UserRegistered(Guid userId, string email, string password) : UserEvent(use
 }
 
 interface IMigratedBeforeUserRegisteredEvent : IUserEvent, IAggregateCreatedEvent;
-[UsedImplicitly] class MigratedBeforeUserRegisteredEvent : UserEvent, IMigratedBeforeUserRegisteredEvent;
+[UsedImplicitly]
+#pragma warning disable CA1812 // Class is instantiated via reflection during event deserialization
+class MigratedBeforeUserRegisteredEvent : UserEvent, IMigratedBeforeUserRegisteredEvent;
+#pragma warning restore CA1812
 
 interface IMigratedAfterUserChangedEmailEvent : IUserEvent, IAggregateCreatedEvent;
-[UsedImplicitly] class MigratedAfterUserChangedEmailEvent : UserEvent, IMigratedAfterUserChangedEmailEvent;
+[UsedImplicitly]
+#pragma warning disable CA1812 // Class is instantiated via reflection during event deserialization
+class MigratedAfterUserChangedEmailEvent : UserEvent, IMigratedAfterUserChangedEmailEvent;
+#pragma warning restore CA1812
 
 interface IMigratedReplaceUserChangedPasswordEvent : IUserEvent, IAggregateCreatedEvent;
-[UsedImplicitly] class MigratedReplaceUserChangedPasswordEvent : UserEvent, IMigratedReplaceUserChangedPasswordEvent;
+[UsedImplicitly]
+#pragma warning disable CA1812 // Class is instantiated via reflection during event deserialization
+class MigratedReplaceUserChangedPasswordEvent : UserEvent, IMigratedReplaceUserChangedPasswordEvent;
+#pragma warning restore CA1812

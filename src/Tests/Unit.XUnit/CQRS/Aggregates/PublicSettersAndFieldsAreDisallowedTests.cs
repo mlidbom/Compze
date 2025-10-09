@@ -34,7 +34,9 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
          public static class NestedComponent
          {
             public interface IRoot : Component.IRoot{ string           Public3 { get; set; }  }
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
             internal class Root : Component.Root, IRoot { public string Public3 { get; set; } = string.Empty; }
+#pragma warning restore CA1812
          }
       }
 
@@ -42,7 +44,9 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       {
          public interface IRoot : RootEvent.IRoot{ string            Public4 { get; set; }  }
          internal class Root : RootEvent.Root, IRoot { public string Public4 { get; set; } = string.Empty;
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
             [UsedImplicitly] public class GetterSetter : IGetSetAggregateEntityEventEntityId<Guid, Root, IRoot>
+#pragma warning restore CA1812
             {
                public Guid GetId(IRoot @event) => throw new Exception();
                public void SetEntityId(Root @event, Guid id) => throw new Exception();
@@ -57,7 +61,9 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
             public static class NestedComponent
             {
                public interface IRoot : Component.IRoot{ string            Public3 { get; set; }  }
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
                internal class Root : Component.Root, IRoot { public string Public3 { get; set; } = string.Empty;}
+#pragma warning restore CA1812
             }
          }
       }

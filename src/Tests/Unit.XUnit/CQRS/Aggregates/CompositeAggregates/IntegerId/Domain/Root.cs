@@ -46,7 +46,9 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Component.Implementation.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootEvent.Component.Entity.Implementation.Created(++_instances, name));
 
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
    [UsedImplicitly]public class Entity : RemovableEntity<Entity,
+#pragma warning restore CA1812
       int,
       RootEvent.Component.Entity.IRoot,
       RootEvent.Component.Entity.Implementation.Root,
@@ -66,7 +68,9 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    }
 }
 
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
 [UsedImplicitly]class RemovableEntity : Root.RemovableEntity<RemovableEntity,
+#pragma warning restore CA1812
    int,
    RootEvent.Entity.Implementation.Root,
    RootEvent.Entity.IRoot,
@@ -89,7 +93,9 @@ class Component : Root.Component<Component, RootEvent.Component.Implementation.R
    public void Rename(string name) => Publish(new RootEvent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootEvent.Entity.Implementation.Removed());
 
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
    public class RemovableNestedEntity : RemovableEntity<RemovableNestedEntity,
+#pragma warning restore CA1812
       int,
       RootEvent.Entity.NestedEntity.IRoot,
       RootEvent.Entity.NestedEntity.Implementation.Root,

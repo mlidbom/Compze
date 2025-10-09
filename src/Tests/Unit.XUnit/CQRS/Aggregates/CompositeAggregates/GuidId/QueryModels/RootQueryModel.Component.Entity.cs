@@ -6,7 +6,9 @@ namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Que
 
 partial class Component
 {
+#pragma warning disable CA1812 // Used via reflection in query model infrastructure
    [UsedImplicitly]public class Entity : Component.RemovableNestedEntity<Entity, Guid, CompositeAggregateEvent.Component.Entity.IRoot, CompositeAggregateEvent.Component.Entity.Created, CompositeAggregateEvent.Component.Entity.Removed, CompositeAggregateEvent.Component.Entity.Implementation.Root.IdGetterSetter>
+#pragma warning restore CA1812
    {
       public string Name { get; private set; } = string.Empty;
       public Entity(Component parent) : base(parent)

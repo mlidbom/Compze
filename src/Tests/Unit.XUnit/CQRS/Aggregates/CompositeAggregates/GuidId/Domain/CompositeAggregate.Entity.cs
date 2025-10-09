@@ -4,7 +4,9 @@ using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
 partial class RemovableEntity :
+#pragma warning restore CA1812
     CompositeAggregate.RemovableEntity<
         RemovableEntity,
         Guid,

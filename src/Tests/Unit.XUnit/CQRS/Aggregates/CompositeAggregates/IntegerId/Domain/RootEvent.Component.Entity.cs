@@ -37,7 +37,9 @@ static partial class RootEvent
             {
                public int EntityId { get; protected set; }
 
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
                [UsedImplicitly] public class IdGetterSetter : IGetSetAggregateEntityEventEntityId<int, Root, IRoot>
+#pragma warning restore CA1812
                {
                   public void SetEntityId(Root @event, int id) => @event.EntityId = id;
                   public int GetId(IRoot @event) => @event.EntityId;

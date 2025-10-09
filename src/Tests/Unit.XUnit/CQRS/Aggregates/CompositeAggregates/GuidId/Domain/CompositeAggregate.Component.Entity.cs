@@ -6,7 +6,9 @@ namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Dom
 
 partial class Component
 {
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
     [UsedImplicitly] public class Entity :
+#pragma warning restore CA1812
         Component.RemovableEntity<
             Entity,
             Guid,

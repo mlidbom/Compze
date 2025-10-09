@@ -37,7 +37,9 @@ static partial class CompositeAggregateEvent
             {
                public Guid NestedEntityId { get; protected set; }
 
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
                [UsedImplicitly] public new class IdGetterSetter : Root, IGetSetAggregateEntityEventEntityId<Guid, Root, IRoot>
+#pragma warning restore CA1812
                {
                   public void SetEntityId(Root @event, Guid id) => @event.NestedEntityId = id;
                   public Guid GetId(IRoot @event) => @event.NestedEntityId;

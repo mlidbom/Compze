@@ -5,7 +5,9 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 
+#pragma warning disable CA1812 // Used via reflection in query model infrastructure
 [UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, CompositeAggregateEvent.Entity.IRoot, CompositeAggregateEvent.Entity.Created, CompositeAggregateEvent.Entity.Removed, CompositeAggregateEvent.Entity.Implementation.Root.IdGetterSetter>
+#pragma warning restore CA1812
 {
    public string Name { get; private set; } = string.Empty;
    public Entity(RootQueryModel root) : base(root)

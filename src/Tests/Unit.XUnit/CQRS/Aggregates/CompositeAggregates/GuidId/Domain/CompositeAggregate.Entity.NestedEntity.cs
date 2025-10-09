@@ -6,7 +6,9 @@ namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Dom
 
 [UsedImplicitly] partial class RemovableEntity
 {
+#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
     public class RemovableNestedEntity :
+#pragma warning restore CA1812
         RemovableEntity.RemovableEntity<
             RemovableNestedEntity,
             Guid,
