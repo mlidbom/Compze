@@ -1,5 +1,6 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tests.Common.NUnit.Persistence.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Common.Persistence.DocumentDb;
 using Compze.Utilities.DependencyInjection;

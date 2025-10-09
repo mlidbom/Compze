@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
@@ -13,8 +12,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Threading;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions.Extensions;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
@@ -25,27 +22,27 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public abstract partial class Fixture(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract partial class Fixture(string pluggableComponentsCombination)
 {
+   protected string PluggableComponentsCombination { get; } = pluggableComponentsCombination;
+   
    static readonly TimeSpan _timeout = 10.Seconds();
-   internal ITestingEndpointHost Host;
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   internal IThreadGate CommandHandlerThreadGate;
-   internal IThreadGate CommandHandlerWithResultThreadGate;
-   internal IThreadGate MyCreateAggregateCommandHandlerThreadGate;
-   internal IThreadGate MyUpdateAggregateCommandHandlerThreadGate;
-   internal IThreadGate MyRemoteAggregateEventHandlerThreadGate;
-   internal IThreadGate MyLocalAggregateEventHandlerThreadGate;
-   internal IThreadGate EventHandlerThreadGate;
-   internal IThreadGate QueryHandlerThreadGate;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   internal ITestingEndpointHost Host = null!;
+   internal IThreadGate CommandHandlerThreadGate = null!;
+   internal IThreadGate CommandHandlerWithResultThreadGate = null!;
+   internal IThreadGate MyCreateAggregateCommandHandlerThreadGate = null!;
+   internal IThreadGate MyUpdateAggregateCommandHandlerThreadGate = null!;
+   internal IThreadGate MyRemoteAggregateEventHandlerThreadGate = null!;
+   internal IThreadGate MyLocalAggregateEventHandlerThreadGate = null!;
+   internal IThreadGate EventHandlerThreadGate = null!;
+   internal IThreadGate QueryHandlerThreadGate = null!;
 
    internal IReadOnlyList<IThreadGate> AllGates = [];
 
-   protected IEndpoint ClientEndpoint { get; set; }
-   protected IEndpoint RemoteEndpoint { get; set; }
+   protected IEndpoint ClientEndpoint { get; set; } = null!;
+   protected IEndpoint RemoteEndpoint { get; set; } = null!;
 
-   [SetUp] public async Task Setup()
+   protected void InitializeHost()
    {
       Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
 
@@ -98,7 +95,10 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
                                              });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
+   }
 
+   protected async System.Threading.Tasks.Task StartHostAsync()
+   {
       await Host.StartAsync();
       AllGates =
       [
@@ -113,7 +113,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
       ];
    }
 
-   [TearDown] public virtual async Task TearDownAsync()
+   protected async System.Threading.Tasks.Task TearDownHostAsync()
    {
       OpenGates();
       await Host.DisposeAsync();

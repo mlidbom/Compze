@@ -243,6 +243,11 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Tests/Common/">
+    <Project Path="Tests/Common/NUnit/Compze.Tests.Common.NUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Tests/Infrastructure/">
     <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj">
       <BuildType Solution="docs|*" Project="Debug" />

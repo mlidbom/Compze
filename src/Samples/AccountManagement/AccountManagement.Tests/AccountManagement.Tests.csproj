@@ -24,10 +24,6 @@
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-         <PrivateAssets>all</PrivateAssets>
-         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
    </ItemGroup>
    <ItemGroup>
 	   <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
@@ -37,9 +33,6 @@
          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-   <PropertyGroup>
-      <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
-   </PropertyGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
    </ItemGroup>

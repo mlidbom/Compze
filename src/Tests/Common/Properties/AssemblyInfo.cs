@@ -1,1 +1,1 @@
-﻿[assembly:NUnit.Framework.NonTestAssembly]
+﻿// NUnit-specific attributes moved to Compze.Tests.Common.NUnit

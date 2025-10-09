@@ -8,9 +8,9 @@ using JetBrains.Annotations;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
 
-namespace Compze.Tests.Common.Persistence.DocumentDb;
+namespace Compze.Tests.Common.NUnit.Persistence.DocumentDb;
 
-abstract class DocumentDbTestsBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class DocumentDbTestsBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
    protected IServiceLocator ServiceLocator { get; private set; }

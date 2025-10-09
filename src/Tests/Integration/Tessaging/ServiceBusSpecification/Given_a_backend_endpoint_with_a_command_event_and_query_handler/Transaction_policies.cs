@@ -1,14 +1,16 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure.Threading;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
+using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Transaction_policies(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
+public class Transaction_policies(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
 {
    [Test] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
