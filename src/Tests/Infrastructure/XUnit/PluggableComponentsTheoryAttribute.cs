@@ -32,15 +32,26 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
    {
       var combinations = PluggableComponentsReader.GetCombinations().ToList();
       
-      // Check if method has parameters
+      // Check if method has parameters and what type
       var parameters = testMethod.Method.GetParameters();
+      var hasContextParameter = parameters.Any() && parameters[0].ParameterType.Name == nameof(PluggableComponentTestContext);
       var hasStringParameter = parameters.Any() && parameters[0].ParameterType.Name == "String";
       
       var testCases = combinations
          .Select(combination =>
          {
-            // If method has a string parameter, pass the combination as an argument
-            var arguments = hasStringParameter ? new object[] { combination } : null;
+            // Determine what to pass based on parameter type
+            object?[]? arguments = null;
+            if(hasContextParameter)
+            {
+               // Create and pass a PluggableComponentTestContext instance
+               arguments = new object[] { new PluggableComponentTestContext(combination) };
+            }
+            else if(hasStringParameter)
+            {
+               // Pass the combination string directly
+               arguments = new object[] { combination };
+            }
             
             return new PluggableComponentsTestCase(
                testMethod: testMethod,
