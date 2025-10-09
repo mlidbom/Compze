@@ -15,7 +15,8 @@ public abstract class ComponentRegistration
    internal InstantiationSpec InstantiationSpec { get; }
    internal Lifestyle Lifestyle { get; }
    internal IReadOnlyList<Type> DependencyTypes { get; }
-   internal abstract int ComponentIndex { get; }
+   internal bool ProvidesService(Type service) => ServiceTypes.Contains(service);
+    internal abstract int ComponentIndex { get; }
 
    internal readonly int[] ServiceTypeIndexes;
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.DependencyInjection;
 
@@ -34,10 +35,10 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
 
    public IDependencyRegistrar Register() => new DependencyRegistrar(this);
 
-    /// <summary>
-    /// Container-specific registration logic. Called after validation and tracking.
-    /// </summary>
-    protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
+   /// <summary>
+   /// Container-specific registration logic. Called after validation and tracking.
+   /// </summary>
+   protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
@@ -82,7 +83,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          foreach(var serviceType in newRegistration.ServiceTypes)
          {
             var existingRegistration = _registeredComponents
-               .FirstOrDefault(existing => existing.ServiceTypes.Contains(serviceType));
+              .FirstOrDefault(existing => existing.ServiceTypes.Contains(serviceType));
 
             if(existingRegistration != null)
             {
@@ -97,20 +98,16 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
 
    void AssertLifeStyleCombinationsAreValid()
    {
-      foreach(var registration in _registeredComponents.Where(r => r.Lifestyle == Lifestyle.Singleton))
-      {
-         foreach(var dependencyType in registration.DependencyTypes)
-         {
-            var dependencyRegistration = _registeredComponents
-               .FirstOrDefault(r => r.ServiceTypes.Contains(dependencyType));
-
-            if(dependencyRegistration is { Lifestyle: Lifestyle.Scoped })
-            {
-               var implementationType = registration.InstantiationSpec.FactoryMethodReturnType;
-               throw new Exception($"Invalid lifestyle combination: {nameof(Lifestyle.Singleton)}: {implementationType.FullName} depends on {nameof(Lifestyle.Scoped)}: {dependencyType.FullName}");
-            }
-         }
-      }
+      _registeredComponents.Where(it => it.Lifestyle == Lifestyle.Singleton)
+                           .ForEach(singleton =>
+                            {
+                               foreach(var dependencyType in singleton.DependencyTypes)
+                               {
+                                  _registeredComponents
+                                    .Where(it => it.ProvidesService(dependencyType) && it.Lifestyle != Lifestyle.Singleton)
+                                    .ForEach(invalidDependency => throw new InvalidLifeStyleCombinationException(singleton, invalidDependency, dependencyType));
+                               }
+                            });
    }
 }
 
@@ -130,6 +127,7 @@ internal class DependencyRegistrar(IDependencyInjectionContainer container) : ID
       {
          registrationMethod(this);
       }
+
       return this;
    }
 

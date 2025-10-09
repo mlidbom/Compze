@@ -14,7 +14,7 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
    {
       var container = TestingContainerFactory.Create(RunMode.Testing);
 
-      var exception = Assert.Throws<Exception>(() =>
+      var exception = Assert.Throws<InvalidLifeStyleCombinationException>(() =>
       {
          container.Register(
             Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
