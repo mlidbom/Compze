@@ -9,7 +9,7 @@
     <ProjectReference Include="..\..\Common\Compze.Persistence.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
