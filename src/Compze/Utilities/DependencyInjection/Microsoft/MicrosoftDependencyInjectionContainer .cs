@@ -29,18 +29,13 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
       foreach(var componentRegistration in registrations)
       {
-         var lifetime = componentRegistration.Lifestyle switch
-         {
-            Lifestyle.Singleton => ServiceLifetime.Singleton,
-            Lifestyle.Scoped => ServiceLifetime.Scoped,
-            _ => throw new ArgumentOutOfRangeException(nameof(componentRegistration.Lifestyle))
-         };
+         var lifetime = componentRegistration.Lifestyle.AsServiceLifetime();
 
-         if(componentRegistration.InstantiationSpec.SingletonInstance != null)
+         if(componentRegistration.InstantiationSpec.SingletonInstance is {} instance)
          {
             foreach(var serviceType in componentRegistration.ServiceTypes)
             {
-               _services.AddSingleton(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
+               _services.AddSingleton(serviceType, instance);
             }
          } else
          {

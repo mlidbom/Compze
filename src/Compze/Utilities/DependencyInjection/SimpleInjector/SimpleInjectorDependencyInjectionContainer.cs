@@ -40,36 +40,28 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
             _                   => throw new ArgumentOutOfRangeException(nameof(componentRegistration.Lifestyle))
          };
 
-         if(componentRegistration.InstantiationSpec.SingletonInstance != null)
+         if(componentRegistration.InstantiationSpec.SingletonInstance is {} instance)
          {
             foreach(var serviceType in componentRegistration.ServiceTypes)
             {
-               _container.RegisterInstance(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
+               _container.RegisterInstance(serviceType, instance);
             }
          } else
          {
-            var baseRegistration = GetSimpleInjectorLifestyle(componentRegistration.Lifestyle)
-              .CreateRegistration(
-                  componentRegistration.InstantiationSpec.FactoryMethodReturnType,
-                  () => componentRegistration.InstantiationSpec.RunFactoryMethod(this),
-                  _container);
+            var baseRegistration = componentRegistration.Lifestyle
+                                                        .AsSimpleInjectorLifestyle()
+                                                        .CreateRegistration(
+                                                            componentRegistration.InstantiationSpec.FactoryMethodReturnType,
+                                                            () => componentRegistration.InstantiationSpec.RunFactoryMethod(this),
+                                                            _container);
             foreach(var serviceType in componentRegistration.ServiceTypes)
             {
                _container.AddRegistration(serviceType, baseRegistration);
             }
          }
       }
-      return this;
-    }
 
-   static global::SimpleInjector.Lifestyle GetSimpleInjectorLifestyle(Lifestyle @this)
-   {
-      return @this switch
-      {
-         Lifestyle.Singleton => global::SimpleInjector.Lifestyle.Singleton,
-         Lifestyle.Scoped    => global::SimpleInjector.Lifestyle.Scoped,
-         _                   => throw new ArgumentOutOfRangeException(nameof(@this), @this, null)
-      };
+      return this;
    }
 
    bool _verified;
