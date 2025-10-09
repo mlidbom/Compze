@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +10,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

@@ -11,6 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
+    <ProjectReference Include="..\NUnit\Compze.TestInfrastructure.NUnit.csproj" />
+    <ProjectReference Include="..\XUnit\Compze.TestInfrastructure.XUnit.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />

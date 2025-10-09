@@ -1,8 +1,9 @@
-﻿using AccountManagement.Domain.Passwords;
+using AccountManagement.Domain.Passwords;
 using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
+using Compze.TestInfrastructure.NUnit;
 
 namespace AccountManagement.UnitTests.Passwords;
 

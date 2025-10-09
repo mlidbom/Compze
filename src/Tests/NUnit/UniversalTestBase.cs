@@ -1,7 +1,7 @@
-﻿using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE;
 using NUnit.Framework;
 
-namespace Compze.TestInfrastructure;
+namespace Compze.TestInfrastructure.NUnit;
 
 public class UniversalTestBase
 {

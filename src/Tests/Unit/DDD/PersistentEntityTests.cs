@@ -2,6 +2,7 @@ using System;
 using Compze.Abstractions;
 using Compze.TestInfrastructure;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.DDD;
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +17,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 

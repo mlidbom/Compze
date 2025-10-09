@@ -18,6 +18,7 @@ using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.TestInfrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing

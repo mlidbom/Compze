@@ -11,6 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Tests\Compze.TestInfrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Tests\NUnit\Compze.TestInfrastructure.NUnit.csproj" />
     <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
   </ItemGroup>
   <ItemGroup>

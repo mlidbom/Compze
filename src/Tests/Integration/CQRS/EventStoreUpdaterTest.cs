@@ -23,6 +23,7 @@ using Compze.TestInfrastructure.Threading;
 using Compze.TestInfrastructure.Transactions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable AccessToDisposedClosure
 

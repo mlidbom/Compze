@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Hosting.Configuration;
 using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
 

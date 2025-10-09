@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
@@ -9,6 +9,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.Serialization;
 

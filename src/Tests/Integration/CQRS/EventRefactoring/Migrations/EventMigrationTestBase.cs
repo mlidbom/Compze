@@ -18,6 +18,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable AccessToModifiedClosure
 

@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using JetBrains.Annotations;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable UnusedMember.Global
 

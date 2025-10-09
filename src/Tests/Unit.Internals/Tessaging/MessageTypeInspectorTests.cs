@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.TestInfrastructure;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.Tessaging;
 

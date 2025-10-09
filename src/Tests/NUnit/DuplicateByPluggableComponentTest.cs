@@ -1,11 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Compze.Utilities.Functional;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
-namespace Compze.TestInfrastructure;
+namespace Compze.TestInfrastructure.NUnit;
 
 [TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
 public class DuplicateByPluggableComponentTest : UniversalTestBase

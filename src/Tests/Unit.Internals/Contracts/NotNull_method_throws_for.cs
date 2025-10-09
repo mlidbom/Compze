@@ -1,4 +1,4 @@
-using Compze.TestInfrastructure.TestFrameworkExtensions.XUnit;
+using Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.Contracts;
 

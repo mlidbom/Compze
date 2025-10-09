@@ -7,6 +7,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace AccountManagement.UserStories;
 

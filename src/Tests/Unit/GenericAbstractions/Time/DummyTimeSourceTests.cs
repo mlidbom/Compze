@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Compze.Abstractions.Internal.Time;
 using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.GenericAbstractions.Time;
 

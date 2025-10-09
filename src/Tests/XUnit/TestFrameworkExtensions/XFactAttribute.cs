@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
@@ -6,8 +6,9 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 using static Compze.Utilities.Contracts.Assert;
+using Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
 
-namespace Compze.TestInfrastructure.TestFrameworkExtensions.XUnit;
+namespace Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
 
 ///<summary>
 /// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
@@ -16,8 +17,8 @@ namespace Compze.TestInfrastructure.TestFrameworkExtensions.XUnit;
 [XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
 sealed class XFactAttribute : FactAttribute
 {
-   const string XFactDiscovererFullTypeName = "Compze.TestInfrastructure.TestFrameworkExtensions.XUnit.XFactDiscoverer";
-   const string XFactDiscovererAssembly = "Compze.TestInfrastructure";
+   const string XFactDiscovererFullTypeName = "Compze.TestInfrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
+   const string XFactDiscovererAssembly = "Compze.TestInfrastructure.XUnit";
 
    static XFactAttribute()
    {

@@ -6,6 +6,7 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable UnusedMethodReturnValue.Local
 // ReSharper disable MemberCanBeMadeStatic.Local

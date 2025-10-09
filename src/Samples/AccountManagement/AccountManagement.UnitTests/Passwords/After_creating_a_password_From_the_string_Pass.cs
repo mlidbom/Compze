@@ -1,7 +1,8 @@
-﻿using AccountManagement.Domain.Passwords;
+using AccountManagement.Domain.Passwords;
 using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable InconsistentNaming
 

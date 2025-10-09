@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Linq;
-using Compze.TestInfrastructure.TestFrameworkExtensions.XUnit;
+using Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;

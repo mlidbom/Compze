@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.TestInfrastructure;
@@ -7,6 +7,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 #pragma warning disable CA1806 // Do not ignore method results
 

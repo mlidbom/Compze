@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Persistence.Common.Abstractions;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
@@ -10,6 +10,7 @@ using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
 using Compze.Wiring;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Integration.Internals.Testing.Persistence;
 

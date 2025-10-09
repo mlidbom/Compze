@@ -13,6 +13,7 @@ using Compze.TestInfrastructure.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 

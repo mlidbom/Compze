@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Linq;
 using AccountManagement.API;
 using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace AccountManagement.UnitTests.UI.Commands.UserCommands;
 

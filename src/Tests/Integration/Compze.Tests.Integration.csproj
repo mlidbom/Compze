@@ -12,6 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
+    <ProjectReference Include="..\NUnit\Compze.TestInfrastructure.NUnit.csproj" />
+    <ProjectReference Include="..\XUnit\Compze.TestInfrastructure.XUnit.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

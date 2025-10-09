@@ -9,6 +9,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.TestInfrastructure;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 //ncrunch: no coverage start
 

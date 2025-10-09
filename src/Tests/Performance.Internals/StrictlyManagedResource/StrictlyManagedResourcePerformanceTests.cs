@@ -1,10 +1,11 @@
-﻿
+
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable StringLiteralTypo
 

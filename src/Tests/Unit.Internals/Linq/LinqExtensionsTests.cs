@@ -3,6 +3,7 @@ using System.Linq;
 using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 

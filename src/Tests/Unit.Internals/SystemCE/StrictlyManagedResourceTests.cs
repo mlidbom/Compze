@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.TestInfrastructure;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
@@ -7,6 +7,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.SystemCE;
 

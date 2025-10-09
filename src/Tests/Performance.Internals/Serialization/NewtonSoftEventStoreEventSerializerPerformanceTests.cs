@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
@@ -10,6 +10,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 

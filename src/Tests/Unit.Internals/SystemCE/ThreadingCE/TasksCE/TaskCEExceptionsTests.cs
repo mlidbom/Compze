@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.TestInfrastructure;
@@ -6,6 +6,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
 

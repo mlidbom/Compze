@@ -14,6 +14,7 @@ using Compze.TestInfrastructure.Threading;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing

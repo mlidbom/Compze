@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Integration.CQRS;
 

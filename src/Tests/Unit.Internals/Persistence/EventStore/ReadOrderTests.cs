@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -6,6 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using ReadOrder = Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 using static FluentAssertions.FluentActions;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.Persistence.EventStore;
 

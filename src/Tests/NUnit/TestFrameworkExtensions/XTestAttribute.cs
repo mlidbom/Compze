@@ -3,7 +3,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 
-namespace Compze.TestInfrastructure.TestFrameworkExtensions.NUnit;
+namespace Compze.TestInfrastructure.NUnit.TestFrameworkExtensions;
 
 ///<summary>
 /// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.

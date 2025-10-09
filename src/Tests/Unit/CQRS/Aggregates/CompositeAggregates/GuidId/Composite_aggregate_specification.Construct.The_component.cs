@@ -1,4 +1,4 @@
-﻿using Compze.TestInfrastructure.TestFrameworkExtensions.XUnit;
+using Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 using FluentAssertions;
 

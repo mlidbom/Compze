@@ -4,6 +4,7 @@ using Compze.TestInfrastructure;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace Compze.Tests.Integration.Internals.DependencyInjection;
 

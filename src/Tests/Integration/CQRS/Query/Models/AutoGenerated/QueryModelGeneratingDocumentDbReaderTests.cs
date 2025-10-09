@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
@@ -16,6 +16,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

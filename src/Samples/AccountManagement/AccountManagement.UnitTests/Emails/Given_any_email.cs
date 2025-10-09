@@ -1,7 +1,8 @@
-﻿using AccountManagement.Domain;
+using AccountManagement.Domain;
 using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.TestInfrastructure.NUnit;
 
 namespace AccountManagement.UnitTests.Emails;
 

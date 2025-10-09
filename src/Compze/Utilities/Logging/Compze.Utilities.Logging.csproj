@@ -19,6 +19,8 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
     <InternalsVisibleTo Include="Compze.TestInfrastructure" />
+    <InternalsVisibleTo Include="Compze.TestInfrastructure.NUnit" />
+    <InternalsVisibleTo Include="Compze.TestInfrastructure.XUnit" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
   </ItemGroup>

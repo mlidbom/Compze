@@ -10,6 +10,7 @@ using FluentAssertions.Extensions;
 using NCrunch.Framework;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
+using Compze.TestInfrastructure.NUnit;
 
 // ReSharper disable AccessToDisposedClosure
 
