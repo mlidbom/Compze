@@ -1,81 +1,42 @@
 using System;
 using System.Collections.Generic;
-using Compze.Utilities.SystemCE.ReflectionCE;
-using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
-using static Compze.Utilities.Contracts.Assert;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Xunit.v3;
 
 namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
-///<summary>
-/// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
-///This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
+/// <summary>
+/// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
+/// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
-[XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
-sealed class XFactAttribute : FactAttribute
+[XunitTestCaseDiscoverer(typeof(XFactAttributeTestCaseDiscoverer))]
+sealed class XFactAttribute(
+   [CallerFilePath] string? sourceFilePath = null,
+   [CallerLineNumber] int sourceLineNumber = -1)
+      : FactAttribute(sourceFilePath, sourceLineNumber)
 {
-   const string XFactDiscovererFullTypeName = "Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
-   const string XFactDiscovererAssembly = "Compze.Tests.Infrastructure.XUnit";
-
-   static XFactAttribute()
-   {
-      Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable());
-      Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name);
-   }
 }
 
-[UsedImplicitly] class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
+class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
 {
-   readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
-
-   public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
+   public ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, IFactAttribute factAttribute)
    {
-      var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
-      var currentType = testMethod.TestClass.Class.ToRuntimeType();
+      var declaringType = testMethod.Method.DeclaringType;
+      var currentType = testMethod.TestClass.Class;
 
-      if(declaringType != currentType) // Skip tests declared in base classes
-         return Array.Empty<IXunitTestCase>();
+      if (declaringType != currentType)
+         return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(Array.Empty<IXunitTestCase>());
 
-      return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
+      return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(new[]
+      {
+         new XunitTestCase(
+            testMethod: testMethod,
+            testCaseDisplayName: testMethod.Method.Name,
+            uniqueID: $"{testMethod.UniqueID}.{testMethod.Method.Name}",
+            @explicit: factAttribute.Explicit)
+      });
    }
 }
-
-//Below here is the working implementation of this for XUnit.v3:
-// using System;
-// using System.Collections.Generic;
-// using System.Threading.Tasks;
-// using Xunit;
-// using Xunit.Sdk;
-// using Xunit.v3;
-//
-// namespace Compze.Testing.TestFrameworkExtensions.XUnit;
-//
-// ///<summary>
-// /// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
-// ///This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
-// /// </summary>
-// [XunitTestCaseDiscoverer(typeof(XFactAttributeTestCaseDiscoverer))]
-// sealed class XFactAttribute : FactAttribute {}
-//
-// class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
-// {
-//    public ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, IFactAttribute factAttribute)
-//    {
-//       var declaringType = testMethod.Method.DeclaringType;
-//       var currentType = testMethod.TestClass.Class;
-//
-//       if(declaringType != currentType)
-//          return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(Array.Empty<IXunitTestCase>());
-//
-//       return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([
-//                                                                           new XunitTestCase(
-//                                                                              testMethod: testMethod,
-//                                                                              testCaseDisplayName: testMethod.Method.Name,
-//                                                                              uniqueID: $"{testMethod.UniqueID}.{testMethod.Method.Name}",
-//                                                                              @explicit: factAttribute.Explicit)
-//                                                                        ]);
-//    }
-// }
