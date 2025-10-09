@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Compze.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.DependencyInjection.Microsoft;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using MicrosoftDI = Compze.Utilities.DependencyInjection.Microsoft;
 
 namespace Compze.Tests.Unit.Internals.DependencyInjection;
 
@@ -125,7 +125,7 @@ public class MicrosoftDependencyInjectionTransientDisposalTests : UniversalTestB
       // This test demonstrates that scoped components registered via RegisterToHandleServiceResolutionFor
       // cannot be resolved from the root provider because the implementation delegates back to our container
       // which tries to resolve from the Microsoft root provider (not a scope)
-      IDependencyInjectionContainer container = new MicrosoftDI.MicrosoftDependencyInjectionContainer(RunMode.Production);
+      IDependencyInjectionContainer container = new MicrosoftDependencyInjectionContainer(RunMode.Production);
 
       container.Register(
          Scoped.For<DisposableComponent>()
@@ -150,7 +150,7 @@ public class MicrosoftDependencyInjectionTransientDisposalTests : UniversalTestB
    public async Task RegisterToHandleServiceResolutionFor_With_Scoped_Components_Cannot_Be_Resolved_Async()
    {
       // Same limitation as the sync version
-      IDependencyInjectionContainer container = new MicrosoftDI.MicrosoftDependencyInjectionContainer(RunMode.Production);
+      IDependencyInjectionContainer container = new MicrosoftDependencyInjectionContainer(RunMode.Production);
 
       container.Register(
          Scoped.For<BothDisposableComponent>()
@@ -174,7 +174,7 @@ public class MicrosoftDependencyInjectionTransientDisposalTests : UniversalTestB
    {
       // SURPRISING BEHAVIOR: Even singleton instance registrations are disposed by Microsoft DI!
       // This is contrary to typical DI container behavior
-      IDependencyInjectionContainer container = new MicrosoftDI.MicrosoftDependencyInjectionContainer(RunMode.Production);
+      IDependencyInjectionContainer container = new MicrosoftDependencyInjectionContainer(RunMode.Production);
       var singletonInstance = new DisposableComponent();
 
       container.Register(
@@ -210,7 +210,7 @@ public class MicrosoftDependencyInjectionTransientDisposalTests : UniversalTestB
    public void Factory_Created_Singletons_ARE_Double_Disposed()
    {
       // Singletons created by factory WILL have double-disposal issues
-      IDependencyInjectionContainer container = new MicrosoftDI.MicrosoftDependencyInjectionContainer(RunMode.Production);
+      IDependencyInjectionContainer container = new MicrosoftDependencyInjectionContainer(RunMode.Production);
       DisposableComponent? trackedComponent = null;
 
       container.Register(
