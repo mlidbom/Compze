@@ -46,22 +46,17 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
             {
                _container.RegisterInstance(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
             }
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
-         } else if(componentRegistration.InstantiationSpec.FactoryMethod != null)
+         } else
          {
             var baseRegistration = GetSimpleInjectorLifestyle(componentRegistration.Lifestyle)
               .CreateRegistration(
                   componentRegistration.InstantiationSpec.FactoryMethodReturnType,
                   () => componentRegistration.InstantiationSpec.RunFactoryMethod(this),
                   _container);
-            foreach(var someCompletelyOtherName in componentRegistration.ServiceTypes)
+            foreach(var serviceType in componentRegistration.ServiceTypes)
             {
-               _container.AddRegistration(someCompletelyOtherName, baseRegistration);
+               _container.AddRegistration(serviceType, baseRegistration);
             }
-         } else
-         {
-            throw new Exception($"Invalid {nameof(InstantiationSpec)}");
          }
       }
       return this;
