@@ -11,6 +11,6 @@ Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking
 # - Fix-CsprojExclusions
 # - Remove-RedundantInternalsVisibleTo
 # - Validate-SolutionStructure
-# - Test-Compze
-# - Test-Compze -NoBuild
+# - Test-Compze              # Run tests (no build)
+# - Test-Compze -Build       # Build then run tests
 # - Reload-Profile

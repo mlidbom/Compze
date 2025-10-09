@@ -52,32 +52,36 @@ function Test-Compze {
     Runs Compze tests with proper configuration
     
     .DESCRIPTION
-    Runs the full Compze test suite with single-threaded build to avoid race conditions.
+    Runs the full Compze test suite. By default, runs tests without building (assumes already built).
     Tests run in parallel according to assembly-level attributes by default.
-    Optionally builds first, then always runs tests with --no-build.
+    Use -Build to build before testing with single-threaded build to avoid race conditions.
     
-    .PARAMETER NoBuild
-    Skip building and run tests only
+    .PARAMETER Build
+    Build the solution before running tests (single-threaded build)
     
     .PARAMETER SingleThreadedTesting
     Run tests single-threaded (forces sequential test execution)
     
     .EXAMPLE
     Test-Compze
-    Builds (single-threaded) and runs all tests (parallel)
+    Runs all tests without building (parallel)
     
     .EXAMPLE
-    Test-Compze -NoBuild
-    Runs tests without building
+    Test-Compze -Build
+    Builds (single-threaded) then runs all tests (parallel)
     
     .EXAMPLE
     Test-Compze -SingleThreadedTesting
-    Builds and runs all tests single-threaded (for debugging)
+    Runs all tests single-threaded without building (for debugging)
+    
+    .EXAMPLE
+    Test-Compze -Build -SingleThreadedTesting
+    Builds then runs all tests single-threaded (for debugging)
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
-        [switch]$NoBuild,
+        [switch]$Build,
         [switch]$SingleThreadedTesting
     )
     
@@ -85,15 +89,7 @@ function Test-Compze {
     
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
-        if ($NoBuild) {
-            if ($SingleThreadedTesting) {
-                Write-Host "Running tests without building (single-threaded)..." -ForegroundColor Cyan
-                dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
-            } else {
-                Write-Host "Running tests without building..." -ForegroundColor Cyan
-                dotnet test $solutionPath --no-build
-            }
-        } else {
+        if ($Build) {
             Write-Host "Building solution..." -ForegroundColor Cyan
             dotnet build $solutionPath -m:1
             
@@ -109,6 +105,14 @@ function Test-Compze {
                 Write-Host "`nRunning tests..." -ForegroundColor Cyan
                 dotnet test $solutionPath --no-build
             }
+        } else {
+            if ($SingleThreadedTesting) {
+                Write-Host "Running tests without building (single-threaded)..." -ForegroundColor Cyan
+                dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
+            } else {
+                Write-Host "Running tests without building..." -ForegroundColor Cyan
+                dotnet test $solutionPath --no-build
+            }
         }
     } finally {
         Pop-Location
@@ -121,22 +125,26 @@ function Reload-Profile {
     Reloads the PowerShell profile
     
     .DESCRIPTION
-    Reloads your PowerShell profile without restarting the shell
+    Reloads your PowerShell profile without restarting the shell.
+    Also force-reloads the Compze module to pick up any changes.
     
     .EXAMPLE
     Reload-Profile
-    Reloads your profile
+    Reloads your profile and the Compze module
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
     
+    Write-Host "Reloading Compze module..." -ForegroundColor Cyan
+    Import-Module (Join-Path $PSScriptRoot "Compze.psd1") -DisableNameChecking -Force -Global
+    
     if (Test-Path $PROFILE) {
         Write-Host "Reloading PowerShell profile..." -ForegroundColor Cyan
         . $PROFILE
-        Write-Host "Profile reloaded successfully!" -ForegroundColor Green
+        Write-Host "✓ Reload complete!" -ForegroundColor Green
     } else {
-        Write-Warning "Profile not found at: $PROFILE"
+        Write-Host "✓ Compze module reloaded!" -ForegroundColor Green
     }
 }
 

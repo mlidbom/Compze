@@ -13,17 +13,20 @@ To edit your profile, run: `notepad $PROFILE`
 ## Available Commands
 
 ### Test-Compze
-Runs the full test suite with proper single-threaded configuration to avoid .NET race conditions.
+Runs the full test suite. Default is to run tests without building (assumes already built).
 
 ```powershell
-# Build and test (default - parallel testing)
+# Run tests (default - no build)
 Test-Compze
 
-# Test without building
-Test-Compze -NoBuild
+# Build then test
+Test-Compze -Build
 
 # Single-threaded testing (for debugging)
 Test-Compze -SingleThreadedTesting
+
+# Build and test single-threaded
+Test-Compze -Build -SingleThreadedTesting
 ```
 
 ### Reload-Profile
@@ -32,6 +35,8 @@ Reloads your PowerShell profile without restarting the shell.
 ```powershell
 Reload-Profile
 ```
+
+**Important**: This force-reloads the Compze module first to pick up any changes to DevScripts, then reloads your profile. Use this after editing any module files.
 
 ### Fix-CsprojExclusions
 Fixes .csproj exclusions for Compze projects.
@@ -57,9 +62,10 @@ Validate-SolutionStructure
 ## Key Benefits
 
 ✅ **Work from any directory** - All commands automatically resolve paths relative to Compze root  
-✅ **Single-threaded builds** - Test-Compze uses `-m:1` for building to avoid .NET test runner race conditions  
+✅ **Fast by default** - Test-Compze runs tests without building (use `-Build` when needed)
+✅ **Single-threaded builds when needed** - Using `-Build` flag uses `-m:1` to avoid .NET test runner race conditions  
 ✅ **Parallel test execution** - Tests run in parallel according to assembly-level attributes  
-✅ **Consistent test execution** - Always uses `--no-build` after building to ensure proper test discovery  
+✅ **Easy profile reload** - `Reload-Profile` picks up DevScripts changes without restarting  
 ✅ **Clean command names** - Simple, memorable function names
 
 ## Technical Details

@@ -42,14 +42,14 @@ Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking
 
 ### Test-Compze
 
-Run tests after building (default):
+Run tests (default - no build, assumes already built):
 ```powershell
 Test-Compze
 ```
 
-Run tests without building (if already built):
+Build and run tests:
 ```powershell
-Test-Compze -NoBuild
+Test-Compze -Build
 ```
 
 Run tests single-threaded (useful for debugging):
@@ -57,7 +57,12 @@ Run tests single-threaded (useful for debugging):
 Test-Compze -SingleThreadedTesting
 ```
 
-**Note**: This command always uses `-m:1` (single-threaded build) to avoid .NET test runner race conditions.
+Build and run tests single-threaded:
+```powershell
+Test-Compze -Build -SingleThreadedTesting
+```
+
+**Note**: When using `-Build`, it uses `-m:1` (single-threaded build) to avoid .NET test runner race conditions.
 
 ### Other Commands
 
@@ -66,8 +71,10 @@ These commands work from any directory:
 Fix-CsprojExclusions
 Remove-RedundantInternalsVisibleTo
 Validate-SolutionStructure
-Reload-Profile
+Reload-Profile  # Force-reloads Compze module and your profile
 ```
+
+**Note**: `Reload-Profile` automatically force-reloads the Compze module to pick up any changes to DevScripts files, then reloads your profile.
 
 ## How It Works
 
