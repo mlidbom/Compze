@@ -6,7 +6,7 @@ using Compze.Tessaging.Typermedia.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-class ChangePasswordScenario : ScenarioBase<AccountResource>
+public class ChangePasswordScenario : ScenarioBase<AccountResource>
 {
    readonly IEndpoint _clientEndpoint;
 

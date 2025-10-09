@@ -33,7 +33,4 @@
          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
-   </ItemGroup>
 </Project>

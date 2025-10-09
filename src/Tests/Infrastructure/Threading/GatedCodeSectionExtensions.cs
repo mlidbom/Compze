@@ -3,7 +3,7 @@ using Compze.Utilities.Contracts;
 
 namespace Compze.Tests.Infrastructure.Threading;
 
-static class GatedCodeSectionExtensions
+public static class GatedCodeSectionExtensions
 {
    public static IGatedCodeSection Open(this IGatedCodeSection @this)
    {

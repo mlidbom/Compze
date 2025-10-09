@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tests.Infrastructure.Transactions;
 
-static class TransactionInterceptorExtensions
+public static class TransactionInterceptorExtensions
 {
    public static void FailOnPrepare(this Transaction @this, Exception? exception = null) =>
       @this.AddPrepareTasks(() =>

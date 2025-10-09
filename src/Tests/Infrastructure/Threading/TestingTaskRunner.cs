@@ -9,7 +9,7 @@ namespace Compze.Tests.Infrastructure.Threading;
 ///<summary>
 /// Runs and monitors tasks on background threads.
 /// Throws <see cref="AggregateException"/> on dispose if any throw exceptions or do not complete within timeout. </summary>
-sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDisposable
+public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDisposable
 {
    readonly List<Task> _monitoredTasks = [];
    readonly TimeSpan _timeout = timeout;

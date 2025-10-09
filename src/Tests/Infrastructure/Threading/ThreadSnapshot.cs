@@ -2,7 +2,7 @@
 
 namespace Compze.Tests.Infrastructure.Threading;
 
-class ThreadSnapshot
+public class ThreadSnapshot
 {
    public Thread Thread { get; } = Thread.CurrentThread;
 

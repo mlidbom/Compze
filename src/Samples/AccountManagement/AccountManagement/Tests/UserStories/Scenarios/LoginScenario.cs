@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-class LoginScenario(IEndpoint clientEndpoint, string email, string password) : ScenarioBase<AccountResource.Command.LogIn.LoginAttemptResult>
+public class LoginScenario(IEndpoint clientEndpoint, string email, string password) : ScenarioBase<AccountResource.Command.LogIn.LoginAttemptResult>
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
    public string Password { get; set; } = password;

@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 
-class After<TEvent> : EventMigration<IRootEvent>
+public class After<TEvent> : EventMigration<IRootEvent>
 {
    readonly IEnumerable<Type> _insert;
 

@@ -64,7 +64,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest, IAsyncLi
    protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<IEventStoreUpdater, TResult> useSession)
       => _serviceLocator.ExecuteTransactionInIsolatedScope(() => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
 
-   protected void UseInScope([InstantHandle] Action<IEventStoreUpdater> useSession)
+   public void UseInScope([InstantHandle] Action<IEventStoreUpdater> useSession)
       => _serviceLocator.ExecuteInIsolatedScope(() => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
 
    [PluggableComponentsTheory]

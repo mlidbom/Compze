@@ -4,12 +4,12 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Tests.Infrastructure.Threading;
 
-interface IThreadGateVisitor
+public interface IThreadGateVisitor
 {
    void AwaitPassThrough();
 }
 
-interface IThreadGate : IThreadGateVisitor
+public interface IThreadGate : IThreadGateVisitor
 {
    ///<summary>Opens the gate and lets all threads through.</summary>
    IThreadGate Open();
@@ -44,7 +44,7 @@ interface IThreadGate : IThreadGateVisitor
 }
 
 ///<summary>A block of code with <see cref="ThreadGate"/>s for <see cref="EntranceGate"/> and <see cref="ExitGate"/>. Useful for controlling multithreaded code for testing purposes.</summary>
-interface IGatedCodeSection
+public interface IGatedCodeSection
 {
    IThreadGate EntranceGate { get; }
    IThreadGate ExitGate { get; }

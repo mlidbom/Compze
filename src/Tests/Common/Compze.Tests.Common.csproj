@@ -19,10 +19,4 @@
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tests.Common.NUnit" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-  </ItemGroup>
 </Project>

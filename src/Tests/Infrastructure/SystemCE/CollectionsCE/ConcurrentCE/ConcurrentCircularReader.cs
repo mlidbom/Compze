@@ -4,12 +4,12 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 
-static class ConcurrentCircularReader
+public static class ConcurrentCircularReader
 {
    public static ConcurrentCircularReader<T> ToConcurrentCircularReader<T>(this IEnumerable<T> source) => new(source);
 }
 
-class ConcurrentCircularReader<T>(IEnumerable<T> source)
+public class ConcurrentCircularReader<T>(IEnumerable<T> source)
 {
    readonly T[] _items = source.ToArray();
    readonly MonitorCE _lock = MonitorCE.WithDefaultTimeout();

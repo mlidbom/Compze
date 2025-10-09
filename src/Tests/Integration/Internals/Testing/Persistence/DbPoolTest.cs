@@ -16,7 +16,7 @@ namespace Compze.Tests.Integration.Internals.Testing.Persistence;
 
 public abstract class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
-   internal static DbPool CreatePool() =>
+   public static DbPool CreatePool() =>
       TestEnv.PersistenceLayer.Current switch
       {
          PersistenceLayer.MicrosoftSqlServer => new MsSqlDbPool(),

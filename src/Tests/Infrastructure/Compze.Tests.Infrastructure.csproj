@@ -21,19 +21,6 @@
     <PackageReference Include="FluentAssertions" Version="8.7.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Infrastructure.NUnit" />
-    <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit" />
-    <InternalsVisibleTo Include="Compze.Tests.Common" />
-    <InternalsVisibleTo Include="Compze.Tests.Common.NUnit" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
-  </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
   <ItemGroup>

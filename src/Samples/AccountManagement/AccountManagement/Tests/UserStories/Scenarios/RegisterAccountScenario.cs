@@ -6,7 +6,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource? Account)>
+public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource? Account)>
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
 

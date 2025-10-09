@@ -27,17 +27,17 @@ public abstract partial class Fixture(string pluggableComponentsCombination)
    protected string PluggableComponentsCombination { get; } = pluggableComponentsCombination;
    
    static readonly TimeSpan _timeout = 10.Seconds();
-   internal ITestingEndpointHost Host = null!;
-   internal IThreadGate CommandHandlerThreadGate = null!;
-   internal IThreadGate CommandHandlerWithResultThreadGate = null!;
-   internal IThreadGate MyCreateAggregateCommandHandlerThreadGate = null!;
-   internal IThreadGate MyUpdateAggregateCommandHandlerThreadGate = null!;
-   internal IThreadGate MyRemoteAggregateEventHandlerThreadGate = null!;
-   internal IThreadGate MyLocalAggregateEventHandlerThreadGate = null!;
-   internal IThreadGate EventHandlerThreadGate = null!;
-   internal IThreadGate QueryHandlerThreadGate = null!;
+   public ITestingEndpointHost Host = null!;
+   public IThreadGate CommandHandlerThreadGate = null!;
+   public IThreadGate CommandHandlerWithResultThreadGate = null!;
+   public IThreadGate MyCreateAggregateCommandHandlerThreadGate = null!;
+   public IThreadGate MyUpdateAggregateCommandHandlerThreadGate = null!;
+   public IThreadGate MyRemoteAggregateEventHandlerThreadGate = null!;
+   public IThreadGate MyLocalAggregateEventHandlerThreadGate = null!;
+   public IThreadGate EventHandlerThreadGate = null!;
+   public IThreadGate QueryHandlerThreadGate = null!;
 
-   internal IReadOnlyList<IThreadGate> AllGates = [];
+   public IReadOnlyList<IThreadGate> AllGates = [];
 
    protected IEndpoint ClientEndpoint { get; set; } = null!;
    protected IEndpoint RemoteEndpoint { get; set; } = null!;

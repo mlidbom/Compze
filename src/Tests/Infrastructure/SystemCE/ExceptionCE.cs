@@ -2,7 +2,7 @@
 
 namespace Compze.Tests.Infrastructure.SystemCE;
 
-static class ExceptionCE
+public static class ExceptionCE
 {
    public static Exception? TryCatch(Action action)
    {

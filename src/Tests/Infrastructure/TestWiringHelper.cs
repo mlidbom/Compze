@@ -10,35 +10,35 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Infrastructure;
 
-static class TestWiringHelper
+public static class TestWiringHelper
 {
-   internal const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
+   public const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
-   internal static IEventStore EventStore(this IServiceLocator @this) =>
+   public static IEventStore EventStore(this IServiceLocator @this) =>
       @this.Resolve<IEventStore>();
 
-   internal static IDocumentDb DocumentDb(this IServiceLocator @this) =>
+   public static IDocumentDb DocumentDb(this IServiceLocator @this) =>
       @this.Resolve<IDocumentDb>();
 
-   internal static IDocumentDbReader DocumentDbReader(this IServiceLocator @this) =>
+   public static IDocumentDbReader DocumentDbReader(this IServiceLocator @this) =>
       @this.Resolve<IDocumentDbReader>();
 
-   internal static IDocumentDbUpdater DocumentDbUpdater(this IServiceLocator @this) =>
+   public static IDocumentDbUpdater DocumentDbUpdater(this IServiceLocator @this) =>
       @this.Resolve<IDocumentDbUpdater>();
 
-   internal static IDocumentDbBulkReader DocumentDbBulkReader(this IServiceLocator @this) =>
+   public static IDocumentDbBulkReader DocumentDbBulkReader(this IServiceLocator @this) =>
       @this.Resolve<IDocumentDbBulkReader>();
 
-   internal static IEventStoreUpdater EventStoreUpdater(this IServiceLocator @this) =>
+   public static IEventStoreUpdater EventStoreUpdater(this IServiceLocator @this) =>
       @this.Resolve<IEventStoreUpdater>();
 
-   internal static IEventStoreReader EventStoreReader(this IServiceLocator @this) =>
+   public static IEventStoreReader EventStoreReader(this IServiceLocator @this) =>
       @this.Resolve<IEventStoreReader>();
 
-   internal static IDocumentDbSession DocumentDbSession(this IServiceLocator @this)
+   public static IDocumentDbSession DocumentDbSession(this IServiceLocator @this)
       => @this.Resolve<IDocumentDbSession>();
 
-   internal static IServiceLocator SetupTestingServiceLocator([InstantHandle] Action<IDependencyRegistrar>? configureContainer = null) =>
+   public static IServiceLocator SetupTestingServiceLocator([InstantHandle] Action<IDependencyRegistrar>? configureContainer = null) =>
       CompzeLogger.For(typeof(TestWiringHelper)).ExceptionsAndRethrow(() =>
                                                                    TestingContainerFactory.CreateServiceLocatorForTesting(register =>
                                                                    {

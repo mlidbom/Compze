@@ -29,19 +29,19 @@ namespace Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_ba
 public abstract class NUnitFixtureBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    static readonly TimeSpan _timeout = 10.Seconds();
-   internal ITestingEndpointHost Host;
+   public ITestingEndpointHost Host;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   internal IThreadGate CommandHandlerThreadGate;
-   internal IThreadGate CommandHandlerWithResultThreadGate;
-   internal IThreadGate MyCreateAggregateCommandHandlerThreadGate;
-   internal IThreadGate MyUpdateAggregateCommandHandlerThreadGate;
-   internal IThreadGate MyRemoteAggregateEventHandlerThreadGate;
-   internal IThreadGate MyLocalAggregateEventHandlerThreadGate;
-   internal IThreadGate EventHandlerThreadGate;
-   internal IThreadGate QueryHandlerThreadGate;
+   public IThreadGate CommandHandlerThreadGate;
+   public IThreadGate CommandHandlerWithResultThreadGate;
+   public IThreadGate MyCreateAggregateCommandHandlerThreadGate;
+   public IThreadGate MyUpdateAggregateCommandHandlerThreadGate;
+   public IThreadGate MyRemoteAggregateEventHandlerThreadGate;
+   public IThreadGate MyLocalAggregateEventHandlerThreadGate;
+   public IThreadGate EventHandlerThreadGate;
+   public IThreadGate QueryHandlerThreadGate;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-   internal IReadOnlyList<IThreadGate> AllGates = [];
+   public IReadOnlyList<IThreadGate> AllGates = [];
 
    protected IEndpoint ClientEndpoint { get; set; }
    protected IEndpoint RemoteEndpoint { get; set; }

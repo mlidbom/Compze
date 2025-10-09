@@ -11,32 +11,32 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations
 {
-    interface IRootEvent : IAggregateEvent;
+    public interface IRootEvent : IAggregateEvent;
 
-    abstract class RootEvent : AggregateEvent, IRootEvent;
+    public abstract class RootEvent : AggregateEvent, IRootEvent;
 
     namespace Events
     {
-        abstract class EcAbstract : RootEvent, IAggregateCreatedEvent;
+        public abstract class EcAbstract : RootEvent, IAggregateCreatedEvent;
 
         // ReSharper disable ClassNeverInstantiated.Global
-        class Ec1 : EcAbstract;
-        class Ec2 : EcAbstract;
-        class Ec3 : EcAbstract;
-        class E1 : RootEvent;
-        class E2 : RootEvent;
-        class E3 : RootEvent;
-        class E4 : RootEvent;
-        class E5 : RootEvent;
-        class E6 : RootEvent;
-        class E7 : RootEvent;
-        class E8 : RootEvent;
-        class E9 : RootEvent;
-        class Ef : RootEvent;
+        public class Ec1 : EcAbstract;
+        public class Ec2 : EcAbstract;
+        public class Ec3 : EcAbstract;
+        public class E1 : RootEvent;
+        public class E2 : RootEvent;
+        public class E3 : RootEvent;
+        public class E4 : RootEvent;
+        public class E5 : RootEvent;
+        public class E6 : RootEvent;
+        public class E7 : RootEvent;
+        public class E8 : RootEvent;
+        public class E9 : RootEvent;
+        public class Ef : RootEvent;
         // ReSharper restore ClassNeverInstantiated.Global
     }
 
-    class TestAggregate : Aggregate<TestAggregate, IRootEvent, RootEvent>
+    public class TestAggregate : Aggregate<TestAggregate, IRootEvent, RootEvent>
     {
         public void Publish(params RootEvent[] events)
         {

@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Threading;
 
-class GatedCodeSection : IGatedCodeSection
+public class GatedCodeSection : IGatedCodeSection
 {
    public IThreadGate EntranceGate { get; }
    public IThreadGate ExitGate { get; }

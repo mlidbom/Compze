@@ -16,7 +16,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
-[UsedImplicitly] class SharedObject
+[UsedImplicitly] public class SharedObject
 {
    public string Name { get; set; } = "Default";
 }

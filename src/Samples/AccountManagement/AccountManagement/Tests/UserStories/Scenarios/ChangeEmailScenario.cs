@@ -6,7 +6,7 @@ using Compze.Tessaging.Typermedia.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
+public class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 {
    readonly IEndpoint _clientEndpoint;
 

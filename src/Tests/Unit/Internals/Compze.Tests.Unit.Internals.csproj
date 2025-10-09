@@ -42,7 +42,4 @@
     <EmbeddedResource Remove="XUnit\**" />
     <None Remove="XUnit\**" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-  </ItemGroup>
 </Project>

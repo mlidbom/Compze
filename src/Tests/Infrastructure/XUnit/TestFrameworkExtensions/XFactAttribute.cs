@@ -13,14 +13,14 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 /// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(XFactAttributeTestCaseDiscoverer))]
-sealed class XFactAttribute(
+public sealed class XFactAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : FactAttribute(sourceFilePath, sourceLineNumber)
 {
 }
 
-class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
+public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
 {
    public ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, IFactAttribute factAttribute)
    {

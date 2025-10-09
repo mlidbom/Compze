@@ -19,15 +19,4 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Common" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.XUnit" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
-  </ItemGroup>
 </Project>

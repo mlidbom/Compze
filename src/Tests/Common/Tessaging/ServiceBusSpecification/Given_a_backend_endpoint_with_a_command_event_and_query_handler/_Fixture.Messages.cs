@@ -18,7 +18,7 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 
 public partial class Fixture
 {
-   protected internal static class MyAggregateEvent
+   public static class MyAggregateEvent
    {
       public interface IRoot : IAggregateEvent;
       public interface Created : IRoot, IAggregateCreatedEvent;
@@ -39,7 +39,7 @@ public partial class Fixture
       }
    }
 
-   protected internal class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggregateEvent.Implementation.Root>
+   public class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggregateEvent.Implementation.Root>
    {
       public MyAggregate() : base(new DateTimeNowTimeSource())
       {
@@ -47,9 +47,9 @@ public partial class Fixture
            .IgnoreUnhandled<MyAggregateEvent.IRoot>();
       }
 
-      internal void Update() => Publish(new MyAggregateEvent.Implementation.Updated());
+      public void Update() => Publish(new MyAggregateEvent.Implementation.Updated());
 
-      internal static void Create(Guid id, IInProcessHypermediaNavigator bus)
+      public static void Create(Guid id, IInProcessHypermediaNavigator bus)
       {
          var created = new MyAggregate();
          created.Publish(new MyAggregateEvent.Implementation.Created(id));
@@ -57,11 +57,11 @@ public partial class Fixture
       }
    }
 
-   protected internal class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+   public class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
    {
       MyCreateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
 
-      internal static MyCreateAggregateCommand Create() => new()
+      public static MyCreateAggregateCommand Create() => new()
                                                            {
                                                               MessageId = Guid.CreateVersion7(),
                                                               AggregateId = Guid.NewGuid()
@@ -70,24 +70,24 @@ public partial class Fixture
       public Guid AggregateId { get; set; }
    }
 
-   protected internal class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+   public class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
    {
       [UsedImplicitly] MyUpdateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
       public MyUpdateAggregateCommand(Guid aggregateId) : base(DeduplicationIdHandling.Create) => AggregateId = aggregateId;
       public Guid AggregateId { get; private set; }
    }
 
-   protected internal class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
+   public class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 
-   protected internal interface IMyExactlyOnceEvent : IAggregateEvent;
-   protected internal class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
-   protected internal class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
-   protected internal class MyQueryResult;
+   public interface IMyExactlyOnceEvent : IAggregateEvent;
+   public class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
+   public class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
+   public class MyQueryResult;
 
-   protected internal class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
+   public class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
    {
       MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-      internal static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.CreateVersion7()};
+      public static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.CreateVersion7()};
    }
-   protected internal class MyCommandResult;
+   public class MyCommandResult;
 }

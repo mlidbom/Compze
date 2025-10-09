@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tests.Infrastructure.Threading;
 
-class ThreadGate : IThreadGate
+public class ThreadGate : IThreadGate
 {
    public static IThreadGate CreateClosedWithTimeout(TimeSpan timeout, string? name = null) => new ThreadGate(timeout, name);
    public static IThreadGate CreateOpenWithTimeout(TimeSpan timeout, string? name = null) => new ThreadGate(timeout, name).Open();
