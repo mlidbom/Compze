@@ -54,13 +54,12 @@ function Test-Compze {
     .DESCRIPTION
     Runs the full Compze test suite. By default, runs tests without building (assumes already built).
     Tests run in parallel according to assembly-level attributes by default.
-    Use -Build to build before testing with single-threaded build to avoid race conditions.
     
     .PARAMETER Build
-    Build the solution before running tests (single-threaded build)
+    Build the solution before running tests
     
     .PARAMETER SingleThreadedTesting
-    Run tests single-threaded (forces sequential test execution)
+    Run tests single-threaded (forces sequential test execution, useful for debugging)
     
     .EXAMPLE
     Test-Compze
@@ -68,7 +67,7 @@ function Test-Compze {
     
     .EXAMPLE
     Test-Compze -Build
-    Builds (single-threaded) then runs all tests (parallel)
+    Builds then runs all tests (parallel)
     
     .EXAMPLE
     Test-Compze -SingleThreadedTesting
@@ -91,7 +90,7 @@ function Test-Compze {
     try {
         if ($Build) {
             Write-Host "Building solution..." -ForegroundColor Cyan
-            dotnet build $solutionPath -m:1
+            dotnet build $solutionPath
             
             if ($LASTEXITCODE -ne 0) {
                 Write-Error "Build failed!"
