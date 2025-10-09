@@ -33,4 +33,12 @@
   <PropertyGroup>
     <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Internals\**" />
+    <Compile Remove="XUnit\**" />
+    <EmbeddedResource Remove="Internals\**" />
+    <EmbeddedResource Remove="XUnit\**" />
+    <None Remove="Internals\**" />
+    <None Remove="XUnit\**" />
+  </ItemGroup>
 </Project>

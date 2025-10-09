@@ -12,7 +12,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Compze\Tessaging\Persistence\InMemory\Compze.Tessaging.Persistence.InMemory.csproj" />
+    <ProjectReference Include="..\..\..\..\Compze\Tessaging\Persistence\InMemory\Compze.Tessaging.Persistence.InMemory.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="API\RegisterAccountCommandResources.Designer.cs">

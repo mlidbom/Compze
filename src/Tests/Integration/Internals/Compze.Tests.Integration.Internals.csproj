@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -10,20 +10,17 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-    <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-    <ProjectReference Include="..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\..\Common\Compze.Tests.Common.csproj" />
+    <ProjectReference Include="..\..\Common\NUnit\Compze.Tests.Common.NUnit.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\Testing\DbPool\MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="FluentAssertions" Version="8.7.1" />
     <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
-    <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
     <PackageReference Include="NUnit" Version="4.4.0" />
     <PackageReference Include="NUnit.Analyzers" Version="4.10.0">
       <PrivateAssets>all</PrivateAssets>
@@ -33,6 +30,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <NoWarn>CS0436</NoWarn>

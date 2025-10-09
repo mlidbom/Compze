@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -10,12 +10,21 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
-    <ProjectReference Include="..\Common\NUnit\Compze.Tests.Common.NUnit.csproj" />
-    <ProjectReference Include="..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
+    <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Integration\Compze.Tests.Integration.csproj" />
+    <ProjectReference Include="..\..\Integration\Internals\Compze.Tests.Integration.Internals.csproj" />
+    <ProjectReference Include="..\..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="8.7.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
     <PackageReference Include="NUnit" Version="4.4.0" />
@@ -27,22 +36,5 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\TestUsingPluggableComponentCombinations">
-      <Link>TestUsingPluggableComponentCombinations</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <PropertyGroup>
-    <NoWarn>CS0436</NoWarn>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Internals\**" />
-    <Compile Remove="XUnit\**" />
-    <EmbeddedResource Remove="Internals\**" />
-    <EmbeddedResource Remove="XUnit\**" />
-    <None Remove="Internals\**" />
-    <None Remove="XUnit\**" />
   </ItemGroup>
 </Project>

@@ -10,9 +10,9 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\Tests\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
-    <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
+    <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Tests\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
+    <ProjectReference Include="..\API\AccountManagement.API.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.7.1" />
@@ -24,7 +24,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
+    <None Include="..\..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

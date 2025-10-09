@@ -213,7 +213,7 @@
     </Project>
   </Folder>
   <Folder Name="/Experimenting/">
-    <Project Path="ScratchPad.Internals/ScratchPad.Internals.csproj">
+    <Project Path="ScratchPad/Internals/ScratchPad.Internals.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
@@ -221,25 +221,25 @@
     <Project Path="Tests/Common/Compze.Tests.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Tests/Integration.Internals/Compze.Tests.Integration.Internals.csproj">
+    <Project Path="Tests/Integration/Internals/Compze.Tests.Integration.Internals.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
     <Project Path="Tests/Integration/Compze.Tests.Integration.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Tests/Performance.Internals/Compze.Tests.Performance.Internals.csproj">
+    <Project Path="Tests/Performance/Internals/Compze.Tests.Performance.Internals.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Tests/Unit.Internals/Compze.Tests.Unit.Internals.csproj">
+    <Project Path="Tests/Unit/Internals/Compze.Tests.Unit.Internals.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Tests/Unit.Internals.XUnit/Compze.Tests.Unit.Internals.XUnit.csproj">
+    <Project Path="Tests/Unit/Internals/XUnit/Compze.Tests.Unit.Internals.XUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
     <Project Path="Tests/Unit/Compze.Tests.Unit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Tests/Unit.XUnit/Compze.Tests.Unit.XUnit.csproj">
+    <Project Path="Tests/Unit/XUnit/Compze.Tests.Unit.XUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
@@ -259,8 +259,8 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Tests/Integration.XUnit/">
-    <Project Path="Tests/Integration.XUnit/Compze.Tests.Integration.XUnit.csproj">
+  <Folder Name="/Tests/Integration/XUnit/">
+    <Project Path="Tests/Integration/XUnit/Compze.Tests.Integration.XUnit.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
@@ -273,25 +273,28 @@
     <File Path="Samples/Directory.Build.props" />
   </Folder>
   <Folder Name="/_Samples/AccountManagement/">
-    <Project Path="Samples/AccountManagement/AccountManagement.API/AccountManagement.API.csproj">
+    <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement.Domain.Events/AccountManagement.Domain.Events.csproj">
+    <Project Path="Samples/AccountManagement/AccountManagement/Domain/Events/AccountManagement.Domain.Events.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement.PerformanceTests.Internals/AccountManagement.PerformanceTests.Internals.csproj">
+    <Project Path="Samples/AccountManagement/AccountManagement/Events/AccountManagement.Events.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement.Server/AccountManagement.Server.csproj">
+    <Project Path="Samples/AccountManagement/AccountManagement/PerformanceTests/Internals/AccountManagement.PerformanceTests.Internals.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement.Tests/AccountManagement.Tests.csproj">
+    <Project Path="Samples/AccountManagement/AccountManagement/Server/AccountManagement.Server.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement.UI.MVC/AccountManagement.UI.MVC.csproj">
+    <Project Path="Samples/AccountManagement/AccountManagement/Tests/AccountManagement.Tests.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement.UnitTests/AccountManagement.UnitTests.csproj">
+    <Project Path="Samples/AccountManagement/AccountManagement/UI/MVC/AccountManagement.UI.MVC.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/UnitTests/AccountManagement.UnitTests.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
