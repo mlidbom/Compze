@@ -65,7 +65,8 @@ public class AspNetInboxTransport : IInboxTransport
          it.FeatureProviders.Add(new InternalControllerFeatureProvider());
       });
 
-      builder.WebHost.UseUrls("http://127.0.0.1:0");
+        //todo: in production we want to bind to a specific configured port, not a random one.
+        builder.WebHost.UseUrls("http://127.0.0.1:0");
 
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
