@@ -5,7 +5,6 @@ using Compze.TestInfrastructure.Threading;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using NUnit.Framework;
-using Assert = Xunit.Assert;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
@@ -28,12 +27,14 @@ public class Failure_tests(string pluggableComponentsCombination) : Fixture(plug
    [Test] public void If_query_handler_throws_Query_throws()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      Assert.ThrowsAny<Exception>(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())));
+      var exception = Assert.Catch(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())));
+      Assert.That(exception, Is.Not.Null);
    }
 
    public override async Task TearDownAsync()
    {
-      await Assert.ThrowsAnyAsync<Exception>(async Task() => await Host.DisposeAsync());
+      var exception = Assert.CatchAsync(async () => await Host.DisposeAsync());
+      Assert.That(exception, Is.Not.Null);
       await base.TearDownAsync();
    }
 
