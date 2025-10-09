@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE.LinqCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Lifestyle = Compze.Utilities.DependencyInjection.Abstractions.Lifestyle;
@@ -31,30 +32,20 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
-      foreach(var componentRegistration in registrations)
+      foreach(var registration in registrations)
       {
-         var lifestyle = componentRegistration.Lifestyle switch
+         if(registration.InstantiationSpec.SingletonInstance is {} instance)
          {
-            Lifestyle.Singleton => (global::SimpleInjector.Lifestyle)global::SimpleInjector.Lifestyle.Singleton,
-            Lifestyle.Scoped    => global::SimpleInjector.Lifestyle.Scoped,
-            _                   => throw new ArgumentOutOfRangeException(nameof(componentRegistration.Lifestyle))
-         };
-
-         if(componentRegistration.InstantiationSpec.SingletonInstance is {} instance)
-         {
-            foreach(var serviceType in componentRegistration.ServiceTypes)
-            {
-               _container.RegisterInstance(serviceType, instance);
-            }
+            registration.ServiceTypes.ForEach(it => _container.RegisterInstance(it, instance));
          } else
          {
-            var baseRegistration = componentRegistration.Lifestyle
+            var baseRegistration = registration.Lifestyle
                                                         .AsSimpleInjectorLifestyle()
                                                         .CreateRegistration(
-                                                            componentRegistration.InstantiationSpec.FactoryMethodReturnType,
-                                                            () => componentRegistration.InstantiationSpec.RunFactoryMethod(this),
+                                                            registration.InstantiationSpec.FactoryMethodReturnType,
+                                                            () => registration.InstantiationSpec.RunFactoryMethod(this),
                                                             _container);
-            foreach(var serviceType in componentRegistration.ServiceTypes)
+            foreach(var serviceType in registration.ServiceTypes)
             {
                _container.AddRegistration(serviceType, baseRegistration);
             }
