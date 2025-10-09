@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tests.Infrastructure.NUnit.Logging.Serilog;
+using Compze.Tests.Infrastructure.NUnit.Logging;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Logging.Serilog;
 using Compze.Utilities.SystemCE;

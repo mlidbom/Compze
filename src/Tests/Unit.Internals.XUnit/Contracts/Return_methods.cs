@@ -2,7 +2,7 @@ using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 
-namespace Compze.Tests.Unit.Internals.Contracts;
+namespace Compze.Tests.Unit.Internals.XUnit.Contracts;
 
 public class Return_methods : AssertionMethodsTest
 {

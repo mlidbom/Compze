@@ -1,9 +1,9 @@
 using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 class CompositeAggregate :
     Aggregate<CompositeAggregate,

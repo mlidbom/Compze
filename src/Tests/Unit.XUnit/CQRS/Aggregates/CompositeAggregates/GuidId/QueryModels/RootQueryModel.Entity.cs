@@ -1,9 +1,9 @@
 using System;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using JetBrains.Annotations;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 
 [UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, CompositeAggregateEvent.Entity.IRoot, CompositeAggregateEvent.Entity.Created, CompositeAggregateEvent.Entity.Removed, CompositeAggregateEvent.Entity.Implementation.Root.IdGetterSetter>
 {

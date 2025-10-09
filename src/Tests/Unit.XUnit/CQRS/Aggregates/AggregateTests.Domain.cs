@@ -4,7 +4,7 @@ using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using JetBrains.Annotations;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates;
 
 class User : Aggregate<User,IUserEvent, UserEvent>
 {

@@ -2,7 +2,7 @@
 using Compze.Tessaging.Common.Teventive;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.CQRS.EventHandling;
+namespace Compze.Tests.Unit.XUnit.CQRS.EventHandling;
 
 static class EventDispatcherAsserter
 {

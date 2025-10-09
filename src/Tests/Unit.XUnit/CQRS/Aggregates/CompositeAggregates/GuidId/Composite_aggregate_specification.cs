@@ -1,9 +1,9 @@
 using System;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
 
@@ -14,7 +14,7 @@ using FluentAssertions;
 
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {

@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {

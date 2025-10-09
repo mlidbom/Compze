@@ -1,6 +1,6 @@
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
-namespace Compze.Tests.Unit.Internals.Contracts;
+namespace Compze.Tests.Unit.Internals.XUnit.Contracts;
 
 public class NotNullOrDefault_method_throws_for : AssertionMethodsTest
 {

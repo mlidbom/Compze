@@ -1,8 +1,8 @@
 using System;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using JetBrains.Annotations;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 partial class Component
 {

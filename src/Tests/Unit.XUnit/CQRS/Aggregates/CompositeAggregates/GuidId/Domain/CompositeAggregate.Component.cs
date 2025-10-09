@@ -1,8 +1,8 @@
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using System;
 using Compze.Tessaging.Teventive;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 partial class Component : CompositeAggregate.Component<Component, CompositeAggregateEvent.Component.Implementation.Root, CompositeAggregateEvent.Component.IRoot>
 {

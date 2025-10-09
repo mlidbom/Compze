@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 
 static partial class CompositeAggregateEvent
 {

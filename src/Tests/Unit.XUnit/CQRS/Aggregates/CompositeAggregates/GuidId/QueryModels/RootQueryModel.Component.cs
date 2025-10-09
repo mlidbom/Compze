@@ -1,8 +1,8 @@
 using System;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 
 partial class Component : RootQueryModel.Component<Component, CompositeAggregateEvent.Component.IRoot>
 {
