@@ -120,16 +120,22 @@ public class MicrosoftDependencyInjectionTransientDisposalTests : UniversalTestB
    }
 
    [Test]
-   public void RegisterToHandleServiceResolutionFor_With_Scoped_Components_Cannot_Be_Resolved_From_Root()
+   public void RegisterToHandleServiceResolutionFor_Scoped_Components_ARE_Double_Disposed()
    {
-      // This test demonstrates that scoped components registered via RegisterToHandleServiceResolutionFor
-      // cannot be resolved from the root provider because the implementation delegates back to our container
-      // which tries to resolve from the Microsoft root provider (not a scope)
+      // Scoped components ARE double-disposed! 
+      // 1. Once when OUR container's scope is disposed
+      // 2. Again when Microsoft's provider is disposed (because it tracks transients)
       IDependencyInjectionContainer container = new MicrosoftDependencyInjectionContainer(RunMode.Production);
+      DisposableComponent? trackedComponent = null;
 
       container.Register(
          Scoped.For<DisposableComponent>()
-               .CreatedBy(() => new DisposableComponent())
+               .CreatedBy(() =>
+               {
+                  var component = new DisposableComponent();
+                  trackedComponent = component;
+                  return component;
+               })
       );
 
       var services = new ServiceCollection();
@@ -137,24 +143,45 @@ public class MicrosoftDependencyInjectionTransientDisposalTests : UniversalTestB
 
       var microsoftProvider = services.BuildServiceProvider();
 
-      // This will fail because our implementation delegates to our container which tries to resolve
-      // from the Microsoft root provider, and Microsoft DI doesn't allow resolving scoped services from root
-      using var scope = microsoftProvider.CreateScope();
-      
-      Assert.Throws<InvalidOperationException>(() =>
-         scope.ServiceProvider.GetRequiredService<DisposableComponent>(),
-         "Cannot resolve scoped service from root provider - this is a limitation of the current implementation");
+      DisposableComponent component;
+      // Create scope using OUR container's ServiceLocator
+      using (container.ServiceLocator.BeginScope())
+      {
+         component = microsoftProvider.GetRequiredService<DisposableComponent>();
+         Assert.That(component, Is.SameAs(trackedComponent));
+         Assert.That(component.IsDisposed, Is.False, "Component should not be disposed yet");
+      }
+
+      // After scope disposal by OUR container, component should be disposed once
+      Assert.That(component.DisposeCallCount, Is.EqualTo(1),
+         "Component disposed once by our container's scope");
+
+      // Dispose the Microsoft provider - DOES dispose again! (the double-disposal problem)
+      microsoftProvider.Dispose();
+      Assert.That(component.DisposeCallCount, Is.EqualTo(2),
+         "Microsoft DI ALSO disposed the component - double disposal confirmed!");
+
+      // Now dispose our container - should not dispose again (already disposed by both scope and Microsoft)
+      container.Dispose();
+      Assert.That(component.DisposeCallCount, Is.EqualTo(2),
+         "Total of 2 disposals: one by our scope, one by Microsoft DI");
    }
 
    [Test]
-   public async Task RegisterToHandleServiceResolutionFor_With_Scoped_Components_Cannot_Be_Resolved_Async()
+   public async Task RegisterToHandleServiceResolutionFor_Scoped_Components_ARE_Double_AsyncDisposed()
    {
-      // Same limitation as the sync version
+      // Same double-disposal issue with async disposal
       IDependencyInjectionContainer container = new MicrosoftDependencyInjectionContainer(RunMode.Production);
+      BothDisposableComponent? trackedComponent = null;
 
       container.Register(
          Scoped.For<BothDisposableComponent>()
-               .CreatedBy(() => new BothDisposableComponent())
+               .CreatedBy(() =>
+               {
+                  var component = new BothDisposableComponent();
+                  trackedComponent = component;
+                  return component;
+               })
       );
 
       var services = new ServiceCollection();
@@ -162,11 +189,31 @@ public class MicrosoftDependencyInjectionTransientDisposalTests : UniversalTestB
 
       var microsoftProvider = services.BuildServiceProvider();
 
-      await using var scope = microsoftProvider.CreateAsyncScope();
-      
-      Assert.Throws<InvalidOperationException>(() =>
-         scope.ServiceProvider.GetRequiredService<BothDisposableComponent>(),
-         "Cannot resolve scoped service - this is a limitation of the current implementation");
+      BothDisposableComponent component;
+      // Create scope using OUR container's ServiceLocator
+      using (container.ServiceLocator.BeginScope())
+      {
+         component = microsoftProvider.GetRequiredService<BothDisposableComponent>();
+         Assert.That(component, Is.SameAs(trackedComponent));
+         Assert.That(component.IsDisposed, Is.False, "Component should not be disposed yet");
+      }
+
+      // After scope disposal by OUR container
+      var totalDisposeCount = component.AsyncDisposeCallCount + component.SyncDisposeCallCount;
+      Assert.That(totalDisposeCount, Is.EqualTo(1),
+         "Component disposed once by our container's scope");
+
+      // Dispose the Microsoft provider - DOES dispose again! (double-disposal problem)
+      await microsoftProvider.DisposeAsync();
+      var afterMicrosoftDisposal = component.AsyncDisposeCallCount + component.SyncDisposeCallCount;
+      Assert.That(afterMicrosoftDisposal, Is.EqualTo(2),
+         "Microsoft DI ALSO disposed the component - double disposal confirmed!");
+
+      // Now dispose our container - should not dispose again
+      await container.DisposeAsync();
+      var finalDisposeCount = component.AsyncDisposeCallCount + component.SyncDisposeCallCount;
+      Assert.That(finalDisposeCount, Is.EqualTo(2),
+         "Total of 2 disposals: one by our scope, one by Microsoft DI");
    }
 
    [Test]
