@@ -28,27 +28,44 @@ namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 //refactor: this test. It is too monolithic and hard to read and extend.
 public abstract class EventMigrationTestBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
-   internal async Task RunMigrationTest(params MigrationScenario[] scenarios)
-   {
-      await DeferredConsoleWriter.ExecuteAsync(async writer =>
-      {
-         writer.WriteLine($"###############$$$$$$$Running {scenarios.Length} scenario(s)");
+   internal async Task RunMigrationTest(params MigrationScenario[] scenarios) => await RunMigrationTest(expectedException: null, scenarios);
 
-         IList<IEventMigration> migrations = new List<IEventMigration>();
-         var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations.ToArray());
-         await using var locator = serviceLocator;
-         var timeSource = serviceLocator.Resolve<TestingTimeSource>();
-         timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
-         var scenarioIndex = 1;
+   internal async Task RunMigrationTest<TException>(params MigrationScenario[] scenarios) where TException : Exception 
+      => await RunMigrationTest(expectedException: typeof(TException), scenarios);
+
+   async Task RunMigrationTest(Type? expectedException, params MigrationScenario[] scenarios)
+   {
+      using var writer = new DeferredConsoleWriter();
+      
+      writer.WriteLine($"###############$$$$$$$Running {scenarios.Length} scenario(s)");
+
+      IList<IEventMigration> migrations = new List<IEventMigration>();
+      var serviceLocator = CreateServiceLocatorForEventStoreType(() => migrations.ToArray());
+      await using var locator = serviceLocator;
+      var timeSource = serviceLocator.Resolve<TestingTimeSource>();
+      timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
+      var scenarioIndex = 1;
+      
+      try
+      {
          foreach(var migrationScenario in scenarios)
          {
             timeSource.FreezeAtUtcTime(timeSource.UtcNow + 1.Hours()); //No time collision between scenarios please.
             migrations = migrationScenario.Migrations.ToList();
             await RunScenarioWithEventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
          }
-
-         return 0;
-      });
+         
+         // If we got here without exception, mark as success
+         writer.TestSucceeded();
+      }
+      catch(Exception ex) when (expectedException != null && expectedException.IsInstanceOfType(ex))
+      {
+         // Expected exception was thrown - this is success, suppress output
+         writer.WriteLine($"Expected exception {expectedException.Name} was thrown as expected");
+         writer.TestSucceeded();
+         throw; // Re-throw so the test framework can verify it
+      }
+      // Any other exception will bubble up without calling TestSucceeded(), so output will be shown
    }
 
    static async Task RunScenarioWithEventStoreType(MigrationScenario scenario, IServiceLocator serviceLocator, IList<IEventMigration> migrations, int indexOfScenarioInBatch, DeferredConsoleWriter writer)

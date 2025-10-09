@@ -43,7 +43,7 @@ sealed class DeferredConsoleWriter : IDisposable
    public void WriteImportantLine(string message) =>
       _buffer.Update(buffer => buffer.Content.AppendLine(System.Globalization.CultureInfo.InvariantCulture, $"############################## {message}"));
 
-   void TestSucceeded() => _buffer.Update(buffer => buffer.TestSucceeded = true);
+   public void TestSucceeded() => _buffer.Update(buffer => buffer.TestSucceeded = true);
 
    public void Dispose()
    {

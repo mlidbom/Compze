@@ -26,7 +26,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
    [Test]
    public async Task Base_class_method_should_detect_incorrect_type_order()
    {
-      await this.Invoking(_ => RunMigrationTest(
+      await this.Invoking(_ => RunMigrationTest<Exception>(
                              new MigrationScenario(
                                 EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                                 EnumerableCE.OfTypes<Ec1, Ef, E2, Ef>())))
@@ -242,7 +242,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
    public async Task Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
    {
       await this.Invoking(_ =>
-                             RunMigrationTest(
+                             RunMigrationTest<NonIdempotentMigrationDetectedException>(
                                 new MigrationScenario(
                                    EnumerableCE.OfTypes<Ec1, E1>(),
                                    EnumerableCE.OfTypes<Ec1, E2, E3, E1>(),

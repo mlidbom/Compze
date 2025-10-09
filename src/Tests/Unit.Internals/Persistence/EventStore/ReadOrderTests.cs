@@ -63,11 +63,12 @@ namespace Compze.Tests.Unit.Internals.Persistence.EventStore;
 
    [Test] public void InsertionIntervals()
    {
-      ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 0), Create(2, 0))
-               .ForEach(it => Console.WriteLine(it));
+      // Test to verify CreateOrdersForEventsBetween works correctly
+      var orders1 = ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 0), Create(2, 0));
+      orders1.Should().HaveCount(2);
 
-      ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 10), Create(1, 3000))
-               .ForEach(it => Console.WriteLine(it));
+      var orders2 = ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 10), Create(1, 3000));
+      orders2.Should().HaveCount(2);
    }
 
    [Test] public void CreateOrdersForEventsBetween_Fills_Small_Gap_Around_Integer_Limit()

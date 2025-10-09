@@ -70,8 +70,6 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
       var eventWithOnlySubclassValuesJson = _eventSerializer.Serialize(eventWithOnlySubclassValues);
       var roundTripped = (TestEvent)_eventSerializer.Deserialize(typeof(TestEvent), eventWithAllValuesJson);
 
-      ConsoleCE.WriteLine(eventWithAllValuesJson);
-
       eventWithAllValuesJson.Should().Be("""
                                          {
                                            "Test1": "Test1",
