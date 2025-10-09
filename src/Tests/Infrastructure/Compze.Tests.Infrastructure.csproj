@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NuGetAuditMode>direct</NuGetAuditMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+    <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="FluentAssertions" Version="8.7.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Infrastructure.NUnit" />
+    <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit" />
+    <InternalsVisibleTo Include="Compze.Tests.Common" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration" />
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
+  </ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+  <ItemGroup>
+    <Compile Remove="NUnit\**" />
+    <EmbeddedResource Remove="NUnit\**" />
+    <None Remove="NUnit\**" />
+    <Content Remove="NUnit\**" />
+    <Compile Remove="XUnit\**" />
+    <EmbeddedResource Remove="XUnit\**" />
+    <None Remove="XUnit\**" />
+    <Content Remove="XUnit\**" />
+  </ItemGroup>
+</Project>

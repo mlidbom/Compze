@@ -9,7 +9,7 @@
     <ProjectReference Include="..\..\Common\Compze.Persistence.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="9.0.3" />
+    <PackageReference Include="Npgsql" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />

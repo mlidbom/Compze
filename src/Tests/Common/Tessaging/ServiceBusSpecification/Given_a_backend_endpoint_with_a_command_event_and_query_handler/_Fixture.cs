@@ -9,11 +9,12 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.Threading;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Threading;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing

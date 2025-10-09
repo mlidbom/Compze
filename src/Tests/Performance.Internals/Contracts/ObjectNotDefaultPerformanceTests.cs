@@ -1,10 +1,11 @@
 
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using NUnit.Framework;
 using Assert = Compze.Utilities.Contracts.Assert;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.Contracts;
 

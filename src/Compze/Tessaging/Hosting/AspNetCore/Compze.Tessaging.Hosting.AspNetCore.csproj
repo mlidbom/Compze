@@ -17,7 +17,7 @@
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging" />

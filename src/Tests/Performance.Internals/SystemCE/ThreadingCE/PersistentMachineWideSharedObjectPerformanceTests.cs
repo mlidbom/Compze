@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using NUnit.Framework;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 

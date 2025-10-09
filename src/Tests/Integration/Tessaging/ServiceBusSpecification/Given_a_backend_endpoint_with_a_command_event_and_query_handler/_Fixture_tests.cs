@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Implementation;
-using Compze.TestInfrastructure.Threading;
+using Compze.Tests.Infrastructure.Threading;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using NUnit.Framework;

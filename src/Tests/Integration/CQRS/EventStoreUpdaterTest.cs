@@ -17,12 +17,13 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.SystemCE;
-using Compze.TestInfrastructure.Threading;
-using Compze.TestInfrastructure.Transactions;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.SystemCE;
+using Compze.Tests.Infrastructure.Threading;
+using Compze.Tests.Infrastructure.Transactions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable AccessToDisposedClosure
 

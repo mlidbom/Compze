@@ -12,19 +12,20 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\AccountManagement.Tests\AccountManagement.Tests.csproj" />
+      <ProjectReference Include="..\..\..\Tests\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReference Include="FluentAssertions" Version="8.7.0" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+      <PackageReference Include="FluentAssertions" Version="8.7.1" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
       <PackageReference Include="NUnit" Version="4.4.0" />
-      <PackageReference Include="NUnit3TestAdapter" Version="5.1.0">
+      <PackageReference Include="NUnit3TestAdapter" Version="5.2.0">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
    <ItemGroup>
-	   <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json" >
+	   <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
 		   <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	   </Content>
 	   <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">

@@ -8,11 +8,12 @@ using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.Threading;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 

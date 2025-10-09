@@ -10,9 +10,10 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 

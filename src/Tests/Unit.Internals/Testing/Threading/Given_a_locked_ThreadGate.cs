@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Threading;
-using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.Threading;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Threading;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable AccessToDisposedClosure
 

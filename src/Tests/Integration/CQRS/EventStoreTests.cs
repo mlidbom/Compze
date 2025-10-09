@@ -1,15 +1,16 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Integration.CQRS;
 

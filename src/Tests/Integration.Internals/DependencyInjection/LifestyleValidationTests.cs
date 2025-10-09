@@ -1,9 +1,10 @@
 using System;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
 using NUnit.Framework;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Integration.Internals.DependencyInjection;
 
