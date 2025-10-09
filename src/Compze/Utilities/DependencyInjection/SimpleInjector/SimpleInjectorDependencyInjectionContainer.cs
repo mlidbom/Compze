@@ -2,12 +2,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using Lifestyle = Compze.Utilities.DependencyInjection.Abstractions.Lifestyle;
 
 namespace Compze.Utilities.DependencyInjection.SimpleInjector;
 
@@ -55,15 +53,15 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       return this;
    }
 
-   bool _verified;
+   bool _verificationStarted;
 
    public override IServiceLocator ServiceLocator
    {
       get
       {
-         if(!_verified)
+         if(!_verificationStarted)
          {
-            _verified = true;
+            _verificationStarted = true;
             _container.Verify();
          }
 
