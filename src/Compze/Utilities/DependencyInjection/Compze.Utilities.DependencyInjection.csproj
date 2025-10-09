@@ -48,8 +48,5 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="Abstractions\_DependencyInjectionApi.cs" />
-		<Compile Include="Abstractions\CompzeServiceProviderFactory.cs" />
-		<Compile Include="Abstractions\HybridServiceProvider.cs" />
-		<Compile Include="Abstractions\HybridServiceScope.cs" />
 	</ItemGroup>
 </Project>
