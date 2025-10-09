@@ -1,17 +1,19 @@
-﻿using System;
+using System;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure.Threading;
 using Compze.Tests.Infrastructure.Transactions;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
+using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Exactly_once_guarantee_tests(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
+public class Exactly_once_guarantee_tests(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
 {
    [Test] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
    {

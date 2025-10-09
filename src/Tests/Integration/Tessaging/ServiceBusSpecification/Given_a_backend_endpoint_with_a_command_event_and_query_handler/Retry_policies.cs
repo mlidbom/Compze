@@ -1,16 +1,18 @@
-﻿using System;
+using System;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure.Threading;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
+using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Retry_policies_AtMostOnceCommand_when_command_handler_fails(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
+public class Retry_policies_AtMostOnceCommand_when_command_handler_fails(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
 {
    [SetUp] public void SendCommandThatFails()
    {

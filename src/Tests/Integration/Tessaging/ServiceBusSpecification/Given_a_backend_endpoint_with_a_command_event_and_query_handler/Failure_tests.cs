@@ -1,14 +1,16 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure.Threading;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
+using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Failure_tests(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
+public class Failure_tests(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
 {
    [Test] public async Task If_command_handler_with_result_throws_awaiting_SendAsync_throws()
    {

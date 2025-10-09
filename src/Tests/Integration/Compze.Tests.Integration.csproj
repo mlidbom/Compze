@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
+    <ProjectReference Include="..\Common\NUnit\Compze.Tests.Common.NUnit.csproj" />
     <ProjectReference Include="..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
   </ItemGroup>
   <ItemGroup>

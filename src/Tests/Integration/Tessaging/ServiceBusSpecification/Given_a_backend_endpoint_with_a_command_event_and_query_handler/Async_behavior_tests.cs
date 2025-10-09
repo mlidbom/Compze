@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
+using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Async_behavior_test(string pluggableComponentsCombination) : Fixture(pluggableComponentsCombination)
+public class Async_behavior_test(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
 {
    [Test] public async Task Query_returns_task_immediately_does_not_block_until_awaited()
    {

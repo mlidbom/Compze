@@ -11,6 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
+    <ProjectReference Include="..\Common\NUnit\Compze.Tests.Common.NUnit.csproj" />
     <ProjectReference Include="..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
     <ProjectReference Include="..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />

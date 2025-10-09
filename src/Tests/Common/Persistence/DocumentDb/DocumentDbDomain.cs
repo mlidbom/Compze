@@ -5,19 +5,19 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Common.Persistence.DocumentDb;
 
-class Dog : IPersistentEntity
+public class Dog : IPersistentEntity
 {
    public Guid Id { get; set; }
    public string Name { get; [UsedImplicitly] set; } = "John Doe Doggy";
 }
 
-class Person : PersistentEntity<Person>
+public class Person : PersistentEntity<Person>
 {
    public Person() {}
    public Person(Guid id): base(id) {}
 }
 
-class User : Person
+public class User : Person
 {
    public User(){}
    public User(Guid id): base(id) {}
@@ -29,14 +29,14 @@ class User : Person
    public HashSet<User> People { get; set; } = [];
 }
 
-record Address
+public record Address
 {
    public string Street { [UsedImplicitly] get; set; } = "SomeStreet";
    public int Streetnumber { [UsedImplicitly] get; set; } = 12;
    public string City { [UsedImplicitly] get; set; } = "SomeCity";
 }
 
-record Email(string TheEmail)
+public record Email(string TheEmail)
 {
    public string TheEmail { get; private set; } = TheEmail;
 }

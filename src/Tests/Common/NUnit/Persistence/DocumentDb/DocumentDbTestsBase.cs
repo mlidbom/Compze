@@ -1,21 +1,26 @@
 using System;
+using System.Threading.Tasks;
 using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
+using NUnit.Framework;
+using Compze.Tests.Infrastructure.NUnit;
 
-namespace Compze.Tests.Common.Persistence.DocumentDb;
+namespace Compze.Tests.Common.NUnit.Persistence.DocumentDb;
 
-public abstract class DocumentDbTestsBase(string pluggableComponentsCombination)
+public abstract class DocumentDbTestsBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
-   protected string PluggableComponentsCombination { get; } = pluggableComponentsCombination;
-   
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
-   protected IServiceLocator ServiceLocator { get; set; } = null!;
+   protected IServiceLocator ServiceLocator { get; private set; }
 
-   protected static IServiceLocator CreateServiceLocator() =>
+   static IServiceLocator CreateServiceLocator() =>
       TestWiringHelper.SetupTestingServiceLocator(builder => {});
+
+   [SetUp] public void Setup() => ServiceLocator = CreateServiceLocator();
+
+   [TearDown] public async Task TearDownTask() => await ServiceLocator.DisposeAsync();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) => ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));
    internal void UseInScope([InstantHandle] Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader()));
