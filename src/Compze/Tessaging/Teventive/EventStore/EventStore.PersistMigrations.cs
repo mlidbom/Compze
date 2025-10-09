@@ -17,7 +17,7 @@ partial class EventStore
    public void PersistMigrations()
    {
       Assert.State.Is(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
-      Log.Warning("Starting to persist migrations");
+      Log.Info("Starting to persist migrations");
 
       long migratedAggregates = 0;
       long updatedAggregates = 0;
@@ -110,7 +110,7 @@ partial class EventStore
          }
       }
 
-      Log.Warning("Done persisting migrations.");
+      Log.Info("Done persisting migrations.");
       Log.Info($"Inspected: {migratedAggregates} , Updated: {updatedAggregates}, New Events: {newEventCount}");
       if(exceptions.Any())
       {
