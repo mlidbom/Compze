@@ -43,6 +43,7 @@
     <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit" />
     <InternalsVisibleTo Include="Compze.Tests.Integration" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.XUnit" />
   </ItemGroup>

@@ -20,15 +20,7 @@ public static class PluggableComponentTestContextServiceLocatorExtensions
    {
       // Set the TestEnv context so it can read the combination
       TestEnv.SetTestContext(context.Combination);
-      
-      return TestWiringHelper.SetupTestingServiceLocator(configureContainer);
-   }
 
-   /// <summary>
-   /// Gets the EventStore from a service locator.
-   /// </summary>
-   public static IEventStore EventStore(this IServiceLocator serviceLocator)
-   {
-      return serviceLocator.Resolve<IEventStore>();
+      return TestWiringHelper.SetupTestingServiceLocator(configureContainer);
    }
 }
