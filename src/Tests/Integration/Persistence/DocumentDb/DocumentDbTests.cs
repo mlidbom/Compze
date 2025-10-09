@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Tests.Common.NUnit.Persistence.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Common.Persistence.DocumentDb;
-using Compze.Tests.Common.NUnit.Persistence.DocumentDb;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
