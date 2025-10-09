@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Compze.Utilities.Functional;
 
-namespace Compze.Testing.Threading;
+namespace Compze.TestInfrastructure.Threading;
 
 interface IThreadGateVisitor
 {
@@ -40,7 +40,7 @@ interface IThreadGate : IThreadGateVisitor
    IReadOnlyList<ThreadSnapshot> RequestedThreads { get; }
    IReadOnlyList<ThreadSnapshot> QueuedThreads { get; }
    IReadOnlyList<ThreadSnapshot> PassedThrough { get; }
-   Unit Enablelogging(bool enable = true);
+   unit Enablelogging(bool enable = true);
 }
 
 ///<summary>A block of code with <see cref="ThreadGate"/>s for <see cref="EntranceGate"/> and <see cref="ExitGate"/>. Useful for controlling multithreaded code for testing purposes.</summary>

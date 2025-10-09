@@ -1,8 +1,10 @@
+using Compze.Utilities.DependencyInjection.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.DependencyInjection;
 
@@ -23,17 +25,20 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    /// Template method that validates and registers components.
    /// Ensures validation always happens before calling the container-specific registration logic.
    /// </summary>
-   public void Register(params ComponentRegistration[] registrations)
+   public IDependencyInjectionContainer Register(params ComponentRegistration[] registrations)
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
-      RegisterInContainer(registrations);
+      AssertLifeStyleCombinationsAreValid();
+      return RegisterInContainer(registrations);
    }
+
+   public IDependencyRegistrar Register() => new DependencyRegistrar(this);
 
    /// <summary>
    /// Container-specific registration logic. Called after validation and tracking.
    /// </summary>
-   protected abstract void RegisterInContainer(ComponentRegistration[] registrations);
+   protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
@@ -78,8 +83,8 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          foreach(var serviceType in newRegistration.ServiceTypes)
          {
             var existingRegistration = _registeredComponents
-               .FirstOrDefault(existing => existing.ServiceTypes.Contains(serviceType));
-            
+              .FirstOrDefault(existing => existing.ServiceTypes.Contains(serviceType));
+
             if(existingRegistration != null)
             {
                throw new InvalidOperationException(
@@ -90,4 +95,43 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          }
       }
    }
+
+   void AssertLifeStyleCombinationsAreValid()
+   {
+      _registeredComponents.Where(it => it.Lifestyle == Lifestyle.Singleton)
+                           .ForEach(singleton =>
+                            {
+                               foreach(var dependencyType in singleton.DependencyTypes)
+                               {
+                                  _registeredComponents
+                                    .Where(it => it.ProvidesService(dependencyType) && it.Lifestyle != Lifestyle.Singleton)
+                                    .ForEach(invalidDependency => throw new InvalidLifeStyleCombinationException(singleton, invalidDependency, dependencyType));
+                               }
+                            });
+   }
+}
+
+class DependencyRegistrar(IDependencyInjectionContainer container) : IDependencyRegistrar
+{
+   readonly IDependencyInjectionContainer _container = container;
+
+   public IDependencyRegistrar Register(params ComponentRegistration[] registrations)
+   {
+      _container.Register(registrations);
+      return this;
+   }
+
+   public IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods)
+   {
+      foreach(var registrationMethod in registrationMethods)
+      {
+         registrationMethod(this);
+      }
+
+      return this;
+   }
+
+   public IDependencyInjectionContainer Container() => _container;
+
+   public IRunMode RunMode => _container.RunMode;
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
 using NUnit.Framework;

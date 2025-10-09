@@ -10,7 +10,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -34,8 +34,9 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          builder =>
          {
-            builder.Container.RegisterAspNetCoreTransport();
-            builder.RegisterCurrentTestsConfiguredPersistenceLayer();
+            builder.Container.Register()
+                   .AspNetCoreTransport()
+                   .CurrentTestsConfiguredPersistenceLayer();
             builder.RegisterHandlers
                    .ForQuery((GetUserQuery query) => queryResults.Single(result => result.Name == query.Name))
                    .ForQuery((UserApiStartPageQuery _) => new UserApiStartPage())

@@ -2,7 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE.LinqCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -12,7 +13,7 @@ namespace Compze.Utilities.DependencyInjection.SimpleInjector;
 public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel
 {
    readonly Container _container;
-   
+
    public SimpleInjectorDependencyInjectionContainer(IRunMode runMode) : base(runMode)
    {
       _container = new Container();
@@ -20,71 +21,47 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
       _container.ResolveUnregisteredType += (_, unregisteredTypeEventArgs) =>
       {
-         if (unregisteredTypeEventArgs is { Handled: false, UnregisteredServiceType.IsAbstract: false })
+         if(unregisteredTypeEventArgs is { Handled: false, UnregisteredServiceType.IsAbstract: false })
          {
             throw new InvalidOperationException(unregisteredTypeEventArgs.UnregisteredServiceType.ToFriendlyName() + " has not been registered.");
          }
       };
    }
 
-   protected override void RegisterInContainer(ComponentRegistration[] registrations)
+   protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
-
-      foreach(var componentRegistration in registrations)
+      foreach(var registration in registrations)
       {
-         var lifestyle = componentRegistration.Lifestyle switch
+         if(registration.InstantiationSpec.SingletonInstance is {} instance)
          {
-            Lifestyle.Singleton => (global::SimpleInjector.Lifestyle)global::SimpleInjector.Lifestyle.Singleton,
-            Lifestyle.Scoped => global::SimpleInjector.Lifestyle.Scoped,
-            _ => throw new ArgumentOutOfRangeException(nameof(componentRegistration.Lifestyle))
-         };
-
-         if (componentRegistration.InstantiationSpec.SingletonInstance != null)
-         {
-            Assert.Argument.Is(lifestyle == global::SimpleInjector.Lifestyle.Singleton, () => $"{componentRegistration.ServiceTypes.First().FullName} tried to register using an Instance and lifestyle: {lifestyle}. Instance can only be used with {nameof(Lifestyle.Singleton)}");
-            foreach(var serviceType in componentRegistration.ServiceTypes)
-            {
-               _container.RegisterInstance(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
-            }
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract ReSharper incorrectly believes nullable reference types to deliver runtime guarantees.
-         } else if(componentRegistration.InstantiationSpec.FactoryMethod != null)
-         {
-            var baseRegistration = GetSimpleInjectorLifestyle(componentRegistration.Lifestyle)
-              .CreateRegistration(
-                  componentRegistration.InstantiationSpec.FactoryMethodReturnType,
-                  () => componentRegistration.InstantiationSpec.RunFactoryMethod(this),
-                  _container);
-            foreach (var someCompletelyOtherName in componentRegistration.ServiceTypes)
-            {
-               _container.AddRegistration(someCompletelyOtherName, baseRegistration);
-            }
+            registration.ServiceTypes.ForEach(it => _container.RegisterInstance(it, instance));
          } else
          {
-            throw new Exception($"Invalid {nameof(InstantiationSpec)}");
+            var baseRegistration = registration.Lifestyle
+                                                        .AsSimpleInjectorLifestyle()
+                                                        .CreateRegistration(
+                                                            registration.InstantiationSpec.FactoryMethodReturnType,
+                                                            () => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                            _container);
+            foreach(var serviceType in registration.ServiceTypes)
+            {
+               _container.AddRegistration(serviceType, baseRegistration);
+            }
          }
       }
+
+      return this;
    }
 
-   static global::SimpleInjector.Lifestyle GetSimpleInjectorLifestyle(Lifestyle @this)
-   {
-      return @this switch
-      {
-         Lifestyle.Singleton => global::SimpleInjector.Lifestyle.Singleton,
-         Lifestyle.Scoped => global::SimpleInjector.Lifestyle.Scoped,
-         _ => throw new ArgumentOutOfRangeException(nameof(@this), @this, null)
-      };
-   }
-
-   bool _verified;
+   bool _verificationStarted;
 
    public override IServiceLocator ServiceLocator
    {
       get
       {
-         if(!_verified)
+         if(!_verificationStarted)
          {
-            _verified = true;
+            _verificationStarted = true;
             _container.Verify();
          }
 
@@ -93,16 +70,18 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class => _container.GetInstance<TComponent>();
+   public object Resolve(Type serviceType) => _container.GetInstance(serviceType);
    public TComponent[] ResolveAll<TComponent>() where TComponent : class => _container.GetAllInstances<TComponent>().ToArray();
    IDisposable IServiceLocator.BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
 
    [SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "CA1063 reports 'Dispose should be public and sealed' but incorrectly flags the protected Dispose(bool) override instead of recognizing this sealed class already has a sealed public Dispose() inherited from the base class.")]
    protected override void Dispose(bool disposing)
    {
-      if (disposing)
+      if(disposing)
       {
          _container.Dispose();
       }
+
       base.Dispose(disposing);
    }
 

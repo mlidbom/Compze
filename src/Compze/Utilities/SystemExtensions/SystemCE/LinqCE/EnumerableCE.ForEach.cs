@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Utilities.Functional;
 using JetBrains.Annotations;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -11,19 +12,20 @@ public static partial class EnumerableCE
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static void ForEach<TSource, TReturn>(this IEnumerable<TSource> source, Func<TSource, TReturn> action)
+   public static unit ForEach<TSource, TReturn>(this IEnumerable<TSource> source, Func<TSource, TReturn> action)
    {
       Argument.NotNull(source).NotNull(action);
       foreach(var item in source)
       {
          action(item);
       }
-   }
+      return unit.Value;
+    }
 
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static void ForEach<T>(this IEnumerable<T> source, [InstantHandle]Action<T> action)
+   public static unit ForEach<T>(this IEnumerable<T> source, [InstantHandle]Action<T> action)
    {
       Argument.NotNull(source).NotNull(action);
 
@@ -31,12 +33,13 @@ public static partial class EnumerableCE
       {
          action(item);
       }
+      return unit.Value;
    }
 
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+   public static unit ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
    {
       Argument.NotNull(source).NotNull(action);
 
@@ -45,5 +48,6 @@ public static partial class EnumerableCE
       {
          action(item, index++);
       }
-   }
+      return unit.Value;
+    }
 }

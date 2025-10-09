@@ -3,7 +3,7 @@
 namespace Compze.Tessaging.Typermedia.Abstractions;
 
 ///<summary>Dispatches messages within a process.</summary>
-public interface ILocalHypermediaNavigator
+public interface IInProcessHypermediaNavigator
 {
    ///<summary>Synchronously executes local handler for <paramref name="query"/>. The handler takes part in the active transaction and guarantees consistent results within a transaction.</summary>
    TResult Execute<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>;

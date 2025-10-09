@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,17 +23,22 @@ class InternalControllerFeatureProvider : ControllerFeatureProvider
    protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Controller));
 }
 
-
-public class AspNetInboxTransport : IInboxTransport
+class AspNetInboxTransport : IInboxTransport
 {
    readonly IServiceLocator _serviceLocator;
-   readonly IDependencyInjectionContainer _container;
    WebApplication? _webApplication;
+   readonly CompzeControllerActivator _controllerActivator;
 
-   public AspNetInboxTransport(IServiceLocator serviceLocator, IDependencyInjectionContainer container)
+   internal static void RegisterWith(IDependencyRegistrar registrar) =>
+      registrar.Register(
+         Singleton.For<IInboxTransport>()
+                  .CreatedBy((IServiceLocator serviceLocator, CompzeControllerActivator activator)
+                                => new AspNetInboxTransport(serviceLocator, activator)));
+
+   AspNetInboxTransport(IServiceLocator serviceLocator, CompzeControllerActivator controllerActivator)
    {
+      _controllerActivator = controllerActivator;
       _serviceLocator = serviceLocator;
-      _container = container;
    }
 
    public string Address => _webApplication!.Urls.First();
@@ -64,20 +70,21 @@ public class AspNetInboxTransport : IInboxTransport
          it.FeatureProviders.Add(new InternalControllerFeatureProvider());
       });
 
+      //todo: in production we want to bind to a specific configured port, not a random one.
       builder.WebHost.UseUrls("http://127.0.0.1:0");
 
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      _container.RegisterToHandleServiceResolutionFor(builder.Services);
+      //We need to use our container or things go haywire.
+      builder.Services.AddSingleton<IControllerActivator>(_controllerActivator);
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
 
-      app.Services.AssertAllControllersCanBeInstantiated(_serviceLocator);
-
+      // Create a scope in our container for each request
       app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
 
       await app.StartAsync().caf();

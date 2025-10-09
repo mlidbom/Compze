@@ -3,7 +3,6 @@ using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Utilities.Functional;
 

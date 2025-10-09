@@ -8,11 +8,12 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
-using Compze.Testing;
-using Compze.Tests.CQRS.EventRefactoring.Migrations;
-using Compze.Tests.CQRS.EventRefactoring.Migrations.Events;
+using Compze.TestInfrastructure;
+using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
+using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
@@ -40,7 +41,7 @@ public class EventMigrationPerformanceTest(string pluggableComponentsCombination
       _history = _aggregate.History.Cast<AggregateEvent>().ToList();
 
       _currentMigrations = Enumerable.Empty<IEventMigration>().ToList();
-      _container = CreateServiceLocatorForEventStoreType(migrationsfactory: () => _currentMigrations);
+      _container = CreateServiceLocatorForEventStoreType(migrationsFactory: () => _currentMigrations);
 
       _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<IEventStore>().SaveSingleAggregateEvents(_history));
    }

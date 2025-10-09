@@ -43,7 +43,7 @@ public class Local_Query_performance_tests(string pluggableComponentsCombination
          {
             for(var i = 0; i < queriesPerRequest; i++)
             {
-               LocalNavigator.Execute(new MyLocalStrictlyLocalQuery());
+               InProcessNavigator.Execute(new MyLocalStrictlyLocalQuery());
             }
          });
    }

@@ -5,17 +5,17 @@ namespace Compze.Utilities.SystemCE;
 
 static class VoidCEExtensions
 {
-   internal static Func<TParam, Unit> AsUnitFunc<TParam>(this Action<TParam> @this) =>
+   internal static Func<TParam, unit> AsUnitFunc<TParam>(this Action<TParam> @this) =>
       param =>
       {
          @this(param);
-         return Unit.Instance;
+         return unit.Value;
       };
 
-   internal static Func<Unit> AsUnitFunc(this Action @this) =>
+   internal static Func<unit> AsUnitFunc(this Action @this) =>
       () =>
       {
          @this();
-         return Unit.Instance;
+         return unit.Value;
       };
 }

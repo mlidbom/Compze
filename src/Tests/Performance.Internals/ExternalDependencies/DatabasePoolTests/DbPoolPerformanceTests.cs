@@ -5,9 +5,9 @@ using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Integration.Internals.Testing.Persistence;
-using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
+using Compze.Wiring;
 using NUnit.Framework;
 
 namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;

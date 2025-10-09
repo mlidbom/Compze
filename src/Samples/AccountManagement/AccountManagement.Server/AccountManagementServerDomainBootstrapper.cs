@@ -23,7 +23,8 @@ public class AccountManagementServerDomainBootstrapper
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
                                    setup: builder =>
                                    {
-                                      builder.Container.RegisterAspNetCoreTransport();
+                                      builder.Container.Register()
+                                             .AspNetCoreTransport();
                                       RegisterDomainComponents(builder);
                                       RegisterHandlers(builder);
                                    });
@@ -32,10 +33,11 @@ public class AccountManagementServerDomainBootstrapper
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {
       var connectionStringName = builder.Configuration.ConnectionStringName;
-      builder.Container.RegisterMsSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName);
-      builder.Container.RegisterMsSqlDocumentDb();
-      builder.Container.RegisterMsSqlEventStore();
-      builder.Container.RegisterMsSqlTessaging();
+      var register = builder.Container.Register();
+      register.MsSqlConnectionPool(connectionStringName)
+              .MsSqlDocumentDb()
+              .MsSqlEventStore()
+              .MsSqlTessaging();
 
       builder.RegisterEventStore()
              .HandleAggregate<Account, AccountEvent.Root>();

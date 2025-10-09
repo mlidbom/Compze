@@ -10,6 +10,8 @@ using Compze.Abstractions.Internal.Time;
 using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Serialization;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -18,13 +20,18 @@ namespace Compze.Persistence.DocumentDb;
 
 class DocumentDb : IDocumentDb
 {
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Scoped.For<IDocumentDb>()
+                                  .CreatedBy((IDocumentDbPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer)
+                                                => new DocumentDb(timeSource, serializer, typeMapper, persistenceLayer)));
+
    readonly IUtcTimeTimeSource _timeSource;
    readonly IDocumentDbSerializer _serializer;
 
    readonly ITypeMapper _typeMapper;
    readonly IDocumentDbPersistenceLayer _persistenceLayer;
 
-   internal DocumentDb(IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbPersistenceLayer persistenceLayer)
+   DocumentDb(IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbPersistenceLayer persistenceLayer)
    {
       _persistenceLayer = persistenceLayer;
       _timeSource = timeSource;
@@ -32,13 +39,12 @@ class DocumentDb : IDocumentDb
       _typeMapper = typeMapper;
    }
 
-
-    //todo:urgent:bug: The DocumentKey uses (id, type) as the key. But polymorphism queries by base type, while storage is by concrete type:
-    // Save<Animal>("1", new Dog());
-    // Save<Animal>("1", new Cat()); // Same ID, different concrete types
-    // This creates two documents with the same logical ID but different type GUIDs. Querying Get<Animal>("1") becomes ambiguous.
-    // I don't see any simple fix for this. I think we should just rip out the polymorphism support. It is too complex to manage and reason about, and the use cases are limited.
-    bool IDocumentDb.TryGet<TDocument>(object id, [MaybeNullWhen(false)] out TDocument value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock)
+   //todo:urgent:bug: The DocumentKey uses (id, type) as the key. But polymorphism queries by base type, while storage is by concrete type:
+   // Save<Animal>("1", new Dog());
+   // Save<Animal>("1", new Cat()); // Same ID, different concrete types
+   // This creates two documents with the same logical ID but different type GUIDs. Querying Get<Animal>("1") becomes ambiguous.
+   // I don't see any simple fix for this. I think we should just rip out the polymorphism support. It is too complex to manage and reason about, and the use cases are limited.
+   bool IDocumentDb.TryGet<TDocument>(object id, [MaybeNullWhen(false)] out TDocument value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock)
    {
       value = default;
       var idString = GetIdString(id);
@@ -62,7 +68,7 @@ class DocumentDb : IDocumentDb
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
 
-      _persistenceLayer.Add(new IDocumentDbPersistenceLayer.WriteRow(id: idString, serializedDocument:  serializedDocument, updateTime: _timeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType()).GuidValue));
+      _persistenceLayer.Add(new IDocumentDbPersistenceLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: _timeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType()).GuidValue));
 
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
@@ -121,11 +127,11 @@ class DocumentDb : IDocumentDb
 
    public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _persistenceLayer.GetAllIds(AcceptableTypeIds<T>());
 
-
-   [return:NotNull]TDocument Deserialize<TDocument>(IDocumentDbPersistenceLayer.ReadRow stored) =>
+   [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbPersistenceLayer.ReadRow stored) =>
       (TDocument)Assert.Result.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));
 
    IReadOnlySet<Guid> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
+
    IReadOnlySet<Guid> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
                                                                  .Select(typeId => typeId.GuidValue)
                                                                  .ToHashSet()

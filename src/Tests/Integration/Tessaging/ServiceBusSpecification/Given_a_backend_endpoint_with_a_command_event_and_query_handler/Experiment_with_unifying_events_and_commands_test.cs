@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
-using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
@@ -17,7 +15,9 @@ using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.TestInfrastructure;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing
@@ -43,9 +43,10 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
          builder =>
          {
-            builder.Container.RegisterAspNetCoreTransport();
-            builder.RegisterCurrentTestsConfiguredPersistenceLayer();
-            builder.Container.RegisterEventStore(builder.Configuration.ConnectionStringName);
+            builder.Container.Register()
+                   .AspNetCoreTransport()
+                   .CurrentTestsConfiguredPersistenceLayer();
+            builder.Container.Register().EventStore(builder.Configuration.ConnectionStringName);
 
             builder.RegisterHandlers
                    .ForEvent((UserEvent.IUserRegistered _) => {})

@@ -7,7 +7,7 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.Testing.Threading;
+namespace Compze.TestInfrastructure.Threading;
 
 class ThreadGate : IThreadGate
 {
@@ -25,7 +25,7 @@ class ThreadGate : IThreadGate
    public IReadOnlyList<ThreadSnapshot> RequestedThreads => _monitor.Read(() => _requestsThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> QueuedThreads => _monitor.Read(() => _queuedThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> PassedThrough => _monitor.Read(() => _passedThreads.ToList());
-   public Unit Enablelogging(bool enable = true) => Unit.Ignore(_enableLogging = enable);
+   public unit Enablelogging(bool enable = true) => (_enableLogging = enable).unit();
    public Action<ThreadSnapshot> PassThroughAction => _monitor.Read(() => _passThroughAction);
 
    public IThreadGate Open()

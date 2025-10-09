@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Compze.Utilities.Functional;
 using NUnit.Framework;
 
-namespace Compze.Testing;
+namespace Compze.TestInfrastructure;
 
 [TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
 public class DuplicateByPluggableComponentTest : UniversalTestBase
@@ -32,9 +32,9 @@ class PluggableComponentsTestFixtureSource : IEnumerable<string>
                     .Where(line => !line.StartsWith('#'))
                     .ToArray();
       }
-      catch(Exception e)
+      catch(FileNotFoundException e)
       {
-         return [e.ToString()];
+         return [Enumerable.Repeat($"FileMissing", 3)._(it => string.Join((string?)":", (IEnumerable<string?>)it))];
       }
    }
 }

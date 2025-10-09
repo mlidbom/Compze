@@ -2,15 +2,32 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Serialization;
-using Compze.Tessaging.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation.Http;
 
-class HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer) : IHttpApiClient
+static class HttpApiClientRegistrar
 {
-   readonly IHttpClientFactoryCE _clientFactory = clientFactory;
-   readonly IRemotableMessageSerializer _serializer = serializer;
+   internal static IDependencyRegistrar HttpApiClient(this IDependencyRegistrar registrar)
+      => registrar.Register(Http.HttpApiClient.RegisterWith);
+}
+
+class HttpApiClient : IHttpApiClient
+{
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IHttpApiClient>()
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer)));
+
+   readonly IHttpClientFactoryCE _clientFactory;
+   readonly IRemotableMessageSerializer _serializer;
+
+   HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer)
+   {
+      _clientFactory = clientFactory;
+      _serializer = serializer;
+   }
 
    public async Task<TResult> PostAsync<TResult>(TransportMessage.OutGoing message, object realMessage, Uri requestUri)
    {

@@ -2,14 +2,33 @@
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Typermedia;
 
-class LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry) : ILocalHypermediaNavigator
+static class LocalHypermediaNavigatorRegistrar
 {
-   readonly IMessageHandlerRegistry _handlerRegistry = handlerRegistry;
-   readonly ISingleContextUseGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
+   internal static IDependencyRegistrar InProcessHypermediaNavigator(this IDependencyRegistrar registrar)
+      => registrar.Register(Typermedia.InProcessHypermediaNavigator.RegisterWith);
+}
+
+class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
+{
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Scoped.For<IInProcessHypermediaNavigator>()
+                                  .CreatedBy((IMessageHandlerRegistry messageHandlerRegistry)
+                                                => new InProcessHypermediaNavigator(messageHandlerRegistry)));
+
+   readonly IMessageHandlerRegistry _handlerRegistry;
+   readonly IUsageGuard _contextGuard;
+
+   public InProcessHypermediaNavigator(IMessageHandlerRegistry handlerRegistry)
+   {
+      _handlerRegistry = handlerRegistry;
+      _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
+   }
 
    public TResult Execute<TResult>(IStrictlyLocalCommand<TResult> command)
    {
@@ -42,7 +61,7 @@ class LocalHypermediaNavigator(IMessageHandlerRegistry handlerRegistry) : ILocal
 
    void CommonAssertion(IMessage message)
    {
-      _contextGuard.AssertNoContextChangeOccurred(this);
+      _contextGuard.EnsureAccessValid();
       MessageInspector.AssertValidToExecuteLocally(message);
    }
 }

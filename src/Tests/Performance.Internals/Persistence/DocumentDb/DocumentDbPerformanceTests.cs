@@ -1,7 +1,7 @@
 ﻿using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Testing;
-using Compze.Tests.Persistence.DocumentDb;
+using Compze.TestInfrastructure;
+using Compze.Tests.Common.Persistence.DocumentDb;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions.Extensions;
 using NUnit.Framework;

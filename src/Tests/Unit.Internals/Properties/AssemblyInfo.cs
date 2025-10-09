@@ -1,4 +1,4 @@
-﻿using Compze.Testing;
+﻿using Compze.TestInfrastructure;
 using NUnit.Framework;
 
 #if !NCRUNCH

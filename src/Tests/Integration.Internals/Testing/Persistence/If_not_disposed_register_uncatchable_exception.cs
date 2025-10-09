@@ -1,8 +1,8 @@
 ﻿using System;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Wiring;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
@@ -16,7 +16,7 @@ class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(plugg
       if(TestEnv.PersistenceLayer.Current == PersistenceLayer.Memory) return;
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {
-         Unit.From(() =>
+         unit.From(() =>
          {
             _ = CreatePool();
          });

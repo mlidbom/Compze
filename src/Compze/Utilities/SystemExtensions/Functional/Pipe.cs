@@ -31,10 +31,12 @@ static class Pipe
    ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
    public static TResult then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
 
-   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="Unit"/>.  Useful for chaining statements that return void.</summary>
-   public static Unit then<TValue>(this TValue _, Action action) => Unit.From(action);
+   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
+   public static unit then<TValue>(this TValue _, Action action) => Functional.unit.From(action);
 
-
+   ///<summary>Get unit.Value from any value in order to easily return unit anywhere.</summary>
+   public static unit unit<T>(this T _) => Functional.unit.Value;
+   
    ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
    public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
 

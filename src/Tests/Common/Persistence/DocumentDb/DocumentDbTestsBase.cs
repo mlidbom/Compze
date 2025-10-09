@@ -1,12 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Persistence.DocumentDb.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Compze.Tests.Persistence.DocumentDb;
+namespace Compze.Tests.Common.Persistence.DocumentDb;
 
 abstract class DocumentDbTestsBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

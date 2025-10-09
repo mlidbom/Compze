@@ -14,7 +14,7 @@ public static class ComponentRegistrationExtensions
       this ComponentRegistrationWithoutInstantiationSpec<TService> @this,
       Func<TImplementation> factoryMethod) where TService : class
                                            where TImplementation : TService =>
-      @this.CreatedBy(_ => factoryMethod());
+      @this.CreatedBy(_ => factoryMethod(), []);
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1>(
       this ComponentRegistrationWithoutInstantiationSpec<TService> @this,
@@ -23,7 +23,8 @@ public static class ComponentRegistrationExtensions
                                                          where TImplementation : TService
    {
       var dependency1 = new ComponentPromise<TDependency1>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern)),
+                             [typeof(TDependency1)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2>(
@@ -35,7 +36,8 @@ public static class ComponentRegistrationExtensions
    {
       var dependency1 = new ComponentPromise<TDependency1>();
       var dependency2 = new ComponentPromise<TDependency2>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3>(
@@ -49,7 +51,8 @@ public static class ComponentRegistrationExtensions
       var dependency1 = new ComponentPromise<TDependency1>();
       var dependency2 = new ComponentPromise<TDependency2>();
       var dependency3 = new ComponentPromise<TDependency3>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2), typeof(TDependency3)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4>(
@@ -65,7 +68,8 @@ public static class ComponentRegistrationExtensions
       var dependency2 = new ComponentPromise<TDependency2>();
       var dependency3 = new ComponentPromise<TDependency3>();
       var dependency4 = new ComponentPromise<TDependency4>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2), typeof(TDependency3), typeof(TDependency4)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5>(
@@ -83,7 +87,8 @@ public static class ComponentRegistrationExtensions
       var dependency3 = new ComponentPromise<TDependency3>();
       var dependency4 = new ComponentPromise<TDependency4>();
       var dependency5 = new ComponentPromise<TDependency5>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2), typeof(TDependency3), typeof(TDependency4), typeof(TDependency5)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6>(
@@ -103,7 +108,8 @@ public static class ComponentRegistrationExtensions
       var dependency4 = new ComponentPromise<TDependency4>();
       var dependency5 = new ComponentPromise<TDependency5>();
       var dependency6 = new ComponentPromise<TDependency6>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2), typeof(TDependency3), typeof(TDependency4), typeof(TDependency5), typeof(TDependency6)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7>(
@@ -125,7 +131,8 @@ public static class ComponentRegistrationExtensions
       var dependency5 = new ComponentPromise<TDependency5>();
       var dependency6 = new ComponentPromise<TDependency6>();
       var dependency7 = new ComponentPromise<TDependency7>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern), dependency7.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern), dependency7.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2), typeof(TDependency3), typeof(TDependency4), typeof(TDependency5), typeof(TDependency6), typeof(TDependency7)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8>(
@@ -149,7 +156,8 @@ public static class ComponentRegistrationExtensions
       var dependency6 = new ComponentPromise<TDependency6>();
       var dependency7 = new ComponentPromise<TDependency7>();
       var dependency8 = new ComponentPromise<TDependency8>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern), dependency7.Resolve(kern), dependency8.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern), dependency7.Resolve(kern), dependency8.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2), typeof(TDependency3), typeof(TDependency4), typeof(TDependency5), typeof(TDependency6), typeof(TDependency7), typeof(TDependency8)]);
    }
 
    public static ComponentRegistration<TService> CreatedBy<TService, TImplementation, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9>(
@@ -175,6 +183,7 @@ public static class ComponentRegistrationExtensions
       var dependency7 = new ComponentPromise<TDependency7>();
       var dependency8 = new ComponentPromise<TDependency8>();
       var dependency9 = new ComponentPromise<TDependency9>();
-      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern), dependency7.Resolve(kern), dependency8.Resolve(kern), dependency9.Resolve(kern)));
+      return @this.CreatedBy(kern => factoryMethod(dependency1.Resolve(kern), dependency2.Resolve(kern), dependency3.Resolve(kern), dependency4.Resolve(kern), dependency5.Resolve(kern), dependency6.Resolve(kern), dependency7.Resolve(kern), dependency8.Resolve(kern), dependency9.Resolve(kern)),
+                             [typeof(TDependency1), typeof(TDependency2), typeof(TDependency3), typeof(TDependency4), typeof(TDependency5), typeof(TDependency6), typeof(TDependency7), typeof(TDependency8), typeof(TDependency9)]);
    }
 }

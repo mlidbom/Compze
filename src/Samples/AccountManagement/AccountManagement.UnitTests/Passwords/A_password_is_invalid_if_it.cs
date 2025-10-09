@@ -1,5 +1,5 @@
 ﻿using AccountManagement.Domain.Passwords;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;

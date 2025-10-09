@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,43 +20,33 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
 
-   public MicrosoftDependencyInjectionContainer(IRunMode runMode) : base(runMode)
-   {
+   public MicrosoftDependencyInjectionContainer(IRunMode runMode) : base(runMode) =>
       _services = new ServiceCollection();
-   }
 
-   protected override void RegisterInContainer(ComponentRegistration[] registrations)
+   protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
-
-      foreach(var componentRegistration in registrations)
+      foreach(var registration in registrations)
       {
-         var lifetime = componentRegistration.Lifestyle switch
-         {
-            Lifestyle.Singleton => ServiceLifetime.Singleton,
-            Lifestyle.Scoped => ServiceLifetime.Scoped,
-            _ => throw new ArgumentOutOfRangeException(nameof(componentRegistration.Lifestyle))
-         };
+         var lifetime = registration.Lifestyle.AsServiceLifetime();
 
-         if(componentRegistration.InstantiationSpec.SingletonInstance != null)
+         if(registration.InstantiationSpec.SingletonInstance is {} instance)
          {
-            Assert.Argument.Is(lifetime == ServiceLifetime.Singleton, () => $"{componentRegistration.ServiceTypes.First().FullName} tried to register using an Instance and lifestyle: {lifetime}. Instance can only be used with {nameof(Lifestyle.Singleton)}");
-            foreach(var serviceType in componentRegistration.ServiceTypes)
-            {
-               _services.AddSingleton(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
-            }
+            registration.ServiceTypes.ForEach(it => _services.AddSingleton(it, instance));
          } else
          {
-            var firstServiceType = componentRegistration.ServiceTypes.First();
-            var primaryDescriptor = new ServiceDescriptor(firstServiceType, _ =>  componentRegistration.InstantiationSpec.RunFactoryMethod(this), lifetime);
+            var firstServiceType = registration.ServiceTypes.First();
+            var primaryDescriptor = new ServiceDescriptor(firstServiceType, _ => registration.InstantiationSpec.RunFactoryMethod(this), lifetime);
 
             _services.Add(primaryDescriptor);
 
-            foreach(var serviceType in componentRegistration.ServiceTypes.Skip(1))
+            foreach(var serviceType in registration.ServiceTypes.Skip(1))
             {
                _services.Add(new ServiceDescriptor(serviceType, sp => sp.GetService(firstServiceType)!, lifetime));
             }
          }
       }
+
+      return this;
    }
 
    public override IServiceLocator ServiceLocator
@@ -76,6 +68,12 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    {
       Assert.State.IsNotDisposed(_isDisposed, this);
       return CurrentProvider().GetRequiredService<TComponent>();
+   }
+
+   public object Resolve(Type serviceType)
+   {
+      Assert.State.IsNotDisposed(_isDisposed, this);
+      return CurrentProvider().GetRequiredService(serviceType);
    }
 
    public TComponent[] ResolveAll<TComponent>() where TComponent : class
@@ -108,7 +106,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    [SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "CA1063 reports 'Dispose should be public and sealed' but incorrectly flags the protected Dispose(bool) override instead of recognizing this sealed class already has a sealed public Dispose() inherited from the base class.")]
    protected override void Dispose(bool disposing)
    {
-      if (disposing)
+      if(disposing)
       {
          Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
          if(!_isDisposed)
@@ -118,6 +116,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
             _serviceProvider = null;
          }
       }
+
       base.Dispose(disposing);
    }
 
@@ -131,8 +130,10 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
          {
             await _serviceProvider.DisposeAsync().caf();
          }
+
          _serviceProvider = null;
       }
+
       await base.DisposeAsyncCore().caf();
    }
 }

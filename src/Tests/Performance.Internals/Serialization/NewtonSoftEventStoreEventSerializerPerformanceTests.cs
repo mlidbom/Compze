@@ -4,7 +4,7 @@ using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Tests.Unit.Internals.Serialization;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -17,7 +17,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
 {
    IEventStoreSerializer _eventSerializer;
 
-   [OneTimeSetUp] public void SetupTask() => _eventSerializer = new EventStoreSerializer(new TypeMapper());
+   [OneTimeSetUp] public void SetupTask() => _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);
 
    [Test] public void Should_roundtrip_simple_event_1000_times_in_15_milliseconds()
    {

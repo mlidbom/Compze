@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Teventive.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable StaticMemberInGenericType
 

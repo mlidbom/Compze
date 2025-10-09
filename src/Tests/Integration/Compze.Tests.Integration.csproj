@@ -10,6 +10,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

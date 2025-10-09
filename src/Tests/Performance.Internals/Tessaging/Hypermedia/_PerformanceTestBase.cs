@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
@@ -8,7 +7,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using NUnit.Framework;
 
 //ncrunch: no coverage start
@@ -21,7 +20,7 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
    protected IEndpoint ServerEndpoint { get; set; }
    public IEndpoint ClientEndpoint { get; set; }
    protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
-   protected ILocalHypermediaNavigator LocalNavigator => ServerEndpoint.ServiceLocator.Resolve<ILocalHypermediaNavigator>();
+   protected IInProcessHypermediaNavigator InProcessNavigator => ServerEndpoint.ServiceLocator.Resolve<IInProcessHypermediaNavigator>();
 
    [SetUp] public async Task Setup()
    {
@@ -31,8 +30,9 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
          builder =>
          {
-            builder.Container.RegisterAspNetCoreTransport();
-            builder.RegisterCurrentTestsConfiguredPersistenceLayer();
+            builder.Container.Register()
+                   .AspNetCoreTransport()
+                   .CurrentTestsConfiguredPersistenceLayer();
             builder.RegisterHandlers
                    .ForQuery((MyRemoteQuery _) => new MyQueryResult())
                    .ForQuery((MyLocalStrictlyLocalQuery _) => new MyQueryResult());

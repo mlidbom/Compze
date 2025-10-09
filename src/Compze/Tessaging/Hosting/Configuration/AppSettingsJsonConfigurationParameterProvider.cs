@@ -1,13 +1,28 @@
-﻿using System;
-using System.IO;
+﻿using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
 
 namespace Compze.Tessaging.Hosting.Configuration;
+
+static class AppSettingsJsonConfigurationParameterProviderRegistrar
+{
+   public static IDependencyRegistrar JSonAppConfigFileConfigurationParameterProvider(this IDependencyRegistrar @this)
+      => @this.Register(AppSettingsJsonConfigurationParameterProvider.RegisterWith);
+}
+
 
 ///<summary>Fetches configuration variables from the application configuration file.</summary>
 class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton
 {
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
+                                     .CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
+
+   AppSettingsJsonConfigurationParameterProvider(){}
+
    public static readonly IConfigurationParameterProvider Instance = new AppSettingsJsonConfigurationParameterProvider();
 
    static readonly OptimizedLazy<IConfigurationSection> AppSettingsSectionInitializer = new(() => new ConfigurationBuilder()
@@ -27,6 +42,7 @@ class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterPro
       {
          return valueIfMissing;
       }
+
       throw new Exception($"ApplicationSettings Parameter {parameterName} does not exists");
    }
 }

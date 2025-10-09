@@ -1,6 +1,6 @@
 ﻿using System;
 using Compze.Tessaging.Hosting.Configuration;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -8,8 +8,8 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
 
 [TestFixture] public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
 {
-   AppSettingsJsonConfigurationParameterProvider _provider;
-   [SetUp] public void SetupTask() => _provider = new AppSettingsJsonConfigurationParameterProvider();
+   IConfigurationParameterProvider _provider;
+   [SetUp] public void SetupTask() => _provider = AppSettingsJsonConfigurationParameterProvider.Instance;
 
    [Test] public void ParameterProvider_should_return_the_value_specified_in_the_configuration_file() =>
       Assert.That(_provider.GetString("KeyTest1"), Is.EqualTo("ValueTest1"));

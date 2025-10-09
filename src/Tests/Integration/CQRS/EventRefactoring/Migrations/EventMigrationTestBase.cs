@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
-using Compze.Testing;
-using Compze.Testing.Serialization;
-using Compze.Tests.CQRS.EventRefactoring.Migrations;
+using Compze.TestInfrastructure;
+using Compze.TestInfrastructure.Serialization;
+using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -172,11 +172,10 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
       });
    }
 
-   protected static IServiceLocator CreateServiceLocatorForEventStoreType(Func<IReadOnlyList<IEventMigration>> migrationsfactory)
+   protected static IServiceLocator CreateServiceLocatorForEventStoreType(Func<IReadOnlyList<IEventMigration>> migrationsFactory)
    {
       var serviceLocator = TestingContainerFactory.CreateServiceLocatorForTesting(
-         endpointBuilder =>
-            endpointBuilder.Container.RegisterEventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsfactory));
+         register => register.EventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsFactory));
 
       return serviceLocator;
    }

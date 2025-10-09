@@ -6,17 +6,32 @@ using Compze.Tessaging.Abstractions;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
 partial class Outbox
 {
-   internal class MessageStorage(IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer) : Outbox.IMessageStorage
+   internal class MessageStorage : Outbox.IMessageStorage
    {
-      readonly IServiceBusPersistenceLayer.IOutboxPersistenceLayer _persistenceLayer = persistenceLayer;
-      readonly ITypeMapper _typeMapper = typeMapper;
-      readonly IRemotableMessageSerializer _serializer = serializer;
+      // ReSharper disable once MemberHidesStaticFromOuterClass
+      internal static void RegisterWith(IDependencyRegistrar registrar)
+         => registrar.Register(Singleton.For<Outbox.IMessageStorage>()
+                                        .CreatedBy((IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+                                                      => new Outbox.MessageStorage(persistenceLayer, typeMapper, serializer)));
+
+      readonly IServiceBusPersistenceLayer.IOutboxPersistenceLayer _persistenceLayer;
+      readonly ITypeMapper _typeMapper;
+      readonly IRemotableMessageSerializer _serializer;
+
+      MessageStorage(IServiceBusPersistenceLayer.IOutboxPersistenceLayer persistenceLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+      {
+         _persistenceLayer = persistenceLayer;
+         _typeMapper = typeMapper;
+         _serializer = serializer;
+      }
 
       public void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds)
       {

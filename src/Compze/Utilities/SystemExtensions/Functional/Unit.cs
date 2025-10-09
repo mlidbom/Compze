@@ -1,28 +1,35 @@
 ﻿using System;
-using System.Threading.Tasks;
 
+#pragma warning disable IDE0130
 namespace Compze.Utilities.Functional;
+#pragma warning restore IDE0130
 
-///<summary>The functional programming unit concept. Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>. Simply return <see cref="Unit"/> instead of void from methods with no return value.</summary>
-struct Unit : IEquatable<Unit>
+///<summary>The functional programming unit concept.
+/// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.
+/// Simply return unit.Value instead of void from methods with no return value.
+/// Placed in System and named "unit" in the hope that eventually unit will become a language feature and then
+/// migration from this struct to the language feature might conceivably be no more than removing the reference to this package.
+/// </summary>
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+public readonly struct unit : IEquatable<unit>
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 {
-   internal static readonly Unit Instance = new();
-   internal static readonly Task<Unit> InstanceTask = Task.FromResult(Instance);
+   // ReSharper disable once MemberCanBeInternal
+   public static readonly unit Value = default;
 
-   internal static Unit From(Action action)
+   ///<summary>Executes the task and returns unit making for easily returning unit without extra lines: unit Method() => unit.From(() => DoSomething())</summary>
+   internal static unit From(Action action)
    {
       action();
-      return Instance;
+      return Value;
    }
 
-   internal static Unit Ignore<TValue>(TValue _) => Instance;
+   public override string ToString() => "()";
 
-   public readonly override string ToString() => "()";
+   public bool Equals(unit _) => true;
+   public override bool Equals(object? obj) => obj is unit;
+   public static bool operator ==(unit _, unit __) => true;
+   public static bool operator !=(unit _, unit __) => false;
 
-   public readonly bool Equals(Unit _) => true;
-   public readonly override bool Equals(object? obj) => obj is Unit;
-   public static bool operator ==(Unit _, Unit __) => true;
-   public static bool operator !=(Unit _, Unit __) => false;
-
-   public readonly override int GetHashCode() => 392576489;
+   public override int GetHashCode() => 392576489;
 }

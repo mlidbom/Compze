@@ -2,4 +2,4 @@
 
 namespace Compze.Tests.Integration.Internals;
 
-[SetUpFixture] public class UniversalTestFixture : Compze.Testing.UniversalTestFixture;
+[SetUpFixture] public class UniversalTestFixture : TestInfrastructure.UniversalTestFixture;

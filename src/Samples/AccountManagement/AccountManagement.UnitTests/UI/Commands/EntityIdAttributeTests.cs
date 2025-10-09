@@ -1,7 +1,7 @@
 ﻿using System;
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.UnitTests.UI.Commands.UserCommands;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;

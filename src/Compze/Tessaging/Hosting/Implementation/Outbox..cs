@@ -6,17 +6,40 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-partial class Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, EndpointConfiguration configuration) : IOutbox
+static class OutboxRegistrar
 {
-   readonly IMessageStorage _storage = messageStorage;
-   readonly EndpointConfiguration _configuration = configuration;
-   readonly ITransport _transport = transport;
+   internal static IDependencyRegistrar Outbox(this IDependencyRegistrar registrar)
+      => registrar.Register(Implementation.Outbox.RegisterWith);
+}
+
+partial class Outbox : IOutbox
+{
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+   {
+      registrar.Register(Singleton.For<IOutbox>()
+                                  .CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
+                                                => new Outbox(transport, messageStorage, configuration)));
+      registrar.Register(MessageStorage.RegisterWith);
+   }
+
+   readonly IMessageStorage _storage;
+   readonly EndpointConfiguration _configuration;
+   readonly ITransport _transport;
+
+   Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, EndpointConfiguration configuration)
+   {
+      _storage = messageStorage;
+      _configuration = configuration;
+      _transport = transport;
+   }
 
    public void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent)
    {

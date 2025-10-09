@@ -1,4 +1,4 @@
-﻿using Compze.Testing.TestFrameworkExtensions.XUnit;
+﻿using Compze.TestInfrastructure.TestFrameworkExtensions.XUnit;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 

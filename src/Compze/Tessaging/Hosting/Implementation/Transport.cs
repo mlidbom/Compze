@@ -8,6 +8,8 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
@@ -15,21 +17,40 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-partial class Transport(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient) : ITransport, IDisposable
+internal static class TransportRegistrar
 {
-   readonly IMessagesInFlightTracker _messagesInFlightTracker = messagesInFlightTracker;
-   readonly ITypeMapper _typeMapper = typeMapper;
-   readonly IRemotableMessageSerializer _serializer = serializer;
-   readonly IHttpApiClient _httpApiClient = httpApiClient;
+   internal static IDependencyRegistrar Transport(this IDependencyRegistrar registrar)
+      => registrar.Register(Implementation.Transport.RegisterWith);
+}
+
+partial class Transport : ITransport, IDisposable
+{
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
+                                                                     => new Transport(messagesInFlightTracker, typeMapper, serializer, httpApiClient)));
+
+   Transport(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
+   {
+      _messagesInFlightTracker = messagesInFlightTracker;
+      _typeMapper = typeMapper;
+      _serializer = serializer;
+      _httpApiClient = httpApiClient;
+      _router = new Router(typeMapper);
+   }
+
+   readonly IMessagesInFlightTracker _messagesInFlightTracker;
+   readonly ITypeMapper _typeMapper;
+   readonly IRemotableMessageSerializer _serializer;
+   readonly IHttpApiClient _httpApiClient;
 
    bool _running = true;
-   readonly Router _router = new(typeMapper);
+   readonly Router _router;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
 
-   public async Task ConnectAsync(EndPointAddress remoteEndpointAdress)
+   public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAdress, _typeMapper, _serializer, _httpApiClient);
+      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _httpApiClient);
 
       await clientConnection.Init().caf();
 
@@ -86,5 +107,5 @@ partial class Transport(IMessagesInFlightTracker messagesInFlightTracker, ITypeM
       }
    }
 
-   Unit AssertRunning() => Assert.State.Is(_running, () => "not running").then(Unit.Instance);
+   unit AssertRunning() => Assert.State.Is(_running, () => "not running").then(unit.Value);
 }

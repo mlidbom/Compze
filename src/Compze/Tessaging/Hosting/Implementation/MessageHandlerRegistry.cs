@@ -10,6 +10,8 @@ using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Teventive.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -17,6 +19,14 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging.Hosting.Implementation;
+
+
+static class MessageHandlerRegistryRegistrar
+{
+   internal static IDependencyRegistrar MessageHandlerRegistry(this IDependencyRegistrar registrar)
+      => registrar.Register(Singleton.For<IMessageHandlerRegistrar, IMessageHandlerRegistry, MessageHandlerRegistry>()
+                                     .CreatedBy((ITypeMapper typeMapper) => new MessageHandlerRegistry(typeMapper)));
+}
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. QueryTypeIndexFor<TQuery>.Index. Etc
 class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar, IMessageHandlerRegistry
@@ -104,7 +114,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
    {
       if(_commandHandlersReturningResults.TryGetValue(command.GetType(), out var handler))
       {
-         return actualQuery => (TResult)handler.HandlerMethod(actualQuery);
+         return actualCommand => (TResult)handler.HandlerMethod(actualCommand);
       }
 
       throw new NoHandlerException(command.GetType());

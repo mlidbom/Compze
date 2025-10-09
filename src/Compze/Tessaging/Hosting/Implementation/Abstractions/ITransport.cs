@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
 
 interface ITransport
 {
-    Task ConnectAsync(EndPointAddress remoteEndpointAdress);
+    Task ConnectAsync(EndPointAddress remoteEndpointAddress);
     void Stop();
 
     IInboxConnection ConnectionToHandlerFor(IRemotableCommand command);

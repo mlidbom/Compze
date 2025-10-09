@@ -2,4 +2,4 @@
 
 namespace AccountManagement.UnitTests;
 
-[SetUpFixture] public class UniversalTestFixture : Compze.Testing.UniversalTestFixture;
+[SetUpFixture] public class UniversalTestFixture : Compze.TestInfrastructure.UniversalTestFixture;

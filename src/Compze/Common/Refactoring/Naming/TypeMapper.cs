@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Compze.Abstractions;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -18,6 +15,8 @@ namespace Compze.Common.Refactoring.Naming;
 
 class TypeMapper : ITypeMapper
 {
+   private TypeMapper(){}
+   internal static ITypeMapper Instance = new TypeMapper();
    static readonly IThreadShared<MappingState> State = ThreadShared.WithDefaultTimeout<MappingState>();
 
    static TypeMapper()

@@ -6,7 +6,7 @@ using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tests.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 
 class After<TEvent> : EventMigration<IRootEvent>
 {

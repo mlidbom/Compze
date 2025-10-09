@@ -14,7 +14,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 
    public ILogger WithLogLevel(LogLevel level) => new SerilogLogger(_logger) {_logLevel =  level};
 
-   public Unit Error(Exception exception, string? message = null) => Unit.From(() =>
+   public unit Error(Exception exception, string? message = null) => unit.From(() =>
    {
       if(_logLevel >= LogLevel.Error)
       {
@@ -22,7 +22,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
       }
    });
 
-   public Unit Warning(string message) => Unit.From(() => Unit.From(() =>
+   public unit Warning(string message) => unit.From(() => unit.From(() =>
    {
       if(_logLevel >= LogLevel.Warning)
       {
@@ -30,7 +30,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
       }
    }));
 
-   public Unit Warning(Exception exception, string message) => Unit.From(() => Unit.From(() =>
+   public unit Warning(Exception exception, string message) => unit.From(() => unit.From(() =>
    {
       if(_logLevel >= LogLevel.Warning)
       {
@@ -38,7 +38,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
       }
    }));
 
-   public Unit Info(string message) => Unit.From(() => Unit.From(() =>
+   public unit Info(string message) => unit.From(() => unit.From(() =>
    {
       if(_logLevel >= LogLevel.Info)
       {
@@ -46,7 +46,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
       }
    }));
 
-   public Unit Debug(string message) => Unit.From(() => Unit.From(() =>
+   public unit Debug(string message) => unit.From(() => unit.From(() =>
    {
       if(_logLevel >= LogLevel.Debug)
       {

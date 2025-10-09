@@ -1,19 +1,40 @@
-using System;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Typermedia.Implementation;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
+using System;
 
 namespace Compze.Tessaging.Hosting;
 
-[UsedImplicitly] class ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler) : IServiceBusSession
+
+static class ServiceBusSessionRegistrar
 {
-   readonly IOutbox _transport = transport;
-   readonly CommandScheduler _commandScheduler = commandScheduler;
-   readonly ISingleContextUseGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard());
+   internal static IDependencyRegistrar ServiceBusSession(this IDependencyRegistrar registrar)
+      => registrar.Register(Hosting.ServiceBusSession.RegisterWith);
+}
+
+[UsedImplicitly] class ServiceBusSession : IServiceBusSession
+{
+   internal static void RegisterWith(IDependencyRegistrar registrar)
+      => registrar.Register(Scoped.For<IServiceBusSession>()
+                                  .CreatedBy((IOutbox outbox, CommandScheduler commandScheduler)
+                                                => new ServiceBusSession(outbox, commandScheduler)));
+
+   readonly IOutbox _transport;
+   readonly CommandScheduler _commandScheduler;
+   readonly IUsageGuard _contextGuard;
+
+   public ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler)
+   {
+      _transport = transport;
+      _commandScheduler = commandScheduler;
+      _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
+   }
 
    public void Send(IExactlyOnceCommand command)
    {
@@ -29,7 +50,7 @@ namespace Compze.Tessaging.Hosting;
 
    void RunAssertions(IExactlyOnceCommand command)
    {
-      _contextGuard.AssertNoContextChangeOccurred(this);
+      _contextGuard.EnsureAccessValid();
       MessageInspector.AssertValidToSendRemote(command);
       CommandValidator.AssertCommandIsValid(command);
    }

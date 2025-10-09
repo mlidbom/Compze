@@ -2,16 +2,18 @@
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
-class SingleTransactionUsageGuard : ISingleContextUseGuard
+class SingleTransactionUsageGuard : IUsageGuard
 {
    Transaction? _transaction = Transaction.Current;
+   readonly object _guarded;
+   public SingleTransactionUsageGuard(object guarded) => _guarded = guarded;
 
-   public void AssertNoContextChangeOccurred(object guarded)
+   public void EnsureAccessValid()
    {
       _transaction ??= Transaction.Current;
       if(Transaction.Current != null && Transaction.Current != _transaction)
       {
-         throw new ComponentUsedByMultipleTransactionsException(guarded.GetType());
+         throw new ComponentUsedByMultipleTransactionsException(_guarded.GetType());
       }
    }
 }

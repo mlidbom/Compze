@@ -11,6 +11,7 @@
   </PropertyGroup>
 <ItemGroup>
     <ProjectReference Include="..\Common\Compze.Common.csproj" />
+    <ProjectReference Include="..\Wiring\Compze.Wiring.csproj" />
     <ProjectReference Include="Hosting\Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
     <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
     <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
@@ -34,6 +35,9 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration" />
+
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
@@ -129,5 +133,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Persistence\DocumentDb\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Http">
+      <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

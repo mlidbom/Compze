@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Abstractions\Compze.Abstractions.csproj" />
+		<ProjectReference Include="..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
+		<ProjectReference Include="..\Common\Compze.Common.csproj" />
+		<ProjectReference Include="..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Compze.Tessaging" />
+		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+	</ItemGroup>
+
+</Project>

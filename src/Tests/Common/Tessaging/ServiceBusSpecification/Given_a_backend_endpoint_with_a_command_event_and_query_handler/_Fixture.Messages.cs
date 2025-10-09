@@ -1,7 +1,6 @@
 ﻿using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Persistence;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
@@ -15,7 +14,7 @@ using JetBrains.Annotations;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public partial class Fixture
 {
@@ -50,7 +49,7 @@ public partial class Fixture
 
       internal void Update() => Publish(new MyAggregateEvent.Implementation.Updated());
 
-      internal static void Create(Guid id, ILocalHypermediaNavigator bus)
+      internal static void Create(Guid id, IInProcessHypermediaNavigator bus)
       {
          var created = new MyAggregate();
          created.Publish(new MyAggregateEvent.Implementation.Created(id));
