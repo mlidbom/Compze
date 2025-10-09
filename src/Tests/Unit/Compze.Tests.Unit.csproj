@@ -12,7 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Compze.TestInfrastructure.csproj" />
     <ProjectReference Include="..\NUnit\Compze.TestInfrastructure.NUnit.csproj" />
-    <ProjectReference Include="..\XUnit\Compze.TestInfrastructure.XUnit.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
@@ -27,11 +26,6 @@
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit" Version="2.9.3" />
   </ItemGroup>
   <PropertyGroup>
     <NoWarn>CS0436</NoWarn>

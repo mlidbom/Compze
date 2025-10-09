@@ -13,7 +13,6 @@
     <ProjectReference Include="..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
     <ProjectReference Include="..\Compze.TestInfrastructure.csproj" />
     <ProjectReference Include="..\NUnit\Compze.TestInfrastructure.NUnit.csproj" />
-    <ProjectReference Include="..\XUnit\Compze.TestInfrastructure.XUnit.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
@@ -31,11 +30,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit" Version="2.9.3" />
   </ItemGroup>
   <PropertyGroup>
     <NoWarn>CS0436</NoWarn>
