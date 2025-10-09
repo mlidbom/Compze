@@ -10,21 +10,21 @@ namespace Compze.Tests.Infrastructure.XUnit.Examples;
 public class ExamplePluggableComponentTest : DuplicateByPluggableComponentTest
 {
    /// <summary>
-   /// SIMPLE APPROACH: Use [PluggableComponentsTheory] with a string parameter.
-   /// The combination string is passed automatically, and TestEnv.SetTestContext() is called for you!
+   /// Example test that runs once for each pluggable component combination.
+   /// The PluggableComponentTestContext is automatically injected with the parsed combination.
    /// </summary>
    [PluggableComponentsTheory]
-   public void Example_simple_test_that_runs_for_all_combinations(string pluggableComponentsCombination)
+   public void Example_test_that_runs_for_all_combinations(PluggableComponentTestContext context)
    {
-      // TestEnv.SetTestContext() has been called automatically!
-      // Just use TestEnv directly:
-      var persistenceLayer = TestEnv.PersistenceLayer.Current;
-      var diContainer = TestEnv.DIContainer.Current;
+      // Access the parsed values directly from the context object
+      var persistenceLayer = context.PersistenceLayer;
+      var diContainer = context.DIContainer;
 
       // You also have access to the combination string if needed
-      Assert.Contains(":", pluggableComponentsCombination);
+      System.Console.WriteLine($"Testing with: {context.Combination}");
 
-      var someValue = TestEnv.PersistenceLayer.ValueFor<string>(
+      // Use ValueFor to get different values per persistence layer
+      var someValue = context.ValueFor<string>(
          msSql: "SQL Server specific value",
          mySql: "MySQL specific value",
          pgSql: "PostgreSQL specific value",
@@ -35,24 +35,6 @@ public class ExamplePluggableComponentTest : DuplicateByPluggableComponentTest
       Assert.NotEqual(default, persistenceLayer);
       Assert.NotEqual(default, diContainer);
       Assert.NotNull(someValue);
-   }
-
-   /// <summary>
-   /// ADVANCED APPROACH: If you prefer the explicit [Theory] + [MemberData] approach.
-   /// Gives you full control but requires manual TestEnv.SetTestContext() call.
-   /// </summary>
-   [Theory]
-   [MemberData(nameof(GetPluggableComponentCombinations), MemberType = typeof(DuplicateByPluggableComponentTest))]
-   public void Example_advanced_test_with_explicit_combination(string pluggableComponentsCombination)
-   {
-      TestEnv.SetTestContext(pluggableComponentsCombination);
-
-      // You have access to the combination string if you need it
-      Assert.Contains(":", pluggableComponentsCombination);
-      
-      // And can still use TestEnv as normal
-      var persistenceLayer = TestEnv.PersistenceLayer.Current;
-      Assert.NotEqual(default, persistenceLayer);
    }
 
    /// <summary>

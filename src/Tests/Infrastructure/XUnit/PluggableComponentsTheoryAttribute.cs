@@ -11,9 +11,8 @@ using Xunit.v3;
 namespace Compze.Tests.Infrastructure.XUnit;
 
 /// <summary>
-/// Simplified attribute that generates test cases for all pluggable component combinations.
-/// The test method must accept a string parameter for the combination.
-/// TestEnv.SetTestContext() will be called automatically with this parameter.
+/// Use this attribute instead of [Fact] for tests that should run with all pluggable component combinations.
+/// Automatically discovers combinations and injects a PluggableComponentTestContext instance.
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public sealed class PluggableComponentsTheoryAttribute(
@@ -32,26 +31,11 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
    {
       var combinations = PluggableComponentsReader.GetCombinations().ToList();
       
-      // Check if method has parameters and what type
-      var parameters = testMethod.Method.GetParameters();
-      var hasContextParameter = parameters.Any() && parameters[0].ParameterType.Name == nameof(PluggableComponentTestContext);
-      var hasStringParameter = parameters.Any() && parameters[0].ParameterType.Name == "String";
-      
       var testCases = combinations
          .Select(combination =>
          {
-            // Determine what to pass based on parameter type
-            object?[]? arguments = null;
-            if(hasContextParameter)
-            {
-               // Create and pass a PluggableComponentTestContext instance
-               arguments = new object[] { new PluggableComponentTestContext(combination) };
-            }
-            else if(hasStringParameter)
-            {
-               // Pass the combination string directly
-               arguments = new object[] { combination };
-            }
+            // Create and pass a PluggableComponentTestContext instance
+            var arguments = new object[] { new PluggableComponentTestContext(combination) };
             
             return new PluggableComponentsTestCase(
                testMethod: testMethod,

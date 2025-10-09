@@ -35,23 +35,23 @@ PostgreSql:SimpleInjector
 
 ## Usage
 
-### Basic Test Pattern (RECOMMENDED)
+### Basic Test Pattern
 
 The simplest way to create a test that runs for all pluggable component combinations:
 
 ```csharp
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Tests.Infrastructure.XUnit;
 using Xunit;
 
 public class MyPluggableComponentTest : DuplicateByPluggableComponentTest
 {
    [PluggableComponentsTheory]
-   public void My_test(string pluggableComponentsCombination)  // ← String parameter gets the combination
+   public void My_test(PluggableComponentTestContext context)
    {
-      // TestEnv.SetTestContext() is called automatically!
-      // Just use TestEnv directly:
-      var persistenceLayer = TestEnv.PersistenceLayer.Current;
-      var diContainer = TestEnv.DIContainer.Current;
+      // Fully parsed context object with convenient API
+      var persistenceLayer = context.PersistenceLayer;  // Enum value
+      var diContainer = context.DIContainer;            // Enum value
+      var combination = context.Combination;            // String like "MicrosoftSqlServer:Microsoft"
 
       // Your test logic here
       // ...
@@ -61,32 +61,11 @@ public class MyPluggableComponentTest : DuplicateByPluggableComponentTest
 
 **That's it!** The `[PluggableComponentsTheory]` attribute:
 - Automatically discovers all combinations from the config file
-- Passes the combination string as a parameter to your test
-- Calls `TestEnv.SetTestContext()` before each test run
+- Creates a `PluggableComponentTestContext` instance for each combination
+- Injects it into your test method
 - Creates separate test cases in the test explorer
 
-This is **almost as simple as the NUnit pattern** - just one parameter to declare!
-
-### Advanced Pattern (Manual Control)
-
-If you want full control:
-
-```csharp
-[Theory]
-[MemberData(nameof(GetPluggableComponentCombinations), MemberType = typeof(DuplicateByPluggableComponentTest))]
-public void My_test(string pluggableComponentsCombination)
-{
-   // STEP 1: Set the test context (REQUIRED!)
-   TestEnv.SetTestContext(pluggableComponentsCombination);
-
-   // STEP 2: Use TestEnv to access current configuration
-   var persistenceLayer = TestEnv.PersistenceLayer.Current;
-   var diContainer = TestEnv.DIContainer.Current;
-
-   // STEP 3: Your test logic here
-   // ...
-}
-```
+This is **cleaner and more type-safe** than string-based approaches!
 
 ### Using PersistenceLayer-Specific Values
 
@@ -94,10 +73,9 @@ When you need different values for different persistence layers:
 
 ```csharp
 [PluggableComponentsTheory]
-public void Test_with_layer_specific_values(string pluggableComponentsCombination)
+public void Test_with_layer_specific_values(PluggableComponentTestContext context)
 {
-   // Context is already set automatically
-   var timeout = TestEnv.PersistenceLayer.ValueFor(
+   var timeout = context.ValueFor(
       msSql: TimeSpan.FromSeconds(5),
       mySql: TimeSpan.FromSeconds(10),
       pgSql: TimeSpan.FromSeconds(7),
@@ -117,9 +95,9 @@ public class MyTest : DuplicateByPluggableComponentTest
 {
    // Runs for each combination
    [PluggableComponentsTheory]
-   public void Test_with_all_combinations(string pluggableComponentsCombination)
+   public void Test_with_all_combinations(PluggableComponentTestContext context)
    {
-      // Test logic - context already set
+      // Test logic with context
    }
 
    // Runs only once
@@ -139,16 +117,23 @@ Base class that provides:
 - `GetPluggableComponentCombinations()` - Static method that returns all combinations from the configuration file
 - Inherits from `UniversalTestBase` for common test infrastructure
 
-###PluggableComponentsTheoryAttribute
+### PluggableComponentsTheoryAttribute
 
-**This is the recommended way to write tests.** Custom XUnit attribute that:
+Custom XUnit attribute that:
 - Discovers all pluggable component combinations from the config file
 - Creates a separate test case for each combination
-- Automatically calls `TestEnv.SetTestContext()` with the combination before each test
-- Passes the combination string as a parameter to your test method
-- Requires only a single string parameter in your test method
+- Automatically creates and injects a `PluggableComponentTestContext` instance
+- Provides type-safe access to configuration via the context object
 
-Usage: Replace `[Fact]` with `[PluggableComponentsTheory]` and add a string parameter!
+Usage: Use `[PluggableComponentsTheory]` instead of `[Fact]` and add a `PluggableComponentTestContext` parameter!
+
+### PluggableComponentTestContext
+
+Instance-based test context that provides:
+- `PersistenceLayer` - Enum value of the current persistence layer
+- `DIContainer` - Enum value of the current DI container
+- `Combination` - Full combination string (e.g., "MicrosoftSqlServer:Microsoft")
+- `ValueFor<T>()` - Get persistence-layer-specific values
 
 ### TestEnv
 
@@ -194,32 +179,15 @@ public class MyTest : DuplicateByPluggableComponentTest
 }
 ```
 
-### XUnit Pattern (RECOMMENDED)
+### XUnit Pattern
 ```csharp
 public class MyTest : DuplicateByPluggableComponentTest
 {
    [PluggableComponentsTheory]
-   public void My_test(string pluggableComponentsCombination)
+   public void My_test(PluggableComponentTestContext context)
    {
-      // XUnit automatically sets context via custom attribute
-      var persistenceLayer = TestEnv.PersistenceLayer.Current;
-      // Test logic
-   }
-}
-```
-
-### XUnit Pattern (ADVANCED - if you need the combination string)
-```csharp
-public class MyTest : DuplicateByPluggableComponentTest
-{
-   [Theory]
-   [MemberData(nameof(GetPluggableComponentCombinations), MemberType = typeof(DuplicateByPluggableComponentTest))]
-   public void My_test(string pluggableComponentsCombination)
-   {
-      // XUnit requires explicit context setting in this mode
-      TestEnv.SetTestContext(pluggableComponentsCombination);
-      
-      var persistenceLayer = TestEnv.PersistenceLayer.Current;
+      // XUnit automatically injects context object
+      var persistenceLayer = context.PersistenceLayer;
       // Test logic
    }
 }
@@ -227,40 +195,41 @@ public class MyTest : DuplicateByPluggableComponentTest
 
 ### Key Differences
 
-| Aspect | NUnit | XUnit (Recommended) | XUnit (Advanced) |
-|--------|-------|---------------------|------------------|
-| **Class Instantiation** | Multiple instances, one per combination | Single instance | Single instance |
-| **Context Setting** | Automatic via constructor | Automatic via `[PluggableComponentsTheory]` | Manual via `TestEnv.SetTestContext()` |
-| **Test Discovery** | `[TestFixtureSource]` on class | `[PluggableComponentsTheory]` on method | `[Theory]` + `[MemberData]` on method |
-| **Parameter Handling** | Constructor parameter | Method parameter (string) | Method parameter (string) |
-| **Boilerplate** | Low | **Low** | Moderate |
+| Aspect | NUnit | XUnit |
+|--------|-------|-------|
+| **Class Instantiation** | Multiple instances, one per combination | Single instance |
+| **Context Setting** | Automatic via constructor | Automatic via `[PluggableComponentsTheory]` |
+| **Test Discovery** | `[TestFixtureSource]` on class | `[PluggableComponentsTheory]` on method |
+| **Parameter Handling** | Constructor parameter | Method parameter (context object) |
+| **Type Safety** | String parsing required | Full type safety with context object |
+| **Boilerplate** | Low | **Low** |
 
 ## Common Pitfalls
 
-### ❌ Forgetting the string parameter
+### ❌ Forgetting the context parameter
 ```csharp
 [PluggableComponentsTheory]
-public void My_test() // ❌ Missing string parameter
+public void My_test() // ❌ Missing PluggableComponentTestContext parameter
 {
-   var layer = TestEnv.PersistenceLayer.Current;
+   // Won't work - no context injected
 }
 ```
 
 ### ✅ Correct usage
 ```csharp
 [PluggableComponentsTheory]
-public void My_test(string pluggableComponentsCombination) // ✅ 
+public void My_test(PluggableComponentTestContext context) // ✅ 
 {
-   var layer = TestEnv.PersistenceLayer.Current; // ✅ Works!
+   var layer = context.PersistenceLayer; // ✅ Works!
 }
 ```
 
 ### ❌ Using wrong attribute
 ```csharp
 [Fact] // ❌ Should be [PluggableComponentsTheory]
-public void My_test(string pluggableComponentsCombination)
+public void My_test(PluggableComponentTestContext context)
 {
-   var layer = TestEnv.PersistenceLayer.Current; // ❌ Will throw exception!
+   // Won't run multiple times
 }
 ```
 
