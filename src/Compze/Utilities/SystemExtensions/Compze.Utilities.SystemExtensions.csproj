@@ -65,6 +65,7 @@
       <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
       <InternalsVisibleTo Include="Compze.Tessaging.Typermedia.Abstractions" />
       <InternalsVisibleTo Include="ScratchPad.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/>
 	</ItemGroup>
 
 </Project>

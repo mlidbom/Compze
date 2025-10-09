@@ -259,6 +259,11 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Tests/Integration.XUnit/">
+    <Project Path="Tests/Integration.XUnit/Compze.Tests.Integration.XUnit.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Websites/">
     <Project Path="Websites/Website/Website.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />

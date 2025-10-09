@@ -12,6 +12,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compze.Tests.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
@@ -21,6 +23,7 @@
     <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Common" />
     <InternalsVisibleTo Include="Compze.Tests.Integration" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />

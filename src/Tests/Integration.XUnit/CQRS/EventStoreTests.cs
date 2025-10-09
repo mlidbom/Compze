@@ -1,18 +1,20 @@
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
+using FluentAssertions;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.DependencyInjection;
-using FluentAssertions;
-using NUnit.Framework;
-using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
 
-namespace Compze.Tests.Integration.CQRS;
+namespace Compze.Tests.Integration.XUnit.CQRS;
 
 interface ISomeEvent : IAggregateEvent;
 
@@ -21,26 +23,27 @@ class SomeEvent : AggregateEvent, ISomeEvent
    public SomeEvent(Guid aggregateId, int version) : base(aggregateId)
    {
 #pragma warning disable CS0618 // Type or member is obsolete
-       ((IMutableAggregateEvent)this).SetAggregateVersionInternal(version);
-       ((IMutableAggregateEvent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
+      ((IMutableAggregateEvent)this).SetAggregateVersionInternal(version);
+      ((IMutableAggregateEvent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
 #pragma warning restore CS0618 // Type or member is obsolete
-    }
+   }
 }
 
-public class EventStoreTests(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class EventStoreTests : DuplicateByPluggableComponentTest, IAsyncLifetime
 {
    IEventStore EventStore => _serviceLocator.EventStore();
 
-   IServiceLocator _serviceLocator;
+   IServiceLocator _serviceLocator = null!;
 
-   [SetUp] public void SetupTask()
-   {
-      _serviceLocator = TestWiringHelper.SetupTestingServiceLocator();
-   }
+   public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-   [TearDown] public async Task TearDownTask() => await _serviceLocator.DisposeAsync();
+   public async ValueTask DisposeAsync() => await _serviceLocator.DisposeAsync();
 
-   [Test] public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   IServiceLocator Init(PluggableComponentTestContext context) =>
+      _serviceLocator = context.CreateServiceLocator();
+
+   [PluggableComponentsTheory]
+   public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
    {
       var aggregateId = Guid.NewGuid();
       TransactionScopeCe.Execute(() => EventStore.SaveSingleAggregateEvents(1.Through(10)
@@ -51,7 +54,8 @@ public class EventStoreTests(string pluggableComponentsCombination) : DuplicateB
             .HaveCount(10);
    });
 
-   [Test] public void StreamEventsSinceReturnsWholeEventLogWhenFetchingALargeNumberOfEvents_EnsureBatchingDoesNotBreakThings() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   [PluggableComponentsTheory]
+   public void StreamEventsSinceReturnsWholeEventLogWhenFetchingALargeNumberOfEvents_EnsureBatchingDoesNotBreakThings(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
    {
       const int batchSize = 100;
       const int moreEventsThanTheBatchSizeForStreamingEvents = batchSize + 10;
@@ -73,7 +77,8 @@ public class EventStoreTests(string pluggableComponentsCombination) : DuplicateB
       }
    });
 
-   [Test] public void DeleteEventsDeletesTheEventsForOnlyTheSpecifiedAggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   [PluggableComponentsTheory]
+   public void DeleteEventsDeletesTheEventsForOnlyTheSpecifiedAggregate(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
                                   .ToDictionary(i => i,
@@ -100,7 +105,8 @@ public class EventStoreTests(string pluggableComponentsCombination) : DuplicateB
                 .BeEmpty();
    });
 
-   [Test] public void GetListOfAggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   [PluggableComponentsTheory]
+   public void GetListOfAggregateIds(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
                                   .ToDictionary(i => i,
@@ -116,11 +122,12 @@ public class EventStoreTests(string pluggableComponentsCombination) : DuplicateB
 
       var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder()
                                       .ToList();
-      Assert.That(aggregatesWithEvents.Count, Is.EqualTo(allAggregateIds.Count));
+      allAggregateIds.Should().HaveCount(aggregatesWithEvents.Count);
    });
 
    //Todo: This does not check that only aggregates of the correct type are returned since there are only events of type SomeEvent in the store..
-   [Test] public void GetListOfAggregateIdsUsingEventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   [PluggableComponentsTheory]
+   public void GetListOfAggregateIdsUsingEventType(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
                                   .ToDictionary(i => i,
@@ -135,37 +142,35 @@ public class EventStoreTests(string pluggableComponentsCombination) : DuplicateB
       TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(it => EventStore.SaveSingleAggregateEvents(it.Value)));
       var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder<ISomeEvent>()
                                       .ToList();
-      Assert.That(aggregatesWithEvents.Count, Is.EqualTo(allAggregateIds.Count));
+      allAggregateIds.Should().HaveCount(aggregatesWithEvents.Count);
    });
 
-   [Test]
-   public void Does_not_call_db_in_constructor() =>
-      _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.Resolve<IEventStoreUpdater>());
+   [PluggableComponentsTheory]
+   public void Does_not_call_db_in_constructor(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() => _serviceLocator.Resolve<IEventStoreUpdater>());
 
-   [Test]
-   public void ShouldNotCacheEventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction()
+   [PluggableComponentsTheory]
+   public void ShouldNotCacheEventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
    {
-      _serviceLocator.ExecuteInIsolatedScope(() =>
+      var eventStore = _serviceLocator.EventStore();
+
+      var user = new User();
+      user.Register("email@email.se", "password", Guid.NewGuid());
+
+      using(new TransactionScope())
       {
-         var eventStore = _serviceLocator.EventStore();
+         ((IEventStored)user).Commit(eventStore.SaveSingleAggregateEvents);
+         eventStore.GetAggregateHistory(user.Id);
+         eventStore.GetAggregateHistory(user.Id).Should().NotBeEmpty();
+      }
 
-         var user = new User();
-         user.Register("email@email.se", "password", Guid.NewGuid());
+      eventStore.GetAggregateHistory(user.Id).Should().BeEmpty();
+   });
 
-         using(new TransactionScope())
-         {
-            ((IEventStored)user).Commit(eventStore.SaveSingleAggregateEvents);
-            eventStore.GetAggregateHistory(user.Id);
-            Assert.That(eventStore.GetAggregateHistory(user.Id), Is.Not.Empty);
-         }
-
-         Assert.That(eventStore.GetAggregateHistory(user.Id), Is.Empty);
-      });
-   }
-
-   [Test]
-   public void ShouldCacheEventsBetweenInstancesTransaction()
+   [PluggableComponentsTheory]
+   public void ShouldCacheEventsBetweenInstancesTransaction(PluggableComponentTestContext context)
    {
+      _serviceLocator = context.CreateServiceLocator();
+
       var user = new User();
       using(_serviceLocator.BeginScope())
       {
@@ -177,14 +182,14 @@ public class EventStoreTests(string pluggableComponentsCombination) : DuplicateB
          {
             ((IEventStored)user).Commit(eventStore.SaveSingleAggregateEvents);
             eventStore.GetAggregateHistory(user.Id);
-            Assert.That(eventStore.GetAggregateHistory(user.Id), Is.Not.Empty);
+            eventStore.GetAggregateHistory(user.Id).Should().NotBeEmpty();
          });
       }
 
       var firstRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
-      var secondRead = _serviceLocator.ExecuteInIsolatedScope(() =>  _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
+      var secondRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
-      Assert.That(firstRead, Is.SameAs(secondRead));
+      firstRead.Should().BeSameAs(secondRead);
    }
 }
