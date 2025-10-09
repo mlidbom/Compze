@@ -70,6 +70,12 @@ Validate-SolutionStructure
 
 ## Technical Details
 
+### Why Build Then Test Separately?
+
+There's a known race condition in `dotnet test` when it builds and runs tests in one command - test adapters (NUnit, XUnit) may not be fully copied to the output directory before test discovery starts, causing intermittent failures.
+
+**Workaround**: Always build first (`dotnet build`), then run tests with `--no-build` flag. This is why `Test-Compze -Build` uses two separate commands instead of letting `dotnet test` handle the build.
+
 ### Test Execution
 
 Tests run in parallel by default, respecting your assembly-level parallelization attributes:
