@@ -10,8 +10,8 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Compze.TestInfrastructure.csproj" />
-    <ProjectReference Include="..\NUnit\Compze.TestInfrastructure.NUnit.csproj" />
+    <ProjectReference Include="..\Compze.Tests.Infrastructure.csproj" />
+    <ProjectReference Include="..\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

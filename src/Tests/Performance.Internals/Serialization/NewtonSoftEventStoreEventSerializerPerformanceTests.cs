@@ -4,13 +4,13 @@ using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Unit.Internals.Serialization;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 

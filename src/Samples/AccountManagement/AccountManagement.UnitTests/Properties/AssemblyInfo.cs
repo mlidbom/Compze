@@ -1,5 +1,5 @@
-﻿using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.NUnit;
+﻿using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.NUnit;
 using NUnit.Framework;
 
 #if !NCRUNCH

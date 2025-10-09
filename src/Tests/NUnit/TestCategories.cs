@@ -1,9 +1,9 @@
 using System;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Interfaces;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
-namespace Compze.TestInfrastructure.NUnit;
+namespace Compze.Tests.Infrastructure.NUnit;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class LongRunningAttribute : Attribute,

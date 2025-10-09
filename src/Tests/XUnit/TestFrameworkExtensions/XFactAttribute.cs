@@ -6,9 +6,9 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 using static Compze.Utilities.Contracts.Assert;
-using Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
-namespace Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
+namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 ///<summary>
 /// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
@@ -17,8 +17,8 @@ namespace Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
 [XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
 sealed class XFactAttribute : FactAttribute
 {
-   const string XFactDiscovererFullTypeName = "Compze.TestInfrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
-   const string XFactDiscovererAssembly = "Compze.TestInfrastructure.XUnit";
+   const string XFactDiscovererFullTypeName = "Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
+   const string XFactDiscovererAssembly = "Compze.Tests.Infrastructure.XUnit";
 
    static XFactAttribute()
    {

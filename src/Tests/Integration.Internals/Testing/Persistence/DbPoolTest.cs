@@ -4,13 +4,13 @@ using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.DbPool;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
 using Compze.Wiring;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Integration.Internals.Testing.Persistence;
 

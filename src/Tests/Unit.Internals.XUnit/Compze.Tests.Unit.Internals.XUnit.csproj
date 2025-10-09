@@ -11,8 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-    <ProjectReference Include="..\Compze.TestInfrastructure.csproj" />
-    <ProjectReference Include="..\XUnit\Compze.TestInfrastructure.XUnit.csproj" />
+    <ProjectReference Include="..\Compze.Tests.Infrastructure.csproj" />
+    <ProjectReference Include="..\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="UniversalTestFixture.cs" />

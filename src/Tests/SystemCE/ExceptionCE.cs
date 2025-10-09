@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.TestInfrastructure.SystemCE;
+namespace Compze.Tests.Infrastructure.SystemCE;
 
 static class ExceptionCE
 {

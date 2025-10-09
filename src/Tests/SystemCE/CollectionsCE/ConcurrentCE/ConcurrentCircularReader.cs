@@ -2,7 +2,7 @@
 using System.Linq;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.TestInfrastructure.SystemCE.CollectionsCE.ConcurrentCE;
+namespace Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 
 static class ConcurrentCircularReader
 {

@@ -11,8 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-    <ProjectReference Include="..\Compze.TestInfrastructure.csproj" />
-    <ProjectReference Include="..\NUnit\Compze.TestInfrastructure.NUnit.csproj" />
+    <ProjectReference Include="..\Compze.Tests.Infrastructure.csproj" />
+    <ProjectReference Include="..\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\Compze\test-common-appsettings.json" Link="appsettings.json">

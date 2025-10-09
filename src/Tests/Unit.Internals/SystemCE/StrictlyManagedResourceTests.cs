@@ -1,5 +1,5 @@
 using System;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
@@ -7,7 +7,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.SystemCE;
 

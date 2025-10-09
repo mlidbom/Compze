@@ -5,8 +5,8 @@ using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local

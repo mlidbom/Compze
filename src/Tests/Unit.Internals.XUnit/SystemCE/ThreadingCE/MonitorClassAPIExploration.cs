@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
-using Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
-using Compze.TestInfrastructure.Threading;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Tests.Infrastructure.Threading;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;
 

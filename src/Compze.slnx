@@ -218,15 +218,6 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="Tests/Compze.TestInfrastructure.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-    <Project Path="Tests/NUnit/Compze.TestInfrastructure.NUnit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Tests/XUnit/Compze.TestInfrastructure.XUnit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
     <Project Path="Tests/Common/Compze.Tests.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
@@ -249,6 +240,17 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
     <Project Path="Tests/Unit.XUnit/Compze.Tests.Unit.XUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/Infrastructure/">
+    <Project Path="Tests/Compze.Tests.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="Tests/NUnit/Compze.Tests.Infrastructure.NUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Tests/XUnit/Compze.Tests.Infrastructure.XUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>

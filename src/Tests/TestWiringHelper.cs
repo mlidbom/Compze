@@ -8,7 +8,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using JetBrains.Annotations;
 
-namespace Compze.TestInfrastructure;
+namespace Compze.Tests.Infrastructure;
 
 static class TestWiringHelper
 {

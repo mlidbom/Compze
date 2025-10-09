@@ -1,5 +1,5 @@
 using System.Linq;
-using Compze.TestInfrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 using FluentAssertions;

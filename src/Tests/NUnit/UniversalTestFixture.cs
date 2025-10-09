@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.TestInfrastructure.NUnit.Logging.Serilog;
+using Compze.Tests.Infrastructure.NUnit.Logging.Serilog;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Logging.Serilog;
 using Compze.Utilities.SystemCE;
@@ -10,7 +10,7 @@ using NUnit.Framework;
 using Serilog;
 using Serilog.Exceptions;
 
-namespace Compze.TestInfrastructure.NUnit;
+namespace Compze.Tests.Infrastructure.NUnit;
 
 [SetUpFixture] public class UniversalTestFixture
 {

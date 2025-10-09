@@ -1,8 +1,8 @@
 using Compze.Persistence.DocumentDb;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.KeyValueStorage;
 

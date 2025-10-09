@@ -10,13 +10,13 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.SystemCE.CollectionsCE.ConcurrentCE;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace AccountManagement;
 

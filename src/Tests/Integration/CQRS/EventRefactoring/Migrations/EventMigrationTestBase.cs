@@ -8,8 +8,8 @@ using Compze.Tessaging.Teventive.EventStore;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
-using Compze.TestInfrastructure;
-using Compze.TestInfrastructure.Serialization;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Serialization;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -18,7 +18,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable AccessToModifiedClosure
 

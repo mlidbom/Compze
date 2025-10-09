@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 

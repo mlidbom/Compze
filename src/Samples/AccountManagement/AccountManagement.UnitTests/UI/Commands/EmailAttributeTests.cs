@@ -1,10 +1,10 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.UnitTests.UI.Commands.UserCommands;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace AccountManagement.UnitTests.UI.Commands;
 

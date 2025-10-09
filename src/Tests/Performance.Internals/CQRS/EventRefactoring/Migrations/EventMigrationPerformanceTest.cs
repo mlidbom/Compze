@@ -8,7 +8,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
@@ -17,7 +17,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 

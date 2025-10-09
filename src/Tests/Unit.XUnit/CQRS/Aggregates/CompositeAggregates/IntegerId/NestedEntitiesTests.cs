@@ -1,9 +1,9 @@
 using System;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 using FluentAssertions;
 using Xunit;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

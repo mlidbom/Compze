@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Persistence.DocumentDb.Abstractions;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using NUnit.Framework;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Common.Persistence.DocumentDb;
 

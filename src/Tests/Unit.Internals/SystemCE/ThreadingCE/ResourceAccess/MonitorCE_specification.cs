@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.TestInfrastructure;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using FluentAssertions;
@@ -10,7 +10,7 @@ using FluentAssertions.Extensions;
 using NCrunch.Framework;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
-using Compze.TestInfrastructure.NUnit;
+using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable AccessToDisposedClosure
 
