@@ -77,10 +77,6 @@ class PluggableComponentsTestCase : XunitTestCase
       : base(testMethod, testCaseDisplayName, uniqueID, @explicit, skipReason: null, skipType: null, skipUnless: null, skipWhen: null, timeout: timeout, testMethodArguments: testMethodArguments, traits: null)
    {
       _combination = combination;
-      
-      // Automatically set test context when the test case is created
-      // This will be set again during test execution via the parameter
-      TestEnv.SetTestContext(_combination);
    }
 
    protected override void Serialize(IXunitSerializationInfo info)
@@ -93,8 +89,5 @@ class PluggableComponentsTestCase : XunitTestCase
    {
       base.Deserialize(info);
       _combination = info.GetValue<string>(nameof(_combination)) ?? string.Empty;
-      
-      // Set test context after deserialization
-      TestEnv.SetTestContext(_combination);
    }
 }

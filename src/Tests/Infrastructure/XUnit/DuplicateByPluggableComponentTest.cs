@@ -32,17 +32,27 @@ static class PluggableComponentsReader
    
    public static IEnumerable<string> GetCombinations()
    {
-      try
+      // Try multiple locations to find the file
+      var possiblePaths = new[]
       {
-         return File.ReadAllLines(TestUsingPluggableComponentCombinations)
-                    .Select(it => it.Trim())
-                    .Where(line => !string.IsNullOrEmpty(line))
-                    .Where(line => !line.StartsWith('#'))
-                    .ToArray();
-      }
-      catch(FileNotFoundException)
+         TestUsingPluggableComponentCombinations,
+         Path.Combine("..", "..", "..", "..", "..", TestUsingPluggableComponentCombinations),
+         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "..", TestUsingPluggableComponentCombinations),
+      };
+
+      foreach(var path in possiblePaths)
       {
-         return [Enumerable.Repeat("FileMissing", 3)._(it => string.Join(":", it))];
+         if(File.Exists(path))
+         {
+            return File.ReadAllLines(path)
+                       .Select(it => it.Trim())
+                       .Where(line => !string.IsNullOrEmpty(line))
+                       .Where(line => !line.StartsWith('#'))
+                       .ToArray();
+         }
       }
+
+      // File not found, return error indicator
+      return [Enumerable.Repeat("FileMissing", 3)._(it => string.Join(":", it))];
    }
 }

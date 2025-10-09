@@ -63,16 +63,23 @@ static partial class TestEnv
    static string GetTestName()
    {
       //We do not want to reference NUnit so dig this data out through reflection. When running tests NUnit will be there.
-      var currentContext = TestContextType.GetProperty("CurrentContext")!.GetMethod!.Invoke(null, null)!;
+      var currentContext = GetNUnitTestContextType().GetProperty("CurrentContext")!.GetMethod!.Invoke(null, null)!;
       var test = currentContext.GetType().GetProperty("Test")!.GetMethod!.Invoke(currentContext, null)!;
       var testName = (string)test.GetType().GetProperty("FullName")!.GetMethod!.Invoke(test, null)!;
       return testName;
    }
 
-   static readonly Type TestContextType = AppDomain.CurrentDomain
-                                                   .GetAssemblies()
-                                                   .Single(ass => ass.GetName().FullName.ContainsInvariant("nunit.framework"))
-                                                   .GetType("NUnit.Framework.TestContext")!;
+   static Type? _testContextType;
+   static Type GetNUnitTestContextType()
+   {
+      if(_testContextType != null) return _testContextType;
+      
+      _testContextType = AppDomain.CurrentDomain
+                                   .GetAssemblies()
+                                   .Single(ass => ass.GetName().FullName.ContainsInvariant("nunit.framework"))
+                                   .GetType("NUnit.Framework.TestContext")!;
+      return _testContextType;
+   }
 
    static readonly Regex FindDimensions = new("""\("(.*)\:(.*)"\)""", RegexOptions.Compiled);
    
