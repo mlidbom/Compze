@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Compze.Utilities.Functional;
 using NUnit.Framework;
 
 namespace Compze.Testing;
@@ -32,9 +33,9 @@ class PluggableComponentsTestFixtureSource : IEnumerable<string>
                     .Where(line => !line.StartsWith('#'))
                     .ToArray();
       }
-      catch(Exception e)
+      catch(FileNotFoundException e)
       {
-         return [e.ToString()];
+         return [Enumerable.Repeat($"FileMissing", 3)._(it => string.Join(":", it))];
       }
    }
 }

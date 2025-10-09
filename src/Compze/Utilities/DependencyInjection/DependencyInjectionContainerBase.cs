@@ -28,6 +28,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
+      ValidateLifestyleCombinations();
       return RegisterInContainer(registrations);
    }
 
@@ -89,6 +90,25 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
                   $"Service type '{serviceType.FullName}' is already registered. " +
                   $"Existing registration includes service types: [{string.Join(", ", existingRegistration.ServiceTypes.Select(t => t.Name))}]. " +
                   $"Attempted duplicate registration includes service types: [{string.Join(", ", newRegistration.ServiceTypes.Select(t => t.Name))}].");
+            }
+         }
+      }
+   }
+
+   void ValidateLifestyleCombinations()
+   {
+      // Validate that Singleton components don't depend on Scoped components (captive dependency problem)
+      foreach(var registration in _registeredComponents.Where(r => r.Lifestyle == Lifestyle.Singleton))
+      {
+         foreach(var dependencyType in registration.DependencyTypes)
+         {
+            var dependencyRegistration = _registeredComponents
+               .FirstOrDefault(r => r.ServiceTypes.Contains(dependencyType));
+
+            if(dependencyRegistration != null && dependencyRegistration.Lifestyle == Lifestyle.Scoped)
+            {
+               var implementationType = registration.InstantiationSpec.FactoryMethodReturnType;
+               throw new Exception($"Invalid lifestyle combination: Singleton: {implementationType.FullName} depends on Scoped: {dependencyType.FullName}");
             }
          }
       }

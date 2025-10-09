@@ -9,18 +9,24 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
 {
    protected IReadOnlyList<Type> ServiceTypes { get; }
    readonly Lifestyle _lifestyle;
+
    internal ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
    {
       _lifestyle = lifestyle;
       ServiceTypes = serviceTypes.Concat([typeof(TService)]).ToList();
    }
 
-   internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceLocatorKernel, TImplementation> factoryMethod)
+   internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceLocatorKernel, TImplementation> factoryMethod,
+                                                                       IEnumerable<Type> dependencyTypes)
       where TImplementation : TService
    {
       var implementationType = typeof(TImplementation);
       AssertImplementsAllServices(implementationType);
-      return new ComponentRegistration<TService>(_lifestyle, ServiceTypes, InstantiationSpec.FromFactoryMethod(serviceLocator => factoryMethod(serviceLocator), implementationType));
+      return new ComponentRegistration<TService>(_lifestyle,
+                                                 ServiceTypes,
+                                                 InstantiationSpec.FromFactoryMethod(serviceLocator => factoryMethod(serviceLocator),
+                                                                                     implementationType),
+                                                 dependencyTypes);
    }
 
    protected void AssertImplementsAllServices(Type implementationType)

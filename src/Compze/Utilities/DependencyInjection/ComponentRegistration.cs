@@ -14,20 +14,27 @@ public abstract class ComponentRegistration
    internal IEnumerable<Type> ServiceTypes { get; }
    internal InstantiationSpec InstantiationSpec { get; }
    internal Lifestyle Lifestyle { get; }
+   internal IReadOnlyList<Type> DependencyTypes { get; }
    internal abstract int ComponentIndex { get; }
 
    internal readonly int[] ServiceTypeIndexes;
 
-   internal ComponentRegistration(Lifestyle lifestyle, IEnumerable<Type> serviceTypes, InstantiationSpec instantiationSpec)
+   internal ComponentRegistration(Lifestyle lifestyle,
+                                  IEnumerable<Type> serviceTypes,
+                                  InstantiationSpec instantiationSpec,
+                                  IEnumerable<Type> dependencyTypes)
    {
       serviceTypes = serviceTypes.ToList();
 
       ServiceTypeIndexes = serviceTypes.Select(ServiceTypeIndex.For).ToArray();
-      Assert.Argument.Is(lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null, () => $"{nameof(InstantiationSpec.SingletonInstance)} registrations must be {nameof(Lifestyle.Singleton)}s");
+      Assert.Argument.Is(
+         lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null,
+         () => $"{nameof(InstantiationSpec.SingletonInstance)} registrations must be {nameof(Lifestyle.Singleton)}s");
 
       ServiceTypes = serviceTypes;
       InstantiationSpec = instantiationSpec;
       Lifestyle = lifestyle;
+      DependencyTypes = dependencyTypes.ToList();
    }
 
    internal abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
@@ -35,24 +42,26 @@ public abstract class ComponentRegistration
    internal abstract object Resolve(IServiceLocator serviceLocator);
 }
 
-
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
 {
    bool ShouldDelegateToParentWhenCloning { get; set; }
 
    public ComponentRegistration<TService> DelegateToParentServiceLocatorWhenCloning()
    {
-      Assert.State.Is(Lifestyle == Lifestyle.Singleton, () => "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
+      Assert.State.Is(
+         Lifestyle == Lifestyle.Singleton,
+         () => "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
       ShouldDelegateToParentWhenCloning = true;
       return this;
    }
 
    internal override int ComponentIndex => ServiceTypeIndex.ForService<TService>.Index;
+
    internal override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
    {
       if(!ShouldDelegateToParentWhenCloning)
       {
-         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec);
+         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes);
       }
 
       Assert.State.Is(Lifestyle == Lifestyle.Singleton);
@@ -61,13 +70,16 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       return new ComponentRegistration<TService>(
          lifestyle: Lifestyle.Singleton,
          serviceTypes: ServiceTypes,
-         instantiationSpec: InstantiationSpec.FromInstance(currentLocator.Resolve<TService>())
+         instantiationSpec: InstantiationSpec.FromInstance(currentLocator.Resolve<TService>()),
+         dependencyTypes: DependencyTypes
       );
    }
 
    internal override object Resolve(IServiceLocator locator) => locator.Resolve<TService>();
 
-   internal ComponentRegistration(Lifestyle lifestyle, IEnumerable<Type> serviceTypes, InstantiationSpec instantiationSpec)
-      :base(lifestyle, serviceTypes, instantiationSpec)
-   {}
+   internal ComponentRegistration(Lifestyle lifestyle,
+                                  IEnumerable<Type> serviceTypes,
+                                  InstantiationSpec instantiationSpec,
+                                  IEnumerable<Type> dependencyTypes)
+      : base(lifestyle, serviceTypes, instantiationSpec, dependencyTypes) {}
 }

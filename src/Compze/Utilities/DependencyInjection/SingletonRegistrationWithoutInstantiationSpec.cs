@@ -11,6 +11,6 @@ public class SingletonRegistrationWithoutInstantiationSpec<TService> : Component
    public ComponentRegistration<TService> Instance(TService instance)
    {
       AssertImplementsAllServices(instance.GetType());
-      return new ComponentRegistration<TService>(Lifestyle.Singleton, ServiceTypes, InstantiationSpec.FromInstance(instance));
+      return new ComponentRegistration<TService>(Lifestyle.Singleton, ServiceTypes, InstantiationSpec.FromInstance(instance), dependencyTypes: []);
    }
 }
