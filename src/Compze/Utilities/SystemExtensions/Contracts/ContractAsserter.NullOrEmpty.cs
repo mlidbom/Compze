@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Contracts;
 
-partial class ContractAsserter
+public partial class ContractAsserter
 {
    public ContractAsserter NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value != null ? this : throw _createException(valueString);
@@ -27,8 +26,11 @@ partial class ContractAsserter
    [return: NotNull] public TValue ReturnNotNull<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       value ?? throw _createException(valueString);
 
-   public TValue ReturnNotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct =>
-      NotNullOrDefault(value, valueString).then((TValue)value);
+   public TValue ReturnNotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct
+   {
+      NotNullOrDefault(value, valueString);
+      return (TValue)value;
+   }
 
    public TValue ReturnNotDefault<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
       where TValue : struct

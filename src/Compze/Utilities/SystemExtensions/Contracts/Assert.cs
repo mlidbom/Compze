@@ -2,7 +2,7 @@
 
 namespace Compze.Utilities.Contracts;
 
-static class Assert
+public static class Assert
 {
    ///<summary>Assert conditions about current state of "this". Failures throw <see cref="InvalidOperationException"/>.</summary>
    public static ContractAsserter State { get; } = new(message => new InvalidOperationException(message));

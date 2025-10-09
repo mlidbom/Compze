@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Utilities.Contracts;
 
-partial class ContractAsserter(Func<string, Exception> createException)
+public partial class ContractAsserter(Func<string, Exception> createException)
 {
    readonly Func<string, Exception> _createException = createException;
 
