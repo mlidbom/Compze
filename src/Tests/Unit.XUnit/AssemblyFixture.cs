@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.Internals.XUnit;
+namespace Compze.Tests.Unit.XUnit;
 
 /// <summary>
 /// XUnit v2 doesn't have IAssemblyFixture. This class uses a module initializer to perform assembly-level setup.

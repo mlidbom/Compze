@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure.NUnit.Logging;
 using Compze.Utilities.SystemCE;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Compze.Tests.Infrastructure.NUnit;
@@ -11,6 +12,7 @@ namespace Compze.Tests.Infrastructure.NUnit;
 {
    [OneTimeSetUp] public void UniversalSetup()
    {
+      License.Accepted = true;
       TestFixtureHelper.PerformSetup(new NUnitTestEnricher());
       AssertTestInheritsUniversalTestBase();
    }
