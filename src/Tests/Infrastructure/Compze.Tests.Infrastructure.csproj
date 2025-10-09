@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
   <PropertyGroup>
     <NuGetAuditMode>direct</NuGetAuditMode>
