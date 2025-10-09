@@ -9,8 +9,5 @@ namespace Compze.Tests.Infrastructure.NUnit;
 
 public static class FluentAssertionsInitializer
 {
-    public static void SuppressLicenseWarning()
-    {
-        License.Accepted = true;
-    }
+    public static void SuppressLicenseWarning() => License.Accepted = true;
 }
