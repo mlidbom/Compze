@@ -6,37 +6,36 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates;
 
-[TestFixture]
 public class AggregateTests : UniversalTestBase
 {
-   [Test]
+   [Fact]
    public void VersionIncreasesWithEachAppliedEvent()
    {
       var user = new User();
-      Assert.That(user.Version, Is.EqualTo(0));
+      user.Version.Should().Be(0);
 
       user.Register("email", "password", Guid.NewGuid());
-      Assert.That(user.Version, Is.EqualTo(1));
+      user.Version.Should().Be(1);
 
       user.ChangeEmail("NewEmail");
-      Assert.That(user.Version, Is.EqualTo(2));
+      user.Version.Should().Be(2);
 
       user.ChangePassword("NewPassword");
-      Assert.That(user.Version, Is.EqualTo(3));
+      user.Version.Should().Be(3);
 
    }
 
-   [Test]
+   [Fact]
    public void ResetEmptiesOutListOfUncommittedEvents()
    {
       var user = new User();
       IEventStored userAseventStored = user;
-      Assert.That(user.Version, Is.EqualTo(0));
+      user.Version.Should().Be(0);
 
       user.Register("email", "password", Guid.NewGuid());
       userAseventStored.Commit(_ => {});
@@ -54,7 +53,7 @@ public class AggregateTests : UniversalTestBase
 
 
 
-   [Test]
+   [Fact]
    public void When_Raising_event_that_triggers_another_event_both_events_are_outputted_on_the_observable_only_after_the_triggered_event_and_in_the_raised_order()
    {
       var aggregate = new CascadingEventsAggregate();
