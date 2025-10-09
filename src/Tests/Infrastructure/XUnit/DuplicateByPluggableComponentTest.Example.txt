@@ -1,0 +1,68 @@
+using Compze.Tessaging.Hosting.Testing;
+using Xunit;
+
+namespace Compze.Tests.Infrastructure.XUnit.Examples;
+
+/// <summary>
+/// Example of how to use DuplicateByPluggableComponentTest with XUnit.
+/// This pattern allows you to test all pluggable component combinations defined in TestUsingPluggableComponentCombinations file.
+/// </summary>
+public class ExamplePluggableComponentTest : DuplicateByPluggableComponentTest
+{
+   /// <summary>
+   /// SIMPLE APPROACH: Use [PluggableComponentsTheory] with a string parameter.
+   /// The combination string is passed automatically, and TestEnv.SetTestContext() is called for you!
+   /// </summary>
+   [PluggableComponentsTheory]
+   public void Example_simple_test_that_runs_for_all_combinations(string pluggableComponentsCombination)
+   {
+      // TestEnv.SetTestContext() has been called automatically!
+      // Just use TestEnv directly:
+      var persistenceLayer = TestEnv.PersistenceLayer.Current;
+      var diContainer = TestEnv.DIContainer.Current;
+
+      // You also have access to the combination string if needed
+      Assert.Contains(":", pluggableComponentsCombination);
+
+      var someValue = TestEnv.PersistenceLayer.ValueFor<string>(
+         msSql: "SQL Server specific value",
+         mySql: "MySQL specific value",
+         pgSql: "PostgreSQL specific value",
+         memory: "In-memory specific value"
+      );
+
+      // Your test logic here
+      Assert.NotEqual(default, persistenceLayer);
+      Assert.NotEqual(default, diContainer);
+      Assert.NotNull(someValue);
+   }
+
+   /// <summary>
+   /// ADVANCED APPROACH: If you prefer the explicit [Theory] + [MemberData] approach.
+   /// Gives you full control but requires manual TestEnv.SetTestContext() call.
+   /// </summary>
+   [Theory]
+   [MemberData(nameof(GetPluggableComponentCombinations), MemberType = typeof(DuplicateByPluggableComponentTest))]
+   public void Example_advanced_test_with_explicit_combination(string pluggableComponentsCombination)
+   {
+      TestEnv.SetTestContext(pluggableComponentsCombination);
+
+      // You have access to the combination string if you need it
+      Assert.Contains(":", pluggableComponentsCombination);
+      
+      // And can still use TestEnv as normal
+      var persistenceLayer = TestEnv.PersistenceLayer.Current;
+      Assert.NotEqual(default, persistenceLayer);
+   }
+
+   /// <summary>
+   /// Example of a regular test that doesn't use pluggable components.
+   /// This will run only once.
+   /// </summary>
+   [Fact]
+   public void Example_regular_test()
+   {
+      // Regular test logic
+      Assert.True(true);
+   }
+}
