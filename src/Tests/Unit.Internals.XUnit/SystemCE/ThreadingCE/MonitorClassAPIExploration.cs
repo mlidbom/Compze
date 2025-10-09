@@ -1,13 +1,13 @@
 using System;
 using System.Threading;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Tests.Infrastructure.Threading;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
+namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
 
 public class MonitorClassApiExploration
 {

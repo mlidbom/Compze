@@ -1,9 +1,8 @@
 using System;
-using Compze.Tests.Infrastructure;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 using FluentAssertions;
 using Xunit;
-using Compze.Tests.Infrastructure.XUnit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -13,7 +12,7 @@ using Compze.Tests.Infrastructure.XUnit;
 
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.IntegerId;
 
 public class NestedEntitiesTests : UniversalTestBase
 {

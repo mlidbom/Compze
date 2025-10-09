@@ -1,12 +1,11 @@
-using FluentAssertions;
-using JetBrains.Annotations;
-using Xunit;
 using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using FluentAssertions;
+using JetBrains.Annotations;
+using Xunit;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local
@@ -14,7 +13,7 @@ using Compze.Tests.Infrastructure.XUnit;
 // ReSharper disable MemberCanBeInternal
 #pragma warning disable CA1806 // Do not ignore method results
 
-namespace Compze.Tests.Unit.CQRS.Aggregates;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates;
 
 public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {

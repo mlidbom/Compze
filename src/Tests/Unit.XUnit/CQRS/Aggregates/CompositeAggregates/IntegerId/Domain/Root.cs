@@ -1,9 +1,9 @@
-using JetBrains.Annotations;
 using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive;
+using JetBrains.Annotations;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
+namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 
 class Root : Aggregate<Root, RootEvent.IRoot, RootEvent.Implementation.Root>
 {
