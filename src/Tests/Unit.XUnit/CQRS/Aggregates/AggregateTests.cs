@@ -7,7 +7,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
 using Xunit;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates;
 
