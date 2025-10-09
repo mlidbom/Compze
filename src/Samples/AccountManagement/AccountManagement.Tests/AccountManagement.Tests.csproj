@@ -33,9 +33,6 @@
          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-   <PropertyGroup>
-      <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
-   </PropertyGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
    </ItemGroup>

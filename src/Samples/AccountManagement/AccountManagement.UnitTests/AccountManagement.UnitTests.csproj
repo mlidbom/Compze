@@ -28,7 +28,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <PropertyGroup>
-    <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
-  </PropertyGroup>
 </Project>

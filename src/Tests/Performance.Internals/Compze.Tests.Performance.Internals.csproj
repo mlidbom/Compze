@@ -34,8 +34,4 @@
     </PackageReference>
     <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
   </ItemGroup>
-  <PropertyGroup>
-    <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
-    <NoWarn>CS0436</NoWarn>
-  </PropertyGroup>
 </Project>
