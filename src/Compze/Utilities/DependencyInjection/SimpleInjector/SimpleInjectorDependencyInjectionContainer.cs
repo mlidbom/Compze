@@ -42,7 +42,6 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
          if(componentRegistration.InstantiationSpec.SingletonInstance != null)
          {
-            Assert.Argument.Is(lifestyle == global::SimpleInjector.Lifestyle.Singleton, () => $"{componentRegistration.ServiceTypes.First().FullName} tried to register using an Instance and lifestyle: {lifestyle}. Instance can only be used with {nameof(Lifestyle.Singleton)}");
             foreach(var serviceType in componentRegistration.ServiceTypes)
             {
                _container.RegisterInstance(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);

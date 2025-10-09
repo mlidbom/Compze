@@ -38,7 +38,6 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
          if(componentRegistration.InstantiationSpec.SingletonInstance != null)
          {
-            Assert.Argument.Is(lifetime == ServiceLifetime.Singleton, () => $"{componentRegistration.ServiceTypes.First().FullName} tried to register using an Instance and lifestyle: {lifetime}. Instance can only be used with {nameof(Lifestyle.Singleton)}");
             foreach(var serviceType in componentRegistration.ServiceTypes)
             {
                _services.AddSingleton(serviceType, componentRegistration.InstantiationSpec.SingletonInstance);
