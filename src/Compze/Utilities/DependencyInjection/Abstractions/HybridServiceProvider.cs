@@ -25,53 +25,38 @@ class HybridServiceProvider : IServiceProvider, ISupportRequiredService, IServic
 
    public object? GetService(Type serviceType)
    {
-      // Special services that should come from this provider
-      if (serviceType == typeof(IServiceProvider)) return this;
-      if (serviceType == typeof(IServiceScopeFactory)) return this;
-      
-      // Try Compze container first - check if the service type is registered
-      if (_compzeContainer.RegisteredComponents().Any(c => c.ServiceTypes.Contains(serviceType)))
+      if(serviceType == typeof(IServiceProvider) || serviceType == typeof(IServiceScopeFactory)) return this;
+
+      if(_compzeContainer.IsRegistered(serviceType))
       {
-         try
-         {
-            var method = typeof(IServiceLocator).GetMethod(nameof(IServiceLocator.Resolve))!
-                                                .MakeGenericMethod(serviceType);
-            return method.Invoke(_compzeContainer.ServiceLocator, null);
-         }
-         catch
-         {
-            // Fall through to Microsoft provider
-         }
+         return _compzeContainer.ServiceLocator.Resolve(serviceType);
       }
-      
-      // Fall back to Microsoft provider for ASP.NET Core services
+
       return _microsoftProvider.GetService(serviceType);
    }
 
    public object GetRequiredService(Type serviceType)
    {
       var service = GetService(serviceType);
-      if (service == null)
+      if(service == null)
       {
          throw new InvalidOperationException($"No service for type '{serviceType}' has been registered.");
       }
+
       return service;
    }
 
    public IServiceScope CreateScope()
    {
-      // Create a scope in both containers
       var compzeScope = _compzeContainer.ServiceLocator.BeginScope();
       var microsoftScope = _microsoftScopeFactory.CreateScope();
-      
+
       return new HybridServiceScope(_compzeContainer, microsoftScope, compzeScope);
    }
 
    public void Dispose()
    {
-      // Only dispose Microsoft's provider (ASP.NET Core services)
-      // Our container is disposed separately by the application
-      if (_microsoftProvider is IDisposable disposable)
+      if(_microsoftProvider is IDisposable disposable)
       {
          disposable.Dispose();
       }
@@ -79,12 +64,10 @@ class HybridServiceProvider : IServiceProvider, ISupportRequiredService, IServic
 
    public async ValueTask DisposeAsync()
    {
-      // Only dispose Microsoft's provider (ASP.NET Core services)
-      if (_microsoftProvider is IAsyncDisposable asyncDisposable)
+      if(_microsoftProvider is IAsyncDisposable asyncDisposable)
       {
          await asyncDisposable.DisposeAsync().ConfigureAwait(false);
-      }
-      else if (_microsoftProvider is IDisposable disposable)
+      } else if(_microsoftProvider is IDisposable disposable)
       {
          disposable.Dispose();
       }

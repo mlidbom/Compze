@@ -70,7 +70,8 @@ public class AspNetInboxTransport : IInboxTransport
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      _container.RegisterToHandleServiceResolutionFor(builder.Services);
+      // Use the new factory pattern to avoid double-disposal
+      builder.Host.UseServiceProviderFactory(_container.CreateServiceProviderFactory());
 
       var app = builder.Build();
 
@@ -79,7 +80,9 @@ public class AspNetInboxTransport : IInboxTransport
 
       app.Services.AssertAllControllersCanBeInstantiated(_serviceLocator);
 
-      app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
+      // NOTE: When using CreateServiceProviderFactory, we do NOT add the manual scope middleware
+      // because ASP.NET Core's request pipeline automatically creates scopes via HybridServiceProvider
+      // app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
 
       await app.StartAsync().caf();
 

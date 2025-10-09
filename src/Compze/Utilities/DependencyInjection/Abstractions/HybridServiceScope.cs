@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Abstractions;
@@ -23,21 +24,18 @@ class HybridServiceScope : IServiceScope, IAsyncDisposable
 
    public void Dispose()
    {
-      // Dispose both scopes
       _compzeScope.Dispose();
       _microsoftScope.Dispose();
    }
 
    public async ValueTask DisposeAsync()
    {
-      // Dispose both scopes
       _compzeScope.Dispose();
-      
-      if (_microsoftScope is IAsyncDisposable asyncDisposable)
+
+      if(_microsoftScope is IAsyncDisposable asyncDisposable)
       {
-         await asyncDisposable.DisposeAsync().ConfigureAwait(false);
-      }
-      else
+         await asyncDisposable.DisposeAsync().caf();
+      } else
       {
          _microsoftScope.Dispose();
       }

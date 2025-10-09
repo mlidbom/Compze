@@ -16,8 +16,11 @@ static class ControllerRegistrationValidator
       var feature = new ControllerFeature();
       applicationPartManager.PopulateFeature(feature);
 
+      // When using the HybridServiceProvider (from CreateServiceProviderFactory),
+      // creating a scope through serviceProvider already creates scopes in BOTH containers.
+      // So we don't need to manually create a scope in serviceLocator.
       using var aspNetScope = serviceProvider.CreateScope();
-      using var serviceLocatorScope = serviceLocator.BeginScope();
+      
       foreach(var controllerType in feature.Controllers
                                            .Where(it => it.AsType().IsSubclassOf(typeof(Controller)))
                                            .Where(it => !it.IsAbstract))

@@ -26,6 +26,7 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    bool IsRegistered<TService>() => RegisteredComponents().Any(c => c.ServiceTypes.Contains(typeof(TService)));
+   bool IsRegistered(Type serviceType) => RegisteredComponents().Any(c => c.ServiceTypes.Contains(serviceType));
    IServiceLocator ServiceLocator { get; }
 
    /// <summary>
@@ -67,6 +68,7 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
 {
    TComponent Resolve<TComponent>() where TComponent : class;
    TComponent[] ResolveAll<TComponent>() where TComponent : class;
+   object Resolve(Type serviceType);
    IDisposable BeginScope();
 }
 
