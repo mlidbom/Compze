@@ -23,17 +23,17 @@ static partial class TestEnv
       // ReSharper disable once CompareOfFloatsByEqualityOperator
       if(Performance.IsInstrumented && instrumented != 1.0)
       {
-         ConsoleCE.WriteLine($"Adjusting by {instrumented} for Instrumented Code");
+         //ConsoleCE.WriteLine($"Adjusting by {instrumented} for Instrumented Code");
          return instrumented;
       }
 
       if(Performance.AreOptimizationsDisabled)
       {
-         ConsoleCE.WriteLine($"Adjusting by {unoptimized} for UnOptimized Code");
+         //ConsoleCE.WriteLine($"Adjusting by {unoptimized} for UnOptimized Code");
          return unoptimized;
       }
 
-      ConsoleCE.WriteLine("Code is optimized. No adjustment made");
+      //ConsoleCE.WriteLine("Code is optimized. No adjustment made");
       return 1.0;
    }
 

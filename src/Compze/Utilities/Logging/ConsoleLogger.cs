@@ -9,7 +9,7 @@ class ConsoleLogger : ILogger
 {
    readonly Type _type;
 
-   LogLevel _logLevel = LogLevel.Info;
+   LogLevel _logLevel = LogLevel.Warning;
 
    ConsoleLogger(Type type) => _type = type;
 

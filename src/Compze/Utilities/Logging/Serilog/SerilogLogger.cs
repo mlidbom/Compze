@@ -9,7 +9,7 @@ namespace Compze.Utilities.Logging.Serilog;
 class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 {
    readonly global::Serilog.ILogger _logger = logger;
-   LogLevel _logLevel = LogLevel.Info;
+   LogLevel _logLevel = LogLevel.Warning;
    public static ILogger Create(Type type) => new SerilogLogger(Log.ForContext(type));
 
    public ILogger WithLogLevel(LogLevel level) => new SerilogLogger(_logger) {_logLevel =  level};
