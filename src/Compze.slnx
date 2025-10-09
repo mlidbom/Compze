@@ -242,19 +242,15 @@
     <Project Path="Tests/Unit.Internals/Compze.Tests.Unit.Internals.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <!-- Temporarily commented out for build order issues
     <Project Path="Tests/Unit.Internals.XUnit/Compze.Tests.Unit.Internals.XUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    -->
     <Project Path="Tests/Unit/Compze.Tests.Unit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <!-- Temporarily commented out for build order issues
     <Project Path="Tests/Unit.XUnit/Compze.Tests.Unit.XUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    -->
   </Folder>
   <Folder Name="/Websites/">
     <Project Path="Websites/Website/Website.csproj">

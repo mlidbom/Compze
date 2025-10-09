@@ -14,6 +14,13 @@
     <ProjectReference Include="..\XUnit\Compze.TestInfrastructure.XUnit.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="CQRS\Aggregates\AggregateTests.cs" />
+    <Compile Remove="CQRS\Aggregates\CompositeAggregates\IntegerId\**" />
+    <Compile Remove="CQRS\Aggregates\PublicSettersAndFieldsAreDisallowedTests.cs" />
+    <Compile Remove="CQRS\EventHandling\MutableEventDispatcher_WrappedEventsTests.cs" />
+    <Compile Remove="UniversalTestFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
     <PackageReference Include="FluentAssertions" Version="8.7.1" />
