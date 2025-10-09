@@ -1,6 +1,5 @@
 ﻿using System;
-
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;

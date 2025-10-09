@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
 

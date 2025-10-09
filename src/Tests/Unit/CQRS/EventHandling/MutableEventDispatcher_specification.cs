@@ -1,7 +1,7 @@
 ﻿using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Teventive.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Testing.TestFrameworkExtensions.XUnit;
+using Compze.TestInfrastructure.TestFrameworkExtensions.XUnit;
 using FluentAssertions;
 using Xunit;
 

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Compze.Testing.Serialization;
+namespace Compze.TestInfrastructure.Serialization;
 
 public static class AggregateEventDebugSerializer
 {

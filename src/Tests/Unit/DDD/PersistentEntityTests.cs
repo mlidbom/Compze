@@ -1,6 +1,6 @@
 using System;
 using Compze.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using NUnit.Framework;
 
 namespace Compze.Tests.Unit.DDD;

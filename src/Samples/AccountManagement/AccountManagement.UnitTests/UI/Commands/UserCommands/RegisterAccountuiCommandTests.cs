@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AccountManagement.API;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 

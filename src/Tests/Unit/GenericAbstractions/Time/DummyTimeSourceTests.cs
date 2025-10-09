@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Compze.Abstractions.Internal.Time;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 

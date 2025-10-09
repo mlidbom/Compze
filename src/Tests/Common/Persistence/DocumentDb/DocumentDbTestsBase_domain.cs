@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Abstractions;
 using JetBrains.Annotations;
 
-namespace Compze.Tests.Persistence.DocumentDb;
+namespace Compze.Tests.Common.Persistence.DocumentDb;
 
 class Dog : IPersistentEntity
 {

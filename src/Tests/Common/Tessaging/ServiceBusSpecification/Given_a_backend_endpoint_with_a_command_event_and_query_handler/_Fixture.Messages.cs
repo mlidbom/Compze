@@ -14,7 +14,7 @@ using JetBrains.Annotations;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public partial class Fixture
 {

@@ -10,7 +10,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Persistence;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 

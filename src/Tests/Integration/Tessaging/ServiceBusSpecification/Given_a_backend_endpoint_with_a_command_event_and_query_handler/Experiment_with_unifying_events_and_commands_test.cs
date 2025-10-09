@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
-using Compze.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Tessaging.Abstractions;
@@ -16,6 +15,7 @@ using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.TestInfrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

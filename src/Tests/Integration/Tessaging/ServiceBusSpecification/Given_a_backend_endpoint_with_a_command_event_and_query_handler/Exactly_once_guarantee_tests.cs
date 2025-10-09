@@ -2,9 +2,9 @@
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Testing.Threading;
-using Compze.Testing.Transactions;
-using Compze.Tests.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.TestInfrastructure.Threading;
+using Compze.TestInfrastructure.Transactions;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;

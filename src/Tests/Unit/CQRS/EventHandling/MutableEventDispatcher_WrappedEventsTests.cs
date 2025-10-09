@@ -2,7 +2,7 @@
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using NUnit.Framework;
 
 namespace Compze.Tests.Unit.CQRS.EventHandling;

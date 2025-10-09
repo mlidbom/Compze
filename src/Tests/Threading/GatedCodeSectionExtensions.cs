@@ -1,7 +1,7 @@
 ﻿using System;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Testing.Threading;
+namespace Compze.TestInfrastructure.Threading;
 
 static class GatedCodeSectionExtensions
 {

@@ -1,5 +1,5 @@
 ﻿using Compze.Persistence.DocumentDb;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 

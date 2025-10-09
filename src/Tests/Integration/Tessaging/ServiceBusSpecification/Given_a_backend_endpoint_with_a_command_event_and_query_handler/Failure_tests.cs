@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
-using Compze.Testing.Threading;
-using Compze.Tests.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.TestInfrastructure.Threading;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using NUnit.Framework;
 using Assert = Xunit.Assert;

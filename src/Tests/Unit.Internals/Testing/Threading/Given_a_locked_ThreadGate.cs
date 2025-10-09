@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
-
-using Compze.Testing;
-using Compze.Testing.Threading;
+using Compze.TestInfrastructure;
+using Compze.TestInfrastructure.Threading;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;

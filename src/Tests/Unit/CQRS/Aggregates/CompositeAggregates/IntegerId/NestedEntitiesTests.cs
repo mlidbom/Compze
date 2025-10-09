@@ -1,5 +1,5 @@
 ﻿using System;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 using FluentAssertions;
 using Xunit;

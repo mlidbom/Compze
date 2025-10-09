@@ -1,6 +1,6 @@
 ﻿using System;
-
-using Compze.Testing;
+using Compze.TestInfrastructure;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using FluentAssertions;

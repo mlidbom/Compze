@@ -1,6 +1,6 @@
 ﻿using System;
 using Compze.Abstractions.Internal.Time;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;

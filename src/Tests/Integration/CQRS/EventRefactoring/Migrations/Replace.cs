@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
-using Compze.Tests.CQRS.EventRefactoring.Migrations;
+using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 

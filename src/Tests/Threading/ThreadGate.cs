@@ -7,7 +7,7 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.Testing.Threading;
+namespace Compze.TestInfrastructure.Threading;
 
 class ThreadGate : IThreadGate
 {

@@ -1,5 +1,7 @@
-﻿#pragma warning disable IDE0130
-namespace System;
+﻿using System;
+
+#pragma warning disable IDE0130
+namespace Compze.Utilities.Functional;
 #pragma warning restore IDE0130
 
 ///<summary>The functional programming unit concept.

@@ -5,6 +5,7 @@ using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
 

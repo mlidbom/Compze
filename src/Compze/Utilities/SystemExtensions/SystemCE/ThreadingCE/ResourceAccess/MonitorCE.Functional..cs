@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using Compze.Tessaging.Hosting.Configuration;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
 using NUnit.Framework;

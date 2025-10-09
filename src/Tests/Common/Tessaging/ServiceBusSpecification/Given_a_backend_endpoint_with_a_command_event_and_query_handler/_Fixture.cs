@@ -9,8 +9,8 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Testing;
-using Compze.Testing.Threading;
+using Compze.TestInfrastructure;
+using Compze.TestInfrastructure.Threading;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
@@ -22,7 +22,7 @@ using NUnit.Framework;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 public abstract partial class Fixture(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {

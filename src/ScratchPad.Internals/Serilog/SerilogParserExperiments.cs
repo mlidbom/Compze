@@ -6,7 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace ScratchPad.Serilog;
+namespace ScratchPad.Internals.Serilog;
 
 class SerilogParserExperiments
 {

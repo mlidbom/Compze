@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Testing;
+using Compze.TestInfrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using NUnit.Framework;
 

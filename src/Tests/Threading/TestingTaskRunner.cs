@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Testing.Threading;
+namespace Compze.TestInfrastructure.Threading;
 
 ///<summary>
 /// Runs and monitors tasks on background threads.

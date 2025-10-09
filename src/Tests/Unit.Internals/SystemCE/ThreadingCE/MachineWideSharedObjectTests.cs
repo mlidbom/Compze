@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Testing;
-using Compze.Testing.Threading;
+using Compze.TestInfrastructure;
+using Compze.TestInfrastructure.Threading;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using FluentAssertions;
