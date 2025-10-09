@@ -69,17 +69,26 @@ This is **cleaner and more type-safe** than string-based approaches!
 
 ### Using PersistenceLayer-Specific Values
 
-When you need different values for different persistence layers:
+When you need different values for different persistence layers, use the extension method on `PersistenceLayer`:
 
 ```csharp
 [PluggableComponentsTheory]
 public void Test_with_layer_specific_values(PluggableComponentTestContext context)
 {
-   var timeout = context.ValueFor(
+   // Recommended: Use the extension method directly on PersistenceLayer
+   var timeout = context.PersistenceLayer.ValueFor(
       msSql: TimeSpan.FromSeconds(5),
       mySql: TimeSpan.FromSeconds(10),
       pgSql: TimeSpan.FromSeconds(7),
       memory: TimeSpan.FromSeconds(1)
+   );
+
+   // Alternative: Use the ValueForDb alias on context
+   var connectionString = context.ValueForDb(
+      msSql: "Server=localhost;...",
+      memory: "InMemory",
+      mySql: "Server=localhost;...",
+      pgSql: "Host=localhost;..."
    );
 
    // Use the timeout appropriate for the current persistence layer

@@ -23,12 +23,20 @@ public class ExamplePluggableComponentTest : DuplicateByPluggableComponentTest
       // You also have access to the combination string if needed
       System.Console.WriteLine($"Testing with: {context.Combination}");
 
-      // Use ValueFor to get different values per persistence layer
-      var someValue = context.ValueFor<string>(
+      // Use ValueFor to get different values per persistence layer (recommended)
+      var someValue = context.PersistenceLayer.ValueFor<string>(
          msSql: "SQL Server specific value",
          mySql: "MySQL specific value",
          pgSql: "PostgreSQL specific value",
          memory: "In-memory specific value"
+      );
+
+      // Alternative: Use ValueForDb alias on context
+      var anotherValue = context.ValueForDb<int>(
+         msSql: 100,
+         mySql: 200,
+         pgSql: 150,
+         memory: 50
       );
 
       // Your test logic here

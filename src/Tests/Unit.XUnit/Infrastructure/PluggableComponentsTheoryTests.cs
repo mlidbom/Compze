@@ -35,15 +35,15 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
          Compze.Wiring.DIContainer.SimpleInjector
       );
 
-      // Test the ValueFor functionality
-      var testValue = context.ValueFor<string>(
+      // Test the ValueForDb functionality (alias for PersistenceLayer.ValueFor)
+      var testValue = context.ValueForDb<string>(
          msSql: "SQL Server",
          memory: "In-Memory",
          mySql: "MySQL",
          pgSql: "PostgreSQL"
       );
 
-      System.Console.WriteLine($"  ValueFor result: {testValue}");
+      System.Console.WriteLine($"  ValueForDb result: {testValue}");
       testValue.Should().NotBeNull();
 
       // Verify the value matches the current persistence layer
@@ -57,6 +57,34 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       };
 
       testValue.Should().Be(expectedValue);
+   }
+
+   [PluggableComponentsTheory]
+   public void Can_use_ValueFor_directly_on_PersistenceLayer(PluggableComponentTestContext context)
+   {
+      // Demonstrate using the extension method directly on the PersistenceLayer enum
+      var timeout = context.PersistenceLayer.ValueFor(
+         msSql: System.TimeSpan.FromSeconds(5),
+         memory: System.TimeSpan.FromSeconds(1),
+         mySql: System.TimeSpan.FromSeconds(10),
+         pgSql: System.TimeSpan.FromSeconds(7)
+      );
+
+      System.Console.WriteLine($"✓ Timeout for {context.PersistenceLayer}: {timeout}");
+      
+      timeout.Should().BePositive();
+      
+      // Verify it matches expected value
+      var expected = context.PersistenceLayer switch
+      {
+         Compze.Wiring.PersistenceLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
+         Compze.Wiring.PersistenceLayer.Memory => System.TimeSpan.FromSeconds(1),
+         Compze.Wiring.PersistenceLayer.MySql => System.TimeSpan.FromSeconds(10),
+         Compze.Wiring.PersistenceLayer.PostgreSql => System.TimeSpan.FromSeconds(7),
+         _ => throw new System.Exception($"Unexpected persistence layer: {context.PersistenceLayer}")
+      };
+      
+      timeout.Should().Be(expected);
    }
 
    [Fact]

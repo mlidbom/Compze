@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
-static class TransactionScopeCe
+public static class TransactionScopeCe
 {
    public static void SuppressAmbientAndExecuteInNewTransaction(Action action) => SuppressAmbient(() => Execute(action));
 

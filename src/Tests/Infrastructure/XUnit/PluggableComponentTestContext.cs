@@ -53,8 +53,10 @@ public class PluggableComponentTestContext : IXunitSerializable
    /// <summary>
    /// Returns a persistence-layer-specific value.
    /// Only provide values for the persistence layers you support.
+   /// This is an alias for <see cref="PersistenceLayerExtensions.ValueFor{TValue}"/>.
+   /// Prefer using <c>context.PersistenceLayer.ValueFor(...)</c> for better clarity.
    /// </summary>
-   public TValue ValueFor<TValue>(
+   public TValue ValueForDb<TValue>(
       TValue? db2 = default,
       TValue? memory = default,
       TValue? msSql = default,
@@ -62,23 +64,7 @@ public class PluggableComponentTestContext : IXunitSerializable
       TValue? orcl = default,
       TValue? pgSql = default) where TValue : notnull
    {
-      return _persistenceLayer switch
-      {
-         PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-         PersistenceLayer.Memory             => SelectValue(memory, nameof(memory)),
-         PersistenceLayer.MySql              => SelectValue(mySql, nameof(mySql)),
-         PersistenceLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
-         _                                   => throw new ArgumentOutOfRangeException($"Unsupported persistence layer: {_persistenceLayer}")
-      };
-   }
-
-   [return: NotNull]
-   static TValue SelectValue<TValue>(TValue? value, string providerName) where TValue : notnull
-   {
-      if(value != null && !Equals(value, default(TValue)))
-         return value;
-
-      throw new InvalidOperationException($"No value provided for {providerName}");
+      return _persistenceLayer.ValueFor(db2: db2, memory: memory, msSql: msSql, mySql: mySql, orcl: orcl, pgSql: pgSql);
    }
 
    /// <summary>Serializes this object for XUnit test execution.</summary>
