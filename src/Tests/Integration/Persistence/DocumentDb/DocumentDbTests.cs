@@ -34,7 +34,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
             {
                 City = "MyTown",
                 Street = "MyStreet",
-                Streetnumber = 234
+                StreetNumber = 234
             }
         };
 
@@ -121,7 +121,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
             {
                 City = "MyTown",
                 Street = "MyStreet",
-                Streetnumber = 234
+                StreetNumber = 234
             }
         };
 

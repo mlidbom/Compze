@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions;
 using JetBrains.Annotations;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 namespace Compze.Tests.Common.Persistence.DocumentDb;
 
@@ -26,13 +27,15 @@ public class User : Person
 
    public Address Address { get; set; } = new();
 
+#pragma warning disable CA2227
    public HashSet<User> People { get; set; } = [];
+#pragma warning restore CA2227
 }
 
 public record Address
 {
    public string Street { [UsedImplicitly] get; set; } = "SomeStreet";
-   public int Streetnumber { [UsedImplicitly] get; set; } = 12;
+   public int StreetNumber { [UsedImplicitly] get; set; } = 12;
    public string City { [UsedImplicitly] get; set; } = "SomeCity";
 }
 

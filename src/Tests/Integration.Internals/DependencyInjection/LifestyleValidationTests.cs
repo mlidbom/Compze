@@ -46,7 +46,9 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
    class ScopedService : IScopedService {}
 
    interface ISingletonService {}
+#pragma warning disable CS9113 // Parameter is unread.
    class SingletonServiceDependingOnScoped(IScopedService _) : ISingletonService {}
+#pragma warning restore CS9113 // Parameter is unread.
 
    interface ISingletonDependency {}
    class SingletonDependency : ISingletonDependency {}

@@ -12,7 +12,6 @@ namespace Compze.Tests.Infrastructure;
 
 static class TestWiringHelper
 {
-   const string DocumentDbConnectionStringName = "Fake_connectionstring_for_database_testing";
    internal const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
    internal static IEventStore EventStore(this IServiceLocator @this) =>

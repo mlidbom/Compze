@@ -33,7 +33,7 @@ class PluggableComponentsTestFixtureSource : IEnumerable<string>
                     .Where(line => !line.StartsWith('#'))
                     .ToArray();
       }
-      catch(FileNotFoundException e)
+      catch(FileNotFoundException)
       {
          return [Enumerable.Repeat($"FileMissing", 3)._(it => string.Join((string?)":", (IEnumerable<string?>)it))];
       }
