@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 ///<summary>
-/// This attribute will run the test eXclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
+/// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
 ///This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
 [XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
