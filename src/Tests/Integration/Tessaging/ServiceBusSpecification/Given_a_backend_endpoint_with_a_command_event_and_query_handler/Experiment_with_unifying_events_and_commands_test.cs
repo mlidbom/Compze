@@ -43,8 +43,9 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
          builder =>
          {
-            builder.Container.RegisterAspNetCoreTransport();
-            builder.RegisterCurrentTestsConfiguredPersistenceLayer();
+            builder.Container.Register()
+                   .AspNetCoreTransport()
+                   .CurrentTestsConfiguredPersistenceLayer();
             builder.Container.Register().EventStore(builder.Configuration.ConnectionStringName);
 
             builder.RegisterHandlers

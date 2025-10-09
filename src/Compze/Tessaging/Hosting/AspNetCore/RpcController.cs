@@ -4,6 +4,8 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Http;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Http;
@@ -11,8 +13,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;
 
-class RpcController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : ControllerBase(serializer, typeMapper, handlerExecutionEngine, storage)
+class RpcController : ControllerBase
 {
+   internal static void RegisterWith(IDependencyRegistrar registrar) =>
+      registrar.Register(
+         Scoped.For<RpcController>()
+               .CreatedBy((IRemotableMessageSerializer serializer,
+                           ITypeMapper typeMapper,
+                           Inbox.HandlerExecutionEngine handlerExecutionEngine,
+                           Inbox.IMessageStorage messageStorage)
+                             => new RpcController(serializer, typeMapper, handlerExecutionEngine, messageStorage)));
+
+   RpcController(IRemotableMessageSerializer serializer,
+                 ITypeMapper typeMapper,
+                 Inbox.HandlerExecutionEngine handlerExecutionEngine,
+                 Inbox.IMessageStorage storage) : base(serializer, typeMapper, handlerExecutionEngine, storage) {}
+
    [HttpPost(HttpConstants.Routes.Rpc.Query)]
    public async Task<IActionResult> Query()
    {

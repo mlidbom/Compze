@@ -1,4 +1,5 @@
 using System;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -8,9 +9,13 @@ namespace Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 /// <summary>Custom controller activator that creates controllers using Compze's DI container.</summary>
 class CompzeControllerActivator : IControllerActivator
 {
+   internal static void RegisterWith(IDependencyRegistrar register)
+      => register.Register(Singleton.For<CompzeControllerActivator>()
+                                    .CreatedBy((IServiceLocator serviceLocator) => new CompzeControllerActivator(serviceLocator)));
+
    readonly IServiceLocator _serviceLocator;
 
-   public CompzeControllerActivator(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
+   CompzeControllerActivator(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
 
    public object Create(ControllerContext context)
    {

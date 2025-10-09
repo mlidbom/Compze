@@ -23,17 +23,22 @@ class InternalControllerFeatureProvider : ControllerFeatureProvider
    protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Controller));
 }
 
-
-public class AspNetInboxTransport : IInboxTransport
+class AspNetInboxTransport : IInboxTransport
 {
    readonly IServiceLocator _serviceLocator;
-   readonly IDependencyInjectionContainer _container;
    WebApplication? _webApplication;
+   readonly CompzeControllerActivator _controllerActivator;
 
-   public AspNetInboxTransport(IServiceLocator serviceLocator, IDependencyInjectionContainer container)
+   internal static void RegisterWith(IDependencyRegistrar registrar) =>
+      registrar.Register(
+         Singleton.For<IInboxTransport>()
+                  .CreatedBy((IServiceLocator serviceLocator, CompzeControllerActivator activator)
+                                => new AspNetInboxTransport(serviceLocator, activator)));
+
+   AspNetInboxTransport(IServiceLocator serviceLocator, CompzeControllerActivator controllerActivator)
    {
+      _controllerActivator = controllerActivator;
       _serviceLocator = serviceLocator;
-      _container = container;
    }
 
    public string Address => _webApplication!.Urls.First();
@@ -65,14 +70,14 @@ public class AspNetInboxTransport : IInboxTransport
          it.FeatureProviders.Add(new InternalControllerFeatureProvider());
       });
 
-        //todo: in production we want to bind to a specific configured port, not a random one.
-        builder.WebHost.UseUrls("http://127.0.0.1:0");
+      //todo: in production we want to bind to a specific configured port, not a random one.
+      builder.WebHost.UseUrls("http://127.0.0.1:0");
 
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
       //We need to use our container or things go haywire.
-      builder.Services.AddSingleton<IControllerActivator>(new CompzeControllerActivator(_serviceLocator));
+      builder.Services.AddSingleton<IControllerActivator>(_controllerActivator);
 
       var app = builder.Build();
 

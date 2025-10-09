@@ -53,8 +53,10 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
          builder =>
          {
-            builder.Container.RegisterAspNetCoreTransport();
-            builder.RegisterCurrentTestsConfiguredPersistenceLayer();
+            builder.Container.Register()
+                   .AspNetCoreTransport()
+                   .CurrentTestsConfiguredPersistenceLayer();
+
             builder.RegisterEventStore()
                    .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
 
@@ -88,8 +90,9 @@ public abstract partial class Fixture(string pluggableComponentsCombination) : D
                                              new EndpointId(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B")),
                                              builder =>
                                              {
-                                                builder.Container.RegisterAspNetCoreTransport();
-                                                builder.RegisterCurrentTestsConfiguredPersistenceLayer();
+                                                builder.Container.Register()
+                                                       .AspNetCoreTransport()
+                                                       .CurrentTestsConfiguredPersistenceLayer();
                                                 builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
                                              });
 
