@@ -62,6 +62,11 @@ Exception: System.InvalidOperationException: Something went wrong
 
 ## Key Improvements
 
+### Removed Duplicate FluentAssertions Initialization
+- **Before**: Used both `[assembly: AssertionEngineInitializer(...)]` attribute AND direct calls in assembly fixtures
+- **After**: `License.Accepted = true` is now called only in assembly fixtures
+- **Reason**: Eliminated redundant initialization - now there's a single, consistent initialization path
+
 ### XUnit v3 Migration
 - **Before**: Used module initializers (`[ModuleInitializer]`) which is a workaround for XUnit v2
 - **After**: Uses proper XUnit v3 `[assembly: AssemblyFixture(...)]` attribute with `IAsyncLifetime`
