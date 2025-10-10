@@ -591,8 +591,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest, IAsyncLi
          });
    });
 
-   [PluggableComponentsTheory]
-   public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed(PluggableComponentTestContext context) => Init(context).then(() =>
+   [PluggableComponentsTheory] public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed(PluggableComponentTestContext context) => Init(context).then(() =>
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());

@@ -1,42 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
-    <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
-    <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\..\TestUsingPluggableComponentCombinations">
-      <Link>TestUsingPluggableComponentCombinations</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
-    <PackageReference Include="FluentAssertions" Version="8.7.1" />
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
-      <IncludeAssets>compile;analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.v3" Version="3.1.0" />
-  </ItemGroup>
-  <PropertyGroup>
-    <NoWarn>CS0436</NoWarn>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <OutputType>Exe</OutputType>
+   </PropertyGroup>
+   <PropertyGroup>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference
+         Include="..\..\..\Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
+      <ProjectReference
+         Include="..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
+      <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <Content Include="..\..\..\TestUsingPluggableComponentCombinations">
+         <Link>TestUsingPluggableComponentCombinations</Link>
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+      <PackageReference Include="FluentAssertions" Version="8.7.1" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+         <IncludeAssets>compile;analyzers</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+   </ItemGroup>
+   <PropertyGroup>
+      <NoWarn>CS0436</NoWarn>
+   </PropertyGroup>
 </Project>

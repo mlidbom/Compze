@@ -5,9 +5,9 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Serialization;
 
-class IncludeMembersWithPrivateSettersResolver : DefaultContractResolver, IStaticInstancePropertySingleton
+class IncludeMembersWithPrivateSettersResolver : DefaultContractResolver, IStaticInstancePropertySingleton<IncludeMembersWithPrivateSettersResolver>
 {
-   public static readonly IncludeMembersWithPrivateSettersResolver Instance = new();
+   public static IncludeMembersWithPrivateSettersResolver Instance { get; } = new();
    protected IncludeMembersWithPrivateSettersResolver()
    {
    }

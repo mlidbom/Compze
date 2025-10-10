@@ -3,9 +3,9 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
-class AssertMigrationsAreIdempotentEventModifier : IEventModifier, IStaticInstancePropertySingleton
+class AssertMigrationsAreIdempotentEventModifier : IEventModifier, IStaticInstancePropertySingleton<IEventModifier>
 {
-   public static readonly IEventModifier Instance = new AssertMigrationsAreIdempotentEventModifier();
+   public static IEventModifier Instance { get; } = new AssertMigrationsAreIdempotentEventModifier();
    AssertMigrationsAreIdempotentEventModifier() { }
 
    public void Replace(params AggregateEvent[] events) => throw new NonIdempotentMigrationDetectedException();

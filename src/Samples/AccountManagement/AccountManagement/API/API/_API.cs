@@ -24,9 +24,9 @@ public static class AccountWebClientApi
 /// <summary>
 /// This is the entry point to the API for all .Net clients. It provides a simple intuitive fluent API for accessing all the functionality in the AccountManagement application.
 /// </summary>
-public class AccountApi : IStaticInstancePropertySingleton
+public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
 {
-   public static AccountApi Instance => new();
+   public static AccountApi Instance { get; } = new();
 
    NavigationSpecification<StartResource> Start => NavigationSpecification.Get(AccountWebClientApi.Start);
 

@@ -13,16 +13,30 @@ public static partial class Constructor
       internal static class DefaultConstructor
       {
          internal static readonly Func<TInstance> Instance = CreateInstanceFactory();
+
          static Func<TInstance> CreateInstanceFactory() =>
-            typeof(TInstance).Is<IStaticInstancePropertySingleton>()
+            typeof(IStaticInstancePropertySingleton<TInstance>).IsAssignableFrom(typeof(TInstance))
                ? CompileStaticInstancePropertyDelegate()
                : Compile.ForReturnType<TInstance>().DefaultConstructor();
 
+         static PropertyInfo? ImplicitImplementationProperty() => typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                                                                                   .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
+
+         static PropertyInfo ExplicitImplementationProperty()
+         {
+            // When a class uses explicit interface implementation, the property name includes the full interface name
+            return typeof(TInstance)
+                  .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                  .SingleOrDefault(prop =>
+                                      prop.Name.Contains(nameof(IStaticInstancePropertySingleton<TInstance>), StringComparison.Ordinal) &&
+                                      prop.Name.Contains(nameof(IStaticInstancePropertySingleton<TInstance>.Instance), StringComparison.Ordinal) &&
+                                      prop.PropertyType == typeof(TInstance))
+                  .NotNull(() => $"This should be impossible, but it seems {typeof(TInstance).FullName} does not implement {typeof(IStaticInstancePropertySingleton<TInstance>).FullName}");
+         }
+
          static Func<TInstance> CompileStaticInstancePropertyDelegate()
          {
-            var instanceProperty = typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                                                    .SingleOrDefault(prop => prop.Name == "Instance" && prop.PropertyType == typeof(TInstance))
-                                ?? throw new Exception($"{nameof(IStaticInstancePropertySingleton)} implementation: {typeof(TInstance).GetFullNameCompilable()} does not have a public property named Instance of of the same type.");
+            var instanceProperty = ImplicitImplementationProperty() ?? ExplicitImplementationProperty();
 
             return Expression.Lambda<Func<TInstance>>(Expression.Property(null, instanceProperty)).Compile();
          }

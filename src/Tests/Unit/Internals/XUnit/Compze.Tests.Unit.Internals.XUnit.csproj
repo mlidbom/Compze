@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="8.7.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
-    <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.v3" Version="3.1.0" />
-  </ItemGroup>
-  <PropertyGroup>
-    <NoWarn>CS0436</NoWarn>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <PropertyGroup>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
+      <ProjectReference Include="..\..\..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <Content Include="..\..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="FluentAssertions" Version="8.7.1" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+      <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+   </ItemGroup>
+   <PropertyGroup>
+      <NoWarn>CS0436</NoWarn>
+   </PropertyGroup>
 </Project>
