@@ -15,7 +15,8 @@ static class DiscriminatedUnion
       }
    }
 
-   public class InvalidDiscriminatedUnionTypeException(Type instanceType, IReadOnlyList<Type> allowedTypes) : Exception($"{instanceType.FullName} is not one of {allowedTypes.Select(type => type.FullName ?? "Unnamed type").Join(",")}");
+   public class InvalidDiscriminatedUnionTypeException(Type instanceType, IReadOnlyList<Type> allowedTypes) :
+      Exception($"{instanceType.FullName} is not one of {string.Join(",", allowedTypes.Select(type => type.FullName ?? "Unnamed type"))}");
 }
 
 public abstract class DiscriminatedUnion<TInheritor, TOption1, TOption2>
