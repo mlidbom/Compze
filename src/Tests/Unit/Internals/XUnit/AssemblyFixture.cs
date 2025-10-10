@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using FluentAssertions;
 
@@ -15,18 +17,26 @@ public static class AssemblySetup
    [ModuleInitializer]
    public static void Initialize()
    {
-      lock(_lock)
+      try
       {
-         if(_initialized) return;
-         _initialized = true;
+         lock(_lock)
+         {
+            if(_initialized) return;
+            _initialized = true;
 
-         License.Accepted = true;
-         Tests.Infrastructure.TestFixtureHelper.PerformSetup();
-         AssertTestInheritsUniversalTestBase();
+            License.Accepted = true;
+            Tests.Infrastructure.TestFixtureHelper.PerformSetup();
+            AssertTestInheritsUniversalTestBase();
 
-         // Register cleanup for when the AppDomain unloads
-         AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-         AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
+            // Register cleanup for when the AppDomain unloads
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+            AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
+         }
+      }
+      catch(Exception ex)
+      {
+         LogInitializationFailure("Unit.Internals.XUnit.AssemblySetup.Initialize", ex);
+         throw;
       }
    }
 
@@ -44,5 +54,26 @@ public static class AssemblySetup
          typeof(AssemblySetup).Assembly,
          typeof(Tests.Infrastructure.XUnit.UniversalTestBase),
          Tests.Infrastructure.TestFixtureHelper.IsXUnitTestClass);
+   }
+
+   static void LogInitializationFailure(string location, Exception ex)
+   {
+      try
+      {
+         var logPath = @"c:\tmp\init_failure.txt";
+         Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
+         var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+         var message = $"[{timestamp}] INITIALIZATION FAILURE in {location}:{Environment.NewLine}" +
+                      $"Exception Type: {ex.GetType().FullName}{Environment.NewLine}" +
+                      $"Message: {ex.Message}{Environment.NewLine}" +
+                      $"Stack Trace: {ex.StackTrace}{Environment.NewLine}" +
+                      $"ToString: {ex}{Environment.NewLine}" +
+                      $"==============================================================================={Environment.NewLine}";
+         File.AppendAllText(logPath, message);
+      }
+      catch
+      {
+         // If logging fails, we can't do much about it
+      }
    }
 }

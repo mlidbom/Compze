@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Compze.Utilities.Logging;
@@ -19,8 +20,16 @@ public static class TestFixtureHelper
 {
    public static void PerformSetup(ILogEventEnricher? testEnricher = null)
    {
-      SetupSerilog(testEnricher);
-      UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
+      try
+      {
+         SetupSerilog(testEnricher);
+         UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
+      }
+      catch(Exception ex)
+      {
+         LogInitializationFailure("TestFixtureHelper.PerformSetup", ex);
+         throw;
+      }
    }
 
    public static void PerformTeardown()
@@ -55,13 +64,21 @@ public static class TestFixtureHelper
 
    public static void AssertAllTestClassesInheritFromBase(Assembly assembly, Type baseType, Func<Type, bool> isTestClassPredicate)
    {
-      var testClasses = assembly.GetTypes().Where(isTestClassPredicate);
-      var invalidTests = testClasses.Where(t => !baseType.IsAssignableFrom(t)).ToList();
-
-      if(invalidTests.Any())
+      try
       {
-         var typeList = string.Join(Environment.NewLine, invalidTests.Select(t => t.FullName));
-         throw new InvalidOperationException($"The following test classes do not inherit from {baseType.Name}: {typeList}: Count {invalidTests.Count}");
+         var testClasses = assembly.GetTypes().Where(isTestClassPredicate);
+         var invalidTests = testClasses.Where(t => !baseType.IsAssignableFrom(t)).ToList();
+
+         if(invalidTests.Any())
+         {
+            var typeList = string.Join(Environment.NewLine, invalidTests.Select(t => t.FullName));
+            throw new InvalidOperationException($"The following test classes do not inherit from {baseType.Name}: {typeList}: Count {invalidTests.Count}");
+         }
+      }
+      catch(Exception ex)
+      {
+         LogInitializationFailure($"TestFixtureHelper.AssertAllTestClassesInheritFromBase (Assembly: {assembly.GetName().Name})", ex);
+         throw;
       }
    }
 
@@ -85,5 +102,26 @@ public static class TestFixtureHelper
       return type.GetMethods()
                  .Any(method => method.GetCustomAttributes(true)
                                       .Any(attr => attr.GetType().Name == "TestAttribute"));
+   }
+
+   static void LogInitializationFailure(string location, Exception ex)
+   {
+      try
+      {
+         var logPath = @"c:\tmp\init_failure.txt";
+         Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
+         var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+         var message = $"[{timestamp}] INITIALIZATION FAILURE in {location}:{Environment.NewLine}" +
+                      $"Exception Type: {ex.GetType().FullName}{Environment.NewLine}" +
+                      $"Message: {ex.Message}{Environment.NewLine}" +
+                      $"Stack Trace: {ex.StackTrace}{Environment.NewLine}" +
+                      $"ToString: {ex}{Environment.NewLine}" +
+                      $"==============================================================================={Environment.NewLine}";
+         File.AppendAllText(logPath, message);
+      }
+      catch
+      {
+         // If logging fails, we can't do much about it
+      }
    }
 }
