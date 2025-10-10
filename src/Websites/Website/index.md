@@ -16,9 +16,9 @@ Compze aims to help make these paradigms widely understood, accessible, and popu
 
 <div class="grid">
 
-[!INCLUDE [](index/semantic-events.md)]
+[!INCLUDE [](index/teventive-programming.md)]
 
-[!INCLUDE [](index/hypermedia-apis.md)]
+[!INCLUDE [](index/thypermedia-apis.md)]
 
 </div>
 

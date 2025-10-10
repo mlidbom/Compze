@@ -1,7 +1,7 @@
 ﻿<div>
 
-#### [Semantic Events](~/Compze/Tessaging/Teventive/_docs/definition.md)
-Leveraging well established and understood C# features enables an event modeling paradigm which
+#### [Teventive](~/Compze/Tessaging/Teventive/_docs/definition.md)
+Leveraging .NET type compatibility, teventive programming enables an event modeling paradigm which
 * Gives an unprecedented ability to understand domains in terms of how the events that can occur relate to each other.
 * Eliminates all need for manual event routing and type checking.
 * Dramatically reduces the number of event subscriptions needed.
