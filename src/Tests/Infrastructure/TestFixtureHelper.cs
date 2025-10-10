@@ -139,7 +139,8 @@ public static class TestFixtureHelper
          File.AppendAllText(@"c:\tmp\init_failure.txt",
                             @$"{actionType}Failure: {typeof(TRunner).FullName}
 Exception: {e}
-");// This is the extremely, EXTREMELY, unusual case where we actually swallow an exception, because in the NCrunch test runner, any failure during this stage will result in the test runner failing in ways that are very hard to diagnose.
+");
+         throw;
       }
    }
 }
