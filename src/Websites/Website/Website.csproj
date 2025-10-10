@@ -35,11 +35,9 @@
         <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj"/>
     </ItemGroup>
 
-    <!-- Include all _docs folder contents from the Compze source tree for compilation in the Website project -->
-    <!-- This allows documentation examples to be co-located with production code while being compiled here for DocFX -->
+    <!-- Exclude all .cs files from the Compze junction EXCEPT _docs/*.cs which DocFX needs -->
     <ItemGroup>
-        <Compile Include="..\..\Compze\**\_docs\*.cs" LinkBase="Compze"/>
-        <Content Include="..\..\Compze\**\_docs\*.md" LinkBase="Compze"/>
-        <Content Include="..\..\Compze\**\_docs\*.yml" LinkBase="Compze"/>
+        <Compile Remove="Compze\**\*.cs"/>
+        <Compile Include="Compze\**\_docs\*.cs"/>
     </ItemGroup>
 </Project>
