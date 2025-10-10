@@ -1,5 +1,5 @@
 ﻿<div class="news-article">
 
-##### [Three pages](../paradigms/semantic-events/introduction.md) of Semantic Events documentation added.
+##### [Three pages](~/Compze/Tessaging/Teventive/_docs/introduction.md) of Semantic Events documentation added.
 
 </div>

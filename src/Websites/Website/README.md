@@ -1,3 +1,13 @@
+### Documentation is co-located with source code in `_docs` folders. 
+The Website project accesses these files via a **directory junction**, avoiding file duplication while enabling DocFX processing.
+
+### Setup
+
+```cmd
+cd src\Websites\Website
+mklink /J Compze ..\..\Compze
+```
+
 Look in package.json for details on what these instructions actually execute.
 
 * For local development, run npm install to install dependencies

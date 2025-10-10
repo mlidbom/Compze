@@ -26,7 +26,10 @@
         ],
         "exclude": [
           "_site/**",
-          "node_modules/**"
+          "node_modules/**",
+          "Compze/**/bin/**",
+          "Compze/**/obj/**",
+          "Compze/**/*.cs"
         ]
       }
     ],

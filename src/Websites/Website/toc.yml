@@ -1,9 +1,11 @@
-- name: Semantic Events
-  href: paradigms/semantic-events/
+- name: Tessaging
+  href: Compze/Tessaging/_docs/
+- name: Typermedia  
+  href: Compze/Tessaging/Typermedia/_docs/
+- name: Teventive
+  href: Compze/Tessaging/Teventive/_docs/
 #- name: Hypermedia APIs
 #  href: paradigms/hypermedia-apis/
-- name: Docs
-  href: docs/
 - name: News
   href: news/
 

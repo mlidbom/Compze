@@ -1,0 +1,7 @@
+# Ignore the junction/symlink to source tree
+Compze/
+
+# DocFX build output
+_site/
+api/
+obj/
