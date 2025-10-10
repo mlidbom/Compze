@@ -12,6 +12,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
 		<ProjectReference Include="..\Compze.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
 		<ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
 	<ItemGroup>
