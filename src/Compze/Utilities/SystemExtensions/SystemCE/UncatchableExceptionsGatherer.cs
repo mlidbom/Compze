@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE;
 

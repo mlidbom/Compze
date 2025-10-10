@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 static class SyncOrAsyncCE
 {

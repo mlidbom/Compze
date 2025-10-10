@@ -1,7 +1,7 @@
 using Compze.Persistence.Common;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase

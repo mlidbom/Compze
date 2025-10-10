@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal;
@@ -7,7 +7,7 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;

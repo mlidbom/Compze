@@ -13,6 +13,7 @@
    <ItemGroup>
       <ProjectReference Include="..\..\Tests\AccountManagement.Tests.csproj" />
       <ProjectReference Include="..\..\..\..\..\Tests\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
+      <ProjectReference Include="..\..\..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.1" />

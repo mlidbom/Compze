@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />

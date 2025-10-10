@@ -207,6 +207,11 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Compze/Utilities/Threading/">
+    <Project Path="Compze/Utilities/Threading/Compze.Utilities.Threading.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Compze/Utilities/Testing/" />
   <Folder Name="/Compze/Utilities/Testing/DbPool/">
     <Project Path="Compze/Utilities/Testing/DbPool/Compze.Utilities.Testing.DbPool.csproj">

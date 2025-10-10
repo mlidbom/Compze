@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Typermedia.Abstractions;
 

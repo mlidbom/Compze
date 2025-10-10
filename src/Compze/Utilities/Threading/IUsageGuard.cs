@@ -1,7 +1,7 @@
-﻿namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 ///<summary>Implementations ensure that any preconditions for using an object are fulfilled, and throws an exception if it could not successfully do so.</summary>
-interface IUsageGuard
+public interface IUsageGuard
 {
    ///<summary>Implementations throw an exception if the guard could not guarantee the preconditions.</summary>
    void EnsureAccessValid();

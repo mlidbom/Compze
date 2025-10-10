@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 using Xunit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;

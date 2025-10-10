@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -6,7 +6,7 @@ using Compze.Abstractions;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;

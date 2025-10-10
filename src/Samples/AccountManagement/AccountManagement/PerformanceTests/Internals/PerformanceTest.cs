@@ -12,7 +12,7 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;

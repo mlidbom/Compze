@@ -1,8 +1,9 @@
-﻿using System;
+using System;
+using Compze.Threading.Internal;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
-partial class MonitorCE
+public partial class MonitorCE
 {
    public static MonitorCE WithDefaultTimeout() => new(DefaultTimeout);
    public static MonitorCE WithTimeout(TimeSpan timeout) => new(timeout);

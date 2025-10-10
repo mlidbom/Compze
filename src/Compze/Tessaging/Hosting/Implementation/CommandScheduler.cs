@@ -1,4 +1,4 @@
-﻿using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -7,8 +7,8 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.ResourceAccess;
+using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System;
 using System.Collections.Generic;

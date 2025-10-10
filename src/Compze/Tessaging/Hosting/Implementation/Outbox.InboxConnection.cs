@@ -7,7 +7,7 @@ using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

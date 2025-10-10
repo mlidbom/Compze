@@ -1,6 +1,6 @@
 using System.Data.Common;
 using Compze.Persistence.Common.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using Npgsql;
 
 namespace Compze.Persistence.PostgreSql.Infrastructure;

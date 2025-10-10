@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
     <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
     <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
+    <ProjectReference Include="..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />

@@ -5,7 +5,7 @@ using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using Microsoft.Data.SqlClient;
 using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 

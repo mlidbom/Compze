@@ -1,6 +1,6 @@
-﻿using System.Transactions;
+using System.Transactions;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 class SingleTransactionUsageGuard : IUsageGuard
 {

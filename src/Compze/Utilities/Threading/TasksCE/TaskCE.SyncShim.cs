@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 // ReSharper disable MethodSupportsCancellation
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Threading.TasksCE;
 
 static partial class TaskCE
 {

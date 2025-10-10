@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\Integration\Internals\Compze.Tests.Integration.Internals.csproj" />
     <ProjectReference Include="..\..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
     <ProjectReference Include="..\..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.7.1" />

@@ -16,6 +16,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Contracts\Compze.Utilities.Contracts.csproj" />
 		<ProjectReference Include="..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+		<ProjectReference Include="..\Threading\Compze.Utilities.Threading.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.Microsoft" />

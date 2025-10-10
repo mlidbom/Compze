@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Persistence.Common;

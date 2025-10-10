@@ -3,7 +3,7 @@ using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using Npgsql;
 using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 

@@ -5,7 +5,7 @@ using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using JetBrains.Annotations;
 using System;
 

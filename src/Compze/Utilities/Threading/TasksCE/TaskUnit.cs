@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.Utilities.Functional;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Threading.TasksCE;
 
 static class TaskUnit
 {

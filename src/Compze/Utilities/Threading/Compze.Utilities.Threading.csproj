@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<RootNamespace>Compze.Utilities</RootNamespace>
+		<RootNamespace>Compze.Threading</RootNamespace>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
@@ -22,7 +22,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Contracts\Compze.Utilities.Contracts.csproj" />
 		<ProjectReference Include="..\Functional\Compze.Utilities.Functional.csproj" />
-		<ProjectReference Include="..\Threading\Compze.Utilities.Threading.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -71,7 +70,7 @@
       <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
       <InternalsVisibleTo Include="Compze.Tessaging.Typermedia.Abstractions" />
       <InternalsVisibleTo Include="ScratchPad.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
 	</ItemGroup>
 
 </Project>

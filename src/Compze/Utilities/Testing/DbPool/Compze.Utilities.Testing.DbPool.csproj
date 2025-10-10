@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Tessaging\Hosting\Configuration\Compze.Tessaging.Hosting.Configuration.csproj" />
     <ProjectReference Include="..\..\Logging\Compze.Utilities.Logging.csproj" />
+    <ProjectReference Include="..\..\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />

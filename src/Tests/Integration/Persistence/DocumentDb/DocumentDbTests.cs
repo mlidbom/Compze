@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />

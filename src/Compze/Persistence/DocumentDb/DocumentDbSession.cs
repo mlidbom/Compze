@@ -9,7 +9,7 @@ using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using static Compze.Utilities.Contracts.Assert;
 

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
-interface IThreadShared<out TResource>
+public interface IThreadShared<out TResource>
 {
    TResult Read<TResult>(Func<TResource, TResult> read);
    TResult Update<TResult>(Func<TResource, TResult> update);
@@ -11,7 +11,7 @@ interface IThreadShared<out TResource>
    void Await(TimeSpan timeout, Func<TResource, bool> condition);
 }
 
-static class ThreadShared
+public static class ThreadShared
 {
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>() where TShared : new() =>
       new MonitorCEThreadShared<TShared>(new TShared(), MonitorCE.WithDefaultTimeout());

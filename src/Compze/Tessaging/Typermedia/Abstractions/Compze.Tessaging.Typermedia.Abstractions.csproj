@@ -13,5 +13,6 @@
     <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
 </Project>

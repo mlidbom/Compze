@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Threading;
+using Compze.Threading.Internal;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
-partial class MonitorCE
+public partial class MonitorCE
 {
    internal UpdateLock EnterUpdateLockWhen(Func<bool> condition) =>
       EnterUpdateLockWhen(InfiniteTimeout, condition);

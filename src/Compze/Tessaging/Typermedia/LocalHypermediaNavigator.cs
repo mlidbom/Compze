@@ -1,10 +1,10 @@
-﻿using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 
 namespace Compze.Tessaging.Typermedia;
 

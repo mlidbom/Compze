@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Threading.TasksCE;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class ConfigureAwaitCE

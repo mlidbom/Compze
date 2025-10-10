@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\..\Persistence\DocumentDb\PostgreSql\Compze.Persistence.DocumentDb.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Teventive\EventStore\PostgreSql\Compze.Tessaging.Teventive.EventStore.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Persistence\PostgreSql\Compze.Tessaging.Persistence.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.7.1" />

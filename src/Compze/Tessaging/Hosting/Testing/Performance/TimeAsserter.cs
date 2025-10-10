@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;

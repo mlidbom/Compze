@@ -10,6 +10,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
+		<ProjectReference Include="..\Threading\Compze.Utilities.Threading.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />

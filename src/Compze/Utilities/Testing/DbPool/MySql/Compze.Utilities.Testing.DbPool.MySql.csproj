@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
     <ProjectReference Include="..\..\..\..\Persistence\MySql\Infrastructure\Compze.Persistence.MySql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />

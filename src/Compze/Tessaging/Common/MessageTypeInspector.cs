@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading;
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Common;
 

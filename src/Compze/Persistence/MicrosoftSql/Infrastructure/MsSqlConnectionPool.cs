@@ -1,7 +1,7 @@
 using Compze.Persistence.Common;
 using Compze.Persistence.Common.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Persistence.MicrosoftSql.Infrastructure;

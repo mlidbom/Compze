@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\..\..\Compze\Tessaging\Teventive\EventStore\MicrosoftSql\Compze.Tessaging.Teventive.EventStore.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Tessaging\Persistence\MicrosoftSql\Compze.Tessaging.Persistence.MicrosoftSql.csproj" />
     <ProjectReference Include="..\Domain\Events\AccountManagement.Domain.Events.csproj" />
+    <ProjectReference Include="..\..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">

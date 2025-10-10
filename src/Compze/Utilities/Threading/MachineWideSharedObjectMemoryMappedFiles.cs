@@ -1,4 +1,4 @@
-﻿//todo: Delete if the new version remains stable.
+//todo: Delete if the new version remains stable.
 // using System;
 // using System.Collections.Generic;
 // using System.IO;

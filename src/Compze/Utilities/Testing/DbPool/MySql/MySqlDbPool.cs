@@ -1,6 +1,6 @@
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MySql;

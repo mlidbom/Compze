@@ -1,5 +1,5 @@
-﻿using Compze.Persistence.PostgreSql.Infrastructure;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Persistence.PostgreSql.Infrastructure;
+using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Document = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
