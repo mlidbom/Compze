@@ -53,7 +53,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       Configuration = configuration;
 
       _registry = new MessageHandlerRegistry(TypeMapper.Instance);
-      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new OptimizedLazy<IServiceLocator>(() => Container.ServiceLocator));
+      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
    }
 
    void SetupContainer()

@@ -15,7 +15,7 @@ static class AppSettingsJsonConfigurationParameterProviderRegistrar
 
 
 ///<summary>Fetches configuration variables from the application configuration file.</summary>
-class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton
+class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton<IConfigurationParameterProvider>
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)
       => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
@@ -23,9 +23,9 @@ class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterPro
 
    AppSettingsJsonConfigurationParameterProvider(){}
 
-   public static readonly IConfigurationParameterProvider Instance = new AppSettingsJsonConfigurationParameterProvider();
+   public static IConfigurationParameterProvider Instance { get; } = new AppSettingsJsonConfigurationParameterProvider();
 
-   static readonly OptimizedLazy<IConfigurationSection> AppSettingsSectionInitializer = new(() => new ConfigurationBuilder()
+   static readonly LazyCE<IConfigurationSection> AppSettingsSectionInitializer = new(() => new ConfigurationBuilder()
                                                                                                  .SetBasePath(Directory.GetCurrentDirectory())
                                                                                                  .AddJsonFile("appsettings.json", false, true)
                                                                                                  .AddJsonFile("appsettings-testing.json", true, true)

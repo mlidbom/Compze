@@ -13,13 +13,13 @@ interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, Npgs
 
    class PgSqlConnectionPool : IPgSqlConnectionPool
    {
-      readonly OptimizedLazy<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>> _pool;
+      readonly LazyCE<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>> _pool;
 
       public PgSqlConnectionPool(string connectionString) : this(() => connectionString) {}
 
       public PgSqlConnectionPool(Func<string> getConnectionString)
       {
-         _pool = new OptimizedLazy<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>>(
+         _pool = new LazyCE<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>>(
             () =>
             {
                var connectionString = getConnectionString();

@@ -3,7 +3,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE;
 
-class OptimizedLazy<TValue>(Func<TValue> factory)
+class LazyCE<TValue>(Func<TValue> factory)
    where TValue : class
 {
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();

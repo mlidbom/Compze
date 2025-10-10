@@ -13,11 +13,11 @@ internal interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnecti
 
    class MySqlConnectionPool : IMySqlConnectionPool
    {
-      readonly OptimizedLazy<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>> _pool;
+      readonly LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>> _pool;
 
       public MySqlConnectionPool(Func<string> getConnectionString)
       {
-         _pool = new OptimizedLazy<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>>(
+         _pool = new LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>>(
             () =>
             {
                var connectionString = getConnectionString();

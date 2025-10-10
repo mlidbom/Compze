@@ -13,11 +13,11 @@ internal interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnecti
 
    class MsSqlConnectionPool : IMsSqlConnectionPool
    {
-      readonly OptimizedLazy<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>> _pool;
+      readonly LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>> _pool;
 
       public MsSqlConnectionPool(Func<string> getConnectionString)
       {
-         _pool = new OptimizedLazy<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>>(
+         _pool = new LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>>(
             () =>
             {
                var connectionString = getConnectionString();

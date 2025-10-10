@@ -40,7 +40,7 @@ class RenamingDecorator(ITypeMapper typeMapper)
 {
    readonly ITypeMapper _typeMapper = typeMapper;
 
-   static readonly OptimizedLazy<Regex> FindTypeNames = new(() => new Regex("""
+   static readonly LazyCE<Regex> FindTypeNames = new(() => new Regex("""
                                                                             "\$type"\: "([^"]*)"
                                                                             """,
                                                                             RegexOptions.Compiled));

@@ -5,7 +5,7 @@ namespace Compze.Tessaging.Hosting.Abstractions;
 
 public class MessageHandlerRegistrarWithDependencyInjectionSupport
 {
-   internal MessageHandlerRegistrarWithDependencyInjectionSupport(IMessageHandlerRegistrar register, OptimizedLazy<IServiceLocator> serviceLocator)
+   internal MessageHandlerRegistrarWithDependencyInjectionSupport(IMessageHandlerRegistrar register, LazyCE<IServiceLocator> serviceLocator)
    {
       Register = register;
       ServiceLocator = serviceLocator;
@@ -13,7 +13,7 @@ public class MessageHandlerRegistrarWithDependencyInjectionSupport
 
    internal IMessageHandlerRegistrar Register { get; }
 
-   OptimizedLazy<IServiceLocator> ServiceLocator { get; }
+   LazyCE<IServiceLocator> ServiceLocator { get; }
 
    internal TService Resolve<TService>() where TService : class => ServiceLocator.Value.Resolve<TService>();
 }
