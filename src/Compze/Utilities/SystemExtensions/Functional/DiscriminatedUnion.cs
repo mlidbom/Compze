@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.Functional;
 

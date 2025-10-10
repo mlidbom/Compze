@@ -50,5 +50,5 @@ static class StringCE
 
    public static string Invariant(this FormattableString interpolatedString) => FormattableString.Invariant(interpolatedString);
 
-   public static string IndentToDepth(this string it, string indent, int depth) => it.Split(Environment.NewLine).Select(line => indent.Repeat(depth).Join(string.Empty) + line).Join(Environment.NewLine);
+   public static string IndentToDepth(this string it, string indent, int depth) => it.Split(Environment.NewLine).Select(line => Enumerable.Repeat(indent, depth).Join(string.Empty) + line).Join(Environment.NewLine);
 }
