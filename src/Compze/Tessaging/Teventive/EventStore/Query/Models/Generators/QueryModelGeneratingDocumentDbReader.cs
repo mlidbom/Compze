@@ -6,7 +6,7 @@ using Compze.Abstractions;
 using Compze.Abstractions.Internal.Persistence.DocumentDb;
 using Compze.Persistence.Common;
 using Compze.Utilities.Functional;
-using Compze.Threading;
+using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;

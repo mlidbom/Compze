@@ -4,7 +4,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 

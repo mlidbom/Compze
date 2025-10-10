@@ -7,7 +7,7 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;

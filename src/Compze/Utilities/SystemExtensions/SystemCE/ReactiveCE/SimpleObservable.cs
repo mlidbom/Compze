@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.ReactiveCE;

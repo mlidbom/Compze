@@ -5,7 +5,7 @@ using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;

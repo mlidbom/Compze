@@ -5,8 +5,8 @@ using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

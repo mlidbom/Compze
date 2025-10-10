@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 
 // ReSharper disable StaticMemberInGenericType
 

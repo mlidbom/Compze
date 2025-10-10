@@ -1,6 +1,6 @@
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
-using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.ResourceAccess;
 using Document = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Persistence.DocumentDb.MySql;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 

@@ -4,7 +4,7 @@ using Compze.Persistence.Common;
 using Compze.Persistence.MySql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
 using Schema = Compze.Abstractions.Internal.Persistence.DocumentDb.IDocumentDbPersistenceLayer.DocumentTableSchemaStrings;
 

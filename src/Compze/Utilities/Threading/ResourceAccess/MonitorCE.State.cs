@@ -1,7 +1,6 @@
 using System;
-using Compze.Threading.Internal;
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Utilities.Threading.ResourceAccess;
 
 public partial class MonitorCE
 {

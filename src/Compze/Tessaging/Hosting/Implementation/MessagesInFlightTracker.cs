@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

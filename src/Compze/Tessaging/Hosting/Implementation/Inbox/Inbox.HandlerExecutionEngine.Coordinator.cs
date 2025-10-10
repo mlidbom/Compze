@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Hosting.Implementation;

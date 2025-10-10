@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
 using JetBrains.Annotations;
+using SyncOrAsyncCE = Compze.Utilities.Threading.SyncOrAsyncCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 
@@ -70,7 +70,7 @@ static class TimeAsserter
                                                      [InstantHandle] Action? tearDown,
                                                      uint maxTries,
                                                      DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
-      InternalExecuteAsync(runScenario.AsAsync(), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, null, writer).SyncResult();
+      SyncOrAsyncCE.SyncResult(InternalExecuteAsync(SyncOrAsyncCE.AsAsync(runScenario), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, null, writer));
 
    static async Task<TReturnValue> InternalExecuteAsync<TReturnValue>([InstantHandle] Func<Task<TReturnValue>> runScenario,
                                                                       int iterations,

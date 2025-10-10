@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Compze.Threading;
+namespace Compze.Utilities.Threading;
 
 static class ThreadPoolCE
 {

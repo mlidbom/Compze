@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Compze.Tests.Infrastructure.Threading;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.Testing.Threading;
 

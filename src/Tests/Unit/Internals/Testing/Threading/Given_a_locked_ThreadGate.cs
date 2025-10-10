@@ -4,10 +4,10 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Threading;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.ResourceAccess;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Utilities.Threading.ResourceAccess;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure

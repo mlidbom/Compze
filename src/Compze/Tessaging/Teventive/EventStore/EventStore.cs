@@ -12,7 +12,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading;
+using Compze.Utilities.Threading;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Teventive.EventStore;

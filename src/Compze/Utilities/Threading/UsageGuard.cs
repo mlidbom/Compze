@@ -1,4 +1,4 @@
-namespace Compze.Threading;
+namespace Compze.Utilities.Threading;
 
 ///<summary>Base class that takes care of most of the complexity of implementing <see cref="IUsageGuard"/></summary>
 abstract class UsageGuard : IUsageGuard

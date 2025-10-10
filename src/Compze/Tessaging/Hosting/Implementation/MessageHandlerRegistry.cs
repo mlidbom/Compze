@@ -15,8 +15,8 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
@@ -46,7 +46,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
       _eventHandlers.TryGetValue(typeof(TEvent), out var currentEventSubscribers);
       currentEventSubscribers ??= new List<Action<IEvent>>();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlers, typeof(TEvent), currentEventSubscribers.AddToCopy(@event => handler((TEvent)@event)));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlers, typeof(TEvent), ReadonlyCollectionsCE.AddToCopy(currentEventSubscribers, @event => handler((TEvent)@event)));
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlerRegistrations, new EventHandlerRegistration(typeof(TEvent), registrar => registrar.For(handler)));
       return this;
    });

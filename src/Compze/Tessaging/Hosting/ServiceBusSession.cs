@@ -5,9 +5,9 @@ using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading;
 using JetBrains.Annotations;
 using System;
+using Compze.Utilities.Threading;
 
 namespace Compze.Tessaging.Hosting;
 

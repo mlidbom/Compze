@@ -1,8 +1,8 @@
 using System.Transactions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Persistence.InMemory.EventStore;
 

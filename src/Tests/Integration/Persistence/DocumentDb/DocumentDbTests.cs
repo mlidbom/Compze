@@ -4,7 +4,6 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using Compze.Tests.Common.NUnit.Persistence.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Common.Persistence.DocumentDb;
+using Compze.Utilities.Threading;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure

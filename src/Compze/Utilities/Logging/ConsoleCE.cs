@@ -1,6 +1,6 @@
 using System;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Utilities.Logging;
 

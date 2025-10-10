@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
-using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NCrunch.Framework;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable AccessToDisposedClosure
 

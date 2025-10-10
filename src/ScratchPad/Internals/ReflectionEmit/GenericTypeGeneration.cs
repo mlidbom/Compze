@@ -7,8 +7,8 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 using FluentAssertions;
 using NUnit.Framework;
 

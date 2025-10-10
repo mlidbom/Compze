@@ -5,13 +5,13 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Teventive.EventStore;
 

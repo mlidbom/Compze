@@ -5,11 +5,11 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.EventStore;

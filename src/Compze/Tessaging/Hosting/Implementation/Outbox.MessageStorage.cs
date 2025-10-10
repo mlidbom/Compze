@@ -8,7 +8,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

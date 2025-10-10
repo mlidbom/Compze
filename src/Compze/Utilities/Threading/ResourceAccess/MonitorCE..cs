@@ -13,7 +13,7 @@ using System.Threading;
                            Scope = "type",
                            Target = "~T:Compze.SystemCE.ThreadingCE.ResourceAccess.MonitorCE")]
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Utilities.Threading.ResourceAccess;
 
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 public partial class MonitorCE

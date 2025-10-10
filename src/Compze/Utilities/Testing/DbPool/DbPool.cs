@@ -2,11 +2,11 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Utilities.Testing.DbPool;
 
@@ -18,14 +18,14 @@ public abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 
    protected DbPool() : base(forceStackTraceAllocation:true)
    {
-      _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
+      _reservationLength = System.Diagnostics.Debugger.IsAttached ? TimeSpanCE.Minutes(10) : TimeSpanCE.Seconds(65);
 
       MachineWideState = MachineWideSharedObject<SharedState>.For(GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), usePersistentFile: true);
    }
 
    const string PoolDatabaseNamePrefix = $"Compze_{nameof(DbPool)}_";
 
-   readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
+   readonly MonitorCE _guard = MonitorCE.WithTimeout(TimeSpanCE.Seconds(30));
    readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<Database> _transientCache = new List<Database>();
 
@@ -47,7 +47,7 @@ public abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
       }
 
       var startTime = DateTime.Now;
-      var timeoutAt = startTime + 45.Seconds();
+      var timeoutAt = startTime + TimeSpanCE.Seconds(45);
       while(reservedDatabase == null)
       {
          if(DateTime.Now > timeoutAt) throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");

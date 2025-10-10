@@ -8,8 +8,8 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 
 // ReSharper disable UnusedTypeParameter : todo: We'll keep the unused stuff for reference for now. If it is not used during the refactoring of wrapped event dispatching, ditch it.
 // ReSharper disable UnusedMember.Global

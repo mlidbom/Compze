@@ -1,7 +1,7 @@
 using System;
 using Compze.Utilities.Functional;
 
-namespace Compze.Threading.Internal;
+namespace Compze.Utilities.Threading;
 
 static class TimeSpanExtensions
 {

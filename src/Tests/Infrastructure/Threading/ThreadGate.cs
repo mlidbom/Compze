@@ -5,7 +5,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tests.Infrastructure.Threading;
 

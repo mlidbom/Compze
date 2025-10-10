@@ -2,8 +2,8 @@ using System.Transactions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.ResourceAccess;
 using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessageWithReceivers;
 // ReSharper disable CollectionNeverQueried.Local
 

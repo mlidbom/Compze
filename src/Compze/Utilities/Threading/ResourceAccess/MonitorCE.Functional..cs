@@ -1,9 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Utilities.Functional;
-using Compze.Threading.Internal;
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Utilities.Threading.ResourceAccess;
 
 [SuppressMessage("Design",
                  "CA1001:Types that own disposable fields should be disposable",

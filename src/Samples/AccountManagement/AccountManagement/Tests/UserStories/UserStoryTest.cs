@@ -5,9 +5,9 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
-using Compze.Threading.TasksCE;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace AccountManagement.UserStories;
 

@@ -10,7 +10,6 @@ using JetBrains.Annotations;
 using Xunit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
@@ -24,6 +23,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Functional;
+using Compze.Utilities.Threading;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure
@@ -550,8 +550,8 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest, IAsyncLi
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var getHistorySection = GatedCodeSection.WithTimeout(2.Seconds());
-      var changeEmailSection = GatedCodeSection.WithTimeout(2.Seconds());
+      var getHistorySection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(2));
+      var changeEmailSection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(2));
 
       const int threads = 2;
       var tasks = 1.Through(threads).Select(_ => Task.Run(UpdateEmail)).ToArray();
@@ -602,8 +602,8 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest, IAsyncLi
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var changeEmailSection = GatedCodeSection.WithTimeout(20.Seconds());
-      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(20.Seconds());
+      var changeEmailSection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(20));
+      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(TimeSpanCE.Seconds(20));
 
       const int threads = 2;
 
@@ -613,7 +613,7 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest, IAsyncLi
       changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualTo(2);
       changeEmailSection.ExitGate.AwaitQueueLengthEqualTo(1);
 
-      Thread.Sleep(100.Milliseconds());
+      Thread.Sleep(TimeSpanCE.Milliseconds(100));
 
       var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Should().Be(1, "Only one thread should have been able to fetch the aggregate"));
 

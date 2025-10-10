@@ -1,7 +1,7 @@
 using System.Transactions;
 using Compze.Tessaging.Hosting.Implementation;
-using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.ResourceAccess;
 
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local

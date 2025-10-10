@@ -5,7 +5,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Hosting;

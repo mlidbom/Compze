@@ -4,9 +4,9 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.ResourceAccess;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Utilities.Threading.ResourceAccess;
 
 // ReSharper disable UnusedMethodReturnValue.Local
 // ReSharper disable MemberCanBeMadeStatic.Local

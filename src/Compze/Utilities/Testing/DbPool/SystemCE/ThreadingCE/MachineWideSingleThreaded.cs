@@ -2,7 +2,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;

@@ -1,5 +1,5 @@
 using Compze.Persistence.MicrosoftSql.Infrastructure;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessagesDatabaseSchemaStrings;
 using D = Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.OutboxMessageDispatchingTableSchemaStrings;
 

@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics;
-using Compze.Threading.Internal;
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Utilities.Threading.ResourceAccess;
 
 class EnterLockTimeoutException : Exception
 {

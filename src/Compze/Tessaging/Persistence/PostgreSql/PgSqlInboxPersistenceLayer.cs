@@ -2,7 +2,7 @@ using Compze.Persistence.Common;
 using Compze.Persistence.PostgreSql.Infrastructure;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using Schema =  Compze.Tessaging.Hosting.Implementation.IServiceBusPersistenceLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Persistence.PostgreSql;

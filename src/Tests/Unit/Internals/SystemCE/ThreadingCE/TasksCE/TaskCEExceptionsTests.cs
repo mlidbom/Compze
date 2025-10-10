@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
-using Compze.Threading.TasksCE;
 using FluentAssertions;
 using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
 

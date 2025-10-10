@@ -7,13 +7,13 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

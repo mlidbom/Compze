@@ -1,4 +1,4 @@
-namespace Compze.Threading;
+namespace Compze.Utilities.Threading;
 
 class CombinationUsageGuard(params IUsageGuard[] usageGuards) : IUsageGuard
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Utilities.Threading.ResourceAccess;
 
 class AwaitingConditionTimeoutException : Exception
 {

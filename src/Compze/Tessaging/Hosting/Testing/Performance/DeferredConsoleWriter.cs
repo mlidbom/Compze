@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Compze.Utilities.Logging;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;

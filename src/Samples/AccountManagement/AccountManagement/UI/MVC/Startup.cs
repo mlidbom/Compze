@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

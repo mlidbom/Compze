@@ -4,7 +4,7 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE;
 

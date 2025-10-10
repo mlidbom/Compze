@@ -2,8 +2,8 @@ using System.Transactions;
 using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.ResourceAccess;
 using ReadOrder = Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions.ReadOrder;
 
 namespace Compze.Tessaging.Persistence.InMemory.EventStore;

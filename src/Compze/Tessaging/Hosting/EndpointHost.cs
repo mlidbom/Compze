@@ -9,7 +9,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 

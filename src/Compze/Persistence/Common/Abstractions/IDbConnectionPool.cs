@@ -2,7 +2,7 @@ using System;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Persistence.Common.Abstractions;
 

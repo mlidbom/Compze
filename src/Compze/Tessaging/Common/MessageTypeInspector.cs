@@ -5,8 +5,8 @@ using System.Reflection;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Common;
 

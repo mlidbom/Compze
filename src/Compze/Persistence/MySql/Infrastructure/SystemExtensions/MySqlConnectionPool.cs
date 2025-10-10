@@ -1,7 +1,7 @@
 using Compze.Persistence.Common;
 using Compze.Persistence.Common.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Persistence.MySql.Infrastructure.SystemExtensions;

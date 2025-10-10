@@ -6,7 +6,7 @@ using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
+using Compze.Utilities.Threading.TasksCE;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
