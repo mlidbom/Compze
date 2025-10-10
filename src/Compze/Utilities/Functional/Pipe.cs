@@ -19,7 +19,7 @@ namespace Compze.Utilities.Functional;
 ///    avoiding name conflicts with existing methods is vital.
 ///    Lowercase naming is the most effective strategy we found.
 /// </summary>
-static class Pipe
+public static class Pipe
 {
    ///<summary>Takes the first value, applies <see cref="transform"/> and return the resulting value.</summary>
    public static TResult select<TValue, TResult>(this TValue it, Func<TValue, TResult> transform) => transform(it);

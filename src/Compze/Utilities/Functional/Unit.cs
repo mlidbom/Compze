@@ -18,7 +18,7 @@ public readonly struct unit : IEquatable<unit>
    public static readonly unit Value = default;
 
    ///<summary>Executes the task and returns unit making for easily returning unit without extra lines: unit Method() => unit.From(() => DoSomething())</summary>
-   internal static unit From(Action action)
+   public static unit From(Action action)
    {
       action();
       return Value;

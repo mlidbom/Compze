@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Contracts\Compze.Utilities.Contracts.csproj" />
+		<ProjectReference Include="..\Functional\Compze.Utilities.Functional.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

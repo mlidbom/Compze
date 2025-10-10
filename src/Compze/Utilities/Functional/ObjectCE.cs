@@ -6,12 +6,12 @@ namespace Compze.Utilities.Functional;
 ///<summary>
 /// Methods useful for any type when used in a Linq context
 ///</summary>
-static class ObjectCE
+public static class ObjectCE
 {
    /// <summary>
    /// Returns <paramref name="me"/> repeated <paramref name="times"/> times.
    /// </summary>
-   internal static IEnumerable<T> Repeat<T>(this T me, int times)
+   public static IEnumerable<T> Repeat<T>(this T me, int times)
    {
       while(times-- > 0)
       {

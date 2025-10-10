@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Compze.Utilities.Functional;
 
-static class DiscriminatedUnion
+public static class DiscriminatedUnion
 {
    internal static void AssertValidType(object instance, IReadOnlyList<Type> allowedTypes)
    {
