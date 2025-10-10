@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Transactions;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 class EnlistInAmbientTransactionUsageGuard : IUsageGuard
 {

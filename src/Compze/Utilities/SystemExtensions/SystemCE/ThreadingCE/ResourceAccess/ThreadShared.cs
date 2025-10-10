@@ -1,5 +1,4 @@
 ﻿using System;
-using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -15,7 +14,7 @@ interface IThreadShared<out TResource>
 static class ThreadShared
 {
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>() where TShared : new() =>
-      new MonitorCEThreadShared<TShared>(Constructor.For<TShared>.DefaultConstructor.Instance(), MonitorCE.WithDefaultTimeout());
+      new MonitorCEThreadShared<TShared>(new TShared(), MonitorCE.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>(TShared shared) =>
       new MonitorCEThreadShared<TShared>(shared, MonitorCE.WithDefaultTimeout());

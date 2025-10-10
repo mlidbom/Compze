@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
@@ -17,11 +16,9 @@ static class OnlyWithinLocksThreadingHelpers
    internal static void AddRangeToCopyAndReplace<T>(ref IReadOnlyList<T> original, IEnumerable<T> item) =>
       original = original.AddRangeToCopy(item);
 
-
    ///<summary>Must be called from synchronized code that guarantees that this is the only thread modifying <paramref name="original"/>. It's purpose is to allow readers free access to <paramref name="original"/> even though <paramref name="original"/> is only thread safe for concurrent readers.</summary>
    internal static void AddToCopyAndReplace<T>(ref IReadOnlySet<T> original, T item) =>
       original = original.AddToCopy(item);
-
 
    ///<summary>Must be called from synchronized code that guarantees that this is the only thread modifying <paramref name="original"/>. It's purpose is to allow readers free unlocked access to <paramref name="original"/> even though <paramref name="original"/> is only thread safe for concurrent readers.</summary>
    internal static void AddToCopyAndReplace<TKey, TValue>(ref IReadOnlyDictionary<TKey, TValue> original, TKey key, TValue value) where TKey : notnull =>

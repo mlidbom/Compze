@@ -12,34 +12,32 @@ public static partial class EnumerableCE
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static unit ForEach<TSource, TReturn>(this IEnumerable<TSource> source, Func<TSource, TReturn> action)
+   public static unit ForEach<TSource, TReturn>(this IEnumerable<TSource> source, Func<TSource, TReturn> action) => unit.From(() =>
    {
       Argument.NotNull(source).NotNull(action);
       foreach(var item in source)
       {
          action(item);
       }
-      return unit.Value;
-    }
+   });
 
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static unit ForEach<T>(this IEnumerable<T> source, [InstantHandle]Action<T> action)
+   public static unit ForEach<T>(this IEnumerable<T> source, [InstantHandle] Action<T> action) => unit.From(() =>
    {
       Argument.NotNull(source).NotNull(action);
 
-      foreach (var item in source)
+      foreach(var item in source)
       {
          action(item);
       }
-      return unit.Value;
-   }
+   });
 
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static unit ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+   public static unit ForEach<T>(this IEnumerable<T> source, Action<T, int> action) => unit.From(() =>
    {
       Argument.NotNull(source).NotNull(action);
 
@@ -48,6 +46,5 @@ public static partial class EnumerableCE
       {
          action(item, index++);
       }
-      return unit.Value;
-    }
+   });
 }
