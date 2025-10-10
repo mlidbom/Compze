@@ -25,24 +25,32 @@ public static class TestFixtureHelper
          SetupSerilog(testEnricher);
          UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
       }
-      catch(Exception ex)
+      catch
       {
-         LogInitializationFailure("TestFixtureHelper.PerformSetup", ex);
+         LogFailure(typeof(TestFixtureHelper));
          throw;
       }
    }
 
    public static void PerformTeardown()
    {
-      //We don't consume here,because some test runners, including NCrunch, will not surface teardown exceptions, so consuming here would hide them. Without consuming, we may see them on the next test run.
-      GCCE.ForceFullGcAllGenerationsAndWaitForFinalizers();
-      if(UncatchableExceptionsGatherer.Exceptions.Any())
+      try
       {
-         throw new AggregateException(UncatchableExceptionsGatherer.Exceptions);
-      }
+         //We don't consume here,because some test runners, including NCrunch, will not surface teardown exceptions, so consuming here would hide them. Without consuming, we may see them on the next test run.
+         GCCE.ForceFullGcAllGenerationsAndWaitForFinalizers();
+         if(UncatchableExceptionsGatherer.Exceptions.Any())
+         {
+            throw new AggregateException(UncatchableExceptionsGatherer.Exceptions);
+         }
 
-      // Synchronously wait for log to close
-      Log.CloseAndFlushAsync().AsTask().GetAwaiter().GetResult();
+         // Synchronously wait for log to close
+         Log.CloseAndFlushAsync().AsTask().GetAwaiter().GetResult();
+      }
+      catch
+      {
+         LogFailure(typeof(TestFixtureHelper));
+         throw;
+      }
    }
 
    static void SetupSerilog(ILogEventEnricher? testEnricher)
@@ -56,7 +64,7 @@ public static class TestFixtureHelper
 
       Log.Logger = config.MinimumLevel.Debug()
                          .WriteTo.Seq("http://192.168.0.11:5341", formatProvider: CultureInfo.InvariantCulture)
-                         .WriteTo.Console(formatProvider:CultureInfo.InvariantCulture)
+                         .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
                          .CreateLogger();
 
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
@@ -75,9 +83,9 @@ public static class TestFixtureHelper
             throw new InvalidOperationException($"The following test classes do not inherit from {baseType.Name}: {typeList}: Count {invalidTests.Count}");
          }
       }
-      catch(Exception ex)
+      catch
       {
-         LogInitializationFailure($"TestFixtureHelper.AssertAllTestClassesInheritFromBase (Assembly: {assembly.GetName().Name})", ex);
+         LogFailure(typeof(TestFixtureHelper));
          throw;
       }
    }
@@ -104,24 +112,34 @@ public static class TestFixtureHelper
                                       .Any(attr => attr.GetType().Name == "TestAttribute"));
    }
 
-   static void LogInitializationFailure(string location, Exception ex)
+   public static void LogFailure(Type type)
    {
       try
       {
-         var logPath = @"c:\tmp\init_failure.txt";
-         Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
-         var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-         var message = $"[{timestamp}] INITIALIZATION FAILURE in {location}:{Environment.NewLine}" +
-                      $"Exception Type: {ex.GetType().FullName}{Environment.NewLine}" +
-                      $"Message: {ex.Message}{Environment.NewLine}" +
-                      $"Stack Trace: {ex.StackTrace}{Environment.NewLine}" +
-                      $"ToString: {ex}{Environment.NewLine}" +
-                      $"==============================================================================={Environment.NewLine}";
-         File.AppendAllText(logPath, message);
+         File.AppendAllText(@"c:\tmp\init_failure.txt", type.FullName + Environment.NewLine);
       }
       catch
       {
-         // If logging fails, we can't do much about it
+         // If logging fails, ignore it
+      }
+   }
+
+   public static void RunAssemblyLevelSetup<TRunner>(Action action) => RunAssemblyLevelAction<TRunner>(action, "Setup");
+
+   public static void RunAssemblyLevelTeardown<TRunner>(Action action) => RunAssemblyLevelAction<TRunner>(action, "Teardown");
+
+   static void RunAssemblyLevelAction<TRunner>(Action action, string actionType)
+   {
+      try
+      {
+         action();
+      }
+      catch(Exception e)
+      {
+         File.AppendAllText(@"c:\tmp\init_failure.txt",
+                            @$"{actionType}Failure: {typeof(TRunner).FullName}
+Exception: {e}
+");// This is the extremely, EXTREMELY, unusual case where we actually swallow an exception, because in the NCrunch test runner, any failure during this stage will result in the test runner failing in ways that are very hard to diagnose.
       }
    }
 }

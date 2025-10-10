@@ -9,59 +9,63 @@ This test was not executed during a planned execution run. Ensure your test proj
 ```
 
 ## Solution Implemented
-Added comprehensive try-catch instrumentation to all XUnit and NUnit initialization code paths to capture and log any exceptions that might be occurring during test fixture initialization.
+Added minimal try-catch instrumentation to all XUnit and NUnit initialization and teardown code paths to log which class fails during fixture setup or teardown.
 
 ## Instrumented Files
 
-### 1. XUnit Assembly Fixtures (Module Initializers)
+### 1. Common Test Infrastructure (Shared Helper)
+- **File**: `src\Tests\Infrastructure\TestFixtureHelper.cs`
+  - **Method**: `LogFailure(Type type)` - Simple helper that logs just the type's FullName
+  - **Method**: `PerformSetup()` - Wrapped in try-catch
+  - **Method**: `PerformTeardown()` - Wrapped in try-catch
+  - **Method**: `AssertAllTestClassesInheritFromBase()` - Wrapped in try-catch
+
+### 2. XUnit Assembly Fixtures (Module Initializers)
 - **File**: `src\Tests\Unit\XUnit\AssemblyFixture.cs`
-  - **Method**: `AssemblySetup.Initialize()` (ModuleInitializer)
-  - **Location Tag**: `Unit.XUnit.AssemblySetup.Initialize`
+  - **Method**: `Initialize()` - Setup wrapped in try-catch
+  - **Method**: `Cleanup()` - Teardown wrapped in try-catch
 
 - **File**: `src\Tests\Unit\Internals\XUnit\AssemblyFixture.cs`
-  - **Method**: `AssemblySetup.Initialize()` (ModuleInitializer)
-  - **Location Tag**: `Unit.Internals.XUnit.AssemblySetup.Initialize`
+  - **Method**: `Initialize()` - Setup wrapped in try-catch
+  - **Method**: `Cleanup()` - Teardown wrapped in try-catch
 
-### 2. NUnit Universal Test Fixture
+### 3. NUnit Universal Test Fixture
 - **File**: `src\Tests\Infrastructure\NUnit\UniversalTestFixture.cs`
-  - **Method**: `UniversalSetup()` (OneTimeSetUp)
-  - **Location Tag**: `NUnit.UniversalTestFixture.UniversalSetup`
-
-### 3. Common Test Infrastructure
-- **File**: `src\Tests\Infrastructure\TestFixtureHelper.cs`
-  - **Method**: `PerformSetup()`
-    - **Location Tag**: `TestFixtureHelper.PerformSetup`
-  - **Method**: `AssertAllTestClassesInheritFromBase()`
-    - **Location Tag**: `TestFixtureHelper.AssertAllTestClassesInheritFromBase (Assembly: {assembly.GetName().Name})`
+  - **Method**: `UniversalSetup()` - OneTimeSetUp wrapped in try-catch
+  - **Method**: `UniversalTeardown()` - OneTimeTearDown wrapped in try-catch
 
 ## Log File Location
-All initialization failures will be logged to:
+All failures will be logged to:
 ```
 c:\tmp\init_failure.txt
 ```
 
 ## Log Format
-Each logged exception includes:
-- Timestamp (yyyy-MM-dd HH:mm:ss.fff)
-- Location identifier
-- Exception type (full name)
-- Exception message
-- Full stack trace
-- Exception ToString() output
-- Separator line
+Each logged failure contains just the full type name of the class that failed, one per line:
+```
+Compze.Tests.Unit.XUnit.AssemblySetup
+Compze.Tests.Infrastructure.NUnit.UniversalTestFixture
+Compze.Tests.Infrastructure.TestFixtureHelper
+```
 
 ## Next Steps
 1. Run tests in NCrunch
-2. If initialization failures occur, check `c:\tmp\init_failure.txt` for detailed exception information
-3. Analyze the logged exceptions to identify the root cause
-4. Fix the underlying issue
-5. Remove or keep this diagnostic logging as needed
+2. If initialization/teardown failures occur, check `c:\tmp\init_failure.txt` to see which class failed
+3. The class name will tell you whether the failure was in:
+   - Setup or teardown logic (based on which class is logged)
+   - XUnit or NUnit infrastructure
+   - Common helper methods
+4. Investigate the specific class to determine the root cause
+5. Common issues to look for:
+   - Serilog configuration issues (Seq server unreachable at `http://192.168.0.11:5341`)
+   - Assembly scanning problems in `AssertAllTestClassesInheritFromBase`
+   - Teardown failures in log flushing or exception gathering
 
 ## Test Assemblies Covered
-- `Tests.Unit` (XUnit)
-- `Tests.Unit.Internals` (XUnit)
-- `Tests.Integration` (NUnit, via Infrastructure.NUnit.UniversalTestFixture)
-- `Tests.Integration.Internals` (NUnit, via Infrastructure.NUnit.UniversalTestFixture)
-- `Tests.Performance.Internals` (NUnit, via Infrastructure.NUnit.UniversalTestFixture)
+- `Tests.Unit` (XUnit) - Setup and Cleanup
+- `Tests.Unit.Internals` (XUnit) - Setup and Cleanup
+- `Tests.Integration` (NUnit) - Setup and Teardown (via Infrastructure.NUnit.UniversalTestFixture)
+- `Tests.Integration.Internals` (NUnit) - Setup and Teardown (via Infrastructure.NUnit.UniversalTestFixture)
+- `Tests.Performance.Internals` (NUnit) - Setup and Teardown (via Infrastructure.NUnit.UniversalTestFixture)
 
 All NUnit test assemblies inherit from the instrumented `Tests.Infrastructure.NUnit.UniversalTestFixture`.
