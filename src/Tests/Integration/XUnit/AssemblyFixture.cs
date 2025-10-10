@@ -1,21 +1,22 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-[assembly: AssemblyFixture(typeof(Compze.Tests.Unit.XUnit.XUnitAssemblyFixture))]
+[assembly: AssemblyFixture(typeof(Compze.Tests.Integration.XUnit.XUnitAssemblyFixture))]
 
-namespace Compze.Tests.Unit.XUnit;
+namespace Compze.Tests.Integration.XUnit;
 
 // ReSharper disable once MemberCanBeInternal
 public sealed class XUnitAssemblyFixture : IAsyncLifetime
 {
    public ValueTask InitializeAsync()
    {
-      Tests.Infrastructure.TestFixtureHelper.RunAssemblyLevelSetup<XUnitAssemblyFixture>(() =>
+      TestFixtureHelper.RunAssemblyLevelSetup<XUnitAssemblyFixture>(() =>
       {
          License.Accepted = true;
-         Tests.Infrastructure.TestFixtureHelper.PerformSetup();
+         TestFixtureHelper.PerformSetup();
          AssertTestInheritsUniversalTestBase();
       });
 
@@ -24,19 +25,15 @@ public sealed class XUnitAssemblyFixture : IAsyncLifetime
 
    public ValueTask DisposeAsync()
    {
-      Tests.Infrastructure.TestFixtureHelper.RunAssemblyLevelTeardown<XUnitAssemblyFixture>(() =>
-      {
-         Tests.Infrastructure.TestFixtureHelper.PerformTeardown();
-      });
-
+      TestFixtureHelper.RunAssemblyLevelTeardown<XUnitAssemblyFixture>(TestFixtureHelper.PerformTeardown);
       return ValueTask.CompletedTask;
    }
 
    static void AssertTestInheritsUniversalTestBase()
    {
-      Tests.Infrastructure.TestFixtureHelper.AssertAllTestClassesInheritFromBase(
+      TestFixtureHelper.AssertAllTestClassesInheritFromBase(
          typeof(XUnitAssemblyFixture).Assembly,
          typeof(Tests.Infrastructure.XUnit.UniversalTestBase),
-         Tests.Infrastructure.TestFixtureHelper.IsXUnitTestClass);
+         TestFixtureHelper.IsXUnitTestClass);
    }
 }

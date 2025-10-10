@@ -1,50 +1,39 @@
-using System;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
+using Xunit;
+
+[assembly: AssemblyFixture(typeof(Compze.Tests.Unit.Internals.XUnit.XUnitAssemblyFixture))]
 
 namespace Compze.Tests.Unit.Internals.XUnit;
 
-/// <summary>
-/// XUnit v2 doesn't have IAssemblyFixture. This class uses a module initializer to perform assembly-level setup.
-/// </summary>
-public static class AssemblySetup
+// ReSharper disable once MemberCanBeInternal
+public sealed class XUnitAssemblyFixture : IAsyncLifetime
 {
-   class Marker { }
-
-   static bool _initialized;
-   static readonly object _lock = new();
-
-   [ModuleInitializer]
-   public static void Initialize()
+   public ValueTask InitializeAsync()
    {
-      Tests.Infrastructure.TestFixtureHelper.RunAssemblyLevelSetup<Marker>(() =>
+      TestFixtureHelper.RunAssemblyLevelSetup<XUnitAssemblyFixture>(() =>
       {
-         lock(_lock)
-         {
-            if(_initialized) return;
-            _initialized = true;
-
-            License.Accepted = true;
-            Tests.Infrastructure.TestFixtureHelper.PerformSetup();
-            AssertTestInheritsUniversalTestBase();
-
-            // Register cleanup for when the AppDomain unloads
-            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-            AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
-         }
+         License.Accepted = true;
+         TestFixtureHelper.PerformSetup();
+         AssertTestInheritsUniversalTestBase();
       });
+
+      return ValueTask.CompletedTask;
    }
 
-   static void OnProcessExit(object? sender, EventArgs e) => Cleanup();
-   static void OnDomainUnload(object? sender, EventArgs e) => Cleanup();
+   public ValueTask DisposeAsync()
+   {
+      TestFixtureHelper.RunAssemblyLevelTeardown<XUnitAssemblyFixture>(TestFixtureHelper.PerformTeardown);
 
-   static void Cleanup() => Tests.Infrastructure.TestFixtureHelper.RunAssemblyLevelTeardown<Marker>(Tests.Infrastructure.TestFixtureHelper.PerformTeardown);
+      return ValueTask.CompletedTask;
+   }
 
    static void AssertTestInheritsUniversalTestBase()
    {
-      Tests.Infrastructure.TestFixtureHelper.AssertAllTestClassesInheritFromBase(
-         typeof(AssemblySetup).Assembly,
+      TestFixtureHelper.AssertAllTestClassesInheritFromBase(
+         typeof(XUnitAssemblyFixture).Assembly,
          typeof(Tests.Infrastructure.XUnit.UniversalTestBase),
-         Tests.Infrastructure.TestFixtureHelper.IsXUnitTestClass);
+         TestFixtureHelper.IsXUnitTestClass);
    }
 }
