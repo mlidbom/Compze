@@ -29,6 +29,7 @@
         'Remove-RedundantInternalsVisibleTo',
         'Validate-SolutionStructure',
         'Test-Compze',
+        'Fix-Encodings',
         'Reload-Profile'
     )
 

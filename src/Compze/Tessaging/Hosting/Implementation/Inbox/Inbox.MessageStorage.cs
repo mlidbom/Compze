@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;

@@ -1,4 +1,4 @@
-﻿namespace Compze.Utilities.DependencyInjection;
+namespace Compze.Utilities.DependencyInjection;
 
 interface IServiceLocatorKernel
 {

@@ -1,4 +1,4 @@
-﻿using Compze.Tessaging.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;

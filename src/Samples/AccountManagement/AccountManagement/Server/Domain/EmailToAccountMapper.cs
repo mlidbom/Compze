@@ -1,4 +1,4 @@
-﻿using AccountManagement.Domain.Events;
+using AccountManagement.Domain.Events;
 using Compze.Persistence.DocumentDb;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Typermedia.Abstractions;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Compze.Abstractions;
 using Compze.Abstractions.Internal.Time;

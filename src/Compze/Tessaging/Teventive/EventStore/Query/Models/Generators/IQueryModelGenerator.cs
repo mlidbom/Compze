@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Utilities.Functional;
 
 namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;

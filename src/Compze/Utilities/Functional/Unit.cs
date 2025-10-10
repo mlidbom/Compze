@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 #pragma warning disable IDE0130
 namespace Compze.Utilities.Functional;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;

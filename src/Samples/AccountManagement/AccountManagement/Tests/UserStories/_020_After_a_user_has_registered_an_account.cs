@@ -1,4 +1,4 @@
-﻿using AccountManagement.Domain.Registration;
+using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using FluentAssertions;
 using NUnit.Framework;

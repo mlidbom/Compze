@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;

@@ -1,4 +1,4 @@
-﻿using Compze.Tessaging.Common;
+using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.DependencyInjection;

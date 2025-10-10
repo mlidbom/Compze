@@ -1,4 +1,4 @@
-﻿#if !NCRUNCH
+#if !NCRUNCH
 [assembly: NUnit.Framework.Parallelizable(NUnit.Framework.ParallelScope.None)]
 #endif
 

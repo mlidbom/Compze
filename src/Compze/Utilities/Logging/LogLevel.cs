@@ -1,4 +1,4 @@
-﻿namespace Compze.Utilities.Logging;
+namespace Compze.Utilities.Logging;
 
 public enum LogLevel
 {

@@ -1,4 +1,4 @@
-﻿using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable InconsistentNaming

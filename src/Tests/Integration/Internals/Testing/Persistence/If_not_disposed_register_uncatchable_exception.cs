@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;

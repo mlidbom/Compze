@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Compze.Utilities.Contracts;
 
 namespace Compze.Utilities.Functional;

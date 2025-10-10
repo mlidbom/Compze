@@ -8,6 +8,7 @@ This module provides convenient PowerShell commands for Compze development.
 - **Remove-RedundantInternalsVisibleTo** - Removes redundant InternalsVisibleTo attributes
 - **Validate-SolutionStructure** - Validates the Compze solution structure
 - **Test-Compze** - Runs the full test suite with proper configuration
+- **Fix-Encodings** - Converts files to UTF-8 with BOM encoding
 - **Reload-Profile** - Reloads your PowerShell profile without restarting
 
 ## Setup
@@ -63,6 +64,30 @@ Test-Compze -Build -SingleThreadedTesting
 ```
 
 **Note**: When using `-Build`, it uses `-m:1` (single-threaded build) to avoid .NET test runner race conditions.
+
+### Fix-Encodings
+
+Convert all git-tracked .cs files to UTF-8 without BOM (default path is `src`):
+```powershell
+Fix-Encodings
+```
+
+Check what would be converted without making changes:
+```powershell
+Fix-Encodings -WhatIf
+```
+
+Convert files in a specific path:
+```powershell
+Fix-Encodings -Path "src/Tests"
+```
+
+Convert specific file types:
+```powershell
+Fix-Encodings -FilePattern "*.csproj"
+```
+
+This command ensures consistent UTF-8 without BOM encoding across the codebase, which is the modern standard for .NET projects. UTF-8 without BOM provides better cross-platform compatibility and prevents git diff issues caused by BOM changes.
 
 ### Other Commands
 

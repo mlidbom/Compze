@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.

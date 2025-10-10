@@ -1,4 +1,4 @@
-﻿namespace Compze.Tessaging.Hosting.Implementation;
+namespace Compze.Tessaging.Hosting.Implementation;
 
 partial class Inbox
 {

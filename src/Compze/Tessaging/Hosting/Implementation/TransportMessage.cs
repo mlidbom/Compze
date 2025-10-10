@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;

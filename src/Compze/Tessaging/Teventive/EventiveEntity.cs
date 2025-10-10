@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;

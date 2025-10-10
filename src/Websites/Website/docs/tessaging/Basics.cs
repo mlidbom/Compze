@@ -1,4 +1,4 @@
-﻿// ReSharper disable All
+// ReSharper disable All
 #pragma warning disable
 
 namespace Website.docs.tessaging;

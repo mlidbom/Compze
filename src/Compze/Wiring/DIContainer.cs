@@ -1,4 +1,4 @@
-﻿namespace Compze.Wiring;
+namespace Compze.Wiring;
 
 public enum DIContainer
 {

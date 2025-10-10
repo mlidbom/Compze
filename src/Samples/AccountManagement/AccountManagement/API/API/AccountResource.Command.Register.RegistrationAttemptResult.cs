@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using AccountManagement.Domain.Registration;
 using Newtonsoft.Json;
 

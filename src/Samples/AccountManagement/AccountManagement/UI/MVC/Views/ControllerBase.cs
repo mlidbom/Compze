@@ -1,4 +1,4 @@
-﻿using AccountManagement.API;
+using AccountManagement.API;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountManagement.UI.MVC.Views;

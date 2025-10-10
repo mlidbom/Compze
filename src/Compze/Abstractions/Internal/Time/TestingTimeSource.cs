@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

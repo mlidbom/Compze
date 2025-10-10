@@ -1,4 +1,4 @@
-﻿using Compze.Utilities.Contracts;
+using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 

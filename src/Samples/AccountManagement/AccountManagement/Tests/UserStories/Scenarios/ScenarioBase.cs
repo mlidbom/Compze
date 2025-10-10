@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AccountManagement.API;
 using FluentAssertions;
 using FluentAssertions.Specialized;

@@ -1,4 +1,4 @@
-﻿using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore;
 

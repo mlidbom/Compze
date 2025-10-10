@@ -1,6 +1,7 @@
-﻿root = true
+root = true
 
 [*.cs]
+charset = utf-8
 #options: 
 csharp_style_namespace_declarations = file_scoped
 csharp_style_var_elsewhere = true

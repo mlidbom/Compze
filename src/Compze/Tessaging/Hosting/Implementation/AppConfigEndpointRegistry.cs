@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Configuration;

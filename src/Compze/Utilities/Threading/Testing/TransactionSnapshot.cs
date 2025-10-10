@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Transactions;
 
 namespace Compze.Utilities.Threading.Testing;

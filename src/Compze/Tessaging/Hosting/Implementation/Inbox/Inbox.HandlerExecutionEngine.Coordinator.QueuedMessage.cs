@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;

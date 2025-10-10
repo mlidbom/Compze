@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;

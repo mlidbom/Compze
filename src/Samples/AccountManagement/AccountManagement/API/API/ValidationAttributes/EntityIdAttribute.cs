@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AccountManagement.API.ValidationAttributes.Helpers;
 
 namespace AccountManagement.API.ValidationAttributes;

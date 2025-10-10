@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;

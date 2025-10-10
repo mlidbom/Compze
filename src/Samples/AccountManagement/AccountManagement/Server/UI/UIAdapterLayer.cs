@@ -1,4 +1,4 @@
-﻿using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 
 namespace AccountManagement.UI;
 

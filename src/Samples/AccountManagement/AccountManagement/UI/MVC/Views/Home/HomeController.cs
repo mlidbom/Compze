@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using AccountManagement.UI.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 

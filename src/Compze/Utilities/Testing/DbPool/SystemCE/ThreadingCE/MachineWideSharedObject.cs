@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Compze.Serialization;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;

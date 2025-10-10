@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Persistence.MicrosoftSql.Infrastructure;
 using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
 using Compze.Persistence.PostgreSql.Infrastructure;

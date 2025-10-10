@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 namespace Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;

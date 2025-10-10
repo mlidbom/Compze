@@ -1,4 +1,4 @@
-﻿namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
+namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 public interface IEventStoreEventPublisher
 {

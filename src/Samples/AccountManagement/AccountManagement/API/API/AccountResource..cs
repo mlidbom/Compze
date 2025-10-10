@@ -1,4 +1,4 @@
-﻿using AccountManagement.Domain;
+using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
 using Compze.Abstractions;
 using Newtonsoft.Json;

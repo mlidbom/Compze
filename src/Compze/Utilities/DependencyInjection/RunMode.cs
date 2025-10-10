@@ -1,4 +1,4 @@
-﻿using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Utilities.DependencyInjection;
 

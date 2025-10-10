@@ -1,4 +1,4 @@
-﻿using Compze.Persistence.Common;
+using Compze.Persistence.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
 

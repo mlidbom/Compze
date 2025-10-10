@@ -1,4 +1,4 @@
-﻿
+
 using Composable;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(InternalsRequiredToBeVisibleTo.Assembly1)]

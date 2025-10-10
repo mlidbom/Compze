@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Abstractions;
 using Compze.Tessaging.Teventive.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;

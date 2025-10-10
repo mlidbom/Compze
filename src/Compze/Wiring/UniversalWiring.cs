@@ -1,4 +1,4 @@
-﻿using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Internal.Time;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

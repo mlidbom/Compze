@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
 

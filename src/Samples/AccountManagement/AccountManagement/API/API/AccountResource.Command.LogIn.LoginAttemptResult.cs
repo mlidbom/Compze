@@ -1,4 +1,4 @@
-﻿// ReSharper disable MemberCanBeMadeStatic.Global
+// ReSharper disable MemberCanBeMadeStatic.Global
 
 namespace AccountManagement.API;
 

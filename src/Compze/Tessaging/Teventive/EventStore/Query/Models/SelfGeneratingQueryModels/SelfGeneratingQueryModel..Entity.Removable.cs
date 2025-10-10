@@ -1,4 +1,4 @@
-﻿using Compze.Tessaging.Teventive.Abstractions;
+using Compze.Tessaging.Teventive.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 namespace Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;

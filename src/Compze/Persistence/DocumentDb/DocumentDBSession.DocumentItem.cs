@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Compze.Persistence.DocumentDb.Abstractions;
 using Compze.Utilities.Contracts;
