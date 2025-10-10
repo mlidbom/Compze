@@ -40,4 +40,9 @@
   <ItemGroup>
     <Compile Include="..\..\Compze\**\_docs\*.cs" LinkBase="CompzeDocsExamples" />
   </ItemGroup>
+  
+  <!-- Make _docs folders visible in the Website project file tree -->
+  <ItemGroup>
+    <None Include="..\..\Compze\**\_docs\**" Link="CompzeDocs\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>

@@ -1,4 +1,7 @@
 // ReSharper disable All
+
+using Compze.Tessaging.Teventive.EventStore.Abstractions;
+
 #pragma warning disable
 
 namespace Compze.Tessaging.Abstractions;
@@ -28,6 +31,11 @@ class MessageHandlingExamples
 }
 
 class MyCommand {}
+
+interface IMyEvent : IAggregateEvent
+{
+
+}
 
 interface IMessageHandler<T>
 {
