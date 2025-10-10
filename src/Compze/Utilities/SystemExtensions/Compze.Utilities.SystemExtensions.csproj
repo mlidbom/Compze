@@ -20,6 +20,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Contracts\Compze.Utilities.Contracts.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
       <InternalsVisibleTo Include="Compze.Abstractions" />
       <InternalsVisibleTo Include="Compze.Abstractions.Internal" />
       <InternalsVisibleTo Include="Compze.Common" />

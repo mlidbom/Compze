@@ -192,6 +192,11 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Compze/Utilities/Contracts/">
+    <Project Path="Compze/Utilities/Contracts/Compze.Utilities.Contracts.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Compze/Utilities/SystemExtensions/">
     <Project Path="Compze/Utilities/SystemExtensions/Compze.Utilities.SystemExtensions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />

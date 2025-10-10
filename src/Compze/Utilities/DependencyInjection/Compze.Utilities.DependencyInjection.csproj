@@ -14,6 +14,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\Contracts\Compze.Utilities.Contracts.csproj" />
 		<ProjectReference Include="..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
 	<ItemGroup>

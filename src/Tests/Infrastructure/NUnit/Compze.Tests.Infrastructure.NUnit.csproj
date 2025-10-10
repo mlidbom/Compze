@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
   </ItemGroup>
   <ItemGroup>

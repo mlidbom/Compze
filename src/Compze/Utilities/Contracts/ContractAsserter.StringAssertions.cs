@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Contracts;
 
-partial class ContractAsserter
+public partial class ContractAsserter
 {
    public ContractAsserter NotNullOrEmpty([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
       !string.IsNullOrEmpty(value) ? this : throw _createException($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
@@ -12,6 +11,6 @@ partial class ContractAsserter
    public ContractAsserter NotNullEmptyOrWhitespace([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
    {
       NotNull(value, valueString);
-      return !value.IsNullEmptyOrWhiteSpace() ? this : throw _createException($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
+      return !string.IsNullOrWhiteSpace(value) ? this : throw _createException($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
    }
 }
