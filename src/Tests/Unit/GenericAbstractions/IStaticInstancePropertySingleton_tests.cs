@@ -1,4 +1,3 @@
-using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.NUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -6,7 +5,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
-namespace Compze.Tests.Unit.GenericAbstractions.SystemCE;
+namespace Compze.Tests.Unit.GenericAbstractions;
 
 [TestFixture]
 public class IStaticInstancePropertySingleton_tests : UniversalTestBase

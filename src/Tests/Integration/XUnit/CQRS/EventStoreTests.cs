@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Xunit;
 
 namespace Compze.Tests.Integration.XUnit.CQRS;

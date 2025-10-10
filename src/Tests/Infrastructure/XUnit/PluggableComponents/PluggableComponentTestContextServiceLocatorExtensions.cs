@@ -1,11 +1,8 @@
 using System;
-using Compze.Tests.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tests.Infrastructure.XUnit;
+namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 /// <summary>
 /// Extension methods for PluggableComponentTestContext to provide service locator functionality.

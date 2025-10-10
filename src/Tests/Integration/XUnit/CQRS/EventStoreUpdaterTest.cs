@@ -22,6 +22,7 @@ using Compze.Tests.Infrastructure.Transactions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;

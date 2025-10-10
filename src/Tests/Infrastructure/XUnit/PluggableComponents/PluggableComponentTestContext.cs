@@ -1,9 +1,8 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Compze.Wiring;
 using Xunit.Sdk;
 
-namespace Compze.Tests.Infrastructure.XUnit;
+namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 /// <summary>
 /// Instance-based test context that provides access to the current pluggable component combination.

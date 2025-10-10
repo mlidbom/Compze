@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Wiring;
 
-namespace Compze.Tests.Infrastructure.XUnit;
+namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 /// <summary>
 /// Extension methods for PersistenceLayer to provide convenient access to layer-specific values in tests.

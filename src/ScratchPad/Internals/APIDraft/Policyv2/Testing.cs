@@ -6,7 +6,7 @@ using FluentAssertions;
 // ReSharper disable All
 #pragma warning disable //Review OK: This is API experimental code that is never ever used.
 
-namespace ScratchPad.APIDraft.Policyv2;
+namespace ScratchPad.Internals.APIDraft.Policyv2;
 
 public class Testing
 {

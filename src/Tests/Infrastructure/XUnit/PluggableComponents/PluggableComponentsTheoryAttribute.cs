@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Testing;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.Tests.Infrastructure.XUnit;
+namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 /// <summary>
 /// Use this attribute instead of [Fact] for tests that should run with all pluggable component combinations.
