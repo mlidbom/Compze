@@ -10,6 +10,12 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Exclude _docs files from compilation but keep them visible -->
+    <Compile Remove="_docs\**\*.cs" />
+    <None Include="_docs\**\*.cs" />
+    <Content Include="_docs\**\*.md" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
