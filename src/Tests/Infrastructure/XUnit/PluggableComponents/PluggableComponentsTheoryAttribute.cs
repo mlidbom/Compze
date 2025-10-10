@@ -17,9 +17,7 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 public sealed class PluggableComponentsTheoryAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : FactAttribute(sourceFilePath, sourceLineNumber)
-{
-}
+   : FactAttribute(sourceFilePath, sourceLineNumber) {}
 
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 {
@@ -29,23 +27,23 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       IFactAttribute factAttribute)
    {
       var combinations = PluggableComponentsReader.GetCombinations().ToList();
-      
+
       var testCases = combinations
-         .Select(combination =>
-         {
-            // Create and pass a PluggableComponentTestContext instance
-            var arguments = new object[] { new PluggableComponentTestContext(combination) };
-            
-            return new PluggableComponentsTestCase(
-               testMethod: testMethod,
-               combination: combination,
-               testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
-               uniqueID: $"{testMethod.UniqueID}.{combination}",
-               @explicit: factAttribute.Explicit,
-               timeout: factAttribute.Timeout,
-               testMethodArguments: arguments);
-         })
-         .ToArray();
+                     .Select(combination =>
+                      {
+                         // Create and pass a PluggableComponentTestContext instance
+                         var arguments = new object[] { new PluggableComponentTestContext(combination) };
+
+                         return new PluggableComponentsTestCase(
+                            testMethod: testMethod,
+                            combination: combination,
+                            testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
+                            uniqueID: $"{testMethod.UniqueID}.{combination}",
+                            @explicit: factAttribute.Explicit,
+                            timeout: factAttribute.Timeout,
+                            testMethodArguments: arguments);
+                      })
+                     .ToArray();
 
       return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases);
    }
@@ -56,9 +54,7 @@ class PluggableComponentsTestCase : XunitTestCase
    string _combination = string.Empty;
 
    [Obsolete("Called by deserializer")]
-   public PluggableComponentsTestCase()
-   {
-   }
+   public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
       IXunitTestMethod testMethod,

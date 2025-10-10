@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Compze.Utilities.Functional;
 using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 
@@ -18,24 +15,7 @@ public class DuplicateByPluggableComponentTest : UniversalTestBase
 
 class PluggableComponentsTestFixtureSource : IEnumerable<string>
 {
-   static readonly List<string> Dimensions = CreateDimensions().ToList();
+   static readonly List<string> Dimensions = PluggableComponentsReader.GetCombinations().ToList();
    public IEnumerator<string> GetEnumerator() => Dimensions.GetEnumerator();
    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-   const string TestUsingPluggableComponentCombinations = "TestUsingPluggableComponentCombinations";
-   static string[] CreateDimensions()
-   {
-      try
-      {
-         return File.ReadAllLines(TestUsingPluggableComponentCombinations)
-                    .Select(it => it.Trim())
-                    .Where(line => !string.IsNullOrEmpty(line))
-                    .Where(line => !line.StartsWith('#'))
-                    .ToArray();
-      }
-      catch(FileNotFoundException)
-      {
-         return [Enumerable.Repeat($"FileMissing", 3)._(it => string.Join((string?)":", (IEnumerable<string?>)it))];
-      }
-   }
 }
