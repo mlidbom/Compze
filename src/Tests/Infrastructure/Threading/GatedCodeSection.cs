@@ -1,5 +1,4 @@
 ﻿using System;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Threading;
 
@@ -19,6 +18,6 @@ public class GatedCodeSection : IGatedCodeSection
    public IDisposable Enter()
    {
       EntranceGate.AwaitPassThrough();
-      return DisposableCE.Create(() => ExitGate.AwaitPassThrough());
+      return new Disposable(() => ExitGate.AwaitPassThrough());
    }
 }

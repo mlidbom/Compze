@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Infrastructure.Threading;
@@ -18,7 +17,11 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
 
    public TestingTaskRunner Run(params Action[] tasks)
    {
-      tasks.ForEach(action: task => _monitoredTasks.Add(Task.Run(task)));
+      foreach(var task in tasks)
+      {
+         _monitoredTasks.Add(Task.Run(task));
+      }
+
       return this;
    }
 

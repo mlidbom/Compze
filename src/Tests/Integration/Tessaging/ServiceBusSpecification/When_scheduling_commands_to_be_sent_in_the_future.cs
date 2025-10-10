@@ -62,7 +62,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
       var inOneHour = new ScheduledCommand();
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 
-      _receivedCommandGate.TryAwaitPassededThroughCountEqualTo(1, timeout: .5.Seconds())
+      _receivedCommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: .5.Seconds())
                           .Should().Be(false);
    }
 

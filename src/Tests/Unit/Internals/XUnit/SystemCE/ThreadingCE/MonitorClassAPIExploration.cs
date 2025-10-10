@@ -50,7 +50,7 @@ public class MonitorClassApiExploration
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitQueueLengthEqualTo(1);
 
       threadOneWaitsOnLockSection.ExitGate
-                                 .TryAwaitPassededThroughCountEqualTo(1, timeout: 200.Milliseconds())
+                                 .TryAwaitPassedThroughCountEqualTo(1, timeout: 200.Milliseconds())
                                  .Should().Be(false);
 
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitLetOneThreadPassThrough();
@@ -90,7 +90,7 @@ public class MonitorClassApiExploration
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitQueueLengthEqualTo(1);
 
       threadOneWaitsOnLockSection.ExitGate
-                                 .TryAwaitPassededThroughCountEqualTo(1, timeout: 200.Milliseconds())
+                                 .TryAwaitPassedThroughCountEqualTo(1, timeout: 200.Milliseconds())
                                  .Should().Be(false);
 
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitLetOneThreadPassThrough();

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tests.Infrastructure.Threading;
@@ -126,14 +124,14 @@ public class ThreadGate : IThreadGate
    IDisposable LogMethodEntryExit(string method) => _monitor.Update(() =>
    {
       Log($"Entering {method}");
-      return DisposableCE.Create(() => _monitor.Update(() => Log($"Exiting  {method}")));
+      return new Disposable(() => _monitor.Update(() => Log($"Exiting  {method}")));
 
       void Log(string @event)
       {
          if(!_enableLogging) return;
 
          var message = $"{@event} {this}";
-         this.Log().Info(message);
+         Console.WriteLine(message);
       }
    });
 

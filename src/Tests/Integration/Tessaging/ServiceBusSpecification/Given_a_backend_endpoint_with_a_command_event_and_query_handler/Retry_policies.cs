@@ -24,7 +24,7 @@ public class Retry_policies_AtMostOnceCommand_when_command_handler_fails(string 
 
    [Test] public void ExactlyOnce_Event_raised_in_handler_does_not_reach_remote_handler()
    {
-      MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(count: 1, 1.Seconds())
+      MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, 1.Seconds())
                                              .Should()
                                              .Be(expected: false, because: "event should not reach handler");
    }

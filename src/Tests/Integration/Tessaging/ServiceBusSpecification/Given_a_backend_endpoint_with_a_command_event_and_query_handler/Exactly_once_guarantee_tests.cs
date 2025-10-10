@@ -24,7 +24,7 @@ public class Exactly_once_guarantee_tests(string pluggableComponentsCombination)
                     }))
                    .Should().Throw<TransactionAbortedException>();
 
-      CommandHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
+      CommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
                               .Should()
                               .Be(false, "command should not reach handler");
    }
@@ -41,7 +41,7 @@ public class Exactly_once_guarantee_tests(string pluggableComponentsCombination)
 
       MyLocalAggregateEventHandlerThreadGate.Passed.Should().BeGreaterThanOrEqualTo(1);
 
-      MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassededThroughCountEqualTo(1, 1.Seconds())
+      MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
                                              .Should()
                                              .Be(false, "event should not reach handler");
    }

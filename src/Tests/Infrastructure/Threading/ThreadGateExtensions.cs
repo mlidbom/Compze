@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tests.Infrastructure.Transactions;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Threading;
 
@@ -20,7 +19,7 @@ public static class ThreadGateExtensions
 
    public static IThreadGate AwaitPassedThroughCountEqualTo(this IThreadGate @this, int length) => @this.Await(() => @this.Passed == length);
    public static IThreadGate AwaitPassedThroughCountEqualTo(this IThreadGate @this, int length, TimeSpan timeout) => @this.Await(timeout, () => @this.Passed == length);
-   public static bool TryAwaitPassededThroughCountEqualTo(this IThreadGate @this, int count, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Passed == count);
+   public static bool TryAwaitPassedThroughCountEqualTo(this IThreadGate @this, int count, TimeSpan timeout) => @this.TryAwait(timeout, () => @this.Passed == count);
 
    public static IThreadGate ThrowPostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ => throw exception);
 
@@ -35,7 +34,7 @@ public static class ThreadGateExtensions
       var currentPassthroughAction = @this.PassThroughAction;
       var currentPassedThroughCountPlusOne = @this.PassedThrough.Count + 1;
       @this.SetPassThroughAction(threadSnapshot => throw exceptionFactory(threadSnapshot));
-      return @this.ExecuteWithExclusiveLockWhenAsync(1.Minutes(), () => currentPassedThroughCountPlusOne == @this.PassedThrough.Count, () => @this.SetPassThroughAction(currentPassthroughAction));
+      return @this.ExecuteWithExclusiveLockWhenAsync(TimeSpan.FromMinutes(1), () => currentPassedThroughCountPlusOne == @this.PassedThrough.Count, () => @this.SetPassThroughAction(currentPassthroughAction));
    }
 
    public static Task<IThreadGate> ExecuteWithExclusiveLockWhenAsync(this IThreadGate @this, TimeSpan timeout, Func<bool> condition, Action action)
