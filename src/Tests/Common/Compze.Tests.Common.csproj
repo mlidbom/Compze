@@ -17,6 +17,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
-    <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+    <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
+    <ProjectReference Include="..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
   </ItemGroup>
 </Project>

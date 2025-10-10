@@ -10,7 +10,6 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
     <ProjectReference Include="..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
   </ItemGroup>
   <ItemGroup>

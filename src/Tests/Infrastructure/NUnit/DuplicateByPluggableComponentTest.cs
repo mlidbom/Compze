@@ -5,6 +5,8 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by NUnit via reflection.
+
 [TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
 public class DuplicateByPluggableComponentTest : UniversalTestBase
 {
@@ -19,3 +21,5 @@ class PluggableComponentsTestFixtureSource : IEnumerable<string>
    public IEnumerator<string> GetEnumerator() => Dimensions.GetEnumerator();
    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
+
+#pragma warning restore CA1812

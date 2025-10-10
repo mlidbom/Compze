@@ -3,7 +3,6 @@ using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;

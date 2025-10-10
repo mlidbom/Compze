@@ -6,7 +6,6 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using FluentAssertions;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,7 +37,11 @@ public class EventStoreTests : DuplicateByPluggableComponentTest, IAsyncLifetime
 
    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-   public async ValueTask DisposeAsync() => await _serviceLocator.DisposeAsync();
+   public async ValueTask DisposeAsync()
+   {
+      await _serviceLocator.DisposeAsync();
+      GC.SuppressFinalize(this);
+   }
 
    IServiceLocator Init(PluggableComponentTestContext context) =>
       _serviceLocator = context.CreateServiceLocator();

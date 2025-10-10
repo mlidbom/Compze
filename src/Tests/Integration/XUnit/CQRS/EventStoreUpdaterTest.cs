@@ -46,7 +46,11 @@ public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest, IAsyncLi
 
    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-   public async ValueTask DisposeAsync() => await _serviceLocator.DisposeAsync();
+   public async ValueTask DisposeAsync()
+   {
+      await _serviceLocator.DisposeAsync();
+      GC.SuppressFinalize(this);
+   }
 
    unit Init(PluggableComponentTestContext context)
    {

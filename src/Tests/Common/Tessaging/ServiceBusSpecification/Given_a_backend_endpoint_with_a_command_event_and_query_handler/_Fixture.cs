@@ -8,7 +8,6 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions.Extensions;

@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
     <ProjectReference Include="..\..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>

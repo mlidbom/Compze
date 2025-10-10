@@ -5,47 +5,48 @@
         <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Remove="_site\**"/>
-        <Compile Remove="api\**"/>
+        <Compile Remove="_site\**" />
+        <Compile Remove="api\**" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Remove="_site\**"/>
-        <EmbeddedResource Remove="api\**"/>
+        <EmbeddedResource Remove="_site\**" />
+        <EmbeddedResource Remove="api\**" />
     </ItemGroup>
     <ItemGroup>
-        <Content Remove="_site\**"/>
-        <Content Remove="api\**"/>
+        <Content Remove="_site\**" />
+        <Content Remove="api\**" />
     </ItemGroup>
     <ItemGroup>
-        <None Remove="_site\**"/>
-        <None Remove="api\**"/>
+        <None Remove="_site\**" />
+        <None Remove="api\**" />
     </ItemGroup>
     <ItemGroup>
-        <_ContentIncludedByDefault Remove="_site\api\toc.json"/>
-        <_ContentIncludedByDefault Remove="_site\docs\toc.json"/>
-        <_ContentIncludedByDefault Remove="_site\index.json"/>
-        <_ContentIncludedByDefault Remove="_site\manifest.json"/>
-        <_ContentIncludedByDefault Remove="_site\toc.json"/>
+        <_ContentIncludedByDefault Remove="_site\api\toc.json" />
+        <_ContentIncludedByDefault Remove="_site\docs\toc.json" />
+        <_ContentIncludedByDefault Remove="_site\index.json" />
+        <_ContentIncludedByDefault Remove="_site\manifest.json" />
+        <_ContentIncludedByDefault Remove="_site\toc.json" />
     </ItemGroup>
     <ItemGroup>
-        <Watch Include="_site/**/*.*"/>
-        <Watch Include="**/*.cs"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj"/>
+        <Watch Include="_site/**/*.*" />
+        <Watch Include="**/*.cs" />
     </ItemGroup>
 
     <!-- Hide everything from Compze junction except _docs folders -->
     <ItemGroup>
         <!-- Remove ALL items from Compze -->
-        <Compile Remove="Compze\**"/>
-        <Content Remove="Compze\**"/>
-        <None Remove="Compze\**"/>
+        <Compile Remove="Compze\**" />
+        <Content Remove="Compze\**" />
+        <None Remove="Compze\**" />
         
         <!-- Include ONLY _docs content -->
-        <Compile Include="Compze\**\_docs\*.cs"/>
-        <Content Include="Compze\**\_docs\*.md"/>
-        <Content Include="Compze\**\_docs\*.yml"/>
-        <None Include="Compze\**\_docs\**" Exclude="Compze\**\_docs\*.cs;Compze\**\_docs\*.md;Compze\**\_docs\*.yml"/>
+        <Compile Include="Compze\**\_docs\*.cs" />
+        <Content Include="Compze\**\_docs\*.md" />
+        <Content Include="Compze\**\_docs\*.yml" />
+        <None Include="Compze\**\_docs\**" Exclude="Compze\**\_docs\*.cs;Compze\**\_docs\*.md;Compze\**\_docs\*.yml" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     </ItemGroup>
 </Project>

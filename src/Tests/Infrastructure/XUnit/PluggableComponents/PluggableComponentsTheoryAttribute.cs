@@ -18,9 +18,10 @@ public sealed class PluggableComponentsTheoryAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : FactAttribute(sourceFilePath, sourceLineNumber) {}
-
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 {
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
    public ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
       IXunitTestMethod testMethod,

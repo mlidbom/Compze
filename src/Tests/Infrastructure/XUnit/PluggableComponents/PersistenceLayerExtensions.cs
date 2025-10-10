@@ -1,6 +1,6 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Compze.Wiring;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
@@ -33,12 +33,10 @@ public static class PersistenceLayerExtensions
       };
    }
 
-   [return: NotNull]
    static TValue SelectValue<TValue>(TValue? value, string providerName) where TValue : notnull
    {
-      if(value != null && !Equals(value, default(TValue)))
-         return value;
+      if(!Equals(value, default(TValue))) return Result.ReturnNotNull(value);
 
-      throw new InvalidOperationException($"No value provided for {providerName}");
+      throw new Exception($"Value missing for {providerName}");
    }
 }

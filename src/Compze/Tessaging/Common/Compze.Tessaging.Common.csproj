@@ -11,7 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
     <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
     <ProjectReference Include="..\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
     <ProjectReference Include="..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />

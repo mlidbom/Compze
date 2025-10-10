@@ -23,7 +23,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-		<ProjectReference Include="..\..\..\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
 		<ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
 	<!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
