@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<IsTestProject>false</IsTestProject>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<NuGetAuditMode>direct</NuGetAuditMode>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Compze.Utilities.SystemExtensions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
+		<InternalsVisibleTo Include="Compze.Tests.Infrastructure.NUnit" />
+		<InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit" />
+		<InternalsVisibleTo Include="Compze.Tests.Integration" />
+		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
+		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
+		<InternalsVisibleTo Include="Compze.Utilities.Threading.Testing" />
+	</ItemGroup>
+
+</Project>

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Compze.Tests.Infrastructure.Threading;
+namespace Compze.Utilities.Threading.Testing;
 
 public class ThreadSnapshot
 {

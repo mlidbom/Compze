@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Persistence.EventStore;

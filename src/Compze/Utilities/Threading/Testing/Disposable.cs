@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Compze.Tests.Infrastructure.Threading;
+namespace Compze.Utilities.Threading.Testing;
 
 class Disposable(Action action) : IDisposable
 {

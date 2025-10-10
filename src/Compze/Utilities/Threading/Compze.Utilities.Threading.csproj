@@ -70,6 +70,15 @@
       <InternalsVisibleTo Include="Compze.Tessaging.Typermedia.Abstractions" />
       <InternalsVisibleTo Include="ScratchPad.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
+      <InternalsVisibleTo Include="Compze.Utilities.Threading.Testing" />
+	</ItemGroup>
+
+	<!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer. -->
+	<ItemGroup>
+		<Compile Remove="Testing\**" />
+		<EmbeddedResource Remove="Testing\**" />
+		<None Remove="Testing\**" />
+		<Content Remove="Testing\**" />
 	</ItemGroup>
 
 </Project>

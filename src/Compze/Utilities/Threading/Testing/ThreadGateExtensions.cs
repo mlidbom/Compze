@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Tests.Infrastructure.Transactions;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 
-namespace Compze.Tests.Infrastructure.Threading;
+namespace Compze.Utilities.Threading.Testing;
 
 public static class ThreadGateExtensions
 {

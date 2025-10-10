@@ -2,7 +2,7 @@
 using System.Transactions;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
-namespace Compze.Tests.Infrastructure.Transactions;
+namespace Compze.Utilities.SystemCE.TransactionsCE.Testing;
 
 public static class TransactionInterceptorExtensions
 {

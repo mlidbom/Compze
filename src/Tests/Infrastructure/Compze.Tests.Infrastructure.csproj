@@ -16,7 +16,9 @@
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+    <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Testing\Compze.Utilities.SystemExtensions.Testing.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+    <ProjectReference Include="..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
@@ -34,5 +36,13 @@
     <EmbeddedResource Remove="XUnit\**" />
     <None Remove="XUnit\**" />
     <Content Remove="XUnit\**" />
+    <Compile Remove="Threading\**" />
+    <EmbeddedResource Remove="Threading\**" />
+    <None Remove="Threading\**" />
+    <Content Remove="Threading\**" />
+    <Compile Remove="Transactions\**" />
+    <EmbeddedResource Remove="Transactions\**" />
+    <None Remove="Transactions\**" />
+    <Content Remove="Transactions\**" />
   </ItemGroup>
 </Project>

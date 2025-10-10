@@ -10,7 +10,7 @@ using Compze.Tessaging.Persistence.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Threading;
+using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
