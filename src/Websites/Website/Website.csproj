@@ -1,44 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="_site\**" />
-    <Compile Remove="api\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Remove="_site\**" />
-    <EmbeddedResource Remove="api\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="_site\**" />
-    <Content Remove="api\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="_site\**" />
-    <None Remove="api\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="_site\api\toc.json" />
-    <_ContentIncludedByDefault Remove="_site\docs\toc.json" />
-    <_ContentIncludedByDefault Remove="_site\index.json" />
-    <_ContentIncludedByDefault Remove="_site\manifest.json" />
-    <_ContentIncludedByDefault Remove="_site\toc.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Watch Include="_site/**/*.*" />
-    <Watch Include="**/*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
-  </ItemGroup>
-  
-  <!-- Include all _docs folder contents from the Compze source tree for compilation in the Website project -->
-  <!-- This allows documentation examples to be co-located with production code while being compiled here for DocFX -->
-  <ItemGroup>
-    <Compile Include="..\..\Compze\**\_docs\*.cs" LinkBase="CompzeSourceDocs" />
-    <Content Include="..\..\Compze\**\_docs\*.md" LinkBase="CompzeSourceDocs" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Remove="_site\**"/>
+        <Compile Remove="api\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Remove="_site\**"/>
+        <EmbeddedResource Remove="api\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Remove="_site\**"/>
+        <Content Remove="api\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="_site\**"/>
+        <None Remove="api\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="_site\api\toc.json"/>
+        <_ContentIncludedByDefault Remove="_site\docs\toc.json"/>
+        <_ContentIncludedByDefault Remove="_site\index.json"/>
+        <_ContentIncludedByDefault Remove="_site\manifest.json"/>
+        <_ContentIncludedByDefault Remove="_site\toc.json"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Watch Include="_site/**/*.*"/>
+        <Watch Include="**/*.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj"/>
+    </ItemGroup>
+
+    <!-- Include all _docs folder contents from the Compze source tree for compilation in the Website project -->
+    <!-- This allows documentation examples to be co-located with production code while being compiled here for DocFX -->
+    <ItemGroup>
+        <Compile Include="..\..\Compze\**\_docs\*.cs" LinkBase="Compze"/>
+        <Content Include="..\..\Compze\**\_docs\*.md" LinkBase="Compze"/>
+        <Content Include="..\..\Compze\**\_docs\*.yml" LinkBase="Compze"/>
+    </ItemGroup>
 </Project>
