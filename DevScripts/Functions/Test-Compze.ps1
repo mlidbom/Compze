@@ -21,6 +21,9 @@ function Test-Compze {
     .PARAMETER SingleThreadedTesting
     Run tests single-threaded (forces sequential test execution, useful for debugging)
     
+    .PARAMETER WhatIf
+    Shows what would be deleted by git clean without actually deleting anything (only applies with -FullGitReset).
+    
     .EXAMPLE
     Test-Compze
     Runs all tests without building (parallel)
@@ -38,6 +41,10 @@ function Test-Compze {
     Performs full git clean, builds, then runs all tests (parallel)
     
     .EXAMPLE
+    Test-Compze -FullGitReset -WhatIf
+    Shows what would be deleted by git clean without actually deleting anything
+    
+    .EXAMPLE
     Test-Compze -SingleThreadedTesting
     Runs all tests single-threaded without building (for debugging)
     
@@ -45,7 +52,7 @@ function Test-Compze {
     Test-Compze -Build -SingleThreadedTesting
     Builds then runs all tests single-threaded (for debugging)
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [switch]$Build,
@@ -59,7 +66,12 @@ function Test-Compze {
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
         if ($FullGitReset) {
-            Clean-Compze -FullGitReset
+            if ($WhatIfPreference) {
+                Clean-Compze -FullGitReset -WhatIf
+                return
+            } else {
+                Clean-Compze -FullGitReset
+            }
             dotnet build $solutionPath
             
             if ($LASTEXITCODE -ne 0) {

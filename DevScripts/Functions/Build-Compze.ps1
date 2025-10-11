@@ -14,6 +14,9 @@ function Build-Compze {
     This will backup TestUsingPluggableComponentCombinations before running git clean.
     Requires a clean working tree (no uncommitted changes). Implies -Clean.
     
+    .PARAMETER WhatIf
+    Shows what would be deleted by git clean without actually deleting anything (only applies with -FullGitReset).
+    
     .EXAMPLE
     Build-Compze
     Builds the solution
@@ -25,8 +28,12 @@ function Build-Compze {
     .EXAMPLE
     Build-Compze -FullGitReset
     Performs a full git clean, then builds the solution
+    
+    .EXAMPLE
+    Build-Compze -FullGitReset -WhatIf
+    Shows what would be deleted by git clean without actually deleting anything
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [switch]$Clean,
@@ -38,7 +45,12 @@ function Build-Compze {
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
         if ($FullGitReset) {
-            Clean-Compze -FullGitReset
+            if ($WhatIfPreference) {
+                Clean-Compze -FullGitReset -WhatIf
+                return
+            } else {
+                Clean-Compze -FullGitReset
+            }
         }
         elseif ($Clean) {
             Clean-Compze

@@ -18,16 +18,19 @@ Then reload: `. $PROFILE`
 - **Clean-Compze** - Performs a deep clean of the Compze solution
   - `-FullGitReset` - Performs full git reset, removes all untracked files (requires clean working tree, backs up TestUsingPluggableComponentCombinations)
   - `-Verbose` - Show detailed output
+  - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 - **Build-Compze** - Builds the Compze solution
   - `-Clean` - Deep clean before building
   - `-FullGitReset` - Full git reset before building (implies `-Clean`)
+  - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 - **Test-Compze** - Runs Compze tests with proper configuration
   - `-Build` - Build before testing
   - `-Clean` - Clean and build before testing
   - `-FullGitReset` - Full git reset, build, then test (implies `-Clean` and `-Build`)
   - `-SingleThreadedTesting` - Run tests single-threaded for debugging
+  - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 ### Code Quality & Structure
 
