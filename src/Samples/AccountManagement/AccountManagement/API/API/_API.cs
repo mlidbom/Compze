@@ -3,7 +3,6 @@
 using System;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Persistence.InMemory.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.SystemCE;
 
@@ -54,6 +53,6 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
    ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Eventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
    public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
    {
-      builder.RegisterInMemoryPersistenceLayer();
+      // No longer using InMemory persistence layer - clients should configure their own persistence
    }
 }

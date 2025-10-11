@@ -6,7 +6,6 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
 using Compze.Tessaging.Hosting.Persistence.MySql;
 using Compze.Tessaging.Hosting.Persistence.PostgreSql;
-using Compze.Tessaging.Persistence.InMemory.DependencyInjection;
 using Compze.Tessaging.Persistence.MicrosoftSql;
 using Compze.Tessaging.Persistence.MySql;
 using Compze.Tessaging.Persistence.PostgreSql;
@@ -53,9 +52,6 @@ public static class TestingPersistenceLayerRegistrar
                     .PgSqlDocumentDb()
                     .PgSqlEventStore()
                     .PgSqlTessaging();
-            break;
-         case PersistenceLayer.Memory:
-            register.InMemoryPersistenceLayer();
             break;
          default:
             throw new ArgumentOutOfRangeException();

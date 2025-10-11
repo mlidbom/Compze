@@ -45,7 +45,6 @@ static partial class TestEnv
          return Current switch
          {
             Compze.Wiring.PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-            Compze.Wiring.PersistenceLayer.Memory             => SelectValue(memory, nameof(memory)),
             Compze.Wiring.PersistenceLayer.MySql              => SelectValue(mySql, nameof(mySql)),
             Compze.Wiring.PersistenceLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
             _                                                 => throw new ArgumentOutOfRangeException()

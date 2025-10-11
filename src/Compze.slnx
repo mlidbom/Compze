@@ -119,9 +119,6 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Persistence/">
-    <Project Path="Compze/Tessaging/Persistence/InMemory/Compze.Tessaging.Persistence.InMemory.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
     <Project Path="Compze/Tessaging/Persistence/MicrosoftSql/Compze.Tessaging.Persistence.MicrosoftSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>

@@ -22,7 +22,6 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
          PersistenceLayer.MicrosoftSqlServer => new MsSqlDbPool(),
          PersistenceLayer.MySql => new MySqlDbPool(),
          PersistenceLayer.PostgreSql => new PgSqlDbPool(),
-         PersistenceLayer.Memory => throw new ArgumentOutOfRangeException(),
          _ => throw new ArgumentOutOfRangeException()
       };
 
@@ -39,7 +38,6 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
          case PersistenceLayer.MySql:
             UseMySqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
-         case PersistenceLayer.Memory:
          default:
             throw new ArgumentOutOfRangeException();
       }

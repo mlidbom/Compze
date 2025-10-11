@@ -27,7 +27,6 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       // Verify the values are valid parsed enums (not relying on default check since MicrosoftSqlServer happens to be 0)
       context.PersistenceLayer.Should().BeOneOf(
          Compze.Wiring.PersistenceLayer.MicrosoftSqlServer,
-         Compze.Wiring.PersistenceLayer.Memory,
          Compze.Wiring.PersistenceLayer.MySql,
          Compze.Wiring.PersistenceLayer.PostgreSql
       );
@@ -39,7 +38,6 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       // Test the ValueForDb functionality (alias for PersistenceLayer.ValueFor)
       var testValue = context.ValueForDb<string>(
          msSql: "SQL Server",
-         memory: "In-Memory",
          mySql: "MySQL",
          pgSql: "PostgreSQL"
       );
@@ -51,7 +49,6 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       var expectedValue = context.PersistenceLayer switch
       {
          Compze.Wiring.PersistenceLayer.MicrosoftSqlServer => "SQL Server",
-         Compze.Wiring.PersistenceLayer.Memory => "In-Memory",
          Compze.Wiring.PersistenceLayer.MySql => "MySQL",
          Compze.Wiring.PersistenceLayer.PostgreSql => "PostgreSQL",
          _ => throw new System.Exception($"Unexpected persistence layer: {context.PersistenceLayer}")
@@ -66,7 +63,6 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       // Demonstrate using the extension method directly on the PersistenceLayer enum
       var timeout = context.PersistenceLayer.ValueFor(
          msSql: System.TimeSpan.FromSeconds(5),
-         memory: System.TimeSpan.FromSeconds(1),
          mySql: System.TimeSpan.FromSeconds(10),
          pgSql: System.TimeSpan.FromSeconds(7)
       );
@@ -79,7 +75,6 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       var expected = context.PersistenceLayer switch
       {
          Compze.Wiring.PersistenceLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
-         Compze.Wiring.PersistenceLayer.Memory => System.TimeSpan.FromSeconds(1),
          Compze.Wiring.PersistenceLayer.MySql => System.TimeSpan.FromSeconds(10),
          Compze.Wiring.PersistenceLayer.PostgreSql => System.TimeSpan.FromSeconds(7),
          _ => throw new System.Exception($"Unexpected persistence layer: {context.PersistenceLayer}")

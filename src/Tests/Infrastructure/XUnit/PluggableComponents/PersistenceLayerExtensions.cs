@@ -26,7 +26,6 @@ public static class PersistenceLayerExtensions
       return persistenceLayer switch
       {
          PersistenceLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-         PersistenceLayer.Memory => SelectValue(memory, nameof(memory)),
          PersistenceLayer.MySql => SelectValue(mySql, nameof(mySql)),
          PersistenceLayer.PostgreSql => SelectValue(pgSql, nameof(pgSql)),
          _ => throw new ArgumentOutOfRangeException(nameof(persistenceLayer), persistenceLayer, $"Unsupported persistence layer: {persistenceLayer}")

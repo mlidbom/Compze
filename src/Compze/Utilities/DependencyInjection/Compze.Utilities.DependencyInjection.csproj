@@ -21,7 +21,6 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.Microsoft" />
 		<InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.SimpleInjector" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Persistence.InMemory" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MicrosoftSql" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.PostgreSql" />

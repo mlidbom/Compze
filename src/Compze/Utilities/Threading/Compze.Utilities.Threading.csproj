@@ -43,7 +43,6 @@
       <InternalsVisibleTo Include="Compze.Utilities.Logging" />
       <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
       <InternalsVisibleTo Include="Compze.Persistence.Common" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.InMemory" />
       <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />

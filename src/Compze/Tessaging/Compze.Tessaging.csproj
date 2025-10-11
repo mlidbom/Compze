@@ -30,7 +30,6 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.InMemory" />
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
