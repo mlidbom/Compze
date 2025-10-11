@@ -33,7 +33,7 @@ Then reload: `. $PROFILE`
 
 - **Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders** - Ensures .csproj files exclude .cs files from projects in subfolders
 
-- **Fix-CompzeEncodings** - Converts files to UTF-8 without BOM encoding
+- **Fix-CompzeCsFileEncodings** - Converts .cs files to UTF-8 without BOM encoding
   - `-Path` - Path to scan (defaults to src)
   - `-FilePattern` - File pattern to match (defaults to *.cs)
   - `-WhatIf` - Preview changes without applying
