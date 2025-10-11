@@ -79,7 +79,7 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
 
    public IEnumerable<EventDataRow> StreamEvents(int batchSize)
    {
-      string lastReadEventReadOrder = "0";
+      string lastReadEventReadOrder = ReadOrder.Zero.ToString();
       int fetchedInThisBatch;
       do
       {

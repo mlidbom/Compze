@@ -35,7 +35,7 @@ partial class SqliteEventStoreSqlLayer
                                          {(data.StorageInformation.ReadOrder != null ? "" : $"""
 
                                                                                              UPDATE {Event.TableName}
-                                                                                             SET {Event.ReadOrder} = printf('%d.%019d', {Event.InsertionOrder}, 0)
+                                                                                             SET {Event.ReadOrder} = printf('%020d.%019d', {Event.InsertionOrder}, 0)
                                                                                              WHERE {Event.EventId} = @{Event.EventId};
 
                                                                                              """)}

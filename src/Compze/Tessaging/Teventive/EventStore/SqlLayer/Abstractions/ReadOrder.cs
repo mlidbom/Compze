@@ -13,7 +13,8 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    readonly BigInteger _order;
    readonly BigInteger _offSet;
 
-   public override string ToString() => $"{_order}.{_offSet:D19}";
+   // Pad integer part to 20 digits for proper lexicographic sorting in text-based storage (e.g., SQLite)
+   public override string ToString() => $"{_order.ToString(CultureInfo.InvariantCulture).PadLeft(20, '0')}.{_offSet:D19}";
 
    public static readonly ReadOrder Zero = new(0, 0);
 

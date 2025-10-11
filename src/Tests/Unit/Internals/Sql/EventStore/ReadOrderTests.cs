@@ -14,10 +14,15 @@ namespace Compze.Tests.Unit.Internals.Sql.EventStore;
 {
    [Test] public void Parse_followed_by_ToString_always_results_in_identical_string()
    {
-      var maxValue = $"{long.MaxValue}.{long.MaxValue}";
+      // ToString() now pads the integer part to 20 digits for lexicographic sorting
+      var maxValue = $"{long.MaxValue:D20}.{long.MaxValue}";
 
-      ReadOrder.Parse(maxValue).ToString().Should().Be(maxValue);
-      ReadOrder.Parse(CreateString(1, 1)).ToString().Should().Be(CreateString(1, 1));
+      ReadOrder.Parse($"{long.MaxValue}.{long.MaxValue}").ToString().Should().Be(maxValue);
+      
+      // CreateString(1, 1) returns "1.1111111111111111111"
+      // After padding, it should be "00000000000000000001.1111111111111111111"
+      var expectedPadded = $"00000000000000000001.1111111111111111111";
+      ReadOrder.Parse(CreateString(1, 1)).ToString().Should().Be(expectedPadded);
    }
 
    [Test] public void Parse_throws_on_negative_numbers()
@@ -50,13 +55,19 @@ namespace Compze.Tests.Unit.Internals.Sql.EventStore;
       {
          var stringValue = value.ToString();
          var sql = value.ToSqlDecimal();
+         
+         // The key test: converting to SqlDecimal and back should give the same ReadOrder value
          ReadOrder.FromSqlDecimal(sql).Should().Be(value);
 
-         sql.ToString().Should().Be(stringValue);
-         value.ToString().Should().Be(stringValue);
-
+         // SqlDecimal.ToString() doesn't pad, so it will differ from ReadOrder.ToString() which does pad
+         // But when parsed back, they should represent the same value
+         var sqlString = sql.ToString();
+         ReadOrder.Parse(sqlString).Should().Be(value);
+         
+         // Converting to SqlDecimal multiple times should give the same result
          value.ToSqlDecimal().Should().Be(sql);
 
+         // Round-tripping through SqlDecimal should preserve the ReadOrder
          ReadOrder.FromSqlDecimal(sql).ToString().Should().Be(stringValue);
       }
    }
@@ -127,6 +138,7 @@ namespace Compze.Tests.Unit.Internals.Sql.EventStore;
       Invoking(() => ReadOrder.CreateOrdersForEventsBetween(numberOfEvents: 6, rangeStart: rangeStart, rangeEnd: rangeEnd)).Should().Throw<ArgumentException>();
    }
 
+   // Helper to create ReadOrder with padding
    static ReadOrder Create(long order, long offset) => ReadOrder.Parse($"{order}.{offset:D19}");
    static string CreateString(int order, int value) => $"{order}.{DecimalPlaces(value)}";
    static string DecimalPlaces(int number) => new(number.ToStringInvariant()[0], 19);
