@@ -22,7 +22,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
 
                    INSERT INTO {MessageTable.TableName} 
                                ({MessageTable.MessageId},  {MessageTable.TypeIdGuidValue}, {MessageTable.SerializedMessage}) 
-                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeIdGuidValue}, @{MessageTable.SerializedMessage})
+                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeIdGuidValue}, @{MessageTable.SerializedMessage});
 
                    """)
               .AddVarcharParameter(MessageTable.MessageId, 36, messageWithReceivers.MessageId.ToString())
@@ -36,7 +36,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
 
                                                 INSERT INTO {DispatchingTable.TableName} 
                                                             ({DispatchingTable.MessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
-                                                    VALUES (@{DispatchingTable.MessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived})
+                                                    VALUES (@{DispatchingTable.MessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
                                                 """).AddVarcharParameter($"{DispatchingTable.EndpointId}_{index}", 36, endpointId.ToString()));
 
