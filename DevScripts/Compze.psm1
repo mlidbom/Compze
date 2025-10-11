@@ -20,5 +20,6 @@ Export-ModuleMember -Function @(
     'Test-Compze',
     'Fix-CompzeCsFileEncodings',
     'Get-CompzeCommands',
-    'Reload-CompzeModule'
+    'Reload-CompzeModule',
+    'Kill-CompzeZombieDevProcesses'
 )

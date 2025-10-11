@@ -15,7 +15,8 @@ function Reload-CompzeModule {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
     
-    Import-Module (Join-Path $PSScriptRoot "..\Compze.psd1") -DisableNameChecking -Force -Global
+    # Load the .psm1 directly to avoid manifest sync issues
+    Import-Module (Join-Path $PSScriptRoot "..\Compze.psm1") -DisableNameChecking -Force -Global
     
     if (Test-Path $PROFILE) {
         . $PROFILE
