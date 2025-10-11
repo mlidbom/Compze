@@ -8,7 +8,7 @@
 Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking
 
 # After adding this, you can run these commands from any directory:
-# - Fix-CsprojExclusions
+# - Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders
 # - Remove-RedundantInternalsVisibleTo
 # - Validate-SolutionStructure
 # - Test-Compze              # Run tests (no build)

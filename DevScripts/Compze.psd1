@@ -25,7 +25,7 @@
 
     # Functions to export from this module
     FunctionsToExport = @(
-        'Fix-CompzeCsprojExclusions',
+        'Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders',
         'Remove-CompzeRedundantInternalsVisibleTo',
         'Validate-CompzeSolutionStructure',
         'Clean-Compze',

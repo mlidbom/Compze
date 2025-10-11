@@ -12,7 +12,7 @@ foreach ($file in $functionFiles) {
 
 # Export the functions
 Export-ModuleMember -Function @(
-    'Fix-CompzeCsprojExclusions',
+    'Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders',
     'Remove-CompzeRedundantInternalsVisibleTo', 
     'Validate-CompzeSolutionStructure',
     'Clean-Compze',

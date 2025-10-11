@@ -38,11 +38,11 @@ Reload-Profile
 
 **Important**: This force-reloads the Compze module first to pick up any changes to DevScripts, then reloads your profile. Use this after editing any module files.
 
-### Fix-CsprojExclusions
-Fixes .csproj exclusions for Compze projects.
+### Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders
+Ensures .csproj files exclude .cs files from projects in subfolders.
 
 ```powershell
-Fix-CsprojExclusions
+Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders
 ```
 
 ### Remove-RedundantInternalsVisibleTo

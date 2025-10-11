@@ -31,7 +31,7 @@ Then reload: `. $PROFILE`
 
 ### Code Quality & Structure
 
-- **Fix-CompzeCsprojExclusions** - Fixes .csproj exclusions for Compze projects
+- **Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders** - Ensures .csproj files exclude .cs files from projects in subfolders
 
 - **Fix-CompzeEncodings** - Converts files to UTF-8 without BOM encoding
   - `-Path` - Path to scan (defaults to src)
