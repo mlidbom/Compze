@@ -16,7 +16,7 @@ Then reload: `. $PROFILE`
 ### Build & Test Workflow
 
 - **Clean-Compze** - Performs a deep clean of the Compze solution
-  - `-FullGitReset` - Performs full git reset, removes all untracked files (requires clean working tree, backs up TestUsingPluggableComponentCombinations)
+  - `-FullGitReset` - Performs full git reset, removes all untracked files (requires clean working tree, backs up TestUsingPluggableComponentCombinations.config)
   - `-Verbose` - Show detailed output
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 

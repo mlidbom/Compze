@@ -14,7 +14,7 @@
 
 In the root of the project:
 
-1. Copy `TestUsingPluggableComponentCombinations.example` to `TestUsingPluggableComponentCombinations`
+1. Copy `TestUsingPluggableComponentCombinations.config.example` to `TestUsingPluggableComponentCombinations.config`
 2. Edit this file to configure which database servers the tests run against
 3. If you don't have any SQL server, configure it to use only the `Memory` `PersistenceLayer`
 
@@ -74,7 +74,7 @@ This environment variable lets you adjust the expectations for the performance t
 
 ### Test Configuration Options
 
-Edit `TestUsingPluggableComponentCombinations` to control:
+Edit `TestUsingPluggableComponentCombinations.config` to control:
 - Which persistence layers to test (Memory, SQL Server, PostgreSQL, MySQL)
 - Which dependency injection containers to test
 - Other pluggable component combinations

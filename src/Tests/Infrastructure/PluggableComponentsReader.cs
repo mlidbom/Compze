@@ -11,7 +11,7 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class PluggableComponentsReader
 {
-   const string TestUsingPluggableComponentCombinations = "TestUsingPluggableComponentCombinations";
+   const string TestUsingPluggableComponentCombinations = "TestUsingPluggableComponentCombinations.config";
    
    public static IEnumerable<string> GetCombinations()
    {

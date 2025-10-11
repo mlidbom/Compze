@@ -11,7 +11,7 @@ This implementation brings the NUnit pluggable components testing pattern to XUn
 1. **`Tests/Infrastructure/XUnit/DuplicateByPluggableComponentTest.cs`**
    - Base class for XUnit tests that need to run with multiple component combinations
    - Provides `GetPluggableComponentCombinations()` method for Theory data
-   - Uses `PluggableComponentsReader` to read from `TestUsingPluggableComponentCombinations` file
+   - Uses `PluggableComponentsReader` to read from `TestUsingPluggableComponentCombinations.config` file
 
 2. **`Compze/Tessaging/Hosting/Testing/TestEnv.PersistenceLayer.XUnit.cs`**
    - XUnit-specific implementation of TestEnv helpers
@@ -44,7 +44,7 @@ The system uses a hybrid approach that supports both NUnit and XUnit:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ TestUsingPluggableComponentCombinations (config file)       │
+│ TestUsingPluggableComponentCombinations.config (config file)       │
 │ - MicrosoftSqlServer:Microsoft                              │
 │ - Memory:Microsoft                                          │
 │ - ...                                                       │

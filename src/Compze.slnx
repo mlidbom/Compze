@@ -317,8 +317,8 @@
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Compze/test-common-appsettings.json" />
-    <File Path="TestUsingPluggableComponentCombinations" />
-    <File Path="TestUsingPluggableComponentCombinations.example" />
+    <File Path="TestUsingPluggableComponentCombinations.config" />
+    <File Path="TestUsingPluggableComponentCombinations.config.example" />
   </Folder>
   <Folder Name="/_Solution Items/Devscripts/">
     <File Path="../DevScripts/Remove-RedundantInternalsVisibleTo.ps1" />
