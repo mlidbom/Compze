@@ -32,8 +32,8 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
       eventId: Guid.Parse(eventReader.GetString(4)),
       aggregateVersion: eventReader.GetInt32(3),
       aggregateId: Guid.Parse(eventReader.GetString(2)),
-      //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
-      utcTimeStamp: DateTime.ParseExact(eventReader.GetString(5), "O", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind),
+      // DateTime stored as Ticks (INTEGER) for full precision
+      utcTimeStamp: new DateTime(eventReader.GetInt64(5), DateTimeKind.Utc),
       storageInformation: new AggregateEventStorageInformation
                           {
                              ReadOrder = ReadOrder.Parse(eventReader.GetString(10)),

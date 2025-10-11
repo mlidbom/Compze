@@ -23,11 +23,11 @@ partial class SqliteDocumentDbSqlLayer
 
                                                 CREATE TABLE IF NOT EXISTS {Document.TableName} 
                                                 (
-                                                    {Document.Id}          TEXT NOT NULL,
-                                                    {Document.ValueTypeId} TEXT NOT NULL,
-                                                    {Document.Created}     TEXT NOT NULL,
-                                                    {Document.Updated}     TEXT NOT NULL,
-                                                    {Document.Value}       TEXT NOT NULL,
+                                                    {Document.Id}          TEXT    NOT NULL,
+                                                    {Document.ValueTypeId} TEXT    NOT NULL,
+                                                    {Document.Created}     INTEGER NOT NULL,
+                                                    {Document.Updated}     INTEGER NOT NULL,
+                                                    {Document.Value}       TEXT    NOT NULL,
                                                        
                                                     PRIMARY KEY ({Document.Id}, {Document.ValueTypeId})
                                                 )
