@@ -1,4 +1,4 @@
-function Fix-CsprojExclusions {
+function Fix-CompzeCsprojExclusions {
     <#
     .SYNOPSIS
     Fixes .csproj exclusions for Compze projects

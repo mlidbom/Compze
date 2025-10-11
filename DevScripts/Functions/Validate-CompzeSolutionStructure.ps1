@@ -1,4 +1,4 @@
-function Validate-SolutionStructure {
+function Validate-CompzeSolutionStructure {
     <#
     .SYNOPSIS
     Validates the Compze solution structure

@@ -1,15 +1,15 @@
-function Reload-Profile {
+function Reload-CompzeModule {
     <#
     .SYNOPSIS
-    Reloads the PowerShell profile
+    Reloads the Compze PowerShell module
     
     .DESCRIPTION
-    Reloads your PowerShell profile without restarting the shell.
-    Also force-reloads the Compze module to pick up any changes.
+    Force-reloads the Compze module to pick up any changes without restarting PowerShell.
+    Also reloads your PowerShell profile if it exists.
     
     .EXAMPLE
-    Reload-Profile
-    Reloads your profile and the Compze module
+    Reload-CompzeModule
+    Reloads the Compze module and your profile
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]

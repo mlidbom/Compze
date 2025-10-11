@@ -12,12 +12,12 @@ foreach ($file in $functionFiles) {
 
 # Export the functions
 Export-ModuleMember -Function @(
-    'Fix-CsprojExclusions',
-    'Remove-RedundantInternalsVisibleTo', 
-    'Validate-SolutionStructure',
+    'Fix-CompzeCsprojExclusions',
+    'Remove-CompzeRedundantInternalsVisibleTo', 
+    'Validate-CompzeSolutionStructure',
     'Clean-Compze',
     'Build-Compze',
     'Test-Compze',
-    'Fix-Encodings',
-    'Reload-Profile'
+    'Fix-CompzeEncodings',
+    'Reload-CompzeModule'
 )

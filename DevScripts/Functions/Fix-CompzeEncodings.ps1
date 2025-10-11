@@ -1,4 +1,4 @@
-function Fix-Encodings {
+function Fix-CompzeEncodings {
     <#
     .SYNOPSIS
     Converts files to UTF-8 without BOM encoding (standard for modern .NET)
