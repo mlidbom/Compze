@@ -143,6 +143,9 @@ function Test-Compze {
     .PARAMETER Build
     Build the solution before running tests
     
+    .PARAMETER Clean
+    Performs a deep clean and build before running tests (implies -Build)
+    
     .PARAMETER SingleThreadedTesting
     Run tests single-threaded (forces sequential test execution, useful for debugging)
     
@@ -153,6 +156,10 @@ function Test-Compze {
     .EXAMPLE
     Test-Compze -Build
     Builds then runs all tests (parallel)
+    
+    .EXAMPLE
+    Test-Compze -Clean
+    Cleans, builds, then runs all tests (parallel)
     
     .EXAMPLE
     Test-Compze -SingleThreadedTesting
@@ -166,6 +173,7 @@ function Test-Compze {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [switch]$Build,
+        [switch]$Clean,
         [switch]$SingleThreadedTesting
     )
     
@@ -173,7 +181,22 @@ function Test-Compze {
     
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
-        if ($Build) {
+        if ($Clean) {
+            Clean-Compze
+            dotnet build $solutionPath
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Build failed!"
+                return
+            }
+            
+            if ($SingleThreadedTesting) {
+                dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
+            } else {
+                dotnet test $solutionPath --no-build
+            }
+        }
+        elseif ($Build) {
             dotnet build $solutionPath
             
             if ($LASTEXITCODE -ne 0) {
