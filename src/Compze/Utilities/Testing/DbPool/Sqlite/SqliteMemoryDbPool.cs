@@ -1,26 +1,71 @@
 using Microsoft.Data.Sqlite;
+using System.Collections.Concurrent;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
 internal class SqliteMemoryDbPool : DbPool
 {
-   // For in-memory SQLite, we use shared cache with a unique database name.
-   // The database is automatically created when the first connection opens,
-   // and automatically destroyed when the last connection closes.
-   // No explicit initialization, reset, or cleanup needed - everything is managed by connection lifecycle.
+   // Keep one connection open per database to prevent the in-memory database from disappearing
+   // Key: database name, Value: keeper connection
+   readonly ConcurrentDictionary<string, SqliteConnection> _keeperConnections = new();
+
+   // For in-memory SQLite testing with shared cache, the database only exists while
+   // at least one connection to it is open. We must keep a "keeper" connection open
+   // for the lifetime of each database to prevent it from disappearing between uses.
    protected override string ConnectionStringFor(Database db)
    {
       return new SqliteConnectionStringBuilder
       {
          DataSource = $"file:{db.Name}?mode=memory&cache=shared",
-         Mode = SqliteOpenMode.ReadWriteCreate,
+         Mode = SqliteOpenMode.Memory,
          Cache = SqliteCacheMode.Shared
       }.ConnectionString;
    }
 
-   // In-memory database is created automatically on first connection
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db) { }
+   // Open and keep a connection to ensure the database stays alive
+   protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
+   {
+      var connectionString = ConnectionStringFor(db);
+      var keeperConnection = new SqliteConnection(connectionString);
+      keeperConnection.Open();
+      
+      // Store the keeper connection - this keeps the in-memory database alive
+      _keeperConnections[db.Name] = keeperConnection;
+   }
 
-   // In-memory database is destroyed automatically when all connections close
-   protected override void ResetDatabase(Database db) { }
+   // To reset an in-memory database, we must close the keeper connection (destroying the DB)
+   // and then open a new keeper connection (creating a fresh empty DB)
+   protected override void ResetDatabase(Database db)
+   {
+      // Close the keeper connection, which destroys the in-memory database
+      if (_keeperConnections.TryRemove(db.Name, out var oldConnection))
+      {
+         oldConnection.Dispose();
+      }
+      
+      // Clear the connection pool for this specific database
+      // This ensures no pooled connections remain that reference the old database
+      SqliteConnection.ClearAllPools();
+      
+      // Open a new keeper connection, creating a fresh empty in-memory database
+      var connectionString = ConnectionStringFor(db);
+      var newConnection = new SqliteConnection(connectionString);
+      newConnection.Open();
+      _keeperConnections[db.Name] = newConnection;
+   }
+
+   protected override void Dispose(bool disposing)
+   {
+      if (disposing)
+      {
+         // Close all keeper connections
+         foreach (var connection in _keeperConnections.Values)
+         {
+            connection.Dispose();
+         }
+         _keeperConnections.Clear();
+      }
+      
+      base.Dispose(disposing);
+   }
 }
