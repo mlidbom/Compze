@@ -21,8 +21,8 @@ static class InboxRegistrar
    internal static void RegisterWith(IDependencyRegistrar registrar)
       => registrar.Register(
          Singleton.For<Inbox.IMessageStorage>()
-                  .CreatedBy((IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer)
-                                => new InboxMessageStorage(persistenceLayer)),
+                  .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)
+                                => new InboxMessageStorage(sqlLayer)),
          Singleton.For<Inbox.HandlerExecutionEngine>()
                   .CreatedBy((IMessagesInFlightTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
                                 => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),

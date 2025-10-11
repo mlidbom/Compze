@@ -1,7 +1,7 @@
 using System;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
-using Compze.Tests.Common.Persistence.DocumentDb;
+using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 // ReSharper disable All

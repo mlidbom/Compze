@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
@@ -15,7 +15,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
 		<InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
-		<InternalsVisibleTo Include="Compze.Persistence.Common" />
+		<InternalsVisibleTo Include="Compze.Sql.Common" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
 		<InternalsVisibleTo Include="Compze.Tessaging" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
@@ -27,16 +27,16 @@
 		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
 		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
 	</ItemGroup>
-	<!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
-	<ItemGroup>
-		<Compile Remove="Abstractions\**" />
-		<EmbeddedResource Remove="Abstractions\**" />
-		<None Remove="Abstractions\**" />
-		<Content Remove="Abstractions\**" />
-		<Compile Remove="Serilog\**" />
-		<EmbeddedResource Remove="Serilog\**" />
-		<None Remove="Serilog\**" />
-		<Content Remove="Serilog\**" />
-	</ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <None Remove="Abstractions\**" />
+    <Content Remove="Abstractions\**" />
+    <Compile Remove="Serilog\**" />
+    <EmbeddedResource Remove="Serilog\**" />
+    <None Remove="Serilog\**" />
+    <Content Remove="Serilog\**" />
+  </ItemGroup>
 </Project>

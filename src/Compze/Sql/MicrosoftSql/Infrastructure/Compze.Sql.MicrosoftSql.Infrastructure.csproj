@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Compze.Sql.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+  </ItemGroup>
+</Project>

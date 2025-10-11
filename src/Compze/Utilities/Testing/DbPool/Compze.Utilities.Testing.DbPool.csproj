@@ -26,7 +26,7 @@
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
   <ItemGroup>
     <Compile Remove="MicrosoftSql\**" />
     <EmbeddedResource Remove="MicrosoftSql\**" />

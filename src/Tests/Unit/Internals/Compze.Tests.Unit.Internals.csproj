@@ -10,7 +10,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Sql\DocumentDb\Compze.Sql.DocumentDb.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
     <ProjectReference Include="..\..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
@@ -38,9 +38,12 @@
   <PropertyGroup>
     <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
   <ItemGroup>
     <Compile Remove="XUnit\**" />
     <EmbeddedResource Remove="XUnit\**" />
     <None Remove="XUnit\**" />
+    <Content Remove="XUnit\**" />
   </ItemGroup>
 </Project>

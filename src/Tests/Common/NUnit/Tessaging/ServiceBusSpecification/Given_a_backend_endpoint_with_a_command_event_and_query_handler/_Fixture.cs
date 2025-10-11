@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Persistence.EventStore;
+using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
@@ -57,7 +57,7 @@ public abstract class NUnitFixtureBase(string pluggableComponentsCombination) : 
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredPersistenceLayer();
+                   .CurrentTestsConfiguredSqlLayer();
 
             builder.RegisterEventStore()
                    .HandleAggregate<Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture.MyAggregate, Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture.MyAggregateEvent.IRoot>();
@@ -94,7 +94,7 @@ public abstract class NUnitFixtureBase(string pluggableComponentsCombination) : 
                                              {
                                                 builder.Container.Register()
                                                        .AspNetCoreTransport()
-                                                       .CurrentTestsConfiguredPersistenceLayer();
+                                                       .CurrentTestsConfiguredSqlLayer();
                                                 builder.RegisterHandlers.ForEvent((Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture.MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
                                              });
 

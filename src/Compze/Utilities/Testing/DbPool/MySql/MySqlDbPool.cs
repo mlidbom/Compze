@@ -1,4 +1,4 @@
-using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
+using Compze.Sql.MySql.Infrastructure.SystemExtensions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;

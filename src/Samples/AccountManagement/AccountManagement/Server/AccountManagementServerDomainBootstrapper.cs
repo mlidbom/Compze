@@ -3,13 +3,13 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Compze.Persistence.DocumentDb.DependencyInjection;
-using Compze.Persistence.DocumentDb.MicrosoftSql;
+using Compze.Sql.DocumentDb.DependencyInjection;
+using Compze.Sql.DocumentDb.MicrosoftSql;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
-using Compze.Tessaging.Hosting.Persistence.MicrosoftSql;
-using Compze.Tessaging.Persistence.EventStore;
-using Compze.Tessaging.Persistence.MicrosoftSql;
+using Compze.Tessaging.Hosting.Sql.MicrosoftSql;
+using Compze.Tessaging.Sql.EventStore;
+using Compze.Tessaging.Sql.MicrosoftSql;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 

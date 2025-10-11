@@ -13,7 +13,7 @@
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
-    <ProjectReference Include="..\..\..\Persistence\Common\Compze.Persistence.Common.csproj" />
+    <ProjectReference Include="..\..\..\Sql\Common\Compze.Sql.Common.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\Compze.Tessaging.Teventive.csproj" />
     <ProjectReference Include="..\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
@@ -22,7 +22,7 @@
     <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
     <EmbeddedResource Remove="Abstractions\**" />

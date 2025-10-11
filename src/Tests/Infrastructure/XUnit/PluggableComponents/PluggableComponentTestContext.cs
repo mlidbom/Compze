@@ -11,7 +11,7 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 public class PluggableComponentTestContext : IXunitSerializable
 {
    readonly string _combination;
-   readonly PersistenceLayer _persistenceLayer;
+   readonly SqlLayer _sqlLayer;
    readonly DIContainer _diContainer;
 
    /// <summary>
@@ -21,7 +21,7 @@ public class PluggableComponentTestContext : IXunitSerializable
    public PluggableComponentTestContext()
    {
       _combination = string.Empty;
-      _persistenceLayer = default;
+      _sqlLayer = default;
       _diContainer = default;
    }
 
@@ -31,10 +31,10 @@ public class PluggableComponentTestContext : IXunitSerializable
 
       var parts = pluggableComponentsCombination.Split(':');
       if(parts.Length != 2)
-         throw new ArgumentException($"Invalid combination format: {pluggableComponentsCombination}. Expected format: 'PersistenceLayer:DIContainer'");
+         throw new ArgumentException($"Invalid combination format: {pluggableComponentsCombination}. Expected format: 'SqlLayer:DIContainer'");
 
-      if(!Enum.TryParse(parts[0], out _persistenceLayer))
-         throw new ArgumentException($"Invalid persistence layer: {parts[0]}");
+      if(!Enum.TryParse(parts[0], out _sqlLayer))
+         throw new ArgumentException($"Invalid sql layer: {parts[0]}");
 
       if(!Enum.TryParse(parts[1], out _diContainer))
          throw new ArgumentException($"Invalid DI container: {parts[1]}");
@@ -43,17 +43,17 @@ public class PluggableComponentTestContext : IXunitSerializable
    /// <summary>Gets the full combination string (e.g., "MicrosoftSqlServer:Microsoft")</summary>
    public string Combination => _combination;
 
-   /// <summary>Gets the current persistence layer for this test</summary>
-   public PersistenceLayer PersistenceLayer => _persistenceLayer;
+   /// <summary>Gets the current sql layer for this test</summary>
+   public SqlLayer SqlLayer => _sqlLayer;
 
    /// <summary>Gets the current DI container for this test</summary>
    public DIContainer DIContainer => _diContainer;
 
    /// <summary>
-   /// Returns a persistence-layer-specific value.
-   /// Only provide values for the persistence layers you support.
-   /// This is an alias for <see cref="PersistenceLayerExtensions.ValueFor{TValue}"/>.
-   /// Prefer using <c>context.PersistenceLayer.ValueFor(...)</c> for better clarity.
+   /// Returns a sql-layer-specific value.
+   /// Only provide values for the sql layers you support.
+   /// This is an alias for <see cref="SqlLayerExtensions.ValueFor{TValue}"/>.
+   /// Prefer using <c>context.SqlLayer.ValueFor(...)</c> for better clarity.
    /// </summary>
    public TValue ValueForDb<TValue>(
       TValue? db2 = default,
@@ -63,7 +63,7 @@ public class PluggableComponentTestContext : IXunitSerializable
       TValue? orcl = default,
       TValue? pgSql = default) where TValue : notnull
    {
-      return _persistenceLayer.ValueFor(db2: db2, memory: memory, msSql: msSql, mySql: mySql, orcl: orcl, pgSql: pgSql);
+      return _sqlLayer.ValueFor(db2: db2, memory: memory, msSql: msSql, mySql: mySql, orcl: orcl, pgSql: pgSql);
    }
 
    /// <summary>Serializes this object for XUnit test execution.</summary>
@@ -87,11 +87,11 @@ public class PluggableComponentTestContext : IXunitSerializable
       var parts = combination.Split(':');
       if(parts.Length == 2)
       {
-         if(Enum.TryParse(parts[0], out PersistenceLayer persistenceLayer))
+         if(Enum.TryParse(parts[0], out SqlLayer sqlLayer))
          {
-            var persistenceLayerField = typeof(PluggableComponentTestContext).GetField(nameof(_persistenceLayer),
+            var sqlLayerField = typeof(PluggableComponentTestContext).GetField(nameof(_sqlLayer),
                                                                                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
-            persistenceLayerField.SetValue(this, persistenceLayer);
+            sqlLayerField.SetValue(this, sqlLayer);
          }
 
          if(Enum.TryParse(parts[1], out DIContainer diContainer))

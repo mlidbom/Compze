@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Persistence.EventStore;
+using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Threading.Testing;
@@ -52,7 +52,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination)
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredPersistenceLayer();
+                   .CurrentTestsConfiguredSqlLayer();
 
             builder.RegisterEventStore()
                    .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
@@ -89,7 +89,7 @@ public abstract partial class Fixture(string pluggableComponentsCombination)
                                              {
                                                 builder.Container.Register()
                                                        .AspNetCoreTransport()
-                                                       .CurrentTestsConfiguredPersistenceLayer();
+                                                       .CurrentTestsConfiguredSqlLayer();
                                                 builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
                                              });
 

@@ -28,19 +28,27 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Sql.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Sql.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tests.Integration" />
 
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sql\DocumentDb\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Http">
+      <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
     <EmbeddedResource Remove="Abstractions\**" />
@@ -50,14 +58,14 @@
     <EmbeddedResource Remove="Common\**" />
     <None Remove="Common\**" />
     <Content Remove="Common\**" />
-        <Compile Remove="Hosting\AspNetCore\**" />
-    <EmbeddedResource Remove="Hosting\AspNetCore\**" />
-    <None Remove="Hosting\AspNetCore\**" />
-    <Content Remove="Hosting\AspNetCore\**" />
     <Compile Remove="Hosting\Abstractions\**" />
     <EmbeddedResource Remove="Hosting\Abstractions\**" />
     <None Remove="Hosting\Abstractions\**" />
     <Content Remove="Hosting\Abstractions\**" />
+    <Compile Remove="Hosting\AspNetCore\**" />
+    <EmbeddedResource Remove="Hosting\AspNetCore\**" />
+    <None Remove="Hosting\AspNetCore\**" />
+    <Content Remove="Hosting\AspNetCore\**" />
     <Compile Remove="Hosting\Configuration\**" />
     <EmbeddedResource Remove="Hosting\Configuration\**" />
     <None Remove="Hosting\Configuration\**" />
@@ -66,38 +74,34 @@
     <EmbeddedResource Remove="Hosting\Configuration\Abstractions\**" />
     <None Remove="Hosting\Configuration\Abstractions\**" />
     <Content Remove="Hosting\Configuration\Abstractions\**" />
-    <Compile Remove="Hosting\Persistence\MicrosoftSql\**" />
-    <EmbeddedResource Remove="Hosting\Persistence\MicrosoftSql\**" />
-    <None Remove="Hosting\Persistence\MicrosoftSql\**" />
-    <Content Remove="Hosting\Persistence\MicrosoftSql\**" />
-    <Compile Remove="Hosting\Persistence\MySql\**" />
-    <EmbeddedResource Remove="Hosting\Persistence\MySql\**" />
-    <None Remove="Hosting\Persistence\MySql\**" />
-    <Content Remove="Hosting\Persistence\MySql\**" />
-    <Compile Remove="Hosting\Persistence\PostgreSql\**" />
-    <EmbeddedResource Remove="Hosting\Persistence\PostgreSql\**" />
-    <None Remove="Hosting\Persistence\PostgreSql\**" />
-    <Content Remove="Hosting\Persistence\PostgreSql\**" />
+    <Compile Remove="Hosting\Sql\MicrosoftSql\**" />
+    <EmbeddedResource Remove="Hosting\Sql\MicrosoftSql\**" />
+    <None Remove="Hosting\Sql\MicrosoftSql\**" />
+    <Content Remove="Hosting\Sql\MicrosoftSql\**" />
+    <Compile Remove="Hosting\Sql\MySql\**" />
+    <EmbeddedResource Remove="Hosting\Sql\MySql\**" />
+    <None Remove="Hosting\Sql\MySql\**" />
+    <Content Remove="Hosting\Sql\MySql\**" />
+    <Compile Remove="Hosting\Sql\PostgreSql\**" />
+    <EmbeddedResource Remove="Hosting\Sql\PostgreSql\**" />
+    <None Remove="Hosting\Sql\PostgreSql\**" />
+    <Content Remove="Hosting\Sql\PostgreSql\**" />
     <Compile Remove="Hosting\Testing\**" />
     <EmbeddedResource Remove="Hosting\Testing\**" />
     <None Remove="Hosting\Testing\**" />
     <Content Remove="Hosting\Testing\**" />
-    <Compile Remove="Persistence\InMemory\**" />
-    <EmbeddedResource Remove="Persistence\InMemory\**" />
-    <None Remove="Persistence\InMemory\**" />
-    <Content Remove="Persistence\InMemory\**" />
-    <Compile Remove="Persistence\MicrosoftSql\**" />
-    <EmbeddedResource Remove="Persistence\MicrosoftSql\**" />
-    <None Remove="Persistence\MicrosoftSql\**" />
-    <Content Remove="Persistence\MicrosoftSql\**" />
-    <Compile Remove="Persistence\MySql\**" />
-    <EmbeddedResource Remove="Persistence\MySql\**" />
-    <None Remove="Persistence\MySql\**" />
-    <Content Remove="Persistence\MySql\**" />
-    <Compile Remove="Persistence\PostgreSql\**" />
-    <EmbeddedResource Remove="Persistence\PostgreSql\**" />
-    <None Remove="Persistence\PostgreSql\**" />
-    <Content Remove="Persistence\PostgreSql\**" />
+    <Compile Remove="Sql\MicrosoftSql\**" />
+    <EmbeddedResource Remove="Sql\MicrosoftSql\**" />
+    <None Remove="Sql\MicrosoftSql\**" />
+    <Content Remove="Sql\MicrosoftSql\**" />
+    <Compile Remove="Sql\MySql\**" />
+    <EmbeddedResource Remove="Sql\MySql\**" />
+    <None Remove="Sql\MySql\**" />
+    <Content Remove="Sql\MySql\**" />
+    <Compile Remove="Sql\PostgreSql\**" />
+    <EmbeddedResource Remove="Sql\PostgreSql\**" />
+    <None Remove="Sql\PostgreSql\**" />
+    <Content Remove="Sql\PostgreSql\**" />
     <Compile Remove="Teventive\**" />
     <EmbeddedResource Remove="Teventive\**" />
     <None Remove="Teventive\**" />
@@ -130,13 +134,5 @@
     <EmbeddedResource Remove="Typermedia\Abstractions\**" />
     <None Remove="Typermedia\Abstractions\**" />
     <Content Remove="Typermedia\Abstractions\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Persistence\DocumentDb\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Http">
-      <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

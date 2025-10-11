@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -12,11 +12,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
-    <ProjectReference Include="..\..\..\..\Persistence\PostgreSql\Infrastructure\Compze.Persistence.PostgreSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Sql\PostgreSql\Infrastructure\Compze.Sql.PostgreSql.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
   </ItemGroup>
 </Project>

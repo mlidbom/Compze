@@ -6,9 +6,9 @@ namespace Compze.Utilities.SystemCE;
 
 static class DateTimeCE
 {
-   //Todo: Review time zone management in all persistence layers, in all code using the persistence layers, and in Serialization.
+   //Todo: Review time zone management in all sql layers, in all code using the sql layers, and in Serialization.
    // We must have a well thought out approach for ensuring that all of this behaves sanely and consistently.
-   // Start by writing tests exploring how the persistence layers and the serializer deals with DateTime instances with all three different kinds when serialized/persisted with one timezone and then read/deserialized in another.
+   // Start by writing tests exploring how the sql layers and the serializer deals with DateTime instances with all three different kinds when serialized/persisted with one timezone and then read/deserialized in another.
    // How are they converted? Do you get the same Kind back? Does the value change?
    //todo: Do we also need ToLocalTimeSafely?
    ///<summary>Like <see cref="DateTime.ToUniversalTime"/> except it will throw an exception if <see cref="@this"/>.Kind == <see cref="DateTimeKind.Unspecified"/> instead of assuming that Kind == <see cref="DateTimeKind.Local"/> and converting based on that assumption like <see cref="DateTime.ToUniversalTime"/> does.</summary>

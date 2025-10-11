@@ -4,7 +4,7 @@
 // using System.IO;
 // using System.IO.MemoryMappedFiles;
 // using Compze.Contracts;
-// using Compze.Persistence;
+// using Compze.Sql;
 // using Compze.Serialization;
 // using Compze.SystemCE.CollectionsCE.GenericCE;
 // using Compze.SystemCE.LinqCE;

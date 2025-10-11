@@ -5,19 +5,19 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-class InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer persistenceLayer) : Inbox.IMessageStorage
+class InboxMessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.IMessageStorage
 {
-   readonly IServiceBusPersistenceLayer.IInboxPersistenceLayer _persistenceLayer = persistenceLayer;
+   readonly IServiceBusSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 
    public void SaveIncomingMessage(TransportMessage.InComing message)
-      => _persistenceLayer.SaveMessage(message.MessageId, message.MessageTypeId.GuidValue, message.Body);
+      => _sqlLayer.SaveMessage(message.MessageId, message.MessageTypeId.GuidValue, message.Body);
 
    public void MarkAsSucceeded(TransportMessage.InComing message)
-      => _persistenceLayer.MarkAsSucceeded(message.MessageId);
+      => _sqlLayer.MarkAsSucceeded(message.MessageId);
 
    public void RecordException(TransportMessage.InComing message, Exception exception)
    {
-      var affectedRows = _persistenceLayer.RecordException(message.MessageId,
+      var affectedRows = _sqlLayer.RecordException(message.MessageId,
                                                            exception.StackTrace ?? string.Empty,
                                                            exception.Message,
                                                            exception.GetType().GetFullNameCompilable());
@@ -27,9 +27,9 @@ class InboxMessageStorage(IServiceBusPersistenceLayer.IInboxPersistenceLayer per
 
    public void MarkAsFailed(TransportMessage.InComing message)
    {
-      var affectedRows = _persistenceLayer.MarkAsFailed(message.MessageId);
+      var affectedRows = _sqlLayer.MarkAsFailed(message.MessageId);
       Assert.Result.Is(affectedRows == 1);
    }
 
-   public Task StartAsync() => _persistenceLayer.InitAsync();
+   public Task StartAsync() => _sqlLayer.InitAsync();
 }

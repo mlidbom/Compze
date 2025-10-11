@@ -16,10 +16,10 @@
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="Compze.Common" />
-		<InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
-		<InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MicrosoftSql" />
-		<InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
-		<InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
+		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
+		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
+		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
 		<InternalsVisibleTo Include="Compze.Serialization" />

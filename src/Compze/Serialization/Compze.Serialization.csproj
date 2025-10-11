@@ -13,7 +13,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
     <InternalsVisibleTo Include="Compze.Utilities.Logging" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
@@ -28,7 +28,7 @@
     <ProjectReference Include="..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
     <EmbeddedResource Remove="Abstractions\**" />

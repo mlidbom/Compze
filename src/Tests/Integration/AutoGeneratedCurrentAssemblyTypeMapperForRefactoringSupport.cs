@@ -1,5 +1,5 @@
 using System;
-using Compze.Tests.Common.Persistence.DocumentDb;
+using Compze.Tests.Common.Sql.DocumentDb;
 
 // ReSharper disable All
 namespace Compze.Tests.Integration;

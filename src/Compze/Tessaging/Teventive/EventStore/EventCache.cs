@@ -1,5 +1,5 @@
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

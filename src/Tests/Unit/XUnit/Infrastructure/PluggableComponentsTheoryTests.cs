@@ -21,21 +21,21 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       context.Should().NotBeNull();
 
       // Access the parsed values directly from the context
-      System.Console.WriteLine($"  Persistence Layer: {context.PersistenceLayer}");
+      System.Console.WriteLine($"  Sql Layer: {context.SqlLayer}");
       System.Console.WriteLine($"  DI Container: {context.DIContainer}");
 
       // Verify the values are valid parsed enums (not relying on default check since MicrosoftSqlServer happens to be 0)
-      context.PersistenceLayer.Should().BeOneOf(
-         Compze.Wiring.PersistenceLayer.MicrosoftSqlServer,
-         Compze.Wiring.PersistenceLayer.MySql,
-         Compze.Wiring.PersistenceLayer.PostgreSql
+      context.SqlLayer.Should().BeOneOf(
+         Compze.Wiring.SqlLayer.MicrosoftSqlServer,
+         Compze.Wiring.SqlLayer.MySql,
+         Compze.Wiring.SqlLayer.PostgreSql
       );
       context.DIContainer.Should().BeOneOf(
          Compze.Wiring.DIContainer.Microsoft,
          Compze.Wiring.DIContainer.SimpleInjector
       );
 
-      // Test the ValueForDb functionality (alias for PersistenceLayer.ValueFor)
+      // Test the ValueForDb functionality (alias for SqlLayer.ValueFor)
       var testValue = context.ValueForDb<string>(
          msSql: "SQL Server",
          mySql: "MySQL",
@@ -45,39 +45,39 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       System.Console.WriteLine($"  ValueForDb result: {testValue}");
       testValue.Should().NotBeNull();
 
-      // Verify the value matches the current persistence layer
-      var expectedValue = context.PersistenceLayer switch
+      // Verify the value matches the current sql layer
+      var expectedValue = context.SqlLayer switch
       {
-         Compze.Wiring.PersistenceLayer.MicrosoftSqlServer => "SQL Server",
-         Compze.Wiring.PersistenceLayer.MySql => "MySQL",
-         Compze.Wiring.PersistenceLayer.PostgreSql => "PostgreSQL",
-         _ => throw new System.Exception($"Unexpected persistence layer: {context.PersistenceLayer}")
+         Compze.Wiring.SqlLayer.MicrosoftSqlServer => "SQL Server",
+         Compze.Wiring.SqlLayer.MySql => "MySQL",
+         Compze.Wiring.SqlLayer.PostgreSql => "PostgreSQL",
+         _ => throw new System.Exception($"Unexpected sql layer: {context.SqlLayer}")
       };
 
       testValue.Should().Be(expectedValue);
    }
 
    [PluggableComponentsTheory]
-   public void Can_use_ValueFor_directly_on_PersistenceLayer(PluggableComponentTestContext context)
+   public void Can_use_ValueFor_directly_on_SqlLayer(PluggableComponentTestContext context)
    {
-      // Demonstrate using the extension method directly on the PersistenceLayer enum
-      var timeout = context.PersistenceLayer.ValueFor(
+      // Demonstrate using the extension method directly on the SqlLayer enum
+      var timeout = context.SqlLayer.ValueFor(
          msSql: System.TimeSpan.FromSeconds(5),
          mySql: System.TimeSpan.FromSeconds(10),
          pgSql: System.TimeSpan.FromSeconds(7)
       );
 
-      System.Console.WriteLine($"✓ Timeout for {context.PersistenceLayer}: {timeout}");
+      System.Console.WriteLine($"✓ Timeout for {context.SqlLayer}: {timeout}");
       
       timeout.Should().BePositive();
       
       // Verify it matches expected value
-      var expected = context.PersistenceLayer switch
+      var expected = context.SqlLayer switch
       {
-         Compze.Wiring.PersistenceLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
-         Compze.Wiring.PersistenceLayer.MySql => System.TimeSpan.FromSeconds(10),
-         Compze.Wiring.PersistenceLayer.PostgreSql => System.TimeSpan.FromSeconds(7),
-         _ => throw new System.Exception($"Unexpected persistence layer: {context.PersistenceLayer}")
+         Compze.Wiring.SqlLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
+         Compze.Wiring.SqlLayer.MySql => System.TimeSpan.FromSeconds(10),
+         Compze.Wiring.SqlLayer.PostgreSql => System.TimeSpan.FromSeconds(7),
+         _ => throw new System.Exception($"Unexpected sql layer: {context.SqlLayer}")
       };
       
       timeout.Should().Be(expected);

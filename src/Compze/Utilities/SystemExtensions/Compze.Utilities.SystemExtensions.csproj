@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -33,10 +33,10 @@
       <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection" />
       <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.Microsoft" />
       <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.SimpleInjector" />
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.MySql" />
-      <InternalsVisibleTo Include="Compze.Persistence.DocumentDb.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
       <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MicrosoftSql" />
       <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MySql" />
@@ -44,17 +44,17 @@
       <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Abstractions" />
       <InternalsVisibleTo Include="Compze.Utilities.Logging" />
       <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
-      <InternalsVisibleTo Include="Compze.Persistence.Common" />
-      <InternalsVisibleTo Include="Compze.Persistence.MicrosoftSql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.MySql.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Persistence.PostgreSql.Infrastructure" />
+      <InternalsVisibleTo Include="Compze.Sql.Common" />
+      <InternalsVisibleTo Include="Compze.Sql.MicrosoftSql.Infrastructure" />
+      <InternalsVisibleTo Include="Compze.Sql.MySql.Infrastructure" />
+      <InternalsVisibleTo Include="Compze.Sql.PostgreSql.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Serialization" />
       <InternalsVisibleTo Include="Compze.Tessaging" />
       <InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
       <InternalsVisibleTo Include="Compze.Tessaging.Common" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Persistence.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MySql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Sql.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
@@ -74,13 +74,12 @@
       <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/>
       <InternalsVisibleTo Include="Compze.Utilities.SystemExtensions.Testing"/>
 	</ItemGroup>
-
-	<!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer. -->
-	<ItemGroup>
-		<Compile Remove="Testing\**" />
-		<EmbeddedResource Remove="Testing\**" />
-		<None Remove="Testing\**" />
-		<Content Remove="Testing\**" />
-	</ItemGroup>
-
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Testing\**" />
+    <EmbeddedResource Remove="Testing\**" />
+    <None Remove="Testing\**" />
+    <Content Remove="Testing\**" />
+  </ItemGroup>
 </Project>

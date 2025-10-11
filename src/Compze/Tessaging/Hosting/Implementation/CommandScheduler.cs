@@ -49,7 +49,7 @@ class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRu
          throw new InvalidOperationException(message: "You cannot schedule a queuedMessageInformation to be sent in the past.");
 
       var scheduledCommand = new ScheduledCommand(sendAt, message);
-      //todo:Persistence.
+      //todo:Sql.
       _scheduledMessages.Add(scheduledCommand);
    });
 

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using ReadOrder = Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions.ReadOrder;
+using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
 
 namespace Compze.Tessaging.Teventive.EventStore;
 
@@ -43,7 +43,7 @@ partial class EventStore
                   //performance: bug: Look at ways to avoid taking a lock for a long time as we do now. This might be a problem in production.
                   using var transaction = new TransactionScope(TransactionScopeOption.Required, scopeTimeout: 10.Minutes());
 
-                  var original = GetAggregateEventsFromPersistenceLayer(aggregateId: aggregateId, takeWriteLock: true);
+                  var original = GetAggregateEventsFromSqlLayer(aggregateId: aggregateId, takeWriteLock: true);
 
                   var highestSeenVersion = original.Max(@event => @event.StorageInformation.InsertedVersion) + 1;
 
@@ -137,7 +137,7 @@ partial class EventStore
       //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every event in every refactored aggregate if only a few, or none, have actually changed.
       versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.MessageId, index + 1)));
 
-      _persistenceLayer.UpdateEffectiveVersions(versionUpdates);
+      _sqlLayer.UpdateEffectiveVersions(versionUpdates);
    }
 
    void AssertHistoriesAreIdentical(AggregateEvent[] inMemoryMigratedHistory, IReadOnlyList<IAggregateEvent> loadedAggregateHistory)
@@ -179,29 +179,29 @@ partial class EventStore
 
    void InsertAfterEvent(Guid eventId, EventDataRow[] insertAfterGroup)
    {
-      var eventToInsertAfter = _persistenceLayer.LoadEventNeighborHood(eventId);
+      var eventToInsertAfter = _sqlLayer.LoadEventNeighborHood(eventId);
 
       SetManualReadOrders(newEvents: insertAfterGroup,
                           rangeStart: eventToInsertAfter.EffectiveReadOrder,
                           rangeEnd: eventToInsertAfter.NextEventReadOrder);
 
-      _persistenceLayer.InsertSingleAggregateEvents(insertAfterGroup);
+      _sqlLayer.InsertSingleAggregateEvents(insertAfterGroup);
    }
 
    void InsertBeforeEvent(Guid eventId, EventDataRow[] insertBefore)
    {
-      var eventToInsertBefore = _persistenceLayer.LoadEventNeighborHood(eventId);
+      var eventToInsertBefore = _sqlLayer.LoadEventNeighborHood(eventId);
 
       SetManualReadOrders(newEvents: insertBefore,
                           rangeStart: eventToInsertBefore.PreviousEventReadOrder,
                           rangeEnd: eventToInsertBefore.EffectiveReadOrder);
 
-      _persistenceLayer.InsertSingleAggregateEvents(insertBefore);
+      _sqlLayer.InsertSingleAggregateEvents(insertBefore);
    }
 
    void ReplaceEvent(Guid eventId, EventDataRow[] replacementEvents)
    {
-      var neighborHood = _persistenceLayer.LoadEventNeighborHood(eventId);
+      var neighborHood = _sqlLayer.LoadEventNeighborHood(eventId);
 
       //We are not making maximally efficient use of the space here. Since the replaced event is no longer in use we should theoretically be able to start the range at the previous events position.
       //To make this possible without a collision on the unique index the replaced events read order would need to be moved out of the way somehow. Negating it seems easy but actually introduces risk of collisions.
@@ -212,7 +212,7 @@ partial class EventStore
                           rangeStart: neighborHood.EffectiveReadOrder,
                           rangeEnd: neighborHood.NextEventReadOrder);
 
-      _persistenceLayer.InsertSingleAggregateEvents(replacementEvents);
+      _sqlLayer.InsertSingleAggregateEvents(replacementEvents);
    }
 
    static void SetManualReadOrders(EventDataRow[] newEvents, ReadOrder rangeStart, ReadOrder rangeEnd)

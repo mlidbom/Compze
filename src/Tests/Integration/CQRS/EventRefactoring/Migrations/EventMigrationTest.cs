@@ -20,7 +20,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 
-//Todo: Write tests that verify that none of the persistence layers lose precision in the persisted ReadOrder when persisting refactorings.
+//Todo: Write tests that verify that none of the sql layers lose precision in the persisted ReadOrder when persisting refactorings.
 public class EventMigrationTest(string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
 {
    [Test]

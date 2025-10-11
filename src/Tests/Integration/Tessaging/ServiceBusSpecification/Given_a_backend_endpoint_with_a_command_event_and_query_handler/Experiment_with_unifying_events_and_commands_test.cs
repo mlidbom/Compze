@@ -9,7 +9,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
@@ -46,7 +46,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredPersistenceLayer();
+                   .CurrentTestsConfiguredSqlLayer();
             builder.Container.Register().EventStore(builder.Configuration.ConnectionStringName);
 
             builder.RegisterHandlers

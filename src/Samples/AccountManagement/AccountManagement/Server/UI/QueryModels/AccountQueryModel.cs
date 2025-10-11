@@ -7,7 +7,7 @@ using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Persistence.EventStore;
+using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia.Abstractions;
 

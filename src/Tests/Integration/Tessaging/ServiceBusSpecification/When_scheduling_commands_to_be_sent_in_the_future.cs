@@ -6,7 +6,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
@@ -35,7 +35,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredPersistenceLayer();
+                   .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers.ForCommand<ScheduledCommand>(_ => _receivedCommandGate.AwaitPassThrough());
          });
 

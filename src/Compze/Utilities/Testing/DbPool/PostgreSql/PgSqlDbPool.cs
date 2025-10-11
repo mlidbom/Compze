@@ -1,5 +1,5 @@
-using Compze.Persistence.Common;
-using Compze.Persistence.PostgreSql.Infrastructure;
+using Compze.Sql.Common;
+using Compze.Sql.PostgreSql.Infrastructure;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using Npgsql;

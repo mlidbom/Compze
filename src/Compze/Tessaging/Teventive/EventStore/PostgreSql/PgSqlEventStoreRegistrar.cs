@@ -1,5 +1,5 @@
-using Compze.Persistence.PostgreSql.Infrastructure;
-using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
@@ -11,6 +11,6 @@ public static class PgSqlEventStoreRegistrar
       registrar.Register(
          Singleton.For<PgSqlEventStoreConnectionManager>()
                   .CreatedBy((IPgSqlConnectionPool sqlConnectionProvider) => new PgSqlEventStoreConnectionManager(sqlConnectionProvider)),
-         Singleton.For<IEventStorePersistenceLayer>()
-                  .CreatedBy((PgSqlEventStoreConnectionManager connectionManager) => new PgSqlEventStorePersistenceLayer(connectionManager)));
+         Singleton.For<IEventStoreSqlLayer>()
+                  .CreatedBy((PgSqlEventStoreConnectionManager connectionManager) => new PgSqlEventStoreSqlLayer(connectionManager)));
 }

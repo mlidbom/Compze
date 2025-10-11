@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\..\..\Sql\MicrosoftSql\Infrastructure\Compze.Sql.MicrosoftSql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>

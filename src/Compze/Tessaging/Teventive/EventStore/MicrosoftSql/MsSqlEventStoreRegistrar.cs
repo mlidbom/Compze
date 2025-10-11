@@ -1,5 +1,5 @@
-using Compze.Persistence.MicrosoftSql.Infrastructure;
-using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
@@ -11,6 +11,6 @@ public static class MsSqlEventStoreRegistrar
       registrar.Register(
          Singleton.For<MsSqlEventStoreConnectionManager>()
                   .CreatedBy((IMsSqlConnectionPool sqlConnectionProvider) => new MsSqlEventStoreConnectionManager(sqlConnectionProvider)),
-         Singleton.For<IEventStorePersistenceLayer>()
-                  .CreatedBy((MsSqlEventStoreConnectionManager connectionManager) => new MsSqlEventStorePersistenceLayer(connectionManager)));
+         Singleton.For<IEventStoreSqlLayer>()
+                  .CreatedBy((MsSqlEventStoreConnectionManager connectionManager) => new MsSqlEventStoreSqlLayer(connectionManager)));
 }

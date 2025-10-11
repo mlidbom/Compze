@@ -4,7 +4,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
@@ -33,7 +33,7 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredPersistenceLayer();
+                   .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
                    .ForQuery((MyRemoteQuery _) => new MyQueryResult())
                    .ForQuery((MyLocalStrictlyLocalQuery _) => new MyQueryResult());

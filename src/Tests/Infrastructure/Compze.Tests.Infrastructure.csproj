@@ -11,7 +11,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Compze\Persistence\DocumentDb\Compze.Persistence.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Compze.Sql.DocumentDb.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
@@ -24,7 +24,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
   <ItemGroup>
     <Compile Remove="NUnit\**" />
     <EmbeddedResource Remove="NUnit\**" />
@@ -34,13 +34,5 @@
     <EmbeddedResource Remove="XUnit\**" />
     <None Remove="XUnit\**" />
     <Content Remove="XUnit\**" />
-    <Compile Remove="Threading\**" />
-    <EmbeddedResource Remove="Threading\**" />
-    <None Remove="Threading\**" />
-    <Content Remove="Threading\**" />
-    <Compile Remove="Transactions\**" />
-    <EmbeddedResource Remove="Transactions\**" />
-    <None Remove="Transactions\**" />
-    <Content Remove="Transactions\**" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-using Compze.Persistence.DocumentDb;
+using Compze.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using NUnit.Framework;

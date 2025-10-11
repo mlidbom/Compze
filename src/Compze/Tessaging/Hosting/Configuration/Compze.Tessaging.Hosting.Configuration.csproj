@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
@@ -13,9 +13,9 @@
 		<PackageReference Include="SimpleInjector" Version="5.5.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MicrosoftSql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.MySql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Persistence.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql" />
+		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MySql" />
+		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql" />
 		<InternalsVisibleTo Include="Compze.Tessaging" />
 		<InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
 		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
@@ -25,12 +25,12 @@
 		<ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
 		<ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
-	<!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Fix-CsprojExclusions.ps1 -->
-	<ItemGroup>
-		<Compile Remove="Abstractions\**" />
-		<EmbeddedResource Remove="Abstractions\**" />
-		<None Remove="Abstractions\**" />
-		<Content Remove="Abstractions\**" />
-	</ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <None Remove="Abstractions\**" />
+    <Content Remove="Abstractions\**" />
+  </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Configuration;
 using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Testing.Persistence;
+using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
@@ -23,7 +23,7 @@ public static class TestingContainerFactory
                .TimeSource()
                .TypeMapper()
                .DummyConfigurationParameterProvider()
-               .CurrentTestsConfiguredPersistenceLayer()
+               .CurrentTestsConfiguredSqlLayer()
                .MessageHandlerRegistry()
                .InMemoryEventStoreEventPublisher();
       setup(container.Register());

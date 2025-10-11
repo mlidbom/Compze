@@ -1,5 +1,5 @@
-using Compze.Persistence.MySql.Infrastructure.SystemExtensions;
-using Compze.Tessaging.Teventive.EventStore.PersistenceLayer.Abstractions;
+using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
@@ -11,6 +11,6 @@ public static class MySqlEventStoreRegistrar
       registrar.Register(
          Singleton.For<MySqlEventStoreConnectionManager>()
                   .CreatedBy((IMySqlConnectionPool sqlConnectionProvider) => new MySqlEventStoreConnectionManager(sqlConnectionProvider)),
-         Singleton.For<IEventStorePersistenceLayer>()
-                  .CreatedBy((MySqlEventStoreConnectionManager connectionManager) => new MySqlEventStorePersistenceLayer(connectionManager)));
+         Singleton.For<IEventStoreSqlLayer>()
+                  .CreatedBy((MySqlEventStoreConnectionManager connectionManager) => new MySqlEventStoreSqlLayer(connectionManager)));
 }

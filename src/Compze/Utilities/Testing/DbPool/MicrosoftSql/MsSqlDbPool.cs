@@ -1,4 +1,4 @@
-using Compze.Persistence.MicrosoftSql.Infrastructure;
+using Compze.Sql.MicrosoftSql.Infrastructure;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
 using Microsoft.Data.SqlClient;
 
