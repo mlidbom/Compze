@@ -48,6 +48,7 @@ static partial class TestEnv
             Compze.Wiring.SqlLayer.MySql              => mySql,
             Compze.Wiring.SqlLayer.PostgreSql         => pgSql,
             Compze.Wiring.SqlLayer.Sqlite             => sqlite,
+            Compze.Wiring.SqlLayer.SqliteMemory       => sqlite,
             _                                                 => throw new ArgumentOutOfRangeException()
          };
       }

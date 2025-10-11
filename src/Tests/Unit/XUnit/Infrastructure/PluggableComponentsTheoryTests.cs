@@ -29,7 +29,8 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
          Compze.Wiring.SqlLayer.MicrosoftSqlServer,
          Compze.Wiring.SqlLayer.MySql,
          Compze.Wiring.SqlLayer.PostgreSql,
-         Compze.Wiring.SqlLayer.Sqlite
+         Compze.Wiring.SqlLayer.Sqlite,
+         Compze.Wiring.SqlLayer.SqliteMemory
       );
       context.DIContainer.Should().BeOneOf(
          Compze.Wiring.DIContainer.Microsoft,
@@ -54,6 +55,7 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
          Compze.Wiring.SqlLayer.MySql => "MySQL",
          Compze.Wiring.SqlLayer.PostgreSql => "PostgreSQL",
          Compze.Wiring.SqlLayer.Sqlite => "SQLite",
+         Compze.Wiring.SqlLayer.SqliteMemory => "SQLite",
          _ => throw new System.Exception($"Unexpected sql layer: {context.SqlLayer}")
       };
 
@@ -82,6 +84,7 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
          Compze.Wiring.SqlLayer.MySql => System.TimeSpan.FromSeconds(10),
          Compze.Wiring.SqlLayer.PostgreSql => System.TimeSpan.FromSeconds(7),
          Compze.Wiring.SqlLayer.Sqlite => System.TimeSpan.FromSeconds(6),
+         Compze.Wiring.SqlLayer.SqliteMemory => System.TimeSpan.FromSeconds(6),
          _ => throw new System.Exception($"Unexpected sql layer: {context.SqlLayer}")
       };
       

@@ -125,6 +125,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
             useConnection = () => pgSqlConnectionProvider.UseConnection(_ => {});
             break;
          case SqlLayer.Sqlite:
+         case SqlLayer.SqliteMemory:
             var sqliteConnectionProvider = ISqliteConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => sqliteConnectionProvider.UseConnection(_ => {});
             break;

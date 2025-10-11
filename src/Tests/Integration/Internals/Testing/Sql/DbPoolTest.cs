@@ -25,6 +25,7 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
          SqlLayer.MySql => new MySqlDbPool(),
          SqlLayer.PostgreSql => new PgSqlDbPool(),
          SqlLayer.Sqlite => new SqliteDbPool(),
+         SqlLayer.SqliteMemory => new SqliteMemoryDbPool(),
          _ => throw new ArgumentOutOfRangeException()
       };
 
@@ -42,6 +43,7 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
             UseMySqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
          case SqlLayer.Sqlite:
+         case SqlLayer.SqliteMemory:
             UseSqliteConnection(pool.ConnectionStringFor(connectionString), func);
             break;
          default:
