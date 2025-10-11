@@ -11,7 +11,7 @@ function Build-Compze {
     
     .PARAMETER FullGitReset
     Performs a full git reset that removes all untracked files and directories before building.
-    This will backup TestUsingPluggableComponentCombinations.config before running git clean.
+    This will backup TestUsingPluggableComponentCombinations before running git clean.
     Requires a clean working tree (no uncommitted changes). Implies -Clean.
     
     .PARAMETER WhatIf

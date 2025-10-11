@@ -5,11 +5,11 @@ function Clean-Compze {
     
     .DESCRIPTION
     Performs a deep clean by running 'dotnet clean' and then deleting all \obj\ folders.
-    With -FullGitReset, performs a full git clean after backing up TestUsingPluggableComponentCombinations.config.
+    With -FullGitReset, performs a full git clean after backing up TestUsingPluggableComponentCombinations.
     
     .PARAMETER FullGitReset
     When specified, performs a full git reset that removes all untracked files and directories.
-    This will backup TestUsingPluggableComponentCombinations.config before running git clean.
+    This will backup TestUsingPluggableComponentCombinations before running git clean.
     Requires a clean working tree (no uncommitted changes).
     
     .PARAMETER WhatIf
@@ -21,7 +21,7 @@ function Clean-Compze {
     
     .EXAMPLE
     Clean-Compze -FullGitReset
-    Performs a deep clean plus git clean -fdx after backing up TestUsingPluggableComponentCombinations.config
+    Performs a deep clean plus git clean -fdx after backing up TestUsingPluggableComponentCombinations
     
     .EXAMPLE
     Clean-Compze -FullGitReset -WhatIf
@@ -50,8 +50,8 @@ function Clean-Compze {
                 return
             }
             
-            # Show what would be removed, but filter out TestUsingPluggableComponentCombinations.config since we protect it
-            git clean -fdxn | Where-Object { $_ -notmatch 'src/TestUsingPluggableComponentCombinations.config' }
+            # Show what would be removed, but filter out TestUsingPluggableComponentCombinations since we protect it
+            git clean -fdxn | Where-Object { $_ -notmatch 'src/TestUsingPluggableComponentCombinations' }
         } finally {
             Pop-Location
         }
@@ -71,12 +71,12 @@ function Clean-Compze {
                 return
             }
             
-            # Backup TestUsingPluggableComponentCombinations.config to temp directory (outside git repo)
-            $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations.config"
-            $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.config.backup"
+            # Backup TestUsingPluggableComponentCombinations to temp directory (outside git repo)
+            $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
+            $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
             
             if (Test-Path $testConfigFile) {
-                Write-Verbose "Backing up TestUsingPluggableComponentCombinations.config to $backupFile"
+                Write-Verbose "Backing up TestUsingPluggableComponentCombinations to $backupFile"
                 Copy-Item -Path $testConfigFile -Destination $backupFile -Force
             }
         } finally {
@@ -124,11 +124,11 @@ function Clean-Compze {
                     Write-Verbose "Git clean completed successfully."
                     
                     # Restore the backup from temp directory
-                    $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations.config"
-                    $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.config.backup"
+                    $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
+                    $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
                     
                     if (Test-Path $backupFile) {
-                        Write-Verbose "Restoring TestUsingPluggableComponentCombinations.config from backup"
+                        Write-Verbose "Restoring TestUsingPluggableComponentCombinations from backup"
                         Copy-Item -Path $backupFile -Destination $testConfigFile -Force
                         Remove-Item -Path $backupFile -Force
                     }

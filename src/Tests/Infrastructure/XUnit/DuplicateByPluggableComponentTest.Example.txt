@@ -5,7 +5,7 @@ namespace Compze.Tests.Infrastructure.XUnit.Examples;
 
 /// <summary>
 /// Example of how to use DuplicateByPluggableComponentTest with XUnit.
-/// This pattern allows you to test all pluggable component combinations defined in TestUsingPluggableComponentCombinations.config file.
+/// This pattern allows you to test all pluggable component combinations defined in TestUsingPluggableComponentCombinations file.
 /// </summary>
 public class ExamplePluggableComponentTest : DuplicateByPluggableComponentTest
 {

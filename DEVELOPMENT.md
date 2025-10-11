@@ -16,7 +16,7 @@ If you want to test against real database servers (recommended for comprehensive
 
 In the root of the project:
 
-1. **Optional**: Copy `TestUsingPluggableComponentCombinations.config.example` to `TestUsingPluggableComponentCombinations.config`
+1. **Optional**: Copy `TestUsingPluggableComponentCombinations.example` to `TestUsingPluggableComponentCombinations`
    - If you don't create this file, it will be automatically created from the example during the first build
    - **By default, tests run using SQLite in-memory** with no required configuration.
 2. Edit this file to configure which database servers the tests run against
@@ -81,7 +81,7 @@ This environment variable lets you adjust the expectations for the performance t
 
 ### Test Configuration Options
 
-Edit `TestUsingPluggableComponentCombinations.config` to control:
+Edit `TestUsingPluggableComponentCombinations` to control:
 - Which persistence layers to test (SQLite in-memory by default, can enable SQL Server, PostgreSQL, MySQL, file-based SQLite)
 - Which dependency injection containers to test (Microsoft DI, SimpleInjector)
 - Other pluggable component combinations
@@ -100,7 +100,7 @@ If tests fail with database connection errors
 1. Verify your SQL server is running
 2. Check that the connection string is correct
 3. Ensure you have appropriate permissions to create databases
-4. **Quick fix:** Switch back to SQLite in-memory by editing `TestUsingPluggableComponentCombinations.config` to only enable `SqliteMemory:Microsoft`
+4. **Quick fix:** Switch back to SQLite in-memory by editing `TestUsingPluggableComponentCombinations` to only enable `SqliteMemory:Microsoft`
 
 ### Performance Test Failures
 

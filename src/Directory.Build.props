@@ -3,11 +3,11 @@
 		<EnablePackageValidation>true</EnablePackageValidation>
 	</PropertyGroup>
 	
-	<!-- Ensure TestUsingPluggableComponentCombinations.config exists by copying from example if needed -->
+	<!-- Ensure TestUsingPluggableComponentCombinations exists by copying from example if needed -->
 	<Target Name="EnsurePluggableComponentsConfig" BeforeTargets="Build">
 		<PropertyGroup>
-			<PluggableComponentsConfig>$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations.config</PluggableComponentsConfig>
-			<PluggableComponentsExample>$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations.config.example</PluggableComponentsExample>
+			<PluggableComponentsConfig>$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations</PluggableComponentsConfig>
+			<PluggableComponentsExample>$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations.example</PluggableComponentsExample>
 		</PropertyGroup>
 		<Copy SourceFiles="$(PluggableComponentsExample)" 
 		      DestinationFiles="$(PluggableComponentsConfig)" 
@@ -15,7 +15,7 @@
 		      SkipUnchangedFiles="true">
 			<Output TaskParameter="CopiedFiles" ItemName="CopiedConfigFile" />
 		</Copy>
-		<Message Text="Created TestUsingPluggableComponentCombinations.config from example file" 
+		<Message Text="Created TestUsingPluggableComponentCombinations from example file" 
 		         Condition="'@(CopiedConfigFile)' != ''" 
 		         Importance="high" />
 	</Target>
