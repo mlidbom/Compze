@@ -10,17 +10,30 @@ namespace Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 
 public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {
+   const int IntegerDigits = 20;     // Maximum digits in the integer part
+   const int FractionDigits = 19;    // Number of digits in the fractional part (always exactly 19)
+   const int TotalDigits = 38;       // Total precision: integer + fractional digits (for decimal(38,19))
+   const int ZeroFractionalPart = 0; // Zero fractional part for sequential events (e.g., 1.0, 2.0, 3.0)
+
    readonly BigInteger _order;
    readonly BigInteger _offSet;
 
-   // Pad integer part to 20 digits for proper lexicographic sorting in text-based storage (e.g., SQLite)
-   public override string ToString() => $"{_order.ToString(CultureInfo.InvariantCulture).PadLeft(20, '0')}.{_offSet:D19}";
+   public override string ToString() => $"{FormatIntegerPart(_order)}.{FormatFractionalPart(_offSet)}";
+
+   static string FormatIntegerPart(BigInteger integerPart) 
+      => integerPart.ToString(CultureInfo.InvariantCulture).PadLeft(IntegerDigits, '0');
+
+   static string FormatFractionalPart(BigInteger fractionalPart) 
+      => fractionalPart.ToString($"D{FractionDigits}", CultureInfo.InvariantCulture);
+
+   public static string CreateSqliteIntegerToReadOrderExpression(string integerColumnName)
+      => $"printf('%0{IntegerDigits}d.%0{FractionDigits}d', {integerColumnName}, {ZeroFractionalPart})";
 
    public static readonly ReadOrder Zero = new(0, 0);
 
    public static ReadOrder FromLong(long readOrder) => new(readOrder, 0);
 
-   static readonly BigInteger MaxOffset = BigInteger.Parse("1".PadRight(20, '0'), CultureInfo.InvariantCulture);
+   static readonly BigInteger MaxOffset = BigInteger.Parse("1".PadRight(IntegerDigits, '0'), CultureInfo.InvariantCulture);
 
    ReadOrder(BigInteger order, BigInteger offSet)
    {
@@ -31,7 +44,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
       _offSet = offSet;
    }
 
-   public SqlDecimal ToSqlDecimal() => ToCorrectPrecisionAndScale(SqlDecimal.Parse(ToString()));
+   public SqlDecimal ToSqlDecimal() => ToCorrectIntegerAndFractionDigits(SqlDecimal.Parse(ToString()));
 
    public ReadOrder NextIntegerOrder => new(_order + 1, 0);
 
@@ -46,10 +59,10 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
       if(!bypassScaleTest)
       {
-         if(offset.Length != 19) throw new ArgumentException($"Got number with {offset.Length} decimal numbers. It must be exactly 19", nameof(value));
+         if(offset.Length != FractionDigits) throw new ArgumentException($"Got number with {offset.Length} decimal numbers. It must be exactly {FractionDigits}", nameof(value));
       }
 
-      return new ReadOrder(BigInteger.Parse(order, CultureInfo.InvariantCulture), BigInteger.Parse(offset.PadRight(19, '0'), CultureInfo.InvariantCulture));
+      return new ReadOrder(BigInteger.Parse(order, CultureInfo.InvariantCulture), BigInteger.Parse(offset.PadRight(FractionDigits, '0'), CultureInfo.InvariantCulture));
    }
 
    public static ReadOrder FromSqlDecimal(SqlDecimal value) => Parse(value.ToString());
@@ -92,7 +105,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
       return result;
    }
 
-   static SqlDecimal ToCorrectPrecisionAndScale(SqlDecimal value) => SqlDecimal.ConvertToPrecScale(value, 38, 19);
+   static SqlDecimal ToCorrectIntegerAndFractionDigits(SqlDecimal value) => SqlDecimal.ConvertToPrecScale(value, TotalDigits, FractionDigits);
 
    public bool Equals(ReadOrder other) => _order.Equals(other._order) && _offSet.Equals(other._offSet);
    public override bool Equals(object? obj) => obj is ReadOrder other && Equals(other);
