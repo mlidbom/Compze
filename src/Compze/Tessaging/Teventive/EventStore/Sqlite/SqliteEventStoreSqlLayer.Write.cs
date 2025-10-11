@@ -26,14 +26,15 @@ partial class SqliteEventStoreSqlLayer
                                         $"""
 
                                          INSERT INTO {Event.TableName}
-                                         (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
-                                         VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrder}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
+                                         (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrderIntegerPart},  {Event.ReadOrderFractionPart},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
+                                         VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrderIntegerPart}, @{Event.ReadOrderFractionPart}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
 
 
                                          {(data.StorageInformation.ReadOrder != null ? "" : $"""
 
                                                                                              UPDATE {Event.TableName}
-                                                                                             SET {Event.ReadOrder} = {ReadOrder.CreateSqliteIntegerToReadOrderExpression(Event.InsertionOrder)}
+                                                                                             SET {Event.ReadOrderIntegerPart} = {Event.InsertionOrder},
+                                                                                                 {Event.ReadOrderFractionPart} = 0
                                                                                              WHERE {Event.EventId} = @{Event.EventId};
 
                                                                                              """)}
@@ -45,7 +46,8 @@ partial class SqliteEventStoreSqlLayer
                                     .AddVarcharParameter(Event.EventId, 36, data.EventId.ToString())
                                     .AddDateTime2Parameter(Event.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Event.Event, data.EventJson)
-                                    .AddVarcharParameter(Event.ReadOrder, 50, data.StorageInformation.ReadOrder?.ToString() ?? new ReadOrder().ToString())
+                                    .AddParameter(Event.ReadOrderIntegerPart, (data.StorageInformation.ReadOrder ?? ReadOrder.Zero).IntegerPart)
+                                    .AddParameter(Event.ReadOrderFractionPart, (data.StorageInformation.ReadOrder ?? ReadOrder.Zero).FractionPart)
                                     .AddParameter(Event.EffectiveVersion, data.StorageInformation.EffectiveVersion)
                                     .AddNullableParameter(Event.TargetEvent, SqliteType.Text, data.StorageInformation.RefactoringInformation?.TargetEvent.ToString())
                                     .AddNullableParameter(Event.RefactoringType, SqliteType.Integer, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (int?)data.StorageInformation.RefactoringInformation.RefactoringType)
@@ -71,9 +73,23 @@ partial class SqliteEventStoreSqlLayer
    {
       var selectStatement = $"""
 
-                             SELECT  {Event.ReadOrder},        
-                                     (select {Event.ReadOrder} from {Event.TableName} e1 where e1.{Event.ReadOrder} < {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} desc limit 1) PreviousReadOrder,
-                                     (select {Event.ReadOrder} from {Event.TableName} e1 where e1.{Event.ReadOrder} > {Event.TableName}.{Event.ReadOrder} order by {Event.ReadOrder} limit 1) NextReadOrder
+                             SELECT  {Event.ReadOrderIntegerPart}, {Event.ReadOrderFractionPart},        
+                                     (select {Event.ReadOrderIntegerPart} from {Event.TableName} e1 
+                                      where e1.{Event.ReadOrderIntegerPart} < {Event.TableName}.{Event.ReadOrderIntegerPart}
+                                         OR (e1.{Event.ReadOrderIntegerPart} = {Event.TableName}.{Event.ReadOrderIntegerPart} AND e1.{Event.ReadOrderFractionPart} < {Event.TableName}.{Event.ReadOrderFractionPart})
+                                      order by e1.{Event.ReadOrderIntegerPart} desc, e1.{Event.ReadOrderFractionPart} desc limit 1) PreviousIntegerPart,
+                                     (select {Event.ReadOrderFractionPart} from {Event.TableName} e1 
+                                      where e1.{Event.ReadOrderIntegerPart} < {Event.TableName}.{Event.ReadOrderIntegerPart}
+                                         OR (e1.{Event.ReadOrderIntegerPart} = {Event.TableName}.{Event.ReadOrderIntegerPart} AND e1.{Event.ReadOrderFractionPart} < {Event.TableName}.{Event.ReadOrderFractionPart})
+                                      order by e1.{Event.ReadOrderIntegerPart} desc, e1.{Event.ReadOrderFractionPart} desc limit 1) PreviousFractionPart,
+                                     (select {Event.ReadOrderIntegerPart} from {Event.TableName} e1 
+                                      where e1.{Event.ReadOrderIntegerPart} > {Event.TableName}.{Event.ReadOrderIntegerPart}
+                                         OR (e1.{Event.ReadOrderIntegerPart} = {Event.TableName}.{Event.ReadOrderIntegerPart} AND e1.{Event.ReadOrderFractionPart} > {Event.TableName}.{Event.ReadOrderFractionPart})
+                                      order by e1.{Event.ReadOrderIntegerPart}, e1.{Event.ReadOrderFractionPart} limit 1) NextIntegerPart,
+                                     (select {Event.ReadOrderFractionPart} from {Event.TableName} e1 
+                                      where e1.{Event.ReadOrderIntegerPart} > {Event.TableName}.{Event.ReadOrderIntegerPart}
+                                         OR (e1.{Event.ReadOrderIntegerPart} = {Event.TableName}.{Event.ReadOrderIntegerPart} AND e1.{Event.ReadOrderFractionPart} > {Event.TableName}.{Event.ReadOrderFractionPart})
+                                      order by e1.{Event.ReadOrderIntegerPart}, e1.{Event.ReadOrderFractionPart} limit 1) NextFractionPart
                              FROM    {Event.TableName} 
                              where {Event.EventId} = @{Event.EventId}
                              """;
@@ -88,12 +104,12 @@ partial class SqliteEventStoreSqlLayer
             using var reader = command.ExecuteReader();
             reader.Read();
 
-            var effectiveReadOrder = reader.GetString(0);
-            var previousEventReadOrder = reader.IsDBNull(1) ? null : reader.GetString(1);
-            var nextEventReadOrder = reader.IsDBNull(2) ? null : reader.GetString(2);
-            neighborhood = new EventNeighborhood(effectiveReadOrder: ReadOrder.Parse(effectiveReadOrder),
-                                                 previousEventReadOrder: previousEventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(previousEventReadOrder)),
-                                                 nextEventReadOrder: nextEventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextEventReadOrder)));
+            var effectiveReadOrder = ReadOrder.FromParts(reader.GetInt64(0), reader.GetInt64(1));
+            var previousEventReadOrder = reader.IsDBNull(2) ? null : new ReadOrder?(ReadOrder.FromParts(reader.GetInt64(2), reader.GetInt64(3)));
+            var nextEventReadOrder = reader.IsDBNull(4) ? null : new ReadOrder?(ReadOrder.FromParts(reader.GetInt64(4), reader.GetInt64(5)));
+            neighborhood = new EventNeighborhood(effectiveReadOrder: effectiveReadOrder,
+                                                 previousEventReadOrder: previousEventReadOrder,
+                                                 nextEventReadOrder: nextEventReadOrder);
          });
 
       return Assert.Result.NotNull(neighborhood).then(neighborhood);

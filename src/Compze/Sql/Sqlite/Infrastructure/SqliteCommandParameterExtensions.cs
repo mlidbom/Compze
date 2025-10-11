@@ -7,6 +7,7 @@ namespace Compze.Sql.Sqlite.Infrastructure;
 internal static class SqliteCommandParameterExtensions
 {
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, int value) => AddParameter(@this, name, SqliteType.Integer, value);
+   public static SqliteCommand AddParameter(this SqliteCommand @this, string name, long value) => AddParameter(@this, name, SqliteType.Integer, value);
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, Guid value) => AddParameter(@this, name, SqliteType.Text, value.ToString());
    
    // Store DateTime as INTEGER (Ticks) for full precision and efficient storage/comparisons

@@ -18,6 +18,9 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    readonly BigInteger _order;
    readonly BigInteger _offSet;
 
+   public long IntegerPart => (long)_order;
+   public long FractionPart => (long)_offSet;
+
    public override string ToString() => $"{FormatIntegerPart(_order)}.{FormatFractionalPart(_offSet)}";
 
    static string FormatIntegerPart(BigInteger integerPart) 
@@ -32,6 +35,8 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    public static readonly ReadOrder Zero = new(0, 0);
 
    public static ReadOrder FromLong(long readOrder) => new(readOrder, 0);
+   
+   public static ReadOrder FromParts(long integerPart, long fractionPart) => new(integerPart, fractionPart);
 
    static readonly BigInteger MaxOffset = BigInteger.Parse("1".PadRight(IntegerDigits, '0'), CultureInfo.InvariantCulture);
 

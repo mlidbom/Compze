@@ -20,7 +20,7 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
       return $"""
 
               SELECT 
-              {Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, {Event.ReadOrder} as CharReadOrder
+              {Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, {Event.ReadOrderIntegerPart}, {Event.ReadOrderFractionPart}
               FROM {Event.TableName}
               {topClause}
               """;
@@ -36,7 +36,7 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
       utcTimeStamp: new DateTime(eventReader.GetInt64(5), DateTimeKind.Utc),
       storageInformation: new AggregateEventStorageInformation
                           {
-                             ReadOrder = ReadOrder.Parse(eventReader.GetString(10)),
+                             ReadOrder = ReadOrder.FromParts(eventReader.GetInt64(10), eventReader.GetInt64(11)),
                              InsertedVersion = eventReader.GetInt32(9),
                              EffectiveVersion = eventReader.GetInt32(3),
                              RefactoringInformation = (eventReader.IsDBNull(7) ? (Guid?)null : Guid.Parse(eventReader.GetString(7)), eventReader.IsDBNull(8) ? (int?)null : eventReader.GetInt32(8))switch
@@ -58,7 +58,7 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
                                                                              WHERE {Event.AggregateId} = @{Event.AggregateId}
                                                                                  AND {Event.InsertedVersion} > @CachedVersion
                                                                                  AND {Event.EffectiveVersion} > 0
-                                                                             ORDER BY {Event.ReadOrder} ASC
+                                                                             ORDER BY {Event.ReadOrderIntegerPart} ASC, {Event.ReadOrderFractionPart} ASC
                                                                              """)
                                                             .AddVarcharParameter(Event.AggregateId, 36, aggregateId.ToString())
                                                             .AddParameter("CachedVersion", startAfterInsertedVersion)
@@ -68,27 +68,27 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
 
    public IEnumerable<EventDataRow> StreamEvents(int batchSize)
    {
-      string lastReadEventReadOrder = ReadOrder.Zero.ToString();
+      var lastReadOrder = ReadOrder.Zero;
       int fetchedInThisBatch;
       do
       {
          var historyData = _connectionManager.UseCommand(suppressTransactionWarning: true,
                                                          command => command.SetCommandText($"""
 
-                                                                                            SELECT 
-                                                                                            {Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, {Event.ReadOrder}
-                                                                                            FROM {Event.TableName}
-                                                                                            WHERE {Event.ReadOrder}  > @{Event.ReadOrder}
+                                                                                            {CreateSelectClause()}
+                                                                                            WHERE ({Event.ReadOrderIntegerPart} > @LastIntegerPart 
+                                                                                                OR ({Event.ReadOrderIntegerPart} = @LastIntegerPart AND {Event.ReadOrderFractionPart} > @LastFractionPart))
                                                                                                 AND {Event.EffectiveVersion} > 0
-                                                                                            ORDER BY {Event.ReadOrder} ASC
+                                                                                            ORDER BY {Event.ReadOrderIntegerPart} ASC, {Event.ReadOrderFractionPart} ASC
                                                                                             LIMIT {batchSize}
                                                                                             """)
-                                                                           .AddVarcharParameter(Event.ReadOrder, 50, lastReadEventReadOrder)
+                                                                           .AddParameter("LastIntegerPart", lastReadOrder.IntegerPart)
+                                                                           .AddParameter("LastFractionPart", lastReadOrder.FractionPart)
                                                                            .ExecuteReaderAndSelect(ReadDataRow)
                                                                            .ToList());
          if(historyData.Any())
          {
-            lastReadEventReadOrder = historyData[^1].StorageInformation.ReadOrder!.Value.ToString();
+            lastReadOrder = historyData[^1].StorageInformation.ReadOrder!.Value;
          }
 
          foreach(var eventDataRow in historyData)
@@ -108,8 +108,9 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
                                                                                       SELECT {Event.AggregateId}, {Event.EventType} 
                                                                                       FROM {Event.TableName} 
                                                                                       WHERE {Event.EffectiveVersion} = 1 
-                                                                                      ORDER BY {Event.ReadOrder} ASC
+                                                                                      ORDER BY {Event.ReadOrderIntegerPart} ASC, {Event.ReadOrderFractionPart} ASC
                                                                                       """)
                                                                      .ExecuteReaderAndSelect(reader => new CreationEventRow(aggregateId: Guid.Parse(reader.GetString(0)), typeId: Guid.Parse(reader.GetString(1)))));
    }
 }
+

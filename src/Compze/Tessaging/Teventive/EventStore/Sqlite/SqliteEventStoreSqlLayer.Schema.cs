@@ -26,18 +26,20 @@ partial class SqliteEventStoreSqlLayer
                                                                                {Event.EventId}                 TEXT                              NOT NULL UNIQUE,
                                                                                {Event.InsertedVersion}         INTEGER                           NOT NULL,
                                                                                {Event.SqlInsertTimeStamp}      TEXT                              NOT NULL DEFAULT (datetime('now')),
-                                                                               {Event.ReadOrder}               TEXT                              NOT NULL UNIQUE,    
+                                                                               {Event.ReadOrderIntegerPart}    INTEGER                           NOT NULL,    
+                                                                               {Event.ReadOrderFractionPart}   INTEGER                           NOT NULL,    
                                                                                {Event.EffectiveVersion}        INTEGER                           NOT NULL,
                                                                                {Event.TargetEvent}             TEXT                              NULL,
                                                                                {Event.RefactoringType}         INTEGER                           NULL,
                                                                        
                                                                                UNIQUE ({Event.AggregateId}, {Event.InsertedVersion}),
+                                                                               UNIQUE ({Event.ReadOrderIntegerPart}, {Event.ReadOrderFractionPart}),
                                                                                FOREIGN KEY ( {Event.TargetEvent} ) 
                                                                                    REFERENCES {Event.TableName} ({Event.EventId})
                                                                            );
 
-                                                                           CREATE INDEX IF NOT EXISTS IX_{Event.TableName}_{Event.ReadOrder} ON {Event.TableName} 
-                                                                                   ({Event.ReadOrder} , {Event.EffectiveVersion} );
+                                                                           CREATE INDEX IF NOT EXISTS IX_{Event.TableName}_{Event.ReadOrderIntegerPart}_{Event.ReadOrderFractionPart} ON {Event.TableName} 
+                                                                                   ({Event.ReadOrderIntegerPart}, {Event.ReadOrderFractionPart}, {Event.EffectiveVersion} );
 
                                                                            CREATE TABLE IF NOT EXISTS {Lock.TableName}
                                                                            (
@@ -51,3 +53,4 @@ partial class SqliteEventStoreSqlLayer
       }
    });
 }
+
