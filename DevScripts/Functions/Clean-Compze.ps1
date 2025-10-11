@@ -50,7 +50,8 @@ function Clean-Compze {
                 return
             }
             
-            git clean -fdxn
+            # Show what would be removed, but filter out TestUsingPluggableComponentCombinations since we protect it
+            git clean -fdxn | Where-Object { $_ -notmatch 'src/TestUsingPluggableComponentCombinations' }
         } finally {
             Pop-Location
         }
