@@ -3,7 +3,7 @@
 #Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
 #Empty/Whitespace lines are ignored
 
-###MicrosoftSqlServer:Microsoft
+MicrosoftSqlServer:Microsoft
 ###Memory:Microsoft
 ###MySql:Microsoft
 ###PostgreSql:Microsoft
