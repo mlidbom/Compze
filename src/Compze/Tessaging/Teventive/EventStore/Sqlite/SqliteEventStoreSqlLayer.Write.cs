@@ -25,8 +25,6 @@ partial class SqliteEventStoreSqlLayer
                   command => command.SetCommandText(
                                         $"""
 
-                                         {(data.AggregateVersion > 1 ? "" : $"INSERT OR IGNORE INTO {Lock.TableName}({Lock.AggregateId}) VALUES(@{Lock.AggregateId});")}
-
                                          INSERT INTO {Event.TableName}
                                          (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
                                          VALUES(@{Event.AggregateId}, @{Event.InsertedVersion}, @{Event.EffectiveVersion}, @{Event.ReadOrder}, @{Event.EventType}, @{Event.EventId}, @{Event.UtcTimeStamp}, @{Event.Event}, @{Event.TargetEvent},@{Event.RefactoringType});
