@@ -1,4 +1,5 @@
 using System.Data;
+using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Infrastructure;
@@ -7,7 +8,7 @@ internal static class SqliteCommandParameterExtensions
 {
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, int value) => AddParameter(@this, name, SqliteType.Integer, value);
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, Guid value) => AddParameter(@this, name, SqliteType.Text, value.ToString());
-   public static SqliteCommand AddDateTime2Parameter(this SqliteCommand @this, string name, DateTime value) => AddParameter(@this, name, SqliteType.Text, value.ToString("O"));
+   public static SqliteCommand AddDateTime2Parameter(this SqliteCommand @this, string name, DateTime value) => AddParameter(@this, name, SqliteType.Text, value.ToUniversalTimeSafely().ToString("O"));
    public static SqliteCommand AddVarcharParameter(this SqliteCommand @this, string name, int length, string value) => AddParameter(@this, name, SqliteType.Text, value);
    public static SqliteCommand AddMediumTextParameter(this SqliteCommand @this, string name, string value) => AddParameter(@this, name, SqliteType.Text, value);
 
