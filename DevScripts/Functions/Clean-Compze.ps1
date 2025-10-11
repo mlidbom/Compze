@@ -79,7 +79,17 @@ function Clean-Compze {
             Write-Verbose "Running git clean -fdx to remove all untracked files and directories..."
             Push-Location $script:CompzeRoot
             try {
-                git clean -fdx
+                if ($VerbosePreference -eq 'Continue') {
+                    git clean -fdx
+                } else {
+                    # Redirect stdout to null but let stderr through for errors
+                    git clean -fdx 2>&1 | ForEach-Object {
+                        if ($_ -is [System.Management.Automation.ErrorRecord]) {
+                            Write-Error $_
+                        }
+                    }
+                }
+                
                 if ($LASTEXITCODE -ne 0) {
                     Write-Error "git clean -fdx failed with exit code $LASTEXITCODE"
                 } else {
