@@ -5,8 +5,10 @@ namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
 internal class SqliteMemoryDbPool : DbPool
 {
-   // For in-memory SQLite, we use shared cache with a unique database name
-   // This allows multiple connections to access the same in-memory database
+   // For in-memory SQLite, we use shared cache with a unique database name.
+   // This allows multiple connections to access the same in-memory database.
+   // The database is automatically created when the first connection opens,
+   // and automatically destroyed when the last connection closes.
    protected override string ConnectionStringFor(Database db)
    {
       return new SqliteConnectionStringBuilder
@@ -17,33 +19,25 @@ internal class SqliteMemoryDbPool : DbPool
       }.ConnectionString;
    }
 
+   // In-memory databases are created automatically when the first connection opens.
+   // No explicit initialization needed.
    protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
    {
-      // In-memory databases are created automatically when opened
-      // Just ensure we have a connection to create the database
-      using var connection = new SqliteConnection(ConnectionStringFor(db));
-      connection.Open();
-      // Database is created, close the connection
-      connection.Close();
+      // Nothing to do - in-memory DB is created automatically
    }
 
+   // In-memory databases with shared cache are automatically destroyed when all connections close.
+   // Clearing the connection pool ensures all connections are closed.
    protected override void ResetDatabase(Database db)
    {
-      // For in-memory databases, we need to close all connections and clear pools
-      // This effectively destroys the in-memory database
       SqliteConnection.ClearAllPools();
-      
-      // Recreate by opening a new connection
-      using var connection = new SqliteConnection(ConnectionStringFor(db));
-      connection.Open();
-      connection.Close();
    }
 
+   // Cleanup: Clear all connection pools to destroy all in-memory databases
    protected override void Dispose(bool disposing)
    {
       if(disposing)
       {
-         // Clear all connection pools - this will destroy all in-memory databases
          SqliteConnection.ClearAllPools();
       }
       
