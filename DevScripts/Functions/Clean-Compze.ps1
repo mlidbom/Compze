@@ -37,6 +37,26 @@ function Clean-Compze {
     $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
     $srcPath = Join-Path $script:CompzeRoot "src"
     
+    # If FullGitReset with WhatIf, skip normal clean and just show git clean preview
+    if ($FullGitReset -and $WhatIfPreference) {
+        Push-Location $script:CompzeRoot
+        try {
+            # Check git status
+            $gitStatus = git status --porcelain
+            if ($gitStatus) {
+                Write-Error "Cannot perform FullGitReset: There are uncommitted changes in the repository."
+                Write-Host "Git status shows:"
+                Write-Host $gitStatus
+                return
+            }
+            
+            git clean -fdxn
+        } finally {
+            Pop-Location
+        }
+        return
+    }
+    
     # If FullGitReset is specified, check for uncommitted changes first
     if ($FullGitReset) {
         Push-Location $script:CompzeRoot
@@ -83,47 +103,37 @@ function Clean-Compze {
         
         # If FullGitReset is specified, run git clean
         if ($FullGitReset) {
-            if ($WhatIfPreference) {
-                Write-Host "What if: Running git clean -fdxn to show what would be removed..."
-                Push-Location $script:CompzeRoot
-                try {
-                    git clean -fdxn
-                } finally {
-                    Pop-Location
-                }
-            } else {
-                Write-Verbose "Running git clean -fdx to remove all untracked files and directories..."
-                Push-Location $script:CompzeRoot
-                try {
-                    if ($VerbosePreference -eq 'Continue') {
-                        git clean -fdx
-                    } else {
-                        # Redirect stdout to null but let stderr through for errors
-                        git clean -fdx 2>&1 | ForEach-Object {
-                            if ($_ -is [System.Management.Automation.ErrorRecord]) {
-                                Write-Error $_
-                            }
+            Write-Verbose "Running git clean -fdx to remove all untracked files and directories..."
+            Push-Location $script:CompzeRoot
+            try {
+                if ($VerbosePreference -eq 'Continue') {
+                    git clean -fdx
+                } else {
+                    # Redirect stdout to null but let stderr through for errors
+                    git clean -fdx 2>&1 | ForEach-Object {
+                        if ($_ -is [System.Management.Automation.ErrorRecord]) {
+                            Write-Error $_
                         }
                     }
+                }
+                
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Error "git clean -fdx failed with exit code $LASTEXITCODE"
+                } else {
+                    Write-Verbose "Git clean completed successfully."
                     
-                    if ($LASTEXITCODE -ne 0) {
-                        Write-Error "git clean -fdx failed with exit code $LASTEXITCODE"
-                    } else {
-                        Write-Verbose "Git clean completed successfully."
-                        
-                        # Restore the backup from temp directory
-                        $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
-                        $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
-                        
-                        if (Test-Path $backupFile) {
-                            Write-Verbose "Restoring TestUsingPluggableComponentCombinations from backup"
-                            Copy-Item -Path $backupFile -Destination $testConfigFile -Force
-                            Remove-Item -Path $backupFile -Force
-                        }
+                    # Restore the backup from temp directory
+                    $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
+                    $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
+                    
+                    if (Test-Path $backupFile) {
+                        Write-Verbose "Restoring TestUsingPluggableComponentCombinations from backup"
+                        Copy-Item -Path $backupFile -Destination $testConfigFile -Force
+                        Remove-Item -Path $backupFile -Force
                     }
-                } finally {
-                    Pop-Location
                 }
+            } finally {
+                Pop-Location
             }
         }
     } finally {
