@@ -118,23 +118,16 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Compze/Tessaging/Persistence/" />
-  <Folder Name="/Compze/Tessaging/Persistence/InMemory/">
+  <Folder Name="/Compze/Tessaging/Persistence/">
     <Project Path="Compze/Tessaging/Persistence/InMemory/Compze.Tessaging.Persistence.InMemory.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Persistence/MicrosoftSql/">
     <Project Path="Compze/Tessaging/Persistence/MicrosoftSql/Compze.Tessaging.Persistence.MicrosoftSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Persistence/MySql/">
     <Project Path="Compze/Tessaging/Persistence/MySql/Compze.Tessaging.Persistence.MySql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Persistence/PostgreSql/">
     <Project Path="Compze/Tessaging/Persistence/PostgreSql/Compze.Tessaging.Persistence.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
