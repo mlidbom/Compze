@@ -47,6 +47,9 @@
     <Project Path="Compze/Sql/DocumentDb/PostgreSql/Compze.Sql.DocumentDb.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
+    <Project Path="Compze/Sql/DocumentDb/Sqlite/Compze.Sql.DocumentDb.Sqlite.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
   </Folder>
   <Folder Name="/Compze/Sql/MicrosoftSql/">
     <Project Path="Compze/Sql/MicrosoftSql/Infrastructure/Compze.Sql.MicrosoftSql.Infrastructure.csproj">
@@ -60,6 +63,11 @@
   </Folder>
   <Folder Name="/Compze/Sql/PostgreSql/">
     <Project Path="Compze/Sql/PostgreSql/Infrastructure/Compze.Sql.PostgreSql.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Sql/Sqlite/">
+    <Project Path="Compze/Sql/Sqlite/Infrastructure/Compze.Sql.Sqlite.Infrastructure.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
@@ -112,6 +120,9 @@
     <Project Path="Compze/Tessaging/Hosting/Sql/PostgreSql/Compze.Tessaging.Hosting.Sql.PostgreSql.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
+    <Project Path="Compze/Tessaging/Hosting/Sql/Sqlite/Compze.Tessaging.Hosting.Sql.Sqlite.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/Testing/">
     <Project Path="Compze/Tessaging/Hosting/Testing/Compze.Tessaging.Hosting.Testing.csproj">
@@ -126,6 +137,9 @@
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="Compze/Tessaging/Sql/PostgreSql/Compze.Tessaging.Sql.PostgreSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="Compze/Tessaging/Sql/Sqlite/Compze.Tessaging.Sql.Sqlite.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
@@ -151,6 +165,9 @@
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
     <Project Path="Compze/Tessaging/Teventive/EventStore/PostgreSql/Compze.Tessaging.Teventive.EventStore.PostgreSql.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Release" />
+    </Project>
+    <Project Path="Compze/Tessaging/Teventive/EventStore/Sqlite/Compze.Tessaging.Teventive.EventStore.Sqlite.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
@@ -217,6 +234,9 @@
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
     <Project Path="Compze/Utilities/Testing/DbPool/PostgreSql/Compze.Utilities.Testing.DbPool.PostgreSql.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="Compze/Utilities/Testing/DbPool/Sqlite/Compze.Utilities.Testing.DbPool.Sqlite.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
