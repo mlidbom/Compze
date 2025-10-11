@@ -46,6 +46,47 @@ function Validate-SolutionStructure {
     & "$PSScriptRoot\Validate-SolutionStructure.ps1" @args
 }
 
+function Clean-Compze {
+    <#
+    .SYNOPSIS
+    Performs a deep clean of the Compze solution
+    
+    .DESCRIPTION
+    Performs a deep clean by running 'dotnet clean' and then deleting all \obj\ folders.
+    
+    .EXAMPLE
+    Clean-Compze
+    Performs a deep clean (dotnet clean + delete all \obj\ folders)
+    #>
+    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
+    param()
+    
+    $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
+    $srcPath = Join-Path $script:CompzeRoot "src"
+    
+    Push-Location $srcPath
+    try {
+        dotnet clean $solutionPath | Out-Null
+        
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "dotnet clean reported errors, but continuing..."
+        }
+        
+        $objFolders = Get-ChildItem -Path $srcPath -Recurse -Directory -Filter "obj" -ErrorAction SilentlyContinue
+        
+        foreach ($folder in $objFolders) {
+            try {
+                Remove-Item -Path $folder.FullName -Recurse -Force -ErrorAction Stop
+            } catch {
+                Write-Warning "Failed to delete: $($folder.FullName) - $_"
+            }
+        }
+    } finally {
+        Pop-Location
+    }
+}
+
 function Build-Compze {
     <#
     .SYNOPSIS
@@ -72,44 +113,19 @@ function Build-Compze {
     )
     
     $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
-    $srcPath = Join-Path $script:CompzeRoot "src"
     
-    Push-Location $srcPath
+    Push-Location (Join-Path $script:CompzeRoot "src")
     try {
         if ($Clean) {
-            Write-Host "Running dotnet clean..." -ForegroundColor Cyan
-            dotnet clean $solutionPath
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Warning "dotnet clean reported errors, but continuing..."
-            }
-            
-            Write-Host "Deleting all \obj\ folders..." -ForegroundColor Cyan
-            $objFolders = Get-ChildItem -Path $srcPath -Recurse -Directory -Filter "obj" -ErrorAction SilentlyContinue
-            $deletedCount = 0
-            
-            foreach ($folder in $objFolders) {
-                try {
-                    Remove-Item -Path $folder.FullName -Recurse -Force -ErrorAction Stop
-                    $deletedCount++
-                } catch {
-                    Write-Warning "  Failed to delete: $($folder.FullName) - $_"
-                }
-            }
-            
-            Write-Host "Deleted $deletedCount \obj\ folders" -ForegroundColor Green
-            Write-Host ""
+            Clean-Compze
         }
         
-        Write-Host "Building solution..." -ForegroundColor Cyan
         dotnet build $solutionPath
         
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Build failed!"
             return
         }
-        
-        Write-Host "Build completed successfully!" -ForegroundColor Green
     } finally {
         Pop-Location
     }
@@ -158,7 +174,6 @@ function Test-Compze {
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
         if ($Build) {
-            Write-Host "Building solution..." -ForegroundColor Cyan
             dotnet build $solutionPath
             
             if ($LASTEXITCODE -ne 0) {
@@ -167,18 +182,14 @@ function Test-Compze {
             }
             
             if ($SingleThreadedTesting) {
-                Write-Host "`nRunning tests (single-threaded)..." -ForegroundColor Cyan
                 dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
             } else {
-                Write-Host "`nRunning tests..." -ForegroundColor Cyan
                 dotnet test $solutionPath --no-build
             }
         } else {
             if ($SingleThreadedTesting) {
-                Write-Host "Running tests without building (single-threaded)..." -ForegroundColor Cyan
                 dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
             } else {
-                Write-Host "Running tests without building..." -ForegroundColor Cyan
                 dotnet test $solutionPath --no-build
             }
         }
@@ -230,11 +241,6 @@ function Fix-Encodings {
         return
     }
     
-    Write-Host "Scanning for git-tracked files in: $Path" -ForegroundColor Cyan
-    Write-Host "Pattern: $FilePattern" -ForegroundColor Cyan
-    Write-Host "Target: UTF-8 without BOM (modern .NET standard)" -ForegroundColor Cyan
-    Write-Host ""
-    
     # Get all git-tracked files matching the pattern
     Push-Location $Path
     try {
@@ -256,7 +262,6 @@ function Fix-Encodings {
     
     $utf8NoBom = New-Object System.Text.UTF8Encoding $false
     $convertedCount = 0
-    $skippedCount = 0
     
     foreach ($file in $files) {
         try {
@@ -284,24 +289,19 @@ function Fix-Encodings {
                     Write-Host "[WhatIf] Would convert: $($file.FullName)" -ForegroundColor Yellow
                     $convertedCount++
                 }
-            } else {
-                $skippedCount++
             }
         } catch {
             Write-Warning "Failed to process $($file.FullName): $_"
         }
     }
     
-    Write-Host ""
-    if ($WhatIfPreference) {
-        Write-Host "Summary (WhatIf mode):" -ForegroundColor Cyan
-        Write-Host "  Would convert: $convertedCount files" -ForegroundColor Yellow
-    } else {
-        Write-Host "Summary:" -ForegroundColor Cyan
-        Write-Host "  Converted: $convertedCount files" -ForegroundColor Green
+    if ($convertedCount -gt 0) {
+        if ($WhatIfPreference) {
+            Write-Host "Would convert: $convertedCount files" -ForegroundColor Yellow
+        } else {
+            Write-Host "Converted: $convertedCount files" -ForegroundColor Green
+        }
     }
-    Write-Host "  Already UTF-8 without BOM: $skippedCount files" -ForegroundColor Gray
-    Write-Host "  Total scanned: $($files.Count) files" -ForegroundColor Cyan
 }
 
 function Reload-Profile {
@@ -321,15 +321,10 @@ function Reload-Profile {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
     
-    Write-Host "Reloading Compze module..." -ForegroundColor Cyan
     Import-Module (Join-Path $PSScriptRoot "Compze.psd1") -DisableNameChecking -Force -Global
     
     if (Test-Path $PROFILE) {
-        Write-Host "Reloading PowerShell profile..." -ForegroundColor Cyan
         . $PROFILE
-        Write-Host "Reload complete!" -ForegroundColor Green
-    } else {
-        Write-Host "Compze module reloaded!" -ForegroundColor Green
     }
 }
 
@@ -338,6 +333,7 @@ Export-ModuleMember -Function @(
     'Fix-CsprojExclusions',
     'Remove-RedundantInternalsVisibleTo', 
     'Validate-SolutionStructure',
+    'Clean-Compze',
     'Build-Compze',
     'Test-Compze',
     'Fix-Encodings',
