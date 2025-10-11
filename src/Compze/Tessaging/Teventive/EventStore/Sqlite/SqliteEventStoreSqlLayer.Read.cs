@@ -19,7 +19,7 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
       return $"""
 
               SELECT 
-              {Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, {Event.ReadOrder}
+              {Event.EventType}, {Event.Event}, {Event.AggregateId}, {Event.EffectiveVersion}, {Event.EventId}, {Event.UtcTimeStamp}, {Event.InsertionOrder}, {Event.TargetEvent}, {Event.RefactoringType}, {Event.InsertedVersion}, {Event.ReadOrder} as CharReadOrder
               FROM {Event.TableName}
               {topClause}
               """;
@@ -31,7 +31,8 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
       eventId: Guid.Parse(eventReader.GetString(4)),
       aggregateVersion: eventReader.GetInt32(3),
       aggregateId: Guid.Parse(eventReader.GetString(2)),
-      utcTimeStamp: DateTime.Parse(eventReader.GetString(5)).ToUniversalTime(),
+      //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
+      utcTimeStamp: DateTime.SpecifyKind(DateTime.Parse(eventReader.GetString(5), System.Globalization.CultureInfo.InvariantCulture), DateTimeKind.Utc),
       storageInformation: new AggregateEventStorageInformation
                           {
                              ReadOrder = ReadOrder.Parse(eventReader.GetString(10)),
