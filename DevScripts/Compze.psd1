@@ -32,6 +32,7 @@
         'Build-Compze',
         'Test-Compze',
         'Fix-CompzeEncodings',
+        'Get-CompzeCommands',
         'Reload-CompzeModule'
     )
 
