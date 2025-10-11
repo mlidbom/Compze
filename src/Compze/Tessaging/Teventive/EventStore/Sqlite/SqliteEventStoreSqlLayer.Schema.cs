@@ -20,12 +20,12 @@ partial class SqliteEventStoreSqlLayer
                                                                            (
                                                                                {Event.InsertionOrder}          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                                                                                {Event.AggregateId}             TEXT                              NOT NULL,  
-                                                                               {Event.UtcTimeStamp}            TEXT                              NOT NULL,   
+                                                                               {Event.UtcTimeStamp}            INTEGER                           NOT NULL,   
                                                                                {Event.EventType}               TEXT                              NOT NULL,    
                                                                                {Event.Event}                   TEXT                              NOT NULL,
                                                                                {Event.EventId}                 TEXT                              NOT NULL UNIQUE,
                                                                                {Event.InsertedVersion}         INTEGER                           NOT NULL,
-                                                                               {Event.SqlInsertTimeStamp}      TEXT                              NOT NULL DEFAULT (datetime('now')),
+                                                                               {Event.SqlInsertTimeStamp}      INTEGER                           NOT NULL DEFAULT 0,
                                                                                {Event.ReadOrderIntegerPart}    INTEGER                           NOT NULL,    
                                                                                {Event.ReadOrderFractionPart}   INTEGER                           NOT NULL,    
                                                                                {Event.EffectiveVersion}        INTEGER                           NOT NULL,
@@ -53,4 +53,5 @@ partial class SqliteEventStoreSqlLayer
       }
    });
 }
+
 
