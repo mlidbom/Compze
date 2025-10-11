@@ -41,19 +41,19 @@ class PerformanceTest(string pluggableComponentsCombination) : DuplicateByPlugga
       TimeAsserter.Execute(
          description: "Register accounts",
          action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
-         iterations: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 6, pgSql: 6),
+         iterations: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 6, pgSql: 6, sqlite: 6),
          maxTotal: 100.Milliseconds().EnvMultiply(1.6));
 
    [Test] public void Multithreaded_creates_XX_accounts_in_20_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.ExecuteThreaded(
          description: "Register accounts",
          action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
-         iterations: TestEnv.SqlLayer.ValueFor(msSql: 4, mySql: 1, pgSql: 3),
+         iterations: TestEnv.SqlLayer.ValueFor(msSql: 4, mySql: 1, pgSql: 3, sqlite: 4),
          maxTotal: 20.Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.4));
 
    [Test] public void Multithreaded_logs_in_XX_times_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()
    {
-      var logins = TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 3, pgSql: 8);
+      var logins = TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 3, pgSql: 8, sqlite: 8);
       var accountsReader = CreateAccountsThreaded(Math.Min(logins, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Log in to account",
@@ -68,7 +68,7 @@ class PerformanceTest(string pluggableComponentsCombination) : DuplicateByPlugga
 
    [Test] public void Multithreaded_fetches_XX_account_resources_in_20_milliseconds_db2_memory__msSql__mySql__oracle_pgSql_()
    {
-      var fetches = TestEnv.SqlLayer.ValueFor(msSql: 20, mySql: 20, pgSql: 30);
+      var fetches = TestEnv.SqlLayer.ValueFor(msSql: 20, mySql: 20, pgSql: 30, sqlite: 20);
       var accountsReader = CreateAccountsThreaded(Math.Min(fetches, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Fetch account resource",
