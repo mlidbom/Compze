@@ -14,7 +14,8 @@
 
 In the root of the project:
 
-1. Copy `TestUsingPluggableComponentCombinations.config.example` to `TestUsingPluggableComponentCombinations.config`
+1. **Optional**: Copy `TestUsingPluggableComponentCombinations.config.example` to `TestUsingPluggableComponentCombinations.config`
+   - If you don't create this file, it will be automatically created from the example during the first build
 2. Edit this file to configure which database servers the tests run against
 3. If you don't have any SQL server, configure it to use only the `Memory` `PersistenceLayer`
 
