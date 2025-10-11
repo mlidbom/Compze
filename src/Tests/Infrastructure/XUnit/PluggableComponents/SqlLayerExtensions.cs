@@ -21,13 +21,15 @@ public static class SqlLayerExtensions
       TValue? msSql = default,
       TValue? mySql = default,
       TValue? orcl = default,
-      TValue? pgSql = default) where TValue : notnull
+      TValue? pgSql = default,
+      TValue? sqlite = default) where TValue : notnull
    {
       return sqlLayer switch
       {
          SqlLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
          SqlLayer.MySql => SelectValue(mySql, nameof(mySql)),
          SqlLayer.PostgreSql => SelectValue(pgSql, nameof(pgSql)),
+         SqlLayer.Sqlite => SelectValue(sqlite, nameof(sqlite)),
          _ => throw new ArgumentOutOfRangeException(nameof(sqlLayer), sqlLayer, $"Unsupported sql layer: {sqlLayer}")
       };
    }

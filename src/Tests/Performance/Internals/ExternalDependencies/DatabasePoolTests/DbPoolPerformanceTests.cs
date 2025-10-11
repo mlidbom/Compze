@@ -2,6 +2,7 @@ using System;
 using Compze.Sql.MicrosoftSql.Infrastructure;
 using Compze.Sql.MySql.Infrastructure.SystemExtensions;
 using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Integration.Internals.Testing.Sql;
@@ -101,7 +102,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
    public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_50_MsSql_180_MySql_24_Oracle_140_PgSql_300()
    {
       var allowedTime = 10.Milliseconds().EnvMultiply(instrumented:2);
-      var iterations = TestEnv.SqlLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300);
+      var iterations = TestEnv.SqlLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300, sqlite: 180);
 
       using var manager = CreatePool();
       manager.SetLogLevel(LogLevel.Warning);
@@ -122,6 +123,10 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
          case SqlLayer.PostgreSql:
             var pgSqlConnectionProvider = IPgSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
             useConnection = () => pgSqlConnectionProvider.UseConnection(_ => {});
+            break;
+         case SqlLayer.Sqlite:
+            var sqliteConnectionProvider = ISqliteConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
+            useConnection = () => sqliteConnectionProvider.UseConnection(_ => {});
             break;
          default:
             throw new ArgumentOutOfRangeException();

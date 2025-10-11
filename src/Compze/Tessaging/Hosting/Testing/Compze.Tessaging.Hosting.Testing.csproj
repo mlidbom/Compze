@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Sql\MicrosoftSql\Compze.Tessaging.Hosting.Sql.MicrosoftSql.csproj" />
     <ProjectReference Include="..\Sql\MySql\Compze.Tessaging.Hosting.Sql.MySql.csproj" />
     <ProjectReference Include="..\Sql\PostgreSql\Compze.Tessaging.Hosting.Sql.PostgreSql.csproj" />
+    <ProjectReference Include="..\Sql\Sqlite\Compze.Tessaging.Hosting.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\Sql\DocumentDb\MicrosoftSql\Compze.Sql.DocumentDb.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Teventive\EventStore\MicrosoftSql\Compze.Tessaging.Teventive.EventStore.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Sql\MicrosoftSql\Compze.Tessaging.Sql.MicrosoftSql.csproj" />
@@ -27,6 +28,9 @@
     <ProjectReference Include="..\..\..\Sql\DocumentDb\PostgreSql\Compze.Sql.DocumentDb.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Teventive\EventStore\PostgreSql\Compze.Tessaging.Teventive.EventStore.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Sql\PostgreSql\Compze.Tessaging.Sql.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\..\Sql\DocumentDb\Sqlite\Compze.Sql.DocumentDb.Sqlite.csproj" />
+    <ProjectReference Include="..\..\Teventive\EventStore\Sqlite\Compze.Tessaging.Teventive.EventStore.Sqlite.csproj" />
+    <ProjectReference Include="..\..\Sql\Sqlite\Compze.Tessaging.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>

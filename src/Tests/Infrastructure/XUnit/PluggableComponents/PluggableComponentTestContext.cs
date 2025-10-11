@@ -61,9 +61,10 @@ public class PluggableComponentTestContext : IXunitSerializable
       TValue? msSql = default,
       TValue? mySql = default,
       TValue? orcl = default,
-      TValue? pgSql = default) where TValue : notnull
+      TValue? pgSql = default,
+      TValue? sqlite = default) where TValue : notnull
    {
-      return _sqlLayer.ValueFor(db2: db2, memory: memory, msSql: msSql, mySql: mySql, orcl: orcl, pgSql: pgSql);
+      return _sqlLayer.ValueFor(db2: db2, memory: memory, msSql: msSql, mySql: mySql, orcl: orcl, pgSql: pgSql, sqlite: sqlite);
    }
 
    /// <summary>Serializes this object for XUnit test execution.</summary>

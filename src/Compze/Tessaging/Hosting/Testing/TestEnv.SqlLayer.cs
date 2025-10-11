@@ -33,12 +33,12 @@ static partial class TestEnv
          }
       }
 
-      public static TValue ValueFor<TValue>(TValue msSql = default!, TValue mySql = default!, TValue pgSql = default!) where TValue: notnull
+      public static TValue ValueFor<TValue>(TValue msSql = default!, TValue mySql = default!, TValue pgSql = default!, TValue sqlite = default!) where TValue: notnull
       {
          // Check if we're running in XUnit context first
          if(CurrentTestContext.PluggableComponentsCombination != null)
          {
-            return XUnit.SqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql);
+            return XUnit.SqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql, sqlite: sqlite);
          }
 
          // Fall back to NUnit
@@ -47,6 +47,7 @@ static partial class TestEnv
             Compze.Wiring.SqlLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
             Compze.Wiring.SqlLayer.MySql              => SelectValue(mySql, nameof(mySql)),
             Compze.Wiring.SqlLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
+            Compze.Wiring.SqlLayer.Sqlite             => SelectValue(sqlite, nameof(sqlite)),
             _                                                 => throw new ArgumentOutOfRangeException()
          };
       }
