@@ -28,6 +28,7 @@
         'Fix-CsprojExclusions',
         'Remove-RedundantInternalsVisibleTo',
         'Validate-SolutionStructure',
+        'Build-Compze',
         'Test-Compze',
         'Fix-Encodings',
         'Reload-Profile'

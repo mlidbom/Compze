@@ -46,6 +46,75 @@ function Validate-SolutionStructure {
     & "$PSScriptRoot\Validate-SolutionStructure.ps1" @args
 }
 
+function Build-Compze {
+    <#
+    .SYNOPSIS
+    Builds the Compze solution
+    
+    .DESCRIPTION
+    Builds the Compze solution. Optionally performs a deep clean before building.
+    
+    .PARAMETER Clean
+    Performs a deep clean before building. This runs 'dotnet clean' and then deletes all \obj\ folders.
+    
+    .EXAMPLE
+    Build-Compze
+    Builds the solution
+    
+    .EXAMPLE
+    Build-Compze -Clean
+    Performs a deep clean (dotnet clean + delete all \obj\ folders) then builds the solution
+    #>
+    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
+    param(
+        [switch]$Clean
+    )
+    
+    $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
+    $srcPath = Join-Path $script:CompzeRoot "src"
+    
+    Push-Location $srcPath
+    try {
+        if ($Clean) {
+            Write-Host "Running dotnet clean..." -ForegroundColor Cyan
+            dotnet clean $solutionPath
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "dotnet clean reported errors, but continuing..."
+            }
+            
+            Write-Host "Deleting all \obj\ folders..." -ForegroundColor Cyan
+            $objFolders = Get-ChildItem -Path $srcPath -Recurse -Directory -Filter "obj" -ErrorAction SilentlyContinue
+            $deletedCount = 0
+            
+            foreach ($folder in $objFolders) {
+                try {
+                    Remove-Item -Path $folder.FullName -Recurse -Force -ErrorAction Stop
+                    $deletedCount++
+                } catch {
+                    Write-Warning "  Failed to delete: $($folder.FullName) - $_"
+                }
+            }
+            
+            Write-Host "Deleted $deletedCount \obj\ folders" -ForegroundColor Green
+            Write-Host ""
+        }
+        
+        Write-Host "Building solution..." -ForegroundColor Cyan
+        dotnet build $solutionPath
+        
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Build failed!"
+            return
+        }
+        
+        Write-Host "Build completed successfully!" -ForegroundColor Green
+    } finally {
+        Pop-Location
+    }
+}
+
 function Test-Compze {
     <#
     .SYNOPSIS
@@ -269,6 +338,7 @@ Export-ModuleMember -Function @(
     'Fix-CsprojExclusions',
     'Remove-RedundantInternalsVisibleTo', 
     'Validate-SolutionStructure',
+    'Build-Compze',
     'Test-Compze',
     'Fix-Encodings',
     'Reload-Profile'
