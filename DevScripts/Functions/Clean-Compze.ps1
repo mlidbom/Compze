@@ -43,12 +43,12 @@ function Clean-Compze {
                 return
             }
             
-            # Backup TestUsingPluggableComponentCombinations
+            # Backup TestUsingPluggableComponentCombinations to temp directory (outside git repo)
             $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
-            $backupFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations.backup"
+            $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
             
             if (Test-Path $testConfigFile) {
-                Write-Host "Backing up TestUsingPluggableComponentCombinations to TestUsingPluggableComponentCombinations.backup"
+                Write-Host "Backing up TestUsingPluggableComponentCombinations to $backupFile"
                 Copy-Item -Path $testConfigFile -Destination $backupFile -Force
             }
         } finally {
@@ -85,9 +85,9 @@ function Clean-Compze {
                 } else {
                     Write-Host "Git clean completed successfully."
                     
-                    # Restore the backup
+                    # Restore the backup from temp directory
                     $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
-                    $backupFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations.backup"
+                    $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
                     
                     if (Test-Path $backupFile) {
                         Write-Host "Restoring TestUsingPluggableComponentCombinations from backup"
