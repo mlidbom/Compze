@@ -13,6 +13,11 @@ function Test-Compze {
     .PARAMETER Clean
     Performs a deep clean and build before running tests (implies -Build)
     
+    .PARAMETER FullGitReset
+    Performs a full git reset that removes all untracked files and directories before testing.
+    This will backup TestUsingPluggableComponentCombinations before running git clean.
+    Requires a clean working tree (no uncommitted changes). Implies -Clean and -Build.
+    
     .PARAMETER SingleThreadedTesting
     Run tests single-threaded (forces sequential test execution, useful for debugging)
     
@@ -29,6 +34,10 @@ function Test-Compze {
     Cleans, builds, then runs all tests (parallel)
     
     .EXAMPLE
+    Test-Compze -FullGitReset
+    Performs full git clean, builds, then runs all tests (parallel)
+    
+    .EXAMPLE
     Test-Compze -SingleThreadedTesting
     Runs all tests single-threaded without building (for debugging)
     
@@ -41,6 +50,7 @@ function Test-Compze {
     param(
         [switch]$Build,
         [switch]$Clean,
+        [switch]$FullGitReset,
         [switch]$SingleThreadedTesting
     )
     
@@ -48,7 +58,22 @@ function Test-Compze {
     
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
-        if ($Clean) {
+        if ($FullGitReset) {
+            Clean-Compze -FullGitReset
+            dotnet build $solutionPath
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Build failed!"
+                return
+            }
+            
+            if ($SingleThreadedTesting) {
+                dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
+            } else {
+                dotnet test $solutionPath --no-build
+            }
+        }
+        elseif ($Clean) {
             Clean-Compze
             dotnet build $solutionPath
             
