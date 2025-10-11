@@ -30,7 +30,10 @@ partial class SqliteDocumentDbSqlLayer
                                                     {Document.Value}       TEXT    NOT NULL,
                                                        
                                                     PRIMARY KEY ({Document.Id}, {Document.ValueTypeId})
-                                                )
+                                                );
+
+                                                CREATE INDEX IF NOT EXISTS IX_{Document.TableName}_{Document.ValueTypeId} 
+                                                    ON {Document.TableName} ({Document.ValueTypeId});
 
                                                 """);
             });

@@ -41,6 +41,9 @@ partial class SqliteEventStoreSqlLayer
                                                                            CREATE INDEX IF NOT EXISTS IX_{Event.TableName}_{Event.ReadOrderIntegerPart}_{Event.ReadOrderFractionPart} ON {Event.TableName} 
                                                                                    ({Event.ReadOrderIntegerPart}, {Event.ReadOrderFractionPart}, {Event.EffectiveVersion} );
 
+                                                                           CREATE INDEX IF NOT EXISTS IX_{Event.TableName}_{Event.AggregateId} ON {Event.TableName} 
+                                                                                   ({Event.AggregateId}, {Event.InsertedVersion}, {Event.ReadOrderIntegerPart}, {Event.ReadOrderFractionPart});
+
                                                                            CREATE TABLE IF NOT EXISTS {Lock.TableName}
                                                                            (
                                                                                {Lock.AggregateId} TEXT NOT NULL,
