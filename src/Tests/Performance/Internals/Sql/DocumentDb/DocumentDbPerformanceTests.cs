@@ -28,7 +28,7 @@ class DocumentDbPerformanceTests(string pluggableComponentsCombination) : Docume
          TimeAsserter.Execute(
             action: SaveOneNewUserInTransaction,
             iterations: 100,
-            maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 75, mySql: 500, pgSql: 75).Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.3)
+            maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 75, mySql: 500, pgSql: 75, sqlite: 100).Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.3)
          );
          return;
 
