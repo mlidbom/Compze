@@ -33,12 +33,12 @@ static partial class TestEnv
          }
       }
 
-      public static TValue ValueFor<TValue>(TValue db2 = default!, TValue memory = default!, TValue msSql = default!, TValue mySql = default!, TValue orcl = default!, TValue pgSql = default!) where TValue: notnull
+      public static TValue ValueFor<TValue>(TValue msSql = default!, TValue mySql = default!, TValue pgSql = default!) where TValue: notnull
       {
          // Check if we're running in XUnit context first
          if(CurrentTestContext.PluggableComponentsCombination != null)
          {
-            return XUnit.PersistenceLayer.ValueFor(db2: db2, memory: memory, msSql: msSql, mySql: mySql, orcl: orcl, pgSql: pgSql);
+            return XUnit.PersistenceLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql);
          }
 
          // Fall back to NUnit

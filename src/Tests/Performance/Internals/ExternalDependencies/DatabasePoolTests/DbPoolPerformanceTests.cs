@@ -34,13 +34,13 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
             dbPool.ConnectionStringFor(dbName);
          },
          iterations: 5,
-         maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 150, msSql: 150, mySql: 150, orcl: 300, pgSql: 150).Milliseconds());
+         maxTotal: TestEnv.PersistenceLayer.ValueFor(msSql: 150, mySql: 150, pgSql: 150).Milliseconds());
    }
 
    [Test]
    public void Multiple_threads_can_reserve_and_release_5_identically_named_databases_in_milliseconds_db2_50_msSql_75_mySql_75_orcl_100_pgSql_25()
    {
-      var maxTime = TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 75, mySql: 75, orcl: 100, pgSql: 25).Milliseconds().EnvMultiply(instrumented:1.2);
+      var maxTime = TestEnv.PersistenceLayer.ValueFor(msSql: 75, mySql: 75, pgSql: 25).Milliseconds().EnvMultiply(instrumented:1.2);
       var dbName = Guid.NewGuid().ToString();
       TimeAsserter.ExecuteThreaded(
          action:
@@ -57,7 +57,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
    [Test]
    public void Multiple_threads_can_reserve_and_release_5_differently_named_databases_in_milliseconds_msSql_125_mySql_175_pgSql_400_orcl_400_db2_100()
    {
-      var maxTotal = TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 70, mySql: 175, orcl: 400, pgSql: 400).Milliseconds().EnvMultiply(instrumented:1.6);
+      var maxTotal = TestEnv.PersistenceLayer.ValueFor(msSql: 70, mySql: 175, pgSql: 400).Milliseconds().EnvMultiply(instrumented:1.6);
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
@@ -80,7 +80,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
          iterations: 5,
-         maxTotal: TestEnv.PersistenceLayer.ValueFor(db2: 100, msSql: 100, mySql: 170, orcl: 300, pgSql: 500).Milliseconds());
+         maxTotal: TestEnv.PersistenceLayer.ValueFor(msSql: 100, mySql: 170, pgSql: 500).Milliseconds());
    }
 
    [Test]
@@ -101,7 +101,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
    public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_50_MsSql_180_MySql_24_Oracle_140_PgSql_300()
    {
       var allowedTime = 10.Milliseconds().EnvMultiply(instrumented:2);
-      var iterations = TestEnv.PersistenceLayer.ValueFor(db2: 50, msSql: 180, mySql: 24, orcl: 140, pgSql: 300);
+      var iterations = TestEnv.PersistenceLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300);
 
       using var manager = CreatePool();
       manager.SetLogLevel(LogLevel.Warning);
