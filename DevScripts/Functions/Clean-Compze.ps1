@@ -48,7 +48,7 @@ function Clean-Compze {
             $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
             
             if (Test-Path $testConfigFile) {
-                Write-Host "Backing up TestUsingPluggableComponentCombinations to $backupFile"
+                Write-Verbose "Backing up TestUsingPluggableComponentCombinations to $backupFile"
                 Copy-Item -Path $testConfigFile -Destination $backupFile -Force
             }
         } finally {
@@ -76,21 +76,21 @@ function Clean-Compze {
         
         # If FullGitReset is specified, run git clean
         if ($FullGitReset) {
-            Write-Host "Running git clean -fdx to remove all untracked files and directories..."
+            Write-Verbose "Running git clean -fdx to remove all untracked files and directories..."
             Push-Location $script:CompzeRoot
             try {
                 git clean -fdx
                 if ($LASTEXITCODE -ne 0) {
                     Write-Error "git clean -fdx failed with exit code $LASTEXITCODE"
                 } else {
-                    Write-Host "Git clean completed successfully."
+                    Write-Verbose "Git clean completed successfully."
                     
                     # Restore the backup from temp directory
                     $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
                     $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
                     
                     if (Test-Path $backupFile) {
-                        Write-Host "Restoring TestUsingPluggableComponentCombinations from backup"
+                        Write-Verbose "Restoring TestUsingPluggableComponentCombinations from backup"
                         Copy-Item -Path $backupFile -Destination $testConfigFile -Force
                         Remove-Item -Path $backupFile -Force
                     }
