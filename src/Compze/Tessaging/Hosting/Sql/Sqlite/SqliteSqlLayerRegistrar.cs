@@ -39,4 +39,27 @@ public static class SqliteSqlLayerRegistrar
          Singleton.For<ISqliteConnectionPool>()
                   .CreatedBy((SqliteDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
+
+   public static IDependencyRegistrar SqliteMemoryConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
+   {
+      if(registrar.RunMode.IsTesting)
+      {
+         registrar.SqliteMemoryDbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
+      } else
+      {
+         throw new InvalidOperationException("SqliteMemory is only supported in testing mode");
+      }
+      return registrar;
+   }
+
+   public static IDependencyRegistrar SqliteMemoryDbPoolAndConnectionPoolForConnectionStringName(this IDependencyRegistrar registrar, string connectionStringName)
+   {
+      registrar.Register(Singleton.For<SqliteMemoryDbPool>()
+                                  .CreatedBy((IConfigurationParameterProvider _) => new SqliteMemoryDbPool())
+                                  .DelegateToParentServiceLocatorWhenCloning());
+
+      return registrar.Register(
+         Singleton.For<ISqliteConnectionPool>()
+                  .CreatedBy((SqliteMemoryDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+   }
 }

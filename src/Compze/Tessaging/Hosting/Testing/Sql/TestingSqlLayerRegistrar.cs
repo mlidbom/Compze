@@ -58,8 +58,13 @@ public static class TestingSqlLayerRegistrar
                     .PgSqlTessaging();
             break;
          case SqlLayer.Sqlite:
-         case SqlLayer.SqliteMemory:
             register.SqliteConnectionPool(connectionStringName)
+                    .SqliteDocumentDb()
+                    .SqliteEventStore()
+                    .SqliteTessaging();
+            break;
+         case SqlLayer.SqliteMemory:
+            register.SqliteMemoryConnectionPool(connectionStringName)
                     .SqliteDocumentDb()
                     .SqliteEventStore()
                     .SqliteTessaging();
