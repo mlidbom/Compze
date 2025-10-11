@@ -36,8 +36,10 @@ internal interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConne
          var ambientTransaction = Transaction.Current;
          if(ambientTransaction != null && _transaction == null)
          {
-            // Start an explicit SQLite transaction
-            _transaction = Connection.BeginTransaction();
+            // Start an IMMEDIATE transaction for better concurrency control
+            // IMMEDIATE mode acquires a RESERVED lock immediately, preventing other writers
+            // This is more appropriate for transactional workloads than DEFERRED mode
+            _transaction = Connection.BeginTransaction(System.Data.IsolationLevel.Serializable);
 
             // Create a participant that will commit or rollback the SQLite transaction
             _transactionParticipant = new VolatileLambdaTransactionParticipant(

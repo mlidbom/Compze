@@ -1,6 +1,7 @@
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Lock = Compze.Tessaging.Teventive.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.Sqlite;
 
@@ -37,6 +38,12 @@ partial class SqliteEventStoreSqlLayer
 
                                                                            CREATE INDEX IF NOT EXISTS IX_{Event.TableName}_{Event.ReadOrder} ON {Event.TableName} 
                                                                                    ({Event.ReadOrder} , {Event.EffectiveVersion} );
+
+                                                                           CREATE TABLE IF NOT EXISTS {Lock.TableName}
+                                                                           (
+                                                                               {Lock.AggregateId} TEXT NOT NULL,
+                                                                               PRIMARY KEY ( {Lock.AggregateId} )
+                                                                           );
 
                                                                            """));
 

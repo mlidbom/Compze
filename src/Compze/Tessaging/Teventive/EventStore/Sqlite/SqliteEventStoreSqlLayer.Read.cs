@@ -3,6 +3,7 @@ using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Microsoft.Data.Sqlite;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Lock = Compze.Tessaging.Teventive.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.Sqlite;
 
@@ -47,20 +48,34 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
                           }
    );
 
-   public IReadOnlyList<EventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
-      _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
-                                    command => command.SetCommandText($"""
+   public IReadOnlyList<EventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   {
+      if(takeWriteLock)
+      {
+         // For SQLite, we need to ensure we have a write lock by actually writing to the lock table
+         // This forces SQLite to escalate to a RESERVED or EXCLUSIVE lock
+         _connectionManager.UseCommand(command => command.SetCommandText($"""
+                                                                          INSERT OR IGNORE INTO {Lock.TableName}({Lock.AggregateId}) VALUES(@{Lock.AggregateId});
+                                                                          UPDATE {Lock.TableName} SET {Lock.AggregateId} = @{Lock.AggregateId} WHERE {Lock.AggregateId} = @{Lock.AggregateId};
+                                                                          """)
+                                                         .AddVarcharParameter(Lock.AggregateId, 36, aggregateId.ToString())
+                                                         .ExecuteNonQuery());
+      }
 
-                                                                       {CreateSelectClause()} 
-                                                                       WHERE {Event.AggregateId} = @{Event.AggregateId}
-                                                                           AND {Event.InsertedVersion} > @CachedVersion
-                                                                           AND {Event.EffectiveVersion} > 0
-                                                                       ORDER BY {Event.ReadOrder} ASC
-                                                                       """)
-                                                      .AddVarcharParameter(Event.AggregateId, 36, aggregateId.ToString())
-                                                      .AddParameter("CachedVersion", startAfterInsertedVersion)
-                                                      .ExecuteReaderAndSelect(ReadDataRow)
-                                                      .ToList());
+      return _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
+                                          command => command.SetCommandText($"""
+
+                                                                             {CreateSelectClause()} 
+                                                                             WHERE {Event.AggregateId} = @{Event.AggregateId}
+                                                                                 AND {Event.InsertedVersion} > @CachedVersion
+                                                                                 AND {Event.EffectiveVersion} > 0
+                                                                             ORDER BY {Event.ReadOrder} ASC
+                                                                             """)
+                                                            .AddVarcharParameter(Event.AggregateId, 36, aggregateId.ToString())
+                                                            .AddParameter("CachedVersion", startAfterInsertedVersion)
+                                                            .ExecuteReaderAndSelect(ReadDataRow)
+                                                            .ToList());
+   }
 
    public IEnumerable<EventDataRow> StreamEvents(int batchSize)
    {

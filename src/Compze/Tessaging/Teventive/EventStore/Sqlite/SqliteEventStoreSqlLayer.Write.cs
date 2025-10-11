@@ -7,6 +7,7 @@ using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
 using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Lock = Compze.Tessaging.Teventive.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.Sqlite;
 
@@ -23,6 +24,8 @@ partial class SqliteEventStoreSqlLayer
                connection.UseCommand(
                   command => command.SetCommandText(
                                         $"""
+
+                                         {(data.AggregateVersion > 1 ? "" : $"INSERT OR IGNORE INTO {Lock.TableName}({Lock.AggregateId}) VALUES(@{Lock.AggregateId});")}
 
                                          INSERT INTO {Event.TableName}
                                          (       {Event.AggregateId},  {Event.InsertedVersion},  {Event.EffectiveVersion},  {Event.ReadOrder},  {Event.EventType},  {Event.EventId},  {Event.UtcTimeStamp},  {Event.Event},  {Event.TargetEvent}, {Event.RefactoringType}) 
