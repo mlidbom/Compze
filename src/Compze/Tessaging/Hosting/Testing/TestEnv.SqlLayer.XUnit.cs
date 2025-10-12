@@ -14,7 +14,7 @@ static partial class TestEnv
          static readonly LazyStruct<Wiring.SqlLayer> _cache = new LazyStruct<Wiring.SqlLayer>(GetCurrent);
 
          static Wiring.SqlLayer GetCurrent()
-            => ParseParts(XUnitTestContext.PluggableComponentsCombination.NotNull()).Item1;
+            => XUnitTestContext.PluggableComponentsCombination!.Value.SqlLayer;
 
          public static Wiring.SqlLayer Current => _cache.Value;
 
@@ -31,8 +31,8 @@ static partial class TestEnv
          static readonly LazyStruct<Wiring.DIContainer> _cache = new(GetCurrent);
          public static Wiring.DIContainer Current => _cache.Value;
 
-         public static Wiring.DIContainer GetCurrent()
-            => ParseParts(XUnitTestContext.PluggableComponentsCombination.NotNull()).Item2;
+         static Wiring.DIContainer GetCurrent()
+            => XUnitTestContext.PluggableComponentsCombination!.Value.DiContainer;
       }
    }
 }

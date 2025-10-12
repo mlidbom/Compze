@@ -17,8 +17,9 @@ public class DuplicateByPluggableComponentTest : UniversalTestBase
 
 class PluggableComponentsTestFixtureSource : IEnumerable<string>
 {
-   static readonly List<string> Dimensions = PluggableComponentsReader.GetCombinations().ToList();
-   public IEnumerator<string> GetEnumerator() => Dimensions.GetEnumerator();
+   static readonly IReadOnlyList<PluggableComponents> Dimensions = PluggableComponentsReader.GetCombinations();
+   static readonly IReadOnlyList<string> DimensionsStrings = PluggableComponentsReader.GetCombinations().Select(it => it.ToString()).ToList();
+   public IEnumerator<string> GetEnumerator() => DimensionsStrings.GetEnumerator();
    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
 

@@ -2,6 +2,7 @@ using Compze.Utilities.SystemCE;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Compze.Tests.Infrastructure;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Hosting.Testing;
@@ -107,13 +108,9 @@ static partial class TestEnv
    static class XUnitTestContext
    {
       [ThreadStatic]
-      public static string? PluggableComponentsCombination;
+      public static PluggableComponents? PluggableComponentsCombination;
    }
 
-   /// <summary>
-   /// Call this at the beginning of XUnit test methods that use pluggable components.
-   /// This sets up the context so that TestEnv.SqlLayer.Current and TestEnv.DIContainer.Current work correctly.
-   /// </summary>
-   public static void SetXunitTestContext(string pluggableComponentsCombination) =>
+   public static void SetXunitTestContext(PluggableComponents pluggableComponentsCombination) =>
       XUnitTestContext.PluggableComponentsCombination = pluggableComponentsCombination;
 }

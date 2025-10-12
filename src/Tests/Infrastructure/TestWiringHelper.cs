@@ -7,11 +7,29 @@ using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using JetBrains.Annotations;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure;
 
 public static class TestWiringHelper
 {
+   static (Wiring.SqlLayer, Wiring.DIContainer) ParseParts(string _combination)
+   {
+      try
+      {
+         var parts = _combination.Split(':');
+
+         Argument.Is(parts.Length == 2, () => $"PluggableComponentParts has an invalid format: {_combination}");
+
+         return ((Wiring.SqlLayer)Enum.Parse(typeof(Wiring.SqlLayer), parts[0]),
+                 (Wiring.DIContainer)Enum.Parse(typeof(Wiring.DIContainer), parts[1]));
+      }
+      catch(Exception e)
+      {
+         throw new Exception($"PluggableComponentParts has an invalid format: {_combination}", e);
+      }
+   }
+
    public const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
    public static IEventStore EventStore(this IServiceLocator @this) =>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -22,7 +23,7 @@ public sealed class PluggableComponentsTheoryAttribute(
    /// <summary>
    /// SQL layers to exclude from test execution. Use when a test is not applicable to certain database types.
    /// </summary>
-   public Compze.Wiring.SqlLayer[]? ExcludeSqlLayers { get; init; }
+   public Wiring.SqlLayer[]? ExcludeSqlLayers { get; init; }
 }
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
@@ -71,33 +72,41 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 
 class PluggableComponentsTestCase : XunitTestCase
 {
-   string _combination = string.Empty;
+   Infrastructure.PluggableComponents? _combination = null;
 
    [Obsolete("Called by deserializer")]
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
       IXunitTestMethod testMethod,
-      string combination,
+      Infrastructure.PluggableComponents combination,
       string testCaseDisplayName,
       string uniqueID,
       bool @explicit,
       int? timeout,
       object?[]? testMethodArguments)
-      : base(testMethod, testCaseDisplayName, uniqueID, @explicit, skipReason: null, skipType: null, skipUnless: null, skipWhen: null, timeout: timeout, testMethodArguments: testMethodArguments, traits: null)
-   {
+      : base(testMethod,
+             testCaseDisplayName,
+             uniqueID,
+             @explicit,
+             skipReason: null,
+             skipType: null,
+             skipUnless: null,
+             skipWhen: null,
+             timeout: timeout,
+             testMethodArguments: testMethodArguments,
+             traits: null) =>
       _combination = combination;
-   }
 
    protected override void Serialize(IXunitSerializationInfo info)
    {
       base.Serialize(info);
-      info.AddValue(nameof(_combination), _combination);
+      info.AddValue(nameof(_combination), _combination.ToString());
    }
 
    protected override void Deserialize(IXunitSerializationInfo info)
    {
       base.Deserialize(info);
-      _combination = info.GetValue<string>(nameof(_combination)) ?? string.Empty;
+      _combination = Infrastructure.PluggableComponents.FromString(info.GetValue<string>(nameof(_combination)).NotNull());
    }
 }
