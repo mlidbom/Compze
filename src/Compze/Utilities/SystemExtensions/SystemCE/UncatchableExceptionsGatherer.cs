@@ -22,7 +22,8 @@ static class UncatchableExceptionsGatherer
    {
       var exceptions = _exceptions;
       _exceptions = [];
-      if(exceptions.Any()) throw new AggregateException(exceptions);
+      if(exceptions.Any()) 
+         throw new AggregateException(exceptions);
    });
 
    internal static unit ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions()
