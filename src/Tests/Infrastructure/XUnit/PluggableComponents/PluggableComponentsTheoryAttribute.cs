@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Wiring;
 using Xunit;
@@ -25,6 +26,7 @@ public sealed class PluggableComponentsTheoryAttribute(
    static PluggableComponentsTheoryAttribute()
    {
       TestFixtureHelper.SetupSerilog(null);
+      TestEnv._contextProviders.Add(() => (TestContext.Current.TestCase as PluggableComponentsTestCase)?.Components);
    }
 
    /// <summary>
@@ -77,9 +79,11 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
    }
 }
 
-class PluggableComponentsTestCase : XunitTestCase
+public class PluggableComponentsTestCase : XunitTestCase
 {
    Infrastructure.PluggableComponents? _combination = null;
+
+   public Infrastructure.PluggableComponents Components => _combination!.Value;
 
    [Obsolete("Called by deserializer")]
    public PluggableComponentsTestCase() {}
