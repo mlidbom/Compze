@@ -2,19 +2,16 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using FluentAssertions;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
-using Xunit;
 
 namespace Compze.Tests.Integration.XUnit.CQRS;
 
@@ -31,18 +28,12 @@ class SomeEvent : AggregateEvent, ISomeEvent
    }
 }
 
-public class EventStoreTests : UniversalTestBase, IAsyncLifetime
+public class EventStoreTests : UniversalTestBase
 {
    IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();
 
-   public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
-
-   public async ValueTask DisposeAsync()
-   {
-      await _serviceLocator.DisposeAsync();
-      GC.SuppressFinalize(this);
-   }
+   protected override void Dispose(bool disposing) => _serviceLocator.Dispose();
 
    [PluggableComponentsTheory]
    public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>

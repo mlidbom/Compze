@@ -10,9 +10,12 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public sealed class PluggableComponentsTheoryAttribute(
-   [CallerFilePath] string? sourceFilePath = null,
-   [CallerLineNumber] int sourceLineNumber = -1)
-   : FactAttribute(sourceFilePath, sourceLineNumber)
+      [CallerFilePath] string? sourceFilePath = null,
+      [CallerLineNumber] int sourceLineNumber = -1)
+   // ReSharper disable once ExplicitCallerInfoArgument
+   : FactAttribute(sourceFilePath,
+                   // ReSharper disable once ExplicitCallerInfoArgument
+                   sourceLineNumber)
 {
    /// <summary>
    /// SQL layers to exclude from test execution. Use when a test is not applicable to certain database types.
