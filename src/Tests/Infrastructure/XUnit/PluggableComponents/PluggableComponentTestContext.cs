@@ -22,6 +22,7 @@ public class PluggableComponentTestContext : IXunitSerializable
 
    internal PluggableComponentTestContext(Infrastructure.PluggableComponents pluggableComponentsCombination)
    {
+      Log.NCrunch("PluggableComponentTestContext");
       TestEnv.SetXunitTestContext(pluggableComponentsCombination);
       _combination = pluggableComponentsCombination;
    }

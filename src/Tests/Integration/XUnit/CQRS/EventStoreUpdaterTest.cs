@@ -13,6 +13,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
@@ -54,7 +55,7 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
 
    unit Init(PluggableComponentTestContext context)
    {
-      _serviceLocator = context.CreateServiceLocator();
+      _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(null);
 
       _eventSpy = new EventSpy();
 

@@ -10,6 +10,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Xunit;
@@ -44,7 +46,7 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
    }
 
    IServiceLocator Init(PluggableComponentTestContext context) =>
-      _serviceLocator = context.CreateServiceLocator();
+      _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(null);
 
    [PluggableComponentsTheory]
    public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
@@ -173,7 +175,7 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
    [PluggableComponentsTheory]
    public void ShouldCacheEventsBetweenInstancesTransaction(PluggableComponentTestContext context)
    {
-      _serviceLocator = context.CreateServiceLocator();
+      _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
 
       var user = new User();
       using(_serviceLocator.BeginScope())
