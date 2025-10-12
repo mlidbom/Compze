@@ -1,4 +1,6 @@
 using System;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE;
 using Compze.Wiring;
 using Xunit.Sdk;
 
@@ -10,8 +12,8 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 /// </summary>
 public class PluggableComponentTestContext : IXunitSerializable
 {
-   readonly string _combination;
-   readonly SqlLayer _sqlLayer;
+   string _combination;
+   SqlLayer _sqlLayer;
    readonly DIContainer _diContainer;
 
    /// <summary>
@@ -51,7 +53,6 @@ public class PluggableComponentTestContext : IXunitSerializable
 
    /// <summary>
    /// Returns a sql-layer-specific value.
-   /// All SQL layers must be provided - no defaults allowed.
    /// This is an alias for <see cref="SqlLayerExtensions.ValueFor{TValue}"/>.
    /// Prefer using <c>context.SqlLayer.ValueFor(...)</c> for better clarity.
    /// </summary>
@@ -59,46 +60,24 @@ public class PluggableComponentTestContext : IXunitSerializable
       TValue msSql,
       TValue mySql,
       TValue pgSql,
-      TValue sqlite) where TValue : notnull
-   {
-      return _sqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql, sqlite: sqlite);
-   }
+      TValue sqlite) where TValue : notnull =>
+      _sqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql, sqlite: sqlite);
 
    /// <summary>Serializes this object for XUnit test execution.</summary>
-   public void Serialize(IXunitSerializationInfo info)
-   {
-      info.AddValue(nameof(_combination), _combination);
-   }
+   public void Serialize(IXunitSerializationInfo info) => info.AddValue(nameof(_combination), _combination);
 
    /// <summary>Deserializes this object from XUnit test execution.</summary>
    public void Deserialize(IXunitSerializationInfo info)
    {
-      var combination = info.GetValue<string>(nameof(_combination))
-                     ?? throw new InvalidOperationException("Combination string was null during deserialization");
-
-      // Use reflection to set the readonly fields since we're deserializing
-      var combinationField = typeof(PluggableComponentTestContext).GetField(nameof(_combination),
-                                                                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
-      combinationField.SetValue(this, combination);
+      _combination = info.GetValue<string>(nameof(_combination)).NotNull();
 
       // Parse and set the enum values
-      var parts = combination.Split(':');
-      if(parts.Length == 2)
-      {
-         if(Enum.TryParse(parts[0], out SqlLayer sqlLayer))
-         {
-            var sqlLayerField = typeof(PluggableComponentTestContext).GetField(nameof(_sqlLayer),
-                                                                                       System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
-            sqlLayerField.SetValue(this, sqlLayer);
-         }
+      var parts = _combination.Split(':');
 
-         if(Enum.TryParse(parts[1], out DIContainer diContainer))
-         {
-            var diContainerField = typeof(PluggableComponentTestContext).GetField(nameof(_diContainer),
-                                                                                  System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
-            diContainerField.SetValue(this, diContainer);
-         }
-      }
+      Assert.Argument.Is(parts.Length == 2, () => $"PluggableComponentParts has an invalid format: {_combination}");
+
+      _sqlLayer = (SqlLayer)Enum.Parse(typeof(SqlLayer), parts[0]);
+      _sqlLayer = (SqlLayer)Enum.Parse(typeof(DIContainer), parts[2]);
    }
 
    public override string ToString() => _combination;

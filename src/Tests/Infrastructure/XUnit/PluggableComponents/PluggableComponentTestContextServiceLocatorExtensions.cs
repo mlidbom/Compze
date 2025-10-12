@@ -16,7 +16,7 @@ public static class PluggableComponentTestContextServiceLocatorExtensions
    public static IServiceLocator CreateServiceLocator(this PluggableComponentTestContext context, Action<IDependencyRegistrar>? configureContainer = null)
    {
       // Set the TestEnv context so it can read the combination
-      TestEnv.SetTestContext(context.Combination);
+      TestEnv.SetXunitTestContext(context.Combination);
 
       return TestWiringHelper.SetupTestingServiceLocator(configureContainer);
    }

@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 using Compze.Utilities.SystemCE;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -10,37 +9,16 @@ static partial class TestEnv
 {
    static class XUnit
    {
-      public static class SqlLayer
+      public static class XUnitSqlLayer
       {
-         public static Compze.Wiring.SqlLayer Current
-         {
-            get
-            {
-               var testName = CurrentTestContext.PluggableComponentsCombination;
-               if(testName == null) throw new Exception("XUnit test context not set. Make sure test method has pluggableComponentsCombination parameter and calls TestEnv.SetTestContext.");
-               
-               var storageProviderName = FindDimensions.Match(testName).Groups[1].Value;
-               if(Enum.TryParse(storageProviderName, out Compze.Wiring.SqlLayer provider)) return provider;
+         static readonly LazyStruct<Wiring.SqlLayer> _cache = new LazyStruct<Wiring.SqlLayer>(GetCurrent);
 
-#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
-               throw new Exception($"Failed to parse SqlLayerProvider from XUnit test environment. Test context was: {testName}, parsed value: {storageProviderName}");
-#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
-            }
-         }
+         static Wiring.SqlLayer GetCurrent()
+            => ParseParts(XUnitTestContext.PluggableComponentsCombination.NotNull()).Item1;
 
-         public static TValue ValueFor<TValue>(TValue msSql = default!, TValue mySql = default!, TValue pgSql = default!, TValue sqlite = default!) where TValue: notnull
-            =>
-               Current switch
-               {
-                  Compze.Wiring.SqlLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-                  Compze.Wiring.SqlLayer.MySql              => SelectValue(mySql, nameof(mySql)),
-                  Compze.Wiring.SqlLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
-                  Compze.Wiring.SqlLayer.Sqlite             => SelectValue(sqlite, nameof(sqlite)),
-                  Compze.Wiring.SqlLayer.SqliteMemory       => SelectValue(sqlite, nameof(sqlite)),
-                  _                                                 => throw new ArgumentOutOfRangeException()
-               };
+         public static Wiring.SqlLayer Current => _cache.Value;
 
-         [return:NotNull]static TValue SelectValue<TValue>(TValue value, string provider)
+         [return: NotNull] static TValue SelectValue<TValue>(TValue value, string provider)
          {
             if(!Equals(value, default(TValue))) return Result.ReturnNotNull(value);
 
@@ -48,28 +26,13 @@ static partial class TestEnv
          }
       }
 
-      public static class DIContainer
+      public static class XUnitDIContainer
       {
-         public static Compze.Wiring.DIContainer Current
-         {
-            get
-            {
-               var testName = CurrentTestContext.PluggableComponentsCombination;
-               if(testName == null) throw new Exception("XUnit test context not set. Make sure test method has pluggableComponentsCombination parameter and calls TestEnv.SetTestContext.");
-               
-               var containerName = FindDimensions.Match(testName).Groups[2].Value;
-               if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
-               {
-#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
-                  throw new Exception($"Failed to parse DIContainer from XUnit test environment. Test context was: {testName}, parsed value: {containerName}");
-#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
-               }
+         static readonly LazyStruct<Wiring.DIContainer> _cache = new(GetCurrent);
+         public static Wiring.DIContainer Current => _cache.Value;
 
-               return provider;
-            }
-         }
+         public static Wiring.DIContainer GetCurrent()
+            => ParseParts(XUnitTestContext.PluggableComponentsCombination.NotNull()).Item2;
       }
-
-      static readonly Regex FindDimensions = new("""^(.+?):(.+?)$""", RegexOptions.Compiled);
    }
 }

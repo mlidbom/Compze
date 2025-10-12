@@ -1,8 +1,7 @@
+using Compze.Utilities.SystemCE;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Compze.Utilities.SystemCE;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Hosting.Testing;
@@ -10,92 +9,92 @@ namespace Compze.Tessaging.Hosting.Testing;
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 static partial class TestEnv
 {
+   static (Wiring.SqlLayer, Wiring.DIContainer) ParseParts(string _combination)
+   {
+      try
+      {
+         var parts = _combination.Split(':');
+
+         Argument.Is(parts.Length == 2, () => $"PluggableComponentParts has an invalid format: {_combination}");
+
+         return ((Wiring.SqlLayer)Enum.Parse(typeof(Wiring.SqlLayer), parts[0]),
+                 (Wiring.DIContainer)Enum.Parse(typeof(Wiring.DIContainer), parts[1]));
+      }
+      catch(Exception e)
+      {
+         throw new Exception($"PluggableComponentParts has an invalid format: {_combination}", e);
+      }
+   }
+
    ///<summary>Sql layer members</summary>
    public static class SqlLayer
    {
-      public static Compze.Wiring.SqlLayer Current
+      static readonly LazyStruct<Compze.Wiring.SqlLayer> _cache = new LazyStruct<Compze.Wiring.SqlLayer>(GetCurrent);
+      public static Compze.Wiring.SqlLayer Current => _cache.Value;
+
+      public static Compze.Wiring.SqlLayer GetCurrent()
       {
-         get
+         if(XUnitTestContext.PluggableComponentsCombination != null)
          {
-            // Check if we're running in XUnit context first (via thread-local storage)
-            if(CurrentTestContext.PluggableComponentsCombination != null)
-            {
-               return XUnit.SqlLayer.Current;
-            }
-
-            // Fall back to NUnit
-            var storageProviderName = FindDimensions.Match(GetTestName()).Groups[1].Value;
-            if(Enum.TryParse(storageProviderName, out Compze.Wiring.SqlLayer provider)) return provider;
-
-#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
-            throw new Exception($"Failed to parse SqlLayerProvider from test environment. Value was: {storageProviderName}");
-#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
-         }
-      }
-
-      public static TValue ValueFor<TValue>(TValue msSql, TValue mySql, TValue pgSql, TValue sqlite) where TValue: notnull
-      {
-         // Check if we're running in XUnit context first
-         if(CurrentTestContext.PluggableComponentsCombination != null)
-         {
-            return XUnit.SqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql, sqlite: sqlite);
+            return XUnit.XUnitSqlLayer.Current;
          }
 
          // Fall back to NUnit
+         var storageProviderName = FindDimensions.Match(GetNunitTestName()).Groups[1].Value;
+         if(Enum.TryParse(storageProviderName, out Compze.Wiring.SqlLayer provider)) return provider;
+
+         throw new Exception($"Failed to parse SqlLayerProvider from test environment. Value was: {storageProviderName}");
+      }
+
+      public static TValue ValueFor<TValue>(TValue msSql, TValue mySql, TValue pgSql, TValue sqlite) where TValue : notnull
+      {
          return Current switch
          {
-            Compze.Wiring.SqlLayer.MicrosoftSqlServer => msSql,
-            Compze.Wiring.SqlLayer.MySql              => mySql,
-            Compze.Wiring.SqlLayer.PostgreSql         => pgSql,
-            Compze.Wiring.SqlLayer.Sqlite             => sqlite,
-            Compze.Wiring.SqlLayer.SqliteMemory       => sqlite,
-            _                                                 => throw new ArgumentOutOfRangeException()
+            Wiring.SqlLayer.MicrosoftSqlServer => msSql,
+            Wiring.SqlLayer.MySql              => mySql,
+            Wiring.SqlLayer.PostgreSql         => pgSql,
+            Wiring.SqlLayer.Sqlite             => sqlite,
+            Wiring.SqlLayer.SqliteMemory       => sqlite,
+            _                                  => throw new ArgumentOutOfRangeException()
          };
       }
    }
 
-   static string GetTestName()
+   static string GetNunitTestName()
    {
-      //We do not want to reference NUnit so dig this data out through reflection. When running tests NUnit will be there.
       var currentContext = GetNUnitTestContextType().GetProperty("CurrentContext")!.GetMethod!.Invoke(null, null)!;
       var test = currentContext.GetType().GetProperty("Test")!.GetMethod!.Invoke(currentContext, null)!;
       var testName = (string)test.GetType().GetProperty("FullName")!.GetMethod!.Invoke(test, null)!;
       return testName;
    }
 
-   static Type? _testContextType;
    static Type GetNUnitTestContextType()
    {
-      if(_testContextType != null) return _testContextType;
-      
-      _testContextType = AppDomain.CurrentDomain
-                                   .GetAssemblies()
-                                   .Single(ass => ass.GetName().FullName.ContainsInvariant("nunit.framework"))
-                                   .GetType("NUnit.Framework.TestContext")!;
-      return _testContextType;
+      //We do not want to reference NUnit so dig this data out through reflection. When running tests NUnit will be there.
+      return AppDomain.CurrentDomain
+                      .GetAssemblies()
+                      .Single(ass => ass.GetName().FullName.ContainsInvariant("nunit.framework"))
+                      .GetType("NUnit.Framework.TestContext")
+                      .NotNull();
    }
 
    static readonly Regex FindDimensions = new("""\("(.*)\:(.*)"\)""", RegexOptions.Compiled);
-   
+
    public static class DIContainer
    {
       public static Compze.Wiring.DIContainer Current
       {
          get
          {
-            // Check if we're running in XUnit context first
-            if(CurrentTestContext.PluggableComponentsCombination != null)
+            if(XUnitTestContext.PluggableComponentsCombination != null)
             {
-               return XUnit.DIContainer.Current;
+               return XUnit.XUnitDIContainer.Current;
             }
 
-            // Fall back to NUnit
-            var containerName = FindDimensions.Match(GetTestName()).Groups[2].Value;
+            var containerName = FindDimensions.Match(GetNunitTestName()).Groups[2].Value;
             if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
             {
-#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
                throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");
-#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
             }
 
             return provider;
@@ -103,28 +102,18 @@ static partial class TestEnv
       }
    }
 
-   /// <summary>
-   /// Thread-local storage for current test context in XUnit.
-   /// Set this at the beginning of each test method.
-   /// </summary>
-   [ThreadStatic]
-   static string? _currentPluggableComponentsCombination;
 
-   static class CurrentTestContext
+
+   static class XUnitTestContext
    {
-      public static string? PluggableComponentsCombination
-      {
-         get => _currentPluggableComponentsCombination;
-         set => _currentPluggableComponentsCombination = value;
-      }
+      [ThreadStatic]
+      public static string? PluggableComponentsCombination;
    }
 
    /// <summary>
    /// Call this at the beginning of XUnit test methods that use pluggable components.
    /// This sets up the context so that TestEnv.SqlLayer.Current and TestEnv.DIContainer.Current work correctly.
    /// </summary>
-   public static void SetTestContext(string pluggableComponentsCombination)
-   {
-      CurrentTestContext.PluggableComponentsCombination = pluggableComponentsCombination;
-   }
+   public static void SetXunitTestContext(string pluggableComponentsCombination) =>
+      XUnitTestContext.PluggableComponentsCombination = pluggableComponentsCombination;
 }
