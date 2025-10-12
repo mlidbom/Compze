@@ -1,12 +1,11 @@
-using System;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Utilities.Logging;
 using NUnit.Framework;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class NUnitStartupInfrastructure
 {
    [ModuleInitializer]

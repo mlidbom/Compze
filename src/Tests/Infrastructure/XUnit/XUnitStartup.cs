@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;
@@ -8,9 +10,10 @@ using Xunit;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
-public class XUnitStartupInfrastructure : IAsyncLifetime
+public class XUnitStartupInfrastructure
 {
-   public XUnitStartupInfrastructure()
+   [ModuleInitializer]
+   public static void Initialize()
    {
       TestFixtureHelper.SetupSerilog(null);
       TestEnv.XunitDiscoverer = () =>
@@ -20,11 +23,7 @@ public class XUnitStartupInfrastructure : IAsyncLifetime
             return theCase.Components;
          }
 
-         return null;
+         throw new Exception($"Current test is not a {typeof(PluggableComponentsTestCase)}");
       };
    }
-
-   public async ValueTask DisposeAsync() => await ValueTask.CompletedTask;
-
-   public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
 }
