@@ -40,7 +40,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                             testMethod: testMethod,
                             combination: combination,
                             testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
-                            uniqueID: $"{testMethod.UniqueID}.{combination}",
+                            uniqueId: $"{testMethod.UniqueID}.{combination}",
                             @explicit: factAttribute.Explicit,
                             timeout: factAttribute.Timeout,
                             testMethodArguments: arguments);
