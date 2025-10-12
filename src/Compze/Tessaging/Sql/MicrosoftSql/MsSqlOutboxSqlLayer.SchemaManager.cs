@@ -12,9 +12,8 @@ partial class MsSqlOutboxSqlLayer
       //Performance: Why is the MessageId not the primary key? Are we worried about performance loss because of fragmentation because of non-sequential Guids? Is there a (performant and truly reliable) sequential-guid-generator we could use? How does it not being the clustered index impact row vs page etc locking?
       public static async Task EnsureTablesExistAsync(IMsSqlConnectionPool connectionFactory)
       {
-#pragma warning disable CA1849 //The warning is right, this is a blocking call in an async method. But if I make the async call it crashes!
          // ReSharper disable once MethodHasAsyncOverload | THis crashes with weird exception if called async so ...
-         connectionFactory.ExecuteNonQuery($"""
+         await connectionFactory.ExecuteNonQueryAsync($"""
 
                                             IF NOT EXISTS (select name from sys.tables where name = '{Message.TableName}')
                                             BEGIN
@@ -43,9 +42,7 @@ partial class MsSqlOutboxSqlLayer
                                                 )
                                             END
 
-                                            """);
-#pragma warning restore CA1849
-         await Task.CompletedTask.caf();
+                                            """).caf();
       }
    }
 }

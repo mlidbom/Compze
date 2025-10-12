@@ -11,28 +11,27 @@ partial class SqliteOutboxSqlLayer
    {
       public static async Task EnsureTablesExistAsync(ISqliteConnectionPool connectionFactory)
       {
-         connectionFactory.ExecuteNonQuery($"""
+         await connectionFactory.ExecuteNonQueryAsync($"""
 
-                                            CREATE TABLE IF NOT EXISTS {Message.TableName}
-                                            (
-                                                {Message.GeneratedId}       INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                                {Message.TypeIdGuidValue}   TEXT                              NOT NULL,
-                                                {Message.MessageId}         TEXT                              NOT NULL UNIQUE,
-                                                {Message.SerializedMessage} TEXT                              NOT NULL
-                                            );
-                                    
-                                            CREATE TABLE IF NOT EXISTS {D.TableName}
-                                            (
-                                                {D.MessageId}  TEXT    NOT NULL,
-                                                {D.EndpointId} TEXT    NOT NULL,
-                                                {D.IsReceived} INTEGER NOT NULL,
-                                    
-                                                PRIMARY KEY( {D.MessageId}, {D.EndpointId}),
-                                                FOREIGN KEY ( {D.MessageId} ) REFERENCES {Message.TableName} ({Message.MessageId})
-                                            );
+                                                       CREATE TABLE IF NOT EXISTS {Message.TableName}
+                                                       (
+                                                           {Message.GeneratedId}       INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                                           {Message.TypeIdGuidValue}   TEXT                              NOT NULL,
+                                                           {Message.MessageId}         TEXT                              NOT NULL UNIQUE,
+                                                           {Message.SerializedMessage} TEXT                              NOT NULL
+                                                       );
 
-                                            """);
-         await Task.CompletedTask.caf();
+                                                       CREATE TABLE IF NOT EXISTS {D.TableName}
+                                                       (
+                                                           {D.MessageId}  TEXT    NOT NULL,
+                                                           {D.EndpointId} TEXT    NOT NULL,
+                                                           {D.IsReceived} INTEGER NOT NULL,
+
+                                                           PRIMARY KEY( {D.MessageId}, {D.EndpointId}),
+                                                           FOREIGN KEY ( {D.MessageId} ) REFERENCES {Message.TableName} ({Message.MessageId})
+                                                       );
+
+                                                       """).caf();
       }
    }
 }
