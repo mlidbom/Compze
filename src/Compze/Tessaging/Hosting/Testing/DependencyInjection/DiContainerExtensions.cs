@@ -44,7 +44,7 @@ static class DiContainerExtensions
       return container.ServiceLocator;
    }
 
-   const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
+   public const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
    public static IServiceLocator SetupTestingServiceLocator(this DIContainer @this, [InstantHandle] Action<IDependencyRegistrar>? configureContainer = null) =>
       CompzeLogger.For(typeof(DiContainerExtensions)).ExceptionsAndRethrow(() =>
                                                                               @this.CreateServiceLocatorForTesting(register =>

@@ -198,7 +198,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
 
    protected static IServiceLocator CreateServiceLocatorForEventStoreType(Func<IReadOnlyList<IEventMigration>> migrationsFactory)
    {
-      var serviceLocator = TestingContainerFactory.CreateServiceLocatorForTesting(register => register.EventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsFactory));
+      var serviceLocator = TestingContainerFactory.CreateServiceLocatorForTesting(register => register.EventStoreForFlexibleTesting(DiContainerExtensions.EventStoreConnectionStringName, migrationsFactory));
 
       return serviceLocator;
    }
