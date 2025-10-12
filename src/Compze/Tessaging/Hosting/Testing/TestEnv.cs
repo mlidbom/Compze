@@ -15,21 +15,26 @@ public static partial class TestEnv
    internal static IList<Func<PluggableComponents?>> _contextProviders => new List<Func<PluggableComponents?>>();
    static PluggableComponents? GetComponentsFromProviders() => _contextProviders.Select(it => it()).NotNull().FirstOrDefault();
 
-   static readonly LazyStruct<SqlLayer> SqlLayerCache = new(() =>
+
+   public static SqlLayer SqlLayer
    {
-      if(_xUnitPluggableComponentsCombination != null)
+      get
       {
-         return XUnit.XUnitSqlLayer.Current;
+         if(GetComponentsFromProviders() is {} components)
+            return components.SqlLayer;
+
+         if(_xUnitPluggableComponentsCombination != null)
+         {
+            return XUnit.XUnitSqlLayer.Current;
+         }
+
+         // Fall back to NUnit
+         var storageProviderName = FindDimensions!.Match(GetNunitTestName()).Groups[1].Value;
+         if(Enum.TryParse(storageProviderName, out SqlLayer provider)) return provider;
+
+         throw new Exception($"Failed to parse SqlLayerProvider from test environment. Value was: {storageProviderName}");
       }
-
-      // Fall back to NUnit
-      var storageProviderName = FindDimensions!.Match(GetNunitTestName()).Groups[1].Value;
-      if(Enum.TryParse(storageProviderName, out SqlLayer provider)) return provider;
-
-      throw new Exception($"Failed to parse SqlLayerProvider from test environment. Value was: {storageProviderName}");
-   });
-
-   public static SqlLayer SqlLayer => SqlLayerCache.Value;
+   }
 
    static string GetNunitTestName()
    {
