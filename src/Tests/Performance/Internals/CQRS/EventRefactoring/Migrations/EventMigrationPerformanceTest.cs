@@ -18,6 +18,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Wiring;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 

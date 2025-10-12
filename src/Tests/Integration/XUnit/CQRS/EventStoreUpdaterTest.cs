@@ -13,7 +13,9 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE;
@@ -23,8 +25,8 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
-using Compze.Utilities.Functional;
 using Compze.Utilities.Threading;
+using Compze.Wiring;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure
@@ -40,9 +42,18 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
       readonly List<IExactlyOnceEvent> _events = [];
    }
 
-   EventSpy _eventSpy = null!;
+   readonly EventSpy _eventSpy;
+   readonly IServiceLocator _serviceLocator;
 
-   IServiceLocator _serviceLocator = null!;
+   public EventStoreUpdaterTest()
+   {
+      _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(null);
+
+      _eventSpy = new EventSpy();
+
+      _serviceLocator.Resolve<IMessageHandlerRegistrar>()
+                     .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
+   }
 
    public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
 
@@ -50,18 +61,6 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
    {
       await _serviceLocator.DisposeAsync();
       GC.SuppressFinalize(this);
-   }
-
-   unit Init(PluggableComponentTestContext context)
-   {
-      _serviceLocator = context.CreateServiceLocator();
-
-      _eventSpy = new EventSpy();
-
-      _serviceLocator.Resolve<IMessageHandlerRegistrar>()
-                     .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
-
-      return unit.Value;
    }
 
    protected void UseInTransactionalScope([InstantHandle] Action<IEventStoreUpdater> useSession)
@@ -74,14 +73,14 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
       => _serviceLocator.ExecuteInIsolatedScope(() => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));
 
    [PluggableComponentsTheory]
-   public void WhenFetchingAggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void WhenFetchingAggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
    {
       UseInTransactionalScope(session => FluentActions.Invoking(() => session.Get<User>(Guid.NewGuid()))
                                                       .Should().Throw<ArgumentOutOfRangeException>());
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void CanSaveAndLoadAggregate(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void CanSaveAndLoadAggregate()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -98,10 +97,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          loadedUser.Email.Should().Be(user.Email);
          loadedUser.Password.Should().Be(user.Password);
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void ThrowsIfUsedByMultipleThreads(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void ThrowsIfUsedByMultipleThreads()
    {
       IEventStoreUpdater? updater = null;
       IEventStoreReader? reader = null;
@@ -124,10 +123,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
       FluentActions.Invoking(() => reader.GetReadonlyCopyOfVersion<User>(Guid.NewGuid(), 1)).Should().Throw<MultiThreadedUseException>();
       FluentActions.Invoking(() => updater.Save(new User())).Should().Throw<MultiThreadedUseException>();
       FluentActions.Invoking(() => updater.TryGet(Guid.NewGuid(), out User? _)).Should().Throw<MultiThreadedUseException>();
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void CanLoadSpecificVersionOfAggregate(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void CanLoadSpecificVersionOfAggregate()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -154,10 +153,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          loadedUser.Email.Should().Be("NewEmail");
          loadedUser.Password.Should().Be("NewPassword");
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void ReturnsSameInstanceOnRepeatedLoads(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void ReturnsSameInstanceOnRepeatedLoads()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -170,10 +169,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          var loaded2 = session.Get<User>(user.Id);
          loaded1.Should().BeSameAs(loaded2);
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void ReturnsSameInstanceOnLoadAfterSave(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void ReturnsSameInstanceOnLoadAfterSave()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -187,10 +186,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          loaded1.Should().BeSameAs(loaded2);
          loaded1.Should().BeSameAs(user);
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void TracksAndUpdatesLoadedAggregates(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void TracksAndUpdatesLoadedAggregates()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -208,10 +207,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          var loadedUser = session.Get<User>(user.Id);
          loadedUser.Password.Should().Be("NewPassword");
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void DoesNotUpdateAggregatesLoadedViaSpecificVersion(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void DoesNotUpdateAggregatesLoadedViaSpecificVersion()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", Guid.NewGuid());
@@ -229,20 +228,20 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          var loadedUser = session.Get<User>(user.Id);
          loadedUser.Email.Should().Be("OriginalEmail");
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void ResetsAggregatesAfterSaveChanges(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void ResetsAggregatesAfterSaveChanges()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", Guid.NewGuid());
 
       UseInTransactionalScope(session => session.Save(user));
       ((IEventStored)user).Commit(events => events.Should().BeEmpty());
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void ThrowsWhenAttemptingToSaveExistingAggregate(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void ThrowsWhenAttemptingToSaveExistingAggregate()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", Guid.NewGuid());
@@ -251,20 +250,20 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
 
       UseInTransactionalScope(session => FluentActions.Invoking(() => session.Save(user))
                                                       .Should().Throw<InvalidOperationException>());
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void DoesNotExplodeWhenSavingMoreThan10Events(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void DoesNotExplodeWhenSavingMoreThan10Events()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", Guid.NewGuid());
       1.Through(100).ForEach(index => user.ChangeEmail("email" + index));
 
       UseInTransactionalScope(session => session.Save(user));
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void AggregateCannotBeRetrievedAfterBeingDeleted(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void AggregateCannotBeRetrievedAfterBeingDeleted()
    {
       var user1 = new User();
       user1.Register("email1@email.se", "password", Guid.NewGuid());
@@ -289,10 +288,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
       });
 
       UseInTransactionalScope(session => session.TryGet(user1.Id, out User? _).Should().BeFalse());
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void DeletingAnAggregateDoesNotPreventEventsFromItFromBeingRaised(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void DeletingAnAggregateDoesNotPreventEventsFromItFromBeingRaised()
    {
       var user1 = new User();
       user1.Register("email1@email.se", "password", Guid.NewGuid());
@@ -322,10 +321,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
                .Should()
                .Be(3);
       published.Last().Should().BeOfType<UserChangedEmail>();
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void Events_should_be_published_immediately(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void Events_should_be_published_immediately()
    {
       UseInTransactionalScope(session =>
       {
@@ -343,10 +342,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
                   .Should()
                   .BeOfType<UserChangedEmail>();
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void When_fetching_history_from_the_same_instance_after_updating_an_aggregate_the_fetched_history_includes_the_new_events(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void When_fetching_history_from_the_same_instance_after_updating_an_aggregate_the_fetched_history_includes_the_new_events()
    {
       var userId = Guid.NewGuid();
       UseInTransactionalScope(session =>
@@ -367,10 +366,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          var history = ((IEventStoreReader)session).GetHistory(userId);
          history.Count.Should().Be(2);
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void When_deleting_and_then_fetching_an_aggregates_history_the_history_should_be_gone(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void When_deleting_and_then_fetching_an_aggregates_history_the_history_should_be_gone()
    {
       var userId = Guid.NewGuid();
 
@@ -388,10 +387,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          var history = ((IEventStoreReader)session).GetHistory(userId);
          history.Count.Should().Be(0);
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void When_fetching_and_deleting_an_aggregate_then_fetching_history_again_the_history_should_be_gone(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void When_fetching_and_deleting_an_aggregate_then_fetching_history_again_the_history_should_be_gone()
    {
       var userId = Guid.NewGuid();
 
@@ -413,17 +412,17 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          var history = ((IEventStoreReader)session).GetHistory(userId);
          history.Count.Should().Be(0);
       });
-   });
+   }
 
-   [PluggableComponentsTheory(Skip = "Performance test requires StopwatchCE and TimeAsserter which haven't been migrated to XUnit yet")]
-   public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel(PluggableComponentTestContext context) => Init(context).then(() =>
+   //Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite
+   [PluggableComponentsTheory(ExcludeSqlLayers = [SqlLayer.Sqlite, SqlLayer.SqliteMemory])]
+   public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
 
       UseInTransactionalScope(session => session.Save(user));
 
-      /* Performance test - TODO: Migrate StopwatchCE and TimeAsserter to XUnit
       const int threadedIterations = 20;
       var delayEachTransactionBy = 1.Milliseconds();
 
@@ -437,11 +436,18 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          description: $"If access is serialized the time will be approximately {singleThreadedExecutionTime} milliseconds. If parallelized it should be far below this value.");
 
       timingsSummary.IndividualExecutionTimes.Aggregate(TimeSpan.Zero, (t1, t2) => t1 + t2).Should().BeGreaterThan(timingsSummary.Total, "If the sum elapsed time of the parts that run in parallel is not greater than the clock time passed parallelism is not taking place.");
-      */
-   });
+      return;
+
+      void ReadUserHistory() =>
+         UseInTransactionalScope(session =>
+         {
+            ((IEventStoreReader)session).GetHistory(user.Id);
+            Thread.Sleep(delayEachTransactionBy);
+         });
+   }
 
    [PluggableComponentsTheory]
-   public void EventsArePublishedImmediatelyOnAggregateChanges(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void EventsArePublishedImmediatelyOnAggregateChanges()
    {
       var users = 1.Through(9).Select(i =>
       {
@@ -484,13 +490,11 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
 
          allPersistedEvents.Should().BeEquivalentTo(dispatchedEvents, options => options.WithStrictOrdering());
       });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public async Task InsertNewEventType_should_not_throw_exception_if_the_event_type_has_been_inserted_by_something_else(PluggableComponentTestContext context)
+   public async Task InsertNewEventType_should_not_throw_exception_if_the_event_type_has_been_inserted_by_something_else()
    {
-      Init(context);
-
       var user = UseInTransactionalScope(session => User.Register(session, "email@email.se", "password", Guid.NewGuid()));
       var otherUser = await ChangeAnotherUsersEmailInOtherInstance();
 
@@ -518,7 +522,7 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
    }
 
    [PluggableComponentsTheory]
-   public void If_the_first_transaction_to_insert_an_event_of_specific_type_fails_the_next_succeeds(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void If_the_first_transaction_to_insert_an_event_of_specific_type_fails_the_next_succeeds()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -542,10 +546,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
             var loadedUser = session.Get<User>(user.Id);
             loadedUser.ChangeEmail("new@email.com");
          });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed_even_if_history_has_been_read_outside_of_modifying_transactions(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed_even_if_history_has_been_read_outside_of_modifying_transactions()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -594,16 +598,13 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
                }
             });
          });
-   });
+   }
 
-   // SQLite: This test validates high-concurrency performance characteristics that SQLite is not designed for.
-   // SQLite is optimized for embedded, single-writer scenarios, not high-concurrency multi-writer workloads.
-   // The functional correctness (transaction serialization, no duplicate keys, data integrity) is fully
-   // verified by other tests. This test specifically validates performance under concurrent load, which
-   // is outside SQLite's intended use case.
-   [PluggableComponentsTheory(ExcludeSqlLayers = [Compze.Wiring.SqlLayer.Sqlite, Compze.Wiring.SqlLayer.SqliteMemory])]
-   public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed(PluggableComponentTestContext context) => Init(context).then(() =>
+    //We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...
+    [PluggableComponentsTheory(ExcludeSqlLayers = [Wiring.SqlLayer.Sqlite, Wiring.SqlLayer.SqliteMemory])]
+   public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed()
    {
+
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
       UseInTransactionalScope(session =>
@@ -612,8 +613,8 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var changeEmailSection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(20));
-      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(TimeSpanCE.Seconds(20));
+      var changeEmailSection = GatedCodeSection.WithTimeout(20.Seconds());
+      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(20.Seconds());
 
       const int threads = 2;
 
@@ -623,7 +624,7 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
       changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualTo(2);
       changeEmailSection.ExitGate.AwaitQueueLengthEqualTo(1);
 
-      Thread.Sleep(TimeSpanCE.Milliseconds(100));
+      Thread.Sleep(100.Milliseconds());
 
       var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Should().Be(1, "Only one thread should have been able to fetch the aggregate"));
 
@@ -655,10 +656,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
                userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
             }
          });
-   });
+   }
 
    [PluggableComponentsTheory]
-   public void If_an_updater_is_used_in_two_transactions_an_exception_is_thrown(PluggableComponentTestContext context) => Init(context).then(() =>
+   public void If_an_updater_is_used_in_two_transactions_an_exception_is_thrown()
    {
       using(_serviceLocator.BeginScope())
       {
@@ -670,5 +671,5 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          FluentActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
                       .Should().Throw<InvalidOperationException>();
       }
-   });
+   }
 }

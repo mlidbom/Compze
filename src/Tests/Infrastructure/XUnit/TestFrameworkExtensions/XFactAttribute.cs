@@ -28,15 +28,14 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
       var currentType = testMethod.TestClass.Class;
 
       if (declaringType != currentType)
-         return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(Array.Empty<IXunitTestCase>());
+         return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
-      return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(new[]
-      {
-         new XunitTestCase(
-            testMethod: testMethod,
-            testCaseDisplayName: testMethod.Method.Name,
-            uniqueID: $"{testMethod.UniqueID}.{testMethod.Method.Name}",
-            @explicit: factAttribute.Explicit)
-      });
+      return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([
+                                                                          new XunitTestCase(
+                                                                             testMethod: testMethod,
+                                                                             testCaseDisplayName: testMethod.Method.Name,
+                                                                             uniqueID: $"{testMethod.UniqueID}.{testMethod.Method.Name}",
+                                                                             @explicit: factAttribute.Explicit)
+                                                                       ]);
    }
 }

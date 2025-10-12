@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore;
@@ -198,7 +199,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
 
    protected static IServiceLocator CreateServiceLocatorForEventStoreType(Func<IReadOnlyList<IEventMigration>> migrationsFactory)
    {
-      var serviceLocator = TestingContainerFactory.CreateServiceLocatorForTesting(register => register.EventStoreForFlexibleTesting(TestWiringHelper.EventStoreConnectionStringName, migrationsFactory));
+      var serviceLocator = TestEnv.DIContainer.CreateServiceLocatorForTesting(register => register.EventStoreForFlexibleTesting(DiContainerExtensions.EventStoreConnectionStringName, migrationsFactory));
 
       return serviceLocator;
    }

@@ -53,7 +53,7 @@ public static class TestFixtureHelper
       }
    }
 
-   static void SetupSerilog(ILogEventEnricher? testEnricher)
+   public static void SetupSerilog(ILogEventEnricher? testEnricher)
    {
       var config = new LoggerConfiguration()
                   .Enrich.WithMachineName()

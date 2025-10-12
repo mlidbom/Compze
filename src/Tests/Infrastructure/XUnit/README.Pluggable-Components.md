@@ -46,7 +46,7 @@ using Xunit;
 public class MyPluggableComponentTest : DuplicateByPluggableComponentTest
 {
    [PluggableComponentsTheory]
-   public void My_test(PluggableComponentTestContext context)
+   public void My_test()
    {
       // Fully parsed context object with convenient API
       var persistenceLayer = context.PersistenceLayer;  // Enum value
@@ -73,7 +73,7 @@ When you need different values for different persistence layers, use the extensi
 
 ```csharp
 [PluggableComponentsTheory]
-public void Test_with_layer_specific_values(PluggableComponentTestContext context)
+public void Test_with_layer_specific_values()
 {
    // Recommended: Use the extension method directly on PersistenceLayer
    var timeout = context.PersistenceLayer.ValueFor(
@@ -104,7 +104,7 @@ public class MyTest : DuplicateByPluggableComponentTest
 {
    // Runs for each combination
    [PluggableComponentsTheory]
-   public void Test_with_all_combinations(PluggableComponentTestContext context)
+   public void Test_with_all_combinations()
    {
       // Test logic with context
    }
@@ -193,7 +193,7 @@ public class MyTest : DuplicateByPluggableComponentTest
 public class MyTest : DuplicateByPluggableComponentTest
 {
    [PluggableComponentsTheory]
-   public void My_test(PluggableComponentTestContext context)
+   public void My_test()
    {
       // XUnit automatically injects context object
       var persistenceLayer = context.PersistenceLayer;
@@ -227,7 +227,7 @@ public void My_test() // ❌ Missing PluggableComponentTestContext parameter
 ### ✅ Correct usage
 ```csharp
 [PluggableComponentsTheory]
-public void My_test(PluggableComponentTestContext context) // ✅ 
+public void My_test() // ✅ 
 {
    var layer = context.PersistenceLayer; // ✅ Works!
 }
@@ -236,7 +236,7 @@ public void My_test(PluggableComponentTestContext context) // ✅
 ### ❌ Using wrong attribute
 ```csharp
 [Fact] // ❌ Should be [PluggableComponentsTheory]
-public void My_test(PluggableComponentTestContext context)
+public void My_test()
 {
    // Won't run multiple times
 }
