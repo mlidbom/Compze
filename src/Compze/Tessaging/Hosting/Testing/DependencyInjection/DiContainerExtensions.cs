@@ -14,7 +14,7 @@ using Compze.Sql.DocumentDb.DependencyInjection;
 
 namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
-static class DiContainerExtensions
+public static class DiContainerExtensions
 {
    public static IDependencyInjectionContainer Create(this DIContainer @this, IRunMode runMode)
    {

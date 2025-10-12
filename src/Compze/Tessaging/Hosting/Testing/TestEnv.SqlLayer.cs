@@ -9,7 +9,7 @@ using Compze.Wiring;
 namespace Compze.Tessaging.Hosting.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
-static partial class TestEnv
+public static partial class TestEnv
 {
    static readonly LazyStruct<SqlLayer> _sqlLayerCache = new(() =>
    {
@@ -68,7 +68,6 @@ static partial class TestEnv
 
    static class XUnitTestContext
    {
-      [ThreadStatic]
       public static PluggableComponents? PluggableComponentsCombination;
    }
 
