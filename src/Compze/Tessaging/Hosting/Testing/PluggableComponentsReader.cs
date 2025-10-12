@@ -1,10 +1,11 @@
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Logging;
+using Compze.Utilities.SystemCE;
+using Compze.Wiring;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Compze.Utilities.Contracts;
-using Compze.Utilities.SystemCE;
-using Compze.Wiring;
 
 namespace Compze.Tests.Infrastructure;
 
@@ -21,6 +22,7 @@ public static class PluggableComponentsReader
 
    static IReadOnlyList<PluggableComponents> GetCombinationsInternal()
    {
+      ConsoleCE.WriteImportantLine("DIContainer.Current");
       var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestUsingPluggableComponentCombinations);
 
       if(!File.Exists(filePath)) throw new Exception($"{filePath} is missing");
@@ -40,6 +42,7 @@ public readonly record struct PluggableComponents(SqlLayer SqlLayer, DIContainer
 
    public static PluggableComponents FromString(string _combination)
    {
+      ConsoleCE.WriteImportantLine("PluggableComponents.FromString");
       try
       {
          var parts = _combination.Split(':');

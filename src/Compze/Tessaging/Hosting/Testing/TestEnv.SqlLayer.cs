@@ -1,39 +1,22 @@
+using Compze.Tests.Infrastructure;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Compze.Tests.Infrastructure;
-using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Hosting.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 static partial class TestEnv
 {
-   static (Wiring.SqlLayer, Wiring.DIContainer) ParseParts(string _combination)
-   {
-      try
-      {
-         var parts = _combination.Split(':');
-
-         Argument.Is(parts.Length == 2, () => $"PluggableComponentParts has an invalid format: {_combination}");
-
-         return ((Wiring.SqlLayer)Enum.Parse(typeof(Wiring.SqlLayer), parts[0]),
-                 (Wiring.DIContainer)Enum.Parse(typeof(Wiring.DIContainer), parts[1]));
-      }
-      catch(Exception e)
-      {
-         throw new Exception($"PluggableComponentParts has an invalid format: {_combination}", e);
-      }
-   }
-
    ///<summary>Sql layer members</summary>
    public static class SqlLayer
    {
       static readonly LazyStruct<Compze.Wiring.SqlLayer> _cache = new LazyStruct<Compze.Wiring.SqlLayer>(GetCurrent);
       public static Compze.Wiring.SqlLayer Current => _cache.Value;
 
-      public static Compze.Wiring.SqlLayer GetCurrent()
+      static Compze.Wiring.SqlLayer GetCurrent()
       {
          if(XUnitTestContext.PluggableComponentsCombination != null)
          {
@@ -95,6 +78,7 @@ static partial class TestEnv
             var containerName = FindDimensions.Match(GetNunitTestName()).Groups[2].Value;
             if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
             {
+               ConsoleCE.WriteImportantLine("DIContainer.Current");
                throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");
             }
 

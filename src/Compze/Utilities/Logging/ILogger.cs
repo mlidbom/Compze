@@ -11,4 +11,6 @@ interface ILogger
    unit Warning(Exception exception, string message);
    unit Info(string message);
    unit Debug(string message);
+
+   unit NCrunch(string message) => Warning($"NCR:{message}");
 }

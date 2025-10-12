@@ -1,4 +1,6 @@
 using System;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Wiring;
 using Xunit.Sdk;
@@ -11,6 +13,7 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 /// </summary>
 public class PluggableComponentTestContext : IXunitSerializable
 {
+   static ILogger Log => CompzeLogger.For<PluggableComponentTestContext>();
    Infrastructure.PluggableComponents? _combination;
 
    /// <summary>Parameterless constructor required for XUnit serialization.</summary>
@@ -18,7 +21,10 @@ public class PluggableComponentTestContext : IXunitSerializable
    public PluggableComponentTestContext() => _combination = null;
 
    internal PluggableComponentTestContext(Infrastructure.PluggableComponents pluggableComponentsCombination)
-      => _combination = pluggableComponentsCombination;
+   {
+      TestEnv.SetXunitTestContext(pluggableComponentsCombination);
+      _combination = pluggableComponentsCombination;
+   }
 
    public Infrastructure.PluggableComponents Combination => _combination!.Value;
 
@@ -37,11 +43,19 @@ public class PluggableComponentTestContext : IXunitSerializable
       SqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql, sqlite: sqlite);
 
    /// <summary>Serializes this object for XUnit test execution.</summary>
-   public void Serialize(IXunitSerializationInfo info) => info.AddValue(nameof(_combination), _combination.ToString());
+   public void Serialize(IXunitSerializationInfo info)
+   {
+      Log.Warning($"NCR:SERIALIZING {_combination}");
+      info.AddValue(nameof(_combination), _combination.ToString());
+   }
 
    /// <summary>Deserializes this object from XUnit test execution.</summary>
-   public void Deserialize(IXunitSerializationInfo serializerData) =>
+   public void Deserialize(IXunitSerializationInfo serializerData)
+   {
+      Log.Warning($"NCR:DESERIALIZING {_combination}");
       _combination = Infrastructure.PluggableComponents.FromString(serializerData.GetValue<string>(nameof(_combination)).NotNull());
+      TestEnv.SetXunitTestContext(_combination!.Value);
+   }
 
    public override string ToString() => _combination!.Value.ToString();
 }

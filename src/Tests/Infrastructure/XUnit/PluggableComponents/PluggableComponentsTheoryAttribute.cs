@@ -20,6 +20,11 @@ public sealed class PluggableComponentsTheoryAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : FactAttribute(sourceFilePath, sourceLineNumber)
 {
+   static PluggableComponentsTheoryAttribute()
+   {
+      TestFixtureHelper.SetupSerilog(null);
+   }
+
    /// <summary>
    /// SQL layers to exclude from test execution. Use when a test is not applicable to certain database types.
    /// </summary>
