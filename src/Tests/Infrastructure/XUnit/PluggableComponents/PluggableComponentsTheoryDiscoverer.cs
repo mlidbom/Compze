@@ -22,7 +22,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       {
          var excludedLayers = theoryAttribute.ExcludeSqlLayers;
          combinations = combinations
-                       .Where(combo => !excludedLayers.Contains(TestEnv.SqlLayer))
+                       .Where(combo => !excludedLayers.Contains(combo.SqlLayer))
                        .ToList();
       }
 

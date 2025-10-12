@@ -17,6 +17,6 @@ public sealed class PluggableComponentsTheoryAttribute(
    /// <summary>
    /// SQL layers to exclude from test execution. Use when a test is not applicable to certain database types.
    /// </summary>
-   public Wiring.SqlLayer[]? ExcludeSqlLayers { get; init; }
+   public Wiring.SqlLayer[] ExcludeSqlLayers { get; init; } = [];
 }
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
