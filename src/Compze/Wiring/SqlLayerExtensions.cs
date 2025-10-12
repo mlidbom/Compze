@@ -1,19 +1,10 @@
-using System;
-using Compze.Wiring;
-using static Compze.Utilities.Contracts.Assert;
-
-namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+namespace Compze.Wiring;
 
 /// <summary>
 /// Extension methods for SqlLayer to provide convenient access to layer-specific values in tests.
 /// </summary>
 public static class SqlLayerExtensions
 {
-   /// <summary>
-   /// Returns a sql-layer-specific value.
-   /// All SQL layers must be provided - no defaults allowed.
-   /// This is aliased as <see cref="PluggableComponentTestContext.ValueForDb{TValue}"/> for convenience.
-   /// </summary>
    public static TValue ValueFor<TValue>(
       this SqlLayer sqlLayer,
       TValue msSql,

@@ -4,6 +4,7 @@ using Compze.Utilities.SystemCE;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Compze.Wiring;
 
 namespace Compze.Tessaging.Hosting.Testing;
 
@@ -31,17 +32,7 @@ static partial class TestEnv
       }
 
       public static TValue ValueFor<TValue>(TValue msSql, TValue mySql, TValue pgSql, TValue sqlite) where TValue : notnull
-      {
-         return Current switch
-         {
-            Wiring.SqlLayer.MicrosoftSqlServer => msSql,
-            Wiring.SqlLayer.MySql              => mySql,
-            Wiring.SqlLayer.PostgreSql         => pgSql,
-            Wiring.SqlLayer.Sqlite             => sqlite,
-            Wiring.SqlLayer.SqliteMemory       => sqlite,
-            _                                  => throw new ArgumentOutOfRangeException()
-         };
-      }
+         => Current.ValueFor(msSql, mySql, pgSql, sqlite);
    }
 
    static string GetNunitTestName()
@@ -86,8 +77,6 @@ static partial class TestEnv
          }
       }
    }
-
-
 
    static class XUnitTestContext
    {

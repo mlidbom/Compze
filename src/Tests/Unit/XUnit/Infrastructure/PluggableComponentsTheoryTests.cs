@@ -1,5 +1,6 @@
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Wiring;
 using FluentAssertions;
 using Xunit;
 
