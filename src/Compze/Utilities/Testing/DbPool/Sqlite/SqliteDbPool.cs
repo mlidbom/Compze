@@ -6,7 +6,6 @@ namespace Compze.Utilities.Testing.DbPool.Sqlite;
 internal class SqliteDbPool : DbPool
 {
    readonly string _baseDirectory;
-   readonly HashSet<string> _createdDatabasePaths = [];
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
@@ -20,96 +19,65 @@ internal class SqliteDbPool : DbPool
 
    protected override string ConnectionStringFor(Database db)
    {
-      var dbPath = Path.Combine(_baseDirectory, $"{db.Name}.db");
+      var dbPath = CreateDbPath(db);
       return new SqliteConnectionStringBuilder
-      {
-         DataSource = dbPath,
-         Mode = SqliteOpenMode.ReadWriteCreate,
-         Cache = SqliteCacheMode.Shared
-      }.ConnectionString;
+             {
+                DataSource = dbPath,
+                Mode = SqliteOpenMode.ReadWriteCreate,
+                Cache = SqliteCacheMode.Shared
+             }.ConnectionString;
    }
 
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
-   {
-      var dbPath = Path.Combine(_baseDirectory, $"{db.Name}.db");
-      _createdDatabasePaths.Add(dbPath);
-      
-      if(File.Exists(dbPath))
-      {
-         ResetDatabase(db);
-      } else
-      {
-         // Create empty database
-         using var connection = new SqliteConnection(ConnectionStringFor(db));
-         connection.Open();
-         connection.Close();
-      }
-   }
+   protected override void EnsureDatabaseExistsAndIsEmpty(Database db) => ResetDatabase(db);
 
    protected override void ResetDatabase(Database db)
    {
-      var dbPath = Path.Combine(_baseDirectory, $"{db.Name}.db");
-      _createdDatabasePaths.Add(dbPath);
-      
-      // Close all connections
-      ResetConnectionPool(db);
-      
-      // Delete and recreate the database file
+      using var dbCreatingConnection = new SqliteConnection(ConnectionStringFor(db));
+      dbCreatingConnection.Open();
+   }
+
+   static void ResetConnectionPool(Database db) => SqliteConnection.ClearAllPools();
+
+   static void DeleteDb(string dbPath)
+   {
       if(File.Exists(dbPath))
       {
          File.Delete(dbPath);
       }
-      
-      // Create fresh empty database
-      using var connection = new SqliteConnection(ConnectionStringFor(db));
-      connection.Open();
-      connection.Close();
    }
 
-   void ResetConnectionPool(Database db)
-   {
-      SqliteConnection.ClearAllPools();
-   }
+   string CreateDbPath(Database db) => Path.Combine(_baseDirectory, $"{db.Name}.db");
 
    protected override void Dispose(bool disposing)
    {
       if(disposing)
       {
-         // Clear all connection pools before deleting files
-         SqliteConnection.ClearAllPools();
-         
-         // Delete all database files created by this pool
-         foreach(var dbPath in _createdDatabasePaths.ToList())
+         // Sqlite sometimes takes a moment to release the files, so we retry a few times
+         const int MaxCleanupAttempts = 5;
+         for(int attempt = 1; attempt <= MaxCleanupAttempts; attempt++)
          {
-            try
+            SqliteConnection.ClearAllPools();
+            foreach(var db in _transientCache)
             {
-               if(File.Exists(dbPath))
+               var dbPath = CreateDbPath(db);
+               try
                {
-                  File.Delete(dbPath);
+                  DeleteDb(dbPath);
                }
-               
-               // Also delete the -wal and -shm files if they exist
-               var walPath = $"{dbPath}-wal";
-               if(File.Exists(walPath))
+               catch
                {
-                  File.Delete(walPath);
+                  if(attempt == MaxCleanupAttempts)
+                  {
+                     throw new Exception($"Failed to clean up database {dbPath}");
+                  }
+
+                  Thread.Sleep(10);
                }
-               
-               var shmPath = $"{dbPath}-shm";
-               if(File.Exists(shmPath))
-               {
-                  File.Delete(shmPath);
-               }
-            }
-            catch
-            {
-               // Ignore errors during cleanup - files might be locked or already deleted
             }
          }
-         
-         _createdDatabasePaths.Clear();
+
+         base.Dispose(disposing);
+         return;
       }
-      
-      base.Dispose(disposing);
    }
 }

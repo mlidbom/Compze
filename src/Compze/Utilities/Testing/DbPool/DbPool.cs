@@ -27,7 +27,7 @@ public abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
 
    readonly MonitorCE _guard = MonitorCE.WithTimeout(TimeSpanCE.Seconds(30));
    readonly Guid _poolId = Guid.NewGuid();
-   IReadOnlyList<Database> _transientCache = new List<Database>();
+   protected IReadOnlyList<Database> _transientCache = new List<Database>();
 
    static ILogger _log = CompzeLogger.For<DbPool>();
    bool _disposed;
