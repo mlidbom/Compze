@@ -79,7 +79,7 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
 
    public IEnumerable<EventDataRow> StreamEvents(int batchSize)
    {
-      string lastReadEventReadOrder = ReadOrder.Zero.ToString();
+      string lastReadEventReadOrder = ReadOrder.Zero.ToSqliteReadOrderString();
       int fetchedInThisBatch;
       do
       {
@@ -99,7 +99,7 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
                                                                            .ToList());
          if(historyData.Any())
          {
-            lastReadEventReadOrder = historyData[^1].StorageInformation.ReadOrder!.Value.ToString();
+            lastReadEventReadOrder = historyData[^1].StorageInformation.ReadOrder!.Value.ToSqliteReadOrderString();
          }
 
          foreach(var eventDataRow in historyData)

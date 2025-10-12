@@ -47,7 +47,7 @@ partial class SqliteEventStoreSqlLayer
                                     .AddVarcharParameter(Event.EventId, 36, data.EventId.ToString())
                                     .AddDateTime2Parameter(Event.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Event.Event, data.EventJson)
-                                    .AddVarcharParameter(Event.ReadOrder, 50, data.StorageInformation.ReadOrder?.ToString() ?? new ReadOrder().ToString())
+                                    .AddVarcharParameter(Event.ReadOrder, 50, data.StorageInformation.ReadOrder?.ToSqliteReadOrderString() ?? new ReadOrder().ToSqliteReadOrderString())
                                     .AddParameter(Event.EffectiveVersion, data.StorageInformation.EffectiveVersion)
                                     .AddNullableParameter(Event.TargetEvent, SqliteType.Text, data.StorageInformation.RefactoringInformation?.TargetEvent.ToString())
                                     .AddNullableParameter(Event.RefactoringType, SqliteType.Integer, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (int?)data.StorageInformation.RefactoringInformation.RefactoringType)
