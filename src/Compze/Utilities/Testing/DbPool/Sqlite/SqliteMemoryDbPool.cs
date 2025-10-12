@@ -1,13 +1,14 @@
 using Microsoft.Data.Sqlite;
 using System.Collections.Concurrent;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
 internal class SqliteMemoryDbPool : DbPool
 {
    // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
-   readonly ConcurrentDictionary<string, SqliteConnection> _keepInMemoryDatabaseAliveConnections = new();
+   readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = ThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());
 
    protected override string ConnectionStringFor(Database db)
    {
@@ -20,14 +21,17 @@ internal class SqliteMemoryDbPool : DbPool
    }
 
    protected override void EnsureDatabaseExistsAndIsEmpty(Database db) => ResetDatabase(db);
-   protected override void ResetDatabase(Database db) => _keepInMemoryDatabaseAliveConnections[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db);
+   protected override void ResetDatabase(Database db) => _keepInMemoryDatabaseAliveConnections.Update(cons => cons[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db));
 
    protected override void Dispose(bool disposing)
    {
       if(disposing)
       {
-         _keepInMemoryDatabaseAliveConnections.Values.ForEach(connection => connection.Dispose());
-         _keepInMemoryDatabaseAliveConnections.Clear();
+         _keepInMemoryDatabaseAliveConnections.Update(cons =>
+         {
+            cons.Values.ForEach(connection => connection.Dispose());
+            cons.Clear();
+         });
       }
 
       base.Dispose(disposing);
