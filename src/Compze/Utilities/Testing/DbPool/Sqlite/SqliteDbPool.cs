@@ -53,7 +53,7 @@ internal class SqliteDbPool : DbPool
       if(disposing)
       {
          // Sqlite sometimes takes a moment to release the files, so we retry a few times
-         const int MaxCleanupAttempts = 5;
+         const int MaxCleanupAttempts = 10;
          for(int attempt = 1; attempt <= MaxCleanupAttempts; attempt++)
          {
             SqliteConnection.ClearAllPools();
