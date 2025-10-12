@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure;
 
@@ -40,21 +41,26 @@ public readonly record struct PluggableComponents(SqlLayer SqlLayer, DIContainer
 {
    public override string ToString() => $"{SqlLayer}:{DiContainer}";
 
-   public static PluggableComponents FromString(string _combination)
+   public static PluggableComponents FromString(string combination)
    {
       ConsoleCE.WriteImportantLine("PluggableComponents.FromString");
       try
       {
-         var parts = _combination.Split(':');
+         var parts = combination.Split(':');
 
-         Assert.Argument.Is(parts.Length == 2, () => $"PluggableComponentParts has an invalid format: {_combination}");
+         Assert.Argument.Is(parts.Length == 2, () => $"PluggableComponentParts has an invalid format: {combination}");
 
-         return new PluggableComponents((SqlLayer)Enum.Parse(typeof(Wiring.SqlLayer), parts[0]),
-                                        (DIContainer)Enum.Parse(typeof(Wiring.DIContainer), parts[1]));
+         return FromStrings(parts[0], parts[1]);
       }
       catch(Exception e)
       {
-         throw new Exception($"PluggableComponentParts has an invalid format: {_combination}", e);
+         throw new Exception($"PluggableComponentParts has an invalid format: {combination}", e);
       }
+   }
+
+   public static PluggableComponents FromStrings(string sqlLayer, string container)
+   {
+      return new PluggableComponents((SqlLayer)Enum.Parse(typeof(Wiring.SqlLayer), sqlLayer),
+                                     (DIContainer)Enum.Parse(typeof(Wiring.DIContainer), container));
    }
 }
