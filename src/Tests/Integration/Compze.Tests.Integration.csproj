@@ -35,9 +35,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <PropertyGroup>
-    <NoWarn>CS0436</NoWarn>
-  </PropertyGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
   <ItemGroup>
