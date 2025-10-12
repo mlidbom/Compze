@@ -2,12 +2,15 @@ using System;
 using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Testing.Sql;
+using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
+using Compze.Utilities.Logging;
 using Compze.Wiring;
 using JetBrains.Annotations;
+using Compze.Sql.DocumentDb.DependencyInjection;
 
 namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
@@ -40,4 +43,14 @@ static class DiContainerExtensions
 
       return container.ServiceLocator;
    }
+
+   const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
+   public static IServiceLocator SetupTestingServiceLocator(this DIContainer @this, [InstantHandle] Action<IDependencyRegistrar>? configureContainer = null) =>
+      CompzeLogger.For(typeof(DiContainerExtensions)).ExceptionsAndRethrow(() =>
+                                                                              @this.CreateServiceLocatorForTesting(register =>
+                                                                              {
+                                                                                 register.DocumentDb();
+                                                                                 register.EventStore(EventStoreConnectionStringName);
+                                                                                 configureContainer?.Invoke(register);
+                                                                              }));
 }
