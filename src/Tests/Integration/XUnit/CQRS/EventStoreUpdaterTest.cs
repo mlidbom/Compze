@@ -414,13 +414,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
       });
    }
 
+   //Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite
    [PluggableComponentsTheory(ExcludeSqlLayers = [SqlLayer.Sqlite, SqlLayer.SqliteMemory])]
    public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel()
    {
-      //Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite
-      if(TestEnv.SqlLayer == SqlLayer.Sqlite || TestEnv.SqlLayer == SqlLayer.SqliteMemory)
-         return;
-
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
 
@@ -603,18 +600,10 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          });
    }
 
-    // SQLite: This test validates high-concurrency performance characteristics that SQLite is not designed for.
-    // SQLite is optimized for embedded, single-writer scenarios, not high-concurrency multi-writer workloads.
-    // The functional correctness (transaction serialization, no duplicate keys, data integrity) is fully
-    // verified by other tests. This test specifically validates performance under concurrent load, which
-    // is outside SQLite's intended use case.
-
-
-    //[PluggableComponentsTheory(ExcludeSqlLayers = [Wiring.SqlLayer.Sqlite, Wiring.SqlLayer.SqliteMemory])]
-    [PluggableComponentsTheory] //todo: For some reason, the whole pluggable components infrastructure comes crashing down if I use the above attribute....
+    //We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...
+    [PluggableComponentsTheory(ExcludeSqlLayers = [Wiring.SqlLayer.Sqlite, Wiring.SqlLayer.SqliteMemory])]
    public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed()
    {
-      if(TestEnv.SqlLayer == SqlLayer.Sqlite || TestEnv.SqlLayer == SqlLayer.SqliteMemory) return;
 
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -624,8 +613,8 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var changeEmailSection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(20));
-      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(TimeSpanCE.Seconds(20));
+      var changeEmailSection = GatedCodeSection.WithTimeout(20.Seconds());
+      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(20.Seconds());
 
       const int threads = 2;
 
@@ -635,7 +624,7 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
       changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualTo(2);
       changeEmailSection.ExitGate.AwaitQueueLengthEqualTo(1);
 
-      Thread.Sleep(TimeSpanCE.Milliseconds(100));
+      Thread.Sleep(100.Milliseconds());
 
       var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Should().Be(1, "Only one thread should have been able to fetch the aggregate"));
 
