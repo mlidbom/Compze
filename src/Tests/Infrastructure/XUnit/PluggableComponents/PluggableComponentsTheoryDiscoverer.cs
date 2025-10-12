@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Testing;
 using Xunit.Sdk;
 using Xunit.v3;
 
@@ -9,22 +8,15 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 {
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
    public async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
       IXunitTestMethod testMethod,
       IFactAttribute factAttribute)
    {
-      var combinations = PluggableComponentsReader.GetCombinations();
-
-      // Filter out excluded SQL layers if specified
-      if(factAttribute is PluggableComponentsTheoryAttribute { ExcludeSqlLayers.Length: > 0 } theoryAttribute)
-      {
-         var excludedLayers = theoryAttribute.ExcludeSqlLayers;
-         combinations = combinations
-                       .Where(combo => !excludedLayers.Contains(combo.SqlLayer))
-                       .ToList();
-      }
+      var pgAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
+      var combinations = PluggableComponentsReader.GetCombinations()
+                                                  .Where(combo => !pgAttribute.ExcludeSqlLayers.Contains(combo.SqlLayer))
+                                                  .ToList();
 
       var testCases = combinations
                      .Select(combination => new PluggableComponentsTestCase(
@@ -32,8 +24,8 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                                 combination: combination,
                                 testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
                                 uniqueId: $"{testMethod.UniqueID}.{combination}",
-                                @explicit: factAttribute.Explicit,
-                                timeout: factAttribute.Timeout,
+                                @explicit: pgAttribute.Explicit,
+                                timeout: pgAttribute.Timeout,
                                 testMethodArguments: []))
                      .ToArray();
 
