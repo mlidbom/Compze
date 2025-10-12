@@ -53,7 +53,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
       if(!bypassScaleTest)
       {
-         if(offset.Length != FractionDigits) throw new ArgumentException($"Got number with {offset.Length} decimal numbers. It must be exactly {FractionDigits}", nameof(value));
+         if(offset.Length != FractionDigits) throw new ArgumentException($"Got number with {offset.Length} fraction digits. It must be exactly {FractionDigits}", nameof(value));
       }
 
       return new ReadOrder(BigInteger.Parse(order, CultureInfo.InvariantCulture), BigInteger.Parse(offset.PadRight(FractionDigits, '0'), CultureInfo.InvariantCulture));
