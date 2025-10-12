@@ -6,7 +6,7 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 /// <summary>
 /// Use this attribute instead of [Fact] for tests that should run with all pluggable component combinations.
-/// Automatically discovers combinations and injects a PluggableComponentTestContext instance.
+/// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public sealed class PluggableComponentsTheoryAttribute(
