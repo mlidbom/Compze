@@ -1,16 +1,12 @@
 using System;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Xunit;
 
-[assembly: AssemblyFixture(typeof(XUnitStartupInfrastructure))]
-
 namespace Compze.Tests.Infrastructure.XUnit;
 
-public class XUnitStartupInfrastructure
+public static class XUnitInfrastructureModuleInitializer
 {
    [ModuleInitializer]
    public static void Initialize()

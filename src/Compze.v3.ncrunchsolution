@@ -1,5 +1,6 @@
 ﻿<SolutionConfiguration>
   <Settings>
+    <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <RdiConfigured>True</RdiConfigured>
     <RestrictToString>False</RestrictToString>
     <SolutionConfigured>True</SolutionConfigured>

@@ -5,8 +5,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-public class NUnitStartupInfrastructure
+public static class NUnitInfrastructureModuleInitializer
 {
    [ModuleInitializer]
    public static void Initialize()
