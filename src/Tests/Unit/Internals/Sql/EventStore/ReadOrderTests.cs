@@ -31,14 +31,14 @@ namespace Compze.Tests.Unit.Internals.Sql.EventStore;
       1.Through(18).ForEach(
          num => Invoking(() => ReadOrder.Parse($"1.{new string('1', num)}"))
                .Should().Throw<ArgumentException>().Which
-               .Message.Should().Contain("decimal numbers"));
+               .Message.Should().Contain("fraction digits"));
 
       ReadOrder.Parse($"1.{new string('1', 19)}");
 
       20.Through(40).ForEach(
          num => Invoking(() => ReadOrder.Parse($"1.{new string('1', num)}"))
                .Should().Throw<ArgumentException>().Which
-               .Message.Should().Contain("decimal numbers"));
+               .Message.Should().Contain("fraction digits"));
    }
 
    [Test] public void RoundTripping_SqlDecimal_results_in_same_value()
