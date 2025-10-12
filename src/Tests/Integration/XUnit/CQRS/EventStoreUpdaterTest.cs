@@ -26,6 +26,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading;
+using Compze.Wiring;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure
@@ -597,14 +598,19 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
          });
    });
 
-   // SQLite: This test validates high-concurrency performance characteristics that SQLite is not designed for.
-   // SQLite is optimized for embedded, single-writer scenarios, not high-concurrency multi-writer workloads.
-   // The functional correctness (transaction serialization, no duplicate keys, data integrity) is fully
-   // verified by other tests. This test specifically validates performance under concurrent load, which
-   // is outside SQLite's intended use case.
-   [PluggableComponentsTheory(ExcludeSqlLayers = [Compze.Wiring.SqlLayer.Sqlite, Compze.Wiring.SqlLayer.SqliteMemory])]
+    // SQLite: This test validates high-concurrency performance characteristics that SQLite is not designed for.
+    // SQLite is optimized for embedded, single-writer scenarios, not high-concurrency multi-writer workloads.
+    // The functional correctness (transaction serialization, no duplicate keys, data integrity) is fully
+    // verified by other tests. This test specifically validates performance under concurrent load, which
+    // is outside SQLite's intended use case.
+
+
+    //[PluggableComponentsTheory(ExcludeSqlLayers = [Wiring.SqlLayer.Sqlite, Wiring.SqlLayer.SqliteMemory])]
+    [PluggableComponentsTheory] //todo: For some reason, the whole pluggable components infrastructure comes crashing down if I use the above attribute....
    public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed(PluggableComponentTestContext context) => Init(context).then(() =>
    {
+      if(TestEnv.SqlLayer == SqlLayer.Sqlite || TestEnv.SqlLayer == SqlLayer.SqliteMemory) return;
+
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
       UseInTransactionalScope(session =>

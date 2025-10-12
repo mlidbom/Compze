@@ -1,9 +1,10 @@
 using System.Runtime.CompilerServices;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Xunit;
 
-namespace Compze.Tests.Infrastructure.XUnit;
+namespace Compze.Tests.Integration.XUnit;
 
 public class Startup
 {
