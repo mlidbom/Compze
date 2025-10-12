@@ -48,3 +48,4 @@ repomix*.xml
 **/Debug/net*.*/**
 **/Release/net*.*/**
 /InternalsVisibleTo-Test-Results.log
+/src/TestUsingPluggableComponentCombinations
