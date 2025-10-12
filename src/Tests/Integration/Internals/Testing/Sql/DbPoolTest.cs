@@ -19,7 +19,7 @@ namespace Compze.Tests.Integration.Internals.Testing.Sql;
 public abstract class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
 {
    public static DbPool CreatePool() =>
-      TestEnv.SqlLayer.Current switch
+      TestEnv.SqlLayer switch
       {
          SqlLayer.MicrosoftSqlServer => new MsSqlDbPool(),
          SqlLayer.MySql => new MySqlDbPool(),
@@ -31,7 +31,7 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
 
    internal static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
    {
-      switch(TestEnv.SqlLayer.Current)
+      switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:
             UseMsSqlConnection(pool.ConnectionStringFor(connectionString), func);

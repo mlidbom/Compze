@@ -11,29 +11,21 @@ namespace Compze.Tessaging.Hosting.Testing;
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 static partial class TestEnv
 {
-   ///<summary>Sql layer members</summary>
-   public static class SqlLayer
+   static readonly LazyStruct<SqlLayer> _sqlLayerCache = new(() =>
    {
-      static readonly LazyStruct<Compze.Wiring.SqlLayer> _cache = new LazyStruct<Compze.Wiring.SqlLayer>(GetCurrent);
-      public static Compze.Wiring.SqlLayer Current => _cache.Value;
-
-      static Compze.Wiring.SqlLayer GetCurrent()
+      if(XUnitTestContext.PluggableComponentsCombination != null)
       {
-         if(XUnitTestContext.PluggableComponentsCombination != null)
-         {
-            return XUnit.XUnitSqlLayer.Current;
-         }
-
-         // Fall back to NUnit
-         var storageProviderName = FindDimensions.Match(GetNunitTestName()).Groups[1].Value;
-         if(Enum.TryParse(storageProviderName, out Compze.Wiring.SqlLayer provider)) return provider;
-
-         throw new Exception($"Failed to parse SqlLayerProvider from test environment. Value was: {storageProviderName}");
+         return XUnit.XUnitSqlLayer.Current;
       }
 
-      public static TValue ValueFor<TValue>(TValue msSql, TValue mySql, TValue pgSql, TValue sqlite) where TValue : notnull
-         => Current.ValueFor(msSql, mySql, pgSql, sqlite);
-   }
+      // Fall back to NUnit
+      var storageProviderName = FindDimensions!.Match(GetNunitTestName()).Groups[1].Value;
+      if(Enum.TryParse(storageProviderName, out SqlLayer provider)) return provider;
+
+      throw new Exception($"Failed to parse SqlLayerProvider from test environment. Value was: {storageProviderName}");
+   });
+
+   public static SqlLayer SqlLayer => _sqlLayerCache.Value;
 
    static string GetNunitTestName()
    {
@@ -55,28 +47,24 @@ static partial class TestEnv
 
    static readonly Regex FindDimensions = new("""\("(.*)\:(.*)"\)""", RegexOptions.Compiled);
 
-   public static class DIContainer
+   static readonly LazyStruct<DIContainer> _containerCache = new(() =>
    {
-      public static Compze.Wiring.DIContainer Current
+      if(XUnitTestContext.PluggableComponentsCombination != null)
       {
-         get
-         {
-            if(XUnitTestContext.PluggableComponentsCombination != null)
-            {
-               return XUnit.XUnitDIContainer.Current;
-            }
-
-            var containerName = FindDimensions.Match(GetNunitTestName()).Groups[2].Value;
-            if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
-            {
-               ConsoleCE.WriteImportantLine("DIContainer.Current");
-               throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");
-            }
-
-            return provider;
-         }
+         return XUnit.XUnitDIContainer.Current;
       }
-   }
+
+      var containerName = FindDimensions.Match(GetNunitTestName()).Groups[2].Value;
+      if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
+      {
+         ConsoleCE.WriteImportantLine("DIContainer.Current");
+         throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");
+      }
+
+      return provider;
+   });
+
+   public static DIContainer DIContainer => _containerCache.Value;
 
    static class XUnitTestContext
    {

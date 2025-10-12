@@ -37,7 +37,7 @@ public static class TestingSqlLayerRegistrar
 
    public static IDependencyRegistrar CurrentTestsConfiguredSqlLayer(this IDependencyRegistrar register, string connectionStringName)
    {
-      switch(TestEnv.SqlLayer.Current)
+      switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:
             register.MsSqlConnectionPool(connectionStringName)

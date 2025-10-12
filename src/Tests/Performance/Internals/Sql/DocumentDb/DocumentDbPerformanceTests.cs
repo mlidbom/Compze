@@ -7,6 +7,7 @@ using Compze.Utilities.DependencyInjection;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Wiring;
 
 namespace Compze.Tests.Performance.Internals.Sql.DocumentDb;
 

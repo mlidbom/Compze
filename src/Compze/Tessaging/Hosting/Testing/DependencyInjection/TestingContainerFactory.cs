@@ -33,7 +33,7 @@ public static class TestingContainerFactory
 
    public static IDependencyInjectionContainer Create(IRunMode runMode)
    {
-      IDependencyInjectionContainer container = TestEnv.DIContainer.Current switch
+      IDependencyInjectionContainer container = TestEnv.DIContainer switch
       {
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(runMode),
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(runMode),

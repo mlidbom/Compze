@@ -110,7 +110,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
 
       var useConnection = () => {};
 
-      switch(TestEnv.SqlLayer.Current)
+      switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:
             var msSqlConnectionProvider = IMsSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));

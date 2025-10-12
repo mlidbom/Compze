@@ -17,6 +17,7 @@ using FluentAssertions.Extensions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
 using Compze.Utilities.Threading.TasksCE;
+using Compze.Wiring;
 
 namespace AccountManagement;
 
