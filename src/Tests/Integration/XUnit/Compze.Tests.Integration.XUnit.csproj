@@ -17,8 +17,8 @@
       <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <Content Include="..\..\..\TestUsingPluggableComponentCombinations.config">
-         <Link>TestUsingPluggableComponentCombinations.config</Link>
+      <Content Include="..\..\..\TestUsingPluggableComponentCombinations">
+         <Link>TestUsingPluggableComponentCombinations</Link>
          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
    </ItemGroup>

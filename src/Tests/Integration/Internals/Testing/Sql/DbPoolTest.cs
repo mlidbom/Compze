@@ -3,12 +3,14 @@ using Compze.Sql.Common.Abstractions;
 using Compze.Sql.MicrosoftSql.Infrastructure;
 using Compze.Sql.MySql.Infrastructure.SystemExtensions;
 using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.DbPool;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
+using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Wiring;
 using Compze.Tests.Infrastructure.NUnit;
 
@@ -22,6 +24,8 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
          SqlLayer.MicrosoftSqlServer => new MsSqlDbPool(),
          SqlLayer.MySql => new MySqlDbPool(),
          SqlLayer.PostgreSql => new PgSqlDbPool(),
+         SqlLayer.Sqlite => new SqliteDbPool(),
+         SqlLayer.SqliteMemory => new SqliteMemoryDbPool(),
          _ => throw new ArgumentOutOfRangeException()
       };
 
@@ -38,6 +42,10 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
          case SqlLayer.MySql:
             UseMySqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
+         case SqlLayer.Sqlite:
+         case SqlLayer.SqliteMemory:
+            UseSqliteConnection(pool.ConnectionStringFor(connectionString), func);
+            break;
          default:
             throw new ArgumentOutOfRangeException();
       }
@@ -51,4 +59,7 @@ public abstract class DbPoolTest(string pluggableComponentsCombination) : Duplic
 
    static void UseMsSqlConnection(string connectionStringFor, Action<ICompzeDbConnection> func) =>
       IMsSqlConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
+
+   static void UseSqliteConnection(string connectionStringFor, Action<ICompzeDbConnection> func) =>
+      ISqliteConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
 }

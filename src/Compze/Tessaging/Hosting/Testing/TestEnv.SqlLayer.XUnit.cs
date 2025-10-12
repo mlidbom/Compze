@@ -28,13 +28,15 @@ static partial class TestEnv
             }
          }
 
-         public static TValue ValueFor<TValue>(TValue msSql = default!, TValue mySql = default!, TValue pgSql = default!) where TValue: notnull
+         public static TValue ValueFor<TValue>(TValue msSql = default!, TValue mySql = default!, TValue pgSql = default!, TValue sqlite = default!) where TValue: notnull
             =>
                Current switch
                {
                   Compze.Wiring.SqlLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
                   Compze.Wiring.SqlLayer.MySql              => SelectValue(mySql, nameof(mySql)),
                   Compze.Wiring.SqlLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
+                  Compze.Wiring.SqlLayer.Sqlite             => SelectValue(sqlite, nameof(sqlite)),
+                  Compze.Wiring.SqlLayer.SqliteMemory       => SelectValue(sqlite, nameof(sqlite)),
                   _                                                 => throw new ArgumentOutOfRangeException()
                };
 

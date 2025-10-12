@@ -11,31 +11,24 @@ public static class SqlLayerExtensions
 {
    /// <summary>
    /// Returns a sql-layer-specific value.
-   /// Only provide values for the sql layers you support.
+   /// All SQL layers must be provided - no defaults allowed.
    /// This is aliased as <see cref="PluggableComponentTestContext.ValueForDb{TValue}"/> for convenience.
    /// </summary>
    public static TValue ValueFor<TValue>(
       this SqlLayer sqlLayer,
-      TValue? db2 = default,
-      TValue? memory = default,
-      TValue? msSql = default,
-      TValue? mySql = default,
-      TValue? orcl = default,
-      TValue? pgSql = default) where TValue : notnull
+      TValue msSql,
+      TValue mySql,
+      TValue pgSql,
+      TValue sqlite) where TValue : notnull
    {
       return sqlLayer switch
       {
-         SqlLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-         SqlLayer.MySql => SelectValue(mySql, nameof(mySql)),
-         SqlLayer.PostgreSql => SelectValue(pgSql, nameof(pgSql)),
+         SqlLayer.MicrosoftSqlServer => msSql,
+         SqlLayer.MySql => mySql,
+         SqlLayer.PostgreSql => pgSql,
+         SqlLayer.Sqlite => sqlite,
+         SqlLayer.SqliteMemory => sqlite,
          _ => throw new ArgumentOutOfRangeException(nameof(sqlLayer), sqlLayer, $"Unsupported sql layer: {sqlLayer}")
       };
-   }
-
-   static TValue SelectValue<TValue>(TValue? value, string providerName) where TValue : notnull
-   {
-      if(!Equals(value, default(TValue))) return Result.ReturnNotNull(value);
-
-      throw new Exception($"Value missing for {providerName}");
    }
 }

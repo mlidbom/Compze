@@ -33,29 +33,24 @@ static partial class TestEnv
          }
       }
 
-      public static TValue ValueFor<TValue>(TValue msSql = default!, TValue mySql = default!, TValue pgSql = default!) where TValue: notnull
+      public static TValue ValueFor<TValue>(TValue msSql, TValue mySql, TValue pgSql, TValue sqlite) where TValue: notnull
       {
          // Check if we're running in XUnit context first
          if(CurrentTestContext.PluggableComponentsCombination != null)
          {
-            return XUnit.SqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql);
+            return XUnit.SqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql, sqlite: sqlite);
          }
 
          // Fall back to NUnit
          return Current switch
          {
-            Compze.Wiring.SqlLayer.MicrosoftSqlServer => SelectValue(msSql, nameof(msSql)),
-            Compze.Wiring.SqlLayer.MySql              => SelectValue(mySql, nameof(mySql)),
-            Compze.Wiring.SqlLayer.PostgreSql         => SelectValue(pgSql, nameof(pgSql)),
+            Compze.Wiring.SqlLayer.MicrosoftSqlServer => msSql,
+            Compze.Wiring.SqlLayer.MySql              => mySql,
+            Compze.Wiring.SqlLayer.PostgreSql         => pgSql,
+            Compze.Wiring.SqlLayer.Sqlite             => sqlite,
+            Compze.Wiring.SqlLayer.SqliteMemory       => sqlite,
             _                                                 => throw new ArgumentOutOfRangeException()
          };
-      }
-
-      [return:NotNull]static TValue SelectValue<TValue>(TValue value, string provider)
-      {
-         if(!Equals(value, default(TValue))) return Result.ReturnNotNull(value);
-
-         throw new Exception($"Value missing for {provider}");
       }
    }
 

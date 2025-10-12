@@ -20,6 +20,7 @@
 		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
 		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
 		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
+		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.Sqlite" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
 		<InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
 		<InternalsVisibleTo Include="Compze.Serialization" />

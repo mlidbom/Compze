@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\..\Compze\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\Testing\DbPool\MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Utilities\Testing\DbPool\Sqlite\Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
@@ -35,7 +36,7 @@
     <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="..\..\..\TestUsingPluggableComponentCombinations.config" Link="TestUsingPluggableComponentCombinations.config">
+    <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

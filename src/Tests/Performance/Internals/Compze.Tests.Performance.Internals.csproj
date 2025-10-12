@@ -13,7 +13,7 @@
     <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="..\..\..\TestUsingPluggableComponentCombinations.config" Link="TestUsingPluggableComponentCombinations.config">
+    <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
     <ProjectReference Include="..\..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+    <ProjectReference Include="..\..\..\Compze\Sql\Sqlite\Infrastructure\Compze.Sql.Sqlite.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.7.1" />

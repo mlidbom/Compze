@@ -15,9 +15,9 @@ public static class EventTableSchemaStrings
    public const string ReadOrder = nameof(ReadOrder);
 
    ///<summary>Used only by sql layers that cannot store a decimal(38,19). They are forced to use two columns.</summary>
-   internal const string ReadOrderIntegerPart = nameof(ReadOrderIntegerPart);
+   public const string ReadOrderIntegerPart = nameof(ReadOrderIntegerPart);
    ///<summary>Used only by sql layers that cannot store a decimal(38,19). They are forced to use two columns.</summary>
-   internal const string ReadOrderFractionPart = nameof(ReadOrderFractionPart);
+   public const string ReadOrderFractionPart = nameof(ReadOrderFractionPart);
 
    public const string TargetEvent = nameof(TargetEvent);
    public const string RefactoringType = nameof(RefactoringType);

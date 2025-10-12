@@ -4,5 +4,7 @@ public enum SqlLayer
 {
    MicrosoftSqlServer,
    MySql,
-   PostgreSql
+   PostgreSql,
+   Sqlite,
+   SqliteMemory
 }

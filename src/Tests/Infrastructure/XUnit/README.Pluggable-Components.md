@@ -14,7 +14,7 @@ The system works differently from NUnit's `TestFixtureSource` approach because X
 
 ### Configuration File
 
-Component combinations are defined in `TestUsingPluggableComponentCombinations.config` file at the repository root:
+Component combinations are defined in `TestUsingPluggableComponentCombinations` file at the repository root:
 
 ```
 #When running tests, all tests that use dependency injection and persistence will 
@@ -245,5 +245,5 @@ public void My_test(PluggableComponentTestContext context)
 ## See Also
 
 - `DuplicateByPluggableComponentTest.Example.cs` - Working example
-- `TestUsingPluggableComponentCombinations.config` - Configuration file
+- `TestUsingPluggableComponentCombinations` - Configuration file
 - NUnit version: `Tests/Infrastructure/NUnit/DuplicateByPluggableComponentTest.cs`

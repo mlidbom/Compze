@@ -51,19 +51,17 @@ public class PluggableComponentTestContext : IXunitSerializable
 
    /// <summary>
    /// Returns a sql-layer-specific value.
-   /// Only provide values for the sql layers you support.
+   /// All SQL layers must be provided - no defaults allowed.
    /// This is an alias for <see cref="SqlLayerExtensions.ValueFor{TValue}"/>.
    /// Prefer using <c>context.SqlLayer.ValueFor(...)</c> for better clarity.
    /// </summary>
    public TValue ValueForDb<TValue>(
-      TValue? db2 = default,
-      TValue? memory = default,
-      TValue? msSql = default,
-      TValue? mySql = default,
-      TValue? orcl = default,
-      TValue? pgSql = default) where TValue : notnull
+      TValue msSql,
+      TValue mySql,
+      TValue pgSql,
+      TValue sqlite) where TValue : notnull
    {
-      return _sqlLayer.ValueFor(db2: db2, memory: memory, msSql: msSql, mySql: mySql, orcl: orcl, pgSql: pgSql);
+      return _sqlLayer.ValueFor(msSql: msSql, mySql: mySql, pgSql: pgSql, sqlite: sqlite);
    }
 
    /// <summary>Serializes this object for XUnit test execution.</summary>

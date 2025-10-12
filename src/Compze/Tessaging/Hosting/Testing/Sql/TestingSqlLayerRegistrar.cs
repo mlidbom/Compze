@@ -2,16 +2,20 @@ using System;
 using Compze.Sql.DocumentDb.MicrosoftSql;
 using Compze.Sql.DocumentDb.MySql;
 using Compze.Sql.DocumentDb.PostgreSql;
+using Compze.Sql.DocumentDb.Sqlite;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Sql.MicrosoftSql;
 using Compze.Tessaging.Hosting.Sql.MySql;
 using Compze.Tessaging.Hosting.Sql.PostgreSql;
+using Compze.Tessaging.Hosting.Sql.Sqlite;
 using Compze.Tessaging.Sql.MicrosoftSql;
 using Compze.Tessaging.Sql.MySql;
 using Compze.Tessaging.Sql.PostgreSql;
+using Compze.Tessaging.Sql.Sqlite;
 using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 using Compze.Tessaging.Teventive.EventStore.MySql;
 using Compze.Tessaging.Teventive.EventStore.PostgreSql;
+using Compze.Tessaging.Teventive.EventStore.Sqlite;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Wiring;
 
@@ -52,6 +56,18 @@ public static class TestingSqlLayerRegistrar
                     .PgSqlDocumentDb()
                     .PgSqlEventStore()
                     .PgSqlTessaging();
+            break;
+         case SqlLayer.Sqlite:
+            register.SqliteConnectionPool(connectionStringName)
+                    .SqliteDocumentDb()
+                    .SqliteEventStore()
+                    .SqliteTessaging();
+            break;
+         case SqlLayer.SqliteMemory:
+            register.SqliteMemoryConnectionPool(connectionStringName)
+                    .SqliteDocumentDb()
+                    .SqliteEventStore()
+                    .SqliteTessaging();
             break;
          default:
             throw new ArgumentOutOfRangeException();

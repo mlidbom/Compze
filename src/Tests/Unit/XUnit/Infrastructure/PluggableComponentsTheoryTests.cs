@@ -7,7 +7,7 @@ namespace Compze.Tests.Unit.XUnit.Infrastructure;
 
 /// <summary>
 /// Test to verify that the PluggableComponentsTheory attribute works correctly.
-/// This test should run once for each combination in TestUsingPluggableComponentCombinations.config.
+/// This test should run once for each combination in TestUsingPluggableComponentCombinations.
 /// </summary>
 public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
 {
@@ -28,7 +28,9 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       context.SqlLayer.Should().BeOneOf(
          Compze.Wiring.SqlLayer.MicrosoftSqlServer,
          Compze.Wiring.SqlLayer.MySql,
-         Compze.Wiring.SqlLayer.PostgreSql
+         Compze.Wiring.SqlLayer.PostgreSql,
+         Compze.Wiring.SqlLayer.Sqlite,
+         Compze.Wiring.SqlLayer.SqliteMemory
       );
       context.DIContainer.Should().BeOneOf(
          Compze.Wiring.DIContainer.Microsoft,
@@ -39,7 +41,8 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       var testValue = context.ValueForDb<string>(
          msSql: "SQL Server",
          mySql: "MySQL",
-         pgSql: "PostgreSQL"
+         pgSql: "PostgreSQL",
+         sqlite: "SQLite"
       );
 
       System.Console.WriteLine($"  ValueForDb result: {testValue}");
@@ -51,6 +54,8 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
          Compze.Wiring.SqlLayer.MicrosoftSqlServer => "SQL Server",
          Compze.Wiring.SqlLayer.MySql => "MySQL",
          Compze.Wiring.SqlLayer.PostgreSql => "PostgreSQL",
+         Compze.Wiring.SqlLayer.Sqlite => "SQLite",
+         Compze.Wiring.SqlLayer.SqliteMemory => "SQLite",
          _ => throw new System.Exception($"Unexpected sql layer: {context.SqlLayer}")
       };
 
@@ -64,7 +69,8 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
       var timeout = context.SqlLayer.ValueFor(
          msSql: System.TimeSpan.FromSeconds(5),
          mySql: System.TimeSpan.FromSeconds(10),
-         pgSql: System.TimeSpan.FromSeconds(7)
+         pgSql: System.TimeSpan.FromSeconds(7),
+         sqlite: System.TimeSpan.FromSeconds(6)
       );
 
       System.Console.WriteLine($"✓ Timeout for {context.SqlLayer}: {timeout}");
@@ -77,6 +83,8 @@ public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
          Compze.Wiring.SqlLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
          Compze.Wiring.SqlLayer.MySql => System.TimeSpan.FromSeconds(10),
          Compze.Wiring.SqlLayer.PostgreSql => System.TimeSpan.FromSeconds(7),
+         Compze.Wiring.SqlLayer.Sqlite => System.TimeSpan.FromSeconds(6),
+         Compze.Wiring.SqlLayer.SqliteMemory => System.TimeSpan.FromSeconds(6),
          _ => throw new System.Exception($"Unexpected sql layer: {context.SqlLayer}")
       };
       

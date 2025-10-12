@@ -3,12 +3,14 @@
 #Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
 #Empty/Whitespace lines are ignored
 
-MicrosoftSqlServer:Microsoft
-###Memory:Microsoft
+###MicrosoftSqlServer:Microsoft
 ###MySql:Microsoft
 ###PostgreSql:Microsoft
+###Sqlite:Microsoft
+SqliteMemory:Microsoft
 
 ###MicrosoftSqlServer:SimpleInjector
-###Memory:SimpleInjector
 ###MySql:SimpleInjector
 ###PostgreSql:SimpleInjector
+###Sqlite:SimpleInjector
+###SqliteMemory:SimpleInjector

@@ -17,7 +17,13 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 public sealed class PluggableComponentsTheoryAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : FactAttribute(sourceFilePath, sourceLineNumber) {}
+   : FactAttribute(sourceFilePath, sourceLineNumber)
+{
+   /// <summary>
+   /// SQL layers to exclude from test execution. Use when a test is not applicable to certain database types.
+   /// </summary>
+   public Compze.Wiring.SqlLayer[]? ExcludeSqlLayers { get; init; }
+}
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 {
@@ -28,6 +34,19 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       IFactAttribute factAttribute)
    {
       var combinations = PluggableComponentsReader.GetCombinations().ToList();
+      
+      // Filter out excluded SQL layers if specified
+      if(factAttribute is PluggableComponentsTheoryAttribute theoryAttribute && theoryAttribute.ExcludeSqlLayers?.Length > 0)
+      {
+         var excludedLayers = theoryAttribute.ExcludeSqlLayers;
+         combinations = combinations
+                       .Where(combo =>
+                        {
+                           var context = new PluggableComponentTestContext(combo);
+                           return !excludedLayers.Contains(context.SqlLayer);
+                        })
+                       .ToList();
+      }
 
       var testCases = combinations
                      .Select(combination =>
