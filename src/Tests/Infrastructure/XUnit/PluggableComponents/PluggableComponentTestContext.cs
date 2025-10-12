@@ -23,7 +23,6 @@ public class PluggableComponentTestContext : IXunitSerializable
    internal PluggableComponentTestContext(Infrastructure.PluggableComponents pluggableComponentsCombination)
    {
       Log.NCrunch("PluggableComponentTestContext");
-      TestEnv.SetXunitTestContext(pluggableComponentsCombination);
       _combination = pluggableComponentsCombination;
    }
 
@@ -55,7 +54,6 @@ public class PluggableComponentTestContext : IXunitSerializable
    {
       Log.Warning($"NCR:DESERIALIZING {_combination}");
       _combination = Infrastructure.PluggableComponents.FromString(serializerData.GetValue<string>(nameof(_combination)).NotNull());
-      TestEnv.SetXunitTestContext(_combination!.Value);
    }
 
    public override string ToString() => _combination!.Value.ToString();

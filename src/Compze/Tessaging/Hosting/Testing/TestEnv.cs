@@ -12,9 +12,8 @@ namespace Compze.Tessaging.Hosting.Testing;
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 public static partial class TestEnv
 {
-   internal static IList<Func<PluggableComponents?>> _contextProviders => new List<Func<PluggableComponents?>>();
+   internal static readonly IList<Func<PluggableComponents?>> _contextProviders = new List<Func<PluggableComponents?>>();
    static PluggableComponents? GetComponentsFromProviders() => _contextProviders.Select(it => it()).NotNull().FirstOrDefault();
-
 
    public static SqlLayer SqlLayer
    {
@@ -22,11 +21,6 @@ public static partial class TestEnv
       {
          if(GetComponentsFromProviders() is {} components)
             return components.SqlLayer;
-
-         if(_xUnitPluggableComponentsCombination != null)
-         {
-            return XUnit.XUnitSqlLayer.Current;
-         }
 
          // Fall back to NUnit
          var storageProviderName = FindDimensions!.Match(GetNunitTestName()).Groups[1].Value;
@@ -56,27 +50,21 @@ public static partial class TestEnv
 
    static readonly Regex FindDimensions = new("""\("(.*)\:(.*)"\)""", RegexOptions.Compiled);
 
-   static readonly LazyStruct<DIContainer> ContainerCache = new(() =>
+   public static DIContainer DIContainer
    {
-      if(_xUnitPluggableComponentsCombination != null)
+      get
       {
-         return XUnit.XUnitDIContainer.Current;
+         if(GetComponentsFromProviders() is {} components)
+            return components.DiContainer;
+
+         var containerName = FindDimensions.Match(GetNunitTestName()).Groups[2].Value;
+         if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
+         {
+            ConsoleCE.WriteImportantLine("DIContainer.Current");
+            throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");
+         }
+
+         return provider;
       }
-
-      var containerName = FindDimensions.Match(GetNunitTestName()).Groups[2].Value;
-      if(!Enum.TryParse(containerName, out Compze.Wiring.DIContainer provider))
-      {
-         ConsoleCE.WriteImportantLine("DIContainer.Current");
-         throw new Exception($"Failed to parse DIContainer from test environment. Value was: {containerName}");
-      }
-
-      return provider;
-   });
-
-   public static DIContainer DIContainer => ContainerCache.Value;
-
-   static PluggableComponents? _xUnitPluggableComponentsCombination;
-
-   internal static void SetXunitTestContext(PluggableComponents pluggableComponentsCombination) =>
-      _xUnitPluggableComponentsCombination = pluggableComponentsCombination;
+   }
 }
