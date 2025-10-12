@@ -19,7 +19,7 @@ internal class SqliteMemoryDbPool : DbPool
              }.ConnectionString;
    }
 
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db) => _keepInMemoryDatabaseAliveConnections[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db);
+   protected override void EnsureDatabaseExistsAndIsEmpty(Database db) => ResetDatabase(db);
    protected override void ResetDatabase(Database db) => _keepInMemoryDatabaseAliveConnections[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db);
 
    protected override void Dispose(bool disposing)
@@ -35,8 +35,8 @@ internal class SqliteMemoryDbPool : DbPool
 
    SqliteConnection CreateOpenConnectionThusCreatingANewInMemoryDatabase(Database db)
    {
-      var keeperConnection = new SqliteConnection(ConnectionStringFor(db));
-      keeperConnection.Open();
-      return keeperConnection;
+      var connectionToNewInMemoryDatabase = new SqliteConnection(ConnectionStringFor(db));
+      connectionToNewInMemoryDatabase.Open();
+      return connectionToNewInMemoryDatabase;
    }
 }
