@@ -6,8 +6,8 @@
 ###MicrosoftSqlServer:Microsoft
 ###MySql:Microsoft
 ###PostgreSql:Microsoft
-Sqlite:Microsoft
-###SqliteMemory:Microsoft
+###Sqlite:Microsoft
+SqliteMemory:Microsoft
 
 ###MicrosoftSqlServer:SimpleInjector
 ###MySql:SimpleInjector

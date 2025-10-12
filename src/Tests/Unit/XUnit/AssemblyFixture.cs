@@ -10,7 +10,7 @@ namespace Compze.Tests.Unit.XUnit;
 // ReSharper disable once MemberCanBeInternal
 public sealed class XUnitAssemblyFixture : IAsyncLifetime
 {
-   public ValueTask InitializeAsync()
+   public async ValueTask InitializeAsync()
    {
       Tests.Infrastructure.TestFixtureHelper.RunAssemblyLevelSetup<XUnitAssemblyFixture>(() =>
       {
@@ -19,17 +19,14 @@ public sealed class XUnitAssemblyFixture : IAsyncLifetime
          AssertTestInheritsUniversalTestBase();
       });
 
-      return ValueTask.CompletedTask;
+      await ValueTask.CompletedTask;
    }
 
-   public ValueTask DisposeAsync()
+   public async ValueTask DisposeAsync()
    {
-      Tests.Infrastructure.TestFixtureHelper.RunAssemblyLevelTeardown<XUnitAssemblyFixture>(() =>
-      {
-         Tests.Infrastructure.TestFixtureHelper.PerformTeardown();
-      });
+      Tests.Infrastructure.TestFixtureHelper.RunAssemblyLevelTeardown<XUnitAssemblyFixture>(Tests.Infrastructure.TestFixtureHelper.PerformTeardown);
 
-      return ValueTask.CompletedTask;
+      await ValueTask.CompletedTask;
    }
 
    static void AssertTestInheritsUniversalTestBase()

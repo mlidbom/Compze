@@ -44,7 +44,7 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
 
    IServiceLocator _serviceLocator = null!;
 
-   public ValueTask InitializeAsync() => ValueTask.CompletedTask;
+   public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
 
    public async ValueTask DisposeAsync()
    {
