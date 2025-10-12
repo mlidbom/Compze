@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Compze.Tests.Integration.XUnit.DependencyInjection;
 
-public class DuplicateRegistrationTests : DuplicateByPluggableComponentTest
+public class DuplicateRegistrationTests : UniversalTestBase
 {
    interface ITestService;
    class TestService : ITestService;

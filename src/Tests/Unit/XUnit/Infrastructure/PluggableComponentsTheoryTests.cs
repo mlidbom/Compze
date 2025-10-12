@@ -9,7 +9,7 @@ namespace Compze.Tests.Unit.XUnit.Infrastructure;
 /// Test to verify that the PluggableComponentsTheory attribute works correctly.
 /// This test should run once for each combination in TestUsingPluggableComponentCombinations.
 /// </summary>
-public class PluggableComponentsTheoryTests : DuplicateByPluggableComponentTest
+public class PluggableComponentsTheoryTests : UniversalTestBase
 {
    [PluggableComponentsTheory]
    public void Should_execute_with_context_object_injected(PluggableComponentTestContext context)

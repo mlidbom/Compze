@@ -31,7 +31,7 @@ using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
 namespace Compze.Tests.Integration.XUnit.CQRS;
 
-public class EventStoreUpdaterTest : DuplicateByPluggableComponentTest, IAsyncLifetime
+public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
 {
    class EventSpy
    {

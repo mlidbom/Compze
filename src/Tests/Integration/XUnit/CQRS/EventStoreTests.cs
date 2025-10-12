@@ -29,7 +29,7 @@ class SomeEvent : AggregateEvent, ISomeEvent
    }
 }
 
-public class EventStoreTests : DuplicateByPluggableComponentTest, IAsyncLifetime
+public class EventStoreTests : UniversalTestBase, IAsyncLifetime
 {
    IEventStore EventStore => _serviceLocator.EventStore();
 
