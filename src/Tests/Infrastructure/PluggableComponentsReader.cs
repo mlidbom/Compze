@@ -16,7 +16,7 @@ public static class PluggableComponentsReader
 
    static readonly LazyCE<List<string>> _combinationsLazy = new(GetCombinationsInternal);
 
-   public static IEnumerable<string> GetCombinations() => _combinationsLazy.Value;
+   public static IReadOnlyList<string> GetCombinations() => _combinationsLazy.Value;
 
    static List<string> GetCombinationsInternal()
    {
