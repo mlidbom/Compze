@@ -14,11 +14,8 @@ namespace Compze.Tests.Unit.XUnit.Infrastructure;
 public class PluggableComponentsTheoryTests : UniversalTestBase
 {
    [PluggableComponentsTheory]
-   public void Should_execute_with_context_object_injected(PluggableComponentTestContext context)
+   public void Should_execute_with_context_object_injected()
    {
-      // Verify the context is not null
-      context.Should().NotBeNull();
-
       // Access the parsed values directly from the context
       System.Console.WriteLine($"  Sql Layer: {TestEnv.SqlLayer}");
       System.Console.WriteLine($"  DI Container: {TestEnv.DIContainer}");
@@ -46,18 +43,18 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       var expectedValue = TestEnv.SqlLayer switch
       {
          Compze.Wiring.SqlLayer.MicrosoftSqlServer => "SQL Server",
-         Compze.Wiring.SqlLayer.MySql => "MySQL",
-         Compze.Wiring.SqlLayer.PostgreSql => "PostgreSQL",
-         Compze.Wiring.SqlLayer.Sqlite => "SQLite",
-         Compze.Wiring.SqlLayer.SqliteMemory => "SQLite",
-         _ => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
+         Compze.Wiring.SqlLayer.MySql              => "MySQL",
+         Compze.Wiring.SqlLayer.PostgreSql         => "PostgreSQL",
+         Compze.Wiring.SqlLayer.Sqlite             => "SQLite",
+         Compze.Wiring.SqlLayer.SqliteMemory       => "SQLite",
+         _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       };
 
       testValue.Should().Be(expectedValue);
    }
 
    [PluggableComponentsTheory]
-   public void Can_use_ValueFor_directly_on_SqlLayer(PluggableComponentTestContext context)
+   public void Can_use_ValueFor_directly_on_SqlLayer()
    {
       // Demonstrate using the extension method directly on the SqlLayer enum
       var timeout = TestEnv.SqlLayer.ValueFor(
@@ -68,20 +65,20 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       );
 
       System.Console.WriteLine($"✓ Timeout for {TestEnv.SqlLayer}: {timeout}");
-      
+
       timeout.Should().BePositive();
-      
+
       // Verify it matches expected value
       var expected = TestEnv.SqlLayer switch
       {
          Compze.Wiring.SqlLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
-         Compze.Wiring.SqlLayer.MySql => System.TimeSpan.FromSeconds(10),
-         Compze.Wiring.SqlLayer.PostgreSql => System.TimeSpan.FromSeconds(7),
-         Compze.Wiring.SqlLayer.Sqlite => System.TimeSpan.FromSeconds(6),
-         Compze.Wiring.SqlLayer.SqliteMemory => System.TimeSpan.FromSeconds(6),
-         _ => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
+         Compze.Wiring.SqlLayer.MySql              => System.TimeSpan.FromSeconds(10),
+         Compze.Wiring.SqlLayer.PostgreSql         => System.TimeSpan.FromSeconds(7),
+         Compze.Wiring.SqlLayer.Sqlite             => System.TimeSpan.FromSeconds(6),
+         Compze.Wiring.SqlLayer.SqliteMemory       => System.TimeSpan.FromSeconds(6),
+         _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       };
-      
+
       timeout.Should().Be(expected);
    }
 

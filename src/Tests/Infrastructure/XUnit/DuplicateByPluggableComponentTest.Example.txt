@@ -14,7 +14,7 @@ public class ExamplePluggableComponentTest : DuplicateByPluggableComponentTest
    /// The PluggableComponentTestContext is automatically injected with the parsed combination.
    /// </summary>
    [PluggableComponentsTheory]
-   public void Example_test_that_runs_for_all_combinations(PluggableComponentTestContext context)
+   public void Example_test_that_runs_for_all_combinations()
    {
       // Access the parsed values directly from the context object
       var persistenceLayer = context.PersistenceLayer;

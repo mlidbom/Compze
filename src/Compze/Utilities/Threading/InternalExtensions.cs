@@ -3,13 +3,6 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Threading;
 
-static class TimeSpanExtensions
-{
-   internal static TimeSpan Milliseconds(this int @this) => TimeSpan.FromMilliseconds(@this);
-   internal static TimeSpan Seconds(this int @this) => TimeSpan.FromSeconds(@this);
-   internal static TimeSpan Minutes(this int @this) => TimeSpan.FromMinutes(@this);
-}
-
 static class ActionExtensions
 {
    internal static Func<unit> AsUnitFunc(this Action @this) =>

@@ -1,11 +1,7 @@
-using Compze.Utilities.Logging;
-using Compze.Wiring;
 using NUnit.Framework;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 
@@ -14,16 +10,13 @@ namespace Compze.Tests.Infrastructure.NUnit;
 [TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
 public class DuplicateByPluggableComponentTest : UniversalTestBase
 {
-#pragma warning disable IDE0060, CA1801 // Remove unused parameter : There parameter value is used by NUnit in naming the test and then by composable via reflection of the NUnit API.
+#pragma warning disable IDE0060, CA1801 // Remove unused parameter : The parameter value is used by NUnit in naming the test and then by composable via inspecting the test name.
    public DuplicateByPluggableComponentTest(string pluggableComponentsCombination){}
-
-   static readonly Regex FindDimensions = new("""\("(.*)\:(.*)"\)""", RegexOptions.Compiled);
 #pragma warning restore IDE0060, CA1801 // Remove unused parameter
 }
 
 class PluggableComponentsTestFixtureSource : IEnumerable<string>
 {
-   static readonly IReadOnlyList<PluggableComponents> Dimensions = PluggableComponentsReader.GetCombinations();
    static readonly IReadOnlyList<string> DimensionsStrings = PluggableComponentsReader.GetCombinations().Select(it => it.ToString()).ToList();
    public IEnumerator<string> GetEnumerator() => DimensionsStrings.GetEnumerator();
    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -1,4 +1,6 @@
 using System;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
@@ -16,9 +18,9 @@ public class DuplicateRegistrationTests : UniversalTestBase
    class MultiService : ITestService, ITestService2;
 
    [PluggableComponentsTheory]
-   public void Registering_same_singleton_service_twice_throws_InvalidOperationException(PluggableComponentTestContext context)
+   public void Registering_same_singleton_service_twice_throws_InvalidOperationException()
    {
-      var container = context.CreateContainer();
+      var container = TestEnv.DIContainer.Create();
 
       container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
@@ -31,9 +33,9 @@ public class DuplicateRegistrationTests : UniversalTestBase
    }
 
    [PluggableComponentsTheory]
-   public void Registering_same_scoped_service_twice_throws_InvalidOperationException(PluggableComponentTestContext context)
+   public void Registering_same_scoped_service_twice_throws_InvalidOperationException()
    {
-      var container = context.CreateContainer();
+      var container = TestEnv.DIContainer.Create();
 
       container.Register(Scoped.For<ITestService>().CreatedBy(() => new TestService()));
 
@@ -46,9 +48,9 @@ public class DuplicateRegistrationTests : UniversalTestBase
    }
 
    [PluggableComponentsTheory]
-   public void Registering_service_with_multiple_service_types_then_reregistering_one_throws_InvalidOperationException(PluggableComponentTestContext context)
+   public void Registering_service_with_multiple_service_types_then_reregistering_one_throws_InvalidOperationException()
    {
-      var container = context.CreateContainer();
+      var container = TestEnv.DIContainer.Create();
 
       container.Register(
          Singleton.For<ITestService, ITestService2>()
@@ -63,9 +65,9 @@ public class DuplicateRegistrationTests : UniversalTestBase
    }
 
    [PluggableComponentsTheory]
-   public void Can_register_different_service_types_successfully(PluggableComponentTestContext context)
+   public void Can_register_different_service_types_successfully()
    {
-      var container = context.CreateContainer();
+      var container = TestEnv.DIContainer.Create();
 
       container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 

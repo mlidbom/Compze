@@ -33,9 +33,8 @@ class SomeEvent : AggregateEvent, ISomeEvent
 
 public class EventStoreTests : UniversalTestBase, IAsyncLifetime
 {
+   IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();
-
-   IServiceLocator _serviceLocator = null!;
 
    public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
 
@@ -45,11 +44,8 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
       GC.SuppressFinalize(this);
    }
 
-   IServiceLocator Init(PluggableComponentTestContext context) =>
-      _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(null);
-
    [PluggableComponentsTheory]
-   public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
+   public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregateId = Guid.NewGuid();
       TransactionScopeCe.Execute(() => EventStore.SaveSingleAggregateEvents(1.Through(10)
@@ -61,7 +57,7 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
    });
 
    [PluggableComponentsTheory]
-   public void StreamEventsSinceReturnsWholeEventLogWhenFetchingALargeNumberOfEvents_EnsureBatchingDoesNotBreakThings(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
+   public void StreamEventsSinceReturnsWholeEventLogWhenFetchingALargeNumberOfEvents_EnsureBatchingDoesNotBreakThings() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       const int batchSize = 100;
       const int moreEventsThanTheBatchSizeForStreamingEvents = batchSize + 10;
@@ -84,7 +80,7 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
    });
 
    [PluggableComponentsTheory]
-   public void DeleteEventsDeletesTheEventsForOnlyTheSpecifiedAggregate(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
+   public void DeleteEventsDeletesTheEventsForOnlyTheSpecifiedAggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
                                   .ToDictionary(i => i,
@@ -112,7 +108,7 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
    });
 
    [PluggableComponentsTheory]
-   public void GetListOfAggregateIds(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
+   public void GetListOfAggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
                                   .ToDictionary(i => i,
@@ -133,7 +129,7 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
 
    //Todo: This does not check that only aggregates of the correct type are returned since there are only events of type SomeEvent in the store..
    [PluggableComponentsTheory]
-   public void GetListOfAggregateIdsUsingEventType(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
+   public void GetListOfAggregateIdsUsingEventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
                                   .ToDictionary(i => i,
@@ -152,10 +148,10 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
    });
 
    [PluggableComponentsTheory]
-   public void Does_not_call_db_in_constructor(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() => _serviceLocator.Resolve<IEventStoreUpdater>());
+   public void Does_not_call_db_in_constructor() => _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.Resolve<IEventStoreUpdater>());
 
    [PluggableComponentsTheory]
-   public void ShouldNotCacheEventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction(PluggableComponentTestContext context) => Init(context).ExecuteInIsolatedScope(() =>
+   public void ShouldNotCacheEventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var eventStore = _serviceLocator.EventStore();
 
@@ -173,7 +169,7 @@ public class EventStoreTests : UniversalTestBase, IAsyncLifetime
    });
 
    [PluggableComponentsTheory]
-   public void ShouldCacheEventsBetweenInstancesTransaction(PluggableComponentTestContext context)
+   public void ShouldCacheEventsBetweenInstancesTransaction()
    {
       _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
 

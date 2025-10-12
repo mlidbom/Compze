@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure;
 
@@ -17,9 +16,9 @@ public static class PluggableComponentsReader
 {
    const string TestUsingPluggableComponentCombinations = "TestUsingPluggableComponentCombinations";
 
-   static readonly LazyCE<IReadOnlyList<PluggableComponents>> _combinationsLazy = new(GetCombinationsInternal);
+   static readonly LazyCE<IReadOnlyList<PluggableComponents>> CombinationsLazy = new(GetCombinationsInternal);
 
-   public static IReadOnlyList<PluggableComponents> GetCombinations() => _combinationsLazy.Value;
+   public static IReadOnlyList<PluggableComponents> GetCombinations() => CombinationsLazy.Value;
 
    static IReadOnlyList<PluggableComponents> GetCombinationsInternal()
    {
@@ -60,7 +59,7 @@ public readonly record struct PluggableComponents(SqlLayer SqlLayer, DIContainer
 
    public static PluggableComponents FromStrings(string sqlLayer, string container)
    {
-      return new PluggableComponents((SqlLayer)Enum.Parse(typeof(Wiring.SqlLayer), sqlLayer),
-                                     (DIContainer)Enum.Parse(typeof(Wiring.DIContainer), container));
+      return new PluggableComponents(Enum.Parse<SqlLayer>(sqlLayer),
+                                     Enum.Parse<DIContainer>(container));
    }
 }

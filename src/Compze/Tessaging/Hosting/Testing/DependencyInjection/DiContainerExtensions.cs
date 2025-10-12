@@ -16,8 +16,9 @@ namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
 public static class DiContainerExtensions
 {
-   public static IDependencyInjectionContainer Create(this DIContainer @this, IRunMode runMode)
+   public static IDependencyInjectionContainer Create(this DIContainer @this, IRunMode? runMode = null)
    {
+      runMode = runMode ?? RunMode.Testing;
       IDependencyInjectionContainer container = @this switch
       {
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(runMode),

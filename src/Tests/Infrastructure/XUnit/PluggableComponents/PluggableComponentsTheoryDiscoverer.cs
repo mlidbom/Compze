@@ -22,29 +22,19 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       {
          var excludedLayers = theoryAttribute.ExcludeSqlLayers;
          combinations = combinations
-                       .Where(combo =>
-                        {
-                           var context = new PluggableComponentTestContext(combo);
-                           return !excludedLayers.Contains(TestEnv.SqlLayer);
-                        })
+                       .Where(combo => !excludedLayers.Contains(TestEnv.SqlLayer))
                        .ToList();
       }
 
       var testCases = combinations
-                     .Select(combination =>
-                      {
-                         // Create and pass a PluggableComponentTestContext instance
-                         var arguments = new object[] { new PluggableComponentTestContext(combination) };
-
-                         return new PluggableComponentsTestCase(
-                            testMethod: testMethod,
-                            combination: combination,
-                            testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
-                            uniqueId: $"{testMethod.UniqueID}.{combination}",
-                            @explicit: factAttribute.Explicit,
-                            timeout: factAttribute.Timeout,
-                            testMethodArguments: arguments);
-                      })
+                     .Select(combination => new PluggableComponentsTestCase(
+                                testMethod: testMethod,
+                                combination: combination,
+                                testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
+                                uniqueId: $"{testMethod.UniqueID}.{combination}",
+                                @explicit: factAttribute.Explicit,
+                                timeout: factAttribute.Timeout,
+                                testMethodArguments: []))
                      .ToArray();
 
       return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases);
