@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure;
 
@@ -12,11 +13,15 @@ namespace Compze.Tests.Infrastructure;
 public static class PluggableComponentsReader
 {
    const string TestUsingPluggableComponentCombinations = "TestUsingPluggableComponentCombinations";
-   
-   public static IEnumerable<string> GetCombinations()
+
+   static readonly LazyCE<List<string>> _combinationsLazy = new(GetCombinationsInternal);
+
+   public static IEnumerable<string> GetCombinations() => _combinationsLazy.Value;
+
+   static List<string> GetCombinationsInternal()
    {
       var assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestUsingPluggableComponentCombinations);
-      
+
       if(!File.Exists(assemblyPath))
       {
          return [Enumerable.Repeat("FileMissing", 3)._(it => string.Join(":", it))];
@@ -26,6 +31,6 @@ public static class PluggableComponentsReader
                  .Select(it => it.Trim())
                  .Where(line => !string.IsNullOrEmpty(line))
                  .Where(line => !line.StartsWith('#'))
-                 .ToArray();
+                 .ToList();
    }
 }
