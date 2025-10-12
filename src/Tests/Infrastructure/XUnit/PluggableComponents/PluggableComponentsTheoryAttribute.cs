@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Utilities.SystemCE;
+using Compze.Wiring;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -49,7 +51,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                        .Where(combo =>
                         {
                            var context = new PluggableComponentTestContext(combo);
-                           return !excludedLayers.Contains(context.SqlLayer);
+                           return !excludedLayers.Contains(TestEnv.SqlLayer);
                         })
                        .ToList();
       }

@@ -11,9 +11,9 @@ namespace Compze.Tessaging.Hosting.Testing;
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 public static partial class TestEnv
 {
-   static readonly LazyStruct<SqlLayer> _sqlLayerCache = new(() =>
+   static readonly LazyStruct<SqlLayer> SqlLayerCache = new(() =>
    {
-      if(XUnitTestContext.PluggableComponentsCombination != null)
+      if(_xUnitPluggableComponentsCombination != null)
       {
          return XUnit.XUnitSqlLayer.Current;
       }
@@ -25,7 +25,7 @@ public static partial class TestEnv
       throw new Exception($"Failed to parse SqlLayerProvider from test environment. Value was: {storageProviderName}");
    });
 
-   public static SqlLayer SqlLayer => _sqlLayerCache.Value;
+   public static SqlLayer SqlLayer => SqlLayerCache.Value;
 
    static string GetNunitTestName()
    {
@@ -47,9 +47,9 @@ public static partial class TestEnv
 
    static readonly Regex FindDimensions = new("""\("(.*)\:(.*)"\)""", RegexOptions.Compiled);
 
-   static readonly LazyStruct<DIContainer> _containerCache = new(() =>
+   static readonly LazyStruct<DIContainer> ContainerCache = new(() =>
    {
-      if(XUnitTestContext.PluggableComponentsCombination != null)
+      if(_xUnitPluggableComponentsCombination != null)
       {
          return XUnit.XUnitDIContainer.Current;
       }
@@ -64,13 +64,10 @@ public static partial class TestEnv
       return provider;
    });
 
-   public static DIContainer DIContainer => _containerCache.Value;
+   public static DIContainer DIContainer => ContainerCache.Value;
 
-   static class XUnitTestContext
-   {
-      public static PluggableComponents? PluggableComponentsCombination;
-   }
+   static PluggableComponents? _xUnitPluggableComponentsCombination;
 
-   public static void SetXunitTestContext(PluggableComponents pluggableComponentsCombination) =>
-      XUnitTestContext.PluggableComponentsCombination = pluggableComponentsCombination;
+   internal static void SetXunitTestContext(PluggableComponents pluggableComponentsCombination) =>
+      _xUnitPluggableComponentsCombination = pluggableComponentsCombination;
 }

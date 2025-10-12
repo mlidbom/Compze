@@ -11,6 +11,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
     <ProjectReference Include="..\Compze.Tests.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
     <ProjectReference Include="..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />

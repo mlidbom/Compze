@@ -1,6 +1,8 @@
 using System;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Wiring;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
@@ -19,13 +21,13 @@ public static class PluggableComponentTestContextExtensions
    {
       var runMode = new RunMode(isTesting: isTesting);
       
-      return context.DIContainer switch
+      return TestEnv.DIContainer switch
       {
          Compze.Wiring.DIContainer.Microsoft => 
             new Compze.Utilities.DependencyInjection.Microsoft.MicrosoftDependencyInjectionContainer(runMode),
          Compze.Wiring.DIContainer.SimpleInjector => 
             new Compze.Utilities.DependencyInjection.SimpleInjector.SimpleInjectorDependencyInjectionContainer(runMode),
-         _ => throw new NotSupportedException($"DI Container {context.DIContainer} is not supported in tests")
+         _ => throw new NotSupportedException($"DI Container {TestEnv.DIContainer} is not supported in tests")
       };
    }
 }

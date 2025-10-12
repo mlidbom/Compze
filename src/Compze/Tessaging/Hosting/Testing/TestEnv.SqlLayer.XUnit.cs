@@ -11,12 +11,12 @@ static partial class TestEnv
    {
       public static class XUnitSqlLayer
       {
-         static readonly LazyStruct<Wiring.SqlLayer> _cache = new LazyStruct<Wiring.SqlLayer>(GetCurrent);
+         static readonly LazyStruct<Wiring.SqlLayer> Cache = new LazyStruct<Wiring.SqlLayer>(GetCurrent);
 
          static Wiring.SqlLayer GetCurrent()
-            => XUnitTestContext.PluggableComponentsCombination!.Value.SqlLayer;
+            => _xUnitPluggableComponentsCombination!.Value.SqlLayer;
 
-         public static Wiring.SqlLayer Current => _cache.Value;
+         public static Wiring.SqlLayer Current => Cache.Value;
 
          [return: NotNull] static TValue SelectValue<TValue>(TValue value, string provider)
          {
@@ -28,11 +28,11 @@ static partial class TestEnv
 
       public static class XUnitDIContainer
       {
-         static readonly LazyStruct<Wiring.DIContainer> _cache = new(GetCurrent);
-         public static Wiring.DIContainer Current => _cache.Value;
+         static readonly LazyStruct<Wiring.DIContainer> Cache = new(GetCurrent);
+         public static Wiring.DIContainer Current => Cache.Value;
 
          static Wiring.DIContainer GetCurrent()
-            => XUnitTestContext.PluggableComponentsCombination!.Value.DiContainer;
+            => _xUnitPluggableComponentsCombination!.Value.DiContainer;
       }
    }
 }
