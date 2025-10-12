@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Sql.DocumentDb.Abstractions;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -15,8 +17,7 @@ public abstract class DocumentDbTestsBase(string pluggableComponentsCombination)
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
    protected IServiceLocator ServiceLocator { get; private set; }
 
-   static IServiceLocator CreateServiceLocator() =>
-      TestWiringHelper.SetupTestingServiceLocator(builder => {});
+   static IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
 
    [SetUp] public void Setup() => ServiceLocator = CreateServiceLocator();
 

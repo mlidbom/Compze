@@ -1,5 +1,6 @@
 using System;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 
@@ -21,6 +22,6 @@ public static class PluggableComponentTestContextServiceLocatorExtensions
       TestEnv.SetXunitTestContext(context.Combination);
       Log.NCrunch(nameof(CreateServiceLocator));
 
-      return TestWiringHelper.SetupTestingServiceLocator(configureContainer);
+      return TestEnv.DIContainer.SetupTestingServiceLocator(configureContainer);
    }
 }

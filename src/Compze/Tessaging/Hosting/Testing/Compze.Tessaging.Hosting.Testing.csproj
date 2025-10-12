@@ -50,5 +50,6 @@
     <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.XUnit" />
+    <InternalsVisibleTo Include="Compze.Tests.Common.NUnit" />
   </ItemGroup>
 </Project>
