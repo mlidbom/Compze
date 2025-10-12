@@ -13,7 +13,7 @@ public static partial class TestEnv
    static PluggableComponents GetComponents()
    {
       if(XunitDiscoverer == null && NunitDiscoverer == null)
-         throw new Exception("No test framework registered discoverer");
+         throw new Exception("No test framework registered a discoverer");
 
       if(XunitDiscoverer?.Invoke() is {} xunitComponents)
          return xunitComponents;
