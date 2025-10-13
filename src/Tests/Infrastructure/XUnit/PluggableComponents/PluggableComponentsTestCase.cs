@@ -7,16 +7,16 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 public class PluggableComponentsTestCase : XunitTestCase
 {
-   Infrastructure.PluggableComponents? _combination = null;
+   Tessaging.Hosting.Testing.PluggableComponents? _combination = null;
 
-   public Infrastructure.PluggableComponents Components => _combination!.Value;
+   public Tessaging.Hosting.Testing.PluggableComponents Components => _combination!.Value;
 
    [Obsolete("Called by deserializer")]
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
       IXunitTestMethod testMethod,
-      Infrastructure.PluggableComponents combination,
+      Tessaging.Hosting.Testing.PluggableComponents combination,
       string testCaseDisplayName,
       string uniqueId,
       bool @explicit,
@@ -44,6 +44,6 @@ public class PluggableComponentsTestCase : XunitTestCase
    protected override void Deserialize(IXunitSerializationInfo info)
    {
       base.Deserialize(info);
-      _combination = Infrastructure.PluggableComponents.FromString(info.GetValue<string>(nameof(_combination)).NotNull());
+      _combination = Tessaging.Hosting.Testing.PluggableComponents.FromString(info.GetValue<string>(nameof(_combination)).NotNull());
    }
 }

@@ -1,13 +1,13 @@
-using Compze.Utilities.Contracts;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
-using Compze.Wiring;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Logging;
+using Compze.Utilities.SystemCE;
+using Compze.Wiring;
 
-namespace Compze.Tests.Infrastructure;
+namespace Compze.Tessaging.Hosting.Testing;
 
 /// <summary>
 /// Reads pluggable component combinations from configuration file in the assembly directory.

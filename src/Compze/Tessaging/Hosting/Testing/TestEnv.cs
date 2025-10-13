@@ -1,4 +1,3 @@
-using Compze.Tests.Infrastructure;
 using System;
 using Compze.Wiring;
 
