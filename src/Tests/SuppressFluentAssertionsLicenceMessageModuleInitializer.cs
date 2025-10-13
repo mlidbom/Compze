@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Compze.Tests;
@@ -6,6 +7,7 @@ namespace Compze.Tests;
 // No need to copy it to each project!
 public static class SuppressFluentAssertionsLicenceMessageModuleInitializer
 {
+   [SuppressMessage("Usage", "CA2255:The 'ModuleInitializer' attribute should not be used in libraries", Justification = "Shared test infrastructure needs module initialization to suppress FluentAssertions license message across all test projects")]
    [ModuleInitializer]
    public static void Initialize() => FluentAssertions.License.Accepted = true;
 }
