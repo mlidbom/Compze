@@ -22,7 +22,6 @@ public static class PluggableComponentsReader
 
    static IReadOnlyList<PluggableComponents> GetCombinationsInternal()
    {
-      ConsoleCE.WriteImportantLine("DIContainer.Current");
       var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestUsingPluggableComponentCombinations);
 
       if(!File.Exists(filePath)) throw new Exception($"{filePath} is missing");
@@ -42,7 +41,6 @@ public readonly record struct PluggableComponents(SqlLayer SqlLayer, DIContainer
 
    public static PluggableComponents FromString(string combination)
    {
-      ConsoleCE.WriteImportantLine("PluggableComponents.FromString");
       try
       {
          var parts = combination.Split(':');

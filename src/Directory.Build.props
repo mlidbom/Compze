@@ -21,7 +21,8 @@
 	</Target>
 	
 	<!-- Automatically copy test configuration files to output for test projects -->
-   <ItemGroup Condition="$(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)'))">
+	<!-- Matches test projects but excludes non-test support libraries -->
+   <ItemGroup Condition="($(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)')) OR $(MSBuildProjectName.Contains('Test')) OR $(MSBuildProjectDirectory.Contains('ScratchPad'))) AND !$(MSBuildProjectName.Contains('.Testing'))">
 		<Content Include="$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations">
 			<Link>TestUsingPluggableComponentCombinations</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -32,5 +33,9 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Visible>false</Visible>
 		</Content>
+		<Compile Include="$(MSBuildThisFileDirectory)Tests\SuppressFluentAssertionsLicenceMessageModuleInitializer.cs">
+			<Link>SuppressFluentAssertionsLicenceMessageModuleInitializer.cs</Link>
+			<Visible>false</Visible>
+		</Compile>
 	</ItemGroup>
 </Project>
