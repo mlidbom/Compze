@@ -1,4 +1,4 @@
-function Clean-Compze {
+function C-Clean {
     <#
     .SYNOPSIS
     Performs a deep clean of the Compze solution
@@ -16,15 +16,15 @@ function Clean-Compze {
     Shows what would be deleted by git clean without actually deleting anything (only applies with -FullGitReset).
     
     .EXAMPLE
-    Clean-Compze
+    C-Clean
     Performs a deep clean (dotnet clean + delete all \obj\ folders)
     
     .EXAMPLE
-    Clean-Compze -FullGitReset
+    C-Clean -FullGitReset
     Performs a deep clean plus git clean -fdx after backing up TestUsingPluggableComponentCombinations
     
     .EXAMPLE
-    Clean-Compze -FullGitReset -WhatIf
+    C-Clean -FullGitReset -WhatIf
     Shows what would be deleted by git clean without actually deleting anything
     #>
     [CmdletBinding(SupportsShouldProcess)]

@@ -1,4 +1,4 @@
-function Fix-CompzeCsFileEncodings {
+function C-Fix-CsFileEncodings {
     <#
     .SYNOPSIS
     Converts .cs files to UTF-8 without BOM encoding (standard for modern .NET)
@@ -15,15 +15,15 @@ function Fix-CompzeCsFileEncodings {
     The file pattern to match. Defaults to *.cs
     
     .EXAMPLE
-    Fix-CompzeCsFileEncodings
+    C-Fix-CsFileEncodings
     Converts all git-tracked .cs files in src/ to UTF-8 without BOM
     
     .EXAMPLE
-    Fix-CompzeCsFileEncodings -Path "src/Tests" -FilePattern "*.cs"
+    C-Fix-CsFileEncodings -Path "src/Tests" -FilePattern "*.cs"
     Converts all git-tracked .cs files in src/Tests to UTF-8 without BOM
     
     .EXAMPLE
-    Fix-CompzeCsFileEncodings -WhatIf
+    C-Fix-CsFileEncodings -WhatIf
     Shows which files would be converted without actually converting them
     #>
     [CmdletBinding(SupportsShouldProcess)]

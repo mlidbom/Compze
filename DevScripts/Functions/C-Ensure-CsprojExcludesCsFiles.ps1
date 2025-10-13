@@ -1,4 +1,4 @@
-function Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders {
+function C-Ensure-CsprojExcludesCsFiles {
     <#
     .SYNOPSIS
     Ensures .csproj files exclude .cs files from projects in subfolders
@@ -58,7 +58,7 @@ function Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders {
         
         $comment = @"
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojExcludesCsFiles.ps1 -->
 "@
         
         $itemGroup = @"
@@ -106,7 +106,7 @@ $($exclusionLines -join "`r`n")
         
         # Check if we have the consolidated format with the updated comment
         # Force update if we detect duplicate comments or extra blank lines before </Project>
-        $hasConsolidatedFormat = ($content -match 'This section is automatically maintained by DevScripts\\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders\.ps1') -and 
+        $hasConsolidatedFormat = ($content -match 'This section is automatically maintained by DevScripts\\C-Ensure-CsprojExcludesCsFiles\.ps1') -and 
                                 ($content -notmatch '<!--[^>]*Exclude subdirectories[^>]*-->[\s\r\n]*<!--[^>]*Exclude subdirectories') -and
                                 ($content -notmatch '</ItemGroup>\s*\r?\n\s*\r?\n\s*\r?\n\s*</Project>')
         

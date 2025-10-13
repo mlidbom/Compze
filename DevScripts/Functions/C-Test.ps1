@@ -1,4 +1,4 @@
-function Test-Compze {
+function C-Test {
     <#
     .SYNOPSIS
     Runs Compze tests with proper configuration
@@ -25,31 +25,31 @@ function Test-Compze {
     Shows what would be deleted by git clean without actually deleting anything (only applies with -FullGitReset).
     
     .EXAMPLE
-    Test-Compze
+    C-Test
     Runs all tests without building (parallel)
     
     .EXAMPLE
-    Test-Compze -Build
+    C-Test -Build
     Builds then runs all tests (parallel)
     
     .EXAMPLE
-    Test-Compze -Clean
+    C-Test -Clean
     Cleans, builds, then runs all tests (parallel)
     
     .EXAMPLE
-    Test-Compze -FullGitReset
+    C-Test -FullGitReset
     Performs full git clean, builds, then runs all tests (parallel)
     
     .EXAMPLE
-    Test-Compze -FullGitReset -WhatIf
+    C-Test -FullGitReset -WhatIf
     Shows what would be deleted by git clean without actually deleting anything
     
     .EXAMPLE
-    Test-Compze -SingleThreadedTesting
+    C-Test -SingleThreadedTesting
     Runs all tests single-threaded without building (for debugging)
     
     .EXAMPLE
-    Test-Compze -Build -SingleThreadedTesting
+    C-Test -Build -SingleThreadedTesting
     Builds then runs all tests single-threaded (for debugging)
     #>
     [CmdletBinding(SupportsShouldProcess)]
@@ -67,10 +67,10 @@ function Test-Compze {
     try {
         if ($FullGitReset) {
             if ($WhatIfPreference) {
-                Clean-Compze -FullGitReset -WhatIf
+                C-Clean -FullGitReset -WhatIf
                 return
             } else {
-                Clean-Compze -FullGitReset
+                C-Clean -FullGitReset
             }
             dotnet build $solutionPath
             
@@ -86,7 +86,7 @@ function Test-Compze {
             }
         }
         elseif ($Clean) {
-            Clean-Compze
+            C-Clean
             dotnet build $solutionPath
             
             if ($LASTEXITCODE -ne 0) {

@@ -1,4 +1,4 @@
-function Get-CompzePluggableComponents {
+function C-Get-PluggableComponents {
     <#
     .SYNOPSIS
     Displays the currently active pluggable component combinations
@@ -9,7 +9,7 @@ function Get-CompzePluggableComponents {
     DI containers are configured for testing.
     
     .EXAMPLE
-    Get-CompzePluggableComponents
+    C-Get-PluggableComponents
     Displays the currently active component combinations
     #>
     [CmdletBinding()]

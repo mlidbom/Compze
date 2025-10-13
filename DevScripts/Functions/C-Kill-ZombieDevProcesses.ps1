@@ -1,4 +1,4 @@
-function Kill-CompzeZombieDevProcesses {
+function C-Kill-ZombieDevProcesses {
     <#
     .SYNOPSIS
     Kills hung Compze test executables that are locking files
@@ -17,15 +17,15 @@ function Kill-CompzeZombieDevProcesses {
     Kills processes without prompting for confirmation
     
     .EXAMPLE
-    Kill-CompzeZombieDevProcesses
+    C-Kill-ZombieDevProcesses
     Shows hung test processes and prompts for confirmation before killing
     
     .EXAMPLE
-    Kill-CompzeZombieDevProcesses -WhatIf
+    C-Kill-ZombieDevProcesses -WhatIf
     Shows what processes would be killed without actually killing them
     
     .EXAMPLE
-    Kill-CompzeZombieDevProcesses -Force
+    C-Kill-ZombieDevProcesses -Force
     Kills hung test processes without prompting for confirmation
     #>
     [CmdletBinding(SupportsShouldProcess)]

@@ -1,4 +1,4 @@
-function Reload-CompzeModule {
+function C-Reload-Module {
     <#
     .SYNOPSIS
     Reloads the Compze PowerShell module
@@ -8,7 +8,7 @@ function Reload-CompzeModule {
     Also reloads your PowerShell profile if it exists.
     
     .EXAMPLE
-    Reload-CompzeModule
+    C-Reload-Module
     Reloads the Compze module and your profile
     #>
     [CmdletBinding()]

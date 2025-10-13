@@ -1,4 +1,4 @@
-function Set-CompzePluggableComponents {
+function C-Set-PluggableComponents {
     <#
     .SYNOPSIS
     Configures the TestUsingPluggableComponentCombinations file with selected pluggable components
@@ -43,31 +43,31 @@ function Set-CompzePluggableComponents {
     When no switches are provided, the defaults file will be used.
     
     .EXAMPLE
-    Set-CompzePluggableComponents
+    C-Set-PluggableComponents
     Configures tests using saved defaults (or creates defaults from .example file if none exist)
     
     .EXAMPLE
-    Set-CompzePluggableComponents -SqliteMemory -Microsoft
+    C-Set-PluggableComponents -SqliteMemory -Microsoft
     Configures tests to run only with SqliteMemory and Microsoft DI container
     
     .EXAMPLE
-    Set-CompzePluggableComponents -AllSqlLayers -Microsoft
+    C-Set-PluggableComponents -AllSqlLayers -Microsoft
     Configures tests to run with all SQL layers but only Microsoft DI container
     
     .EXAMPLE
-    Set-CompzePluggableComponents -MicrosoftSqlServer -MySql -AllContainers
+    C-Set-PluggableComponents -MicrosoftSqlServer -MySql -AllContainers
     Configures tests to run with MicrosoftSqlServer and MySql against both DI containers
     
     .EXAMPLE
-    Set-CompzePluggableComponents -AllSqlLayers -AllContainers
+    C-Set-PluggableComponents -AllSqlLayers -AllContainers
     Configures tests to run with all possible combinations
     
     .EXAMPLE
-    Set-CompzePluggableComponents -AllPermutations
+    C-Set-PluggableComponents -AllPermutations
     Configures tests to run with all possible combinations (shorthand for -AllSqlLayers -AllContainers)
     
     .EXAMPLE
-    Set-CompzePluggableComponents -SqliteMemory -Microsoft -SetAsDefaults
+    C-Set-PluggableComponents -SqliteMemory -Microsoft -SetAsDefaults
     Sets SqliteMemory + Microsoft as the default configuration for future calls with no parameters
     #>
     [CmdletBinding(SupportsShouldProcess)]

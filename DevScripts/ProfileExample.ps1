@@ -8,9 +8,12 @@
 Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking
 
 # After adding this, you can run these commands from any directory:
-# - Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders
-# - Remove-RedundantInternalsVisibleTo
-# - Validate-SolutionStructure
-# - Test-Compze              # Run tests (no build)
-# - Test-Compze -Build       # Build then run tests
-# - Reload-Profile
+# Type C-<Tab> to see all available commands, including:
+# - C-Test                   # Run tests (no build)
+# - C-Test -Build            # Build then run tests
+# - C-Build                  # Build solution
+# - C-Clean                  # Deep clean
+# - C-Get-PluggableComponents    # Show active test configurations
+# - C-Set-PluggableComponents    # Configure test combinations
+# - C-Reload-Module          # Reload module and profile
+# - C-Get-Commands           # List all commands

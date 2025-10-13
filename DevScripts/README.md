@@ -15,17 +15,17 @@ Then reload: `. $PROFILE`
 
 ### Build & Test Workflow
 
-- **Clean-Compze** - Performs a deep clean of the Compze solution
+- **C-Clean** - Performs a deep clean of the Compze solution
   - `-FullGitReset` - Performs full git reset, removes all untracked files (requires clean working tree, backs up TestUsingPluggableComponentCombinations)
   - `-Verbose` - Show detailed output
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
-- **Build-Compze** - Builds the Compze solution
+- **C-Build** - Builds the Compze solution
   - `-Clean` - Deep clean before building
   - `-FullGitReset` - Full git reset before building (implies `-Clean`)
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
-- **Test-Compze** - Runs Compze tests with proper configuration
+- **C-Test** - Runs Compze tests with proper configuration
   - `-Build` - Build before testing
   - `-Clean` - Clean and build before testing
   - `-FullGitReset` - Full git reset, build, then test (implies `-Clean` and `-Build`)
@@ -34,22 +34,36 @@ Then reload: `. $PROFILE`
 
 ### Code Quality & Structure
 
-- **Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders** - Ensures .csproj files exclude .cs files from projects in subfolders
+- **C-Ensure-CsprojExcludesCsFiles** - Ensures .csproj files exclude .cs files from projects in subfolders
 
-- **Fix-CompzeCsFileEncodings** - Converts .cs files to UTF-8 without BOM encoding
+- **C-Fix-CsFileEncodings** - Converts .cs files to UTF-8 without BOM encoding
   - `-Path` - Path to scan (defaults to src)
   - `-FilePattern` - File pattern to match (defaults to *.cs)
   - `-WhatIf` - Preview changes without applying
 
-- **Remove-CompzeRedundantInternalsVisibleTo** - Removes redundant InternalsVisibleTo attributes
+- **C-Remove-RedundantInternalsVisibleTo** - Removes redundant InternalsVisibleTo attributes
   - `-SolutionPath` - Path to solution file
   - `-LogFile` - Path to log file
 
-- **Validate-CompzeSolutionStructure** - Validates the Compze solution structure
+- **C-Validate-SolutionStructure** - Validates the Compze solution structure
+
+### Pluggable Components
+
+- **C-Get-PluggableComponents** - Displays the currently active pluggable component combinations
+
+- **C-Set-PluggableComponents** - Configures which SQL layers and DI containers to test
+  - Individual switches: `-MicrosoftSqlServer`, `-MySql`, `-PostgreSql`, `-Sqlite`, `-SqliteMemory`
+  - Container switches: `-Microsoft`, `-SimpleInjector`
+  - Convenience switches: `-AllSqlLayers`, `-AllContainers`, `-AllPermutations`
+  - `-SetAsDefaults` - Save configuration as default
 
 ### Utility
 
-- **Get-CompzeCommands** - Lists all Compze module commands with their syntax
+- **C-Get-Commands** - Lists all Compze module commands with their syntax
 
-- **Reload-CompzeModule** - Reloads the Compze PowerShell module and profile
+- **C-Reload-Module** - Reloads the Compze PowerShell module and profile
+
+- **C-Kill-ZombieDevProcesses** - Kills hung test executables that are locking files
+  - `-Force` - Kill without confirmation
+  - `-WhatIf` - Preview what would be killed
 

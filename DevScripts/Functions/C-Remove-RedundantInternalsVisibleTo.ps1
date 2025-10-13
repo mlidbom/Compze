@@ -1,4 +1,4 @@
-function Remove-CompzeRedundantInternalsVisibleTo {
+function C-Remove-RedundantInternalsVisibleTo {
     <#
     .SYNOPSIS
     Removes redundant InternalsVisibleTo attributes

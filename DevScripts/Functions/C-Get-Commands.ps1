@@ -1,4 +1,4 @@
-function Get-CompzeCommands {
+function C-Get-Commands {
     <#
     .SYNOPSIS
     Lists all Compze module commands with their syntax
@@ -8,13 +8,13 @@ function Get-CompzeCommands {
     and synopsis in a formatted table view.
     
     .EXAMPLE
-    Get-CompzeCommands
+    C-Get-Commands
     Shows all Compze commands with their syntax and descriptions
     #>
     [CmdletBinding()]
     param()
     
-    $commands = Get-Command -Module Compze | Where-Object { $_.Name -ne 'Get-CompzeCommands' } | Sort-Object Name
+    $commands = Get-Command -Module Compze | Where-Object { $_.Name -ne 'C-Get-Commands' } | Sort-Object Name
     
     $results = foreach ($cmd in $commands) {
         # Get the syntax - PowerShell formats this nicely
