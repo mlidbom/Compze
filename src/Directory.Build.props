@@ -19,4 +19,18 @@
 		         Condition="'@(CopiedConfigFile)' != ''" 
 		         Importance="high" />
 	</Target>
+	
+	<!-- Automatically copy test configuration files to output for test projects -->
+	<ItemGroup Condition="$(MSBuildProjectDirectory.Contains('\Tests\')) OR ($(MSBuildProjectDirectory.Contains('Tests')) AND ($(MSBuildProjectDirectory.Contains('UnitTests')) OR $(MSBuildProjectDirectory.Contains('PerformanceTests'))))">
+		<Content Include="$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations">
+			<Link>TestUsingPluggableComponentCombinations</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Visible>false</Visible>
+		</Content>
+		<Content Include="$(MSBuildThisFileDirectory)Compze\test-common-appsettings.json">
+			<Link>appsettings.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Visible>false</Visible>
+		</Content>
+	</ItemGroup>
 </Project>

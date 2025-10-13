@@ -22,9 +22,4 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

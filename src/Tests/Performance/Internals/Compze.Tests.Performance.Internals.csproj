@@ -10,14 +10,6 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Integration\Compze.Tests.Integration.csproj" />
     <ProjectReference Include="..\..\Integration\Internals\Compze.Tests.Integration.Internals.csproj" />
     <ProjectReference Include="..\..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />

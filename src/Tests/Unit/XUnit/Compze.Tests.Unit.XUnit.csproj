@@ -13,12 +13,6 @@
     <ProjectReference Include="..\..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
   </ItemGroup>
-	<ItemGroup>
-		<Content Include="..\..\..\TestUsingPluggableComponentCombinations">
-			<Link>TestUsingPluggableComponentCombinations</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
