@@ -11,15 +11,7 @@ namespace Compze.Tests.Integration.XUnit;
 // ReSharper disable once MemberCanBeInternal
 public sealed class XUnitAssemblyFixture : IAsyncLifetime
 {
-   public async ValueTask InitializeAsync()
-   {
-      TestFixtureHelper.RunAssemblyLevelSetup<XUnitAssemblyFixture>(() =>
-      {
-         License.Accepted = true;
-      });
-
-      await ValueTask.CompletedTask;
-   }
+   public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
 
    public async ValueTask DisposeAsync()
    {
