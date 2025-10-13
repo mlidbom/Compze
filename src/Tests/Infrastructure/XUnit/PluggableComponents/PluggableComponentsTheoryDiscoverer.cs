@@ -25,6 +25,15 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       // This ensures NCrunch gets the same ID during discovery and execution phases
       var fullName = testMethod.TestClass.Class.FullName ?? testMethod.TestClass.Class.Name;
       
+      // XUnit v3 requires that SkipUnless and SkipWhen are mutually exclusive
+      // Only pass non-null/non-empty values, and ensure both aren't set
+      var skipUnless = !string.IsNullOrEmpty(pgAttribute.SkipUnless) ? pgAttribute.SkipUnless : null;
+      var skipWhen = !string.IsNullOrEmpty(pgAttribute.SkipWhen) ? pgAttribute.SkipWhen : null;
+      
+      // If both are somehow set, prefer SkipUnless (defensive)
+      if(skipUnless != null && skipWhen != null)
+         skipWhen = null;
+      
       var testCases = combinations
                      .Select(combination =>
                       {
@@ -37,8 +46,8 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                             @explicit: pgAttribute.Explicit,
                             skipReason: pgAttribute.Skip,
                             skipType: pgAttribute.SkipType,
-                            skipUnless: pgAttribute.SkipUnless,
-                            skipWhen: pgAttribute.SkipWhen,
+                            skipUnless: skipUnless,
+                            skipWhen: skipWhen,
                             timeout: pgAttribute.Timeout,
                             testMethodArguments: []);
                       })

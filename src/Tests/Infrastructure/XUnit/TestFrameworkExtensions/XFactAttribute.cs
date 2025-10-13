@@ -40,6 +40,15 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
       var methodName = testMethod.Method.Name ?? "UnknownMethod";
       var stableUniqueId = $"{fullName}.{methodName}";
 
+      // XUnit v3 requires that SkipUnless and SkipWhen are mutually exclusive
+      // Only pass non-null/non-empty values, and ensure both aren't set
+      var skipUnless = !string.IsNullOrEmpty(factAttribute.SkipUnless) ? factAttribute.SkipUnless : null;
+      var skipWhen = !string.IsNullOrEmpty(factAttribute.SkipWhen) ? factAttribute.SkipWhen : null;
+      
+      // If both are somehow set, prefer SkipUnless (defensive)
+      if(skipUnless != null && skipWhen != null)
+         skipWhen = null;
+
       return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([
                                                                           new XunitTestCase(
                                                                              testMethod: testMethod,
@@ -48,8 +57,8 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
                                                                              @explicit: factAttribute.Explicit,
                                                                              skipReason: factAttribute.Skip,
                                                                              skipType: factAttribute.SkipType,
-                                                                             skipUnless: factAttribute.SkipUnless,
-                                                                             skipWhen: factAttribute.SkipWhen,
+                                                                             skipUnless: skipUnless,
+                                                                             skipWhen: skipWhen,
                                                                              timeout: factAttribute.Timeout,
                                                                              testMethodArguments: [],
                                                                              traits: new Dictionary<string, HashSet<string>>())
