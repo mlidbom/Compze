@@ -37,9 +37,14 @@ function Set-CompzePluggableComponents {
     .PARAMETER AllPermutations
     Include all SQL layers and all DI containers (equivalent to -AllSqlLayers -AllContainers)
     
+    .PARAMETER SetAsDefaults
+    Save the current configuration as the default. The configuration will be saved to both
+    TestUsingPluggableComponentCombinations and TestUsingPluggableComponentCombinations.defaults.
+    When no switches are provided, the defaults file will be used.
+    
     .EXAMPLE
     Set-CompzePluggableComponents
-    Configures tests to run with defaults (SqliteMemory and Microsoft DI container)
+    Configures tests using saved defaults (or creates defaults from .example file if none exist)
     
     .EXAMPLE
     Set-CompzePluggableComponents -SqliteMemory -Microsoft
@@ -60,6 +65,10 @@ function Set-CompzePluggableComponents {
     .EXAMPLE
     Set-CompzePluggableComponents -AllPermutations
     Configures tests to run with all possible combinations (shorthand for -AllSqlLayers -AllContainers)
+    
+    .EXAMPLE
+    Set-CompzePluggableComponents -SqliteMemory -Microsoft -SetAsDefaults
+    Sets SqliteMemory + Microsoft as the default configuration for future calls with no parameters
     #>
     [CmdletBinding(SupportsShouldProcess)]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -78,8 +87,15 @@ function Set-CompzePluggableComponents {
         [switch]$AllContainers,
         
         # Convenience switch for all combinations
-        [switch]$AllPermutations
+        [switch]$AllPermutations,
+        
+        # Save as defaults switch
+        [switch]$SetAsDefaults
     )
+    
+    $testConfigPath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations"
+    $testConfigDefaultsPath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations.defaults"
+    $testConfigExamplePath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations.example"
     
     # Handle -AllPermutations shorthand
     if ($AllPermutations) {
@@ -87,33 +103,56 @@ function Set-CompzePluggableComponents {
         $AllContainers = $true
     }
     
-    # Validate mutually exclusive options for SQL layers
+    # Check if any parameters were specified
     $sqlLayerSwitches = @($MicrosoftSqlServer, $MySql, $PostgreSql, $Sqlite, $SqliteMemory)
+    $containerSwitches = @($Microsoft, $SimpleInjector)
     $anySqlLayerSpecified = $sqlLayerSwitches -contains $true
+    $anyContainerSpecified = $containerSwitches -contains $true
+    $anyParameterSpecified = $AllSqlLayers -or $AllContainers -or $AllPermutations -or $anySqlLayerSpecified -or $anyContainerSpecified
     
+    # If no parameters specified, use defaults file
+    if (-not $anyParameterSpecified) {
+        # Ensure defaults file exists
+        if (-not (Test-Path $testConfigDefaultsPath)) {
+            if (Test-Path $testConfigExamplePath) {
+                Write-Host "No defaults file found. Creating from example file..." -ForegroundColor Yellow
+                Copy-Item -Path $testConfigExamplePath -Destination $testConfigDefaultsPath -Force
+            } else {
+                Write-Error "No defaults file and no example file found at $testConfigExamplePath"
+                return
+            }
+        }
+        
+        # Copy defaults to active config
+        if ($PSCmdlet.ShouldProcess($testConfigPath, "Apply default pluggable component combinations")) {
+            Copy-Item -Path $testConfigDefaultsPath -Destination $testConfigPath -Force
+            Write-Host "Applied default pluggable component combinations from:" -ForegroundColor Green
+            Write-Host "  $testConfigDefaultsPath" -ForegroundColor Cyan
+        }
+        return
+    }
+    
+    # Validate mutually exclusive options for SQL layers
     if ($AllSqlLayers -and $anySqlLayerSpecified) {
         Write-Error "Cannot specify both -AllSqlLayers and individual SQL layer switches"
         return
     }
     
     # Validate mutually exclusive options for containers
-    $containerSwitches = @($Microsoft, $SimpleInjector)
-    $anyContainerSpecified = $containerSwitches -contains $true
-    
     if ($AllContainers -and $anyContainerSpecified) {
         Write-Error "Cannot specify both -AllContainers and individual container switches"
         return
     }
     
-    # Apply defaults if nothing specified
+    # Validate that at least something is selected when parameters are provided
     if (-not $AllSqlLayers -and -not $anySqlLayerSpecified) {
-        $SqliteMemory = $true
-        $anySqlLayerSpecified = $true
+        Write-Error "Must specify at least one SQL layer (or -AllSqlLayers)"
+        return
     }
     
     if (-not $AllContainers -and -not $anyContainerSpecified) {
-        $Microsoft = $true
-        $anyContainerSpecified = $true
+        Write-Error "Must specify at least one DI container (or -AllContainers)"
+        return
     }
     
     # Build list of SQL layers
@@ -165,11 +204,15 @@ function Set-CompzePluggableComponents {
     
     $content = $header + ($combinations -join "`n") + "`n"
     
-    # Write to the configuration file
-    $testConfigPath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations"
-    
+    # Write to the configuration file(s)
     if ($PSCmdlet.ShouldProcess($testConfigPath, "Update pluggable component combinations")) {
         Set-Content -Path $testConfigPath -Value $content -NoNewline
+        
+        if ($SetAsDefaults) {
+            Set-Content -Path $testConfigDefaultsPath -Value $content -NoNewline
+            Write-Host "Saved as defaults to:" -ForegroundColor Green
+            Write-Host "  $testConfigDefaultsPath" -ForegroundColor Cyan
+        }
         
         Write-Host "Updated $testConfigPath with $($combinations.Count) combination(s):" -ForegroundColor Green
         foreach ($combination in $combinations) {
