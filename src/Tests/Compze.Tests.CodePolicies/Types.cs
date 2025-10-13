@@ -21,15 +21,17 @@ public static class Types
                var allCompzeTypes = AppDomain.CurrentDomain.AllCompzeTypes();
 
                var abstractionsInternalTypes = allCompzeTypes
-                  .Where(type => type.Namespace?.Contains(".Abstractions.Internal", StringComparison.Ordinal) == true)
-                  .ToList();
+                                              .Where(type => type.Namespace?.Contains(".Abstractions.Internal", StringComparison.Ordinal) == true)
+                                              .ToList();
 
                var publicTypes = abstractionsInternalTypes
-                  .Where(type => type.IsPublic || type.IsNestedPublic)
-                  .ToList();
+                                .Where(type => type.IsPublic || type.IsNestedPublic)
+                                .ToList();
 
-               publicTypes.Should().BeEmpty(
-                  $"All types in *.Abstractions.Internal namespaces should be internal, but found: {string.Join(", ", publicTypes.Select(t => t.FullName))}");
+               publicTypes.Should().BeEmpty($"""
+                                             All types in *.Abstractions.Internal namespaces should be internal, but found:
+                                              {string.Join(Environment.NewLine, publicTypes.Select(t => t.FullName).ToList())}
+                                             """);
             }
          }
       }
