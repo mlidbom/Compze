@@ -49,3 +49,4 @@ repomix*.xml
 **/Release/net*.*/**
 /InternalsVisibleTo-Test-Results.log
 /src/TestUsingPluggableComponentCombinations
+/src/TestUsingPluggableComponentCombinations.defaults

@@ -42,6 +42,9 @@ function C-Build {
     
     $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
     
+    # Ensure pluggable component configuration files exist before building
+    C-Set-PluggableComponents -EnsureValid
+    
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
         if ($FullGitReset) {

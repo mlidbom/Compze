@@ -42,9 +42,17 @@ function C-Set-PluggableComponents {
     TestUsingPluggableComponentCombinations and TestUsingPluggableComponentCombinations.defaults.
     When no switches are provided, the defaults file will be used.
     
+    .PARAMETER EnsureValid
+    Ensures that required configuration files exist without making changes. Creates missing files from defaults/example.
+    Incompatible with all other switches. Useful for ensuring valid state before builds.
+    
     .EXAMPLE
     C-Set-PluggableComponents
     Configures tests using saved defaults (or creates defaults from .example file if none exist)
+    
+    .EXAMPLE
+    C-Set-PluggableComponents -EnsureValid
+    Ensures configuration and defaults files exist, creating them if needed. Makes no changes if files exist.
     
     .EXAMPLE
     C-Set-PluggableComponents -SqliteMemory -Microsoft
@@ -90,12 +98,56 @@ function C-Set-PluggableComponents {
         [switch]$AllPermutations,
         
         # Save as defaults switch
-        [switch]$SetAsDefaults
+        [switch]$SetAsDefaults,
+        
+        # Ensure valid configuration exists switch
+        [switch]$EnsureValid
     )
     
     $testConfigPath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations"
     $testConfigDefaultsPath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations.defaults"
     $testConfigExamplePath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations.example"
+    
+    # Handle -EnsureValid (must be first and exclusive)
+    if ($EnsureValid) {
+        # Check if any other switches are specified
+        $sqlLayerSwitches = @($MicrosoftSqlServer, $MySql, $PostgreSql, $Sqlite, $SqliteMemory, $AllSqlLayers)
+        $containerSwitches = @($Microsoft, $SimpleInjector, $AllContainers)
+        $otherSwitches = @($AllPermutations, $SetAsDefaults)
+        
+        if (($sqlLayerSwitches -contains $true) -or ($containerSwitches -contains $true) -or ($otherSwitches -contains $true)) {
+            Write-Error "-EnsureValid is incompatible with all other switches"
+            return
+        }
+        
+        $filesCreated = @()
+        
+        # Ensure defaults file exists (create from example if needed)
+        if (-not (Test-Path $testConfigDefaultsPath)) {
+            if (Test-Path $testConfigExamplePath) {
+                Copy-Item -Path $testConfigExamplePath -Destination $testConfigDefaultsPath -Force
+                $filesCreated += "TestUsingPluggableComponentCombinations.defaults (from .example)"
+            } else {
+                Write-Error "Cannot create defaults file: example file not found at $testConfigExamplePath"
+                return
+            }
+        }
+        
+        # Ensure active config file exists (create from defaults)
+        if (-not (Test-Path $testConfigPath)) {
+            if (Test-Path $testConfigDefaultsPath) {
+                Copy-Item -Path $testConfigDefaultsPath -Destination $testConfigPath -Force
+                $filesCreated += "TestUsingPluggableComponentCombinations (from .defaults)"
+            } else {
+                Write-Error "Cannot create config file: defaults file not found"
+                return
+            }
+        }
+        
+        # Only output on errors - silent success
+        
+        return
+    }
     
     # Handle -AllPermutations shorthand
     if ($AllPermutations) {
