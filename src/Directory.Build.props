@@ -1,41 +1,17 @@
 <Project>
-	<PropertyGroup>
-		<EnablePackageValidation>true</EnablePackageValidation>
+	<!-- Enable package validation for all projects -->
+	<Import Project="msbuild\EnablePackageValidation.props" />
+	
+	<!-- Ensure test configuration file exists before build -->
+	<Import Project="msbuild\EnsurePluggableComponentsConfigExists.props" />
+	
+	<!-- Include test configuration files in test projects only -->
+	<!-- Matches test projects but excludes non-test support libraries -->
+	<PropertyGroup Condition="($(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)')) OR $(MSBuildProjectName.Contains('Test')) OR $(MSBuildProjectDirectory.Contains('ScratchPad'))) AND !$(MSBuildProjectName.Contains('.Testing'))">
+		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 	
-	<!-- Ensure TestUsingPluggableComponentCombinations exists by copying from example if needed -->
-	<Target Name="EnsurePluggableComponentsConfig" BeforeTargets="Build">
-		<PropertyGroup>
-			<PluggableComponentsConfig>$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations</PluggableComponentsConfig>
-			<PluggableComponentsExample>$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations.example</PluggableComponentsExample>
-		</PropertyGroup>
-		<Copy SourceFiles="$(PluggableComponentsExample)" 
-		      DestinationFiles="$(PluggableComponentsConfig)" 
-		      Condition="!Exists('$(PluggableComponentsConfig)') AND Exists('$(PluggableComponentsExample)')" 
-		      SkipUnchangedFiles="true">
-			<Output TaskParameter="CopiedFiles" ItemName="CopiedConfigFile" />
-		</Copy>
-		<Message Text="Created TestUsingPluggableComponentCombinations from example file" 
-		         Condition="'@(CopiedConfigFile)' != ''" 
-		         Importance="high" />
-	</Target>
-	
-	<!-- Automatically copy test configuration files to output for test projects -->
-	<!-- Matches test projects but excludes non-test support libraries -->
-   <ItemGroup Condition="($(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)')) OR $(MSBuildProjectName.Contains('Test')) OR $(MSBuildProjectDirectory.Contains('ScratchPad'))) AND !$(MSBuildProjectName.Contains('.Testing'))">
-		<Content Include="$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations">
-			<Link>TestUsingPluggableComponentCombinations</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Visible>false</Visible>
-		</Content>
-		<Content Include="$(MSBuildThisFileDirectory)Compze\test-common-appsettings.json">
-			<Link>appsettings.json</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Visible>false</Visible>
-		</Content>
-		<Compile Include="$(MSBuildThisFileDirectory)Tests\SuppressFluentAssertionsLicenceMessageModuleInitializer.cs">
-			<Link>SuppressFluentAssertionsLicenceMessageModuleInitializer.cs</Link>
-			<Visible>false</Visible>
-		</Compile>
-	</ItemGroup>
+	<Import Project="msbuild\IncludeTestConfigurationFiles.props" Condition="'$(IsTestProject)' == 'true'" />
+	<Import Project="msbuild\IncludeTestAppSettings.props" Condition="'$(IsTestProject)' == 'true'" />
+	<Import Project="msbuild\IncludeFluentAssertionsLicenseSuppressor.props" Condition="'$(IsTestProject)' == 'true'" />
 </Project>

@@ -1,0 +1,18 @@
+<Project>
+	<!-- Ensure TestUsingPluggableComponentCombinations exists by copying from example if needed -->
+	<Target Name="EnsurePluggableComponentsConfig" BeforeTargets="Build">
+		<PropertyGroup>
+			<PluggableComponentsConfig>$(MSBuildThisFileDirectory)..\TestUsingPluggableComponentCombinations</PluggableComponentsConfig>
+			<PluggableComponentsExample>$(MSBuildThisFileDirectory)..\TestUsingPluggableComponentCombinations.example</PluggableComponentsExample>
+		</PropertyGroup>
+		<Copy SourceFiles="$(PluggableComponentsExample)" 
+		      DestinationFiles="$(PluggableComponentsConfig)" 
+		      Condition="!Exists('$(PluggableComponentsConfig)') AND Exists('$(PluggableComponentsExample)')" 
+		      SkipUnchangedFiles="true">
+			<Output TaskParameter="CopiedFiles" ItemName="CopiedConfigFile" />
+		</Copy>
+		<Message Text="Created TestUsingPluggableComponentCombinations from example file" 
+		         Condition="'@(CopiedConfigFile)' != ''" 
+		         Importance="high" />
+	</Target>
+</Project>

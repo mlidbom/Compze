@@ -1,0 +1,6 @@
+<Project>
+	<!-- Enable NuGet package validation for all projects -->
+	<PropertyGroup>
+		<EnablePackageValidation>true</EnablePackageValidation>
+	</PropertyGroup>
+</Project>

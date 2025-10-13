@@ -1,0 +1,10 @@
+<Project>
+	<!-- Copy TestUsingPluggableComponentCombinations to test project output -->
+	<ItemGroup>
+		<Content Include="$(MSBuildThisFileDirectory)..\TestUsingPluggableComponentCombinations">
+			<Link>TestUsingPluggableComponentCombinations</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Visible>false</Visible>
+		</Content>
+	</ItemGroup>
+</Project>
