@@ -12,13 +12,13 @@ namespace Compze.Tests.Infrastructure.XUnit;
 /// </summary>
 public sealed class XUnitAssemblyFixture : IAsyncLifetime
 {
-   public async ValueTask DisposeAsync()
+   public async ValueTask InitializeAsync()
    {
       UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
       await ValueTask.CompletedTask;
    }
 
-   public async ValueTask InitializeAsync()
+   public async ValueTask DisposeAsync()
    {
       TestFixtureHelper.PerformTeardown();
       await ValueTask.CompletedTask;

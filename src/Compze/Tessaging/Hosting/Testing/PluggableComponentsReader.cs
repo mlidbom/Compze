@@ -16,11 +16,7 @@ public static class PluggableComponentsReader
 {
    const string TestUsingPluggableComponentCombinations = "TestUsingPluggableComponentCombinations";
 
-   static readonly LazyCE<IReadOnlyList<PluggableComponents>> CombinationsLazy = new(GetCombinationsInternal);
-
-   public static IReadOnlyList<PluggableComponents> Combinations => CombinationsLazy.Value;
-
-   static IReadOnlyList<PluggableComponents> GetCombinationsInternal()
+   static readonly LazyCE<IReadOnlyList<PluggableComponents>> CombinationsLazy = new(() =>
    {
       var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestUsingPluggableComponentCombinations);
 
@@ -32,7 +28,10 @@ public static class PluggableComponentsReader
                  .Where(line => !line.StartsWith('#'))
                  .Select(PluggableComponents.FromString)
                  .ToList();
-   }
+   });
+
+   public static IReadOnlyList<PluggableComponents> Combinations => CombinationsLazy.Value;
+
 }
 
 public readonly record struct PluggableComponents(SqlLayer SqlLayer, DIContainer DiContainer)
