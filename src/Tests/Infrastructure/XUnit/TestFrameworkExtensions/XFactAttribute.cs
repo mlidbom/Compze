@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -14,11 +13,12 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(XFactAttributeTestCaseDiscoverer))]
 public sealed class XFactAttribute(
-   [CallerFilePath] string? sourceFilePath = null,
-   [CallerLineNumber] int sourceLineNumber = -1)
-   : FactAttribute(sourceFilePath, sourceLineNumber)
-{
-}
+      [CallerFilePath] string? sourceFilePath = null,
+      [CallerLineNumber] int sourceLineNumber = -1)
+   // ReSharper disable once ExplicitCallerInfoArgument
+   : FactAttribute(sourceFilePath,
+                   // ReSharper disable once ExplicitCallerInfoArgument
+                   sourceLineNumber) {}
 
 public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
 {
@@ -27,14 +27,16 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
       var declaringType = testMethod.Method.DeclaringType;
       var currentType = testMethod.TestClass.Class;
 
-      if (declaringType != currentType)
+      if(declaringType != currentType)
          return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
+
+      var stableUniqueId = $"{testMethod.TestClass.Class.FullName}.{testMethod.Method.Name}";
 
       return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([
                                                                           new XunitTestCase(
                                                                              testMethod: testMethod,
                                                                              testCaseDisplayName: testMethod.Method.Name,
-                                                                             uniqueID: $"{testMethod.UniqueID}.{testMethod.Method.Name}",
+                                                                             uniqueID: stableUniqueId,
                                                                              @explicit: factAttribute.Explicit)
                                                                        ]);
    }

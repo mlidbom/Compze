@@ -22,14 +22,18 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                                                   .ToList();
 
       var testCases = combinations
-                     .Select(combination => new PluggableComponentsTestCase(
-                                testMethod: testMethod,
-                                combination: combination,
-                                testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
-                                uniqueId: $"{testMethod.UniqueID}.{combination}",
-                                @explicit: pgAttribute.Explicit,
-                                timeout: pgAttribute.Timeout,
-                                testMethodArguments: []))
+                     .Select(combination =>
+                      {
+                         var stableUniqueId = $"{testMethod.TestClass.Class.FullName}.{testMethod.Method.Name}.{combination}";
+                         return new PluggableComponentsTestCase(
+                            testMethod: testMethod,
+                            combination: combination,
+                            testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
+                            uniqueId: stableUniqueId,
+                            @explicit: pgAttribute.Explicit,
+                            timeout: pgAttribute.Timeout,
+                            testMethodArguments: []);
+                      })
                      .ToArray();
 
       return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases);
