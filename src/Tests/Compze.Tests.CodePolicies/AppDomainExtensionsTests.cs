@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
@@ -31,7 +32,7 @@ public static class AppDomainExtensionsTests
             .Where(assembly => !assembliesWithTypes.Contains(assembly))
             .ToList();
 
-         assembliesWithoutTypes.Should().BeEmpty(
+         assembliesWithoutTypes.Must().BeEmpty(
             $"every Compze assembly should have at least one type, but these assemblies have no types: {string.Join(", ", assembliesWithoutTypes.Select(a => a.GetName().Name))}");
       }
 

@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using System.Reflection;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
-using FluentAssertions;
 
 namespace Compze.Tests.CodePolicies;
 
@@ -28,10 +27,10 @@ public static class Types
                                 .Where(type => type.IsPublic || type.IsNestedPublic)
                                 .ToList();
 
-               publicTypes.Should().BeEmpty($"""
-                                             All types in *.Abstractions.Internal namespaces should be internal, but found:
-                                              {string.Join(Environment.NewLine, publicTypes.Select(t => t.FullName).ToList())}
-                                             """);
+               publicTypes.Must().BeEmpty($"""
+                                           All types in *.Abstractions.Internal namespaces should be internal, but we found public types:
+                                           {string.Join(Environment.NewLine, publicTypes.Select(t => t.FullName))}
+                                           """);
             }
          }
       }
