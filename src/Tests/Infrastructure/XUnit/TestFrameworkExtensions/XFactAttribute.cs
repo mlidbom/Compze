@@ -37,7 +37,14 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
                                                                              testMethod: testMethod,
                                                                              testCaseDisplayName: testMethod.Method.Name,
                                                                              uniqueID: stableUniqueId,
-                                                                             @explicit: factAttribute.Explicit)
+                                                                             @explicit: factAttribute.Explicit,
+                                                                             skipReason: factAttribute.Skip,
+                                                                             skipType: null,
+                                                                             skipUnless: null,
+                                                                             skipWhen: null,
+                                                                             timeout: factAttribute.Timeout,
+                                                                             testMethodArguments: null,
+                                                                             traits: null)
                                                                        ]);
    }
 }
