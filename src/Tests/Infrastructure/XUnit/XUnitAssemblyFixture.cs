@@ -1,3 +1,4 @@
+using Compze.Utilities.SystemCE;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -11,12 +12,15 @@ namespace Compze.Tests.Infrastructure.XUnit;
 /// </summary>
 public sealed class XUnitAssemblyFixture : IAsyncLifetime
 {
-   public async ValueTask InitializeAsync()
+   public async ValueTask DisposeAsync()
    {
-      TestFixtureHelper.RunAssemblyLevelTeardown<XUnitAssemblyFixture>(TestFixtureHelper.PerformTeardown);
+      UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
       await ValueTask.CompletedTask;
    }
 
-   //XUnit does NOT surface exceptions thrown here it seems, and they might be causing issues in NCrunch so don't check.
-   public async ValueTask DisposeAsync() => await ValueTask.CompletedTask;
+   public async ValueTask InitializeAsync()
+   {
+      TestFixtureHelper.PerformTeardown();
+      await ValueTask.CompletedTask;
+   }
 }

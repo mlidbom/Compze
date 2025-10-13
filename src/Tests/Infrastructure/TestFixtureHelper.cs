@@ -22,20 +22,11 @@ public static class TestFixtureHelper
    {
       try
       {
-         //We don't consume here,because some test runners, including NCrunch, will not surface teardown exceptions, so consuming here would hide them. Without consuming, we may see them on the next test run.
-         GCCE.ForceFullGcAllGenerationsAndWaitForFinalizers();
-         if(UncatchableExceptionsGatherer.Exceptions.Any())
-         {
-            throw new AggregateException(UncatchableExceptionsGatherer.Exceptions);
-         }
-
-         // Synchronously wait for log to close
          Log.CloseAndFlushAsync().AsTask().GetAwaiter().GetResult();
       }
       catch
       {
-         LogFailure(typeof(TestFixtureHelper));
-         throw;
+         // ignore: really nothing we can do here;
       }
    }
 
@@ -54,37 +45,5 @@ public static class TestFixtureHelper
                          .CreateLogger();
 
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
-   }
-
-   public static void LogFailure(Type type)
-   {
-      try
-      {
-         File.AppendAllText(@"c:\tmp\init_failure.txt", type.FullName + Environment.NewLine);
-      }
-      catch
-      {
-         // If logging fails, ignore it
-      }
-   }
-
-   public static void RunAssemblyLevelSetup<TRunner>(Action action) => RunAssemblyLevelAction<TRunner>(action, "Setup");
-
-   public static void RunAssemblyLevelTeardown<TRunner>(Action action) => RunAssemblyLevelAction<TRunner>(action, "Teardown");
-
-   static void RunAssemblyLevelAction<TRunner>(Action action, string actionType)
-   {
-      try
-      {
-         action();
-      }
-      catch(Exception e)
-      {
-         File.AppendAllText(@"c:\tmp\init_failure.txt",
-                            @$"{actionType}Failure: {typeof(TRunner).FullName}
-Exception: {e}
-");
-         throw;
-      }
    }
 }

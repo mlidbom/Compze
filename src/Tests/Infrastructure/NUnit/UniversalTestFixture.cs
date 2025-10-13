@@ -1,5 +1,6 @@
-using System.Threading.Tasks;
+using Compze.Utilities.SystemCE;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 
@@ -7,7 +8,7 @@ namespace Compze.Tests.Infrastructure.NUnit;
 {
    [OneTimeTearDown] public async Task UniversalTeardown()
    {
-      TestFixtureHelper.RunAssemblyLevelTeardown<NUnitUniversalTestFixture>(TestFixtureHelper.PerformTeardown);
+      UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
       await Task.CompletedTask;
    }
 }
