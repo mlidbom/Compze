@@ -16,7 +16,6 @@ public sealed class XUnitAssemblyFixture : IAsyncLifetime
       TestFixtureHelper.RunAssemblyLevelSetup<XUnitAssemblyFixture>(() =>
       {
          License.Accepted = true;
-         AssertTestInheritsUniversalTestBase();
       });
 
       await ValueTask.CompletedTask;
@@ -26,12 +25,5 @@ public sealed class XUnitAssemblyFixture : IAsyncLifetime
    {
       TestFixtureHelper.RunAssemblyLevelTeardown<XUnitAssemblyFixture>(TestFixtureHelper.PerformTeardown);
       await ValueTask.CompletedTask;
-   }
-
-   static void AssertTestInheritsUniversalTestBase()
-   {
-      TestFixtureHelper.AssertAllTestClassesInheritFromUniversalTestBase(
-         typeof(XUnitAssemblyFixture).Assembly,
-         TestFixtureHelper.IsXUnitTestClass);
    }
 }

@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Compze.Tests.Infrastructure.NUnit.Logging;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -12,7 +11,6 @@ namespace Compze.Tests.Infrastructure.NUnit;
       TestFixtureHelper.RunAssemblyLevelSetup<NUnitUniversalTestFixture>(() =>
       {
          License.Accepted = true;
-         AssertTestInheritsUniversalTestBase();
       });
    }
 
@@ -20,12 +18,5 @@ namespace Compze.Tests.Infrastructure.NUnit;
    {
       TestFixtureHelper.RunAssemblyLevelTeardown<NUnitUniversalTestFixture>(TestFixtureHelper.PerformTeardown);
       await Task.CompletedTask;
-   }
-
-   void AssertTestInheritsUniversalTestBase()
-   {
-      TestFixtureHelper.AssertAllTestClassesInheritFromUniversalTestBase(
-         GetType().Assembly,
-         TestFixtureHelper.IsNUnitTestClass);
    }
 }

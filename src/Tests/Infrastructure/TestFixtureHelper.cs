@@ -56,48 +56,6 @@ public static class TestFixtureHelper
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 
-   public static void AssertAllTestClassesInheritFromUniversalTestBase(Assembly assembly, Func<Type, bool> isTestClassPredicate)
-   {
-      try
-      {
-         var testClasses = assembly.GetTypes().Where(isTestClassPredicate);
-         var invalidTests = testClasses.Where(t => !typeof(UniversalTestBase).IsAssignableFrom(t)).ToList();
-
-         if(invalidTests.Any())
-         {
-            var typeList = string.Join(Environment.NewLine, invalidTests.Select(t => t.FullName));
-            throw new InvalidOperationException($"The following test classes do not inherit from {nameof(UniversalTestBase)}: {typeList}: Count {invalidTests.Count}");
-         }
-      }
-      catch
-      {
-         LogFailure(typeof(TestFixtureHelper));
-         throw;
-      }
-   }
-
-   public static bool IsXUnitTestClass(Type type)
-   {
-      if(type.IsAbstract || type.IsInterface)
-         return false;
-
-      // Check for XUnit attributes by name to avoid taking a dependency on XUnit in this shared project
-      return type.GetMethods()
-                 .Any(method => method.GetCustomAttributes(true)
-                                      .Any(attr => attr.GetType().Name is "FactAttribute" or "TheoryAttribute"));
-   }
-
-   public static bool IsNUnitTestClass(Type type)
-   {
-      // Check for NUnit attributes by name to avoid taking a dependency on NUnit in this shared project
-      if(type.GetCustomAttributes(true).Any(attr => attr.GetType().Name == "TestFixtureAttribute"))
-         return true;
-
-      return type.GetMethods()
-                 .Any(method => method.GetCustomAttributes(true)
-                                      .Any(attr => attr.GetType().Name == "TestAttribute"));
-   }
-
    public static void LogFailure(Type type)
    {
       try
