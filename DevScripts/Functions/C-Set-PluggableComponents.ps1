@@ -187,8 +187,12 @@ function C-Set-PluggableComponents {
         # Copy defaults to active config
         if ($PSCmdlet.ShouldProcess($testConfigPath, "Apply default pluggable component combinations")) {
             Copy-Item -Path $testConfigDefaultsPath -Destination $testConfigPath -Force
-            Write-Host "Applied default pluggable component combinations from:" -ForegroundColor Green
-            Write-Host "  $testConfigDefaultsPath" -ForegroundColor Cyan
+            
+            # Read and display the resulting combinations
+            $appliedCombinations = Get-Content $testConfigPath | Where-Object { $_ -match '^\s*[^#]' -and $_ -notmatch '^\s*$' }
+            foreach ($combination in $appliedCombinations) {
+                Write-Host "  $combination" -ForegroundColor Cyan
+            }
         }
         return
     }
