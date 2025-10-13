@@ -72,6 +72,35 @@
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Compze/Samples/">
+    <File Path="Samples/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/Compze/Samples/AccountManagement/">
+    <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/Domain/Events/AccountManagement.Domain.Events.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/Events/AccountManagement.Events.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/PerformanceTests/Internals/AccountManagement.PerformanceTests.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/Server/AccountManagement.Server.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/Tests/AccountManagement.Tests.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/UI/MVC/AccountManagement.UI.MVC.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/UnitTests/AccountManagement.UnitTests.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze/Serialization/Abstractions/Compze.Serialization.Abstractions.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
@@ -177,6 +206,63 @@
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
   </Folder>
+  <Folder Name="/Compze/Tests/" />
+  <Folder Name="/Compze/Tests/Common/">
+    <Project Path="Tests/Common/Compze.Tests.Common.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Tests/Common/NUnit/Compze.Tests.Common.NUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tests/Infrastructure/">
+    <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="Tests/Infrastructure/NUnit/Compze.Tests.Infrastructure.NUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Tests/Infrastructure/XUnit/Compze.Tests.Infrastructure.XUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tests/Integration/">
+    <Project Path="Tests/Integration/Compze.Tests.Integration.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Tests/Integration/Internals/Compze.Tests.Integration.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Tests/Integration/XUnit/Compze.Tests.Integration.XUnit.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tests/Performance/">
+    <Project Path="Tests/Performance/Internals/Compze.Tests.Performance.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tests/ScratchPad/">
+    <Project Path="Tests/ScratchPad/Compze.Tests.ScratchPad.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tests/Unit/">
+    <Project Path="Tests/Unit/Compze.Tests.Unit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Tests/Unit/XUnit/Compze.Tests.Unit.XUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Compze/Tests/Unit/Internals/">
+    <Project Path="Tests/Unit/Internals/Compze.Tests.Unit.Internals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Tests/Unit/Internals/XUnit/Compze.Tests.Unit.Internals.XUnit.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Compze/Utilities/" />
   <Folder Name="/Compze/Utilities/DependencyInjection/">
     <Project Path="Compze/Utilities/DependencyInjection/Compze.Utilities.DependencyInjection.csproj">
@@ -239,91 +325,6 @@
     </Project>
     <Project Path="Compze/Utilities/Testing/DbPool/Sqlite/Compze.Utilities.Testing.DbPool.Sqlite.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Samples/">
-    <File Path="Samples/Directory.Build.props" />
-  </Folder>
-  <Folder Name="/Samples/AccountManagement/">
-    <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/Domain/Events/AccountManagement.Domain.Events.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/Events/AccountManagement.Events.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/PerformanceTests/Internals/AccountManagement.PerformanceTests.Internals.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/Server/AccountManagement.Server.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/Tests/AccountManagement.Tests.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/UI/MVC/AccountManagement.UI.MVC.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/UnitTests/AccountManagement.UnitTests.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Tests/ScratchPad/">
-    <Project Path="Tests/ScratchPad/Compze.Tests.ScratchPad.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Tests/Common/">
-    <Project Path="Tests/Common/Compze.Tests.Common.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Tests/Common/NUnit/Compze.Tests.Common.NUnit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Tests/Infrastructure/">
-    <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-    <Project Path="Tests/Infrastructure/NUnit/Compze.Tests.Infrastructure.NUnit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Tests/Infrastructure/XUnit/Compze.Tests.Infrastructure.XUnit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Tests/Integration/">
-    <Project Path="Tests/Integration/Compze.Tests.Integration.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Tests/Integration/Internals/Compze.Tests.Integration.Internals.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Tests/Integration/XUnit/Compze.Tests.Integration.XUnit.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Tests/Performance/">
-    <Project Path="Tests/Performance/Internals/Compze.Tests.Performance.Internals.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Tests/Unit/">
-    <Project Path="Tests/Unit/Compze.Tests.Unit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Tests/Unit/XUnit/Compze.Tests.Unit.XUnit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
-  <Folder Name="/Tests/Unit/Internals/">
-    <Project Path="Tests/Unit/Internals/Compze.Tests.Unit.Internals.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Tests/Unit/Internals/XUnit/Compze.Tests.Unit.Internals.XUnit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Websites/">
