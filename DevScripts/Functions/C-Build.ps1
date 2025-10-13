@@ -1,4 +1,4 @@
-function Build-Compze {
+function C-Build {
     <#
     .SYNOPSIS
     Builds the Compze solution
@@ -18,19 +18,19 @@ function Build-Compze {
     Shows what would be deleted by git clean without actually deleting anything (only applies with -FullGitReset).
     
     .EXAMPLE
-    Build-Compze
+    C-Build
     Builds the solution
     
     .EXAMPLE
-    Build-Compze -Clean
+    C-Build -Clean
     Performs a deep clean (dotnet clean + delete all \obj\ folders) then builds the solution
     
     .EXAMPLE
-    Build-Compze -FullGitReset
+    C-Build -FullGitReset
     Performs a full git clean, then builds the solution
     
     .EXAMPLE
-    Build-Compze -FullGitReset -WhatIf
+    C-Build -FullGitReset -WhatIf
     Shows what would be deleted by git clean without actually deleting anything
     #>
     [CmdletBinding(SupportsShouldProcess)]
@@ -46,14 +46,14 @@ function Build-Compze {
     try {
         if ($FullGitReset) {
             if ($WhatIfPreference) {
-                Clean-Compze -FullGitReset -WhatIf
+                C-Clean -FullGitReset -WhatIf
                 return
             } else {
-                Clean-Compze -FullGitReset
+                C-Clean -FullGitReset
             }
         }
         elseif ($Clean) {
-            Clean-Compze
+            C-Clean
         }
         
         dotnet build $solutionPath
