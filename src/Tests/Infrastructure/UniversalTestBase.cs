@@ -1,5 +1,6 @@
 using System.Threading;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading;
 
 namespace Compze.Tests.Infrastructure;
 
@@ -10,21 +11,6 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public abstract class UniversalTestBase
 {
-   static int _hasPerformedLazySetup;
-
-   protected UniversalTestBase()
-   {
-      // Lazy initialization - runs exactly once on first test construction
-      if(Interlocked.CompareExchange(ref _hasPerformedLazySetup, 1, 0) == 0)
-      {
-         PerformLazySetup();
-      }
-   }
-
-   static void PerformLazySetup()
-   {
-      // Force GC and surface any uncatchable exceptions from previous test runs
-      // This is done lazily to avoid breaking NCrunch during assembly load
-      UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
-   }
+   static readonly RunJustOnce OneTimeAssertion = new(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions);
+   protected UniversalTestBase() => OneTimeAssertion.RunIfNotExecutedBefore();
 }
