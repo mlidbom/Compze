@@ -21,10 +21,14 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                                                   .Where(combo => !pgAttribute.ExcludeSqlLayers.Contains(combo.SqlLayer))
                                                   .ToList();
 
+      // Build deterministic ID from full type name + method name + combination
+      // This ensures NCrunch gets the same ID during discovery and execution phases
+      var fullName = testMethod.TestClass.Class.FullName ?? testMethod.TestClass.Class.Name;
+      
       var testCases = combinations
                      .Select(combination =>
                       {
-                         var stableUniqueId = $"{testMethod.TestClass.Class.FullName}.{testMethod.Method.Name}.{combination}";
+                         var stableUniqueId = $"{fullName}.{testMethod.Method.Name}.{combination}";
                          return new PluggableComponentsTestCase(
                             testMethod: testMethod,
                             combination: combination,

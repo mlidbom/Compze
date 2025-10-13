@@ -30,7 +30,10 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
       if(declaringType != currentType)
          return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
-      var stableUniqueId = $"{testMethod.TestClass.Class.FullName}.{testMethod.Method.Name}";
+      // Build deterministic ID from full type name + method name instead of relying on testMethod.UniqueID
+      // This ensures NCrunch gets the same ID during discovery and execution phases
+      var fullName = testMethod.TestClass.Class.FullName ?? testMethod.TestClass.Class.Name;
+      var stableUniqueId = $"{fullName}.{testMethod.Method.Name}";
 
       return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([
                                                                           new XunitTestCase(
@@ -43,7 +46,7 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
                                                                              skipUnless: null,
                                                                              skipWhen: null,
                                                                              timeout: factAttribute.Timeout,
-                                                                             testMethodArguments: null,
+                                                                             testMethodArguments: [],
                                                                              traits: null)
                                                                        ]);
    }
