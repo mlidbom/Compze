@@ -3,23 +3,18 @@
 
 $script:CompzeRoot = Split-Path -Parent $PSScriptRoot
 
-# Import all function files from the Functions directory
+# Import all function files from the Functions directory and collect function names
 $functionFiles = Get-ChildItem -Path (Join-Path $PSScriptRoot "Functions") -Filter "*.ps1" -ErrorAction SilentlyContinue
+$functionNames = @()
 
 foreach ($file in $functionFiles) {
     . $file.FullName
+    
+    # Extract function name from file name (assumes file name matches function name)
+    # e.g., "Build-Compze.ps1" -> "Build-Compze"
+    $functionName = $file.BaseName
+    $functionNames += $functionName
 }
 
-# Export the functions
-Export-ModuleMember -Function @(
-    'Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders',
-    'Remove-CompzeRedundantInternalsVisibleTo', 
-    'Validate-CompzeSolutionStructure',
-    'Clean-Compze',
-    'Build-Compze',
-    'Test-Compze',
-    'Fix-CompzeCsFileEncodings',
-    'Get-CompzeCommands',
-    'Reload-CompzeModule',
-    'Kill-CompzeZombieDevProcesses'
-)
+# Export all loaded functions automatically
+Export-ModuleMember -Function $functionNames
