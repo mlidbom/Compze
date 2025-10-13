@@ -21,7 +21,7 @@
 	</Target>
 	
 	<!-- Automatically copy test configuration files to output for test projects -->
-	<ItemGroup Condition="$(MSBuildProjectDirectory.Contains('\Tests\')) OR ($(MSBuildProjectDirectory.Contains('Tests')) AND ($(MSBuildProjectDirectory.Contains('UnitTests')) OR $(MSBuildProjectDirectory.Contains('PerformanceTests'))))">
+   <ItemGroup Condition="$(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)'))">
 		<Content Include="$(MSBuildThisFileDirectory)TestUsingPluggableComponentCombinations">
 			<Link>TestUsingPluggableComponentCombinations</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

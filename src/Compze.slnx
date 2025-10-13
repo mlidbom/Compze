@@ -8,6 +8,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Compze/">
+    <File Path="Directory.Build.props" />
     <Project Path="Compze/Wiring/Compze.Wiring.csproj" Id="f00c57dd-e01d-4af3-b35d-aa658512cbfc">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
@@ -335,7 +336,6 @@
     <File Path="../README.md" />
     <File Path="../Writing_documentation.md" />
     <File Path=".editorconfig" />
-    <File Path="Directory.Build.props" />
     <File Path="Compze/test-common-appsettings.json" />
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />

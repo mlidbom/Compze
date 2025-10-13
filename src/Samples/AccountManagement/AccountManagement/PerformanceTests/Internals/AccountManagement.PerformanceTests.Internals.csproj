@@ -25,12 +25,4 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-   <ItemGroup>
-	   <Content Include="..\..\..\..\..\Compze\test-common-appsettings.json" Link="appsettings.json">
-		   <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	   </Content>
-	   <None Include="..\..\..\..\..\TestUsingPluggableComponentCombinations" Link="TestUsingPluggableComponentCombinations">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-   </ItemGroup>
 </Project>
