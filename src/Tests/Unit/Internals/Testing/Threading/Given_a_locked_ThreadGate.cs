@@ -14,12 +14,12 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Testing.Threading;
 
-[TestFixture] public class Given_a_locked_ThreadGate : UniversalTestBase
+[TestFixture] public class Given_a_locked_ThreadGate : NUnitTestBase
 {
    [Test] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
       => Invoking(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough()).Should().Throw<AwaitingConditionTimeoutException>();
 
-   public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
+   public class After_starting_10_threads_that_all_call_PassThrough : NUnitTestBase
    {
       [Test] public void Within_50_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
@@ -30,7 +30,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 
-      public class And_all_have_queued_up_calling_PassThrough : UniversalTestBase
+      public class And_all_have_queued_up_calling_PassThrough : NUnitTestBase
       {
          ThreadGateTestFixture _fixture;
 
@@ -44,7 +44,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
       }
    }
 
-   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once : UniversalTestBase
+   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once : NUnitTestBase
    {
       ThreadGateTestFixture _fixture;
 
@@ -62,7 +62,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
       [Test] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
    }
 
-   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : UniversalTestBase
+   [TestFixture] public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : NUnitTestBase
    {
       ThreadGateTestFixture _fixture;
 
@@ -81,7 +81,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
    }
 
    [TestFixture(3, 1)] [TestFixture(7, 2)] [TestFixture(12, 3)] [TestFixture(10, 4)] [TestFixture(5, 5)] [TestFixture(10, 6)] [TestFixture(10, 7)] [TestFixture(10, 8)] [TestFixture(10, 9)] [TestFixture(10, 10)]
-   public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y : UniversalTestBase
+   public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y : NUnitTestBase
    {
       readonly int _threads;
       readonly int _timesToCallLetOneThreadPassThrough;

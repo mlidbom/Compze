@@ -21,7 +21,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    public string Name { get; set; } = "Default";
 }
 
-[TestFixture] public class MachineWideSharedObjectTests : UniversalTestBase
+[TestFixture] public class MachineWideSharedObjectTests : NUnitTestBase
 {
    [Test] public void Create()
    {

@@ -28,7 +28,7 @@ class SomeEvent : AggregateEvent, ISomeEvent
    }
 }
 
-public class EventStoreTests : UniversalTestBase
+public class EventStoreTests : XUnitTestBase
 {
    IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();

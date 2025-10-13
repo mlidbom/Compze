@@ -20,7 +20,7 @@ class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(plugg
             _ = CreatePool();
          });
 
-         Invoking(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
+         Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
            .Should().Throw<AggregateException>().Which
            .InnerExceptions.Should().HaveCount(1);
       });

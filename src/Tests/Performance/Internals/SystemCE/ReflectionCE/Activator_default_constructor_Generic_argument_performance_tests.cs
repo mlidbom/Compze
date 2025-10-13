@@ -13,7 +13,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
-[TestFixture]public class Activator_default_constructor_Generic_argument_performance_tests : UniversalTestBase
+[TestFixture]public class Activator_default_constructor_Generic_argument_performance_tests : NUnitTestBase
 {
    [UsedImplicitly] class Simple;
 

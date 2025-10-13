@@ -8,7 +8,7 @@ using FluentAssertions;
 namespace Compze.Tests.Unit.Internals;
 
 [TestFixture]
-public class ObjectExtensionsTest : UniversalTestBase
+public class ObjectExtensionsTest : NUnitTestBase
 {
    [Test]
    public void RepeatShouldCreateSequenceOfLengthEqualToParameter() => 12.Repeat(10).Count().Should().Be(10);

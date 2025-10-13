@@ -10,7 +10,7 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
 
-public class TaskCEExceptionsTests : UniversalTestBase
+public class TaskCEExceptionsTests : NUnitTestBase
 {
    static async Task FailingMethod()
    {

@@ -12,7 +12,7 @@ namespace Compze.Tests.Unit.DDD;
 #pragma warning disable CA1508 //Avoid dead conditional code
 
 [TestFixture]
-public class PersistentEntityTests : UniversalTestBase
+public class PersistentEntityTests : NUnitTestBase
 {
    class Person : PersistentEntity<Person>
    {

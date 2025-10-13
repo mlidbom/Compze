@@ -96,7 +96,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
    // 3. Using a global setup/teardown to reset static state between tests
 
    /*
-   [TestFixture] public class TypeRenamingSerializationTests : UniversalTestBase
+   [TestFixture] public class TypeRenamingSerializationTests : NUnitTestBase
    {
       ITypeMapper _originaltypesMap;
       ITypeMapper _renamedTypesMap;

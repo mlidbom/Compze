@@ -9,7 +9,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace AccountManagement.UnitTests.UI.Commands;
 
 [TestFixture]
-public class EmailAttributeTests : UniversalTestBase
+public class EmailAttributeTests : NUnitTestBase
 {
    [Test]
    public void IsNotValidIfEmailIsNull()

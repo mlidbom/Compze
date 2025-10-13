@@ -9,7 +9,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace AccountManagement.UnitTests.Passwords;
 
 [TestFixture]
-public class After_creating_a_password_From_the_string_Pass : UniversalTestBase
+public class After_creating_a_password_From_the_string_Pass : NUnitTestBase
 {
    static readonly Password _password = new("Pass");
 

@@ -8,7 +8,7 @@ using FluentAssertions;
 namespace Compze.Tests.Unit.Internals.Linq;
 
 [TestFixture]
-public class SeqTests : UniversalTestBase
+public class SeqTests : NUnitTestBase
 {
    [Test]
    public void CreateShouldEnumerateAllParamsInOrder()

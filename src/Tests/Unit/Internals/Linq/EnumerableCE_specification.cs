@@ -8,7 +8,7 @@ using FluentAssertions;
 namespace Compze.Tests.Unit.Internals.Linq;
 
 [TestFixture]
-public class EnumerableCE_specification : UniversalTestBase
+public class EnumerableCE_specification : NUnitTestBase
 {
    [Test]
    public void UntilShouldHaveLastElementEqualToArgumentMinusStepSizeWhenSteppingByOneOreMinusOne()

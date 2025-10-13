@@ -15,7 +15,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
-[TestFixture]public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
+[TestFixture]public class Activator_one_argument_constructor_performance_tests : NUnitTestBase
 {
    const string Argument = "AnArgument";
 

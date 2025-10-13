@@ -8,7 +8,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.GenericAbstractions.Time;
 
-[TestFixture] public class DateTimeNowTimeSourceTests : UniversalTestBase
+[TestFixture] public class DateTimeNowTimeSourceTests : NUnitTestBase
 {
    [Test] public void UtcNow_should_return_within_100_milliseconds_of_DateTimeNow()
    {

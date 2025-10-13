@@ -9,7 +9,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace AccountManagement.UnitTests.UI.Commands.UserCommands;
 
 [TestFixture]
-public class RegisterAccountUICommandTests : UniversalTestBase
+public class RegisterAccountUICommandTests : NUnitTestBase
 {
    AccountResource.Command.Register? _registerAccountUiCommand;
 

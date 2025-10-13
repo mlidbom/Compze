@@ -17,7 +17,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    const int ResultOfDefaultConstructor = new();
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : UniversalTestBase
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : NUnitTestBase
    {
       [Test]
       public void ShouldReturnResulOfConstructor()
@@ -37,7 +37,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : UniversalTestBase
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : NUnitTestBase
    {
       [Test]
       public void ShouldReturnExistingValue()
@@ -59,7 +59,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
 
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: UniversalTestBase
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: NUnitTestBase
    {
       [Test]
       public void ShouldReturnResulOfConstructor()
@@ -79,7 +79,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
    [TestFixture]
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: UniversalTestBase
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: NUnitTestBase
    {
       [Test]
       public void ShouldReturnExistingValue()

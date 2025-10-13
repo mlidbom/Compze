@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates;
 
-public class AggregateTests : UniversalTestBase
+public class AggregateTests : XUnitTestBase
 {
    [Fact]
    public void VersionIncreasesWithEachAppliedEvent()

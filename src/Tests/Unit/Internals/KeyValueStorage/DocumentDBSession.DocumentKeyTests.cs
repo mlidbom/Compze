@@ -7,7 +7,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace Compze.Tests.Unit.Internals.KeyValueStorage;
 
 [TestFixture]
-public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
+public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
 {
    class Base;
 

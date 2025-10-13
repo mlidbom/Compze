@@ -8,7 +8,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace AccountManagement.UnitTests.Passwords;
 
 [TestFixture]
-public class A_password_is_invalid_if_it : UniversalTestBase
+public class A_password_is_invalid_if_it : NUnitTestBase
 {
    [Test] public static void Is_null() => AssertCreatingPasswordThrowsExceptionContainingFailure(null!, Password.Policy.Failures.Null);
    [Test] public static void Is_shorter_than_four_characters() => AssertCreatingPasswordThrowsExceptionContainingFailure("abc", Password.Policy.Failures.ShorterThanFourCharacters);

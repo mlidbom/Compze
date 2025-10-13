@@ -9,7 +9,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace Compze.Tests.Unit.GenericAbstractions.Time;
 
 [TestFixture]
-public class DummyTimeSourceTests : UniversalTestBase
+public class DummyTimeSourceTests : NUnitTestBase
 {
    [Test]
    public void Now_should_return_within_100_millisecond_of_datetime_UtcNow()

@@ -10,7 +10,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace AccountManagement.UnitTests.UI.Commands;
 
 [TestFixture]
-public class EntityIdAttributeTests: UniversalTestBase
+public class EntityIdAttributeTests: NUnitTestBase
 {
    [Test]
    public void IsValidIfIdIsNull()

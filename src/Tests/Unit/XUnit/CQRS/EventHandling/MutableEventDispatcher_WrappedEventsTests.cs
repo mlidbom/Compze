@@ -8,7 +8,7 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.EventHandling;
 
-public class MutableEventDispatcher_WrappedEventsTests : UniversalTestBase
+public class MutableEventDispatcher_WrappedEventsTests : XUnitTestBase
 {
    interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent;
    class UserWrapperEvent<TEvent>(TEvent @event) : WrapperEvent<TEvent>(@event), IUserWrapperEvent<TEvent>

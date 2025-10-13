@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.SystemCE;
 
-class StrictlyManagedResourceTests : UniversalTestBase
+class StrictlyManagedResourceTests : NUnitTestBase
 {
    [Test, NonParallelizable] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {

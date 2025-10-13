@@ -18,41 +18,6 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class TestFixtureHelper
 {
-   /// <summary>
-   /// Performs assembly-level setup including Serilog configuration. 
-   /// Should only be called from module initializers.
-   /// </summary>
-   public static void PerformSetup(ILogEventEnricher? testEnricher = null)
-   {
-      try
-      {
-         SetupSerilog(testEnricher);
-         UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
-      }
-      catch
-      {
-         LogFailure(typeof(TestFixtureHelper));
-         throw;
-      }
-   }
-
-   /// <summary>
-   /// Performs assembly-level setup WITHOUT Serilog configuration.
-   /// Use this from assembly fixtures since Serilog is already configured by module initializers.
-   /// </summary>
-   public static void PerformSetupWithoutSerilog()
-   {
-      try
-      {
-         UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
-      }
-      catch
-      {
-         LogFailure(typeof(TestFixtureHelper));
-         throw;
-      }
-   }
-
    public static void PerformTeardown()
    {
       try
@@ -91,17 +56,17 @@ public static class TestFixtureHelper
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 
-   public static void AssertAllTestClassesInheritFromBase(Assembly assembly, Type baseType, Func<Type, bool> isTestClassPredicate)
+   public static void AssertAllTestClassesInheritFromUniversalTestBase(Assembly assembly, Func<Type, bool> isTestClassPredicate)
    {
       try
       {
          var testClasses = assembly.GetTypes().Where(isTestClassPredicate);
-         var invalidTests = testClasses.Where(t => !baseType.IsAssignableFrom(t)).ToList();
+         var invalidTests = testClasses.Where(t => !typeof(UniversalTestBase).IsAssignableFrom(t)).ToList();
 
          if(invalidTests.Any())
          {
             var typeList = string.Join(Environment.NewLine, invalidTests.Select(t => t.FullName));
-            throw new InvalidOperationException($"The following test classes do not inherit from {baseType.Name}: {typeList}: Count {invalidTests.Count}");
+            throw new InvalidOperationException($"The following test classes do not inherit from {nameof(UniversalTestBase)}: {typeList}: Count {invalidTests.Count}");
          }
       }
       catch

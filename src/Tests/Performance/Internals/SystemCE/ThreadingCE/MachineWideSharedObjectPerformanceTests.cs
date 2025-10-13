@@ -10,7 +10,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
-[TestFixture] public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
+[TestFixture] public class MachineWideSharedObjectPerformanceTests : NUnitTestBase
 {
    [Test] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
    {

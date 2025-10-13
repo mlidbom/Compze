@@ -13,14 +13,14 @@ namespace Compze.Tests.Unit.Internals.Tessaging;
 interface INonGenericWrapperEvent : IWrapperEvent<IEvent>;
 interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
 
-[TestFixture] public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
+[TestFixture] public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : NUnitTestBase
 {
    static void AssertInvalidForSending<TMessage>() => Invoking(MessageInspector.AssertValid<TMessage>).Should().Throw<MessageTypeInspector.MessageTypeDesignViolationException>();
    static void AssertInvalidForSubscription<TMessage>() => Invoking(MessageInspector.AssertValidForSubscription<TMessage>).Should().Throw<MessageTypeInspector.MessageTypeDesignViolationException>();
 
-   [TestFixture] public class Inspecting_type_for_subscription_ : UniversalTestBase
+   [TestFixture] public class Inspecting_type_for_subscription_ : NUnitTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
+      public class Type_implements_Wrapper_event_interface_but_ : NUnitTestBase
       {
          [Test] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 
@@ -28,9 +28,9 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
       }
    }
 
-   [TestFixture] public class Inspecting_type_for_sending_and_ : UniversalTestBase
+   [TestFixture] public class Inspecting_type_for_sending_and_ : NUnitTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
+      public class Type_implements_Wrapper_event_interface_but_ : NUnitTestBase
       {
          [Test] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 

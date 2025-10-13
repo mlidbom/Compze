@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Compze.Tests.Unit.GenericAbstractions;
 
 [TestFixture]
-public class IStaticInstancePropertySingleton_tests : UniversalTestBase
+public class IStaticInstancePropertySingleton_tests : NUnitTestBase
 {
    [UsedImplicitly] class ImplicitImplementation : IStaticInstancePropertySingleton<ImplicitImplementation>
    {

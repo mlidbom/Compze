@@ -12,7 +12,6 @@ namespace Compze.Tests.Infrastructure.NUnit;
       TestFixtureHelper.RunAssemblyLevelSetup<UniversalTestFixture>(() =>
       {
          License.Accepted = true;
-         TestFixtureHelper.PerformSetupWithoutSerilog(); // Serilog already configured by module initializer
          AssertTestInheritsUniversalTestBase();
       });
    }
@@ -25,9 +24,8 @@ namespace Compze.Tests.Infrastructure.NUnit;
 
    void AssertTestInheritsUniversalTestBase()
    {
-      TestFixtureHelper.AssertAllTestClassesInheritFromBase(
+      TestFixtureHelper.AssertAllTestClassesInheritFromUniversalTestBase(
          GetType().Assembly,
-         typeof(UniversalTestBase),
          TestFixtureHelper.IsNUnitTestClass);
    }
 }

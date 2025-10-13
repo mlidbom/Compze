@@ -16,7 +16,6 @@ public sealed class XUnitAssemblyFixture : IAsyncLifetime
       TestFixtureHelper.RunAssemblyLevelSetup<XUnitAssemblyFixture>(() =>
       {
          License.Accepted = true;
-         TestFixtureHelper.PerformSetupWithoutSerilog(); // Serilog already configured by module initializer
          AssertTestInheritsUniversalTestBase();
       });
 
@@ -31,9 +30,8 @@ public sealed class XUnitAssemblyFixture : IAsyncLifetime
 
    static void AssertTestInheritsUniversalTestBase()
    {
-      TestFixtureHelper.AssertAllTestClassesInheritFromBase(
+      TestFixtureHelper.AssertAllTestClassesInheritFromUniversalTestBase(
          typeof(XUnitAssemblyFixture).Assembly,
-         typeof(Tests.Infrastructure.XUnit.UniversalTestBase),
          TestFixtureHelper.IsXUnitTestClass);
    }
 }

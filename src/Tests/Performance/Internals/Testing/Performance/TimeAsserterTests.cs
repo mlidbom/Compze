@@ -7,7 +7,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.Testing.Performance;
 
-[TestFixture] public class TimeAsserterTests : UniversalTestBase
+[TestFixture] public class TimeAsserterTests : NUnitTestBase
 {
    [Test] public void Execute_should_add_at_most_1_milliseconds_to_1000_iterations_of_action()
    {

@@ -19,11 +19,11 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Threading;
 using Compze.Wiring;
@@ -33,7 +33,7 @@ using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
 namespace Compze.Tests.Integration.XUnit.CQRS;
 
-public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
+public class EventStoreUpdaterTest : XUnitTestBase, IAsyncLifetime
 {
    class EventSpy
    {

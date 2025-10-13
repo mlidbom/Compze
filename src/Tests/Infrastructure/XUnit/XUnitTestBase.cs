@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
-public class UniversalTestBase : IDisposable
+public class XUnitTestBase : UniversalTestBase, IDisposable
 {
    bool _disposed;
 

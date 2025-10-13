@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.StrictlyManagedResource;
 
-[TestFixture]public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
+[TestFixture]public class StrictlyManagedResourcePerformanceTests : NUnitTestBase
 {
    // ReSharper disable once ClassNeverInstantiated.Local
    #pragma warning disable ca1812 // Class is never instantiated

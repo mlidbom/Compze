@@ -10,7 +10,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.Sql.EventStore;
 
-[TestFixture] public class ReadOrderTests : UniversalTestBase
+[TestFixture] public class ReadOrderTests : NUnitTestBase
 {
    [Test] public void Parse_followed_by_ToString_always_results_in_identical_string()
    {

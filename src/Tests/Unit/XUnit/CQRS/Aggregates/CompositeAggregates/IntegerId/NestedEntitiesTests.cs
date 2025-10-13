@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.IntegerId;
 
-public class NestedEntitiesTests : UniversalTestBase
+public class NestedEntitiesTests : XUnitTestBase
 {
    [Fact]
    public void ConstructorWorks() => new Root("root").Name.Should().Be("root");

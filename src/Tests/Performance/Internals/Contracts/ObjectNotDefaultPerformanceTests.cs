@@ -9,7 +9,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.Contracts;
 
-[TestFixture] public class ObjectNotDefaultPerformanceTests : UniversalTestBase
+[TestFixture] public class ObjectNotDefaultPerformanceTests : NUnitTestBase
 {
    [Test] public void Should_run_10_000_tests_in_1_Millisecond()
    {

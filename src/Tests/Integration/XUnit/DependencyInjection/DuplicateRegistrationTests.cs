@@ -5,11 +5,10 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
-using Xunit;
 
 namespace Compze.Tests.Integration.XUnit.DependencyInjection;
 
-public class DuplicateRegistrationTests : UniversalTestBase
+public class DuplicateRegistrationTests : XUnitTestBase
 {
    interface ITestService;
    class TestService : ITestService;

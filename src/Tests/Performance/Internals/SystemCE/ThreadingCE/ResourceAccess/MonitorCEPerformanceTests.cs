@@ -16,7 +16,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE.ResourceAccess;
 
-public class MonitorCEPerformanceTests : UniversalTestBase
+public class MonitorCEPerformanceTests : NUnitTestBase
 {
    class MyLong
    {

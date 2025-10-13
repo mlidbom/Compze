@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates;
 
-public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
+public class PublicSettersAndFieldsAreDisallowedTests : XUnitTestBase
 {
    public static class RootEvent
    {

@@ -9,7 +9,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
-[TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
+[TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : NUnitTestBase
 {
    MachineWideSharedObject<SharedObject> _shared;
    [SetUp] public void SetupTask()

@@ -13,7 +13,7 @@ using Compze.Tests.Infrastructure.NUnit;
 namespace Compze.Tests.Unit.Internals.Serialization;
 
 [TestFixture]
-public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
+public class NewtonSoftEventStoreEventSerializerTests : NUnitTestBase
 {
    IEventStoreSerializer _eventSerializer;
 

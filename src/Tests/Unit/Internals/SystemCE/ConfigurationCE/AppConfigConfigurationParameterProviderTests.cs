@@ -7,7 +7,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
 
-[TestFixture] public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
+[TestFixture] public class AppConfigConfigurationParameterProviderTests: NUnitTestBase
 {
    IConfigurationParameterProvider _provider;
    [SetUp] public void SetupTask() => _provider = AppSettingsJsonConfigurationParameterProvider.Instance;

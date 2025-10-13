@@ -9,7 +9,7 @@ using FluentAssertions;
 namespace Compze.Tests.Unit.Internals.Linq;
 
 [TestFixture]
-public class LinqExtensionsTests : UniversalTestBase
+public class LinqExtensionsTests : NUnitTestBase
 {
    [Test]
    public void FlattenShouldIterateAllNestedCollectionInstances()

@@ -14,7 +14,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
-public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTestBase
+public class NewtonSoftEventStoreEventSerializerPerformanceTests : NUnitTestBase
 {
    IEventStoreSerializer _eventSerializer;
 
