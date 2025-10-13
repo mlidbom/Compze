@@ -10,12 +10,6 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <!-- Exclude _docs files from compilation but keep them visible -->
-    <Compile Remove="_docs\**\*.cs" />
-    <None Include="_docs\**\*.cs" />
-    <Content Include="_docs\**\*.md" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
@@ -24,5 +18,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Abstractions\Compze.Abstractions.csproj" />
     <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+  </ItemGroup>
+  <!-- Exclude _docs files from compilation but keep them visible.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="_Docs\**\*.cs" />
+    <None Include="_Docs\**\*.cs" />
+    <Content Include="_Docs\**\*.md" />
   </ItemGroup>
 </Project>

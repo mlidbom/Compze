@@ -34,7 +34,7 @@ Then reload: `. $PROFILE`
 
 ### Code Quality & Structure
 
-- **C-Ensure-CsprojExcludesCsFiles** - Ensures .csproj files exclude .cs files from projects in subfolders
+- **C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders** - Ensures .csproj files exclude .cs files from projects in subfolders and properly handle _docs folders
 
 - **C-Fix-CsFileEncodings** - Converts .cs files to UTF-8 without BOM encoding
   - `-Path` - Path to scan (defaults to src)

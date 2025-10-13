@@ -22,14 +22,15 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
   </ItemGroup>
-    <ItemGroup>
-        <!-- Exclude _docs files from compilation but keep them visible -->
-        <Compile Remove="_docs\**\*.cs" />
-        <None Include="_docs\**\*.cs" />
-        <Content Include="_docs\**\*.md" />
-    </ItemGroup>
+  <!-- Exclude _docs files from compilation but keep them visible.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="_docs\**\*.cs" />
+    <None Include="_docs\**\*.cs" />
+    <Content Include="_docs\**\*.md" />
+  </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
     <EmbeddedResource Remove="Abstractions\**" />
@@ -55,5 +56,9 @@
     <EmbeddedResource Remove="EventStore\PostgreSql\**" />
     <None Remove="EventStore\PostgreSql\**" />
     <Content Remove="EventStore\PostgreSql\**" />
+    <Compile Remove="EventStore\Sqlite\**" />
+    <EmbeddedResource Remove="EventStore\Sqlite\**" />
+    <None Remove="EventStore\Sqlite\**" />
+    <Content Remove="EventStore\Sqlite\**" />
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
     <Compile Remove="NUnit\**" />
     <EmbeddedResource Remove="NUnit\**" />

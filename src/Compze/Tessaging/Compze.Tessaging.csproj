@@ -48,8 +48,24 @@
       <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <!-- Exclude _docs files from compilation but keep them visible.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="_docs\**\*.cs" />
+    <None Include="_docs\**\*.cs" />
+    <Content Include="_docs\**\*.md" />
+    <Compile Remove="Abstractions\_Docs\**\*.cs" />
+    <None Include="Abstractions\_Docs\**\*.cs" />
+    <Content Include="Abstractions\_Docs\**\*.md" />
+    <Compile Remove="Teventive\_docs\**\*.cs" />
+    <None Include="Teventive\_docs\**\*.cs" />
+    <Content Include="Teventive\_docs\**\*.md" />
+    <Compile Remove="Typermedia\_docs\**\*.cs" />
+    <None Include="Typermedia\_docs\**\*.cs" />
+    <Content Include="Typermedia\_docs\**\*.md" />
+  </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\Ensure-CompzeCsprojfilesExcludeCsFilesFromProjectsInSubfolders.ps1 -->
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
     <EmbeddedResource Remove="Abstractions\**" />

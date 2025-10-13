@@ -38,11 +38,11 @@ C-Reload-Module
 
 **Important**: This force-reloads the Compze module first to pick up any changes to DevScripts, then reloads your profile. Use this after editing any module files.
 
-### C-Ensure-CsprojExcludesCsFiles
-Ensures .csproj files exclude .cs files from projects in subfolders.
+### C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
+Ensures .csproj files exclude .cs files from projects in subfolders and properly handle _docs folders.
 
 ```powershell
-C-Ensure-CsprojExcludesCsFiles
+C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
 ```
 
 ### C-Remove-RedundantInternalsVisibleTo
