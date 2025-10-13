@@ -4,6 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Abstractions.Internal.Refactoring.Naming;
 
+
+/// <summary>
+/// Maps types to Guids.
+/// Whenever we persist an instance of a type anywhere, we use the mapped ID, not the type name.
+/// That way one can freely rename types without breaking any persisted data.
+/// </summary>
 interface ITypeMapper
 {
    //todo: Use static type and indexing trick to improve performance
