@@ -270,8 +270,8 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Tests/">
-    <Project Path="ScratchPad/Internals/Compze.Tests.ScratchPad.csproj">
+  <Folder Name="/Tests/ScratchPad/">
+    <Project Path="Tests/ScratchPad/Compze.Tests.ScratchPad.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
