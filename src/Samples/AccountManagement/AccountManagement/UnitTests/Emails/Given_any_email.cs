@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
 
-namespace AccountManagement.UnitTests.Emails;
+namespace AccountManagement.Tests.Unit.Emails;
 
 [TestFixture] public class Given_any_email : NUnitTestBase
 {

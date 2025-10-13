@@ -43,7 +43,7 @@
     <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="AccountManagement.PerformanceTests.Internals" />
+    <InternalsVisibleTo Include="AccountManagement.Tests.PerformanceInternals" />
     <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit" />
     <InternalsVisibleTo Include="Compze.Tests.Integration" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />

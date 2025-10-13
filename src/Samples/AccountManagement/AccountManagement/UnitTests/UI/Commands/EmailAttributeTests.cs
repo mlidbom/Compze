@@ -1,12 +1,12 @@
 using AccountManagement.API.ValidationAttributes;
-using AccountManagement.UnitTests.UI.Commands.UserCommands;
+using AccountManagement.Tests.Unit.UI.Commands.UserCommands;
 using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
 
-namespace AccountManagement.UnitTests.UI.Commands;
+namespace AccountManagement.Tests.Unit.UI.Commands;
 
 [TestFixture]
 public class EmailAttributeTests : NUnitTestBase

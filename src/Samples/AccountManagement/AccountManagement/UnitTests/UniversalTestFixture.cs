@@ -1,5 +1,5 @@
 using NUnit.Framework;
 
-namespace AccountManagement.UnitTests;
+namespace AccountManagement.Tests.Unit;
 
 [SetUpFixture] public class UniversalTestFixture : Compze.Tests.Infrastructure.NUnit.NUnitUniversalTestFixture;

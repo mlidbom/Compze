@@ -6,7 +6,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable InconsistentNaming
 
-namespace AccountManagement.UnitTests.Passwords;
+namespace AccountManagement.Tests.Unit.Passwords;
 
 [TestFixture]
 public class After_creating_a_password_From_the_string_Pass : NUnitTestBase

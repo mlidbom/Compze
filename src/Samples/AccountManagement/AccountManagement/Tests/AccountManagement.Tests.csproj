@@ -12,7 +12,7 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Server\AccountManagement.Server.csproj" />
-      <ProjectReference Include="..\UnitTests\AccountManagement.UnitTests.csproj" />
+      <ProjectReference Include="..\UnitTests\AccountManagement.Tests.Unit.csproj" />
       <ProjectReference Include="..\..\..\..\Tests\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
       <ProjectReference Include="..\..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
    </ItemGroup>

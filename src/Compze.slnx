@@ -82,22 +82,21 @@
     <Project Path="Samples/AccountManagement/AccountManagement/Domain/Events/AccountManagement.Domain.Events.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/Events/AccountManagement.Events.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/PerformanceTests/Internals/AccountManagement.PerformanceTests.Internals.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
     <Project Path="Samples/AccountManagement/AccountManagement/Server/AccountManagement.Server.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/Tests/AccountManagement.Tests.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
     <Project Path="Samples/AccountManagement/AccountManagement/UI/MVC/AccountManagement.UI.MVC.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
-    <Project Path="Samples/AccountManagement/AccountManagement/UnitTests/AccountManagement.UnitTests.csproj">
+  </Folder>
+  <Folder Name="/Compze/Samples/AccountManagement/Tests/">
+    <Project Path="Samples/AccountManagement/AccountManagement/PerformanceTests/Internals/AccountManagement.Tests.PerformanceInternals.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/Tests/AccountManagement.Tests.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+    <Project Path="Samples/AccountManagement/AccountManagement/UnitTests/AccountManagement.Tests.Unit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>

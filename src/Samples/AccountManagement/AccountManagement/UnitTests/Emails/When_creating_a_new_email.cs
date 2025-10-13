@@ -5,7 +5,7 @@ using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.NUnit;
 
-namespace AccountManagement.UnitTests.Emails;
+namespace AccountManagement.Tests.Unit.Emails;
 
 [TestFixture] public class When_creating_a_new_email : NUnitTestBase
 {

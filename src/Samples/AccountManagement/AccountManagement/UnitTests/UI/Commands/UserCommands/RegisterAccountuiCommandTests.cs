@@ -6,7 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
 
-namespace AccountManagement.UnitTests.UI.Commands.UserCommands;
+namespace AccountManagement.Tests.Unit.UI.Commands.UserCommands;
 
 [TestFixture]
 public class RegisterAccountUICommandTests : NUnitTestBase

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.NUnit;
 
-namespace AccountManagement.UnitTests.Passwords;
+namespace AccountManagement.Tests.Unit.Passwords;
 
 [TestFixture]
 public class A_password_is_invalid_if_it : NUnitTestBase
