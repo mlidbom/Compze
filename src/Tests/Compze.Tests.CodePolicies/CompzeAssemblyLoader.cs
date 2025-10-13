@@ -1,0 +1,22 @@
+using System.Linq;
+using System.Reflection;
+
+namespace Compze.Tests.CodePolicies;
+
+static class CompzeAssemblyLoader
+{
+   public static void EnsureAllCompzeAssembliesAreLoaded()
+   {
+      var binDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+      var allDllFiles = System.IO.Directory.GetFiles(binDirectory, "Compze.*.dll", System.IO.SearchOption.TopDirectoryOnly);
+
+      foreach(var dllPath in allDllFiles)
+      {
+         var assemblyName = AssemblyName.GetAssemblyName(dllPath);
+         if(System.AppDomain.CurrentDomain.GetAssemblies().All(loadedAssembly => loadedAssembly.FullName != assemblyName.FullName))
+         {
+            Assembly.LoadFrom(dllPath);
+         }
+      }
+   }
+}

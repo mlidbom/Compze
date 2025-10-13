@@ -287,7 +287,11 @@
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />
   </Folder>
-  <Folder Name="/_Tests/" />
+  <Folder Name="/_Tests/">
+    <Project Path="Tests/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" Id="8ffdc9e1-6b76-4b81-b753-0038d579a649">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
+  </Folder>
   <Folder Name="/_Tests/Common/">
     <Project Path="Tests/Common/Compze.Tests.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
