@@ -35,6 +35,10 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                             testCaseDisplayName: $"{testMethod.Method.Name}({combination})",
                             uniqueId: stableUniqueId,
                             @explicit: pgAttribute.Explicit,
+                            skipReason: pgAttribute.Skip,
+                            skipType: pgAttribute.SkipType,
+                            skipUnless: pgAttribute.SkipUnless,
+                            skipWhen: pgAttribute.SkipWhen,
                             timeout: pgAttribute.Timeout,
                             testMethodArguments: []);
                       })

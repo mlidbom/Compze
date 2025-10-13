@@ -27,27 +27,32 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
       var declaringType = testMethod.Method.DeclaringType;
       var currentType = testMethod.TestClass.Class;
 
+      // Ensure we have valid types before comparing
+      if(declaringType == null || currentType == null)
+         return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
+
       if(declaringType != currentType)
          return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
       // Build deterministic ID from full type name + method name instead of relying on testMethod.UniqueID
       // This ensures NCrunch gets the same ID during discovery and execution phases
       var fullName = testMethod.TestClass.Class.FullName ?? testMethod.TestClass.Class.Name;
-      var stableUniqueId = $"{fullName}.{testMethod.Method.Name}";
+      var methodName = testMethod.Method.Name ?? "UnknownMethod";
+      var stableUniqueId = $"{fullName}.{methodName}";
 
       return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([
                                                                           new XunitTestCase(
                                                                              testMethod: testMethod,
-                                                                             testCaseDisplayName: testMethod.Method.Name,
+                                                                             testCaseDisplayName: methodName,
                                                                              uniqueID: stableUniqueId,
                                                                              @explicit: factAttribute.Explicit,
                                                                              skipReason: factAttribute.Skip,
-                                                                             skipType: null,
-                                                                             skipUnless: null,
-                                                                             skipWhen: null,
+                                                                             skipType: factAttribute.SkipType,
+                                                                             skipUnless: factAttribute.SkipUnless,
+                                                                             skipWhen: factAttribute.SkipWhen,
                                                                              timeout: factAttribute.Timeout,
                                                                              testMethodArguments: [],
-                                                                             traits: null)
+                                                                             traits: new Dictionary<string, HashSet<string>>())
                                                                        ]);
    }
 }

@@ -20,19 +20,23 @@ public class PluggableComponentsTestCase : XunitTestCase
       string testCaseDisplayName,
       string uniqueId,
       bool @explicit,
+      string? skipReason,
+      Type? skipType,
+      string? skipUnless,
+      string? skipWhen,
       int? timeout,
       object?[]? testMethodArguments)
       : base(testMethod,
              testCaseDisplayName,
              uniqueId,
              @explicit,
-             skipReason: null,
-             skipType: null,
-             skipUnless: null,
-             skipWhen: null,
+             skipReason: skipReason,
+             skipType: skipType,
+             skipUnless: skipUnless,
+             skipWhen: skipWhen,
              timeout: timeout,
              testMethodArguments: testMethodArguments,
-             traits: null) =>
+             traits: new System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>>()) =>
       _combination = combination;
 
    protected override void Serialize(IXunitSerializationInfo info)
