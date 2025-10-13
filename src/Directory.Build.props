@@ -4,8 +4,7 @@
 	
 	<!-- Ensure test configuration file exists before build -->
 	<Import Project="msbuild\EnsurePluggableComponentsConfigExists.props" />
-	
-	<!-- Include test configuration files in test projects only -->
+
 	<!-- Matches test projects but excludes non-test support libraries -->
 	<PropertyGroup Condition="($(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)')) OR $(MSBuildProjectName.Contains('Test')) OR $(MSBuildProjectDirectory.Contains('ScratchPad'))) AND !$(MSBuildProjectName.Contains('.Testing'))">
 		<IsTestProject>true</IsTestProject>

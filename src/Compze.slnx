@@ -241,11 +241,6 @@
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Experimenting/">
-    <Project Path="ScratchPad/Internals/ScratchPad.Internals.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
-  </Folder>
   <Folder Name="/Samples/">
     <File Path="Samples/Directory.Build.props" />
   </Folder>
@@ -275,7 +270,11 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/">
+    <Project Path="ScratchPad/Internals/Compze.Tests.ScratchPad.csproj">
+      <BuildType Solution="docs|Any CPU" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Tests/Common/">
     <Project Path="Tests/Common/Compze.Tests.Common.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
