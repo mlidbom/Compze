@@ -4,4 +4,9 @@ using Compze.Utilities.SystemCE;
 namespace Compze.Tests.Infrastructure.Fluent;
 
 public class AssertionFailedException(string message) :
-   Exception($"{Environment.NewLine}{message.IndentToDepth("   ", 1)}");
+   Exception($"""
+
+              
+              {message.Indent()}
+
+              """);

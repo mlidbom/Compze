@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.SystemCE;
 using FluentAssertions;
 
 namespace Compze.Tests.CodePolicies;
@@ -24,16 +25,19 @@ public static class AppDomainExtensionsTests
          compzeAssemblies.Should().NotBeEmpty("there should be Compze assemblies loaded");
 
          var assembliesWithTypes = allTypes
-            .GroupBy(type => type.Assembly)
-            .Select(group => group.Key)
-            .ToList();
+                                  .GroupBy(type => type.Assembly)
+                                  .Select(group => group.Key)
+                                  .ToList();
 
          var assembliesWithoutTypes = compzeAssemblies
-            .Where(assembly => !assembliesWithTypes.Contains(assembly))
-            .ToList();
+                                     .Where(assembly => !assembliesWithTypes.Contains(assembly))
+                                     .ToList();
 
          assembliesWithoutTypes.Must().BeEmpty(
-            $"every Compze assembly should have at least one type, but these assemblies have no types: {string.Join(", ", assembliesWithoutTypes.Select(a => a.GetName().Name))}");
+            $"""
+             every Compze assembly should have at least one type, but these assemblies have no types: 
+             {assembliesWithoutTypes.Select(a => a.GetName().FullName).JoinLines().Indent()}
+             """);
       }
 
       [XFact]

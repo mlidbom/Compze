@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Compze.Utilities.Functional;
 using JetBrains.Annotations;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -51,4 +50,7 @@ static class StringCE
    public static string Invariant(this FormattableString interpolatedString) => FormattableString.Invariant(interpolatedString);
 
    public static string IndentToDepth(this string it, string indent, int depth) => it.Split(Environment.NewLine).Select(line => Enumerable.Repeat(indent, depth).Join(string.Empty) + line).Join(Environment.NewLine);
+   public static string IndentTab(this string it) => it.IndentToDepth("\t", 1);
+   public static string Indent(this string it) => it.IndentTab();
+   public static string JoinLines(this IEnumerable<string > it) => it.Join(Environment.NewLine);
 }

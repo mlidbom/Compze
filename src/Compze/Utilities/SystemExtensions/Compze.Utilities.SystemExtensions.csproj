@@ -1,31 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<RootNamespace>Compze.Utilities</RootNamespace>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <RootNamespace>Compze.Utilities</RootNamespace>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
 
 
-	<PropertyGroup>
-		<NuGetAuditMode>direct</NuGetAuditMode>
-		<AnalysisLevel>latest-all</AnalysisLevel>
-		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-	</PropertyGroup>
+   <PropertyGroup>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-	</ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+         <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+   </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Contracts\Compze.Utilities.Contracts.csproj" />
-		<ProjectReference Include="..\Functional\Compze.Utilities.Functional.csproj" />
-		<ProjectReference Include="..\Threading\Compze.Utilities.Threading.csproj" />
-	</ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\Functional\Compze.Utilities.Functional.csproj" />
+      <ProjectReference Include="..\Threading\Compze.Utilities.Threading.csproj" />
+   </ItemGroup>
 
-	<ItemGroup>
+   <ItemGroup>
       <InternalsVisibleTo Include="Compze.Abstractions" />
       <InternalsVisibleTo Include="Compze.Abstractions.Internal" />
       <InternalsVisibleTo Include="Compze.Common" />
@@ -76,15 +76,16 @@
       <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
       <InternalsVisibleTo Include="Compze.Tessaging.Typermedia.Abstractions" />
       <InternalsVisibleTo Include="Compze.Tests.ScratchPad" />
-		<InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/>
-      <InternalsVisibleTo Include="Compze.Utilities.SystemExtensions.Testing"/>
-	</ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+      		<InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"  />
+      <InternalsVisibleTo Include="Compze.Utilities.SystemExtensions.Testing"  />
+      <InternalsVisibleTo Include="Compze.Tests.CodePolicies" />
+   </ItemGroup>
+   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Testing\**" />
-    <EmbeddedResource Remove="Testing\**" />
-    <None Remove="Testing\**" />
-    <Content Remove="Testing\**" />
-  </ItemGroup>
+   <ItemGroup>
+      <Compile Remove="Testing\**" />
+      <EmbeddedResource Remove="Testing\**" />
+      <None Remove="Testing\**" />
+      <Content Remove="Testing\**" />
+   </ItemGroup>
 </Project>

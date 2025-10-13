@@ -2,6 +2,9 @@ using System;
 using System.Linq;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tests.CodePolicies;
 
@@ -29,7 +32,7 @@ public static class Types
 
                publicTypes.Must().BeEmpty($"""
                                            All types in *.Abstractions.Internal namespaces should be internal, but we found public types:
-                                           {string.Join(Environment.NewLine, publicTypes.Select(t => t.FullName))}
+                                           {publicTypes.Select(t => t.FullName ?? t.Name).JoinLines().Indent()}
                                            """);
             }
          }
