@@ -5,11 +5,11 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 
-[SetUpFixture] public class UniversalTestFixture
+[SetUpFixture] public class NUnitUniversalTestFixture
 {
    [OneTimeSetUp] public void UniversalSetup()
    {
-      TestFixtureHelper.RunAssemblyLevelSetup<UniversalTestFixture>(() =>
+      TestFixtureHelper.RunAssemblyLevelSetup<NUnitUniversalTestFixture>(() =>
       {
          License.Accepted = true;
          AssertTestInheritsUniversalTestBase();
@@ -18,8 +18,8 @@ namespace Compze.Tests.Infrastructure.NUnit;
 
    [OneTimeTearDown] public async Task UniversalTeardown()
    {
-      TestFixtureHelper.RunAssemblyLevelTeardown<UniversalTestFixture>(TestFixtureHelper.PerformTeardown);
-      await Task.CompletedTask; // Keep async signature for consistency
+      TestFixtureHelper.RunAssemblyLevelTeardown<NUnitUniversalTestFixture>(TestFixtureHelper.PerformTeardown);
+      await Task.CompletedTask;
    }
 
    void AssertTestInheritsUniversalTestBase()
