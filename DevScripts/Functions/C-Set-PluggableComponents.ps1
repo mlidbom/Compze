@@ -7,6 +7,9 @@ function C-Set-PluggableComponents {
     Sets the TestUsingPluggableComponentCombinations file to contain the cross join of all selected
     SQL persistence layers and DI containers. This controls which component combinations will be tested.
     
+    If only SQL layers (or only containers) are specified, the missing component type will be loaded
+    from the defaults file. This allows you to easily vary one dimension while keeping the other constant.
+    
     .PARAMETER MicrosoftSqlServer
     Include Microsoft SQL Server persistence layer
     
@@ -57,6 +60,10 @@ function C-Set-PluggableComponents {
     .EXAMPLE
     C-Set-PluggableComponents -SqliteMemory -Microsoft
     Configures tests to run only with SqliteMemory and Microsoft DI container
+    
+    .EXAMPLE
+    C-Set-PluggableComponents -AllSqlLayers
+    Configures tests to run with all SQL layers and the containers from the defaults file
     
     .EXAMPLE
     C-Set-PluggableComponents -AllSqlLayers -Microsoft
@@ -160,7 +167,9 @@ function C-Set-PluggableComponents {
     $containerSwitches = @($Microsoft, $SimpleInjector)
     $anySqlLayerSpecified = $sqlLayerSwitches -contains $true
     $anyContainerSpecified = $containerSwitches -contains $true
-    $anyParameterSpecified = $AllSqlLayers -or $AllContainers -or $AllPermutations -or $anySqlLayerSpecified -or $anyContainerSpecified
+    $sqlLayerSpecifiedOrAll = $AllSqlLayers -or $anySqlLayerSpecified
+    $containerSpecifiedOrAll = $AllContainers -or $anyContainerSpecified
+    $anyParameterSpecified = $sqlLayerSpecifiedOrAll -or $containerSpecifiedOrAll
     
     # If no parameters specified, use defaults file
     if (-not $anyParameterSpecified) {
@@ -196,15 +205,61 @@ function C-Set-PluggableComponents {
         return
     }
     
-    # Validate that at least something is selected when parameters are provided
-    if (-not $AllSqlLayers -and -not $anySqlLayerSpecified) {
-        Write-Error "Must specify at least one SQL layer (or -AllSqlLayers)"
-        return
+    # If only SQL layers or only containers are specified, load the missing part from defaults
+    if ($sqlLayerSpecifiedOrAll -and -not $containerSpecifiedOrAll) {
+        # Load containers from defaults
+        if (-not (Test-Path $testConfigDefaultsPath)) {
+            Write-Error "Cannot load default containers: defaults file not found at $testConfigDefaultsPath"
+            return
+        }
+        
+        $defaultCombinations = Get-Content $testConfigDefaultsPath | Where-Object { $_ -match '^\s*[^#]' -and $_ -notmatch '^\s*$' }
+        $defaultContainers = $defaultCombinations | ForEach-Object { 
+            if ($_ -match ':(.+)$') { $matches[1].Trim() }
+        } | Select-Object -Unique
+        
+        if ($defaultContainers.Count -eq 0) {
+            Write-Error "No containers found in defaults file"
+            return
+        }
+        
+        # Set the container switches based on defaults
+        foreach ($container in $defaultContainers) {
+            switch ($container) {
+                'Microsoft' { $Microsoft = $true }
+                'SimpleInjector' { $SimpleInjector = $true }
+            }
+        }
+        $anyContainerSpecified = $true
     }
-    
-    if (-not $AllContainers -and -not $anyContainerSpecified) {
-        Write-Error "Must specify at least one DI container (or -AllContainers)"
-        return
+    elseif ($containerSpecifiedOrAll -and -not $sqlLayerSpecifiedOrAll) {
+        # Load SQL layers from defaults
+        if (-not (Test-Path $testConfigDefaultsPath)) {
+            Write-Error "Cannot load default SQL layers: defaults file not found at $testConfigDefaultsPath"
+            return
+        }
+        
+        $defaultCombinations = Get-Content $testConfigDefaultsPath | Where-Object { $_ -match '^\s*[^#]' -and $_ -notmatch '^\s*$' }
+        $defaultSqlLayers = $defaultCombinations | ForEach-Object {
+            if ($_ -match '^(.+?):') { $matches[1].Trim() }
+        } | Select-Object -Unique
+        
+        if ($defaultSqlLayers.Count -eq 0) {
+            Write-Error "No SQL layers found in defaults file"
+            return
+        }
+        
+        # Set the SQL layer switches based on defaults
+        foreach ($sqlLayer in $defaultSqlLayers) {
+            switch ($sqlLayer) {
+                'MicrosoftSqlServer' { $MicrosoftSqlServer = $true }
+                'MySql' { $MySql = $true }
+                'PostgreSql' { $PostgreSql = $true }
+                'Sqlite' { $Sqlite = $true }
+                'SqliteMemory' { $SqliteMemory = $true }
+            }
+        }
+        $anySqlLayerSpecified = $true
     }
     
     # Build list of SQL layers

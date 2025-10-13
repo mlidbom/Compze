@@ -4,19 +4,19 @@ function C-Test {
     Runs Compze tests with proper configuration
     
     .DESCRIPTION
-    Runs the full Compze test suite. By default, runs tests without building (assumes already built).
+    Runs the full Compze test suite. By default, builds the solution before running tests.
     Tests run in parallel according to assembly-level attributes by default.
     
-    .PARAMETER Build
-    Build the solution before running tests
+    .PARAMETER NoBuild
+    Skip building the solution before running tests (assumes already built)
     
     .PARAMETER Clean
-    Performs a deep clean and build before running tests (implies -Build)
+    Performs a deep clean and build before running tests
     
     .PARAMETER FullGitReset
     Performs a full git reset that removes all untracked files and directories before testing.
     This will backup TestUsingPluggableComponentCombinations before running git clean.
-    Requires a clean working tree (no uncommitted changes). Implies -Clean and -Build.
+    Requires a clean working tree (no uncommitted changes). Implies -Clean.
     
     .PARAMETER SingleThreadedTesting
     Run tests single-threaded (forces sequential test execution, useful for debugging)
@@ -26,11 +26,11 @@ function C-Test {
     
     .EXAMPLE
     C-Test
-    Runs all tests without building (parallel)
+    Builds then runs all tests (parallel)
     
     .EXAMPLE
-    C-Test -Build
-    Builds then runs all tests (parallel)
+    C-Test -NoBuild
+    Runs all tests without building (parallel)
     
     .EXAMPLE
     C-Test -Clean
@@ -46,16 +46,16 @@ function C-Test {
     
     .EXAMPLE
     C-Test -SingleThreadedTesting
-    Runs all tests single-threaded without building (for debugging)
+    Builds then runs all tests single-threaded (for debugging)
     
     .EXAMPLE
-    C-Test -Build -SingleThreadedTesting
-    Builds then runs all tests single-threaded (for debugging)
+    C-Test -NoBuild -SingleThreadedTesting
+    Runs all tests single-threaded without building (for debugging)
     #>
     [CmdletBinding(SupportsShouldProcess)]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
-        [switch]$Build,
+        [switch]$NoBuild,
         [switch]$Clean,
         [switch]$FullGitReset,
         [switch]$SingleThreadedTesting
@@ -100,7 +100,13 @@ function C-Test {
                 dotnet test $solutionPath --no-build
             }
         }
-        elseif ($Build) {
+        elseif ($NoBuild) {
+            if ($SingleThreadedTesting) {
+                dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
+            } else {
+                dotnet test $solutionPath --no-build
+            }
+        } else {
             dotnet build $solutionPath
             
             if ($LASTEXITCODE -ne 0) {
@@ -108,12 +114,6 @@ function C-Test {
                 return
             }
             
-            if ($SingleThreadedTesting) {
-                dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
-            } else {
-                dotnet test $solutionPath --no-build
-            }
-        } else {
             if ($SingleThreadedTesting) {
                 dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0
             } else {
