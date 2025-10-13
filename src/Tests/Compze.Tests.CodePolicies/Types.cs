@@ -2,9 +2,7 @@ using System;
 using System.Linq;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
-using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tests.CodePolicies;
 
