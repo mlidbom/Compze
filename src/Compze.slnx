@@ -73,9 +73,6 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Serialization/">
-    <Project Path="Compze/Serialization/Abstractions/Compze.Serialization.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
     <Project Path="Compze/Serialization/Compze.Serialization.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
@@ -104,9 +101,6 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/Configuration/">
-    <Project Path="Compze/Tessaging/Hosting/Configuration/Abstractions/Compze.Tessaging.Hosting.Configuration.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
     <Project Path="Compze/Tessaging/Hosting/Configuration/Compze.Tessaging.Hosting.Configuration.csproj">
       <BuildType Solution="docs|Any CPU" Project="Release" />
     </Project>
@@ -190,9 +184,6 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/Utilities/Logging/">
-    <Project Path="Compze/Utilities/Logging/Abstractions/Compze.Utilities.Logging.Abstractions.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Release" />
-    </Project>
     <Project Path="Compze/Utilities/Logging/Compze.Utilities.Logging.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>

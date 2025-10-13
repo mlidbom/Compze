@@ -26,12 +26,4 @@
 		<ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
 		<ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <EmbeddedResource Remove="Abstractions\**" />
-    <None Remove="Abstractions\**" />
-    <Content Remove="Abstractions\**" />
-  </ItemGroup>
 </Project>

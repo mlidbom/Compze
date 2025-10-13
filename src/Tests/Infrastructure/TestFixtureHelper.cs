@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Logging.Serilog;
-using Compze.Utilities.SystemCE;
 using Serilog;
 using Serilog.Core;
 using Serilog.Exceptions;
