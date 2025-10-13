@@ -5,7 +5,7 @@ using Compze.Wiring;
 using FluentAssertions;
 using Xunit;
 
-namespace Compze.Tests.Unit.XUnit.Infrastructure;
+namespace Compze.Tests.Integration.XUnit.Infrastructure;
 
 /// <summary>
 /// Test to verify that the PluggableComponentsTheory attribute works correctly.
