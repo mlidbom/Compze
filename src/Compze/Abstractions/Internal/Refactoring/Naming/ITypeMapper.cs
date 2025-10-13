@@ -7,8 +7,8 @@ namespace Compze.Abstractions.Internal.Refactoring.Naming;
 
 /// <summary>
 /// Maps types to Guids.
-/// Whenever we persist an instance of a type anywhere, we use the mapped ID, not the type name.
-/// That way one can freely rename types without breaking any persisted data.
+/// Whenever we serialize or save an instance of a type anywhere, we use the mapped ID, not the type name.
+/// That way one can freely rename types without breaking any persisted data or communication between systems.
 /// </summary>
 interface ITypeMapper
 {
