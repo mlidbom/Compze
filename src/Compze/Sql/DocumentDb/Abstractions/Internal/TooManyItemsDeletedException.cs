@@ -1,5 +1,5 @@
 using System;
 
-namespace Compze.Abstractions.Internal.Sql.DocumentDb;
+namespace Compze.Sql.DocumentDb.Abstractions.Internal;
 
 class TooManyItemsDeletedException : Exception;

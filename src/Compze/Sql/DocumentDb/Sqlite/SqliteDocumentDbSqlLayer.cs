@@ -1,13 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Internal.Sql.DocumentDb;
 using Compze.Sql.Common;
+using Compze.Sql.DocumentDb.Abstractions.Internal;
 using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
-using Schema = Compze.Abstractions.Internal.Sql.DocumentDb.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Schema = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Sql.DocumentDb.Sqlite;
 

@@ -11,7 +11,8 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Sqlite\Infrastructure\Compze.Sql.Sqlite.Infrastructure.csproj" />
+     <ProjectReference Include="..\Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\Sqlite\Infrastructure\Compze.Sql.Sqlite.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>
   <ItemGroup>

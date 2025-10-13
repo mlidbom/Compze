@@ -12,4 +12,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
+	<ItemGroup>
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
+	  <InternalsVisibleTo Include="Compze.Sql.DocumentDb.Sqlite" />
+	</ItemGroup>
 </Project>

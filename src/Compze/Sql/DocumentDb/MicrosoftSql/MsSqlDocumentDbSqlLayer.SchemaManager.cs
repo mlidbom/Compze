@@ -1,7 +1,7 @@
 using Compze.Sql.MicrosoftSql.Infrastructure;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.ResourceAccess;
-using Document = Compze.Abstractions.Internal.Sql.DocumentDb.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Document = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Sql.DocumentDb.MicrosoftSql;
 

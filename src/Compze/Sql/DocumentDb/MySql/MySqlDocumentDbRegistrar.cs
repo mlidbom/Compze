@@ -1,4 +1,4 @@
-using Compze.Abstractions.Internal.Sql.DocumentDb;
+using Compze.Sql.DocumentDb.Abstractions.Internal;
 using Compze.Sql.MySql.Infrastructure.SystemExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
