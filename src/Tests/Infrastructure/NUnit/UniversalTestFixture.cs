@@ -12,7 +12,7 @@ namespace Compze.Tests.Infrastructure.NUnit;
       TestFixtureHelper.RunAssemblyLevelSetup<UniversalTestFixture>(() =>
       {
          License.Accepted = true;
-         TestFixtureHelper.PerformSetup(new NUnitTestEnricher());
+         TestFixtureHelper.PerformSetupWithoutSerilog(); // Serilog already configured by module initializer
          AssertTestInheritsUniversalTestBase();
       });
    }

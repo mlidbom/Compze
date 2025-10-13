@@ -18,11 +18,32 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class TestFixtureHelper
 {
+   /// <summary>
+   /// Performs assembly-level setup including Serilog configuration. 
+   /// Should only be called from module initializers.
+   /// </summary>
    public static void PerformSetup(ILogEventEnricher? testEnricher = null)
    {
       try
       {
          SetupSerilog(testEnricher);
+         UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
+      }
+      catch
+      {
+         LogFailure(typeof(TestFixtureHelper));
+         throw;
+      }
+   }
+
+   /// <summary>
+   /// Performs assembly-level setup WITHOUT Serilog configuration.
+   /// Use this from assembly fixtures since Serilog is already configured by module initializers.
+   /// </summary>
+   public static void PerformSetupWithoutSerilog()
+   {
+      try
+      {
          UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
       }
       catch
