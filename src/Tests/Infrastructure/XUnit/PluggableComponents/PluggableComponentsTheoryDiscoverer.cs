@@ -6,15 +6,17 @@ using Xunit.v3;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
+#pragma warning disable CA1812
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 {
+#pragma warning restore CA1812
    public async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
       IXunitTestMethod testMethod,
       IFactAttribute factAttribute)
    {
       var pgAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
-      var combinations = PluggableComponentsReader.GetCombinations()
+      var combinations = PluggableComponentsReader.Combinations
                                                   .Where(combo => !pgAttribute.ExcludeSqlLayers.Contains(combo.SqlLayer))
                                                   .ToList();
 

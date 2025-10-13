@@ -33,7 +33,11 @@ public class EventStoreTests : UniversalTestBase
    IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();
 
-   protected override void Dispose(bool disposing) => _serviceLocator.Dispose();
+   protected override void Dispose(bool disposing)
+   {
+      _serviceLocator.Dispose();
+      base.Dispose(disposing);
+   }
 
    [PluggableComponentsTheory]
    public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
@@ -25,7 +26,11 @@ public class XUnitStartupIntegrationTest : IAsyncLifetime
       };
    }
 
-   public async ValueTask DisposeAsync() => await ValueTask.CompletedTask;
+   public async ValueTask DisposeAsync()
+   {
+      await ValueTask.CompletedTask;
+      GC.SuppressFinalize(this);
+   }
 
    public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
 }
