@@ -12,7 +12,7 @@ static class ThreadPoolCE
       for(var tries = 1; Idle <= threadCount && tries < 5; tries++)
       {
          var waitForAllThreadsToStart = new CountdownEvent(threadCount);
-         Task.WaitAll(Enumerable.Range(1, threadCount).Select(_ => TaskCE.Run(() =>
+         Task.WaitAll(Enumerable.Range(1, threadCount).Select(_ => TaskCE.RunOnDedicatedThread(() =>
          {
             waitForAllThreadsToStart.Signal(1);
             waitForAllThreadsToStart.Wait();
