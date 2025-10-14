@@ -6,6 +6,7 @@ using Xunit.Sdk;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
+//XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 #pragma warning disable CA1812
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 {
