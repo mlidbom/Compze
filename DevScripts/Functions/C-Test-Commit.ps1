@@ -81,7 +81,8 @@ function C-Test-Commit {
                 $line -notmatch '^Starting test execution, please wait\.\.\.' -and
                 $line -notmatch '^A total of \d+ test files matched the specified pattern\.' -and
                 $line -notmatch '^Test run for .+\.dll \(\.NETCoreApp,Version=' -and
-                $line -notmatch '^\s+Skipped .+\[\d+\s+\w+\]'
+                $line -notmatch '^\s+Skipped .+\[\d+\s+\w+\]' -and
+                $line -notmatch '^\[xUnit\.net \d+:\d+:\d+\.\d+\]\s+.+\[SKIP\]'
             } | ForEach-Object { Write-Host $_ }
             
             # Check for FailureText if specified
