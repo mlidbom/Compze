@@ -20,8 +20,10 @@ namespace Compze.Tests.Integration.XUnit.Tessaging;
 
 public class TaskRunnerExceptionHandlingTests : XUnitTestBase, IAsyncLifetime
 {
-   readonly ITestingEndpointHost _host;
-   readonly ITaskRunner _taskRunner;
+#pragma warning disable CA2213 // Disposable fields should be disposed
+    readonly ITestingEndpointHost _host;
+#pragma warning restore CA2213 // Disposable fields should be disposed
+    readonly ITaskRunner _taskRunner;
 
    public TaskRunnerExceptionHandlingTests()
    {
