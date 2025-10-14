@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,16 +24,19 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
 
    public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
    {
-      var declaringType = testMethod.Method.Type;
-      var currentType = testMethod.TestClass.Class;
+      // In XUnit v2, we need to convert ITypeInfo and IMethodInfo to runtime types to compare them properly
+      // This is the key difference from just comparing Name properties
+      var declaringType = testMethod.Method.ToRuntimeMethod()?.DeclaringType;
+      var currentType = testMethod.TestClass.Class.ToRuntimeType();
 
       // Ensure we have valid types before comparing
       if(declaringType == null || currentType == null)
-         return [];
+         return Array.Empty<IXunitTestCase>();
 
-      if(declaringType.Name != currentType.Name)
-         return [];
+      // Only create a test case if the method is declared in the current class (not inherited from base)
+      if(declaringType != currentType)
+         return Array.Empty<IXunitTestCase>();
 
-      return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
+      return new[] { new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod) };
    }
 }
