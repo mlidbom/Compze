@@ -6,6 +6,7 @@ using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endp
 using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
 using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.TasksCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
@@ -30,7 +31,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : NUnit
    [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_Query()
    {
       QueryHandlerThreadGate.Close();
-      var tasks = 1.Through(5).Select(_ => Task.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())))).ToList();
+      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())))).ToList();
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       QueryHandlerThreadGate.Open();

@@ -46,7 +46,7 @@ class ThreadGateTestFixture : IDisposable
                        .ToList();
 
       _tasksPassingGate = _entrantEvents.Select(
-                                           entrantEvent => TaskCE.RunOnDedicatedPoolThread(
+                                           entrantEvent => TaskCE.Run(
                                               () =>
                                               {
                                                  entrantEvent.HasStarted.Set();

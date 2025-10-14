@@ -12,6 +12,7 @@ using JetBrains.Annotations;
 using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -133,11 +134,11 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
       using var shared2 = MachineWideSharedObject<SharedObject>.For(name);
       // ReSharper disable AccessToDisposedClosure
       var tasks = Task.WhenAll(
-         Task.Run(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),
-         Task.Run(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {}))),
-         Task.Run(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.GetCopy())),
-         Task.Run(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {}))),
-         Task.Run(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.GetCopy())));
+         TaskCE.Run(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),
+         TaskCE.Run(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {}))),
+         TaskCE.Run(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.GetCopy())),
+         TaskCE.Run(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {}))),
+         TaskCE.Run(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.GetCopy())));
 
       updateGate.AwaitQueueLengthEqualTo(1);
       conflictingSections.ForEach(section =>

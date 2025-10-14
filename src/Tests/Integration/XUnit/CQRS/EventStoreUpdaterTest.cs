@@ -26,6 +26,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.TasksCE;
 using Compze.Wiring;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
@@ -101,7 +102,7 @@ public class EventStoreUpdaterTest : XUnitTestBase, IAsyncLifetime
       IEventStoreUpdater? updater = null;
       IEventStoreReader? reader = null;
       using var wait = new ManualResetEventSlim();
-      Task.Run(() =>
+      TaskCE.Run(() =>
       {
          _serviceLocator.ExecuteInIsolatedScope(() =>
          {
@@ -559,7 +560,7 @@ public class EventStoreUpdaterTest : XUnitTestBase, IAsyncLifetime
       var changeEmailSection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(2));
 
       const int threads = 2;
-      var tasks = 1.Through(threads).Select(_ => Task.Run(UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
 
       getHistorySection.LetOneThreadPass();
       changeEmailSection.LetOneThreadEnterAndReachExit();
@@ -614,7 +615,7 @@ public class EventStoreUpdaterTest : XUnitTestBase, IAsyncLifetime
 
       const int threads = 2;
 
-      var tasks = 1.Through(threads).Select(_ => Task.Run(UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
 
       changeEmailSection.EntranceGate.Open();
       changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualTo(2);

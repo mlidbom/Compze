@@ -29,7 +29,7 @@ public class MonitorCE_specification : XUnitTestBase
 
       using var otherThreadIsWaitingForLock = new ManualResetEventSlim(false);
       using var otherThreadGotLock = new ManualResetEventSlim(false);
-      var otherThreadTask = Task.Run(() =>
+      var otherThreadTask = TaskCE.Run(() =>
       {
          otherThreadIsWaitingForLock.Set();
          using(monitor.TakeUpdateLock())
@@ -54,11 +54,11 @@ public class MonitorCE_specification : XUnitTestBase
       {
          using(monitor.TakeUpdateLock()) {}
 
-         Invoking(() => TaskCE.RunOnDedicatedPoolThread(() => monitor.TakeUpdateLock(timeout: 100.Milliseconds())).Wait())
+         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(timeout: 100.Milliseconds())).Wait())
            .Should().Throw<Exception>();
       }
 
-      TaskCE.RunOnDedicatedPoolThread(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
+      TaskCE.Run(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
    }
 
    public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : XUnitTestBase
@@ -85,7 +85,7 @@ public class MonitorCE_specification : XUnitTestBase
          var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
          var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);
 
-         TaskCE.RunOnDedicatedPoolThread(() =>
+         TaskCE.Run(() =>
          {
             var @lock = monitor.TakeUpdateLock();
             threadOneHasTakenUpdateLock.Set();
@@ -96,7 +96,7 @@ public class MonitorCE_specification : XUnitTestBase
 
          threadOneHasTakenUpdateLock.WaitOne();
 
-         var thrownException = Invoking(() => TaskCE.RunOnDedicatedPoolThread(() =>
+         var thrownException = Invoking(() => TaskCE.Run(() =>
                                                      {
                                                         threadTwoIsAboutToTryToEnterUpdateLock.Set();
                                                         monitor.TakeUpdateLock();

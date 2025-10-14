@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Utilities.Threading.Testing;
 
@@ -38,5 +39,5 @@ public static class ThreadGateExtensions
    }
 
    public static Task<IThreadGate> ExecuteWithExclusiveLockWhenAsync(this IThreadGate @this, TimeSpan timeout, Func<bool> condition, Action action)
-      => Task.Run(() => @this.ExecuteWithExclusiveLockWhen(timeout, condition, action));
+      => TaskCE.Run(() => @this.ExecuteWithExclusiveLockWhen(timeout, condition, action));
 }

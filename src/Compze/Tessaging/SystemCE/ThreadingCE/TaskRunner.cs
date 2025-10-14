@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
@@ -30,7 +31,7 @@ static class TaskRunnerRegistrar
 
    public void RunSwallowAndLogExceptions(string taskName, Action task)
    {
-      Task.Run(() =>
+      TaskCE.Run(() =>
       {
          try
          {
