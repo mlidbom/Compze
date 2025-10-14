@@ -44,7 +44,7 @@ function C-Test-Commit {
     param(
         [string]$FailureText,
         
-        [int]$MaxFailures = -1,
+        [int]$MaxFailures = 1,
         
         [int]$Iterations = 1
     )
@@ -52,11 +52,6 @@ function C-Test-Commit {
     # Validate mutually exclusive parameters
     if ($FailureText -and $MaxFailures -ge 0) {
         Write-Error "Parameters -FailureText and -MaxFailures are mutually exclusive. Use one or the other."
-        return $false
-    }
-    
-    if (-not $FailureText -and $MaxFailures -lt 0) {
-        Write-Error "You must specify either -FailureText or -MaxFailures"
         return $false
     }
     
