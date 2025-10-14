@@ -111,6 +111,8 @@ function C-GitBisectAuto {
             
             # Found a good commit
             Write-Host "Found good commit: $targetCommit" -ForegroundColor Green
+            # Reset any changes from build before marking as good
+            git reset --hard HEAD 2>&1 | Out-Null
             git bisect good
             $foundGood = $true
         }
@@ -140,12 +142,17 @@ function C-GitBisectAuto {
             
             if ($LASTEXITCODE -ne 0) {
                 Write-Host "Build failed, marking as skip..." -ForegroundColor Yellow
+                # Reset any changes from build before skipping
+                git reset --hard HEAD 2>&1 | Out-Null
                 git bisect skip
                 continue
             }
             
             # Test the commit
             $isGood = Test-Commit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
+            
+            # Reset any changes from build/test before marking
+            git reset --hard HEAD 2>&1 | Out-Null
             
             if ($isGood) {
                 Write-Host "Tests passed, marking as good..." -ForegroundColor Green
