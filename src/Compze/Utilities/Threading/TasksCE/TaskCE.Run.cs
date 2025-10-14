@@ -12,5 +12,5 @@ static partial class TaskCE
    static readonly TaskFactory DefaultSchedulerDenyChildAttachTaskFactory = new(CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskContinuationOptions.None, TaskScheduler.Default);
 
    ///<summary>Passing <see cref="TaskCreationOptions.LongRunning"/> to <see cref="TaskFactory{TResult}.StartNew(System.Func{object?,TResult},object?)"/> which has the result of ensuring that the task gets a thread to run on right away.</summary>
-   internal static Task RunPrioritized(Action action) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(action, TaskCreationOptions.LongRunning);
+   internal static Task RunOnDedicatedPoolThread(Action action) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(action, TaskCreationOptions.LongRunning);
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,19 +50,18 @@ public class MonitorCE_specification : XUnitTestBase
    [XFact] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
       var monitor = MonitorCE.WithTimeout(1.Seconds());
-
       using(monitor.TakeUpdateLock())
       {
          using(monitor.TakeUpdateLock()) {}
 
-         Invoking(() => Task.Run(() => monitor.TakeUpdateLock(timeout: 10.Milliseconds())).Wait())
-                                       .Should().Throw<Exception>();
+         Invoking(() => TaskCE.RunOnDedicatedPoolThread(() => monitor.TakeUpdateLock(timeout: 100.Milliseconds())).Wait())
+           .Should().Throw<Exception>();
       }
 
-      TaskCE.RunPrioritized(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
+      TaskCE.RunOnDedicatedPoolThread(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
    }
 
-    public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : XUnitTestBase
+   public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : XUnitTestBase
    {
       [XFact, EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 5.Seconds(), monitorTimeout: 10.Milliseconds()).Should().BeOfType<EnterLockTimeoutException>();
@@ -85,7 +85,7 @@ public class MonitorCE_specification : XUnitTestBase
          var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
          var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);
 
-         TaskCE.RunPrioritized(() =>
+         TaskCE.RunOnDedicatedPoolThread(() =>
          {
             var @lock = monitor.TakeUpdateLock();
             threadOneHasTakenUpdateLock.Set();
@@ -96,13 +96,12 @@ public class MonitorCE_specification : XUnitTestBase
 
          threadOneHasTakenUpdateLock.WaitOne();
 
-         var thrownException = Invoking(
-                                         () => TaskCE.RunPrioritized(() =>
-                                                    {
-                                                       threadTwoIsAboutToTryToEnterUpdateLock.Set();
-                                                       monitor.TakeUpdateLock();
-                                                    })
-                                                   .Wait())
+         var thrownException = Invoking(() => TaskCE.RunOnDedicatedPoolThread(() =>
+                                                     {
+                                                        threadTwoIsAboutToTryToEnterUpdateLock.Set();
+                                                        monitor.TakeUpdateLock();
+                                                     })
+                                                    .Wait())
                               .Should().Throw<AggregateException>()
                               .Which.InnerExceptions.Single();
 
