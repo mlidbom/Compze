@@ -85,6 +85,27 @@ function C-Test-Commit {
                 $line -notmatch '^\[xUnit\.net \d+:\d+:\d+\.\d+\]\s+.+\[SKIP\]'
             } | ForEach-Object { Write-Host $_ }
             
+            # Parse test results to count failures
+            $iterationFailures = 0
+            $summaryLines = $testOutput | Where-Object { $_ -match '(Passed!|Failed!)\s+-\s+Failed:' }
+            
+            if ($summaryLines) {
+                foreach ($line in $summaryLines) {
+                    $summaryText = $line.ToString()
+                    
+                    if ($summaryText -match 'Failed:\s*(\d+)') {
+                        $iterationFailures += [int]$matches[1]
+                    }
+                }
+            }
+            
+            $totalFailures += $iterationFailures
+            
+            # Display iteration summary
+            if ($Iterations -gt 1) {
+                Write-Host "Iteration $i failures: $iterationFailures (cumulative: $totalFailures)" -ForegroundColor $(if ($iterationFailures -gt 0) { "Yellow" } else { "Green" })
+            }
+            
             # Check for FailureText if specified
             if ($FailureText) {
                 $outputString = $testOutput | Out-String
@@ -96,34 +117,16 @@ function C-Test-Commit {
             
             # Check for MaxFailures if specified
             if ($MaxFailures -ge 0) {
-                # Parse test results - sum up failures from all test projects
-                $summaryLines = $testOutput | Where-Object { $_ -match '(Passed!|Failed!)\s+-\s+Failed:' }
-                
-                if ($summaryLines) {
-                    foreach ($line in $summaryLines) {
-                        $summaryText = $line.ToString()
-                        
-                        if ($summaryText -match 'Failed:\s*(\d+)') {
-                            $failures = [int]$matches[1]
-                            $totalFailures += $failures
-                            
-                            if ($Iterations -gt 1) {
-                                Write-Host "Iteration $i failures: $failures (cumulative: $totalFailures)" -ForegroundColor Yellow
-                            }
-                            
-                            if ($totalFailures -gt $MaxFailures) {
-                                Write-Host "Cumulative failures ($totalFailures) exceeded MaxFailures ($MaxFailures)" -ForegroundColor Red
-                                return $false
-                            }
-                        }
-                    }
+                if ($totalFailures -gt $MaxFailures) {
+                    Write-Host "Cumulative failures ($totalFailures) exceeded MaxFailures ($MaxFailures)" -ForegroundColor Red
+                    return $false
                 }
             }
         }
         
-        # All iterations passed
-        if ($MaxFailures -ge 0 -and $Iterations -gt 1) {
-            Write-Host "Total cumulative failures: $totalFailures (limit: $MaxFailures)" -ForegroundColor Green
+        # All iterations passed - display final summary
+        if ($Iterations -gt 1) {
+            Write-Host "Total cumulative failures: $totalFailures" -ForegroundColor $(if ($totalFailures -eq 0) { "Green" } else { "Yellow" })
         }
         return $true
         
