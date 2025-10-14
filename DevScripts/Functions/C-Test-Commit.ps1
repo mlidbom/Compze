@@ -73,8 +73,14 @@ function C-Test-Commit {
             # Run tests and capture output
             $testOutput = dotnet test $solutionPath --no-build 2>&1
             
-            # Display output
-            $testOutput | ForEach-Object { Write-Host $_ }
+            # Display output, filtering out VSTest noise
+            $testOutput | Where-Object { 
+                $line = $_.ToString()
+                -not [string]::IsNullOrWhiteSpace($line) -and
+                $line -notmatch '^VSTest version' -and
+                $line -notmatch '^Starting test execution, please wait\.\.\.' -and
+                $line -notmatch '^A total of \d+ test files matched the specified pattern\.'
+            } | ForEach-Object { Write-Host $_ }
             
             # Check for FailureText if specified
             if ($FailureText) {
