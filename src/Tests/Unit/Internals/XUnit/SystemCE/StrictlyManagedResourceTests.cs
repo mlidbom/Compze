@@ -13,6 +13,7 @@ using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.SystemCE;
 
+[Collection(nameof(NonParallelCollection))]
 public class StrictlyManagedResourceTests : XUnitTestBase
 {
    //Note: NonParallelizable removed in migration to XUnit. Should things turn flaky...

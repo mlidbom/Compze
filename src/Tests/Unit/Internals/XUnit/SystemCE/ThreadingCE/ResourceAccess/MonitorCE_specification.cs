@@ -17,7 +17,8 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE.ResourceAccess;
 
- public class MonitorCE_specification : XUnitTestBase
+[Collection(nameof(NonParallelCollection))]
+public class MonitorCE_specification : XUnitTestBase
 {
    [XFact] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
