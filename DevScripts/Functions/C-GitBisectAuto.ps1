@@ -79,7 +79,8 @@ function C-GitBisectAuto {
         $foundGood = $false
         
         while (-not $foundGood) {
-            $targetCommit = git rev-parse "HEAD~$stepsBack" 2>$null
+            # Get the commit hash that is $stepsBack commits back, including all merged branches
+            $targetCommit = git log --all --oneline --format=%H --skip=$stepsBack -n 1 2>$null
             
             if (-not $targetCommit -or $LASTEXITCODE -ne 0) {
                 Write-Error "Could not go back $stepsBack commits. Reached beginning of history."
