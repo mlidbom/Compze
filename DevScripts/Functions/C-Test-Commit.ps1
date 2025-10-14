@@ -79,7 +79,9 @@ function C-Test-Commit {
                 -not [string]::IsNullOrWhiteSpace($line) -and
                 $line -notmatch '^VSTest version' -and
                 $line -notmatch '^Starting test execution, please wait\.\.\.' -and
-                $line -notmatch '^A total of \d+ test files matched the specified pattern\.'
+                $line -notmatch '^A total of \d+ test files matched the specified pattern\.' -and
+                $line -notmatch '^Test run for .+\.dll \(\.NETCoreApp,Version=' -and
+                $line -notmatch '^\s+Skipped .+\[\d+\s+\w+\]'
             } | ForEach-Object { Write-Host $_ }
             
             # Check for FailureText if specified
