@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using Xunit;
-using Xunit.v3;
+using Xunit.Sdk;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
@@ -8,14 +8,8 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 /// Use this attribute instead of [Fact] for tests that should run with all pluggable component combinations.
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// </summary>
-[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
-public sealed class PluggableComponentsTheoryAttribute(
-      [CallerFilePath] string? sourceFilePath = null,
-      [CallerLineNumber] int sourceLineNumber = -1)
-   // ReSharper disable once ExplicitCallerInfoArgument
-   : FactAttribute(sourceFilePath,
-                   // ReSharper disable once ExplicitCallerInfoArgument
-                   sourceLineNumber)
+[XunitTestCaseDiscoverer("Compze.Tests.Infrastructure.XUnit.PluggableComponents.PluggableComponentsTheoryDiscoverer", "Compze.Tests.Infrastructure.XUnit")]
+public sealed class PluggableComponentsTheoryAttribute : FactAttribute
 {
    /// <summary>
    /// SQL layers to exclude from test execution. Use when a test is not applicable to certain database types.
