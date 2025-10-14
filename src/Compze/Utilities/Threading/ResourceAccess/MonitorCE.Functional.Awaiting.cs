@@ -36,12 +36,14 @@ public partial class MonitorCE
    {
       if(conditionTimeout == InfiniteTimeout)
       {
-         Enter(DefaultTimeout);
+         if(!TryEnter(DefaultTimeout)) 
+            return false;
          while(!condition()) Wait(InfiniteTimeout);
       } else
       {
          var startTime = DateTime.UtcNow;
-         Enter(conditionTimeout);
+         if(!TryEnter(DefaultTimeout)) 
+            return false;
 
          while(!condition())
          {
