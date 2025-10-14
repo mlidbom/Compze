@@ -102,7 +102,7 @@ function C-GitBisectAuto {
             }
             
             # Test the commit
-            $isGood = Test-Commit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
+            $isGood = C-Test-Commit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
             
             if (-not $isGood) {
                 Write-Host "Tests failed, going back $GoodSearchSteps more commits..." -ForegroundColor Red
@@ -153,7 +153,7 @@ function C-GitBisectAuto {
             }
             
             # Test the commit
-            $isGood = Test-Commit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
+            $isGood = C-Test-Commit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
             
             # Reset any changes from build/test before marking
             git reset --hard HEAD 2>&1 | Out-Null
@@ -166,76 +166,6 @@ function C-GitBisectAuto {
                 git bisect bad
             }
         }
-        
-    } finally {
-        Pop-Location
-    }
-}
-
-function Test-Commit {
-    param(
-        [string]$FailureText,
-        [int]$MaxFailures,
-        [int]$Iterations
-    )
-    
-    $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
-    $totalFailures = 0
-    
-    Push-Location (Join-Path $script:CompzeRoot "src")
-    try {
-        for ($i = 1; $i -le $Iterations; $i++) {
-            if ($Iterations -gt 1) {
-                Write-Host "`n--- Test iteration $i of $Iterations ---" -ForegroundColor Cyan
-            }
-            
-            # Run tests and capture output
-            $testOutput = dotnet test $solutionPath --no-build 2>&1
-            
-            # Display output
-            $testOutput | ForEach-Object { Write-Host $_ }
-            
-            # Check for FailureText if specified
-            if ($FailureText) {
-                $outputString = $testOutput | Out-String
-                if ($outputString -match [regex]::Escape($FailureText)) {
-                    Write-Host "Found failure text: '$FailureText'" -ForegroundColor Red
-                    return $false
-                }
-            }
-            
-            # Check for MaxFailures if specified
-            if ($MaxFailures -ge 0) {
-                # Parse test results - sum up failures from all test projects
-                $summaryLines = $testOutput | Where-Object { $_ -match '(Passed!|Failed!)\s+-\s+Failed:' }
-                
-                if ($summaryLines) {
-                    foreach ($line in $summaryLines) {
-                        $summaryText = $line.ToString()
-                        
-                        if ($summaryText -match 'Failed:\s*(\d+)') {
-                            $failures = [int]$matches[1]
-                            $totalFailures += $failures
-                            
-                            if ($Iterations -gt 1) {
-                                Write-Host "Iteration $i failures: $failures (cumulative: $totalFailures)" -ForegroundColor Yellow
-                            }
-                            
-                            if ($totalFailures -gt $MaxFailures) {
-                                Write-Host "Cumulative failures ($totalFailures) exceeded MaxFailures ($MaxFailures)" -ForegroundColor Red
-                                return $false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        # All iterations passed
-        if ($MaxFailures -ge 0 -and $Iterations -gt 1) {
-            Write-Host "Total cumulative failures: $totalFailures (limit: $MaxFailures)" -ForegroundColor Green
-        }
-        return $true
         
     } finally {
         Pop-Location
