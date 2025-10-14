@@ -13,7 +13,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
 class ThreadGateTestFixture : IDisposable
 {
    public readonly IThreadGate Gate;
-   public int NumberOfThreads { get; private set; }
+   public int NumberOfThreads { get; private init; }
    IReadOnlyList<Entrant> _entrantEvents = [];
    Task[] _tasksPassingGate = [];
 
