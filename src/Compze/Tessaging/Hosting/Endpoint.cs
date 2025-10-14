@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 using static Compze.Utilities.Contracts.Assert;
@@ -102,6 +103,14 @@ class Endpoint : IEndpoint
    public async ValueTask DisposeAsync()
    {
       if(IsRunning) await StopAsync().caf();
+      
+      // Check for any exceptions collected by TaskRunner before disposing
+      if(!_configuration.IsPureClientEndpoint)
+      {
+         var taskRunner = ServiceLocator.Resolve<ITaskRunner>();
+         taskRunner.ThrowIfAnyExceptions();
+      }
+      
       await ServiceLocator.DisposeAsync().caf();
       _serverComponents?.Dispose();
    }

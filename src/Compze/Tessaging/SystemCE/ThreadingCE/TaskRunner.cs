@@ -2,16 +2,18 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Compze.Utilities.Threading.ResourceAccess;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 interface ITaskRunner
 {
-   //Bug: We cannot just ignore exceptions because we log them. Maybe calling component should be notified about them somehow and get to decide what to do?. Maybe return a Task that calling code is responsible for checking the result of sooner or later?
-   //Bug: Check out: TaskScheduler.UnobservedTaskException and if we should use it. Perhaps in EndpointHost.
    void RunSwallowAndLogExceptions(string taskName, Action task);
+   void ThrowIfAnyExceptions();
 }
 
 static class TaskRunnerRegistrar
@@ -23,6 +25,8 @@ static class TaskRunnerRegistrar
    {
       internal static void RegisterWith(IDependencyRegistrar registrar)
          => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunnerImpl()));
+
+      readonly IThreadShared<List<Exception>> _collectedExceptions = ThreadShared.WithDefaultTimeout(new List<Exception>());
 
       TaskRunnerImpl() {}
 
@@ -37,8 +41,18 @@ static class TaskRunnerRegistrar
             catch(Exception exception)
             {
                this.Log().Error(exception, "Exception thrown on background thread. ");
+               _collectedExceptions.Update(exceptions => exceptions.Add(exception));
             }
          });
+      }
+
+      public void ThrowIfAnyExceptions()
+      {
+         var exceptions = _collectedExceptions.Read(exceptions => exceptions.ToArray());
+         if(exceptions.Length > 0)
+         {
+            throw new AggregateException("Exceptions were thrown on background threads during endpoint execution.", exceptions);
+         }
       }
 
       readonly CancellationTokenSource _cancellationTokenSource = new();
