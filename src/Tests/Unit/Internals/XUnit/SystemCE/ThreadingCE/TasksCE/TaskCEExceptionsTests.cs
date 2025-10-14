@@ -6,6 +6,7 @@ using FluentAssertions;
 using Xunit;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE.TasksCE;
@@ -18,7 +19,7 @@ public class TaskCEExceptionsTests : XUnitTestBase
       throw new Exception("I broke");
    }
 
-   [Fact] public async Task WithAggregateExceptions_throws_aggregate_exception_containing_all_exceptions() =>
+   [XFact] public async Task WithAggregateExceptions_throws_aggregate_exception_containing_all_exceptions() =>
       (await Invoking(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions())
             .Should().ThrowAsync<AggregateException>())
      .Which.InnerExceptions.Should().HaveCount(10);

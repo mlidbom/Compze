@@ -132,7 +132,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Serialization
          _renamedTypesSerializer = new RenamingSupportingJsonSerializer(JsonSettings.JsonSerializerSettings, _renamedTypesMap);
       }
 
-      [Fact] public void Roundtrips_polymorphic_types()
+      [XFact] public void Roundtrips_polymorphic_types()
       {
          var originalRoot = OriginalTypes.Root.Create();
          var originalJson = _originalTypesSerializer.Serialize(originalRoot);
@@ -142,7 +142,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Serialization
          originalRoot.Should().BeEquivalentTo(deserializedRoot, options => options.PreferringRuntimeMemberTypes());
       }
 
-      [Fact] public void Handles_renaming_of_types()
+      [XFact] public void Handles_renaming_of_types()
       {
          var originalRoot = OriginalTypes.Root.Create();
          var originalJson = _originalTypesSerializer.Serialize(originalRoot);

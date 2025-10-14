@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.Serialization;
 
@@ -48,7 +49,7 @@ public class NewtonSoftEventStoreEventSerializerTests : XUnitTestBase
    }
 
 
-   [Fact]
+   [XFact]
    public void IgnoresAllIAggregateEventProperties()
    {
       var eventWithAllValuesSet = new TestEvent(

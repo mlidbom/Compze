@@ -9,7 +9,7 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 //XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 /// <summary>
-/// Use this attribute instead of [Fact] for tests that should run with all pluggable component combinations.
+/// Use this attribute instead of [XFact] for tests that should run with all pluggable component combinations.
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// </summary>
 [XunitTestCaseDiscoverer(PluggableComponentsTheoryAttributeFullTypeName, PluggableComponentsDiscovererAssembly)]

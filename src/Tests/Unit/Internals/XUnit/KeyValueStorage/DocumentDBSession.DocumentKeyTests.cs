@@ -3,6 +3,7 @@ using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.KeyValueStorage;
 
@@ -18,7 +19,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
    class Unrelated;
 
 
-   [Fact]
+   [XFact]
    public void TwoInstancesOfTheSameTypeWithTheSameIdAreEqualAndHaveTheSameHashCode()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
@@ -29,7 +30,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Fact]
+   [XFact]
    public void TwoInstancesOfTheSameTypeWithIdsDifferingOnlyByCaseAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("THEID");
@@ -40,7 +41,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Fact]
+   [XFact]
    public void TwoInstancesOfTheSameTypeWithIdsDifferingOnlyInTrailingSpacesAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theid  ");
@@ -51,7 +52,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Fact]
+   [XFact]
    public void TwoInstancesOfTheSameTypeWithDifferentIdsAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
@@ -61,7 +62,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       rhs.Should().NotBe(lhs);
    }
 
-   [Fact]
+   [XFact]
    public void TwoInstancesWithInheritingTypesAndTheSameIdAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
@@ -72,7 +73,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Fact]
+   [XFact]
    public void TwoInstancesWithInheritingTypesAndDifferingIdsAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
@@ -82,7 +83,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       rhs.Should().NotBe(lhs);
    }
 
-   [Fact]
+   [XFact]
    public void TwoInstancesOfUnrelatedTypesAndSameIdAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");

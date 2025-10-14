@@ -4,6 +4,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
 using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.Linq;
@@ -11,7 +12,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Linq;
 
 public class LinqExtensionsTests : XUnitTestBase
 {
-   [Fact]
+   [XFact]
    public void FlattenShouldIterateAllNestedCollectionInstances()
    {
       var nestedInts = new List<List<int>>
@@ -25,14 +26,14 @@ public class LinqExtensionsTests : XUnitTestBase
       flattened.Should().BeEquivalentTo(1.Through(7));
    }
 
-   [Fact]
+   [XFact]
    public void ChoppingFollowedBySelectManyShouldEqualOriginalSequence()
    {
       var oneThroughAHundred = 1.Through(10003).ChopIntoSizesOf(10).SelectMany(me => me);
       oneThroughAHundred.Should().Equal(1.Through(10003));
    }
 
-   [Fact]
+   [XFact]
    public void ChoppingListIntoListSizeChunksShouldReturnOnlyOneChunk()
    {
       var oneEntry = 1.Through(10).ChopIntoSizesOf(10);

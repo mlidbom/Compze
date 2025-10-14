@@ -5,6 +5,7 @@ using Compze.Tests.Infrastructure;
 using JetBrains.Annotations;
 using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 
@@ -22,9 +23,9 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
    {
       public class Type_implements_Wrapper_event_interface_but_ : XUnitTestBase
       {
-         [Fact] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
+         [XFact] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 
-         [Fact] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperEvent>();
+         [XFact] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperEvent>();
       }
    }
 
@@ -32,31 +33,31 @@ interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
    {
       public class Type_implements_Wrapper_event_interface_but_ : XUnitTestBase
       {
-         [Fact] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
+         [XFact] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 
-         [Fact] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperEvent>();
+         [XFact] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperEvent>();
       }
 
       interface INotMessage;
-      [Fact] public void Is_not_IMessage() => AssertInvalidForSending<INotMessage>();
+      [XFact] public void Is_not_IMessage() => AssertInvalidForSending<INotMessage>();
 
       interface ICommandAndEvent : IEvent, ICommand;
-      [Fact] public void Is_Both_command_and_event() => AssertInvalidForSending<ICommandAndEvent>();
+      [XFact] public void Is_Both_command_and_event() => AssertInvalidForSending<ICommandAndEvent>();
 
       interface ICommandAndQuery : IEvent, IQuery<object>;
-      [Fact] public void Is_Both_command_and_query() => AssertInvalidForSending<ICommandAndQuery>();
+      [XFact] public void Is_Both_command_and_query() => AssertInvalidForSending<ICommandAndQuery>();
 
       interface IStrictlyLocalAndRemotable : IRemotableMessage, IStrictlyLocalMessage;
-      [Fact] public void Is_Both_strictly_local_and_remotable() => AssertInvalidForSending<IStrictlyLocalAndRemotable>();
+      [XFact] public void Is_Both_strictly_local_and_remotable() => AssertInvalidForSending<IStrictlyLocalAndRemotable>();
 
       interface IForbidAndRequireTransactionalSender : IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction;
-      [Fact] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
+      [XFact] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
 
       [UsedImplicitly] internal class AtMostOnceCommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaCommand
       {
          public Guid MessageId { get; } = Guid.NewGuid();
       }
 
-      [Fact] public void Is_at_most_once_command_and_sets_MessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceCommandSettingMessageIdInDefaultConstructor>();
+      [XFact] public void Is_at_most_once_command_and_sets_MessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceCommandSettingMessageIdInDefaultConstructor>();
    }
 }

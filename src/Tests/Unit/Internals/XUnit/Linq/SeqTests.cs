@@ -3,6 +3,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
 using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.Linq;
@@ -10,7 +11,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Linq;
 
 public class SeqTests : XUnitTestBase
 {
-   [Fact]
+   [XFact]
    public void CreateShouldEnumerateAllParamsInOrder()
    {
       var oneToTen = 1.Through(10);

@@ -1,4 +1,5 @@
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
@@ -21,7 +22,7 @@ public class IStaticInstancePropertySingleton_tests : XUnitTestBase
       ExplicitImplementation() { }
    }
 
-   [Fact]
+   [XFact]
    public void Constructor_should_work_with_implicit_interface_implementation()
    {
       var instance1 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
@@ -32,7 +33,7 @@ public class IStaticInstancePropertySingleton_tests : XUnitTestBase
       instance1.Should().BeSameAs(ImplicitImplementation.Instance);
    }
 
-   [Fact]
+   [XFact]
    public void Constructor_should_work_with_explicit_interface_implementation()
    {
       var instance1 = Constructor.For<ExplicitImplementation>.DefaultConstructor.Instance();

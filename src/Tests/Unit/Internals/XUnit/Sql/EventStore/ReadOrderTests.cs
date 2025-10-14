@@ -7,12 +7,13 @@ using Xunit;
 using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
 
  public class ReadOrderTests : XUnitTestBase
 {
-   [Fact] public void Parse_followed_by_ToString_always_results_in_identical_string()
+   [XFact] public void Parse_followed_by_ToString_always_results_in_identical_string()
    {
       var maxValue = $"{long.MaxValue}.{long.MaxValue}";
 
@@ -20,13 +21,13 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
       ReadOrder.Parse(CreateString(1, 1)).ToString().Should().Be(CreateString(1, 1));
    }
 
-   [Fact] public void Parse_throws_on_negative_numbers()
+   [XFact] public void Parse_throws_on_negative_numbers()
    {
       Invoking(() => ReadOrder.Parse(CreateString(0, -1)))
         .Should().Throw<ArgumentException>().Which.Message.Should().Contain("negative");
    }
 
-   [Fact] public void Parse_requires_exactly_19_decimal_point_numbers()
+   [XFact] public void Parse_requires_exactly_19_decimal_point_numbers()
    {
       1.Through(18).ForEach(
          num => Invoking(() => ReadOrder.Parse($"1.{new string('1', num)}"))
@@ -41,7 +42,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
                .Message.Should().Contain("fraction digits"));
    }
 
-   [Fact] public void RoundTripping_SqlDecimal_results_in_same_value()
+   [XFact] public void RoundTripping_SqlDecimal_results_in_same_value()
    {
       TestValue(Create(1, 2));
       return;
@@ -61,7 +62,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
       }
    }
 
-   [Fact] public void InsertionIntervals()
+   [XFact] public void InsertionIntervals()
    {
       // Test to verify CreateOrdersForEventsBetween works correctly
       var orders1 = ReadOrder.CreateOrdersForEventsBetween(2, Create(1, 0), Create(2, 0));
@@ -71,7 +72,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
       orders2.Should().HaveCount(2);
    }
 
-   [Fact] public void CreateOrdersForEventsBetween_Fills_Small_Gap_Around_Integer_Limit()
+   [XFact] public void CreateOrdersForEventsBetween_Fills_Small_Gap_Around_Integer_Limit()
    {
       var rangeStart = ReadOrder.Parse("1.9999999999999999997");
       var rangeEnd = ReadOrder.Parse("2.0000000000000000003");
@@ -85,7 +86,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
       orders[4].Should().Be(ReadOrder.Parse("2.0000000000000000002"));
    }
 
-   [Fact] public void CreateOrdersForEventsBetween_Fills_Minimum_Gap_Around_Integer_Limit()
+   [XFact] public void CreateOrdersForEventsBetween_Fills_Minimum_Gap_Around_Integer_Limit()
    {
       var rangeStart = ReadOrder.Parse("1.9999999999999999999");
       var rangeEnd = ReadOrder.Parse("2.0000000000000000001");
@@ -95,7 +96,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
       orders[0].Should().Be(ReadOrder.Parse("2.0000000000000000000"));
    }
 
-   [Fact] public void CreateOrdersForEventsBetween_Fills_Small_Gap_in_middle_of_offset()
+   [XFact] public void CreateOrdersForEventsBetween_Fills_Small_Gap_in_middle_of_offset()
    {
       var rangeStart = ReadOrder.Parse("1.5999999999999999993");
       var rangeEnd = ReadOrder.Parse("1.5999999999999999999");
@@ -109,7 +110,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
       orders[4].Should().Be(ReadOrder.Parse("1.5999999999999999998"));
    }
 
-   [Fact] public void CreateOrdersForEventsBetween_Fills_Minimum_Gap_in_middle_of_offset()
+   [XFact] public void CreateOrdersForEventsBetween_Fills_Minimum_Gap_in_middle_of_offset()
    {
       var rangeStart = ReadOrder.Parse("1.5999999999999999993");
       var rangeEnd = ReadOrder.Parse("1.5999999999999999995");
@@ -119,7 +120,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Sql.EventStore;
       orders[0].Should().Be(ReadOrder.Parse("1.5999999999999999994"));
    }
 
-   [Fact] public void CreateOrdersForEventsBetween_Throws_InvalidOperationException_if_gap_is_too_small()
+   [XFact] public void CreateOrdersForEventsBetween_Throws_InvalidOperationException_if_gap_is_too_small()
    {
       var rangeStart = ReadOrder.Parse("1.9999999999999999997");
       var rangeEnd = ReadOrder.Parse("2.0000000000000000003");

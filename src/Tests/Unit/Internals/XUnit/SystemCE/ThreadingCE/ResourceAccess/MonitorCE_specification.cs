@@ -9,6 +9,7 @@ using NCrunch.Framework;
 using Xunit;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.ResourceAccess;
 using Compze.Utilities.Threading.TasksCE;
 
@@ -18,7 +19,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE.ResourceAccess;
 
  public class MonitorCE_specification : XUnitTestBase
 {
-   [Fact] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
+   [XFact] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
       var monitor = MonitorCE.WithTimeout(1.Seconds());
 
@@ -44,7 +45,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE.ResourceAccess;
       Task.WaitAll(otherThreadTask);
    }
 
-   [Fact] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
+   [XFact] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
       var monitor = MonitorCE.WithTimeout(1.Seconds());
 
@@ -61,13 +62,13 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE.ResourceAccess;
 
     public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : XUnitTestBase
    {
-      [Fact, EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
+      [XFact, EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 5.Seconds(), monitorTimeout: 10.Milliseconds()).Should().BeOfType<EnterLockTimeoutException>();
 
-      [Fact, EnableRdi(false)] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
+      [XFact, EnableRdi(false)] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 5.Seconds(), monitorTimeout: 5.Milliseconds()).Message.Should().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
-      [Fact] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
+      [XFact] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 60.Milliseconds(), timeToWaitForStackTrace: 1.Milliseconds(), monitorTimeout: 5.Milliseconds()).Message.Should().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();

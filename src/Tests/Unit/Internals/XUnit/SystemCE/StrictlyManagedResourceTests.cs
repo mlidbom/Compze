@@ -8,13 +8,14 @@ using JetBrains.Annotations;
 using Xunit;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.SystemCE;
 
 public class StrictlyManagedResourceTests : XUnitTestBase
 {
    //Note: NonParallelizable removed in migration to XUnit. Should things turn flaky...
-   [Fact] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
+   [XFact] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {

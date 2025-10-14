@@ -39,6 +39,6 @@ public sealed class XFactAttribute : FactAttribute
       if(declaringType != currentType) // Skip tests declared in base classes
          return [];
 
-      return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
+      return [new XFactTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
    }
 }
