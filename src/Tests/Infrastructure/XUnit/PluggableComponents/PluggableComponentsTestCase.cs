@@ -33,7 +33,11 @@ public class PluggableComponentsTestCase : XunitTestCase
       DisplayName = $"{testMethod.Method.Name}({combination})";
    }
 
-   public override async Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink, IMessageBus messageBus, object[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+   public override async Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink,
+                                                   IMessageBus messageBus,
+                                                   object[] constructorArguments,
+                                                   ExceptionAggregator aggregator,
+                                                   CancellationTokenSource cancellationTokenSource)
    {
       // Set the current combination in AsyncLocal so TestEnv can access it
       XUnitInfrastructureModuleInitializer.CurrentPluggableComponents.Value = _combination;

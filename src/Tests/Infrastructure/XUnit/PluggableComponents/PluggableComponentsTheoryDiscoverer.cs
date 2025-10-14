@@ -12,10 +12,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 #pragma warning restore CA1812
    readonly IMessageSink _diagnosticMessageSink;
 
-   public PluggableComponentsTheoryDiscoverer(IMessageSink diagnosticMessageSink)
-   {
-      _diagnosticMessageSink = diagnosticMessageSink;
-   }
+   public PluggableComponentsTheoryDiscoverer(IMessageSink diagnosticMessageSink) => _diagnosticMessageSink = diagnosticMessageSink;
 
    public IEnumerable<IXunitTestCase> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
@@ -24,19 +21,19 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
    {
       var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<Wiring.SqlLayer[]>(nameof(PluggableComponentsTheoryAttribute.ExcludeSqlLayers));
       var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
-      
+
       var combinations = PluggableComponentsReader.Combinations
                                                   .Where(combo => !excludedSqlLayers.Contains(combo.SqlLayer))
                                                   .ToList();
 
       var testCases = combinations
                      .Select(combination =>
-                        new PluggableComponentsTestCase(
-                           diagnosticMessageSink: _diagnosticMessageSink,
-                           defaultMethodDisplay: discoveryOptions.MethodDisplayOrDefault(),
-                           defaultMethodDisplayOptions: discoveryOptions.MethodDisplayOptionsOrDefault(),
-                           testMethod: testMethod,
-                           combination: combination))
+                                new PluggableComponentsTestCase(
+                                   diagnosticMessageSink: _diagnosticMessageSink,
+                                   defaultMethodDisplay: discoveryOptions.MethodDisplayOrDefault(),
+                                   defaultMethodDisplayOptions: discoveryOptions.MethodDisplayOptionsOrDefault(),
+                                   testMethod: testMethod,
+                                   combination: combination))
                      .ToArray();
 
       return testCases;
