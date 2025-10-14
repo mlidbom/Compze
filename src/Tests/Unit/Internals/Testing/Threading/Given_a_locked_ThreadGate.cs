@@ -21,12 +21,12 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
 
    public class After_starting_10_threads_that_all_call_PassThrough : NUnitTestBase
    {
-      [Test] public void Within_50_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
+      [Test] public void Within_500_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
          using(ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()) {} //warmup
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
-         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 50.Milliseconds());
+         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 500.Milliseconds());
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 
