@@ -11,7 +11,7 @@ public static class NUnitInfrastructureModuleInitializer
    [ModuleInitializer]
    public static void Initialize()
    {
-      TestFixtureHelper.SetupSerilog(new NUnitTestEnricher());
+      TestFixtureHelper.SetupSerilog(new NUnitTestSerilogEnricher());
       TestEnv.NunitDiscoverer = () =>
       {
          var testName = TestContext.CurrentContext.Test.FullName;

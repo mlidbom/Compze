@@ -40,15 +40,14 @@ public class PluggableComponentsTestCase : XunitTestCase
                                                    ExceptionAggregator aggregator,
                                                    CancellationTokenSource cancellationTokenSource)
    {
-      // Set the current combination in AsyncLocal so TestEnv can access it
-      XUnitInfrastructureModuleInitializer.CurrentPluggableComponents.Value = _combination;
+      TestContext.Current.Value = new TestContextData(_combination, TestMethod);
       try
       {
          return await base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
       }
       finally
       {
-         XUnitInfrastructureModuleInitializer.CurrentPluggableComponents.Value = null;
+         TestContext.Current.Value = null;
       }
    }
 
