@@ -18,23 +18,23 @@ static partial class TaskCE
    /// </summary>
    public static Task<TResult> Run<TResult>(Func<TResult> function)
    {
-      var tcs = new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+      var taskCompletionSource = new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 
       ThreadPool.QueueUserWorkItem(_ =>
                                    {
                                       try
                                       {
                                          var result = function();
-                                         tcs.SetResult(result);
+                                         taskCompletionSource.SetResult(result);
                                       }
                                       catch(Exception ex)
                                       {
-                                         tcs.SetException(ex);
+                                         taskCompletionSource.SetException(ex);
                                       }
                                    },
                                    null);
 
-      return tcs.Task;
+      return taskCompletionSource.Task;
    }
 
    static readonly TaskFactory DefaultSchedulerDenyChildAttachTaskFactory = new(CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskContinuationOptions.None, TaskScheduler.Default);
