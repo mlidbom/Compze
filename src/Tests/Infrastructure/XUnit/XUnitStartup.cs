@@ -12,6 +12,6 @@ public static class XUnitInfrastructureModuleInitializer
    public static void Initialize()
    {
       TestFixtureHelper.SetupSerilog(new XUnitTestSerilogEnricher());
-      TestEnv.XunitDiscoverer = () => TestContext.Current.Value?.PluggableComponents ?? throw new Exception("No pluggable components set for current test");
+      TestEnv.XunitDiscoverer = () => TestContext.Current?.PluggableComponents ?? throw new Exception("No pluggable components set for current test");
    }
 }

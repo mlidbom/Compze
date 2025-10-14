@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -12,20 +13,21 @@ readonly record struct TestContextData(Tessaging.Hosting.Testing.PluggableCompon
 
 static class TestContext
 {
-   internal static readonly AsyncLocal<TestContextData?> Current = new();
+   internal static TestContextData? Current => CurrentInternal.Value;
+   static readonly AsyncLocal<TestContextData?> CurrentInternal = new();
 
    internal static async Task<RunSummary> RunTestInContextAsync(
       TestContextData contextData,
       Func<Task<RunSummary>> executeTest)
    {
-      Current.Value = contextData;
+      CurrentInternal.Value = contextData;
       try
       {
          return await executeTest();
       }
       finally
       {
-         Current.Value = null;
+         CurrentInternal.Value = null;
       }
    }
 }
