@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 using static FluentAssertions.FluentActions;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE.TasksCE;
 
-public class TaskCEExceptionsTests : NUnitTestBase
+public class TaskCEExceptionsTests : XUnitTestBase
 {
    static async Task FailingMethod()
    {
@@ -18,7 +18,7 @@ public class TaskCEExceptionsTests : NUnitTestBase
       throw new Exception("I broke");
    }
 
-   [Test] public async Task WithAggregateExceptions_throws_aggregate_exception_containing_all_exceptions() =>
+   [Fact] public async Task WithAggregateExceptions_throws_aggregate_exception_containing_all_exceptions() =>
       (await Invoking(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions())
             .Should().ThrowAsync<AggregateException>())
      .Which.InnerExceptions.Should().HaveCount(10);

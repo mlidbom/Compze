@@ -1,13 +1,13 @@
 using Compze.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using FluentAssertions;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
+using Compze.Tests.Infrastructure.XUnit;
 
-namespace Compze.Tests.Unit.Internals.KeyValueStorage;
+namespace Compze.Tests.Unit.Internals.XUnit.KeyValueStorage;
 
-[TestFixture]
-public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
+
+public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
 {
    class Base;
 
@@ -18,7 +18,7 @@ public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
    class Unrelated;
 
 
-   [Test]
+   [Fact]
    public void TwoInstancesOfTheSameTypeWithTheSameIdAreEqualAndHaveTheSameHashCode()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
@@ -29,7 +29,7 @@ public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Test]
+   [Fact]
    public void TwoInstancesOfTheSameTypeWithIdsDifferingOnlyByCaseAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("THEID");
@@ -40,7 +40,7 @@ public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Test]
+   [Fact]
    public void TwoInstancesOfTheSameTypeWithIdsDifferingOnlyInTrailingSpacesAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theid  ");
@@ -51,7 +51,7 @@ public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Test]
+   [Fact]
    public void TwoInstancesOfTheSameTypeWithDifferentIdsAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
@@ -61,7 +61,7 @@ public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
       rhs.Should().NotBe(lhs);
    }
 
-   [Test]
+   [Fact]
    public void TwoInstancesWithInheritingTypesAndTheSameIdAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
@@ -72,7 +72,7 @@ public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [Test]
+   [Fact]
    public void TwoInstancesWithInheritingTypesAndDifferingIdsAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
@@ -82,7 +82,7 @@ public class DocumentDBSession_DocumentKeyTests : NUnitTestBase
       rhs.Should().NotBe(lhs);
    }
 
-   [Test]
+   [Fact]
    public void TwoInstancesOfUnrelatedTypesAndSameIdAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");

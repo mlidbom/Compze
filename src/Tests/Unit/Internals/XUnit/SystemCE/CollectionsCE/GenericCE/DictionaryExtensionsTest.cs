@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.Internals.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.CollectionsCE.GenericCE;
 
 public static class DictionaryExtensionsGetOrAddWhenKey
 {
@@ -16,17 +16,17 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    const string Key = "key";
    const int ResultOfDefaultConstructor = new();
 
-   [TestFixture]
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : NUnitTestBase
+   
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : XUnitTestBase
    {
-      [Test]
+      [Fact]
       public void ShouldReturnResulOfConstructor()
       {
          var empty = new Dictionary<string, int>();
          empty.GetOrAdd(Key, Constructor).Should().Be(InsertedValue);
       }
 
-      [Test]
+      [Fact]
       public void ShouldAddResultOfConstructor()
       {
          var empty = new Dictionary<string, int>();
@@ -36,10 +36,10 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       }
    }
 
-   [TestFixture]
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : NUnitTestBase
+   
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : XUnitTestBase
    {
-      [Test]
+      [Fact]
       public void ShouldReturnExistingValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
@@ -47,7 +47,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          empty.GetOrAdd(Key, Constructor).Should().Be(ExistingValue);
       }
 
-      [Test]
+      [Fact]
       public void ShouldLeaveValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
@@ -58,17 +58,17 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
 
-   [TestFixture]
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: NUnitTestBase
+   
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: XUnitTestBase
    {
-      [Test]
+      [Fact]
       public void ShouldReturnResulOfConstructor()
       {
          var empty = new Dictionary<string, int>();
          empty.GetOrAddDefault(Key).Should().Be(ResultOfDefaultConstructor);
       }
 
-      [Test]
+      [Fact]
       public void ShouldAddResultOfConstructor()
       {
          var empty = new Dictionary<string, int>();
@@ -78,10 +78,10 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       }
    }
 
-   [TestFixture]
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: NUnitTestBase
+   
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: XUnitTestBase
    {
-      [Test]
+      [Fact]
       public void ShouldReturnExistingValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
@@ -89,7 +89,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          empty.GetOrAddDefault(Key).Should().Be(ExistingValue);
       }
 
-      [Test]
+      [Fact]
       public void ShouldLeaveValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };

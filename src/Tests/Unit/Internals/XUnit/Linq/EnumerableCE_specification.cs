@@ -1,16 +1,16 @@
 using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.Internals.Linq;
+namespace Compze.Tests.Unit.Internals.XUnit.Linq;
 
-[TestFixture]
-public class EnumerableCE_specification : NUnitTestBase
+
+public class EnumerableCE_specification : XUnitTestBase
 {
-   [Test]
+   [Fact]
    public void UntilShouldHaveLastElementEqualToArgumentMinusStepSizeWhenSteppingByOneOreMinusOne()
    {
       1.Until(12).Last().Should().Be(12 - 1);
@@ -18,7 +18,7 @@ public class EnumerableCE_specification : NUnitTestBase
       (-1).By(-1).Until(-12).Last().Should().Be(-12 - -1);
    }
 
-   [Test]
+   [Fact]
    public void UntilShouldStopEnumeratingAtValueBeforeGuard()
    {
       (-1).By(-2).Until(-7).Last().Should().Be(-5);
@@ -28,7 +28,7 @@ public class EnumerableCE_specification : NUnitTestBase
       2.By(3).Until(6).Last().Should().Be(5);
    }
 
-   [Test]
+   [Fact]
    public void ThroughShouldHaveLastElementEqualToArgument()
    {
       1.Through(12).Last().Should().Be(12);
@@ -36,7 +36,7 @@ public class EnumerableCE_specification : NUnitTestBase
       (-1).By(-1).Through(-12).Last().Should().Be(-12);
    }
 
-   [Test]
+   [Fact]
    public void ThroughShouldHaveCountEqualToToMinusFromPlus1()
    {
       12.Through(20).Count().Should().Be(20 - 12 + 1);
@@ -44,7 +44,7 @@ public class EnumerableCE_specification : NUnitTestBase
       (-12).By(-1).Through(-20).Count().Should().Be(20 - 12 + 1);
    }
 
-   [Test]
+   [Fact]
    public void StepSizeShouldIterateFromImplicitParameter()
    {
       12.By(2).Through(int.MaxValue).First().Should().Be(12);
@@ -52,7 +52,7 @@ public class EnumerableCE_specification : NUnitTestBase
    }
 
 
-   [Test]
+   [Fact]
    public void StepSizeShouldStepByStepsize()
    {
       12.By(2).Through(int.MaxValue).ElementAt(1).Should().Be(14);

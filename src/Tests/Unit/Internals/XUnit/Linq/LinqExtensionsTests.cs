@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.Internals.Linq;
+namespace Compze.Tests.Unit.Internals.XUnit.Linq;
 
-[TestFixture]
-public class LinqExtensionsTests : NUnitTestBase
+
+public class LinqExtensionsTests : XUnitTestBase
 {
-   [Test]
+   [Fact]
    public void FlattenShouldIterateAllNestedCollectionInstances()
    {
       var nestedInts = new List<List<int>>
@@ -25,14 +25,14 @@ public class LinqExtensionsTests : NUnitTestBase
       flattened.Should().BeEquivalentTo(1.Through(7));
    }
 
-   [Test]
+   [Fact]
    public void ChoppingFollowedBySelectManyShouldEqualOriginalSequence()
    {
       var oneThroughAHundred = 1.Through(10003).ChopIntoSizesOf(10).SelectMany(me => me);
       oneThroughAHundred.Should().Equal(1.Through(10003));
    }
 
-   [Test]
+   [Fact]
    public void ChoppingListIntoListSizeChunksShouldReturnOnlyOneChunk()
    {
       var oneEntry = 1.Through(10).ChopIntoSizesOf(10);

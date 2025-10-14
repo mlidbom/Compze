@@ -5,15 +5,16 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;
-using NUnit.Framework;
+using Xunit;
 using static FluentAssertions.FluentActions;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit;
 
-namespace Compze.Tests.Unit.Internals.SystemCE;
+namespace Compze.Tests.Unit.Internals.XUnit.SystemCE;
 
-class StrictlyManagedResourceTests : NUnitTestBase
+public class StrictlyManagedResourceTests : XUnitTestBase
 {
-   [Test, NonParallelizable] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
+   //Note: NonParallelizable removed in migration to XUnit. Should things turn flaky...
+   [Fact] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {

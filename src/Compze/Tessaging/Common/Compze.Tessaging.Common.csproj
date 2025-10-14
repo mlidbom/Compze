@@ -20,6 +20,7 @@
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
   </ItemGroup>
 </Project>

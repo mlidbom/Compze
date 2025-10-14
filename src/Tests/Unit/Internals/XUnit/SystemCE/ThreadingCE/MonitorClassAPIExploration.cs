@@ -7,7 +7,7 @@ using FluentAssertions;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
+namespace Compze.Tests.Unit.Internals.XUnit.XUnit.SystemCE.ThreadingCE;
 
 public class MonitorClassApiExploration
 {

@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Compze.Tests.Unit.Internals.Serialization
+namespace Compze.Tests.Unit.Internals.XUnit.Serialization
 {
    namespace OriginalTypes
    {
@@ -96,7 +96,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
    // 3. Using a global setup/teardown to reset static state between tests
 
    /*
-   [TestFixture] public class TypeRenamingSerializationTests : NUnitTestBase
+    public class TypeRenamingSerializationTests : XUnitTestBase
    {
       ITypeMapper _originaltypesMap;
       ITypeMapper _renamedTypesMap;
@@ -111,7 +111,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
          internal const string TypeBB = "243C4874-529F-44B6-91BE-1353DB87AAEE";
       }
 
-      [OneTimeSetUp] public void SetupTask()
+      // OneTimeSetUp - moved to constructor public void SetupTask()
       {
          _originaltypesMap = new TypeMapper();
          _renamedTypesMap = new TypeMapper();
@@ -132,7 +132,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
          _renamedTypesSerializer = new RenamingSupportingJsonSerializer(JsonSettings.JsonSerializerSettings, _renamedTypesMap);
       }
 
-      [Test] public void Roundtrips_polymorphic_types()
+      [Fact] public void Roundtrips_polymorphic_types()
       {
          var originalRoot = OriginalTypes.Root.Create();
          var originalJson = _originalTypesSerializer.Serialize(originalRoot);
@@ -142,7 +142,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
          originalRoot.Should().BeEquivalentTo(deserializedRoot, options => options.PreferringRuntimeMemberTypes());
       }
 
-      [Test] public void Handles_renaming_of_types()
+      [Fact] public void Handles_renaming_of_types()
       {
          var originalRoot = OriginalTypes.Root.Create();
          var originalJson = _originalTypesSerializer.Serialize(originalRoot);

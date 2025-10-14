@@ -1,16 +1,16 @@
 using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.Internals.Linq;
+namespace Compze.Tests.Unit.Internals.XUnit.Linq;
 
-[TestFixture]
-public class SeqTests : NUnitTestBase
+
+public class SeqTests : XUnitTestBase
 {
-   [Test]
+   [Fact]
    public void CreateShouldEnumerateAllParamsInOrder()
    {
       var oneToTen = 1.Through(10);

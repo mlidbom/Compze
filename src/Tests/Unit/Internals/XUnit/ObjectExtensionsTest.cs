@@ -1,15 +1,15 @@
 using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Functional;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals;
 
-[TestFixture]
-public class ObjectExtensionsTest : NUnitTestBase
+
+public class ObjectExtensionsTest : XUnitTestBase
 {
-   [Test]
+   [Fact]
    public void RepeatShouldCreateSequenceOfLengthEqualToParameter() => 12.Repeat(10).Count().Should().Be(10);
 }

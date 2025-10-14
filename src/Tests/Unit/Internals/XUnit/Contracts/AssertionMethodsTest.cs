@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using Compze.Utilities.Contracts;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.Internals.XUnit.Contracts;
+namespace Compze.Tests.Unit.Internals.XUnit.XUnit.Contracts;
 
 public abstract class AssertionMethodsTest
 {
