@@ -28,6 +28,7 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
       var currentType = testMethod.TestClass.Class;
 
       // Ensure we have valid types before comparing
+      // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
       if(declaringType == null || currentType == null)
          return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
@@ -44,7 +45,7 @@ public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
       // Only pass non-null/non-empty values, and ensure both aren't set
       var skipUnless = !string.IsNullOrEmpty(factAttribute.SkipUnless) ? factAttribute.SkipUnless : null;
       var skipWhen = !string.IsNullOrEmpty(factAttribute.SkipWhen) ? factAttribute.SkipWhen : null;
-      
+
       // If both are somehow set, prefer SkipUnless (defensive)
       if(skipUnless != null && skipWhen != null)
          skipWhen = null;
