@@ -1,10 +1,13 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
+using Xunit.Abstractions;
 using Xunit.Sdk;
-using Xunit.v3;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
+//XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 public class PluggableComponentsTestCase : XunitTestCase
 {
    Tessaging.Hosting.Testing.PluggableComponents? _combination = null;
@@ -15,39 +18,49 @@ public class PluggableComponentsTestCase : XunitTestCase
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
-      IXunitTestMethod testMethod,
+      IMessageSink diagnosticMessageSink,
+      TestMethodDisplay defaultMethodDisplay,
+      TestMethodDisplayOptions defaultMethodDisplayOptions,
+      ITestMethod testMethod,
       Tessaging.Hosting.Testing.PluggableComponents combination,
-      string testCaseDisplayName,
-      string uniqueId,
-      bool @explicit,
-      string? skipReason,
-      Type? skipType,
-      string? skipUnless,
-      string? skipWhen,
-      int? timeout,
-      object?[]? testMethodArguments)
-      : base(testMethod,
-             testCaseDisplayName,
-             uniqueId,
-             @explicit,
-             skipReason: skipReason,
-             skipType: skipType,
-             skipUnless: skipUnless,
-             skipWhen: skipWhen,
-             timeout: timeout,
-             testMethodArguments: testMethodArguments,
-             traits: new System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>>()) =>
-      _combination = combination;
-
-   protected override void Serialize(IXunitSerializationInfo info)
+      object[]? testMethodArguments = null)
+      : base(diagnosticMessageSink,
+             defaultMethodDisplay,
+             defaultMethodDisplayOptions,
+             testMethod,
+             testMethodArguments)
    {
-      base.Serialize(info);
-      info.AddValue(nameof(_combination), _combination.ToString());
+      _combination = combination;
+      DisplayName = $"{testMethod.Method.Name}({combination})";
    }
 
-   protected override void Deserialize(IXunitSerializationInfo info)
+   public override async Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink,
+                                                   IMessageBus messageBus,
+                                                   object[] constructorArguments,
+                                                   ExceptionAggregator aggregator,
+                                                   CancellationTokenSource cancellationTokenSource)
    {
-      base.Deserialize(info);
-      _combination = Tessaging.Hosting.Testing.PluggableComponents.FromString(info.GetValue<string>(nameof(_combination)).NotNull());
+      // Set the current combination in AsyncLocal so TestEnv can access it
+      XUnitInfrastructureModuleInitializer.CurrentPluggableComponents.Value = _combination;
+      try
+      {
+         return await base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
+      }
+      finally
+      {
+         XUnitInfrastructureModuleInitializer.CurrentPluggableComponents.Value = null;
+      }
+   }
+
+   public override void Serialize(IXunitSerializationInfo data)
+   {
+      base.Serialize(data);
+      data.AddValue(nameof(_combination), _combination.ToString());
+   }
+
+   public override void Deserialize(IXunitSerializationInfo data)
+   {
+      base.Deserialize(data);
+      _combination = Tessaging.Hosting.Testing.PluggableComponents.FromString(data.GetValue<string>(nameof(_combination)).NotNull());
    }
 }

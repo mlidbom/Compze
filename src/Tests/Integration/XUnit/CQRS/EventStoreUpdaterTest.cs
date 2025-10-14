@@ -55,13 +55,9 @@ public class EventStoreUpdaterTest : XUnitTestBase, IAsyncLifetime
                      .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
    }
 
-   public async ValueTask InitializeAsync() => await ValueTask.CompletedTask;
+   public Task InitializeAsync() => Task.CompletedTask;
 
-   public async ValueTask DisposeAsync()
-   {
-      await _serviceLocator.DisposeAsync();
-      GC.SuppressFinalize(this);
-   }
+   public Task DisposeAsync() => _serviceLocator.DisposeAsync().AsTask();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IEventStoreUpdater> useSession)
       => _serviceLocator.ExecuteTransactionInIsolatedScope(() => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));

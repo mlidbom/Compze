@@ -1,26 +1,19 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit.Logging;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
-using Xunit;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
 public static class XUnitInfrastructureModuleInitializer
 {
+   internal static readonly AsyncLocal<Tessaging.Hosting.Testing.PluggableComponents?> CurrentPluggableComponents = new();
+
    [ModuleInitializer]
    public static void Initialize()
    {
-      TestFixtureHelper.SetupSerilog(new XUnitTestEnricher());
-      TestEnv.XunitDiscoverer = () =>
-      {
-         if(TestContext.Current.TestCase is PluggableComponentsTestCase theCase)
-         {
-            return theCase.Components;
-         }
-
-         throw new Exception($"Current test is not a {typeof(PluggableComponentsTestCase)}");
-      };
+      TestFixtureHelper.SetupSerilog(new DummyXUnitTestEnricher());
+      TestEnv.XunitDiscoverer = () => CurrentPluggableComponents.Value ?? throw new Exception("No pluggable components set for current test");
    }
 }

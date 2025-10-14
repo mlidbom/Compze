@@ -1,25 +1,29 @@
 using System.Runtime.CompilerServices;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using Xunit;
-using Xunit.v3;
+using Xunit.Sdk;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
+//XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 /// <summary>
 /// Use this attribute instead of [Fact] for tests that should run with all pluggable component combinations.
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// </summary>
-[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
-public sealed class PluggableComponentsTheoryAttribute(
-      [CallerFilePath] string? sourceFilePath = null,
-      [CallerLineNumber] int sourceLineNumber = -1)
-   // ReSharper disable once ExplicitCallerInfoArgument
-   : FactAttribute(sourceFilePath,
-                   // ReSharper disable once ExplicitCallerInfoArgument
-                   sourceLineNumber)
+[XunitTestCaseDiscoverer(PluggableComponentsTheoryAttributeFullTypeName, PluggableComponentsDiscovererAssembly)]
+public sealed class PluggableComponentsTheoryAttribute : FactAttribute
 {
-   /// <summary>
-   /// SQL layers to exclude from test execution. Use when a test is not applicable to certain database types.
-   /// </summary>
+   const string PluggableComponentsTheoryAttributeFullTypeName = "Compze.Tests.Infrastructure.XUnit.PluggableComponents.PluggableComponentsTheoryDiscoverer";
+   const string PluggableComponentsDiscovererAssembly = "Compze.Tests.Infrastructure.XUnit";
+
+   static PluggableComponentsTheoryAttribute()
+   {
+      Invariant.Is(PluggableComponentsTheoryAttributeFullTypeName == typeof(PluggableComponentsTheoryDiscoverer).GetFullNameCompilable());
+      Invariant.Is(PluggableComponentsDiscovererAssembly == typeof(PluggableComponentsTheoryAttribute).Assembly.GetName().Name);
+   }
+
    public Wiring.SqlLayer[] ExcludeSqlLayers { get; init; } = [];
 }
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
