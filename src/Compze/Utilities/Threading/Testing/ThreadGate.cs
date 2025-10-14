@@ -84,7 +84,7 @@ public class ThreadGate : IThreadGate
       return this;
    }
 
-   public void AwaitPassThrough()
+   public unit AwaitPassThrough()
    {
       using var _ = LogMethodEntryExit(nameof(AwaitPassThrough));
 
@@ -110,6 +110,7 @@ public class ThreadGate : IThreadGate
          _passThroughAction.Invoke(currentThread);
          _postPassThroughAction.Invoke(currentThread);
       }
+      return unit.Value;
    }
 
    ThreadGate(TimeSpan defaultTimeout, string? name = null)

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using Compze.Utilities.Threading.TasksCE;
 
@@ -12,7 +13,8 @@ namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 interface ITaskRunner
 {
-   void RunSwallowAndLogExceptions(string taskName, Action task);
+   void Run(string taskName, Action task);
+   void Run(string taskName, Func<unit> task);
    void ThrowIfAnyExceptions();
 }
 
@@ -30,7 +32,7 @@ static class TaskRunnerRegistrar
 
       TaskRunnerImpl() {}
 
-      public void RunSwallowAndLogExceptions(string taskName, Action task)
+      public void Run(string taskName, Action task)
       {
          TaskCE.Run(() =>
          {
@@ -40,11 +42,20 @@ static class TaskRunnerRegistrar
             }
             catch(Exception exception)
             {
-               this.Log().Error(exception, "Exception thrown on background thread. ");
-               _collectedExceptions.Update(exceptions => exceptions.Add(exception));
+               _collectedExceptions.Update(it => it.Add(exception));
+               try
+               {
+                  this.Log().Error(exception, "Exception thrown on background thread.");
+               }
+               catch(Exception loggingException)
+               {
+                  _collectedExceptions.Update(it => it.Add(loggingException));
+               }
             }
          });
       }
+
+      public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });
 
       public void ThrowIfAnyExceptions()
       {

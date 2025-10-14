@@ -38,6 +38,7 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tests.Integration" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
 
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,95 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.Sql;
+using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Utilities.Functional;
+using Compze.Utilities.Threading.Testing;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using Xunit;
+
+namespace Compze.Tests.Integration.XUnit.Tessaging;
+
+public class TaskRunnerExceptionHandlingTests : XUnitTestBase, IAsyncLifetime
+{
+   readonly ITestingEndpointHost _host;
+   readonly ITaskRunner _taskRunner;
+
+   public TaskRunnerExceptionHandlingTests()
+   {
+      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      var endpoint = _host.RegisterEndpoint(
+         "endpoint",
+         new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),
+         builder =>
+         {
+            builder.Container.Register()
+                   .AspNetCoreTransport()
+                   .CurrentTestsConfiguredSqlLayer();
+         });
+
+      _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
+   }
+
+   public async Task InitializeAsync() => await _host.StartAsync();
+
+   public async Task DisposeAsync() => await Task.CompletedTask;
+
+   [PluggableComponentsTheory]
+   public async Task Should_throw_aggregate_exception_on_dispose_when_background_task_throws()
+   {
+      var gate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
+
+      _taskRunner.Run("test-task", () => gate.AwaitPassThrough().then(() => throw new InvalidOperationException("exception1")));
+
+      gate.AwaitPassedThroughCountEqualTo(1);
+
+      var disposeAction = async () => await _host.DisposeAsync();
+      var aggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+
+      var flattened = aggregateException.Which.Flatten();
+      flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
+   }
+
+   [PluggableComponentsTheory]
+   public async Task Should_not_throw_on_dispose_when_no_exceptions_occurred()
+   {
+      var gate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
+
+      _taskRunner.Run("test-task", gate.AwaitPassThrough);
+
+      gate.AwaitPassedThroughCountEqualTo(1);
+
+      var disposeAction = async () => await _host.DisposeAsync();
+      await disposeAction.Should().NotThrowAsync();
+   }
+
+   [PluggableComponentsTheory]
+   public async Task Should_collect_multiple_exceptions_from_multiple_background_tasks()
+   {
+      var gate = ThreadGate.CreateOpenWithTimeout(20.Seconds());
+
+      _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough().then(() => throw new InvalidOperationException("exception1")));
+      _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough().then(() => throw new ArgumentException("exception2")));
+      _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough().then(() => throw new NotSupportedException("exception3")));
+
+      gate.AwaitPassedThroughCountEqualTo(3);
+
+      var disposeAction = async () => await _host.DisposeAsync();
+      var aggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+
+      var flattened = aggregateException.Which.Flatten();
+      flattened.InnerExceptions.Should().HaveCount(3);
+      flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
+      flattened.InnerExceptions.Should().Contain(e => e is ArgumentException && e.Message == "exception2");
+      flattened.InnerExceptions.Should().Contain(e => e is NotSupportedException && e.Message == "exception3");
+   }
+}

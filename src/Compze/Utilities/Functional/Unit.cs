@@ -4,6 +4,8 @@ using System;
 namespace Compze.Utilities.Functional;
 #pragma warning restore IDE0130
 
+
+
 ///<summary>The functional programming unit concept.
 /// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.
 /// Simply return unit.Value instead of void from methods with no return value.
