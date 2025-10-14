@@ -13,7 +13,7 @@ public static class XUnitInfrastructureModuleInitializer
    [ModuleInitializer]
    public static void Initialize()
    {
-      TestFixtureHelper.SetupSerilog(new XUnitTestEnricher());
+      TestFixtureHelper.SetupSerilog(new DummyXUnitTestEnricher());
       TestEnv.XunitDiscoverer = () => CurrentPluggableComponents.Value ?? throw new Exception("No pluggable components set for current test");
    }
 }

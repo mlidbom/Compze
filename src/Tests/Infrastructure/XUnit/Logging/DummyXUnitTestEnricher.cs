@@ -3,7 +3,7 @@ using Serilog.Events;
 
 namespace Compze.Tests.Infrastructure.XUnit.Logging;
 
-class XUnitTestEnricher : ILogEventEnricher
+class DummyXUnitTestEnricher : ILogEventEnricher
 {
    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
    {
