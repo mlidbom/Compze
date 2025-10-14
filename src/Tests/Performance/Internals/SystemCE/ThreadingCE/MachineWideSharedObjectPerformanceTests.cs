@@ -1,7 +1,5 @@
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.NUnit;
-using Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using FluentAssertions;
