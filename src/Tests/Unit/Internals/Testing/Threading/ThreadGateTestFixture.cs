@@ -64,7 +64,7 @@ class ThreadGateTestFixture : IDisposable
 
    public ThreadGateTestFixture WaitForAllThreadsToQueueUpAtPassThrough()
    {
-      Gate.Await(() => Gate.Queued == NumberOfThreads);
+      Gate.AwaitQueueLengthEqualTo(NumberOfThreads);
       return this;
    }
 
