@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using JetBrains.Annotations;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
@@ -10,33 +13,31 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 /// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
 /// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
-[XunitTestCaseDiscoverer("Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactAttributeTestCaseDiscoverer", "Compze.Tests.Infrastructure.XUnit")]
-public sealed class XFactAttribute : FactAttribute {}
-
-public class XFactAttributeTestCaseDiscoverer : IXunitTestCaseDiscoverer
+[XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
+public sealed class XFactAttribute : FactAttribute
 {
-   readonly IMessageSink _diagnosticMessageSink;
+   const string XFactDiscovererFullTypeName = "Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
+   const string XFactDiscovererAssembly = "Compze.Tests.Infrastructure.XUnit";
 
-   public XFactAttributeTestCaseDiscoverer(IMessageSink diagnosticMessageSink)
+   static XFactAttribute()
    {
-      _diagnosticMessageSink = diagnosticMessageSink;
+      Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable());
+      Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name);
    }
+}
+
+[UsedImplicitly] class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
+{
+   readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 
    public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
    {
-      // In XUnit v2, we need to convert ITypeInfo and IMethodInfo to runtime types to compare them properly
-      // This is the key difference from just comparing Name properties
-      var declaringType = testMethod.Method.ToRuntimeMethod()?.DeclaringType;
+      var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
       var currentType = testMethod.TestClass.Class.ToRuntimeType();
 
-      // Ensure we have valid types before comparing
-      if(declaringType == null || currentType == null)
-         return Array.Empty<IXunitTestCase>();
+      if(declaringType != currentType) // Skip tests declared in base classes
+         return [];
 
-      // Only create a test case if the method is declared in the current class (not inherited from base)
-      if(declaringType != currentType)
-         return Array.Empty<IXunitTestCase>();
-
-      return new[] { new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod) };
+      return [new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
    }
 }
