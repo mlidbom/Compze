@@ -47,7 +47,7 @@ public partial class MonitorCE
          {
             var elapsedTime = DateTime.UtcNow - startTime;
             var timeRemaining = conditionTimeout - elapsedTime;
-            if(elapsedTime > conditionTimeout)
+            if(timeRemaining <= TimeSpan.Zero)
             {
                Exit();
                return false;
