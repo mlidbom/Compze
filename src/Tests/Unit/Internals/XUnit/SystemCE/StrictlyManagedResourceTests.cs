@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 using Xunit;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.XUnit.SystemCE;

@@ -7,13 +7,13 @@ using Xunit.Sdk;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
-readonly record struct TestContextData(Tessaging.Hosting.Testing.PluggableComponents? PluggableComponents, ITestMethod TestMethod)
+public readonly record struct TestContextData(Tessaging.Hosting.Testing.PluggableComponents? PluggableComponents, ITestMethod TestMethod)
 {
 }
 
-static class TestContext
+public static class TestContext
 {
-   internal static TestContextData? Current => CurrentInternal.Value;
+   public static TestContextData? Current => CurrentInternal.Value;
    static readonly AsyncLocal<TestContextData?> CurrentInternal = new();
 
    internal static async Task<RunSummary> RunTestInContextAsync(
