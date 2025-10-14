@@ -27,8 +27,10 @@ public sealed class XFactAttribute : FactAttribute
    }
 }
 
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
 [UsedImplicitly] class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
 {
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
    readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 
    public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
