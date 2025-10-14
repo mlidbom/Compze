@@ -121,19 +121,22 @@ function C-GitBisectAuto {
         # Now bisect will automatically checkout commits to test
         Write-Host "`nStarting automated bisect process..." -ForegroundColor Cyan
         
+        $lastTestedCommit = $null
+        
         while ($true) {
             # Get current commit
             $currentCommit = git rev-parse HEAD
             
-            # Check if bisect is done (git will tell us)
-            $statusCheck = git status 2>&1 | Out-String
-            if ($statusCheck -notmatch "You are currently bisecting") {
+            # Check if we're testing the same commit again - means bisect is done
+            if ($lastTestedCommit -eq $currentCommit) {
                 Write-Host "`nBisect complete!" -ForegroundColor Green
                 Write-Host "The first bad commit is:" -ForegroundColor Green
                 git bisect log | Select-Object -First 10 | ForEach-Object { Write-Host $_ }
                 Write-Host "`nRepository left in bisect state. Use 'git bisect reset' to return to original state." -ForegroundColor Yellow
                 return
             }
+            
+            $lastTestedCommit = $currentCommit
             
             Write-Host "`n=== Testing commit: $currentCommit ===" -ForegroundColor Cyan
             
