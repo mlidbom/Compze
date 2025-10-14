@@ -1,7 +1,7 @@
 using System;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
-namespace Compze.Tests.Unit.Internals.XUnit.Contracts;
+namespace Compze.Tests.Unit.Internals.XUnit.XUnit.Contracts;
 
 public class StringAssertion_method : AssertionMethodsTest
 {

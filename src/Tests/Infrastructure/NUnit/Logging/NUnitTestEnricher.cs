@@ -5,7 +5,7 @@ using Serilog.Events;
 
 namespace Compze.Tests.Infrastructure.NUnit.Logging;
 
-class NUnitTestEnricher : ILogEventEnricher
+class NUnitTestSerilogEnricher : ILogEventEnricher
 {
    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
    {

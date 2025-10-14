@@ -1,6 +1,7 @@
 using System;
 using Compze.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using Xunit;
 
@@ -22,14 +23,14 @@ public class PersistentEntityTests : XUnitTestBase
       }
    }
 
-   [Fact]
+   [XFact]
    public void InstanceEqualsItself()
    {
       var person = new Person();
       AssertAreEqual(person, person);
    }
 
-   [Fact]
+   [XFact]
    public void IntstanceEqualsOtherInstanceWithSameId()
    {
       var lhs = new Person();
@@ -37,7 +38,7 @@ public class PersistentEntityTests : XUnitTestBase
       AssertAreEqual(lhs, rhs);
    }
 
-   [Fact]
+   [XFact]
    public void IntstanceNotEqualToinstanceWithOtherId()
    {
       var lhs = new Person(Guid.NewGuid());
@@ -45,7 +46,7 @@ public class PersistentEntityTests : XUnitTestBase
       AssertAreNotEqual(lhs, rhs);
    }
 
-   [Fact]
+   [XFact]
    public void IntstancesWithSameIdHasSameHashCode()
    {
       var lhs = new Person();
@@ -55,7 +56,7 @@ public class PersistentEntityTests : XUnitTestBase
    }
 
 
-   [Fact]
+   [XFact]
    public void ComparisonWithRhsNullReturnsFalse()
    {
       var lhs = new Person();
@@ -64,7 +65,7 @@ public class PersistentEntityTests : XUnitTestBase
       (lhs == null).Should().BeFalse();
    }
 
-   [Fact]
+   [XFact]
    public void ComparisonWithLhsNullReturnsFalse()
    {
       var rhs = new Person();
@@ -72,7 +73,7 @@ public class PersistentEntityTests : XUnitTestBase
       (null == rhs).Should().BeFalse();
    }
 
-   [Fact]
+   [XFact]
    public void ComparisonWithLhsNullAndRhsNullReturnsTrue()
    {
       Person? rhs = null;

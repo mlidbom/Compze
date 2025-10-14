@@ -46,7 +46,7 @@ class ThreadGateTestFixture : IDisposable
                        .ToList();
 
       _tasksPassingGate = _entrantEvents.Select(
-                                           entrantEvent => TaskCE.RunPrioritized(
+                                           entrantEvent => TaskCE.Run(
                                               () =>
                                               {
                                                  entrantEvent.HasStarted.Set();

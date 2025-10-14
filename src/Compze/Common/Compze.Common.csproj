@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -18,6 +18,7 @@
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
   </ItemGroup>
 </Project>

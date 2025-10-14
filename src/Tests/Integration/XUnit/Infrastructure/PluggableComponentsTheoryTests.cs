@@ -1,6 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Wiring;
 using FluentAssertions;
 using Xunit;
@@ -82,7 +83,7 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
       timeout.Should().Be(expected);
    }
 
-   [Fact]
+   [XFact]
    public void Regular_fact_test_should_run_only_once()
    {
       System.Console.WriteLine("✓ This regular Fact test runs exactly once");

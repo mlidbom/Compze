@@ -21,6 +21,7 @@
     <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />

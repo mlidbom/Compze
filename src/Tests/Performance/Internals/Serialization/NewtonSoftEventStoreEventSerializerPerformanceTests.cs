@@ -1,16 +1,15 @@
-using System;
-using System.Linq;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Unit.Internals.Serialization;
+using Compze.Tests.Infrastructure.NUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using System;
+using System.Linq;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
@@ -22,7 +21,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : NUnitTestBase
 
    [Test] public void Should_roundtrip_simple_event_1000_times_in_15_milliseconds()
    {
-      var @event = new NewtonSoftEventStoreEventSerializerTests.TestEvent(
+      var @event = new TestEvent(
          test1: "Test1",
          test2: "Test2",
          aggregateId: Guid.NewGuid(),
@@ -30,13 +29,13 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : NUnitTestBase
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
       //Warmup
-      _eventSerializer.Deserialize(typeof(NewtonSoftEventStoreEventSerializerTests.TestEvent), _eventSerializer.Serialize(@event));
+      _eventSerializer.Deserialize(typeof(TestEvent), _eventSerializer.Serialize(@event));
 
       TimeAsserter.Execute(
          () =>
          {
             var eventJson = _eventSerializer.Serialize(@event);
-            _eventSerializer.Deserialize(typeof(NewtonSoftEventStoreEventSerializerTests.TestEvent), eventJson);
+            _eventSerializer.Deserialize(typeof(TestEvent), eventJson);
          },
          iterations:1000,
          maxTotal: 15.Milliseconds()
@@ -48,7 +47,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : NUnitTestBase
       const int iterations = 1000;
       const double allowedSlowdown = 1.5;
 
-      var events = 1.Through(iterations).Select( _ =>  new NewtonSoftEventStoreEventSerializerTests.TestEvent(
+      var events = 1.Through(iterations).Select( _ =>  new TestEvent(
                                                     test1: "Test1",
                                                     test2: "Test2",
                                                     aggregateId: Guid.NewGuid(),
@@ -58,14 +57,14 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : NUnitTestBase
       var settings = EventStoreSerializer.JsonSettings;
 
       //Warmup
-      _eventSerializer.Deserialize(typeof(NewtonSoftEventStoreEventSerializerTests.TestEvent), _eventSerializer.Serialize(events.First()));
-      JsonConvert.DeserializeObject<NewtonSoftEventStoreEventSerializerTests.TestEvent>(JsonConvert.SerializeObject(events.First(), settings), settings);
+      _eventSerializer.Deserialize(typeof(TestEvent), _eventSerializer.Serialize(events.First()));
+      JsonConvert.DeserializeObject<TestEvent>(JsonConvert.SerializeObject(events.First(), settings), settings);
 
       var defaultSerializerPerformanceNumbers = StopwatchCE.TimeExecution(() =>
       {
          var eventJson = events.Select(it => JsonConvert.SerializeObject(it, settings))
                                .ToList();
-         eventJson.ForEach(it => JsonConvert.DeserializeObject<NewtonSoftEventStoreEventSerializerTests.TestEvent>(it, settings));
+         eventJson.ForEach(it => JsonConvert.DeserializeObject<TestEvent>(it, settings));
       });
 
       var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown).EnvMultiply(unoptimized:1.2);
@@ -75,7 +74,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : NUnitTestBase
                            {
                               var eventJson = events.Select(_eventSerializer.Serialize)
                                                     .ToList();
-                              eventJson.ForEach(it => _eventSerializer.Deserialize(typeof(NewtonSoftEventStoreEventSerializerTests.TestEvent), it));
+                              eventJson.ForEach(it => _eventSerializer.Deserialize(typeof(TestEvent), it));
                            },
                            maxTotal: allowedTime);
    }

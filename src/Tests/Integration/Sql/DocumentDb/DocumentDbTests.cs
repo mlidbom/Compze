@@ -15,6 +15,7 @@ using Compze.Tests.Common.NUnit.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.TasksCE;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
@@ -547,7 +548,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBa
     {
         IDocumentDbSession? session = null;
         using var wait = new ManualResetEventSlim();
-        var task = Task.Run(() =>
+        var task = TaskCE.Run(() =>
         {
             ServiceLocator.ExecuteInIsolatedScope(() => session = ServiceLocator.DocumentDbSession());
             wait.Set();

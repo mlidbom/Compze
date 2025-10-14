@@ -110,7 +110,7 @@ public class MyTest : DuplicateByPluggableComponentTest
    }
 
    // Runs only once
-   [Fact]
+   [XFact]
    public void Regular_test()
    {
       // Test logic
@@ -134,7 +134,7 @@ Custom XUnit attribute that:
 - Automatically creates and injects a `PluggableComponentTestContext` instance
 - Provides type-safe access to configuration via the context object
 
-Usage: Use `[PluggableComponentsTheory]` instead of `[Fact]` and add a `PluggableComponentTestContext` parameter!
+Usage: Use `[PluggableComponentsTheory]` instead of `[XFact]` and add a `PluggableComponentTestContext` parameter!
 
 ### PluggableComponentTestContext
 
@@ -235,7 +235,7 @@ public void My_test() // ✅
 
 ### ❌ Using wrong attribute
 ```csharp
-[Fact] // ❌ Should be [PluggableComponentsTheory]
+[XFact] // ❌ Should be [PluggableComponentsTheory]
 public void My_test()
 {
    // Won't run multiple times

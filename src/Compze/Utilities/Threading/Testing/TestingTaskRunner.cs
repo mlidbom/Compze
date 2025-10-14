@@ -19,7 +19,7 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
    {
       foreach(var task in tasks)
       {
-         _monitoredTasks.Add(Task.Run(task));
+         _monitoredTasks.Add(TaskCE.Run(task));
       }
 
       return this;

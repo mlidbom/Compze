@@ -49,7 +49,7 @@ public class ExamplePluggableComponentTest : DuplicateByPluggableComponentTest
    /// Example of a regular test that doesn't use pluggable components.
    /// This will run only once.
    /// </summary>
-   [Fact]
+   [XFact]
    public void Example_regular_test()
    {
       // Regular test logic

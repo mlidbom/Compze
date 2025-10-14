@@ -40,16 +40,9 @@ public class PluggableComponentsTestCase : XunitTestCase
                                                    ExceptionAggregator aggregator,
                                                    CancellationTokenSource cancellationTokenSource)
    {
-      // Set the current combination in AsyncLocal so TestEnv can access it
-      XUnitInfrastructureModuleInitializer.CurrentPluggableComponents.Value = _combination;
-      try
-      {
-         return await base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
-      }
-      finally
-      {
-         XUnitInfrastructureModuleInitializer.CurrentPluggableComponents.Value = null;
-      }
+      return await TestContext.RunTestInContextAsync(
+         new TestContextData(_combination, TestMethod),
+         () => base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
    }
 
    public override void Serialize(IXunitSerializationInfo data)

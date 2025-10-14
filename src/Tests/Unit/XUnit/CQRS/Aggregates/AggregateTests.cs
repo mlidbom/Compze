@@ -8,12 +8,13 @@ using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
 using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates;
 
 public class AggregateTests : XUnitTestBase
 {
-   [Fact]
+   [XFact]
    public void VersionIncreasesWithEachAppliedEvent()
    {
       var user = new User();
@@ -30,7 +31,7 @@ public class AggregateTests : XUnitTestBase
 
    }
 
-   [Fact]
+   [XFact]
    public void ResetEmptiesOutListOfUncommittedEvents()
    {
       var user = new User();
@@ -53,7 +54,7 @@ public class AggregateTests : XUnitTestBase
 
 
 
-   [Fact]
+   [XFact]
    public void When_Raising_event_that_triggers_another_event_both_events_are_outputted_on_the_observable_only_after_the_triggered_event_and_in_the_raised_order()
    {
       var aggregate = new CascadingEventsAggregate();

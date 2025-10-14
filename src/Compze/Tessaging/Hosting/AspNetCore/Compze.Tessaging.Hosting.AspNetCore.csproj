@@ -25,5 +25,6 @@
     <InternalsVisibleTo Include="Compze.Tests.Integration" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
   </ItemGroup>
 </Project>
