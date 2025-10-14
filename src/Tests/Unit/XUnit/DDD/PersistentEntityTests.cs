@@ -1,18 +1,15 @@
 using System;
 using Compze.Abstractions;
-using Compze.Tests.Infrastructure;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
+using Xunit;
 
-namespace Compze.Tests.Unit.DDD;
+namespace Compze.Tests.Unit.XUnit.DDD;
 
 
-#pragma warning disable NUnit2010 //I'm testing the methods and operators you want me not to use ;)
 #pragma warning disable CA1508 //Avoid dead conditional code
 
-[TestFixture]
-public class PersistentEntityTests : NUnitTestBase
+public class PersistentEntityTests : XUnitTestBase
 {
    class Person : PersistentEntity<Person>
    {
@@ -25,14 +22,14 @@ public class PersistentEntityTests : NUnitTestBase
       }
    }
 
-   [Test]
+   [Fact]
    public void InstanceEqualsItself()
    {
       var person = new Person();
       AssertAreEqual(person, person);
    }
 
-   [Test]
+   [Fact]
    public void IntstanceEqualsOtherInstanceWithSameId()
    {
       var lhs = new Person();
@@ -40,7 +37,7 @@ public class PersistentEntityTests : NUnitTestBase
       AssertAreEqual(lhs, rhs);
    }
 
-   [Test]
+   [Fact]
    public void IntstanceNotEqualToinstanceWithOtherId()
    {
       var lhs = new Person(Guid.NewGuid());
@@ -48,7 +45,7 @@ public class PersistentEntityTests : NUnitTestBase
       AssertAreNotEqual(lhs, rhs);
    }
 
-   [Test]
+   [Fact]
    public void IntstancesWithSameIdHasSameHashCode()
    {
       var lhs = new Person();
@@ -58,7 +55,7 @@ public class PersistentEntityTests : NUnitTestBase
    }
 
 
-   [Test]
+   [Fact]
    public void ComparisonWithRhsNullReturnsFalse()
    {
       var lhs = new Person();
@@ -67,7 +64,7 @@ public class PersistentEntityTests : NUnitTestBase
       (lhs == null).Should().BeFalse();
    }
 
-   [Test]
+   [Fact]
    public void ComparisonWithLhsNullReturnsFalse()
    {
       var rhs = new Person();
@@ -75,7 +72,7 @@ public class PersistentEntityTests : NUnitTestBase
       (null == rhs).Should().BeFalse();
    }
 
-   [Test]
+   [Fact]
    public void ComparisonWithLhsNullAndRhsNullReturnsTrue()
    {
       Person? rhs = null;

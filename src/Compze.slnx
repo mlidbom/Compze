@@ -324,9 +324,6 @@
     </Project>
   </Folder>
   <Folder Name="/_Tests/Unit/">
-    <Project Path="Tests/Unit/Compze.Tests.Unit.csproj">
-      <BuildType Solution="docs|Any CPU" Project="Debug" />
-    </Project>
     <Project Path="Tests/Unit/XUnit/Compze.Tests.Unit.XUnit.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>

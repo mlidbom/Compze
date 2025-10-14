@@ -1,14 +1,13 @@
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
 using JetBrains.Annotations;
-using NUnit.Framework;
+using Xunit;
 
-namespace Compze.Tests.Unit.GenericAbstractions;
+namespace Compze.Tests.Unit.XUnit.GenericAbstractions;
 
-[TestFixture]
-public class IStaticInstancePropertySingleton_tests : NUnitTestBase
+public class IStaticInstancePropertySingleton_tests : XUnitTestBase
 {
    [UsedImplicitly] class ImplicitImplementation : IStaticInstancePropertySingleton<ImplicitImplementation>
    {
@@ -22,7 +21,7 @@ public class IStaticInstancePropertySingleton_tests : NUnitTestBase
       ExplicitImplementation() { }
    }
 
-   [Test]
+   [Fact]
    public void Constructor_should_work_with_implicit_interface_implementation()
    {
       var instance1 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
@@ -33,7 +32,7 @@ public class IStaticInstancePropertySingleton_tests : NUnitTestBase
       instance1.Should().BeSameAs(ImplicitImplementation.Instance);
    }
 
-   [Test]
+   [Fact]
    public void Constructor_should_work_with_explicit_interface_implementation()
    {
       var instance1 = Constructor.For<ExplicitImplementation>.DefaultConstructor.Instance();
