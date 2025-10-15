@@ -130,10 +130,7 @@ function C-GitBisectAuto {
             
             # Check if we're testing the same commit again - means bisect is done
             if ($lastTestedCommit -eq $currentCommit) {
-                Write-Host "`nBisect complete!" -ForegroundColor Green
-                Write-Host "The first bad commit is:" -ForegroundColor Green
-                git bisect log | Select-Object -First 10 | ForEach-Object { Write-Host $_ }
-                Write-Host "`nRepository left in bisect state. Use 'git bisect reset' to return to original state." -ForegroundColor Yellow
+                GitBisect-CheckoutFirstBadCommit
                 return
             }
             
