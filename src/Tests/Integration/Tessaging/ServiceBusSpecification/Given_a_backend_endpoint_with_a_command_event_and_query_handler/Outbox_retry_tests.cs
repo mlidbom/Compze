@@ -64,35 +64,36 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
    //                        })
    //                       .Should().NotThrowAsync();
    // }
-   //
-   // [Test]
-   // public async Task Outbox_records_detailed_failure_information()
-   // {
-   //    await BackendEndPoint.StopAsync();
-   //    RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
-   //
-   //    var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
-   //
-   //    await FluentActions.Awaiting(async () =>
-   //                        {
-   //                           var deadline = DateTime.UtcNow.Add(10.Seconds());
-   //                           while(DateTime.UtcNow < deadline)
-   //                           {
-   //                              var messages = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
-   //                              if(messages.Count > 0 && messages.Any(m => m.RetryCount > 0))
-   //                                 return;
-   //                              await Task.Delay(100);
-   //                           }
-   //
-   //                           throw new Exception("Timeout waiting for failure to be recorded");
-   //                        })
-   //                       .Should().NotThrowAsync();
-   //
-   //    var undeliveredMessage = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero)[0];
-   //    undeliveredMessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
-   //    undeliveredMessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
-   //
-   //    await BackendEndPoint.InitAsync();
-   //    await BackendEndPoint.ConnectAsync();
-   // }
+
+   [Test]
+   public async Task Outbox_records_detailed_failure_information()
+   {
+      await BackendEndPoint.StopAsync();
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
+
+      var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
+
+      await FluentActions.Awaiting(async () =>
+                          {
+                             var deadline = DateTime.UtcNow.Add(10.Seconds());
+                             while(DateTime.UtcNow < deadline)
+                             {
+                                var messages = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
+                                if(messages.Count > 0 && messages.Any(m => m.RetryCount > 0))
+                                   return;
+                                await Task.Delay(100);
+                             }
+
+                             throw new Exception("Timeout waiting for failure to be recorded");
+                          })
+                         .Should().NotThrowAsync();
+
+      var undeliveredMessage = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero)[0];
+      undeliveredMessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
+      undeliveredMessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
+
+      Host.WaitForEndPointsToBeAtRestOnDispose = false;
+      await Host.DisposeAsync();
+      await StartHostAsync();
+   }
 }

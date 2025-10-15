@@ -50,11 +50,10 @@ public abstract class Fixture()
       _rootContainer = TestEnv.DIContainer.Create();
       _rootContainer.Register()
                     .CurrentTestsDbPoolIfNotAlreadyRegistered();
-      InitializeHost();
       await StartHostAsync();
    }
 
-   protected void InitializeHost()
+   void InitializeHost()
    {
       IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed(IRunMode mode)
       {
@@ -118,6 +117,7 @@ public abstract class Fixture()
 
    protected async Task StartHostAsync()
    {
+      InitializeHost();
       await Host.StartAsync();
       AllGates =
       [

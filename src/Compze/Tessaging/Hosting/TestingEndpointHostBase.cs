@@ -54,7 +54,10 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
       if(!_disposed)
       {
          _disposed = true;
-         WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds());
+         if(WaitForEndPointsToBeAtRestOnDispose)
+         {
+            WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds());
+         }
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
@@ -73,6 +76,8 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
          }
       }
    }
+
+   public bool WaitForEndPointsToBeAtRestOnDispose { get; set; } = true;
 
    List<Exception> GetThrownExceptions() => MessagesInFlightTracker.GetExceptions().ToList();
 }
