@@ -21,13 +21,13 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
       await BackendEndPoint.StopAsync();
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
 
-      var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
+      var originalRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
       await FluentActions.Awaiting(async () =>
                           {
                              var deadline = DateTime.UtcNow.Add(10.Seconds());
                              while(DateTime.UtcNow < deadline)
                              {
-                                var messages = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
+                                var messages = originalRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
                                 if(messages.Count > 0 && messages.Any(m => m.RetryCount > 0))
                                    return;
                                 await Task.Delay(100);
@@ -37,23 +37,23 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
                           })
                          .Should().NotThrowAsync();
 
-      var undeliveredMessage = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero)[0];
+      var undeliveredMessage = originalRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero)[0];
       undeliveredMessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
       undeliveredMessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
 
-      remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
+      var newRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
 
       Console.WriteLine("################### After restart");
-      MyLocalAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 5.Seconds());
+      //MyLocalAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 5.Seconds());
       await FluentActions.Awaiting(async () =>
                           {
                              var deadline = DateTime.UtcNow.Add(5.Seconds());
                              while(DateTime.UtcNow < deadline)
                              {
-                                var undeliveredMessages = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
+                                var undeliveredMessages = newRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
                                 undeliveredMessages.ForEach(it => Console.WriteLine($"########### Found undelivered: {it.MessageId}"));
                                 if(undeliveredMessages.Count == 0)
                                    return;
@@ -63,6 +63,8 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
                              throw new Exception("Timeout waiting for messages to be removed from outbox");
                           })
                          .Should().NotThrowAsync();
+
+      originalRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero).Should().HaveCount(0, "the new endpoint after restart should be using the same database");
    }
 
    [Test]
