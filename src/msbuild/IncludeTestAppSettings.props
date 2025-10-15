@@ -4,7 +4,6 @@
 		<Content Include="$(MSBuildThisFileDirectory)..\Compze\test-common-appsettings.json">
 			<Link>appsettings.json</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Visible>false</Visible>
 		</Content>
 	</ItemGroup>
 </Project>

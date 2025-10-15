@@ -1,0 +1,8 @@
+<Project>
+	<!-- Include module initializer to suppress FluentAssertions license messages -->
+	<ItemGroup>
+		<Compile Include="$(MSBuildThisFileDirectory)..\Tests\FluentAssertionsModuleInitializer.autoinclude.cs">
+			<Link>FluentAssertionsModuleInitializer.autoinclude.cs</Link>
+		</Compile>
+	</ItemGroup>
+</Project>

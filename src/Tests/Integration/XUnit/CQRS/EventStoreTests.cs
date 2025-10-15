@@ -12,6 +12,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Integration.XUnit.CQRS;
 

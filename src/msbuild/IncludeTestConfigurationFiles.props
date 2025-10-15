@@ -4,7 +4,6 @@
 		<Content Include="$(MSBuildThisFileDirectory)..\TestUsingPluggableComponentCombinations">
 			<Link>TestUsingPluggableComponentCombinations</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Visible>false</Visible>
 		</Content>
 	</ItemGroup>
 </Project>

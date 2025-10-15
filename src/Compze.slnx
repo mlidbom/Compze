@@ -232,9 +232,7 @@
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/_Samples/">
-    <File Path="Samples/Directory.Build.props" />
-  </Folder>
+  <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
     <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj">
       <BuildType Solution="docs|Any CPU" Project="Debug" />
@@ -265,7 +263,6 @@
     <File Path="../Writing_documentation.md" />
     <File Path=".editorconfig" />
     <File Path="Compze/test-common-appsettings.json" />
-    <File Path="Directory.Build.props" />
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />
   </Folder>
@@ -341,4 +338,7 @@
       <BuildType Solution="docs|Any CPU" Project="Debug" />
     </Project>
   </Folder>
+  <Project Path="Build.csproj">
+    <BuildType Solution="docs|*" Project="Release" />
+  </Project>
 </Solution>

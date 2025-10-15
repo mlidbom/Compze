@@ -1,0 +1,18 @@
+﻿<!-- ReSharper disable MarkupAttributeTypo -->
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <IsPackable>false</IsPackable>
+      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
+
+      <!-- Disable ALL default item globs -->
+      <EnableDefaultItems>false</EnableDefaultItems>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <None Include="**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="**/*.autoinclude.cs" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="TestUsingPluggableComponentCombinations*" />
+   </ItemGroup>
+</Project>
