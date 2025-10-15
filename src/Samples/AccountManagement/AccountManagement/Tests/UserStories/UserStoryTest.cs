@@ -4,7 +4,6 @@ using AccountManagement.UserStories.Scenarios;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
@@ -20,12 +19,7 @@ public abstract class UserStoryTest(string pluggableComponentsCombination) : Dup
 
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
-      Host = TestingEndpointHost.Create(runMode =>
-      {
-         var container = TestEnv.DIContainer.Create(runMode);
-         container.Register().CurrentTestsDbPoolIfNotAlreadyRegistered();
-         return container;
-      });
+      Host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.Create(runMode));
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
       await Host.StartAsync().caf();
