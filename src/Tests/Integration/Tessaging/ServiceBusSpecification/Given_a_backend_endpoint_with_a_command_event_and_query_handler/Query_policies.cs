@@ -2,8 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Utilities.Threading.Testing;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
-using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
 using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.SystemCE.LinqCE;
 using NUnit.Framework;

@@ -1,7 +1,5 @@
 using System.Linq;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
-using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;

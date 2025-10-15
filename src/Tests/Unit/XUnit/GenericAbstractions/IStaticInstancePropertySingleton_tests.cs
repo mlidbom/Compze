@@ -4,7 +4,6 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Xunit;
 
 namespace Compze.Tests.Unit.XUnit.GenericAbstractions;
 

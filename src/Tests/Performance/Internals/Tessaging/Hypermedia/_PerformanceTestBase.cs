@@ -7,7 +7,6 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Tests.Infrastructure;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
 

@@ -6,7 +6,6 @@ using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backen
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using NUnit.Framework;
-using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
 
 // ReSharper disable InconsistentNaming
 

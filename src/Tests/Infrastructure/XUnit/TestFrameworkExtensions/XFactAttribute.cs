@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;

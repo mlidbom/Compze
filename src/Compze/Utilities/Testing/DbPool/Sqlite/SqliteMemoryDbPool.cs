@@ -1,5 +1,4 @@
 using Microsoft.Data.Sqlite;
-using System.Collections.Concurrent;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.ResourceAccess;
 

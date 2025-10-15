@@ -1,4 +1,3 @@
-using Compze.Sql.Sqlite.Infrastructure;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;

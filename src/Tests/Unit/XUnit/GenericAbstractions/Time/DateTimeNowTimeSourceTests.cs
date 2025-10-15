@@ -4,7 +4,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using Xunit;
 
 namespace Compze.Tests.Unit.XUnit.GenericAbstractions.Time;
 

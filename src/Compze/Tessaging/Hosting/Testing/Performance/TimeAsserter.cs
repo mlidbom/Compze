@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 using SyncOrAsyncCE = Compze.Utilities.Threading.SyncOrAsyncCE;

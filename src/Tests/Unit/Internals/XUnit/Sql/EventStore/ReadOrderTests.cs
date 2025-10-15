@@ -1,9 +1,7 @@
 using System;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
-using Xunit;
 using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.XUnit;
