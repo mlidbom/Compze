@@ -81,6 +81,9 @@ function C-GitBisectAuto {
         # Run the automated bisect process to find the first bad commit
         GitBisect-FindFirstBadCommit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
         
+        # Checkout the first bad commit for investigation
+        GitBisect-CheckoutFirstBadCommit
+        
     } finally {
         Pop-Location
     }

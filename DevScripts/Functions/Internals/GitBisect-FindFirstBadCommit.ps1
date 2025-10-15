@@ -6,7 +6,7 @@ function GitBisect-FindFirstBadCommit {
     .DESCRIPTION
     Internal helper function that runs the main git bisect loop.
     Tests each commit that git bisect checks out, marking them as good/bad/skip.
-    Continues until git bisect identifies the first bad commit, then checks it out.
+    Continues until git bisect identifies the first bad commit.
     
     .PARAMETER FailureText
     Text that indicates a test failure
@@ -16,6 +16,9 @@ function GitBisect-FindFirstBadCommit {
     
     .PARAMETER Iterations
     Number of times to run the test suite for each commit
+    
+    .OUTPUTS
+    None - Function continues until bisect completes
     
     .EXAMPLE
     GitBisect-FindFirstBadCommit -FailureText "NullRef" -Iterations 5
@@ -38,7 +41,6 @@ function GitBisect-FindFirstBadCommit {
         
         # Check if we're testing the same commit again - means bisect is done
         if ($lastTestedCommit -eq $currentCommit) {
-            GitBisect-CheckoutFirstBadCommit
             return
         }
         
