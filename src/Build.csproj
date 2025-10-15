@@ -13,6 +13,7 @@
       <None Include="**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="**/*.autoinclude.cs" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="TestUsingPluggableComponentCombinations*" />
+
+       <None Include="TestUsingPluggableComponentCombinations*" />
    </ItemGroup>
 </Project>

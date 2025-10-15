@@ -1,0 +1,20 @@
+﻿<!-- ReSharper disable MarkupAttributeTypo -->
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <IsPackable>false</IsPackable>
+      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
+
+      <!-- Disable ALL default item globs -->
+      <EnableDefaultItems>false</EnableDefaultItems>
+      <RootNamespace>Automation</RootNamespace>
+   </PropertyGroup>
+
+   <ItemGroup>
+       <None Include="../**/*.ps1" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+       <None Include="../**/*.psm1" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+       <None Include="../**/*.psd1" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+       <None Include="../**/*.bat" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+       
+   </ItemGroup>
+</Project>
