@@ -38,8 +38,8 @@ public abstract partial class Fixture()
    public IReadOnlyList<IThreadGate> AllGates = [];
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
-   protected IEndpoint ClientEndpoint { get; set; } = null!;
-   protected IEndpoint RemoteEndpoint { get; set; } = null!;
+   protected IEndpoint ClientEndpoint { get; private set; } = null!;
+   protected IEndpoint RemoteEndpoint { get; private init; } = null!;
 
    public virtual async Task SetupAsync()
    {
