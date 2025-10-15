@@ -6,7 +6,6 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.TasksCE;
@@ -55,11 +54,18 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
       if(!_disposed)
       {
          _disposed = true;
-         this.Log().LogAndSuppressExceptions(() => WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds()));
+         WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds());
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
-         await base.DisposeAsync(disposing).caf();
+         try
+         {
+            await base.DisposeAsync(disposing).caf();
+         }
+         catch(AggregateException aggregateException)
+         {
+            unHandledExceptions.AddRange(aggregateException.Flatten().InnerExceptions);
+         }
 
          if(unHandledExceptions.Any())
          {
