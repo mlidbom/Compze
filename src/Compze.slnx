@@ -185,13 +185,5 @@
     <Project Path="Websites/Website/Website.csproj" />
   </Folder>
   <Project Path="Build.csproj" />
-  <Project Path="Scripts.csproj" Type="Classic C#">
-    <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
-    <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
-    <Configuration Solution="docs|Any CPU" Project="Debug|Any CPU" />
-    <Configuration Solution="docs|x64" Project="Debug|Any CPU" />
-    <Configuration Solution="docs|x86" Project="Debug|Any CPU" />
-    <Configuration Solution="Release|x64" Project="Release|Any CPU" />
-    <Configuration Solution="Release|x86" Project="Release|Any CPU" />
-  </Project>
+  <Project Path="Scripts.csproj" />
 </Solution>
