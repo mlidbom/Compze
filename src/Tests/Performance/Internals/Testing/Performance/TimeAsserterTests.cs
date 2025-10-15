@@ -1,6 +1,5 @@
 
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;

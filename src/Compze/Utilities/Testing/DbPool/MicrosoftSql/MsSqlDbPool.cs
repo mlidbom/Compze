@@ -1,11 +1,29 @@
 using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
-internal class MsSqlDbPool : DbPool
+static class SqliteMemoryDbPoolRegistrar
 {
+   public static IDependencyRegistrar MsSqlDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+      MsSqlDbPool.RegisterWith(registrar);
+}
+
+class MsSqlDbPool : DbPool
+{
+   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<MsSqlDbPool>())
+         return registrar;
+
+      return registrar.Register(Singleton.For<MsSqlDbPool>()
+                                         .CreatedBy(() => new MsSqlDbPool())
+                                         .DelegateToParentServiceLocatorWhenCloning());
+   }
+
    readonly string _masterConnectionString;
    readonly IMsSqlConnectionPool _masterConnectionPool;
 
@@ -20,7 +38,7 @@ internal class MsSqlDbPool : DbPool
    }
 
    protected override string ConnectionStringFor(Database db)
-      => new SqlConnectionStringBuilder(_masterConnectionString) {InitialCatalog = db.Name}.ConnectionString;
+      => new SqlConnectionStringBuilder(_masterConnectionString) { InitialCatalog = db.Name }.ConnectionString;
 
    protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
    {

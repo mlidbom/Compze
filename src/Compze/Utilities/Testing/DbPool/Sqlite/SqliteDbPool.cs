@@ -1,15 +1,32 @@
-using Compze.Sql.Sqlite.Infrastructure;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
+static class SqliteDbPoolRegistrar
+{
+   public static IDependencyRegistrar SqliteDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+      SqliteDbPool.RegisterWith(registrar);
+}
+
 class SqliteDbPool : DbPool
 {
+   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<SqliteDbPool>())
+         return registrar;
+
+      return registrar.Register(Singleton.For<SqliteDbPool>()
+                                         .CreatedBy(() => new SqliteDbPool())
+                                         .DelegateToParentServiceLocatorWhenCloning());
+   }
+
    readonly string _baseDirectory;
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
-   public SqliteDbPool()
+   internal SqliteDbPool()
    {
       _baseDirectory = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                     ?? Path.Combine(Path.GetTempPath(), "CompzeDbPool", "Sqlite");

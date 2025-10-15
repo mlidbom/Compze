@@ -1,8 +1,6 @@
 using System;
 using Compze.Tessaging.Hosting.Configuration;
-using Compze.Tests.Infrastructure;
 using FluentAssertions;
-using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 

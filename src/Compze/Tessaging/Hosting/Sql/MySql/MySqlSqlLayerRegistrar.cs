@@ -12,20 +12,18 @@ public static class MySqlSqlLayerRegistrar
    {
       if(registrar.RunMode.IsTesting)
       {
-         registrar.MySqlProductionConnectionPool(connectionStringName);
+         registrar.MySqlDbPoolWithConnectionPool(connectionStringName);
       } else
       {
-         registrar.MySqlDbPoolWithConnectionPool(connectionStringName);
+         registrar.MySqlProductionConnectionPool(connectionStringName);
       }
 
       return registrar;
    }
 
-   public static IDependencyRegistrar MySqlProductionConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IDependencyRegistrar MySqlDbPoolWithConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
    {
-      registrar.Register(Singleton.For<MySqlDbPool>()
-                                  .CreatedBy((IConfigurationParameterProvider _) => new MySqlDbPool())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+      registrar.MySqlDbPoolIfNotAlreadyRegistered();
 
       return registrar.Register(
          Singleton.For<IMySqlConnectionPool>()
@@ -33,12 +31,11 @@ public static class MySqlSqlLayerRegistrar
       );
    }
 
-   public static IDependencyRegistrar MySqlNewDbPoolWithConnectionPool(this IDependencyRegistrar registrar) =>
-      registrar.MySqlDbPoolWithConnectionPool(Guid.NewGuid().ToString());
-
-   public static IDependencyRegistrar MySqlDbPoolWithConnectionPool(this IDependencyRegistrar registrar, string connectionStringName) =>
-      registrar.Register(
+   public static IDependencyRegistrar MySqlProductionConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
+   {
+      return registrar.Register(
          Singleton.For<IMySqlConnectionPool>()
                   .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMySqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                   .DelegateToParentServiceLocatorWhenCloning());
+   }
 }

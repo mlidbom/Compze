@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Tessaging.Abstractions;
 using Compze.Serialization;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
@@ -17,7 +17,7 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-internal static class TransportRegistrar
+static class TransportRegistrar
 {
    internal static IDependencyRegistrar Transport(this IDependencyRegistrar registrar)
       => registrar.Register(Implementation.Transport.RegisterWith);
@@ -43,7 +43,7 @@ partial class Transport : ITransport, IDisposable
    readonly IRemotableMessageSerializer _serializer;
    readonly IHttpApiClient _httpApiClient;
 
-   bool _running = true;
+   bool _running = false;
    readonly Router _router;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
 
@@ -85,6 +85,9 @@ partial class Transport : ITransport, IDisposable
       var connection = _router.ConnectionToHandlerFor(query);
       return await connection.GetAsync(query).caf();
    }
+
+   public void Start() => Assert.State.Is(!_running, () => "already running")
+                                .then(_running = true);
 
    public void Stop() => AssertRunning().then(() =>
    {

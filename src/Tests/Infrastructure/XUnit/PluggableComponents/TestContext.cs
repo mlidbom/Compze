@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 

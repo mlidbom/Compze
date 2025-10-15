@@ -1,6 +1,4 @@
-using System;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
 using NUnit.Framework;
@@ -14,7 +12,7 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
    [Test]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
-      var container = TestingContainerFactory.Create(RunMode.Testing);
+      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(RunMode.Testing);
 
       var exception = Invoking(() =>
       {
@@ -32,7 +30,7 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
    [Test]
    public void Should_allow_singleton_depending_on_singleton()
    {
-      var container = TestingContainerFactory.Create(RunMode.Testing);
+      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(RunMode.Testing);
 
       container.Register(
          Singleton.For<ISingletonDependency>().CreatedBy(() => new SingletonDependency()),

@@ -1,5 +1,6 @@
 using System;
 using Compze.Common.Refactoring.Naming.Wiring;
+using Compze.Sql.DocumentDb.DependencyInjection;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
@@ -10,12 +11,18 @@ using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.Logging;
 using Compze.Wiring;
 using JetBrains.Annotations;
-using Compze.Sql.DocumentDb.DependencyInjection;
 
 namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
 public static class DiContainerExtensions
 {
+   public static IDependencyInjectionContainer CreateWithRegisteredServiceLocator(this DIContainer @this, IRunMode? runMode = null)
+   {
+      var container = @this.Create();
+      container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
+      return container;
+   }
+
    public static IDependencyInjectionContainer Create(this DIContainer @this, IRunMode? runMode = null)
    {
       runMode = runMode ?? RunMode.Testing;
@@ -25,14 +32,12 @@ public static class DiContainerExtensions
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(runMode),
          _                          => throw new ArgumentOutOfRangeException()
       };
-
-      container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
       return container;
    }
 
    public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IDependencyRegistrar> setup)
    {
-      var container = @this.Create(RunMode.Testing);
+      var container = @this.CreateWithRegisteredServiceLocator(RunMode.Testing);
       container.Register()
                .TimeSource()
                .TypeMapper()

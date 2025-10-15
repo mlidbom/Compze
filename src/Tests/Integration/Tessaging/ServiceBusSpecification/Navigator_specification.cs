@@ -10,7 +10,6 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
@@ -28,7 +27,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
    {
       var queryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
       _host.RegisterEndpoint(
          "Backend",

@@ -1,9 +1,7 @@
 using System;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
-using Compze.Tests.Infrastructure;
 using JetBrains.Annotations;
-using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;

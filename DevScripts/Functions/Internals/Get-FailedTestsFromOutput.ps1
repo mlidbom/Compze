@@ -40,17 +40,20 @@ function Get-FailedTestsFromOutput {
             $displayName = $matches[1].Trim()
             
             # Now look ahead for the stack trace to find the actual test method
+            # We want the LAST method in the stack trace that has a source file location,
+            # as that's typically the actual test method (not framework code)
             $fullName = $null
+            $lastMethodFound = $null
             for ($j = $i + 1; $j -lt $lines.Count -and $j -lt ($i + 100); $j++) {
                 $stackLine = $lines[$j]
                 
-                # Look for the test method call in the stack trace
+                # Look for method calls in the stack trace with source file locations
                 # Pattern: "   at Namespace.Class.Method() in ..."
                 if ($stackLine -match '^\s+at\s+([A-Za-z_][\w.]+)\.([A-Za-z_]\w+)\([^)]*\)\s+in\s+.*\.cs:line\s+\d+') {
                     $className = $matches[1]
                     $methodName = $matches[2]
-                    $fullName = "$className.$methodName"
-                    break
+                    $lastMethodFound = "$className.$methodName"
+                    # Don't break - keep looking for the last one
                 }
                 
                 # Stop searching if we hit the next test or a summary line
@@ -58,6 +61,8 @@ function Get-FailedTestsFromOutput {
                     break
                 }
             }
+            
+            $fullName = $lastMethodFound
             
             # If we couldn't find it in the stack trace, use the display name
             if (-not $fullName) {

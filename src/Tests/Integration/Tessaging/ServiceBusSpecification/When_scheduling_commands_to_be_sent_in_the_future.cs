@@ -8,7 +8,6 @@ using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -26,7 +25,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
 
    [SetUp] public async Task Setup()
    {
-      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
       _endpoint = _host.RegisterEndpoint(
          "endpoint",

@@ -1,12 +1,30 @@
 using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MySql;
 
-internal sealed class MySqlDbPool : DbPool
+static class MySqlDbPoolRegistrar
 {
+   public static IDependencyRegistrar MySqlDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+      MySqlDbPool.RegisterWith(registrar);
+}
+
+sealed class MySqlDbPool : DbPool
+{
+   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<MySqlDbPool>())
+         return registrar;
+
+      return registrar.Register(Singleton.For<MySqlDbPool>()
+                                         .CreatedBy(() => new MySqlDbPool())
+                                         .DelegateToParentServiceLocatorWhenCloning());
+   }
+
    readonly IMySqlConnectionPool _masterConnectionPool;
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_MYSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";

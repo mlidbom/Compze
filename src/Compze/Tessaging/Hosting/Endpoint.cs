@@ -19,11 +19,13 @@ class Endpoint : IEndpoint
       public readonly IInbox Inbox = inbox;
       readonly IOutbox _outbox = outbox;
 
-      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).caf();
+      public async Task StartListeningComponentsAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync()).caf();
+      public async Task StartSendingComponentsAsync() => await Task.WhenAll(_outbox.StartAsync()).caf();
+
       public async Task StopAsync()
       {
          _commandScheduler.Stop();
-         await Inbox.StopAsync().caf();
+         await Task.WhenAll(Inbox.StopAsync(), _outbox.StartAsync()).caf();
       }
 
       public void Dispose() => _commandScheduler.Dispose();
@@ -31,6 +33,7 @@ class Endpoint : IEndpoint
 
    readonly EndpointConfiguration _configuration;
    public bool IsRunning { get; private set; }
+
    public Endpoint(IServiceLocator serviceLocator,
                    IMessagesInFlightTracker globalStateTracker,
                    ITransport transport,
@@ -44,6 +47,7 @@ class Endpoint : IEndpoint
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
+
    public EndpointId Id => _configuration.Id;
    public IServiceLocator ServiceLocator { get; }
 
@@ -54,47 +58,47 @@ class Endpoint : IEndpoint
 
    ServerComponents? _serverComponents;
 
-   public async Task InitAsync()
+   public async Task StartListeningComponentsAsync()
    {
       State.Is(!IsRunning);
 
       RunSanityChecks();
+
+      _transport.Start();
 
       //todo: find cleaner way of handling what an endpoint supports
       if(!_configuration.IsPureClientEndpoint)
       {
          _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await _serverComponents.InitAsync().caf();
+         await _serverComponents.StartListeningComponentsAsync().caf();
       }
-
 
       IsRunning = true;
    }
 
-   public async Task ConnectAsync()
+   public async Task StartSendingComponentsAsync()
    {
       var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
-      if (_serverComponents != null)
+      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
+      if(_serverComponents != null)
       {
+         await _serverComponents.StartSendingComponentsAsync().caf();
          serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
       }
-      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
    }
 
    static void RunSanityChecks() => AssertAllTypesNeedingMappingsAreMapped();
 
    //todo: figure out how to do this sanely
-   static void AssertAllTypesNeedingMappingsAreMapped()
-   {
-   }
+   static void AssertAllTypesNeedingMappingsAreMapped() {}
 
    public async Task StopAsync()
    {
       State.Is(IsRunning);
       IsRunning = false;
       _transport.Stop();
-      if(_serverComponents != null )
+      if(_serverComponents != null)
          await _serverComponents.StopAsync().caf();
    }
 
@@ -103,14 +107,14 @@ class Endpoint : IEndpoint
    public async ValueTask DisposeAsync()
    {
       if(IsRunning) await StopAsync().caf();
-      
+
       // Check for any exceptions collected on background threads before disposing
       if(!_configuration.IsPureClientEndpoint)
       {
          var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
          exceptionReporter.ThrowIfAnyExceptions();
       }
-      
+
       await ServiceLocator.DisposeAsync().caf();
       _serverComponents?.Dispose();
    }

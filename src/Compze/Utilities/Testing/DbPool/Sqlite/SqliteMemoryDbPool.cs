@@ -1,12 +1,29 @@
-using Microsoft.Data.Sqlite;
-using System.Collections.Concurrent;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.ResourceAccess;
+using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
-internal class SqliteMemoryDbPool : DbPool
+static class SqliteMemoryDbPoolRegistrar
 {
+   public static IDependencyRegistrar SqliteMemoryDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+      SqliteMemoryDbPool.RegisterWith(registrar);
+}
+
+class SqliteMemoryDbPool : DbPool
+{
+   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<SqliteMemoryDbPool>())
+         return registrar;
+
+      return registrar.Register(Singleton.For<SqliteMemoryDbPool>()
+                                         .CreatedBy(() => new SqliteMemoryDbPool())
+                                         .DelegateToParentServiceLocatorWhenCloning());
+   }
+
    // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
    readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = ThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());
 

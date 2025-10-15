@@ -49,12 +49,17 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
 
    bool _disposed;
 
-   protected override async ValueTask DisposeAsync(bool disposing)
+   protected override async ValueTask DisposeAsync(bool disposing) => await DisposeAsync(disposing, true).caf();
+
+   async ValueTask DisposeAsync(bool disposing, bool waitForEndpointsToBeAtRest)
    {
       if(!_disposed)
       {
          _disposed = true;
-         WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds());
+         if(waitForEndpointsToBeAtRest)
+         {
+            WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds());
+         }
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
 
@@ -73,6 +78,9 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
          }
       }
    }
+
+   public bool WaitForEndPointsToBeAtRestOnDispose { get; set; } = true;
+   public async Task DisposeAsyncWithoutWaitingForEndpointsToBeAtRest() => await DisposeAsync(true, false).caf();
 
    List<Exception> GetThrownExceptions() => MessagesInFlightTracker.GetExceptions().ToList();
 }

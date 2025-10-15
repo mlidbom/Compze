@@ -17,6 +17,7 @@ public static class SqliteSqlLayerRegistrar
       {
          registrar.SqliteProductionConnectionPool(connectionStringName);
       }
+
       return registrar;
    }
 
@@ -31,9 +32,7 @@ public static class SqliteSqlLayerRegistrar
 
    public static IDependencyRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IDependencyRegistrar registrar, string connectionStringName)
    {
-      registrar.Register(Singleton.For<SqliteDbPool>()
-                                  .CreatedBy((IConfigurationParameterProvider _) => new SqliteDbPool())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+      registrar.SqliteDbPoolIfNotAlreadyRegistered();
 
       return registrar.Register(
          Singleton.For<ISqliteConnectionPool>()
@@ -49,14 +48,13 @@ public static class SqliteSqlLayerRegistrar
       {
          throw new InvalidOperationException("SqliteMemory is only supported in testing mode");
       }
+
       return registrar;
    }
 
    public static IDependencyRegistrar SqliteMemoryDbPoolAndConnectionPoolForConnectionStringName(this IDependencyRegistrar registrar, string connectionStringName)
    {
-      registrar.Register(Singleton.For<SqliteMemoryDbPool>()
-                                  .CreatedBy((IConfigurationParameterProvider _) => new SqliteMemoryDbPool())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+      registrar.SqliteMemoryDbPoolIfNotAlreadyRegistered();
 
       return registrar.Register(
          Singleton.For<ISqliteConnectionPool>()

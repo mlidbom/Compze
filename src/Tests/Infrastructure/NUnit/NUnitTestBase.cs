@@ -1,4 +1,3 @@
-using System;
 using Compze.Utilities.SystemCE;
 using NUnit.Framework;
 

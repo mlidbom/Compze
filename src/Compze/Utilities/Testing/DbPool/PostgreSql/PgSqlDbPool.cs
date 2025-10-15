@@ -1,5 +1,7 @@
 using Compze.Sql.Common;
 using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using Npgsql;
@@ -8,8 +10,24 @@ using Npgsql;
 
 namespace Compze.Utilities.Testing.DbPool.PostgreSql;
 
-internal sealed class PgSqlDbPool : DbPool
+static class PgSqlDbPoolRegistrar
 {
+   public static IDependencyRegistrar PgSqlDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+      PgSqlDbPool.RegisterWith(registrar);
+}
+
+sealed class PgSqlDbPool : DbPool
+{
+   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<PgSqlDbPool>())
+         return registrar;
+
+      return registrar.Register(Singleton.For<PgSqlDbPool>()
+                                         .CreatedBy(() => new PgSqlDbPool())
+                                         .DelegateToParentServiceLocatorWhenCloning());
+   }
+
    readonly IPgSqlConnectionPool _masterConnectionPool;
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
@@ -38,7 +56,7 @@ internal sealed class PgSqlDbPool : DbPool
       var databaseName = db.Name.ToLowerInvariant();
       ResetConnectionPool(db);
       var exists = (string?)_masterConnectionPool.ExecuteScalar($"SELECT datname FROM pg_database WHERE datname = '{databaseName.ToLowerInvariant()}'");
-      if (!string.IsNullOrEmpty(exists))
+      if(!string.IsNullOrEmpty(exists))
       {
          ResetDatabase(db);
       } else
@@ -48,29 +66,28 @@ internal sealed class PgSqlDbPool : DbPool
    }
 
    protected override void ResetDatabase(Database db) =>
-      IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(
-         command => command.SetCommandText("""
+      IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(command => command.SetCommandText("""
 
-                                           DO $$
-                                           DECLARE
-                                                   dbRecord RECORD;
-                                           BEGIN
-                                           	FOR dbRecord IN (SELECT nspname
-                                           			FROM pg_catalog.pg_namespace
-                                           			WHERE nspname NOT IN ('information_schema', 'pg_catalog', 'pg_toast')) 
-                                           	LOOP
-                                           			EXECUTE format('DROP SCHEMA %I CASCADE;', dbRecord.nspname);
-                                           	END LOOP;
-                                           
-                                           	CREATE SCHEMA public AUTHORIZATION postgres;
-                                           	COMMENT ON SCHEMA public IS 'standard public schema';
-                                           	GRANT ALL ON SCHEMA public TO PUBLIC;
-                                           	GRANT ALL ON SCHEMA public TO postgres;
+                                                                                                                DO $$
+                                                                                                                DECLARE
+                                                                                                                        dbRecord RECORD;
+                                                                                                                BEGIN
+                                                                                                                	FOR dbRecord IN (SELECT nspname
+                                                                                                                			FROM pg_catalog.pg_namespace
+                                                                                                                			WHERE nspname NOT IN ('information_schema', 'pg_catalog', 'pg_toast')) 
+                                                                                                                	LOOP
+                                                                                                                			EXECUTE format('DROP SCHEMA %I CASCADE;', dbRecord.nspname);
+                                                                                                                	END LOOP;
 
-                                           END; $$;
-                                           """)
-                           .PrepareStatement()
-                           .ExecuteNonQuery());
+                                                                                                                	CREATE SCHEMA public AUTHORIZATION postgres;
+                                                                                                                	COMMENT ON SCHEMA public IS 'standard public schema';
+                                                                                                                	GRANT ALL ON SCHEMA public TO PUBLIC;
+                                                                                                                	GRANT ALL ON SCHEMA public TO postgres;
+
+                                                                                                                END; $$;
+                                                                                                                """)
+                                                                                                .PrepareStatement()
+                                                                                                .ExecuteNonQuery());
 
    void ResetConnectionPool(Database db)
    {

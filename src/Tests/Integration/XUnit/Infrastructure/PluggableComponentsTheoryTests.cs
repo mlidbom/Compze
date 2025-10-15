@@ -4,7 +4,6 @@ using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Wiring;
 using FluentAssertions;
-using Xunit;
 
 namespace Compze.Tests.Integration.XUnit.Infrastructure;
 

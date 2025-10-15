@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using NUnit.Framework;
-using static Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler.Fixture;
 
 // ReSharper disable InconsistentNaming
 
@@ -16,7 +16,7 @@ public class Fixture_tests(string pluggableComponentsCombination) : NUnitFixture
 {
    [Test] public async Task If_command_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
-      CommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      MyExactlyOnceCommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }

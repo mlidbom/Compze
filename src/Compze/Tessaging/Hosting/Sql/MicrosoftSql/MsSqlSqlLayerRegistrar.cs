@@ -17,11 +17,9 @@ public static class MsSqlSqlLayerRegistrar
       {
          registrar.MsSqlProductionConnectionPool(connectionStringName);
       }
+
       return registrar;
    }
-
-   public static IDependencyRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IDependencyRegistrar registrar)
-      => registrar.DbPoolAndConnectionPoolForConnectionStringName(Guid.NewGuid().ToString());
 
    public static IDependencyRegistrar MsSqlProductionConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
       => registrar.Register(
@@ -31,9 +29,7 @@ public static class MsSqlSqlLayerRegistrar
 
    public static IDependencyRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IDependencyRegistrar registrar, string connectionStringName)
    {
-      registrar.Register(Singleton.For<MsSqlDbPool>()
-                                  .CreatedBy((IConfigurationParameterProvider _) => new MsSqlDbPool())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+      registrar.MsSqlDbPoolIfNotAlreadyRegistered();
 
       return registrar.Register(
          Singleton.For<IMsSqlConnectionPool>()

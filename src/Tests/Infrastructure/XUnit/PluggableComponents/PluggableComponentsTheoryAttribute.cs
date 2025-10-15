@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Xunit;
 using Xunit.Sdk;

@@ -31,9 +31,12 @@ partial class MsSqlOutboxSqlLayer
                                             
                                                 CREATE TABLE dbo.{D.TableName}
                                                 (
-                                                    {D.MessageId}  uniqueidentifier NOT NULL,
-                                                    {D.EndpointId} uniqueidentifier NOT NULL,
-                                                    {D.IsReceived} bit              NOT NULL,
+                                                    {D.MessageId}        uniqueidentifier NOT NULL,
+                                                    {D.EndpointId}       uniqueidentifier NOT NULL,
+                                                    {D.IsReceived}       bit              NOT NULL,
+                                                    {D.RetryCount}       int              NOT NULL DEFAULT 0,
+                                                    {D.LastAttemptTime}  datetime2        NULL,
+                                                    {D.FailureReason}    nvarchar(MAX)    NULL,
                                             
                                                     CONSTRAINT PK_{D.TableName} PRIMARY KEY CLUSTERED( {D.MessageId}, {D.EndpointId})
                                                         WITH (ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = OFF),

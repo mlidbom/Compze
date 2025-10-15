@@ -30,9 +30,12 @@ partial class MySqlOutboxSqlLayer
                                                        
                                                            CREATE TABLE  IF NOT EXISTS {D.TableName}
                                                            (
-                                                               {D.MessageId} {MySqlGuidType} NOT NULL,
-                                                               {D.EndpointId} {MySqlGuidType} NOT NULL,
-                                                               {D.IsReceived} bit NOT NULL,
+                                                               {D.MessageId}        {MySqlGuidType} NOT NULL,
+                                                               {D.EndpointId}       {MySqlGuidType} NOT NULL,
+                                                               {D.IsReceived}       bit             NOT NULL,
+                                                               {D.RetryCount}       int             NOT NULL DEFAULT 0,
+                                                               {D.LastAttemptTime}  datetime        NULL,
+                                                               {D.FailureReason}    MEDIUMTEXT      NULL,
                                                        
                                                        
                                                                PRIMARY KEY ( {D.MessageId}, {D.EndpointId}),

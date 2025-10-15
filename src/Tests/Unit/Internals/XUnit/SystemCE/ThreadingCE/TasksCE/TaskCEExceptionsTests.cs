@@ -1,9 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tests.Infrastructure;
 using FluentAssertions;
-using Xunit;
 using static FluentAssertions.FluentActions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;

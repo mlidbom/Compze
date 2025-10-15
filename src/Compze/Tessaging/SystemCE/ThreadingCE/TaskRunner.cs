@@ -3,7 +3,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;

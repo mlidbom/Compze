@@ -61,8 +61,8 @@ public class EndpointHost : IEndpointHost
          Assert.State.Is(!_isStarted).Is(Endpoints.None(endpoint => endpoint.IsRunning));
          _isStarted = true;
 
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.InitAsync())).WithAggregateExceptions().caf();
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.ConnectAsync())).WithAggregateExceptions().caf();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingComponentsAsync())).WithAggregateExceptions().caf();
       }catch(Exception e)
       {
          this.Log().Error(e, "Failed to start host");

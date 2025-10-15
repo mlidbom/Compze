@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
@@ -27,7 +25,7 @@ public class TaskRunnerExceptionHandlingTests : XUnitTestBase, IAsyncLifetime
 
    public TaskRunnerExceptionHandlingTests()
    {
-      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
       var endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),

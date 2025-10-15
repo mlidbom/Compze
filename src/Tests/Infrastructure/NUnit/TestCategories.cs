@@ -1,7 +1,6 @@
 using System;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Interfaces;
-using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Infrastructure.NUnit;
 

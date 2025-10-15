@@ -1,6 +1,5 @@
 using Compze.Utilities.SystemCE;
 using System;
-using Xunit;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 

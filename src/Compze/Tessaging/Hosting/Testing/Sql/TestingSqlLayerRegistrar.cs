@@ -3,7 +3,6 @@ using Compze.Sql.DocumentDb.MicrosoftSql;
 using Compze.Sql.DocumentDb.MySql;
 using Compze.Sql.DocumentDb.PostgreSql;
 using Compze.Sql.DocumentDb.Sqlite;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Sql.MicrosoftSql;
 using Compze.Tessaging.Hosting.Sql.MySql;
 using Compze.Tessaging.Hosting.Sql.PostgreSql;
@@ -23,20 +22,12 @@ namespace Compze.Tessaging.Hosting.Testing.Sql;
 
 public static class TestingSqlLayerRegistrar
 {
-   public static void RegisterCurrentTestsConfiguredSqlLayer(this IEndpointBuilder @this)
-      => @this.Container.Register().CurrentTestsConfiguredSqlLayer(@this.Configuration.ConnectionStringName);
-
-   public static IDependencyRegistrar NewDbPoolSqlLayer(this IDependencyRegistrar register)
-   {
-      register.CurrentTestsConfiguredSqlLayer(Guid.NewGuid().ToString());
-      return register;
-   }
-
    public static IDependencyRegistrar CurrentTestsConfiguredSqlLayer(this IDependencyRegistrar register) =>
       register.CurrentTestsConfiguredSqlLayer(Guid.NewGuid().ToString());
 
    public static IDependencyRegistrar CurrentTestsConfiguredSqlLayer(this IDependencyRegistrar register, string connectionStringName)
    {
+      register.CurrentTestsDbPoolIfNotAlreadyRegistered();
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:

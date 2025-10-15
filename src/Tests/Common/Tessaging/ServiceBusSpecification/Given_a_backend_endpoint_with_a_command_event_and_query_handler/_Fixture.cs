@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Utilities.Threading.Testing;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.Testing;
 using FluentAssertions.Extensions;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -21,13 +24,11 @@ using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public abstract partial class Fixture(string pluggableComponentsCombination)
+public abstract class Fixture()
 {
-   protected string PluggableComponentsCombination { get; } = pluggableComponentsCombination;
-   
    static readonly TimeSpan _timeout = 10.Seconds();
    public ITestingEndpointHost Host = null!;
-   public IThreadGate CommandHandlerThreadGate = null!;
+   public IThreadGate MyExactlyOnceCommandHandlerThreadGate = null!;
    public IThreadGate CommandHandlerWithResultThreadGate = null!;
    public IThreadGate MyCreateAggregateCommandHandlerThreadGate = null!;
    public IThreadGate MyUpdateAggregateCommandHandlerThreadGate = null!;
@@ -38,27 +39,44 @@ public abstract partial class Fixture(string pluggableComponentsCombination)
 
    public IReadOnlyList<IThreadGate> AllGates = [];
 
-   protected IEndpoint ClientEndpoint { get; set; } = null!;
-   protected IEndpoint RemoteEndpoint { get; set; } = null!;
+   public IEndpoint BackendEndPoint { get; private set; } = null!;
+   protected IEndpoint ClientEndpoint { get; private set; } = null!;
+   protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
-   protected void InitializeHost()
+   IDependencyInjectionContainer _rootContainer = null!;
+
+   public virtual async Task SetupAsync()
    {
-      Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      _rootContainer = TestEnv.DIContainer.Create();
+      _rootContainer.Register()
+                    .CurrentTestsDbPoolIfNotAlreadyRegistered();
+      await StartHostAsync();
+   }
 
-      Host.RegisterEndpoint(
+   void InitializeHost()
+   {
+      IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed(IRunMode mode)
+      {
+         var clone = _rootContainer.Clone();
+         return clone;
+      }
+
+      Host = TestingEndpointHost.Create(CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed);
+
+      BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
          builder =>
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredSqlLayer();
+                   .CurrentTestsConfiguredSqlLayer("Backend");
 
             builder.RegisterEventStore()
                    .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
 
             builder.RegisterHandlers
-                   .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
+                   .ForCommand((MyExactlyOnceCommand _) => MyExactlyOnceCommandHandlerThreadGate.AwaitPassThrough())
                    .ForCommand((MyCreateAggregateCommand command, IInProcessHypermediaNavigator navigator) =>
                     {
                        MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough();
@@ -89,19 +107,20 @@ public abstract partial class Fixture(string pluggableComponentsCombination)
                                              {
                                                 builder.Container.Register()
                                                        .AspNetCoreTransport()
-                                                       .CurrentTestsConfiguredSqlLayer();
+                                                       .CurrentTestsConfiguredSqlLayer("Remote");
                                                 builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
                                              });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
-   protected async System.Threading.Tasks.Task StartHostAsync()
+   protected async Task StartHostAsync()
    {
+      InitializeHost();
       await Host.StartAsync();
       AllGates =
       [
-         CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate)),
+         MyExactlyOnceCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyExactlyOnceCommandHandlerThreadGate)),
          CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate)),
          MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate)),
          MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate)),
@@ -112,10 +131,11 @@ public abstract partial class Fixture(string pluggableComponentsCombination)
       ];
    }
 
-   protected async System.Threading.Tasks.Task TearDownHostAsync()
+   public virtual async Task TearDownAsync()
    {
       OpenGates();
       await Host.DisposeAsync();
+      _rootContainer.Dispose();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

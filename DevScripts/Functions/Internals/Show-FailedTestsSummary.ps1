@@ -26,8 +26,36 @@ function Show-FailedTestsSummary {
     
     Write-Host "`n=== Failed Tests ===" -ForegroundColor Red
     $uniqueFailedTests = $FailedTests | Select-Object -Property FullName -Unique
+    
+    # Group tests by class name and sort
+    $testsByClass = @{}
     foreach ($test in $uniqueFailedTests) {
-        Write-Host $test.FullName -ForegroundColor Red
+        $fullName = $test.FullName
+        if ($fullName -match '^(.+)\.([^.]+)$') {
+            $className = $matches[1]
+            $methodName = $matches[2]
+            
+            if (-not $testsByClass.ContainsKey($className)) {
+                $testsByClass[$className] = @()
+            }
+            $testsByClass[$className] += $methodName
+        } else {
+            # Fallback if pattern doesn't match - treat entire name as class
+            if (-not $testsByClass.ContainsKey($fullName)) {
+                $testsByClass[$fullName] = @()
+            }
+        }
     }
+    
+    # Display grouped and sorted tests
+    $sortedClasses = $testsByClass.Keys | Sort-Object
+    foreach ($className in $sortedClasses) {
+        Write-Host $className -ForegroundColor Red
+        $sortedMethods = $testsByClass[$className] | Sort-Object
+        foreach ($methodName in $sortedMethods) {
+            Write-Host "   $methodName" -ForegroundColor Red
+        }
+    }
+    
     Write-Host "`nTotal unique failed tests: $($uniqueFailedTests.Count)" -ForegroundColor Red
 }

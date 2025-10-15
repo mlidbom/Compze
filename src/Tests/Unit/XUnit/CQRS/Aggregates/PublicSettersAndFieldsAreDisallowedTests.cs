@@ -6,7 +6,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Xunit;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local

@@ -3,8 +3,6 @@ using Compze.Tessaging.Teventive.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
-using Xunit;
-using static FluentAssertions.FluentActions;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable IDE0051 //Reviewed OK: unused private members are intentional in this test.

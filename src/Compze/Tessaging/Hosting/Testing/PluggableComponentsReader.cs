@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Wiring;
 

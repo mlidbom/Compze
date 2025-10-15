@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;

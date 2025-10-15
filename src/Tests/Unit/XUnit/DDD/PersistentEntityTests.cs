@@ -3,7 +3,6 @@ using Compze.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
-using Xunit;
 
 namespace Compze.Tests.Unit.XUnit.DDD;
 

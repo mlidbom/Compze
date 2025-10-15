@@ -3,7 +3,6 @@ using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Microsoft.Data.Sqlite;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
-using Lock = Compze.Tessaging.Teventive.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.Sqlite;
 

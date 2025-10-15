@@ -2,12 +2,10 @@ using System;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 

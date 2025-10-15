@@ -5,7 +5,6 @@ using Compze.Sql.MySql.Infrastructure.SystemExtensions;
 using Compze.Sql.PostgreSql.Infrastructure;
 using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.DbPool;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 using Compze.Utilities.Testing.DbPool.MySql;

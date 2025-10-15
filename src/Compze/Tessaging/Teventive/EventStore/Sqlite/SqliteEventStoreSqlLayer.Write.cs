@@ -7,7 +7,6 @@ using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
 using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
-using Lock = Compze.Tessaging.Teventive.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.Sqlite;
 

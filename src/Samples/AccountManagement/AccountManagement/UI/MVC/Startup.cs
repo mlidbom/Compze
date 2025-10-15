@@ -21,7 +21,7 @@ public class Startup
    public Startup(IConfiguration configuration)
    {
       Configuration = configuration;
-      _host = EndpointHost.Production.Create(TestingContainerFactory.Create);
+      _host = EndpointHost.Production.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
       _clientEndpoint = _host.RegisterClientEndpoint(AccountApi.RegisterWithClientEndpoint);
 
    }

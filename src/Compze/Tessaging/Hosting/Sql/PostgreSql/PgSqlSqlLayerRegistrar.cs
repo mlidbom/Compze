@@ -36,9 +36,7 @@ public static class PgSqlSqlLayerRegistrar
 
    public static IDependencyRegistrar PgSqlDbPoolWithConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
    {
-      registrar.Register(Singleton.For<PgSqlDbPool>()
-                                  .CreatedBy((IConfigurationParameterProvider _) => new PgSqlDbPool())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+      registrar.PgSqlDbPoolIfNotAlreadyRegistered();
 
       registrar.Register(
          Singleton.For<IPgSqlConnectionPool>()

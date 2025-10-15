@@ -1,4 +1,3 @@
-using System.Threading;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading;
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 
@@ -24,6 +25,7 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    IServiceLocator ServiceLocator { get; }
+   bool IsRegistered<TComponent>() where TComponent : class => RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent)));
 }
 
 public interface IServiceLocator : IDisposable, IAsyncDisposable
