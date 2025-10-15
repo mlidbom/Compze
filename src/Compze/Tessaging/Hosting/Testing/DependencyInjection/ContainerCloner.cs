@@ -14,17 +14,18 @@ static class ContainerCloner
    static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer>()
                                                                                         .ToList();
 
-   public static IServiceLocator Clone(this IServiceLocator @this)
+   public static IServiceLocator Clone(this IServiceLocator @this) =>
+      ((IDependencyInjectionContainer)@this).Clone().ServiceLocator;
+
+   public static IDependencyInjectionContainer Clone(this IDependencyInjectionContainer sourceContainer)
    {
-      var sourceContainer = (IDependencyInjectionContainer)@this;
-
-
+      var sourceServiceLocator = sourceContainer.ServiceLocator;
       IDependencyInjectionContainer cloneContainer = sourceContainer switch
       {
 #pragma warning disable CA2000 // Dispose objects before losing scope: Review: OK-ish. We dispose the container by registering its created serviceLocator in the container. It will dispose the container when disposed.
          SimpleInjectorDependencyInjectionContainer _ => new SimpleInjectorDependencyInjectionContainer(sourceContainer.RunMode),
-         MicrosoftDependencyInjectionContainer => new MicrosoftDependencyInjectionContainer(sourceContainer.RunMode),
-         _ => throw new ArgumentOutOfRangeException()
+         MicrosoftDependencyInjectionContainer        => new MicrosoftDependencyInjectionContainer(sourceContainer.RunMode),
+         _                                            => throw new ArgumentOutOfRangeException()
 #pragma warning restore CA2000 // Dispose objects before losing scope
       };
 
@@ -33,8 +34,8 @@ static class ContainerCloner
 
       sourceContainer.RegisteredComponents()
                      .Where(component => TypesThatAreFacadesForTheContainer.None(facadeForTheContainer => component.ServiceTypes.Contains(facadeForTheContainer)))
-                     .ForEach(action: componentRegistration => cloneContainer.Register(componentRegistration.CreateCloneRegistration(@this)));
+                     .ForEach(action: componentRegistration => cloneContainer.Register(componentRegistration.CreateCloneRegistration(sourceServiceLocator)));
 
-      return cloneContainer.ServiceLocator;
+      return cloneContainer;
    }
 }

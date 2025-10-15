@@ -9,6 +9,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions.Extensions;
@@ -49,6 +50,15 @@ public abstract class Fixture()
 
    protected void InitializeHost()
    {
+      IDependencyInjectionContainer CreateContainer(IRunMode mode)
+      {
+         var container = TestingContainerFactory.Create(mode);
+         container.Register()
+                  .CurrentTestsConfiguredSqlLayer();
+         var clone = container.Clone();
+         return clone;
+      }
+
       Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
 
       BackendEndPoint = Host.RegisterEndpoint(
