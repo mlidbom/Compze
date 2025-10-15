@@ -120,9 +120,9 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
             {
                messages.Add(new IServiceBusSqlLayer.UndeliveredMessage(
                   messageId: Guid.Parse(reader.GetString(0)),
-                  typeIdGuidValue: Guid.Parse(reader.GetString(1)),
+                  typeIdGuid: Guid.Parse(reader.GetString(1)),
                   serializedMessage: reader.GetString(2),
-                  endpointId: Guid.Parse(reader.GetString(3)),
+                  targetEndpointId: Guid.Parse(reader.GetString(3)),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }

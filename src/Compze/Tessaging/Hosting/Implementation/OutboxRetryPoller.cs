@@ -11,6 +11,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
+using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
@@ -96,29 +97,19 @@ class OutboxRetryPoller : IDisposable
    void RetryUndeliveredMessages()
    {
       var undeliveredMessages = _sqlLayer.GetUndeliveredMessages(InitialRetryDelay);
-
       if(undeliveredMessages.Count == 0) return;
 
       this.Log().Info($"Found {undeliveredMessages.Count} undelivered message(s) to retry");
-
-      var messagesGroupedByEndpoint = undeliveredMessages
-                                     .GroupBy(m => m.EndpointId)
-                                     .ToDictionary(g => g.Key, g => g.ToList());
-
-      foreach(var (endpointId, messages) in messagesGroupedByEndpoint)
-      {
-         foreach(var undeliveredMessage in messages)
-         {
-            RetryMessage(undeliveredMessage, endpointId);
-         }
-      }
+      undeliveredMessages.ForEach(RetryMessage);
    }
 
-   void RetryMessage(IServiceBusSqlLayer.UndeliveredMessage undeliveredMessage, Guid endpointId)
+   void RetryMessage(IServiceBusSqlLayer.UndeliveredMessage undeliveredMessage)
    {
+      var endpointId = undeliveredMessage.TargetEndpointId;
+
       try
       {
-         var messageTypeId = new TypeId(undeliveredMessage.TypeIdGuidValue);
+         var messageTypeId = new TypeId(undeliveredMessage.TypeIdGuid);
          var messageType = _typeMapper.GetType(messageTypeId);
          var message = _serializer.DeserializeMessage(messageType, undeliveredMessage.SerializedMessage);
 
@@ -153,9 +144,7 @@ class OutboxRetryPoller : IDisposable
 
          this.Log().Debug($"Retrying delivery of message {undeliveredMessage.MessageId} to endpoint {endpointId} (attempt {undeliveredMessage.RetryCount + 1})");
 
-         TaskCE.ContinueAsynchronouslyOnDefaultScheduler(
-            sendTask,
-            completedTask => HandleRetryResult(completedTask, undeliveredMessage.MessageId, endpointId));
+         sendTask.ContinueAsynchronouslyOnDefaultScheduler(completedTask => HandleRetryResult(completedTask, undeliveredMessage.MessageId, endpointId));
       }
       catch(Exception exception)
       {

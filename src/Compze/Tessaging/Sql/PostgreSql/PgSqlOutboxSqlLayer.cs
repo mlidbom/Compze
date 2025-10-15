@@ -126,9 +126,9 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory) : ISer
             {
                messages.Add(new IServiceBusSqlLayer.UndeliveredMessage(
                   messageId: reader.GetGuid(0),
-                  typeIdGuidValue: reader.GetGuid(1),
+                  typeIdGuid: reader.GetGuid(1),
                   serializedMessage: reader.GetString(2),
-                  endpointId: reader.GetGuid(3),
+                  targetEndpointId: reader.GetGuid(3),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }

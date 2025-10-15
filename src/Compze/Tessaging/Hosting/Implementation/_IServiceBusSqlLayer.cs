@@ -34,12 +34,12 @@ interface IServiceBusSqlLayer
       public IEnumerable<Guid> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   class UndeliveredMessage(Guid messageId, Guid typeIdGuidValue, string serializedMessage, Guid endpointId, int retryCount, DateTime? lastAttemptTime)
+   class UndeliveredMessage(Guid messageId, Guid typeIdGuid, string serializedMessage, Guid targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
       public Guid MessageId { get; } = messageId;
-      public Guid TypeIdGuidValue { get; } = typeIdGuidValue;
+      public Guid TypeIdGuid { get; } = typeIdGuid;
       public string SerializedMessage { get; } = serializedMessage;
-      public Guid EndpointId { get; } = endpointId;
+      public Guid TargetEndpointId { get; } = targetEndpointId;
       public int RetryCount { get; } = retryCount;
       public DateTime? LastAttemptTime { get; } = lastAttemptTime;
    }
