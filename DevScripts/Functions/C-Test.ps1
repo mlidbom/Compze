@@ -76,19 +76,8 @@ function C-Test {
     
     Push-Location $script:CompzeSrcRoot
     try {
-        # Build if needed
-        C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset
-        
-        # Handle -WhatIf for FullGitReset (returns early after showing what would be deleted)
-        if ($FullGitReset -and $WhatIfPreference) {
-            $global:LASTEXITCODE = 0
-            return
-        }
-        
-        # Check if build failed
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Build failed!"
-            $global:LASTEXITCODE = 1
+        # Build and validate
+        if (-not (Invoke-BuildWithValidation -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
             return
         }
         
@@ -101,24 +90,12 @@ function C-Test {
             # Run tests
             $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting
             
-            # Create result object for tracking
-            $result = [PSCustomObject]@{
-                Iteration = $i
-                Executed = $testRunResult.Executed
-                Failed = $testRunResult.Failed
-                Succeeded = $testRunResult.Succeeded
-                Skipped = $testRunResult.Skipped
-                ExitCode = $testRunResult.ExitCode
-                ElapsedSeconds = $testRunResult.ElapsedSeconds
-            }
+            # Add iteration number to result
+            $result = $testRunResult | Add-Member -NotePropertyName Iteration -NotePropertyValue $i -PassThru
             
             # Display iteration summary
             $cumulativeFailures = ($iterationResults + $result | Measure-Object -Property Failed -Sum).Sum
-            if ($Iterations -gt 1) {
-                Write-Host "Iteration $i failures: $($result.Failed) (cumulative: $cumulativeFailures) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
-            } else {
-                Write-Host "Failures: $($result.Failed) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
-            }
+            Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failures $result.Failed -CumulativeFailures $cumulativeFailures -ElapsedSeconds $result.ElapsedSeconds
             
             $iterationResults += $result
         }

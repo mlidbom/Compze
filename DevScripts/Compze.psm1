@@ -8,7 +8,10 @@ $script:CompzeSrcRoot = Join-Path $script:CompzeRoot "src"
 $script:CompzeSolutionPath = Join-Path $script:CompzeSrcRoot "Compze.slnx"
 
 # Import all function files from the Functions directory and collect function names
-$functionFiles = Get-ChildItem -Path (Join-Path $PSScriptRoot "Functions") -Filter "*.ps1" -ErrorAction SilentlyContinue
+$functionFiles = @()
+$functionFiles += Get-ChildItem -Path (Join-Path $PSScriptRoot "Functions") -Filter "*.ps1" -ErrorAction SilentlyContinue
+$functionFiles += Get-ChildItem -Path (Join-Path $PSScriptRoot "Functions\Internals") -Filter "*.ps1" -ErrorAction SilentlyContinue
+
 $functionNames = @()
 
 foreach ($file in $functionFiles) {

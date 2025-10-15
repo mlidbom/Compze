@@ -98,25 +98,14 @@ function C-Test-Commit {
     
     Push-Location $script:CompzeSrcRoot
     try {
-        # Build if needed
-        C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset
-        
-        # Handle -WhatIf for FullGitReset (returns early after showing what would be deleted)
-        if ($FullGitReset -and $WhatIfPreference) {
-            $global:LASTEXITCODE = 0
-            return
-        }
-        
-        # Check if build failed
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Build failed!"
-            $global:LASTEXITCODE = 1
+        # Build and validate
+        if (-not (Invoke-BuildWithValidation -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
             return
         }
         
         for ($i = 1; $i -le $Iterations; $i++) {
             if ($Iterations -gt 1) {
-                Write-Host "`n--- Test iteration $i of $Iterations ---" -ForegroundColor Cyan
+                Write-Host "`n=== Running test iteration $i of $Iterations ===" -ForegroundColor Cyan
             }
             
             # Run tests
@@ -125,11 +114,7 @@ function C-Test-Commit {
             $totalFailures += $result.Failed
             
             # Display iteration summary
-            if ($Iterations -gt 1) {
-                Write-Host "Iteration $i failures: $($result.Failed) (cumulative: $totalFailures) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
-            } else {
-                Write-Host "Failures: $($result.Failed) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
-            }
+            Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failures $result.Failed -CumulativeFailures $totalFailures -ElapsedSeconds $result.ElapsedSeconds
             
             # Check for FailureText if specified
             if ($FailureText) {
