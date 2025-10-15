@@ -41,9 +41,9 @@ partial class SqliteEventStoreSqlLayer(SqliteEventStoreConnectionManager connect
                              EffectiveVersion = eventReader.GetInt32(3),
                              RefactoringInformation = (eventReader.IsDBNull(7) ? (Guid?)null : Guid.Parse(eventReader.GetString(7)), eventReader.IsDBNull(8) ? (int?)null : eventReader.GetInt32(8))switch
                              {
-                                (null, null) => null,
-                                (Guid targetEvent, int type) => new AggregateEventRefactoringInformation(targetEvent, (AggregateEventRefactoringType)type),
-                                _ => throw new Exception("Should not be possible to get here")
+                                (null, null)              => null,
+                                ({} targetEvent, {} type) => new AggregateEventRefactoringInformation(targetEvent, (AggregateEventRefactoringType)type),
+                                _                         => throw new Exception("Should not be possible to get here")
                              }
                           }
    );

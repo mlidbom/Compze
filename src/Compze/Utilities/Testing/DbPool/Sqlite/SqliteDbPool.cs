@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
-internal class SqliteDbPool : DbPool
+class SqliteDbPool : DbPool
 {
    readonly string _baseDirectory;
 
@@ -75,7 +75,6 @@ internal class SqliteDbPool : DbPool
          }
 
          base.Dispose(disposing);
-         return;
       }
    }
 }

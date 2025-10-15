@@ -31,13 +31,13 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
 {
    internal async Task RunMigrationTest(params MigrationScenario[] scenarios) => await RunMigrationTest(expectedException: null, scenarios);
 
-   internal async Task RunMigrationTest<TException>(params MigrationScenario[] scenarios) where TException : Exception 
+   internal async Task RunMigrationTest<TException>(params MigrationScenario[] scenarios) where TException : Exception
       => await RunMigrationTest(expectedException: typeof(TException), scenarios);
 
    static async Task RunMigrationTest(Type? expectedException, params MigrationScenario[] scenarios)
    {
       using var writer = new DeferredConsoleWriter();
-      
+
       writer.WriteLine($"###############$$$$$$$Running {scenarios.Length} scenario(s)");
 
       IList<IEventMigration> migrations = new List<IEventMigration>();
@@ -46,7 +46,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
       var timeSource = serviceLocator.Resolve<TestingTimeSource>();
       timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
       var scenarioIndex = 1;
-      
+
       try
       {
          foreach(var migrationScenario in scenarios)
@@ -55,7 +55,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
             migrations = migrationScenario.Migrations.ToList();
             await RunScenarioWithEventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
          }
-         
+
          // If we got here without exception, mark as success
          writer.TestSucceeded();
       }
