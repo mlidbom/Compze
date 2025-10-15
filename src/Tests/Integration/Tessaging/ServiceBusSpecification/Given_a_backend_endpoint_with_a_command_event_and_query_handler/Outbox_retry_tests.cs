@@ -40,8 +40,7 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
       undeliveredMessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
       undeliveredMessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
 
-      Host.WaitForEndPointsToBeAtRestOnDispose = false;
-      await Host.DisposeAsync();
+      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
 
       Console.WriteLine("################### After restart");
@@ -89,8 +88,7 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
       undeliveredMessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
       undeliveredMessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
 
-      Host.WaitForEndPointsToBeAtRestOnDispose = false;
-      await Host.DisposeAsync();
+      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
    }
 }
