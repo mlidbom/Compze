@@ -14,8 +14,14 @@ static class ContainerCloner
    static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer>()
                                                                                         .ToList();
 
-   public static IServiceLocator Clone(this IServiceLocator @this) =>
-      ((IDependencyInjectionContainer)@this).Clone().ServiceLocator;
+   public static IServiceLocator Clone(this IServiceLocator @this)
+   {
+      var cloneContainer = ((IDependencyInjectionContainer)@this).Clone();
+
+      cloneContainer.Register(Singleton.For<IDependencyInjectionContainer>().Instance(cloneContainer));
+
+      return cloneContainer.ServiceLocator;
+   }
 
    public static IDependencyInjectionContainer Clone(this IDependencyInjectionContainer sourceContainer)
    {
@@ -30,7 +36,6 @@ static class ContainerCloner
       };
 
       cloneContainer.Register(Singleton.For<IServiceLocator>().CreatedBy(() => cloneContainer.ServiceLocator));
-      cloneContainer.Register(Singleton.For<IDependencyInjectionContainer>().Instance(cloneContainer));
 
       sourceContainer.RegisteredComponents()
                      .Where(component => TypesThatAreFacadesForTheContainer.None(facadeForTheContainer => component.ServiceTypes.Contains(facadeForTheContainer)))

@@ -42,6 +42,8 @@ public abstract class Fixture()
    protected IEndpoint ClientEndpoint { get; private set; } = null!;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
+   IList<IDependencyInjectionContainer> _createdContainers = [];
+   
    public virtual async Task SetupAsync()
    {
       InitializeHost();
@@ -50,16 +52,17 @@ public abstract class Fixture()
 
    protected void InitializeHost()
    {
-      IDependencyInjectionContainer CreateContainer(IRunMode mode)
+      IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed(IRunMode mode)
       {
          var container = TestingContainerFactory.Create(mode);
-         container.Register()
-                  .CurrentTestsConfiguredSqlLayer();
+         _createdContainers.Add(container);
+         // container.Register()
+         //          .CurrentTestsDbPoolIfNotAlreadyRegistered();
          var clone = container.Clone();
          return clone;
       }
 
-      Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      Host = TestingEndpointHost.Create(CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed);
 
       BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
@@ -130,6 +133,7 @@ public abstract class Fixture()
 
    public virtual async Task TearDownAsync()
    {
+      _createdContainers.ForEach(container => container.Dispose());
       OpenGates();
       await Host.DisposeAsync();
    }
