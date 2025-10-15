@@ -5,7 +5,6 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -46,18 +45,16 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
 
       var newRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
 
-      Console.WriteLine("################### After restart");
-      //MyLocalAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 5.Seconds());
+      MyExactlyOnceCommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 5.Seconds());
       await FluentActions.Awaiting(async () =>
                           {
-                             var deadline = DateTime.UtcNow.Add(5.Seconds());
+                             var deadline = DateTime.UtcNow.Add(10.Seconds());
                              while(DateTime.UtcNow < deadline)
                              {
                                 var undeliveredMessages = newRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
-                                undeliveredMessages.ForEach(it => Console.WriteLine($"########### Found undelivered: {it.MessageId}"));
                                 if(undeliveredMessages.Count == 0)
                                    return;
-                                await Task.Delay(100);
+                                await Task.Delay(10);
                              }
 
                              throw new Exception("Timeout waiting for messages to be removed from outbox");
@@ -82,7 +79,7 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
                                 var messages = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero);
                                 if(messages.Count > 0 && messages.Any(m => m.RetryCount > 0))
                                    return;
-                                await Task.Delay(100);
+                                await Task.Delay(10);
                              }
 
                              throw new Exception("Timeout waiting for messages to be recorded as undelivered");

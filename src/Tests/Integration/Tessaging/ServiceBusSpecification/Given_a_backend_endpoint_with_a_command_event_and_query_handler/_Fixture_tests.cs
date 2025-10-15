@@ -16,7 +16,7 @@ public class Fixture_tests(string pluggableComponentsCombination) : NUnitFixture
 {
    [Test] public async Task If_command_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
-      CommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      MyExactlyOnceCommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }

@@ -54,7 +54,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : NUnit
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
 
-      CommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
+      MyExactlyOnceCommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                               .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 

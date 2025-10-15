@@ -28,7 +28,7 @@ public abstract class Fixture()
 {
    static readonly TimeSpan _timeout = 10.Seconds();
    public ITestingEndpointHost Host = null!;
-   public IThreadGate CommandHandlerThreadGate = null!;
+   public IThreadGate MyExactlyOnceCommandHandlerThreadGate = null!;
    public IThreadGate CommandHandlerWithResultThreadGate = null!;
    public IThreadGate MyCreateAggregateCommandHandlerThreadGate = null!;
    public IThreadGate MyUpdateAggregateCommandHandlerThreadGate = null!;
@@ -70,13 +70,13 @@ public abstract class Fixture()
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredSqlLayer();
+                   .CurrentTestsConfiguredSqlLayer("Backend");
 
             builder.RegisterEventStore()
                    .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
 
             builder.RegisterHandlers
-                   .ForCommand((MyExactlyOnceCommand _) => CommandHandlerThreadGate.AwaitPassThrough())
+                   .ForCommand((MyExactlyOnceCommand _) => MyExactlyOnceCommandHandlerThreadGate.AwaitPassThrough())
                    .ForCommand((MyCreateAggregateCommand command, IInProcessHypermediaNavigator navigator) =>
                     {
                        MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough();
@@ -107,7 +107,7 @@ public abstract class Fixture()
                                              {
                                                 builder.Container.Register()
                                                        .AspNetCoreTransport()
-                                                       .CurrentTestsConfiguredSqlLayer();
+                                                       .CurrentTestsConfiguredSqlLayer("Remote");
                                                 builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
                                              });
 
@@ -120,7 +120,7 @@ public abstract class Fixture()
       await Host.StartAsync();
       AllGates =
       [
-         CommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerThreadGate)),
+         MyExactlyOnceCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyExactlyOnceCommandHandlerThreadGate)),
          CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate)),
          MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate)),
          MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate)),

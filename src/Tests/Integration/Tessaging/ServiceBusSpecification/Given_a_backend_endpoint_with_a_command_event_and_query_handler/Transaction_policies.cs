@@ -15,7 +15,7 @@ public class Transaction_policies(string pluggableComponentsCombination) : NUnit
    {
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
 
-      var transaction = CommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+      var transaction = MyExactlyOnceCommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                 .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);

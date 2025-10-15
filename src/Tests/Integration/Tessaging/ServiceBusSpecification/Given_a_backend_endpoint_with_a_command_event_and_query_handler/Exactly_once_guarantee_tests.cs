@@ -23,7 +23,7 @@ public class Exactly_once_guarantee_tests(string pluggableComponentsCombination)
                     }))
                    .Should().Throw<TransactionAbortedException>();
 
-      CommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
+      MyExactlyOnceCommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
                               .Should()
                               .Be(false, "command should not reach handler");
    }
