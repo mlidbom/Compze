@@ -39,7 +39,7 @@ public abstract partial class Fixture()
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IEndpoint ClientEndpoint { get; private set; } = null!;
-   protected IEndpoint RemoteEndpoint { get; private init; } = null!;
+   protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
    public virtual async Task SetupAsync()
    {
