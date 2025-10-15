@@ -42,12 +42,10 @@ partial class Inbox
 
       public void Start()
       {
-         _awaitDispatchableMessageThread = new Thread(ThreadExceptionHandler.WrapThreadStart(AwaitDispatchableMessageThread))
-                                           {
-                                              Name = nameof(AwaitDispatchableMessageThread),
-                                              Priority = ThreadPriority.AboveNormal
-                                           };
-         _awaitDispatchableMessageThread.Start();
+         _awaitDispatchableMessageThread = taskRunner.RunOnNamedThread(
+            nameof(AwaitDispatchableMessageThread),
+            AwaitDispatchableMessageThread,
+            ThreadPriority.AboveNormal);
       }
 
       public void Stop()

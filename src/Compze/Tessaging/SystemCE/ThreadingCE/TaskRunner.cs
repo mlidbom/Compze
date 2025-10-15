@@ -15,6 +15,7 @@ interface ITaskRunner
 {
    void Run(string taskName, Action task);
    void Run(string taskName, Func<unit> task);
+   Thread RunOnNamedThread(string threadName, ThreadStart start, ThreadPriority priority = ThreadPriority.Normal);
    void ThrowIfAnyExceptions();
 }
 
@@ -29,6 +30,7 @@ static class TaskRunnerRegistrar
          => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunnerImpl()));
 
       readonly IThreadShared<List<Exception>> _collectedExceptions = ThreadShared.WithDefaultTimeout(new List<Exception>());
+      readonly IThreadShared<List<Thread>> _threads = ThreadShared.WithDefaultTimeout(new List<Thread>());
 
       TaskRunnerImpl() {}
 
@@ -57,6 +59,41 @@ static class TaskRunnerRegistrar
 
       public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });
 
+      public Thread RunOnNamedThread(string threadName, ThreadStart start, ThreadPriority priority = ThreadPriority.Normal)
+      {
+         var thread = new Thread(() =>
+         {
+            try
+            {
+               start.Invoke();
+            }
+            catch(Exception exception) when(exception is OperationCanceledException or ThreadInterruptedException or ThreadAbortException)
+            {
+               this.Log().Info($"Thread: {threadName} is terminating because it received a: {exception.GetType().Name}.");
+            }
+            catch(Exception exception)
+            {
+               _collectedExceptions.Update(it => it.Add(exception));
+               try
+               {
+                  this.Log().Error(exception, $"Exception thrown on thread: {threadName}. Thread is no longer running.");
+               }
+               catch(Exception loggingException)
+               {
+                  _collectedExceptions.Update(it => it.Add(loggingException));
+               }
+            }
+         })
+         {
+            Name = threadName,
+            Priority = priority
+         };
+
+         _threads.Update(it => it.Add(thread));
+         thread.Start();
+         return thread;
+      }
+
       public void ThrowIfAnyExceptions()
       {
          var exceptions = _collectedExceptions.Read(exceptions => exceptions.ToArray());
@@ -68,6 +105,26 @@ static class TaskRunnerRegistrar
 
       readonly CancellationTokenSource _cancellationTokenSource = new();
 
-      public void Dispose() => _cancellationTokenSource.Dispose();
+      public void Dispose()
+      {
+         var threads = _threads.Read(threads => threads.ToArray());
+         foreach(var thread in threads)
+         {
+            if(thread.IsAlive)
+            {
+               thread.Interrupt();
+            }
+         }
+
+         foreach(var thread in threads)
+         {
+            if(thread.IsAlive)
+            {
+               thread.Join();
+            }
+         }
+
+         _cancellationTokenSource.Dispose();
+      }
    }
 }
