@@ -1,13 +1,16 @@
-using System;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tests.Infrastructure.NUnit;
 using Compze.Utilities.Testing.DbPool;
 using Compze.Wiring;
 using FluentAssertions;
 using NUnit.Framework;
+using System;
+using Compze.Tests.Common.Testing.Sql;
 
 namespace Compze.Tests.Integration.Internals.Testing.Sql;
 
-public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponentsCombination) : NUnitDbPoolTest(pluggableComponentsCombination)
+[TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
+public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponentsCombination) : DbPoolTestBase
 {
    DbPool _pool;
    const string Db1 = "LocalDBManagerTests_After_creating_connection_Db1";

@@ -1,5 +1,6 @@
 using System;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using NUnit.Framework;
@@ -7,7 +8,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
-[TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : NUnitTestBase
+[TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    MachineWideSharedObject<SharedObject> _shared;
    [SetUp] public void SetupTask()

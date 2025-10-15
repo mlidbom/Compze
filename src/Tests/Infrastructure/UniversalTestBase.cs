@@ -1,3 +1,4 @@
+using System;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading;
 
@@ -8,8 +9,11 @@ namespace Compze.Tests.Infrastructure;
 /// This ensures GC and exception gathering happens only when tests actually run, not during assembly load.
 /// This class is internal to avoid ambiguous references with framework-specific UniversalTestBase classes.
 /// </summary>
-public abstract class UniversalTestBase
+public abstract class UniversalTestBase : IDisposable
 {
    static readonly RunJustOnce OneTimeAssertion = new(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions);
    protected UniversalTestBase() => OneTimeAssertion.RunIfNotExecutedBefore();
+
+   public virtual void SurfaceAnyUncatchableExceptions() => UncatchableExceptionsGatherer.ConsumeAndThrowAnyExceptionsGathered();
+   public void Dispose() => SurfaceAnyUncatchableExceptions();
 }

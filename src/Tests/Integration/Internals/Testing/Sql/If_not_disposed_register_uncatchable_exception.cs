@@ -1,13 +1,17 @@
-using System;
+using Compze.Tests.Common.Testing.Sql;
+using Compze.Tests.Infrastructure.NUnit;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using NUnit.Framework;
+using System;
 using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Integration.Internals.Testing.Sql;
 
-class If_not_disposed_(string pluggableComponentsCombination) : NUnitDbPoolTest(pluggableComponentsCombination)
+
+[TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
+class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTestBase
 {
    [Test, NonParallelizable] public void Register_uncatchable_exception()
    {

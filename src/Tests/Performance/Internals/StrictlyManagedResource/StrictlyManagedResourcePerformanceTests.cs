@@ -1,6 +1,7 @@
 
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using NUnit.Framework;
@@ -10,7 +11,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.StrictlyManagedResource;
 
-[TestFixture]public class StrictlyManagedResourcePerformanceTests : NUnitTestBase
+[TestFixture]public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
 {
    // ReSharper disable once ClassNeverInstantiated.Local
    #pragma warning disable ca1812 // Class is never instantiated

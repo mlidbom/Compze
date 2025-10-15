@@ -1,6 +1,7 @@
 using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
@@ -14,7 +15,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE.ResourceAccess;
 
-public class MonitorCEPerformanceTests : NUnitTestBase
+public class MonitorCEPerformanceTests : UniversalTestBase
 {
    class MyLong
    {

@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
@@ -14,7 +15,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
-[TestFixture]public class Activator_one_argument_constructor_performance_tests : NUnitTestBase
+[TestFixture]public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
 {
    const string Argument = "AnArgument";
 

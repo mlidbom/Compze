@@ -9,10 +9,11 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using Compze.Tests.Infrastructure;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
-public class NewtonSoftEventStoreEventSerializerPerformanceTests : NUnitTestBase
+public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTestBase
 {
    IEventStoreSerializer _eventSerializer;
 

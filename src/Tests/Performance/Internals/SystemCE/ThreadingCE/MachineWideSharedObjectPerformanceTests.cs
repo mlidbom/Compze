@@ -5,10 +5,11 @@ using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
+using Compze.Tests.Infrastructure;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
-[TestFixture] public class MachineWideSharedObjectPerformanceTests : NUnitTestBase
+[TestFixture] public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    [Test] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
    {

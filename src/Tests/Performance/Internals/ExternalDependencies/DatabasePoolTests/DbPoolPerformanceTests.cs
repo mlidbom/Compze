@@ -5,6 +5,8 @@ using Compze.Sql.PostgreSql.Infrastructure;
 using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tests.Common.Testing.Sql;
+using Compze.Tests.Infrastructure.NUnit;
 using Compze.Tests.Integration.Internals.Testing.Sql;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
@@ -13,7 +15,8 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;
 
-public class DbPoolPerformanceTests(string pluggableComponentsCombination) : NUnitDbPoolTest(pluggableComponentsCombination)
+[TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
+public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbPoolTestBase
 {
    [OneTimeSetUp]public void WarmUpCache()
    {

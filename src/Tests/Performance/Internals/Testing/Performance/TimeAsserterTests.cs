@@ -1,12 +1,11 @@
-
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Performance.Internals.Testing.Performance;
 
-[TestFixture] public class TimeAsserterTests : NUnitTestBase
+[TestFixture] public class TimeAsserterTests : UniversalTestBase
 {
    [Test] public void Execute_should_add_at_most_1_milliseconds_to_1000_iterations_of_action()
    {
