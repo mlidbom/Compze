@@ -98,37 +98,15 @@ function C-Test-Commit {
     
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
-        # Perform clean and build once before all iterations
-        if ($FullGitReset) {
-            if ($WhatIfPreference) {
-                C-Clean -FullGitReset -WhatIf
-                return $true
-            } else {
-                C-Clean -FullGitReset
-            }
-            dotnet build $solutionPath
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "Build failed!"
-                return $false
-            }
+        # Build if needed
+        if (-not (C-Build-IfNeeded -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
+            Write-Error "Build failed!"
+            return $false
         }
-        elseif ($Clean) {
-            C-Clean
-            dotnet build $solutionPath
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "Build failed!"
-                return $false
-            }
-        }
-        elseif (-not $NoBuild) {
-            dotnet build $solutionPath
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "Build failed!"
-                return $false
-            }
+        
+        # Handle -WhatIf for FullGitReset (returns early after showing what would be deleted)
+        if ($FullGitReset -and $WhatIfPreference) {
+            return $true
         }
         
         for ($i = 1; $i -le $Iterations; $i++) {
