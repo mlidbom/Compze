@@ -5,7 +5,9 @@ function C-GitBisectAuto {
     
     .DESCRIPTION
     Automates git bisect to find the commit that introduced a test failure.
-    The function will:
+    
+    If git bisect is already in progress, continues from the current state.
+    Otherwise, the function will:
     1. Start git bisect and mark current commit as bad
     2. Search backwards for a good commit (builds and tests pass)
     3. Automatically test each commit during bisect
@@ -35,6 +37,14 @@ function C-GitBisectAuto {
     C-GitBisectAuto -MaxFailures 10 -Iterations 10 -GoodSearchSteps 15
     Runs bisect looking for commits where cumulative failures across 10 test runs exceed 10,
     starting the search 15 commits back
+    
+    .EXAMPLE
+    git bisect start
+    git bisect bad
+    git bisect good abc123
+    C-GitBisectAuto -MaxFailures 0 -Iterations 3
+    Continues an already-started bisect with the good/bad commits already marked,
+    running 3 test iterations per commit
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -61,21 +71,28 @@ function C-GitBisectAuto {
     
     Push-Location $script:CompzeRoot
     try {
-        # Save current commit for reference
-        $originalCommit = git rev-parse HEAD
-        Write-Host "Starting bisect from commit: $originalCommit" -ForegroundColor Cyan
+        # Check if bisect is already in progress
+        $bisectInProgress = Test-Path (Join-Path $script:CompzeRoot ".git\BISECT_START")
         
-        # Start git bisect
-        Write-Host "`nStarting git bisect..." -ForegroundColor Cyan
-        git bisect start
-        
-        # Mark current commit as bad
-        Write-Host "Marking current commit as bad..." -ForegroundColor Yellow
-        git bisect bad
-        
-        # Find a good commit by searching backwards
-        if (-not (GitBisect-FindFirstGoodCommit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations -GoodSearchSteps $GoodSearchSteps)) {
-            return
+        if ($bisectInProgress) {
+            Write-Host "Git bisect already in progress. Continuing from current state..." -ForegroundColor Cyan
+        } else {
+            # Save current commit for reference
+            $originalCommit = git rev-parse HEAD
+            Write-Host "Starting bisect from commit: $originalCommit" -ForegroundColor Cyan
+            
+            # Start git bisect
+            Write-Host "`nStarting git bisect..." -ForegroundColor Cyan
+            git bisect start
+            
+            # Mark current commit as bad
+            Write-Host "Marking current commit as bad..." -ForegroundColor Yellow
+            git bisect bad
+            
+            # Find a good commit by searching backwards
+            if (-not (GitBisect-FindFirstGoodCommit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations -GoodSearchSteps $GoodSearchSteps)) {
+                return
+            }
         }
         
         # Run the automated bisect process to find the first bad commit
