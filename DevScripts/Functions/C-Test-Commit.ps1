@@ -136,41 +136,21 @@ function C-Test-Commit {
                 Write-Host "`n--- Test iteration $i of $Iterations ---" -ForegroundColor Cyan
             }
             
-            # Run tests and capture output
-            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-            $testOutput = dotnet test $solutionPath --no-build 2>&1
-            $stopwatch.Stop()
+            # Run tests
+            $result = C-Run-TestRun -SolutionPath $solutionPath
             
-            # Display output, filtering out VSTest noise
-            $testOutput | C-Filter-TestOutput | ForEach-Object { Write-Host $_ }
-            
-            # Parse test results to count failures
-            $iterationFailures = 0
-            $summaryLines = $testOutput | Where-Object { $_ -match '(Passed!|Failed!)\s+-\s+Failed:' }
-            
-            if ($summaryLines) {
-                foreach ($line in $summaryLines) {
-                    $summaryText = $line.ToString()
-                    
-                    if ($summaryText -match 'Failed:\s*(\d+)') {
-                        $iterationFailures += [int]$matches[1]
-                    }
-                }
-            }
-            
-            $totalFailures += $iterationFailures
+            $totalFailures += $result.Failed
             
             # Display iteration summary
-            $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
             if ($Iterations -gt 1) {
-                Write-Host "Iteration $i failures: $iterationFailures (cumulative: $totalFailures) elapsed: $elapsedSeconds seconds" -ForegroundColor $(if ($iterationFailures -gt 0) { "Yellow" } else { "Green" })
+                Write-Host "Iteration $i failures: $($result.Failed) (cumulative: $totalFailures) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
             } else {
-                Write-Host "Failures: $iterationFailures elapsed: $elapsedSeconds seconds" -ForegroundColor $(if ($iterationFailures -gt 0) { "Yellow" } else { "Green" })
+                Write-Host "Failures: $($result.Failed) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
             }
             
             # Check for FailureText if specified
             if ($FailureText) {
-                $outputString = $testOutput | Out-String
+                $outputString = $result.TestOutput | Out-String
                 if ($outputString -match [regex]::Escape($FailureText)) {
                     Write-Host "Found failure text: '$FailureText'" -ForegroundColor Red
                     return $false

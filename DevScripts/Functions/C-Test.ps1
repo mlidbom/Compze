@@ -115,63 +115,18 @@ function C-Test {
                 Write-Host "`n=== Running test iteration $i of $Iterations ===" -ForegroundColor Cyan
             }
             
-            # Capture test output
-            $testOutput = $null
+            # Run tests
+            $testRunResult = C-Run-TestRun -SolutionPath $solutionPath -SingleThreaded:$SingleThreadedTesting
             
-            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-            if ($SingleThreadedTesting) {
-                $testOutput = dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0 2>&1
-            } else {
-                $testOutput = dotnet test $solutionPath --no-build 2>&1
-            }
-            $stopwatch.Stop()
-            
-            # Display output, filtering out VSTest noise
-            $testOutput | C-Filter-TestOutput | ForEach-Object { Write-Host $_ }
-            
-            # Parse test results
+            # Create result object for tracking
             $result = [PSCustomObject]@{
                 Iteration = $i
-                Executed = 0
-                Failed = 0
-                Succeeded = 0
-                Skipped = 0
-                ExitCode = $LASTEXITCODE
-                ElapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
-            }
-            
-            # Parse the output for test statistics
-            # dotnet test outputs one "Passed!" or "Failed!" line per test project
-            # We need to sum up all the results across all projects
-            # Pattern examples:
-            # "Passed!  - Failed:     0, Passed:   755, Skipped:     0, Total:   755, Duration: 1 m 23 s"
-            # "Failed!  - Failed:     2, Passed:   753, Skipped:     0, Total:   755, Duration: 1 m 23 s"
-            $summaryLines = $testOutput | Where-Object { $_ -match '(Passed!|Failed!)\s+-\s+Failed:' }
-            
-            if ($summaryLines) {
-                # Sum up results from all test projects
-                foreach ($line in $summaryLines) {
-                    $summaryText = $line.ToString()
-                    
-                    # Extract each metric and add to totals
-                    if ($summaryText -match 'Failed:\s*(\d+)') {
-                        $result.Failed += [int]$matches[1]
-                    }
-                    if ($summaryText -match 'Passed:\s*(\d+)') {
-                        $result.Succeeded += [int]$matches[1]
-                    }
-                    if ($summaryText -match 'Skipped:\s*(\d+)') {
-                        $result.Skipped += [int]$matches[1]
-                    }
-                    if ($summaryText -match 'Total:\s*(\d+)') {
-                        $result.Executed += [int]$matches[1]
-                    }
-                }
-            }
-            
-            # If parsing failed, try to calculate from what we have
-            if ($result.Executed -eq 0 -and ($result.Succeeded -gt 0 -or $result.Failed -gt 0)) {
-                $result.Executed = $result.Succeeded + $result.Failed + $result.Skipped
+                Executed = $testRunResult.Executed
+                Failed = $testRunResult.Failed
+                Succeeded = $testRunResult.Succeeded
+                Skipped = $testRunResult.Skipped
+                ExitCode = $testRunResult.ExitCode
+                ElapsedSeconds = $testRunResult.ElapsedSeconds
             }
             
             # Display iteration summary
