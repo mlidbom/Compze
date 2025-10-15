@@ -74,97 +74,12 @@ function C-GitBisectAuto {
         git bisect bad
         
         # Find a good commit by searching backwards
-        Write-Host "`nSearching for a good commit..." -ForegroundColor Cyan
-        $stepsBack = $GoodSearchSteps
-        $foundGood = $false
-        
-        while (-not $foundGood) {
-            # Get the commit hash that is $stepsBack commits back, including all merged branches
-            $targetCommit = git log --all --oneline --format=%H --skip=$stepsBack -n 1 2>$null
-            
-            if (-not $targetCommit -or $LASTEXITCODE -ne 0) {
-                Write-Error "Could not go back $stepsBack commits. Reached beginning of history."
-                git bisect reset
-                return
-            }
-            
-            Write-Host "`nChecking commit $stepsBack steps back ($targetCommit)..." -ForegroundColor Cyan
-            git checkout $targetCommit 2>&1 | Out-Null
-            
-            # Try to build
-            Write-Host "Building..." -ForegroundColor Yellow
-            C-Build -Clean
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Host "Build failed, going back $GoodSearchSteps more commits..." -ForegroundColor Red
-                $stepsBack += $GoodSearchSteps
-                continue
-            }
-            
-            # Test the commit
-            C-Test-Commit -NoBuild -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
-            $isGood = $LASTEXITCODE -eq 0
-            
-            if (-not $isGood) {
-                Write-Host "Tests failed, going back $GoodSearchSteps more commits..." -ForegroundColor Red
-                $stepsBack += $GoodSearchSteps
-                continue
-            }
-            
-            # Found a good commit
-            Write-Host "Found good commit: $targetCommit" -ForegroundColor Green
-            # Reset any changes from build before marking as good
-            git reset --hard HEAD 2>&1 | Out-Null
-            git bisect good
-            $foundGood = $true
+        if (-not (GitBisect-FindFirstGoodCommit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations -GoodSearchSteps $GoodSearchSteps)) {
+            return
         }
         
-        # Now bisect will automatically checkout commits to test
-        Write-Host "`nStarting automated bisect process..." -ForegroundColor Cyan
-        
-        $lastTestedCommit = $null
-        
-        while ($true) {
-            # Get current commit
-            $currentCommit = git rev-parse HEAD
-            
-            # Check if we're testing the same commit again - means bisect is done
-            if ($lastTestedCommit -eq $currentCommit) {
-                GitBisect-CheckoutFirstBadCommit
-                return
-            }
-            
-            $lastTestedCommit = $currentCommit
-            
-            Write-Host "`n=== Testing commit: $currentCommit ===" -ForegroundColor Cyan
-            
-            # Try to build
-            Write-Host "Building..." -ForegroundColor Yellow
-            C-Build -Clean
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Host "Build failed, marking as skip..." -ForegroundColor Yellow
-                # Reset any changes from build before skipping
-                git reset --hard HEAD 2>&1 | Out-Null
-                git bisect skip
-                continue
-            }
-            
-            # Test the commit
-            C-Test-Commit -NoBuild -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
-            $isGood = $LASTEXITCODE -eq 0
-            
-            # Reset any changes from build/test before marking
-            git reset --hard HEAD 2>&1 | Out-Null
-            
-            if ($isGood) {
-                Write-Host "Tests passed, marking as good..." -ForegroundColor Green
-                git bisect good
-            } else {
-                Write-Host "Tests failed, marking as bad..." -ForegroundColor Red
-                git bisect bad
-            }
-        }
+        # Run the automated bisect process to find the first bad commit
+        GitBisect-FindFirstBadCommit -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
         
     } finally {
         Pop-Location
