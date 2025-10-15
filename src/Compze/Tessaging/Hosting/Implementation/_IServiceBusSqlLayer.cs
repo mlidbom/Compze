@@ -12,6 +12,8 @@ interface IServiceBusSqlLayer
    {
       void SaveMessage(OutboxMessageWithReceivers messageWithReceivers);
       int MarkAsReceived(Guid messageId, Guid endpointId);
+      void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason);
+      IReadOnlyList<UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan);
       Task InitAsync();
    }
 
@@ -30,6 +32,16 @@ interface IServiceBusSqlLayer
       public Guid TypeIdGuidValue { get; } = typeIdGuidValue;
       public Guid MessageId { get; } = messageId;
       public IEnumerable<Guid> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
+   }
+
+   class UndeliveredMessage(Guid messageId, Guid typeIdGuidValue, string serializedMessage, Guid endpointId, int retryCount, DateTime? lastAttemptTime)
+   {
+      public Guid MessageId { get; } = messageId;
+      public Guid TypeIdGuidValue { get; } = typeIdGuidValue;
+      public string SerializedMessage { get; } = serializedMessage;
+      public Guid EndpointId { get; } = endpointId;
+      public int RetryCount { get; } = retryCount;
+      public DateTime? LastAttemptTime { get; } = lastAttemptTime;
    }
 
    static class InboxMessageDatabaseSchemaStrings
@@ -64,5 +76,8 @@ interface IServiceBusSqlLayer
       internal const string MessageId = nameof(MessageId);
       internal const string EndpointId = nameof(EndpointId);
       internal const string IsReceived = nameof(IsReceived);
+      internal const string RetryCount = nameof(RetryCount);
+      internal const string LastAttemptTime = nameof(LastAttemptTime);
+      internal const string FailureReason = nameof(FailureReason);
    }
 }

@@ -11,6 +11,7 @@ partial class Outbox
    {
       void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds);
       void MarkAsReceived(Guid messageId, EndpointId receiverId);
+      void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, string failureReason);
       Task StartAsync();
    }
 }

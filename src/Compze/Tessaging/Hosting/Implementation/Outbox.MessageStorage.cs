@@ -50,6 +50,11 @@ partial class Outbox
          Assert.Result.Is(affectedRows == 1);
       }
 
+      public void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, string failureReason)
+      {
+         _sqlLayer.RecordDeliveryFailure(messageId, receiverId.GuidValue, failureReason);
+      }
+
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
    }
 }

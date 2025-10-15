@@ -33,14 +33,17 @@ partial class PgSqlOutboxSqlLayer
                                                                  
                                                                      CREATE TABLE  IF NOT EXISTS {Dispatch.TableName}
                                                                      (
-                                                                         {Dispatch.MessageId}  {PgSqlGuidType} NOT NULL,
-                                                                         {Dispatch.EndpointId} {PgSqlGuidType} NOT NULL,
-                                                                         {Dispatch.IsReceived} boolean         NOT NULL,
-                                                                 
-                                                                 
+                                                                         {Dispatch.MessageId}        {PgSqlGuidType} NOT NULL,
+                                                                         {Dispatch.EndpointId}       {PgSqlGuidType} NOT NULL,
+                                                                         {Dispatch.IsReceived}       boolean         NOT NULL,
+                                                                         {Dispatch.RetryCount}       integer         NOT NULL DEFAULT 0,
+                                                                         {Dispatch.LastAttemptTime}  timestamp       NULL,
+                                                                         {Dispatch.FailureReason}    TEXT            NULL,
+
+
                                                                          PRIMARY KEY ( {Dispatch.MessageId}, {Dispatch.EndpointId}),
                                                                              
-                                                                 
+
                                                                          FOREIGN KEY ({Dispatch.MessageId}) REFERENCES {Message.TableName} ({Message.MessageId})
                                                                      );
 

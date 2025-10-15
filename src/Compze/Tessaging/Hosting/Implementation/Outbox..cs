@@ -26,22 +26,25 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IDependencyRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage, IBackgroundExceptionReporter exceptionReporter)
-                                                => new Outbox(transport, messageStorage, configuration, exceptionReporter)));
+                                  .CreatedBy((EndpointConfiguration configuration, ITransport transport, IMessageStorage messageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+                                                => new Outbox(transport, messageStorage, configuration, exceptionReporter, retryPoller)));
       registrar.Register(MessageStorage.RegisterWith);
+      registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
    readonly IMessageStorage _storage;
    readonly EndpointConfiguration _configuration;
    readonly ITransport _transport;
    readonly IBackgroundExceptionReporter _exceptionReporter;
+   readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter)
+   Outbox(ITransport transport, IMessageStorage messageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
    {
       _storage = messageStorage;
       _configuration = configuration;
       _transport = transport;
       _exceptionReporter = exceptionReporter;
+      _retryPoller = retryPoller;
    }
 
    public void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent)
@@ -59,7 +62,8 @@ partial class Outbox : IOutbox
 
          Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
          {
-            TaskCE.ContinueAsynchronouslyOnDefaultScheduler(subscriberConnection.SendAsync(exactlyOnceEvent), task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceEvent.MessageId));
+            subscriberConnection.SendAsync(exactlyOnceEvent)
+                                .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceEvent.MessageId));
          }));
       }
    }
@@ -84,7 +88,12 @@ partial class Outbox : IOutbox
       {
          if(completedSendTask.IsFaulted)
          {
-            //Todo: Handle delivery failures sanely.
+            var exception = completedSendTask.Exception?.GetBaseException();
+            var failureReason = exception != null
+                                   ? $"{exception.GetType().Name}: {exception.Message}\n{exception.StackTrace}"
+                                   : "Unknown failure";
+
+            _storage.RecordDeliveryFailure(messageId, receiverId, failureReason);
          } else
          {
             _storage.MarkAsReceived(messageId, receiverId);
@@ -95,6 +104,9 @@ partial class Outbox : IOutbox
    public async Task StartAsync()
    {
       if(!_configuration.IsPureClientEndpoint)
+      {
          await _storage.StartAsync().caf();
+         _retryPoller.Start();
+      }
    }
 }

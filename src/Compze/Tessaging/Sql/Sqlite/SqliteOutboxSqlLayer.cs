@@ -2,6 +2,7 @@ using Compze.Sql.Common;
 using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
+using System.Globalization;
 using MessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
 
@@ -61,6 +62,73 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
                    .AddVarcharParameter(DispatchingTable.MessageId, 36, messageId.ToString())
                    .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
                    .ExecuteNonQuery());
+   }
+
+   public void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason)
+   {
+      _connectionFactory.UseCommand(
+         command => command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {DispatchingTable.TableName} 
+                            SET {DispatchingTable.RetryCount} = {DispatchingTable.RetryCount} + 1,
+                                {DispatchingTable.LastAttemptTime} = @{DispatchingTable.LastAttemptTime},
+                                {DispatchingTable.FailureReason} = @{DispatchingTable.FailureReason}
+                        WHERE {DispatchingTable.MessageId} = @{DispatchingTable.MessageId}
+                            AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
+
+                        """)
+                   .AddVarcharParameter(DispatchingTable.MessageId, 36, messageId.ToString())
+                   .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
+                   .AddVarcharParameter(DispatchingTable.LastAttemptTime, 50, DateTime.UtcNow.ToString("O"))
+                   .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
+                   .ExecuteNonQuery());
+   }
+
+   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan)
+   {
+      var cutoffTime = DateTime.UtcNow - olderThan;
+      
+      return _connectionFactory.UseCommand(
+         command =>
+         {
+            var messages = new List<IServiceBusSqlLayer.UndeliveredMessage>();
+            
+            command
+               .SetCommandText(
+                   $"""
+
+                    SELECT m.{MessageTable.MessageId}, 
+                           m.{MessageTable.TypeIdGuidValue}, 
+                           m.{MessageTable.SerializedMessage},
+                           d.{DispatchingTable.EndpointId},
+                           d.{DispatchingTable.RetryCount},
+                           d.{DispatchingTable.LastAttemptTime}
+                    FROM {MessageTable.TableName} m
+                    INNER JOIN {DispatchingTable.TableName} d ON m.{MessageTable.MessageId} = d.{DispatchingTable.MessageId}
+                    WHERE d.{DispatchingTable.IsReceived} = 0
+                      AND (d.{DispatchingTable.LastAttemptTime} IS NULL 
+                           OR d.{DispatchingTable.LastAttemptTime} < @cutoffTime)
+                    ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
+
+                    """)
+               .AddVarcharParameter("cutoffTime", 50, cutoffTime.ToString("O"));
+            
+            using var reader = command.ExecuteReader();
+            while(reader.Read())
+            {
+               messages.Add(new IServiceBusSqlLayer.UndeliveredMessage(
+                  messageId: Guid.Parse(reader.GetString(0)),
+                  typeIdGuidValue: Guid.Parse(reader.GetString(1)),
+                  serializedMessage: reader.GetString(2),
+                  endpointId: Guid.Parse(reader.GetString(3)),
+                  retryCount: reader.GetInt32(4),
+                  lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
+            }
+            
+            return messages;
+         });
    }
 
    public Task InitAsync() => SchemaManager.EnsureTablesExistAsync(_connectionFactory);

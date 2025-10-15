@@ -64,5 +64,72 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
                    .ExecuteNonQuery());
    }
 
+   public void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason)
+   {
+      _connectionFactory.UseCommand(
+         command => command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {DispatchingTable.TableName} 
+                            SET {DispatchingTable.RetryCount} = {DispatchingTable.RetryCount} + 1,
+                                {DispatchingTable.LastAttemptTime} = @{DispatchingTable.LastAttemptTime},
+                                {DispatchingTable.FailureReason} = @{DispatchingTable.FailureReason}
+                        WHERE {DispatchingTable.MessageId} = @{DispatchingTable.MessageId}
+                            AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
+
+                        """)
+                   .AddParameter(DispatchingTable.MessageId, messageId)
+                   .AddParameter(DispatchingTable.EndpointId, endpointId)
+                   .AddDateTime2Parameter(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
+                   .AddNVarcharMaxParameter(DispatchingTable.FailureReason, failureReason)
+                   .ExecuteNonQuery());
+   }
+
+   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan)
+   {
+      var cutoffTime = DateTime.UtcNow - olderThan;
+      
+      return _connectionFactory.UseCommand(
+         command =>
+         {
+            var messages = new List<IServiceBusSqlLayer.UndeliveredMessage>();
+            
+            command
+               .SetCommandText(
+                   $"""
+
+                    SELECT m.{MessageTable.MessageId}, 
+                           m.{MessageTable.TypeIdGuidValue}, 
+                           m.{MessageTable.SerializedMessage},
+                           d.{DispatchingTable.EndpointId},
+                           d.{DispatchingTable.RetryCount},
+                           d.{DispatchingTable.LastAttemptTime}
+                    FROM {MessageTable.TableName} m
+                    INNER JOIN {DispatchingTable.TableName} d ON m.{MessageTable.MessageId} = d.{DispatchingTable.MessageId}
+                    WHERE d.{DispatchingTable.IsReceived} = 0
+                      AND (d.{DispatchingTable.LastAttemptTime} IS NULL 
+                           OR d.{DispatchingTable.LastAttemptTime} < @cutoffTime)
+                    ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
+
+                    """)
+               .AddDateTime2Parameter("cutoffTime", cutoffTime);
+            
+            using var reader = command.ExecuteReader();
+            while(reader.Read())
+            {
+               messages.Add(new IServiceBusSqlLayer.UndeliveredMessage(
+                  messageId: reader.GetGuid(0),
+                  typeIdGuidValue: reader.GetGuid(1),
+                  serializedMessage: reader.GetString(2),
+                  endpointId: reader.GetGuid(3),
+                  retryCount: reader.GetInt32(4),
+                  lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
+            }
+            
+            return messages;
+         });
+   }
+
    public Task InitAsync() => SchemaManager.EnsureTablesExistAsync(_connectionFactory);
 }

@@ -23,9 +23,12 @@ partial class SqliteOutboxSqlLayer
 
                                                        CREATE TABLE IF NOT EXISTS {D.TableName}
                                                        (
-                                                           {D.MessageId}  TEXT    NOT NULL,
-                                                           {D.EndpointId} TEXT    NOT NULL,
-                                                           {D.IsReceived} INTEGER NOT NULL,
+                                                           {D.MessageId}        TEXT    NOT NULL,
+                                                           {D.EndpointId}       TEXT    NOT NULL,
+                                                           {D.IsReceived}       INTEGER NOT NULL,
+                                                           {D.RetryCount}       INTEGER NOT NULL DEFAULT 0,
+                                                           {D.LastAttemptTime}  TEXT    NULL,
+                                                           {D.FailureReason}    TEXT    NULL,
 
                                                            PRIMARY KEY( {D.MessageId}, {D.EndpointId}),
                                                            FOREIGN KEY ( {D.MessageId} ) REFERENCES {Message.TableName} ({Message.MessageId})
