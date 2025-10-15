@@ -77,13 +77,16 @@ function C-Test {
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
         # Build if needed
-        if (-not (C-Build-IfNeeded -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
-            Write-Error "Build failed!"
-            return
-        }
+        C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset
         
         # Handle -WhatIf for FullGitReset (returns early after showing what would be deleted)
         if ($FullGitReset -and $WhatIfPreference) {
+            return
+        }
+        
+        # Check if build failed
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Build failed!"
             return
         }
         

@@ -6,6 +6,10 @@ function C-Build {
     .DESCRIPTION
     Builds the Compze solution. Optionally performs a deep clean before building.
     
+    .PARAMETER NoBuild
+    Skip building entirely. Useful when called from scripts that may or may not need to build.
+    When specified, returns immediately with success (exit code 0).
+    
     .PARAMETER Clean
     Performs a deep clean before building. This runs 'dotnet clean' and then deletes all \obj\ folders.
     
@@ -22,6 +26,10 @@ function C-Build {
     Builds the solution
     
     .EXAMPLE
+    C-Build -NoBuild
+    Returns immediately without building (useful for scripting)
+    
+    .EXAMPLE
     C-Build -Clean
     Performs a deep clean (dotnet clean + delete all \obj\ folders) then builds the solution
     
@@ -36,9 +44,15 @@ function C-Build {
     [CmdletBinding(SupportsShouldProcess)]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
+        [switch]$NoBuild,
         [switch]$Clean,
         [switch]$FullGitReset
     )
+    
+    # If NoBuild is specified, return immediately with success
+    if ($NoBuild) {
+        return
+    }
     
     $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
     

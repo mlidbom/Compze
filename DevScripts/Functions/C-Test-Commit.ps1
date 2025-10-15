@@ -99,14 +99,17 @@ function C-Test-Commit {
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
         # Build if needed
-        if (-not (C-Build-IfNeeded -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
-            Write-Error "Build failed!"
-            return $false
-        }
+        C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset
         
         # Handle -WhatIf for FullGitReset (returns early after showing what would be deleted)
         if ($FullGitReset -and $WhatIfPreference) {
             return $true
+        }
+        
+        # Check if build failed
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Build failed!"
+            return $false
         }
         
         for ($i = 1; $i -le $Iterations; $i++) {
