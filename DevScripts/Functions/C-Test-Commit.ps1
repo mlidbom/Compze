@@ -119,7 +119,9 @@ function C-Test-Commit {
             }
             
             # Run tests and capture output
+            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
             $testOutput = dotnet test $solutionPath --no-build 2>&1
+            $stopwatch.Stop()
             
             # Display output, filtering out VSTest noise
             $testOutput | Where-Object { 
@@ -151,7 +153,8 @@ function C-Test-Commit {
             
             # Display iteration summary
             if ($Iterations -gt 1) {
-                Write-Host "Iteration $i failures: $iterationFailures (cumulative: $totalFailures)" -ForegroundColor $(if ($iterationFailures -gt 0) { "Yellow" } else { "Green" })
+                $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
+                Write-Host "Iteration $i failures: $iterationFailures (cumulative: $totalFailures) elapsed: $elapsedSeconds seconds" -ForegroundColor $(if ($iterationFailures -gt 0) { "Yellow" } else { "Green" })
             }
             
             # Check for FailureText if specified
