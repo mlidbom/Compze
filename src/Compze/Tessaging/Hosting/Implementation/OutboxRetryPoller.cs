@@ -163,6 +163,9 @@ class OutboxRetryPoller : IDisposable
             if(exception != null)
             {
                this.Log().Warning(exception, $"Retry failed for message {messageId} to endpoint {endpointId}");
+            } else
+            {
+               this.Log().Warning($"Retry failed for message {messageId} to endpoint {endpointId} - no exception details available");
             }
 
             RecordFailure(messageId, endpointId, exception);

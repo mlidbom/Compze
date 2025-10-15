@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Tessaging.Abstractions;
 using Compze.Serialization;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
@@ -14,13 +14,13 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 partial class Outbox
 {
-   internal class MessageStorage : Outbox.IMessageStorage
+   internal class MessageStorage : IMessageStorage
    {
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static void RegisterWith(IDependencyRegistrar registrar)
-         => registrar.Register(Singleton.For<Outbox.IMessageStorage>()
+         => registrar.Register(Singleton.For<IMessageStorage>()
                                         .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
-                                                      => new Outbox.MessageStorage(sqlLayer, typeMapper, serializer)));
+                                                      => new MessageStorage(sqlLayer, typeMapper, serializer)));
 
       readonly IServiceBusSqlLayer.IOutboxSqlLayer _sqlLayer;
       readonly ITypeMapper _typeMapper;
@@ -36,9 +36,9 @@ partial class Outbox
       public void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds)
       {
          var outboxMessageWithReceivers = new IServiceBusSqlLayer.OutboxMessageWithReceivers(_serializer.SerializeMessage(message),
-                                                                                                     _typeMapper.GetId(message.GetType()).GuidValue,
-                                                                                                     message.MessageId,
-                                                                                                     receiverEndpointIds.Select(it => it.GuidValue));
+                                                                                             _typeMapper.GetId(message.GetType()).GuidValue,
+                                                                                             message.MessageId,
+                                                                                             receiverEndpointIds.Select(it => it.GuidValue));
 
          _sqlLayer.SaveMessage(outboxMessageWithReceivers);
       }
@@ -50,10 +50,8 @@ partial class Outbox
          Assert.Result.Is(affectedRows == 1);
       }
 
-      public void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, string failureReason)
-      {
+      public void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, string failureReason) =>
          _sqlLayer.RecordDeliveryFailure(messageId, receiverId.GuidValue, failureReason);
-      }
 
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
    }
