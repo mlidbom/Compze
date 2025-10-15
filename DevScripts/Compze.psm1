@@ -23,5 +23,6 @@ foreach ($file in $functionFiles) {
     $functionNames += $functionName
 }
 
-# Export all loaded functions automatically
-Export-ModuleMember -Function $functionNames
+# Export only public functions (those starting with C-)
+$publicFunctions = $functionNames | Where-Object { $_ -like 'C-*' }
+Export-ModuleMember -Function $publicFunctions
