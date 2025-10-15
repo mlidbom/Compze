@@ -13,8 +13,17 @@ function Show-TestIterationSummary {
     .PARAMETER TotalIterations
     The total number of iterations
     
-    .PARAMETER Failures
-    Number of failures in this iteration
+    .PARAMETER Failed
+    Number of failed tests in this iteration
+    
+    .PARAMETER Passed
+    Number of passed tests in this iteration
+    
+    .PARAMETER Skipped
+    Number of skipped tests in this iteration
+    
+    .PARAMETER Total
+    Total number of tests executed in this iteration
     
     .PARAMETER CumulativeFailures
     Cumulative failures across all iterations so far
@@ -23,7 +32,7 @@ function Show-TestIterationSummary {
     Time taken for this iteration in seconds
     
     .EXAMPLE
-    Show-TestIterationSummary -IterationNumber 1 -TotalIterations 5 -Failures 0 -CumulativeFailures 0 -ElapsedSeconds 4.5
+    Show-TestIterationSummary -IterationNumber 1 -TotalIterations 5 -Failed 0 -Passed 100 -Skipped 2 -Total 102 -CumulativeFailures 0 -ElapsedSeconds 4.5
     #>
     [CmdletBinding()]
     param(
@@ -34,7 +43,16 @@ function Show-TestIterationSummary {
         [int]$TotalIterations,
         
         [Parameter(Mandatory = $true)]
-        [int]$Failures,
+        [int]$Failed,
+        
+        [Parameter(Mandatory = $true)]
+        [int]$Passed,
+        
+        [Parameter(Mandatory = $true)]
+        [int]$Skipped,
+        
+        [Parameter(Mandatory = $true)]
+        [int]$Total,
         
         [Parameter(Mandatory = $true)]
         [int]$CumulativeFailures,
@@ -43,11 +61,11 @@ function Show-TestIterationSummary {
         [decimal]$ElapsedSeconds
     )
     
-    $color = if ($Failures -gt 0) { "Yellow" } else { "Green" }
+    $color = if ($Failed -gt 0) { "Yellow" } else { "Green" }
     
     if ($TotalIterations -gt 1) {
-        Write-Host "Iteration $IterationNumber failures: $Failures (cumulative: $CumulativeFailures) elapsed: $ElapsedSeconds seconds" -ForegroundColor $color
+        Write-Host "Iteration $IterationNumber - Failed: $Failed, Passed: $Passed, Skipped: $Skipped, Total: $Total, Elapsed: $ElapsedSeconds seconds (cumulative failures: $CumulativeFailures)" -ForegroundColor $color
     } else {
-        Write-Host "Failures: $Failures elapsed: $ElapsedSeconds seconds" -ForegroundColor $color
+        Write-Host "Failed: $Failed, Passed: $Passed, Skipped: $Skipped, Total: $Total, Elapsed: $ElapsedSeconds seconds" -ForegroundColor $color
     }
 }

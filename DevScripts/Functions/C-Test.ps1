@@ -96,7 +96,7 @@ function C-Test {
             
             # Display iteration summary
             $cumulativeFailures = ($iterationResults + $result | Measure-Object -Property Failed -Sum).Sum
-            Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failures $result.Failed -CumulativeFailures $cumulativeFailures -ElapsedSeconds $result.ElapsedSeconds
+            Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failed $result.Failed -Passed $result.Succeeded -Skipped $result.Skipped -Total $result.Executed -CumulativeFailures $cumulativeFailures -ElapsedSeconds $result.ElapsedSeconds
             
             $iterationResults += $result
         }

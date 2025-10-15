@@ -115,7 +115,7 @@ function C-Test-Commit {
             $totalFailures += $result.Failed
             
             # Display iteration summary
-            Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failures $result.Failed -CumulativeFailures $totalFailures -ElapsedSeconds $result.ElapsedSeconds
+            Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failed $result.Failed -Passed $result.Succeeded -Skipped $result.Skipped -Total $result.Executed -CumulativeFailures $totalFailures -ElapsedSeconds $result.ElapsedSeconds
             
             # Check for FailureText if specified
             if ($FailureText) {
