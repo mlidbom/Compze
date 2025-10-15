@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using FluentAssertions;
 using NUnit.Framework;
