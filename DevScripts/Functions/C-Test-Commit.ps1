@@ -96,6 +96,7 @@ function C-Test-Commit {
     }
     
     $totalFailures = 0
+    $allFailedTests = @()
     
     Push-Location $script:CompzeSrcRoot
     try {
@@ -114,6 +115,11 @@ function C-Test-Commit {
             
             $totalFailures += $result.Failed
             
+            # Collect failed tests from this iteration
+            if ($result.FailedTests -and $result.FailedTests.Count -gt 0) {
+                $allFailedTests += $result.FailedTests
+            }
+            
             # Display iteration summary
             Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failed $result.Failed -Passed $result.Succeeded -Skipped $result.Skipped -Total $result.Executed -CumulativeFailures $totalFailures -ElapsedSeconds $result.ElapsedSeconds
             
@@ -131,6 +137,7 @@ function C-Test-Commit {
             if ($MaxFailures -ge 0) {
                 if ($totalFailures -gt $MaxFailures) {
                     Write-Host "Cumulative failures ($totalFailures) exceeded MaxFailures ($MaxFailures)" -ForegroundColor Red
+                    Show-FailedTestsSummary -FailedTests $allFailedTests
                     $global:LASTEXITCODE = 1
                     return
                 }
@@ -141,6 +148,9 @@ function C-Test-Commit {
         if ($Iterations -gt 1) {
             Write-Host "Total cumulative failures: $totalFailures" -ForegroundColor $(if ($totalFailures -eq 0) { "Green" } else { "Yellow" })
         }
+        
+        Show-FailedTestsSummary -FailedTests $allFailedTests
+        
         $global:LASTEXITCODE = 0
         
     } finally {

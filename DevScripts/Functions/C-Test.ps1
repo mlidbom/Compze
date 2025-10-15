@@ -74,6 +74,7 @@ function C-Test {
     
     # Array to store results from each iteration
     $iterationResults = @()
+    $allFailedTests = @()
     
     Push-Location $script:CompzeSrcRoot
     try {
@@ -90,6 +91,11 @@ function C-Test {
             
             # Run tests
             $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting
+            
+            # Collect failed tests from this iteration
+            if ($testRunResult.FailedTests -and $testRunResult.FailedTests.Count -gt 0) {
+                $allFailedTests += $testRunResult.FailedTests
+            }
             
             # Add iteration number to result
             $result = $testRunResult | Add-Member -NotePropertyName Iteration -NotePropertyValue $i -PassThru
@@ -129,6 +135,7 @@ function C-Test {
         # Set exit code based on whether any tests failed
         $totalFailedTests = ($iterationResults | Measure-Object -Property Failed -Sum).Sum
         if ($totalFailedTests -gt 0) {
+            Show-FailedTestsSummary -FailedTests $allFailedTests
             $global:LASTEXITCODE = 1
         } else {
             $global:LASTEXITCODE = 0

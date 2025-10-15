@@ -25,6 +25,7 @@ function C-Run-TestRun {
     - Executed: Total number of tests executed
     - ExitCode: The exit code from dotnet test
     - ElapsedSeconds: Time taken to run tests (rounded to 1 decimal)
+    - FailedTests: Array of failed test objects with FullName and DisplayName properties
     
     .EXAMPLE
     $result = C-Run-TestRun -SolutionPath "C:\Dev\Compze\src\Compze.slnx"
@@ -91,6 +92,12 @@ function C-Run-TestRun {
         $executed = $succeeded + $failed + $skipped
     }
     
+    # Extract failed test information
+    $failedTests = @()
+    if ($failed -gt 0) {
+        $failedTests = Get-FailedTestsFromOutput -TestOutput $testOutput
+    }
+    
     # Return structured result
     return [PSCustomObject]@{
         TestOutput = $testOutput
@@ -100,5 +107,6 @@ function C-Run-TestRun {
         Executed = $executed
         ExitCode = $exitCode
         ElapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
+        FailedTests = $failedTests
     }
 }
