@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
@@ -50,8 +51,17 @@ partial class Outbox
          Assert.Result.Is(affectedRows == 1);
       }
 
-      public void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, string failureReason) =>
+      public void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, Exception? exception)
+      {
+         var failureReason = exception != null
+                                ? $"{exception.GetType().Name}: {exception.Message}\n{exception.StackTrace}"
+                                : "Unknown failure";
+         
          _sqlLayer.RecordDeliveryFailure(messageId, receiverId.GuidValue, failureReason);
+      }
+
+      public IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan) =>
+         _sqlLayer.GetUndeliveredMessages(olderThan);
 
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
    }

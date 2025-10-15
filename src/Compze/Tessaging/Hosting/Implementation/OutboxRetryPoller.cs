@@ -6,6 +6,7 @@ using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
@@ -20,15 +21,15 @@ class OutboxRetryPoller : IDisposable
 {
    internal static void RegisterWith(IDependencyRegistrar registrar)
       => registrar.Register(Singleton.For<OutboxRetryPoller>()
-                                     .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer,
+                                     .CreatedBy((Outbox.IMessageStorage messageStorage,
                                                  ITransport transport,
                                                  ITypeMapper typeMapper,
                                                  IRemotableMessageSerializer serializer,
                                                  ITaskRunner taskRunner,
                                                  IBackgroundExceptionReporter exceptionReporter)
-                                                   => new OutboxRetryPoller(sqlLayer, transport, typeMapper, serializer, taskRunner, exceptionReporter)));
+                                                   => new OutboxRetryPoller(messageStorage, transport, typeMapper, serializer, taskRunner, exceptionReporter)));
 
-   readonly IServiceBusSqlLayer.IOutboxSqlLayer _sqlLayer;
+   readonly Outbox.IMessageStorage _messageStorage;
    readonly ITransport _transport;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableMessageSerializer _serializer;
@@ -42,14 +43,14 @@ class OutboxRetryPoller : IDisposable
    static readonly TimeSpan InitialRetryDelay = TimeSpan.FromSeconds(10);
    static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(30);
 
-   OutboxRetryPoller(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer,
+   OutboxRetryPoller(Outbox.IMessageStorage messageStorage,
                      ITransport transport,
                      ITypeMapper typeMapper,
                      IRemotableMessageSerializer serializer,
                      ITaskRunner taskRunner,
                      IBackgroundExceptionReporter exceptionReporter)
    {
-      _sqlLayer = sqlLayer;
+      _messageStorage = messageStorage;
       _transport = transport;
       _typeMapper = typeMapper;
       _serializer = serializer;
@@ -96,7 +97,7 @@ class OutboxRetryPoller : IDisposable
 
    void RetryUndeliveredMessages()
    {
-      var undeliveredMessages = _sqlLayer.GetUndeliveredMessages(InitialRetryDelay);
+      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(InitialRetryDelay);
       if(undeliveredMessages.Count == 0) return;
 
       this.Log().Info($"Found {undeliveredMessages.Count} undelivered message(s) to retry");
@@ -172,19 +173,13 @@ class OutboxRetryPoller : IDisposable
          } else
          {
             this.Log().Info($"Successfully delivered message {messageId} to endpoint {endpointId}");
-            _sqlLayer.MarkAsReceived(messageId, endpointId);
+            _messageStorage.MarkAsReceived(messageId, new EndpointId(endpointId));
          }
       });
    }
 
-   void RecordFailure(Guid messageId, Guid endpointId, Exception? exception)
-   {
-      var failureReason = exception != null
-                             ? $"{exception.GetType().Name}: {exception.Message}"
-                             : "Unknown failure";
-
-      _sqlLayer.RecordDeliveryFailure(messageId, endpointId, failureReason);
-   }
+   void RecordFailure(Guid messageId, Guid endpointId, Exception? exception) =>
+      _messageStorage.RecordDeliveryFailure(messageId, new EndpointId(endpointId), exception);
 
    public void Stop()
    {

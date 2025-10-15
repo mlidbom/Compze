@@ -89,19 +89,13 @@ partial class Outbox : IOutbox
          if(completedSendTask.IsFaulted)
          {
             var exception = completedSendTask.Exception?.GetBaseException();
-            var failureReason = exception != null
-                                   ? $"{exception.GetType().Name}: {exception.Message}\n{exception.StackTrace}"
-                                   : "Unknown failure";
-
-            _storage.RecordDeliveryFailure(messageId, receiverId, failureReason);
+            _storage.RecordDeliveryFailure(messageId, receiverId, exception);
          } else
          {
             _storage.MarkAsReceived(messageId, receiverId);
          }
       });
-   }
-
-   public async Task StartAsync()
+   }   public async Task StartAsync()
    {
       if(!_configuration.IsPureClientEndpoint)
       {
