@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
@@ -8,8 +9,8 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.Testing;
 using FluentAssertions.Extensions;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -38,6 +39,12 @@ public abstract partial class Fixture()
 
    protected IEndpoint ClientEndpoint { get; set; } = null!;
    protected IEndpoint RemoteEndpoint { get; set; } = null!;
+
+   public virtual async Task SetupAsync()
+   {
+      InitializeHost();
+      await StartHostAsync();
+   }
 
    protected void InitializeHost()
    {
@@ -94,7 +101,7 @@ public abstract partial class Fixture()
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
-   protected async System.Threading.Tasks.Task StartHostAsync()
+   protected async Task StartHostAsync()
    {
       await Host.StartAsync();
       AllGates =
@@ -110,7 +117,7 @@ public abstract partial class Fixture()
       ];
    }
 
-   protected async System.Threading.Tasks.Task TearDownHostAsync()
+   public virtual async Task TearDownAsync()
    {
       OpenGates();
       await Host.DisposeAsync();

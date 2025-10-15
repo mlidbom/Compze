@@ -8,11 +8,6 @@ namespace Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_ba
 [TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
 public abstract class NUnitFixtureBase(string _) : Fixture
 {
-   [SetUp] public async Task SetupAsync()
-   {
-      InitializeHost();
-      await StartHostAsync();
-   }
-
-   [TearDown] public virtual async Task TearDownAsync() => await TearDownHostAsync();
+   [SetUp] public override async Task SetupAsync() => await base.SetupAsync();
+   [TearDown] public override async Task TearDownAsync() => await base.TearDownAsync();
 }
