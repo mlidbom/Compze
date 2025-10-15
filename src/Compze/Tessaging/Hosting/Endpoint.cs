@@ -13,13 +13,12 @@ namespace Compze.Tessaging.Hosting;
 
 class Endpoint : IEndpoint
 {
-   class ServerComponents(CommandScheduler commandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
+   class ServerComponents(CommandScheduler commandScheduler, IInbox inbox) : IDisposable
    {
       readonly CommandScheduler _commandScheduler = commandScheduler;
       public readonly IInbox Inbox = inbox;
-      readonly IOutbox _outbox = outbox;
 
-      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync(), _outbox.StartAsync()).caf();
+      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync()).caf();
 
       public async Task StopAsync()
       {
@@ -57,7 +56,7 @@ class Endpoint : IEndpoint
 
    ServerComponents? _serverComponents;
 
-   public async Task InitAsync()
+   public async Task StartListeningComponentsAsync()
    {
       State.Is(!IsRunning);
 
@@ -68,7 +67,7 @@ class Endpoint : IEndpoint
       //todo: find cleaner way of handling what an endpoint supports
       if(!_configuration.IsPureClientEndpoint)
       {
-         _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
+         _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>());
 
          await _serverComponents.InitAsync().caf();
       }
@@ -76,15 +75,15 @@ class Endpoint : IEndpoint
       IsRunning = true;
    }
 
-   public async Task ConnectAsync()
+   public async Task StartSendingComponentsAsync()
    {
       var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
+      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
+         await ServiceLocator.Resolve<IOutbox>().StartAsync().caf();
          serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
       }
-
-      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
    }
 
    static void RunSanityChecks() => AssertAllTypesNeedingMappingsAreMapped();

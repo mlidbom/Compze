@@ -10,8 +10,8 @@ public interface IEndpoint : IAsyncDisposable
     IServiceLocator ServiceLocator { get; }
     EndPointAddress? Address { get; }
     bool IsRunning { get; }
-    Task InitAsync();
-    Task ConnectAsync();
+    Task StartListeningComponentsAsync();
+    Task StartSendingComponentsAsync();
     Task StopAsync();
     void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride);
 }
