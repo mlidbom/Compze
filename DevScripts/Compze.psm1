@@ -18,11 +18,10 @@ foreach ($file in $functionFiles) {
     . $file.FullName
     
     # Extract function name from file name (assumes file name matches function name)
-    # e.g., "Build-Compze.ps1" -> "Build-Compze"
     $functionName = $file.BaseName
     $functionNames += $functionName
 }
 
-# Export only public functions (those starting with C-)
+# Export only C- functions. "public" functions.
 $publicFunctions = $functionNames | Where-Object { $_ -like 'C-*' }
 Export-ModuleMember -Function $publicFunctions
