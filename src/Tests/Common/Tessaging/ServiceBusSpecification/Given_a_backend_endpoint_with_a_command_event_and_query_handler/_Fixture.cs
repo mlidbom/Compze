@@ -10,7 +10,6 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
@@ -45,10 +44,12 @@ public abstract class Fixture()
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
    IDependencyInjectionContainer _rootContainer = null!;
-   
+
    public virtual async Task SetupAsync()
    {
       _rootContainer = TestEnv.DIContainer.Create();
+      _rootContainer.Register()
+                    .CurrentTestsDbPoolIfNotAlreadyRegistered();
       InitializeHost();
       await StartHostAsync();
    }
@@ -58,8 +59,6 @@ public abstract class Fixture()
       IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed(IRunMode mode)
       {
          var container = _rootContainer.Clone();
-         // container.Register()
-         //          .CurrentTestsDbPoolIfNotAlreadyRegistered();
          var clone = container.Clone();
          return clone;
       }
