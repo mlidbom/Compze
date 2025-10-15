@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 using NUnit.Framework;
 using Compze.Tests.Infrastructure.NUnit;
 
-#pragma warning disable IDE1006 //Review OK: Test Naming Styles
+#pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1806  // Do not ignore method results
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
@@ -22,7 +22,7 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 #pragma warning disable CS9113
    [UsedImplicitly] class Simple(string arg1)
    {
-#pragma warning disable CA1823  //Review OK: unused parameter is intentional
+#pragma warning disable CA1823  //Reviewed OK: unused parameter is intentional
 #pragma warning disable CA1801  // Review unused parameters
 #pragma warning restore CA1801  // Review unused parameters
 #pragma warning restore IDE0060 // Remove unused parameter

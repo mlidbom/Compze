@@ -1,5 +1,5 @@
 // ReSharper disable All
-#pragma warning disable //Review OK: This is API experimental code that is never ever used.
+#pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
 
 namespace ScratchPad.Internals.APIDraft.Policyv2;
 

@@ -40,7 +40,7 @@ partial class EventStore
             {
                try
                {
-                  //performance: bug: Look at ways to avoid taking a lock for a long time as we do now. This might be a problem in production.
+                  //performance: Look at ways to avoid taking a lock for a long time as we do now. This might be a problem in production.
                   using var transaction = new TransactionScope(TransactionScopeOption.Required, scopeTimeout: 10.Minutes());
 
                   var original = GetAggregateEventsFromSqlLayer(aggregateId: aggregateId, takeWriteLock: true);

@@ -2,7 +2,7 @@
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
-#pragma warning disable IDE1006 //Review OK: Test Naming Styles
+#pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 
 static partial class CompositeAggregateEvent

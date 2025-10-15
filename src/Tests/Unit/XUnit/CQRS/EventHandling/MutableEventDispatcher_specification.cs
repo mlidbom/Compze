@@ -7,8 +7,8 @@ using Xunit;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable InconsistentNaming
-#pragma warning disable IDE0051 //Review OK: unused private members are intentional in this test.
-#pragma warning disable IDE1006 //Review OK: Test Naming Styles
+#pragma warning disable IDE0051 //Reviewed OK: unused private members are intentional in this test.
+#pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Unit.XUnit.CQRS.EventHandling;
 

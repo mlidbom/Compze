@@ -104,7 +104,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
         {
             if(theEvent is IAggregateCreatedEvent)
             {
-#pragma warning disable 618 // Review OK: This is the one place where we are quite sure that calling this obsolete method is correct.
+#pragma warning disable 618 // Reviewed OK: This is the one place where we are quite sure that calling this obsolete method is correct.
                 SetIdBeVerySureYouKnowWhatYouAreDoing(theEvent.AggregateId);
 #pragma warning restore 618
             }

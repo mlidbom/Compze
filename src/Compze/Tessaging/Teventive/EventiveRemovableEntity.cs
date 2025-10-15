@@ -39,7 +39,7 @@ public abstract class EventiveRemovableEntity<TParent,
     {
         internal CollectionManager(TParent parent): base(parent)
         {
-#pragma warning disable 618 //Review OK: This test class is allowed to use these "obsolete" methods.
+#pragma warning disable 618 //Reviewed OK: This test class is allowed to use these "obsolete" methods.
             parent.RegisterEventAppliersInternal().For<TEntityRemovedEvent>(e =>
             {
 #pragma warning restore 618

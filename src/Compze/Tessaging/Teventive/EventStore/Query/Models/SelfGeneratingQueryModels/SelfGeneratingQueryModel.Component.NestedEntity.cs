@@ -25,7 +25,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEv
 
          protected NestedEntity(TComponent parent) : this(parent.RegisterEventAppliers()) {}
 
-#pragma warning disable CS8618 //Review OK-ish: We guarantee that we never deliver out a null or default value from the public property.
+#pragma warning disable CS8618 //Reviewed OK-ish: We guarantee that we never deliver out a null or default value from the public property.
          protected NestedEntity(IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(appliersRegistrar, registerEventAppliers: false)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
          {
