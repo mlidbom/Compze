@@ -5,6 +5,7 @@ using System.Transactions;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -25,20 +26,22 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IDependencyRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage)
-                                                => new Outbox(transport, messageStorage, configuration)));
+                                  .CreatedBy((EndpointConfiguration configuration, ITransport transport, Outbox.IMessageStorage messageStorage, IBackgroundExceptionReporter exceptionReporter)
+                                                => new Outbox(transport, messageStorage, configuration, exceptionReporter)));
       registrar.Register(MessageStorage.RegisterWith);
    }
 
    readonly IMessageStorage _storage;
    readonly EndpointConfiguration _configuration;
    readonly ITransport _transport;
+   readonly IBackgroundExceptionReporter _exceptionReporter;
 
-   Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, EndpointConfiguration configuration)
+   Outbox(ITransport transport, Outbox.IMessageStorage messageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter)
    {
       _storage = messageStorage;
       _configuration = configuration;
       _transport = transport;
+      _exceptionReporter = exceptionReporter;
    }
 
    public void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent)
@@ -71,20 +74,22 @@ partial class Outbox : IOutbox
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
          connection.SendAsync(exactlyOnceCommand)
-                    //Bug: this returns a task that must be awaited somehow.
                    .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceCommand.MessageId));
       });
    }
 
    void HandleDeliveryTaskResults(Task completedSendTask, EndpointId receiverId, Guid messageId)
    {
-      if(completedSendTask.IsFaulted)
+      _exceptionReporter.RunAndReportAnyExceptions(() =>
       {
-         //Todo: Handle delivery failures sanely.
-      } else
-      {
-         _storage.MarkAsReceived(messageId, receiverId);
-      }
+         if(completedSendTask.IsFaulted)
+         {
+            //Todo: Handle delivery failures sanely.
+         } else
+         {
+            _storage.MarkAsReceived(messageId, receiverId);
+         }
+      });
    }
 
    public async Task StartAsync()
