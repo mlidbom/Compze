@@ -21,7 +21,6 @@
       <ProjectReference Include="..\Integration\XUnit\Compze.Tests.Integration.XUnit.csproj" />
       <ProjectReference Include="..\Performance\Internals\Compze.Tests.Performance.Internals.csproj" />
       <ProjectReference Include="..\ScratchPad\Compze.Tests.ScratchPad.csproj" />
-      <ProjectReference Include="..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
       <ProjectReference Include="..\Unit\Internals\XUnit\Compze.Tests.Unit.Internals.XUnit.csproj" />
       <ProjectReference Include="..\Unit\XUnit\Compze.Tests.Unit.XUnit.csproj" />
       <ProjectReference Include="..\..\Compze\Abstractions\Compze.Abstractions.csproj" />

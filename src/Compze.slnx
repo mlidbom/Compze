@@ -178,7 +178,6 @@
     <Project Path="Tests/Unit/XUnit/Compze.Tests.Unit.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Unit/Internals/">
-    <Project Path="Tests/Unit/Internals/Compze.Tests.Unit.Internals.csproj" />
     <Project Path="Tests/Unit/Internals/XUnit/Compze.Tests.Unit.Internals.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Websites/">
