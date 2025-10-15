@@ -19,6 +19,7 @@ function C-Get-Commands {
     Shows all Compze commands with their full syntax
     #>
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [switch]$Syntax
     )
