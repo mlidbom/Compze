@@ -28,5 +28,6 @@
    </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Compze.Tests.Common.NUnit" />
+        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
     </ItemGroup>
 </Project>

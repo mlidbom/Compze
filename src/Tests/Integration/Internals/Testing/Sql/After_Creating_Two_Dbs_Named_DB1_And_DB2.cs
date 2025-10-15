@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Internals.Testing.Sql;
 
-public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
+public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponentsCombination) : NUnitDbPoolTest(pluggableComponentsCombination)
 {
    DbPool _pool;
    const string Db1 = "LocalDBManagerTests_After_creating_connection_Db1";

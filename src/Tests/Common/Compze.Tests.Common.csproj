@@ -16,7 +16,11 @@
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
+    <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
   </ItemGroup>
+	<ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>

@@ -7,7 +7,7 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Integration.Internals.Testing.Sql;
 
-class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTest(pluggableComponentsCombination)
+class If_not_disposed_(string pluggableComponentsCombination) : NUnitDbPoolTest(pluggableComponentsCombination)
 {
    [Test, NonParallelizable] public void Register_uncatchable_exception()
    {

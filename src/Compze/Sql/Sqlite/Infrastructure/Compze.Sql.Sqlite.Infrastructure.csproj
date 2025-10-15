@@ -19,5 +19,6 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Sql.Sqlite" />
     <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.Common" />
   </ItemGroup>
 </Project>

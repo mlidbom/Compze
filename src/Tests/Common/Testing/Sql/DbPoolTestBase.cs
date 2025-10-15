@@ -5,27 +5,27 @@ using Compze.Sql.MySql.Infrastructure.SystemExtensions;
 using Compze.Sql.PostgreSql.Infrastructure;
 using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.DbPool;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
 using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Wiring;
-using Compze.Tests.Infrastructure.NUnit;
 
-namespace Compze.Tests.Integration.Internals.Testing.Sql;
+namespace Compze.Tests.Common.Testing.Sql;
 
-public abstract class DbPoolTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class DbPoolTestBase : UniversalTestBase
 {
    public static DbPool CreatePool() =>
       TestEnv.SqlLayer switch
       {
          SqlLayer.MicrosoftSqlServer => new MsSqlDbPool(),
-         SqlLayer.MySql => new MySqlDbPool(),
-         SqlLayer.PostgreSql => new PgSqlDbPool(),
-         SqlLayer.Sqlite => new SqliteDbPool(),
-         SqlLayer.SqliteMemory => new SqliteMemoryDbPool(),
-         _ => throw new ArgumentOutOfRangeException()
+         SqlLayer.MySql              => new MySqlDbPool(),
+         SqlLayer.PostgreSql         => new PgSqlDbPool(),
+         SqlLayer.Sqlite             => new SqliteDbPool(),
+         SqlLayer.SqliteMemory       => new SqliteMemoryDbPool(),
+         _                           => throw new ArgumentOutOfRangeException()
       };
 
    internal static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
