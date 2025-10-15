@@ -118,14 +118,16 @@ function C-Test {
             # Capture test output
             $testOutput = $null
             
+            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
             if ($SingleThreadedTesting) {
                 $testOutput = dotnet test $solutionPath --no-build -- NUnit.NumberOfTestWorkers=0 2>&1
             } else {
                 $testOutput = dotnet test $solutionPath --no-build 2>&1
             }
+            $stopwatch.Stop()
             
-            # Display output
-            $testOutput | ForEach-Object { Write-Host $_ }
+            # Display output, filtering out VSTest noise
+            $testOutput | C-Filter-TestOutput | ForEach-Object { Write-Host $_ }
             
             # Parse test results
             $result = [PSCustomObject]@{
@@ -135,6 +137,7 @@ function C-Test {
                 Succeeded = 0
                 Skipped = 0
                 ExitCode = $LASTEXITCODE
+                ElapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
             }
             
             # Parse the output for test statistics
@@ -169,6 +172,14 @@ function C-Test {
             # If parsing failed, try to calculate from what we have
             if ($result.Executed -eq 0 -and ($result.Succeeded -gt 0 -or $result.Failed -gt 0)) {
                 $result.Executed = $result.Succeeded + $result.Failed + $result.Skipped
+            }
+            
+            # Display iteration summary
+            $cumulativeFailures = ($iterationResults + $result | Measure-Object -Property Failed -Sum).Sum
+            if ($Iterations -gt 1) {
+                Write-Host "Iteration $i failures: $($result.Failed) (cumulative: $cumulativeFailures) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
+            } else {
+                Write-Host "Failures: $($result.Failed) elapsed: $($result.ElapsedSeconds) seconds" -ForegroundColor $(if ($result.Failed -gt 0) { "Yellow" } else { "Green" })
             }
             
             $iterationResults += $result

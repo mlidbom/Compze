@@ -6,7 +6,8 @@ function C-Test-Commit {
     .DESCRIPTION
     Runs the test suite for the current commit with configurable failure detection.
     Useful for testing intermittent failures or as part of automated bisect processes.
-    By default, assumes the solution has already been built (uses --no-build flag).
+    By default, builds the solution before running tests.
+    Use -NoBuild to skip building (assumes already built).
     Use -Clean or -FullGitReset to clean and build before testing.
     
     .PARAMETER FailureText
@@ -17,6 +18,9 @@ function C-Test-Commit {
     Maximum cumulative test failures allowed across all iterations.
     If cumulative failures exceed this number, returns false.
     Mutually exclusive with -FailureText.
+    
+    .PARAMETER NoBuild
+    Skip building the solution before running tests (assumes already built)
     
     .PARAMETER Clean
     Performs a deep clean and build before running tests
@@ -42,7 +46,11 @@ function C-Test-Commit {
     
     .EXAMPLE
     C-Test-Commit -MaxFailures 10 -Iterations 10
-    Runs tests 10 times, returns false if cumulative failures exceed 10
+    Builds then runs tests 10 times, returns false if cumulative failures exceed 10
+    
+    .EXAMPLE
+    C-Test-Commit -NoBuild -MaxFailures 5 -Iterations 3
+    Runs tests 3 times without building, returns false if cumulative failures exceed 5
     
     .EXAMPLE
     C-Test-Commit -Clean -MaxFailures 5 -Iterations 3
@@ -69,6 +77,8 @@ function C-Test-Commit {
         [string]$FailureText,
         
         [int]$MaxFailures = 1,
+        
+        [switch]$NoBuild,
         
         [switch]$Clean,
         
@@ -112,6 +122,14 @@ function C-Test-Commit {
                 return $false
             }
         }
+        elseif (-not $NoBuild) {
+            dotnet build $solutionPath
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Build failed!"
+                return $false
+            }
+        }
         
         for ($i = 1; $i -le $Iterations; $i++) {
             if ($Iterations -gt 1) {
@@ -124,16 +142,7 @@ function C-Test-Commit {
             $stopwatch.Stop()
             
             # Display output, filtering out VSTest noise
-            $testOutput | Where-Object { 
-                $line = $_.ToString()
-                -not [string]::IsNullOrWhiteSpace($line) -and
-                $line -notmatch '^VSTest version' -and
-                $line -notmatch '^Starting test execution, please wait\.\.\.' -and
-                $line -notmatch '^A total of \d+ test files matched the specified pattern\.' -and
-                $line -notmatch '^Test run for .+\.dll \(\.NETCoreApp,Version=' -and
-                $line -notmatch '^\s+Skipped .+\[\d+\s+\w+\]' -and
-                $line -notmatch '^\[xUnit\.net \d+:\d+:\d+\.\d+\]\s+.+\[SKIP\]'
-            } | ForEach-Object { Write-Host $_ }
+            $testOutput | C-Filter-TestOutput | ForEach-Object { Write-Host $_ }
             
             # Parse test results to count failures
             $iterationFailures = 0
@@ -152,9 +161,11 @@ function C-Test-Commit {
             $totalFailures += $iterationFailures
             
             # Display iteration summary
+            $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
             if ($Iterations -gt 1) {
-                $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
                 Write-Host "Iteration $i failures: $iterationFailures (cumulative: $totalFailures) elapsed: $elapsedSeconds seconds" -ForegroundColor $(if ($iterationFailures -gt 0) { "Yellow" } else { "Green" })
+            } else {
+                Write-Host "Failures: $iterationFailures elapsed: $elapsedSeconds seconds" -ForegroundColor $(if ($iterationFailures -gt 0) { "Yellow" } else { "Green" })
             }
             
             # Check for FailureText if specified
