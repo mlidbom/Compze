@@ -37,6 +37,7 @@ public abstract partial class Fixture()
 
    public IReadOnlyList<IThreadGate> AllGates = [];
 
+   public IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IEndpoint ClientEndpoint { get; set; } = null!;
    protected IEndpoint RemoteEndpoint { get; set; } = null!;
 
@@ -50,7 +51,7 @@ public abstract partial class Fixture()
    {
       Host = TestingEndpointHost.Create(TestingContainerFactory.Create);
 
-      Host.RegisterEndpoint(
+      BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
          builder =>
