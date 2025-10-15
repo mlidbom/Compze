@@ -12,7 +12,7 @@ using Compze.Wiring;
 namespace Compze.Tests.Performance.Internals.Sql.DocumentDb;
 
 [LongRunning]
-class DocumentDbPerformanceTests(string pluggableComponentsCombination) : DocumentDbTestsBase(pluggableComponentsCombination)
+class DocumentDbPerformanceTests(string pluggableComponentsCombination) : NUnitDocumentDbTestsBase(pluggableComponentsCombination)
 {
    [Test] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()
    {

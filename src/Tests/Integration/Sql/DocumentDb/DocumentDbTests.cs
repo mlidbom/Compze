@@ -22,7 +22,7 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Integration.Sql.DocumentDb;
 
-class DocumentDbTests(string pluggableComponentsCombination) : DocumentDbTestsBase(pluggableComponentsCombination)
+class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTestsBase(pluggableComponentsCombination)
 {
     [Test]
     public void CanSaveAndLoadDocument()
