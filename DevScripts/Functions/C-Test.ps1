@@ -61,8 +61,9 @@ function C-Test {
     C-Test -Iterations 10
     Runs the test suite 10 times and displays a summary of results
     #>
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
     param(
         [switch]$NoBuild,
         [switch]$Clean,
