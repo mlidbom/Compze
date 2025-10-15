@@ -80,6 +80,9 @@ function C-Build {
             Write-Error "Build failed!"
             return
         }
+        
+        # Set success exit code
+        $global:LASTEXITCODE = 0
     } finally {
         Pop-Location
     }

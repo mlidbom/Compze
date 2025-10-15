@@ -7,6 +7,8 @@ function C-Test {
     Runs the full Compze test suite. By default, builds the solution before running tests.
     Tests run in parallel according to assembly-level attributes by default.
     
+    Returns exit code 0 on success, 1 on failure.
+    
     .PARAMETER NoBuild
     Skip building the solution before running tests (assumes already built)
     
@@ -81,12 +83,14 @@ function C-Test {
         
         # Handle -WhatIf for FullGitReset (returns early after showing what would be deleted)
         if ($FullGitReset -and $WhatIfPreference) {
+            $global:LASTEXITCODE = 0
             return
         }
         
         # Check if build failed
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Build failed!"
+            $global:LASTEXITCODE = 1
             return
         }
         
@@ -144,6 +148,14 @@ function C-Test {
             Write-Host "$successfulRuns succeeded" -NoNewline -ForegroundColor Green
             Write-Host ", " -NoNewline
             Write-Host "$failedRuns failed" -ForegroundColor $(if ($failedRuns -gt 0) { "Red" } else { "Green" })
+        }
+        
+        # Set exit code based on whether any tests failed
+        $totalFailedTests = ($iterationResults | Measure-Object -Property Failed -Sum).Sum
+        if ($totalFailedTests -gt 0) {
+            $global:LASTEXITCODE = 1
+        } else {
+            $global:LASTEXITCODE = 0
         }
     } finally {
         Pop-Location
