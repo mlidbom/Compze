@@ -13,17 +13,19 @@ namespace Compze.Tessaging.Hosting;
 
 class Endpoint : IEndpoint
 {
-   class ServerComponents(CommandScheduler commandScheduler, IInbox inbox) : IDisposable
+   class ServerComponents(CommandScheduler commandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
       readonly CommandScheduler _commandScheduler = commandScheduler;
       public readonly IInbox Inbox = inbox;
+      readonly IOutbox _outbox = outbox;
 
-      public async Task InitAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync()).caf();
+      public async Task StartListeningComponentsAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync()).caf();
+      public async Task StartSendingComponentsAsync() => await Task.WhenAll(_outbox.StartAsync()).caf();
 
       public async Task StopAsync()
       {
          _commandScheduler.Stop();
-         await Inbox.StopAsync().caf();
+         await Task.WhenAll(Inbox.StopAsync(), _outbox.StartAsync()).caf();
       }
 
       public void Dispose() => _commandScheduler.Dispose();
@@ -67,9 +69,9 @@ class Endpoint : IEndpoint
       //todo: find cleaner way of handling what an endpoint supports
       if(!_configuration.IsPureClientEndpoint)
       {
-         _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>());
+         _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await _serverComponents.InitAsync().caf();
+         await _serverComponents.StartListeningComponentsAsync().caf();
       }
 
       IsRunning = true;
@@ -81,7 +83,7 @@ class Endpoint : IEndpoint
       await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
-         await ServiceLocator.Resolve<IOutbox>().StartAsync().caf();
+         await _serverComponents.StartSendingComponentsAsync().caf();
          serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
       }
    }
