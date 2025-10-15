@@ -102,7 +102,8 @@ function C-GitBisectAuto {
             }
             
             # Test the commit
-            $isGood = C-Test-Commit -NoBuild -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
+            C-Test-Commit -NoBuild -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
+            $isGood = $LASTEXITCODE -eq 0
             
             if (-not $isGood) {
                 Write-Host "Tests failed, going back $GoodSearchSteps more commits..." -ForegroundColor Red
@@ -153,7 +154,8 @@ function C-GitBisectAuto {
             }
             
             # Test the commit
-            $isGood = C-Test-Commit -NoBuild -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
+            C-Test-Commit -NoBuild -FailureText $FailureText -MaxFailures $MaxFailures -Iterations $Iterations
+            $isGood = $LASTEXITCODE -eq 0
             
             # Reset any changes from build/test before marking
             git reset --hard HEAD 2>&1 | Out-Null

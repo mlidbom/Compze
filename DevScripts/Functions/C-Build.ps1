@@ -51,6 +51,7 @@ function C-Build {
     
     # If NoBuild is specified, return immediately with success
     if ($NoBuild) {
+        $global:LASTEXITCODE = 0
         return
     }
     
