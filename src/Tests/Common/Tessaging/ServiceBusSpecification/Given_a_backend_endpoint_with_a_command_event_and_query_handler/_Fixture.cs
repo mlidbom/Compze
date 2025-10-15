@@ -57,8 +57,7 @@ public abstract class Fixture()
    {
       IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed(IRunMode mode)
       {
-         var container = _rootContainer.Clone();
-         var clone = container.Clone();
+         var clone = _rootContainer.Clone();
          return clone;
       }
 

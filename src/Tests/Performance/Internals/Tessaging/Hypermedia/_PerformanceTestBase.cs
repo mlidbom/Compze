@@ -27,7 +27,7 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
       Host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
       ServerEndpoint = Host.RegisterEndpoint(
          "Backend",
-         new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
+         new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
          builder =>
          {
             builder.Container.Register()

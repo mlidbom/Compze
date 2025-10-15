@@ -40,8 +40,8 @@ class OutboxRetryPoller : IDisposable
    Thread? _pollerThread;
 
    // Exponential backoff configuration
-   static readonly TimeSpan InitialRetryDelay = TimeSpan.FromSeconds(10);
-   static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(30);
+   static readonly TimeSpan InitialRetryDelay = TimeSpan.FromSeconds(1);
+   static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(1);
 
    OutboxRetryPoller(Outbox.IMessageStorage messageStorage,
                      ITransport transport,
@@ -58,13 +58,7 @@ class OutboxRetryPoller : IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
-   public void Start()
-   {
-      _pollerThread = _taskRunner.RunOnNamedThread(
-         threadName: "OutboxRetryPoller",
-         start: PollerLoop,
-         priority: ThreadPriority.BelowNormal);
-   }
+   public void Start() => _pollerThread = _taskRunner.RunOnNamedThread("OutboxRetryPoller", PollerLoop, ThreadPriority.BelowNormal);
 
    void PollerLoop()
    {
@@ -97,8 +91,9 @@ class OutboxRetryPoller : IDisposable
 
    void RetryUndeliveredMessages()
    {
-      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(InitialRetryDelay);
-      if(undeliveredMessages.Count == 0) return;
+      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(TimeSpan.Zero);
+      if(undeliveredMessages.Count == 0)
+         return;
 
       this.Log().Info($"Found {undeliveredMessages.Count} undelivered message(s) to retry");
       undeliveredMessages.ForEach(RetryMessage);
@@ -181,11 +176,11 @@ class OutboxRetryPoller : IDisposable
    void RecordFailure(Guid messageId, Guid endpointId, Exception? exception) =>
       _messageStorage.RecordDeliveryFailure(messageId, new EndpointId(endpointId), exception);
 
-   public void Stop()
+   void Stop()
    {
       this.Log().Info("Stopping OutboxRetryPoller...");
       _cancellationTokenSource.Cancel();
-      _pollerThread?.Join(TimeSpan.FromSeconds(5)); // Give it time to finish current iteration
+      _pollerThread?.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
    }
 
    public void Dispose()

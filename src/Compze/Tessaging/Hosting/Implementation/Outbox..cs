@@ -95,7 +95,9 @@ partial class Outbox : IOutbox
             _storage.MarkAsReceived(messageId, receiverId);
          }
       });
-   }   public async Task StartAsync()
+   }
+
+   public async Task StartAsync()
    {
       if(!_configuration.IsPureClientEndpoint)
       {
