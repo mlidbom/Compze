@@ -9,6 +9,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
@@ -42,10 +43,11 @@ public abstract class Fixture()
    protected IEndpoint ClientEndpoint { get; private set; } = null!;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
-   IList<IDependencyInjectionContainer> _createdContainers = [];
+   IDependencyInjectionContainer _rootContainer = null!;
    
    public virtual async Task SetupAsync()
    {
+      _rootContainer = TestingContainerFactory.Create(RunMode.Testing);
       InitializeHost();
       await StartHostAsync();
    }
@@ -54,8 +56,7 @@ public abstract class Fixture()
    {
       IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed(IRunMode mode)
       {
-         var container = TestingContainerFactory.Create(mode);
-         _createdContainers.Add(container);
+         var container = _rootContainer.Clone();
          // container.Register()
          //          .CurrentTestsDbPoolIfNotAlreadyRegistered();
          var clone = container.Clone();
@@ -133,9 +134,9 @@ public abstract class Fixture()
 
    public virtual async Task TearDownAsync()
    {
-      _createdContainers.ForEach(container => container.Dispose());
       OpenGates();
       await Host.DisposeAsync();
+      _rootContainer.Dispose();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

@@ -28,7 +28,7 @@ class PerformanceTest(string pluggableComponentsCombination) : DuplicateByPlugga
 
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
-      _host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.Create(runMode));
+      _host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithRegisteredServiceLocator(runMode));
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       _clientEndpoint = _host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);

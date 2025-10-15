@@ -19,7 +19,7 @@ public abstract class UserStoryTest(string pluggableComponentsCombination) : Dup
 
    [SetUp] public async Task SetupContainerAndBeginScope()
    {
-      Host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.Create(runMode));
+      Host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithRegisteredServiceLocator(runMode));
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
       await Host.StartAsync().caf();
