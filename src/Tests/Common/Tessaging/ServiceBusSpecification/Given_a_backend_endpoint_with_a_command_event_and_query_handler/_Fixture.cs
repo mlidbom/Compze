@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -47,7 +48,7 @@ public abstract class Fixture()
    
    public virtual async Task SetupAsync()
    {
-      _rootContainer = TestingContainerFactory.Create(RunMode.Testing);
+      _rootContainer = TestEnv.DIContainer.Create();
       InitializeHost();
       await StartHostAsync();
    }

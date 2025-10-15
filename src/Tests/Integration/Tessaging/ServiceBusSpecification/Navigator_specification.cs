@@ -27,7 +27,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
    {
       var queryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
       _host.RegisterEndpoint(
          "Backend",

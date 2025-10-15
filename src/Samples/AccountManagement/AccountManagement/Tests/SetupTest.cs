@@ -12,7 +12,7 @@ public class SetupTest(string pluggableComponentsCombination) : DuplicateByPlugg
 {
    [Test] public async Task TestSetup()
    {
-      var host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      var host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
       host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       await host.StartAsync().caf();

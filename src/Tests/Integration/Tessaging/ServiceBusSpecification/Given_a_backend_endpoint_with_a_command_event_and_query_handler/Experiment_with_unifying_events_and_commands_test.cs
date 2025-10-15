@@ -36,7 +36,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 
    [SetUp] public async Task Setup()
    {
-      _host = TestingEndpointHost.Create(TestingContainerFactory.Create);
+      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
       var userManagementDomainEndpoint = _host.RegisterEndpoint(
          "UserManagement.Domain",
