@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Logging;
+using Compze.Utilities.Threading.ResourceAccess;
+
+namespace Compze.Tessaging.SystemCE.ThreadingCE;
+
+static class BackgroundExceptionReporterRegistrar
+{
+   internal static IDependencyRegistrar BackgroundExceptionReporter(this IDependencyRegistrar registrar)
+      => registrar.Register(BackgroundExceptionReporterImpl.RegisterWith);
+
+   class BackgroundExceptionReporterImpl : IBackgroundExceptionReporter
+   {
+      internal static void RegisterWith(IDependencyRegistrar registrar)
+         => registrar.Register(Singleton.For<IBackgroundExceptionReporter>().CreatedBy(() => new BackgroundExceptionReporterImpl()));
+
+      readonly IThreadShared<List<Exception>> _collectedExceptions = ThreadShared.WithDefaultTimeout(new List<Exception>());
+
+      public void ReportException(Exception exception)
+      {
+         _collectedExceptions.Update(it => it.Add(exception));
+         try
+         {
+            CompzeLogger.For<BackgroundExceptionReporterImpl>().Error(exception, "Exception thrown on background thread.");
+         }
+         catch(Exception loggingException)
+         {
+            _collectedExceptions.Update(it => it.Add(loggingException));
+         }
+      }
+
+      public void ThrowIfAnyExceptions()
+      {
+         var exceptions = _collectedExceptions.Read(exceptions => exceptions.ToArray());
+         if(exceptions.Length > 0)
+         {
+            throw new AggregateException("Exceptions were thrown on background threads during endpoint execution.", exceptions);
+         }
+      }
+   }
+}

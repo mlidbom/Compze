@@ -16,7 +16,6 @@ interface ITaskRunner
    void Run(string taskName, Action task);
    void Run(string taskName, Func<unit> task);
    Thread RunOnNamedThread(string threadName, ThreadStart start, ThreadPriority priority = ThreadPriority.Normal);
-   void ThrowIfAnyExceptions();
 }
 
 static class TaskRunnerRegistrar
@@ -27,12 +26,12 @@ static class TaskRunnerRegistrar
    class TaskRunnerImpl : ITaskRunner, IDisposable
    {
       internal static void RegisterWith(IDependencyRegistrar registrar)
-         => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy(() => new TaskRunnerImpl()));
+         => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerImpl(exceptionReporter)));
 
-      readonly IThreadShared<List<Exception>> _collectedExceptions = ThreadShared.WithDefaultTimeout(new List<Exception>());
+      readonly IBackgroundExceptionReporter _exceptionReporter;
       readonly IThreadShared<List<Thread>> _threads = ThreadShared.WithDefaultTimeout(new List<Thread>());
 
-      TaskRunnerImpl() {}
+      TaskRunnerImpl(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 
       public void Run(string taskName, Action task)
       {
@@ -44,15 +43,7 @@ static class TaskRunnerRegistrar
             }
             catch(Exception exception)
             {
-               _collectedExceptions.Update(it => it.Add(exception));
-               try
-               {
-                  this.Log().Error(exception, "Exception thrown on background thread.");
-               }
-               catch(Exception loggingException)
-               {
-                  _collectedExceptions.Update(it => it.Add(loggingException));
-               }
+               _exceptionReporter.ReportException(exception);
             }
          });
       }
@@ -73,15 +64,7 @@ static class TaskRunnerRegistrar
             }
             catch(Exception exception)
             {
-               _collectedExceptions.Update(it => it.Add(exception));
-               try
-               {
-                  this.Log().Error(exception, $"Exception thrown on thread: {threadName}. Thread is no longer running.");
-               }
-               catch(Exception loggingException)
-               {
-                  _collectedExceptions.Update(it => it.Add(loggingException));
-               }
+               _exceptionReporter.ReportException(exception);
             }
          })
          {
@@ -92,15 +75,6 @@ static class TaskRunnerRegistrar
          _threads.Update(it => it.Add(thread));
          thread.Start();
          return thread;
-      }
-
-      public void ThrowIfAnyExceptions()
-      {
-         var exceptions = _collectedExceptions.Read(exceptions => exceptions.ToArray());
-         if(exceptions.Length > 0)
-         {
-            throw new AggregateException("Exceptions were thrown on background threads during endpoint execution.", exceptions);
-         }
       }
 
       readonly CancellationTokenSource _cancellationTokenSource = new();

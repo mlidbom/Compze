@@ -86,7 +86,8 @@ class ServerEndpointBuilder : IEndpointBuilder
       //Only real endpoint stuff after here
       if(!Configuration.IsPureClientEndpoint)
       {
-         register.TaskRunner()
+         register.BackgroundExceptionReporter()
+                 .TaskRunner()
                  .Outbox()
                  .Inbox()
                  .CommandScheduler()

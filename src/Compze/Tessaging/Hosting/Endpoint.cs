@@ -104,11 +104,11 @@ class Endpoint : IEndpoint
    {
       if(IsRunning) await StopAsync().caf();
       
-      // Check for any exceptions collected by TaskRunner before disposing
+      // Check for any exceptions collected on background threads before disposing
       if(!_configuration.IsPureClientEndpoint)
       {
-         var taskRunner = ServiceLocator.Resolve<ITaskRunner>();
-         taskRunner.ThrowIfAnyExceptions();
+         var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
+         exceptionReporter.ThrowIfAnyExceptions();
       }
       
       await ServiceLocator.DisposeAsync().caf();
