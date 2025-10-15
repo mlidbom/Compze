@@ -34,7 +34,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
    internal async Task RunMigrationTest<TException>(params MigrationScenario[] scenarios) where TException : Exception 
       => await RunMigrationTest(expectedException: typeof(TException), scenarios);
 
-   async Task RunMigrationTest(Type? expectedException, params MigrationScenario[] scenarios)
+   static async Task RunMigrationTest(Type? expectedException, params MigrationScenario[] scenarios)
    {
       using var writer = new DeferredConsoleWriter();
       

@@ -36,8 +36,6 @@ internal class SqliteDbPool : DbPool
       dbCreatingConnection.Open();
    }
 
-   static void ResetConnectionPool(Database db) => SqliteConnection.ClearAllPools();
-
    static void DeleteDb(string dbPath)
    {
       if(File.Exists(dbPath))

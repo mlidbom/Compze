@@ -1,12 +1,10 @@
 using System.Linq;
-using Compze.Tests.Infrastructure;
-using Compze.Utilities.Functional;
-using Xunit;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Functional;
 using FluentAssertions;
 
-namespace Compze.Tests.Unit.Internals;
+namespace Compze.Tests.Unit.Internals.XUnit;
 
 
 public class ObjectExtensionsTest : XUnitTestBase

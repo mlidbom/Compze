@@ -26,7 +26,7 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
 
       exception.Message.Should().Contain("Invalid lifestyle combination");
       exception.Message.Should().Contain("Singleton");
-      exception.Message.Should().Contain("Scoped"); ;
+      exception.Message.Should().Contain("Scoped");
    }
 
    [Test]
@@ -56,6 +56,7 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
 
    class SingletonServiceWithSingletonDependency(ISingletonDependency dependency) : ISingletonService
    {
+      // ReSharper disable once UnusedMember.Local
       public ISingletonDependency Dependency { get; } = dependency;
    }
 }

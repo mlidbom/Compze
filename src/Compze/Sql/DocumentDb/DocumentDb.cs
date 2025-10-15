@@ -135,7 +135,7 @@ class DocumentDb : IDocumentDb
    IReadOnlySet<Guid> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
                                                                  .Select(typeId => typeId.GuidValue)
                                                                  .ToHashSet()
-                                                                 .assert(ids => ids.Any(), it => $"Found no TypeIds for {type.GetFullNameCompilable()}");
+                                                                 .assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 
    Type GetTypeFromId(TypeId id) => _typeMapper.GetType(id);
 }

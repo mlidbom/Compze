@@ -20,7 +20,7 @@ public class MonitorCEPerformanceTests : NUnitTestBase
 {
    class MyLong
    {
-      public long Value { get; private set; }
+      long Value { get; set; }
 
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 

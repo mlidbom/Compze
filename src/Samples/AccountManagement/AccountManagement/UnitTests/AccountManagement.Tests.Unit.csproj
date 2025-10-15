@@ -4,7 +4,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>AccountManagement.UnitTests</RootNamespace>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>

@@ -108,7 +108,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
       manager.SetLogLevel(LogLevel.Warning);
       var reservationName = Guid.NewGuid().ToString();
 
-      var useConnection = () => {};
+      Action useConnection;
 
       switch(TestEnv.SqlLayer)
       {

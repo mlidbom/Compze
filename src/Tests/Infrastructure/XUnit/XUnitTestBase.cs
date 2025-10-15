@@ -23,5 +23,5 @@ public class XUnitTestBase : UniversalTestBase, IDisposable
       _disposed = true;
    }
 
-   void SurfaceAnyUncatchableExceptions() => UncatchableExceptionsGatherer.ConsumeAndThrowAnyExceptionsGathered();
+   static void SurfaceAnyUncatchableExceptions() => UncatchableExceptionsGatherer.ConsumeAndThrowAnyExceptionsGathered();
 }

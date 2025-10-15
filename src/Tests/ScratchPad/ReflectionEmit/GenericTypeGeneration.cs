@@ -12,7 +12,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ScratchPad.Internals.ReflectionEmit;
+namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
 public interface IUserWrapperEvent<out TWrappedUserEvent> : IWrapperEvent<TWrappedUserEvent>
    where TWrappedUserEvent : IUserEvent;

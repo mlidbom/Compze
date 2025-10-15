@@ -33,7 +33,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    }
 
    public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
-      RegisterClientEndpoint(builder => {});
+      RegisterClientEndpoint(_ => {});
 
    public TException AssertThrown<TException>() where TException : Exception
    {

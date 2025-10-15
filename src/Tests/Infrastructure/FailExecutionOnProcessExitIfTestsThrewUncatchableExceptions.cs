@@ -12,7 +12,7 @@ public static class FailExecutionOnProcessExitIfTestsThrewUncatchableExceptions
    [ModuleInitializer]
    public static void Initialize()
    {
-      AppDomain.CurrentDomain.ProcessExit += (s, e) =>
+      AppDomain.CurrentDomain.ProcessExit += (_, _) =>
       {
          try
          {

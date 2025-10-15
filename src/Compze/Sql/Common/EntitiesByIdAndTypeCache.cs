@@ -25,7 +25,7 @@ class EntitiesByIdAndTypeCache
     public void Remove(object id, Type documentType) => _monitor.Update(action: () =>
     {
         IdAndType.Create(id, documentType)
-        .assert(_stringIdToInstance.Remove, id => $"No object with id: {id} of type: {documentType.FullName} is present");
+        .assert(_stringIdToInstance.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
     });
 
     public IList<KeyValuePair<string, object>> GetAll() =>
