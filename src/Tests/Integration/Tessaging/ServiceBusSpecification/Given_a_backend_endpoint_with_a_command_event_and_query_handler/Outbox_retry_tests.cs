@@ -6,6 +6,7 @@ using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
@@ -43,8 +44,10 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFi
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
 
+      remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
+
       Console.WriteLine("################### After restart");
-      //MyLocalAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 5.Seconds());
+      MyLocalAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 5.Seconds());
       await FluentActions.Awaiting(async () =>
                           {
                              var deadline = DateTime.UtcNow.Add(5.Seconds());
