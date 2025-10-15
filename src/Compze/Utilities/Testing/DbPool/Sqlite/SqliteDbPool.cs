@@ -14,7 +14,9 @@ class SqliteDbPool : DbPool
 {
    internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<SqliteDbPool>()) return registrar;
+      if(registrar.Container().IsRegistered<SqliteDbPool>())
+         return registrar;
+
       return registrar.Register(Singleton.For<SqliteDbPool>()
                                          .CreatedBy(() => new SqliteDbPool())
                                          .DelegateToParentServiceLocatorWhenCloning());

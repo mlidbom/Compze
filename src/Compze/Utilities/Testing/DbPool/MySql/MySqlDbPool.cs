@@ -17,7 +17,9 @@ sealed class MySqlDbPool : DbPool
 {
    internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<MySqlDbPool>()) return registrar;
+      if(registrar.Container().IsRegistered<MySqlDbPool>())
+         return registrar;
+
       return registrar.Register(Singleton.For<MySqlDbPool>()
                                          .CreatedBy(() => new MySqlDbPool())
                                          .DelegateToParentServiceLocatorWhenCloning());

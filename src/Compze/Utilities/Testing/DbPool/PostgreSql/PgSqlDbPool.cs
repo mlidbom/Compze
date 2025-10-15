@@ -20,7 +20,9 @@ sealed class PgSqlDbPool : DbPool
 {
    internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<PgSqlDbPool>()) return registrar;
+      if(registrar.Container().IsRegistered<PgSqlDbPool>())
+         return registrar;
+
       return registrar.Register(Singleton.For<PgSqlDbPool>()
                                          .CreatedBy(() => new PgSqlDbPool())
                                          .DelegateToParentServiceLocatorWhenCloning());

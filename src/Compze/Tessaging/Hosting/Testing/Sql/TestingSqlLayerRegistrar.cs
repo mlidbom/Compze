@@ -17,6 +17,10 @@ using Compze.Tessaging.Teventive.EventStore.MySql;
 using Compze.Tessaging.Teventive.EventStore.PostgreSql;
 using Compze.Tessaging.Teventive.EventStore.Sqlite;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Testing.DbPool.MicrosoftSql;
+using Compze.Utilities.Testing.DbPool.MySql;
+using Compze.Utilities.Testing.DbPool.PostgreSql;
+using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Wiring;
 
 namespace Compze.Tessaging.Hosting.Testing.Sql;
@@ -25,9 +29,36 @@ public static class TestingSqlLayerRegistrar
 {
    public static IDependencyRegistrar CurrentTestsConfiguredSqlLayer(this IDependencyRegistrar register) =>
       register.CurrentTestsConfiguredSqlLayer(Guid.NewGuid().ToString());
+   
+   public static IDependencyRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar register)
+   {
+      switch(TestEnv.SqlLayer)
+      {
+         case SqlLayer.MicrosoftSqlServer:
+            register.MsSqlDbPoolIfNotAlreadyRegistered();
+            break;
+         case SqlLayer.MySql:
+            register.MySqlDbPoolIfNotAlreadyRegistered();
+            break;
+         case SqlLayer.PostgreSql:
+            register.PgSqlDbPoolIfNotAlreadyRegistered();
+            break;
+         case SqlLayer.Sqlite:
+            register.SqliteDbPoolIfNotAlreadyRegistered();
+            break;
+         case SqlLayer.SqliteMemory:
+            register.SqliteMemoryDbPoolIfNotAlreadyRegistered();
+            break;
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+
+      return register;
+   }
 
    public static IDependencyRegistrar CurrentTestsConfiguredSqlLayer(this IDependencyRegistrar register, string connectionStringName)
    {
+      register.CurrentTestsDbPoolIfNotAlreadyRegistered();
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:
