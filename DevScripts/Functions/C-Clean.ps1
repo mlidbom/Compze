@@ -34,9 +34,6 @@ function C-Clean {
         [switch]$FullGitReset
     )
     
-    $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
-    $srcPath = Join-Path $script:CompzeRoot "src"
-    
     # If FullGitReset with WhatIf, skip normal clean and just show git clean preview
     if ($FullGitReset -and $WhatIfPreference) {
         Push-Location $script:CompzeRoot
@@ -72,7 +69,7 @@ function C-Clean {
             }
             
             # Backup TestUsingPluggableComponentCombinations to temp directory (outside git repo)
-            $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
+            $testConfigFile = Join-Path $script:CompzeSrcRoot "TestUsingPluggableComponentCombinations"
             $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
             
             if (Test-Path $testConfigFile) {
@@ -84,15 +81,15 @@ function C-Clean {
         }
     }
     
-    Push-Location $srcPath
+    Push-Location $script:CompzeSrcRoot
     try {
-        dotnet clean $solutionPath | Out-Null
+        dotnet clean $script:CompzeSolutionPath | Out-Null
         
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "dotnet clean reported errors, but continuing..."
         }
         
-        $objFolders = Get-ChildItem -Path $srcPath -Recurse -Directory -Filter "obj" -ErrorAction SilentlyContinue
+        $objFolders = Get-ChildItem -Path $script:CompzeSrcRoot -Recurse -Directory -Filter "obj" -ErrorAction SilentlyContinue
         
         foreach ($folder in $objFolders) {
             try {
@@ -124,7 +121,7 @@ function C-Clean {
                     Write-Verbose "Git clean completed successfully."
                     
                     # Restore the backup from temp directory
-                    $testConfigFile = Join-Path $srcPath "TestUsingPluggableComponentCombinations"
+                    $testConfigFile = Join-Path $script:CompzeSrcRoot "TestUsingPluggableComponentCombinations"
                     $backupFile = Join-Path $env:TEMP "CompzeTestUsingPluggableComponentCombinations.backup"
                     
                     if (Test-Path $backupFile) {

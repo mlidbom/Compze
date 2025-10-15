@@ -71,12 +71,10 @@ function C-Test {
         [int]$Iterations = 1
     )
     
-    $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
-    
     # Array to store results from each iteration
     $iterationResults = @()
     
-    Push-Location (Join-Path $script:CompzeRoot "src")
+    Push-Location $script:CompzeSrcRoot
     try {
         # Build if needed
         C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset
@@ -101,7 +99,7 @@ function C-Test {
             }
             
             # Run tests
-            $testRunResult = C-Run-TestRun -SolutionPath $solutionPath -SingleThreaded:$SingleThreadedTesting
+            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting
             
             # Create result object for tracking
             $result = [PSCustomObject]@{

@@ -94,10 +94,9 @@ function C-Test-Commit {
         return
     }
     
-    $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
     $totalFailures = 0
     
-    Push-Location (Join-Path $script:CompzeRoot "src")
+    Push-Location $script:CompzeSrcRoot
     try {
         # Build if needed
         C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset
@@ -121,7 +120,7 @@ function C-Test-Commit {
             }
             
             # Run tests
-            $result = C-Run-TestRun -SolutionPath $solutionPath
+            $result = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath
             
             $totalFailures += $result.Failed
             

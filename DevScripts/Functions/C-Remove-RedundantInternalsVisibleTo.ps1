@@ -22,7 +22,7 @@ function C-Remove-RedundantInternalsVisibleTo {
     
     # Set default values if not provided
     if (-not $SolutionPath) {
-        $SolutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
+        $SolutionPath = $script:CompzeSolutionPath
     }
     if (-not $LogFile) {
         $LogFile = Join-Path $script:CompzeRoot "InternalsVisibleTo-Test-Results.log"

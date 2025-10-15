@@ -55,12 +55,10 @@ function C-Build {
         return
     }
     
-    $solutionPath = Join-Path $script:CompzeRoot "src\Compze.slnx"
-    
     # Ensure pluggable component configuration files exist before building
     C-Set-PluggableComponents -EnsureValid
     
-    Push-Location (Join-Path $script:CompzeRoot "src")
+    Push-Location $script:CompzeSrcRoot
     try {
         if ($FullGitReset) {
             if ($WhatIfPreference) {
@@ -74,7 +72,7 @@ function C-Build {
             C-Clean
         }
         
-        dotnet build $solutionPath
+        dotnet build $script:CompzeSolutionPath
         
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Build failed!"
