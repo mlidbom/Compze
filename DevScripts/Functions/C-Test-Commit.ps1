@@ -6,7 +6,8 @@ function C-Test-Commit {
     .DESCRIPTION
     Runs the test suite for the current commit with configurable failure detection.
     Useful for testing intermittent failures or as part of automated bisect processes.
-    Assumes the solution has already been built (uses --no-build flag).
+    By default, assumes the solution has already been built (uses --no-build flag).
+    Use -Clean or -FullGitReset to clean and build before testing.
     
     .PARAMETER FailureText
     Text that indicates a test failure. If this text appears in test output, returns false.
@@ -17,9 +18,20 @@ function C-Test-Commit {
     If cumulative failures exceed this number, returns false.
     Mutually exclusive with -FailureText.
     
+    .PARAMETER Clean
+    Performs a deep clean and build before running tests
+    
+    .PARAMETER FullGitReset
+    Performs a full git reset that removes all untracked files and directories before testing.
+    This will backup TestUsingPluggableComponentCombinations before running git clean.
+    Requires a clean working tree (no uncommitted changes). Implies -Clean.
+    
     .PARAMETER Iterations
     Number of times to run the test suite (default: 1).
     Useful for intermittent failures.
+    
+    .PARAMETER WhatIf
+    Shows what would be deleted by git clean without actually deleting anything (only applies with -FullGitReset).
     
     .OUTPUTS
     Boolean - $true if all test runs passed according to the criteria, $false otherwise
@@ -33,18 +45,34 @@ function C-Test-Commit {
     Runs tests 10 times, returns false if cumulative failures exceed 10
     
     .EXAMPLE
+    C-Test-Commit -Clean -MaxFailures 5 -Iterations 3
+    Cleans, builds, then runs tests 3 times, returns false if cumulative failures exceed 5
+    
+    .EXAMPLE
+    C-Test-Commit -FullGitReset -MaxFailures 0
+    Performs full git clean, builds, then runs tests once, returns false if any failures occur
+    
+    .EXAMPLE
+    C-Test-Commit -FullGitReset -WhatIf
+    Shows what would be deleted by git clean without actually deleting anything
+    
+    .EXAMPLE
     if (C-Test-Commit -MaxFailures 5 -Iterations 3) {
         Write-Host "Commit is good!"
     } else {
         Write-Host "Commit has failures"
     }
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [string]$FailureText,
         
         [int]$MaxFailures = 1,
+        
+        [switch]$Clean,
+        
+        [switch]$FullGitReset,
         
         [int]$Iterations = 1
     )
@@ -60,6 +88,31 @@ function C-Test-Commit {
     
     Push-Location (Join-Path $script:CompzeRoot "src")
     try {
+        # Perform clean and build once before all iterations
+        if ($FullGitReset) {
+            if ($WhatIfPreference) {
+                C-Clean -FullGitReset -WhatIf
+                return $true
+            } else {
+                C-Clean -FullGitReset
+            }
+            dotnet build $solutionPath
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Build failed!"
+                return $false
+            }
+        }
+        elseif ($Clean) {
+            C-Clean
+            dotnet build $solutionPath
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Build failed!"
+                return $false
+            }
+        }
+        
         for ($i = 1; $i -le $Iterations; $i++) {
             if ($Iterations -gt 1) {
                 Write-Host "`n--- Test iteration $i of $Iterations ---" -ForegroundColor Cyan
