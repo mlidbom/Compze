@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public abstract class XUnitEndpointHostTestBase(string _) : EndpointHostTestBase, IAsyncLifetime
+public abstract class XUnitEndpointHostTestBase : EndpointHostTestBase, IAsyncLifetime
 {
    public Task InitializeAsync() => SetupAsync();
    public Task DisposeAsync() => TearDownAsync();
