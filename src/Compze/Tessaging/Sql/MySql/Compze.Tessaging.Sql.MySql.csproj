@@ -11,7 +11,7 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sql\MySql\Infrastructure\Compze.Sql.MySql.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Sql\MySql\Infrastructure\Compze.Sql.MySql.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>

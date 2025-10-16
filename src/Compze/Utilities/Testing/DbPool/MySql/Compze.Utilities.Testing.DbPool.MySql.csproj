@@ -11,14 +11,14 @@
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj"/>
-        <ProjectReference Include="..\..\..\..\Sql\MySql\Infrastructure\Compze.Sql.MySql.Infrastructure.csproj"/>
-        <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj"/>
+        <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
+        <ProjectReference Include="..\..\..\..\Sql\MySql\Infrastructure\Compze.Sql.MySql.csproj" />
+        <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MySql"/>
-        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing"/>
+        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MySql" />
+        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
         <InternalsVisibleTo Include="Compze.Tests.Common" />
     </ItemGroup>
 </Project>

@@ -43,9 +43,9 @@
       <InternalsVisibleTo Include="Compze.Utilities.Logging"/>
       <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog"/>
       <InternalsVisibleTo Include="Compze.Sql.Common"/>
-      <InternalsVisibleTo Include="Compze.Sql.MicrosoftSql.Infrastructure"/>
-      <InternalsVisibleTo Include="Compze.Sql.MySql.Infrastructure"/>
-      <InternalsVisibleTo Include="Compze.Sql.PostgreSql.Infrastructure"/>
+      <InternalsVisibleTo Include="Compze.Sql.MicrosoftSql"/>
+      <InternalsVisibleTo Include="Compze.Sql.MySql"/>
+      <InternalsVisibleTo Include="Compze.Sql.PostgreSql"/>
       <InternalsVisibleTo Include="Compze.Serialization"/>
       <InternalsVisibleTo Include="Compze.Tessaging"/>
       <InternalsVisibleTo Include="Compze.Tessaging.Abstractions"/>

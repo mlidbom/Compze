@@ -11,14 +11,14 @@
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj"/>
-        <ProjectReference Include="..\..\..\..\Sql\PostgreSql\Infrastructure\Compze.Sql.PostgreSql.Infrastructure.csproj"/>
-        <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj"/>
+        <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
+        <ProjectReference Include="..\..\..\..\Sql\PostgreSql\Infrastructure\Compze.Sql.PostgreSql.csproj" />
+        <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql"/>
-        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing"/>
+        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql" />
+        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
         <InternalsVisibleTo Include="Compze.Tests.Common" />
     </ItemGroup>
 </Project>

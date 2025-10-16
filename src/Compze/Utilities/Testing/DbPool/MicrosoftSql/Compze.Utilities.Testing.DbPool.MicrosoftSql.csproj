@@ -11,13 +11,13 @@
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj"/>
-        <ProjectReference Include="..\..\..\..\Sql\MicrosoftSql\Infrastructure\Compze.Sql.MicrosoftSql.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
+        <ProjectReference Include="..\..\..\..\Sql\MicrosoftSql\Infrastructure\Compze.Sql.MicrosoftSql.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql"/>
-        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing"/>
+        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql" />
+        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
         <InternalsVisibleTo Include="Compze.Tests.Common" />
     </ItemGroup>
 </Project>

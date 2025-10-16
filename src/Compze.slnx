@@ -21,9 +21,12 @@
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze/Serialization/Compze.Serialization.csproj" />
   </Folder>
-  <Folder Name="/Compze/Sql/" />
-  <Folder Name="/Compze/Sql/Common/">
+  <Folder Name="/Compze/Sql/">
     <Project Path="Compze/Sql/Common/Compze.Sql.Common.csproj" />
+    <Project Path="Compze/Sql/MicrosoftSql/Infrastructure/Compze.Sql.MicrosoftSql.csproj" />
+    <Project Path="Compze/Sql/MySql/Infrastructure/Compze.Sql.MySql.csproj" />
+    <Project Path="Compze/Sql/PostgreSql/Infrastructure/Compze.Sql.PostgreSql.csproj" />
+    <Project Path="Compze/Sql/Sqlite/Infrastructure/Compze.Sql.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze/Sql/DocumentDb/">
     <Project Path="Compze/Sql/DocumentDb/Abstractions/Compze.Sql.DocumentDb.Abstractions.csproj" />
@@ -32,18 +35,6 @@
     <Project Path="Compze/Sql/DocumentDb/MySql/Compze.Sql.DocumentDb.MySql.csproj" />
     <Project Path="Compze/Sql/DocumentDb/PostgreSql/Compze.Sql.DocumentDb.PostgreSql.csproj" />
     <Project Path="Compze/Sql/DocumentDb/Sqlite/Compze.Sql.DocumentDb.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Sql/MicrosoftSql/">
-    <Project Path="Compze/Sql/MicrosoftSql/Infrastructure/Compze.Sql.MicrosoftSql.Infrastructure.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Sql/MySql/">
-    <Project Path="Compze/Sql/MySql/Infrastructure/Compze.Sql.MySql.Infrastructure.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Sql/PostgreSql/">
-    <Project Path="Compze/Sql/PostgreSql/Infrastructure/Compze.Sql.PostgreSql.Infrastructure.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Sql/Sqlite/">
-    <Project Path="Compze/Sql/Sqlite/Infrastructure/Compze.Sql.Sqlite.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/">
     <Project Path="Compze/Tessaging/Compze.Tessaging.csproj" />

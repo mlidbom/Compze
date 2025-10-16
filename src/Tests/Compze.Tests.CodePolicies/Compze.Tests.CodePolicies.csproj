@@ -28,10 +28,10 @@
       <ProjectReference Include="..\..\Compze\Sql\DocumentDb\MySql\Compze.Sql.DocumentDb.MySql.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\DocumentDb\PostgreSql\Compze.Sql.DocumentDb.PostgreSql.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Sqlite\Compze.Sql.DocumentDb.Sqlite.csproj" />
-      <ProjectReference Include="..\..\Compze\Sql\MicrosoftSql\Infrastructure\Compze.Sql.MicrosoftSql.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\Compze\Sql\MySql\Infrastructure\Compze.Sql.MySql.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\Compze\Sql\PostgreSql\Infrastructure\Compze.Sql.PostgreSql.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\Compze\Sql\Sqlite\Infrastructure\Compze.Sql.Sqlite.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\MicrosoftSql\Infrastructure\Compze.Sql.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\MySql\Infrastructure\Compze.Sql.MySql.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\PostgreSql\Infrastructure\Compze.Sql.PostgreSql.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\Sqlite\Infrastructure\Compze.Sql.Sqlite.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Common\Compze.Tessaging.Common.csproj" />
