@@ -41,4 +41,7 @@
     <None Remove="XUnit\**" />
     <Content Remove="XUnit\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tessaging\" />
+  </ItemGroup>
 </Project>

@@ -10,20 +10,21 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using FluentAssertions;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
-public class Navigator_specification(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class Navigator_specification : UniversalTestBase, IAsyncLifetime
 {
    ITestingEndpointHost _host;
    IEndpoint _clientEndpoint;
 
-   [SetUp] public async Task Setup()
+   public async Task InitializeAsync()
    {
       var queryResults = new List<UserResource>();
 
@@ -52,15 +53,15 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
       await _host.StartAsync();
    }
 
-   [TearDown] public async Task TearDown() => await _host.DisposeAsync();
+   public async Task DisposeAsync() => await _host.DisposeAsync();
 
-   [Test] public void Can_get_command_result()
+   [PCT]  public void Can_get_command_result()
    {
       var commandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserCommand.Create("new-user-name")));
       commandResult1.Name.Should().Be("new-user-name");
    }
 
-   [Test] public void Can_navigate_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
+   [PCT]  public void Can_navigate_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
    {
       var userResource = _clientEndpoint.ExecuteClientRequest(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                      .Post(startpage => startpage.RegisterUser("new-user-name"))
@@ -69,7 +70,7 @@ public class Navigator_specification(string pluggableComponentsCombination) : Du
       userResource.Name.Should().Be("new-user-name");
    }
 
-   [Test] public async Task Can_navigate_async_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
+   [PCT]  public async Task Can_navigate_async_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
    {
       var userResource = _clientEndpoint.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))

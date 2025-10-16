@@ -8,22 +8,23 @@ using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
-public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBase, IAsyncLifetime
 {
    IUtcTimeTimeSource _timeSource;
    IThreadGate _receivedCommandGate;
    ITestingEndpointHost _host;
    IEndpoint _endpoint;
 
-   [SetUp] public async Task Setup()
+   public async Task InitializeAsync()
    {
       _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
@@ -45,7 +46,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
       _timeSource = serviceLocator.Resolve<IUtcTimeTimeSource>();
    }
 
-   [Test] public void Messages_whose_due_time_has_passed_are_delivered()
+   [PCT]  public void Messages_whose_due_time_has_passed_are_delivered()
    {
       var now = _timeSource.UtcNow;
       var inOneHour = new ScheduledCommand();
@@ -55,7 +56,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
       _receivedCommandGate.AwaitPassedThroughCountEqualTo(1, timeout: 2.Seconds());
    }
 
-   [Test] public void Messages_whose_due_time_have_not_passed_are_not_delivered()
+   [PCT]  public void Messages_whose_due_time_have_not_passed_are_not_delivered()
    {
       var now = _timeSource.UtcNow;
       var inOneHour = new ScheduledCommand();
@@ -65,7 +66,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future(string pluggableC
                           .Should().Be(false);
    }
 
-   [TearDown] public async Task TearDown() => await _host.DisposeAsync();
+   public async Task DisposeAsync() => await _host.DisposeAsync();
 
    internal class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 }
