@@ -165,7 +165,6 @@
   </Folder>
   <Folder Name="/_Tests/Integration/">
     <Project Path="Tests/Integration/Compze.Tests.Integration.csproj" />
-    <Project Path="Tests/Integration/Internals/Compze.Tests.Integration.Internals.csproj" />
     <Project Path="Tests/Integration/XUnit/Compze.Tests.Integration.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Performance/">
