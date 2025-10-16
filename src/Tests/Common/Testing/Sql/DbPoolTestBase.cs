@@ -15,9 +15,12 @@ using Compze.Wiring;
 
 namespace Compze.Tests.Common.Testing.Sql;
 
-public abstract class DbPoolTestBase : UniversalTestBase
+public abstract class DbPoolTestBase : UniversalTestBase, IDisposable
 {
-   public static DbPoolBase CreatePool() =>
+   protected readonly DbPoolBase Pool = CreatePool();
+   public void Dispose() => Pool.Dispose();
+
+   protected static DbPoolBase CreatePool() =>
       TestEnv.SqlLayer switch
       {
          SqlLayer.MicrosoftSqlServer => new MsSqlDbPool(),

@@ -17,7 +17,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
 {
    static DbPoolPerformanceTests()
    {
-      using var pool = CreatePool();
+      using var pool = CreatePool();//warmup
       pool.ConnectionStringFor(Guid.NewGuid().ToString());
    }
 

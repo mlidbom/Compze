@@ -113,6 +113,4 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
    IEnumerable<IVersioningQueryModelGenerator<TDocument>> VersionedGeneratorsForDocumentType<TDocument>() => _documentGenerators.OfType<IVersioningQueryModelGenerator<TDocument>>().ToList();
 
    IEnumerable<IQueryModelGenerator<TDocument>> GetGeneratorsForDocumentType<TDocument>() => _documentGenerators.OfType<IQueryModelGenerator<TDocument>>().ToList();
-
-   protected virtual void Dispose(bool disposing) {}
 }

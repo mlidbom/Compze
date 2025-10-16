@@ -28,15 +28,12 @@ class SomeEvent : AggregateEvent, ISomeEvent
    }
 }
 
-public class EventStoreTests : XUnitTestBase
+public class EventStoreTests : XUnitTestBase, IDisposable
 {
    IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();
 
-   public void Dispose(bool disposing)
-   {
-      _serviceLocator.Dispose();
-   }
+   public void Dispose() => _serviceLocator.Dispose();
 
    [PCT]
    public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
