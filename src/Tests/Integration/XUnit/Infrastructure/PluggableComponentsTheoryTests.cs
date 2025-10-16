@@ -13,7 +13,7 @@ namespace Compze.Tests.Integration.XUnit.Infrastructure;
 /// </summary>
 public class PluggableComponentsTheoryTests : XUnitTestBase
 {
-   [PluggableComponentsTheory]
+   [PCTheory]
    public void Should_execute_with_context_object_injected()
    {
       // Access the parsed values directly from the context
@@ -53,7 +53,7 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
       testValue.Should().Be(expectedValue);
    }
 
-   [PluggableComponentsTheory]
+   [PCTheory]
    public void Can_use_ValueFor_directly_on_SqlLayer()
    {
       // Demonstrate using the extension method directly on the SqlLayer enum

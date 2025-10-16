@@ -11,15 +11,15 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// </summary>
 [XunitTestCaseDiscoverer(PluggableComponentsTheoryAttributeFullTypeName, PluggableComponentsDiscovererAssembly)]
-public sealed class PluggableComponentsTheoryAttribute : FactAttribute
+public sealed class PCTheoryAttribute : FactAttribute
 {
    const string PluggableComponentsTheoryAttributeFullTypeName = "Compze.Tests.Infrastructure.XUnit.PluggableComponents.PluggableComponentsTheoryDiscoverer";
    const string PluggableComponentsDiscovererAssembly = "Compze.Tests.Infrastructure.XUnit";
 
-   static PluggableComponentsTheoryAttribute()
+   static PCTheoryAttribute()
    {
       Invariant.Is(PluggableComponentsTheoryAttributeFullTypeName == typeof(PluggableComponentsTheoryDiscoverer).GetFullNameCompilable());
-      Invariant.Is(PluggableComponentsDiscovererAssembly == typeof(PluggableComponentsTheoryAttribute).Assembly.GetName().Name);
+      Invariant.Is(PluggableComponentsDiscovererAssembly == typeof(PCTheoryAttribute).Assembly.GetName().Name);
    }
 
    public Wiring.SqlLayer[] ExcludeSqlLayers { get; init; } = [];

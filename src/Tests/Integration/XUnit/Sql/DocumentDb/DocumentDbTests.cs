@@ -30,7 +30,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
    public async Task InitializeAsync() => await Task.CompletedTask;
    public async Task DisposeAsync() => await ServiceLocator.DisposeAsync();
 
-   [PluggableComponentsTheory]
+   [PCTheory]
     public void CanSaveAndLoadDocument()
     {
         var user = new User
@@ -59,7 +59,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetAllWithIdsReturnsAsManyResultsAsPassedIds()
     {
         var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
@@ -74,7 +74,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
                                    .Equal(ids.Take(5)));
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetAllWithIdsThrowsNoSuchDocumentExceptionExceptionIfAnyIdIsMissing()
     {
         var ids = 1.Through(9)
@@ -95,7 +95,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
     }
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetAllWithIdsReturnsTheSameInstanceForAnyPreviouslyFetchedDocuments()
     {
         var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
@@ -117,7 +117,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
 
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void CanSaveAndLoadAggregateForUpdate()
     {
         var user = new User
@@ -146,7 +146,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void CallingSaveWithAnInterfaceAsTypeParameterDoesNotExplode()
     {
         IPersistentEntity user1 = new User { Email = "user1" };
@@ -175,7 +175,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void AddingAndRemovingObjectResultsInNoObjectBeingSaved()
     {
         var user = new User();
@@ -192,7 +192,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
                             .BeFalse());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void AddingRemovingAndAddingObjectInTransactionResultsInNoObjectBeingSaved()
     {
         var user = new User();
@@ -207,7 +207,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         UseInScope(reader => reader.TryGet(user.Id, out user).Should().BeTrue());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ObjectsWhoseKeysDifferOnlyByCaseAreConsideredTheSameObjectForCompatibilityWithMsSql()
     {
         var lowerCase = new Email("theemail");
@@ -240,7 +240,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ObjectsWhoseKeysDifferOnlyByTrailingSpacesTrailingWhiteSpaceCaseAreConsideredTheSameObjectForCompatibilityWithMsSql()
     {
         var noWhitespace = new Email("theemail");
@@ -272,7 +272,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void TryingToFetchNonExistentItemDoesNotCauseSessionToTryAndAddItWithANullInstance()
     {
         var user = new User();
@@ -282,7 +282,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
                                    .Be(false));
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void RepeatedlyAddingAndRemovingObjectResultsInNoObjectBeingSaved()
     {
         var user = new User();
@@ -302,7 +302,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
                                    .BeFalse());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void LoadingRemovingAndAddingObjectInTransactionResultsInObjectBeingSaved()
     {
         var user = new User();
@@ -337,7 +337,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
     }
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ReturnsSameInstanceOnRepeatedLoads()
     {
         var user = new User();
@@ -352,7 +352,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ReturnsSameInstanceOnLoadAfterSave()
     {
         var user = new User();
@@ -368,7 +368,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void HandlesHashSets()
     {
         var user = new User();
@@ -383,7 +383,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void HandlesHashSetsInObjects()
     {
         var userInSet = new User
@@ -408,7 +408,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
     }
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ThrowsExceptionWhenAttemptingToDeleteNonExistingValue()
     {
         UseInTransactionalScope((_, updater) =>
@@ -421,7 +421,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void HandlesDeletesOfInstancesAlreadyLoaded()
     {
         var user = new User();
@@ -441,7 +441,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void HandlesDeletesOfInstancesNotYetLoaded()
     {
         var user = new User();
@@ -457,7 +457,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void HandlesAValueBeingAddedAndDeletedDuringTheSameSession()
     {
         var user = new User();
@@ -472,7 +472,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void TracksAndUpdatesLoadedAggregates()
     {
         var user = new User();
@@ -492,7 +492,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ThrowsWhenAttemptingToSaveExistingAggregate()
     {
         var user = new User();
@@ -502,7 +502,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         Invoking(() => UseInTransactionalScope((_, updater) => updater.Save(user.Id, user))).Should().Throw<ArgumentException>();
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void HandlesInstancesOfDifferentTypesWithTheSameId()
     {
         var user = new User
@@ -531,7 +531,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
     }
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void FetchesAllinstancesPerType()
     {
         UseInTransactionalScope((_, updater) =>
@@ -549,7 +549,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         }
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ThrowsIfUsedByMultipleThreads()
     {
         IDocumentDbSession? session = null;
@@ -576,7 +576,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
     }
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetHandlesSubTyping()
     {
         var user1 = new User();
@@ -595,7 +595,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetAllHandlesSubTyping()
     {
         var user1 = new User();
@@ -617,7 +617,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         }
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void ThrowsExceptionIfYouTryToSaveAnIHasPersistentIdentityWithNoId()
     {
         var user1 = new User(Guid.Empty);
@@ -626,7 +626,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
                                                        .Should().Throw<Exception>());
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetByIdsShouldReturnOnlyMatchingResultEvenWhenMoreResultsAreInTheCache()
     {
         var user1 = new User(Guid.Parse("00000000-0000-0000-0000-000000000001"));
@@ -645,7 +645,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
     }
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetAllIdsShouldOnlyReturnResultsWithTheGivenType()
     {
         var userid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -677,7 +677,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         });
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void GetAllIdsShouldOnlyReturnResultsWithTheGivenTypeWhenCalledWithinTheInsertingTransaction()
     {
         var userid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -707,7 +707,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
     }
 
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public void DeletingAllObjectsOfATypeLeavesNoSuchObjectsInTheDbButLeavesOtherObjectsInPlaceAndReturnsTheNumberOfDeletedObjects()
     {
         using (ServiceLocator.BeginScope())
@@ -752,7 +752,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
                                                                                        .Save(new User(userId)));
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public async Task Can_get_document_of_previously_unknown_class_added_by_onother_documentDb_instance()
     {
         var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -765,7 +765,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         }
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public async Task Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance()
     {
         var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -778,7 +778,7 @@ public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
         }
     }
 
-    [PluggableComponentsTheory]
+    [PCTheory]
     public async Task Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance_byId()
     {
         var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
