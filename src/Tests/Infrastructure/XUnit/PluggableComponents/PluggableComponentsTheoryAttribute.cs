@@ -22,8 +22,18 @@ public class PluggableComponentsTheoryAttribute : FactAttribute
 
    static PluggableComponentsTheoryAttribute()
    {
-      Invariant.Is(PluggableComponentsTheoryAttributeFullTypeName == typeof(PluggableComponentsTheoryDiscoverer).GetFullNameCompilable());
-      Invariant.Is(PluggableComponentsDiscovererAssembly == typeof(PCTAttribute).Assembly.GetName().Name);
+      Invariant.Is(PluggableComponentsTheoryAttributeFullTypeName == typeof(PluggableComponentsTheoryDiscoverer).GetFullNameCompilable(),
+                   () =>
+                      $"""
+                       Expected: {typeof(PluggableComponentsTheoryDiscoverer).GetFullNameCompilable()}
+                       Found   : {PluggableComponentsTheoryAttributeFullTypeName}
+                       """);
+      Invariant.Is(PluggableComponentsDiscovererAssembly == typeof(PCTAttribute).Assembly.GetName().Name,
+                   () =>
+                      $"""
+                       Expected: {typeof(PCTAttribute).Assembly.GetName().Name}
+                       Found   : {PluggableComponentsDiscovererAssembly}
+                       """);
    }
 
    public Wiring.SqlLayer[] ExcludeSqlLayers { get; init; } = [];
@@ -36,7 +46,5 @@ public class PluggableComponentsTheoryAttribute : FactAttribute
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// Use TestEnv to access the component and the information.
 /// </summary>
-public sealed class PCTAttribute : PluggableComponentsTheoryAttribute
-{
-}
+public sealed class PCTAttribute : PluggableComponentsTheoryAttribute {}
 #pragma warning restore CA1813 //avoid unsealed attributes

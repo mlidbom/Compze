@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
@@ -19,14 +19,14 @@
 
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tests.Infrastructure"/>
-      <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Infrastructure"/>
       <InternalsVisibleTo Include="Compze.Tests.Integration"/>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Integration"/>
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
    </ItemGroup>
 
 </Project>

@@ -17,9 +17,9 @@
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tessaging"/>
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
       <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing"/>
    </ItemGroup>
 </Project>

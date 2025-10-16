@@ -44,13 +44,13 @@
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="AccountManagement.Tests.PerformanceInternals"/>
-        <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit"/>
+        <InternalsVisibleTo Include="Compze.Tests.Infrastructure"/>
         <InternalsVisibleTo Include="Compze.Tests.Integration"/>
         <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
-        <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/>
+        <InternalsVisibleTo Include="Compze.Tests.Integration"/>
         <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals.XUnit"/>
-        <InternalsVisibleTo Include="Compze.Tests.Unit.XUnit"/>
+       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
+        <InternalsVisibleTo Include="Compze.Tests.Unit"/>
         <InternalsVisibleTo Include="Compze.Tests.Common" />
        <InternalsVisibleTo  Include="AccountManagement.Tests.PerformanceInternals" />
         <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />

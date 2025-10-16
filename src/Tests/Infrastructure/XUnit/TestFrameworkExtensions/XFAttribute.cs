@@ -20,8 +20,18 @@ public class XFactAttribute : FactAttribute
 
    static XFactAttribute()
    {
-      Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable());
-      Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name);
+      Invariant.Is(XFactDiscovererFullTypeName == typeof(Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer).GetFullNameCompilable(),
+                   () =>
+                      $"""
+                       Expected: {typeof(XFactDiscoverer).GetFullNameCompilable()}
+                       Found   : {XFactDiscovererFullTypeName}
+                       """);
+      Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name,
+                   () =>
+                      $"""
+                       Expected: {typeof(XFactDiscoverer).Assembly.GetName().Name}
+                       Found   : {XFactDiscovererAssembly}
+                       """);
    }
 }
 

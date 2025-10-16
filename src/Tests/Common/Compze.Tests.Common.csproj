@@ -22,7 +22,7 @@
    </ItemGroup>
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="xunit" Version="2.9.3" />

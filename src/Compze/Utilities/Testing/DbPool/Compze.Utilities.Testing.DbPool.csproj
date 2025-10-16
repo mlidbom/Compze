@@ -25,9 +25,9 @@
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.Sqlite" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals.XUnit" />
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
    </ItemGroup>
    <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
         This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->

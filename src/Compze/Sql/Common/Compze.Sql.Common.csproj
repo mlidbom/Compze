@@ -40,8 +40,8 @@
       <InternalsVisibleTo Include="Compze.Tessaging.Sql.Sqlite"/>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
       <InternalsVisibleTo Include="Compze.Tests.Common"/>
-      <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tests.Integration"/>
    </ItemGroup>
 </Project>
