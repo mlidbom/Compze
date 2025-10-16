@@ -24,10 +24,10 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
    ITestingEndpointHost _host;
    IEndpoint _endpoint;
 
-   public async Task InitializeAsync()
+   public When_scheduling_commands_to_be_sent_in_the_future()
    {
       _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
-
+      _receivedCommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
       _endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("17ED9DF9-33A8-4DF8-B6EC-6ED97AB2030B")),
@@ -38,11 +38,13 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
                    .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers.ForCommand<ScheduledCommand>(_ => _receivedCommandGate.AwaitPassThrough());
          });
+   }
 
+   public async Task InitializeAsync()
+   {
       await _host.StartAsync();
 
       var serviceLocator = _endpoint.ServiceLocator;
-      _receivedCommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
       _timeSource = serviceLocator.Resolve<IUtcTimeTimeSource>();
    }
 

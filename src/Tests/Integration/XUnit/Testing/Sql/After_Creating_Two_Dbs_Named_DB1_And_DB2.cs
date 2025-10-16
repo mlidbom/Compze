@@ -1,27 +1,20 @@
+using System;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Common.Testing.Sql;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Testing.DbPool;
 using Compze.Wiring;
 using FluentAssertions;
-using NUnit.Framework;
-using System;
-using Compze.Tests.Common.Testing.Sql;
 
-namespace Compze.Tests.Integration.Internals.Testing.Sql;
+namespace Compze.Tests.Integration.XUnit.Testing.Sql;
 
-[TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
-public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponentsCombination) : DbPoolTestBase
+public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
 {
-   DbPool _pool;
+   readonly DbPool _pool = CreatePool();
    const string Db1 = "LocalDBManagerTests_After_creating_connection_Db1";
    const string Db2 = "LocalDBManagerTests_After_creating_connection_Db2";
 
-   [SetUp] public void SetupTask()
-   {
-      _pool = CreatePool();
-   }
-
-   [Test] public void Connection_to_Db1_can_be_opened_and_used()
+   [PCT] public void Connection_to_Db1_can_be_opened_and_used()
    {
       UseConnection(Db1,
                     _pool,
@@ -33,7 +26,7 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponents
                     });
    }
 
-   [Test] public void Connection_to_Db2_can_be_opened_and_used()
+   [PCT] public void Connection_to_Db2_can_be_opened_and_used()
    {
       UseConnection(Db2,
                     _pool,
@@ -47,25 +40,25 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2(string pluggableComponents
 
    static string LayerSpecificCommandText() => TestEnv.SqlLayer.ValueFor(msSql: "select 1", mySql: "select 1", pgSql: "select 1", sqlite: "select 1");
 
-   [Test] public void The_same_connection_string_is_returned_by_each_call_to_CreateOrGetLocalDb_Db1()
+   [PCT] public void The_same_connection_string_is_returned_by_each_call_to_CreateOrGetLocalDb_Db1()
    {
       _pool.ConnectionStringFor(Db1).Should().Be(_pool.ConnectionStringFor(Db1));
    }
 
-   [Test] public void The_same_connection_string_is_returned_by_each_call_to_CreateOrGetLocalDb_Db2()
+   [PCT] public void The_same_connection_string_is_returned_by_each_call_to_CreateOrGetLocalDb_Db2()
    {
       _pool.ConnectionStringFor(Db2).Should().Be(_pool.ConnectionStringFor(Db2));
    }
 
-   [Test] public void The_Db1_connectionstring_is_different_from_the_Db2_connection_string()
+   [PCT] public void The_Db1_connectionstring_is_different_from_the_Db2_connection_string()
    {
       _pool.ConnectionStringFor(Db1).Should().NotBe(_pool.ConnectionStringFor(Db2));
    }
 
-   [TearDown] public void TearDownTask()
+   public override void Dispose()
    {
+      base.Dispose();
       _pool.Dispose();
-
       // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
       _pool.Invoking(action: _ => _pool.ConnectionStringFor(Db1))
            .Should().Throw<Exception>()

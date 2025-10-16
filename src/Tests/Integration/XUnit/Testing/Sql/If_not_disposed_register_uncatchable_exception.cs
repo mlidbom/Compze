@@ -1,19 +1,19 @@
+using System;
 using Compze.Tests.Common.Testing.Sql;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Unit.Internals.XUnit;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using FluentAssertions;
-using NUnit.Framework;
-using System;
+using Xunit;
 using static FluentAssertions.FluentActions;
 
-namespace Compze.Tests.Integration.Internals.Testing.Sql;
+namespace Compze.Tests.Integration.XUnit.Testing.Sql;
 
-
-[TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
-class If_not_disposed_(string pluggableComponentsCombination) : DbPoolTestBase
+[Collection(nameof(NonParallelCollection))]
+public class If_not_disposed_ : DbPoolTestBase
 {
-   [Test, NonParallelizable] public void Register_uncatchable_exception()
+   [PCT] public void Register_uncatchable_exception()
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {

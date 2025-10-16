@@ -17,6 +17,7 @@
       <ProjectReference Include="..\..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
       <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
       <ProjectReference Include="..\..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\Unit\Internals\XUnit\Compze.Tests.Unit.Internals.XUnit.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
