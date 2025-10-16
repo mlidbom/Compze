@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing;
@@ -14,6 +11,10 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
@@ -24,33 +25,53 @@ using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public abstract class EndpointHostTestBase()
+public abstract class EndpointHostTestBase : IAsyncLifetime
 {
    static readonly TimeSpan _timeout = 10.Seconds();
    public ITestingEndpointHost Host = null!;
-   public IThreadGate MyExactlyOnceCommandHandlerThreadGate = null!;
-   public IThreadGate CommandHandlerWithResultThreadGate = null!;
-   public IThreadGate MyCreateAggregateCommandHandlerThreadGate = null!;
-   public IThreadGate MyUpdateAggregateCommandHandlerThreadGate = null!;
-   public IThreadGate MyRemoteAggregateEventHandlerThreadGate = null!;
-   public IThreadGate MyLocalAggregateEventHandlerThreadGate = null!;
-   public IThreadGate EventHandlerThreadGate = null!;
-   public IThreadGate QueryHandlerThreadGate = null!;
+   public readonly IThreadGate MyExactlyOnceCommandHandlerThreadGate;
+   public readonly IThreadGate CommandHandlerWithResultThreadGate;
+   public readonly IThreadGate MyCreateAggregateCommandHandlerThreadGate;
+   public readonly IThreadGate MyUpdateAggregateCommandHandlerThreadGate;
+   public readonly IThreadGate MyRemoteAggregateEventHandlerThreadGate;
+   public readonly IThreadGate MyLocalAggregateEventHandlerThreadGate;
+   public readonly IThreadGate EventHandlerThreadGate;
+   public readonly IThreadGate QueryHandlerThreadGate;
 
-   public IReadOnlyList<IThreadGate> AllGates = [];
+   public readonly IReadOnlyList<IThreadGate> AllGates;
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IEndpoint ClientEndpoint { get; private set; } = null!;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
-   IDependencyInjectionContainer _rootContainer = null!;
+   readonly IDependencyInjectionContainer _rootContainer;
 
-   public virtual async Task SetupAsync()
+   protected EndpointHostTestBase()
    {
       _rootContainer = TestEnv.DIContainer.Create();
       _rootContainer.Register()
                     .CurrentTestsDbPoolIfNotAlreadyRegistered();
-      await StartHostAsync();
+
+      AllGates =
+      [
+         MyExactlyOnceCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyExactlyOnceCommandHandlerThreadGate)),
+         CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate)),
+         MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate)),
+         MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate)),
+         MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate)),
+         MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate)),
+         EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate)),
+         QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(QueryHandlerThreadGate))
+      ];
+   }
+
+   public virtual async Task InitializeAsync() => await StartHostAsync();
+
+   public virtual async Task DisposeAsync()
+   {
+      OpenGates();
+      await Host.DisposeAsync();
+      _rootContainer.Dispose();
    }
 
    void InitializeHost()
@@ -118,24 +139,6 @@ public abstract class EndpointHostTestBase()
    {
       InitializeHost();
       await Host.StartAsync();
-      AllGates =
-      [
-         MyExactlyOnceCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyExactlyOnceCommandHandlerThreadGate)),
-         CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate)),
-         MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate)),
-         MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate)),
-         MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate)),
-         MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate)),
-         EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate)),
-         QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(QueryHandlerThreadGate))
-      ];
-   }
-
-   public virtual async Task TearDownAsync()
-   {
-      OpenGates();
-      await Host.DisposeAsync();
-      _rootContainer.Dispose();
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
