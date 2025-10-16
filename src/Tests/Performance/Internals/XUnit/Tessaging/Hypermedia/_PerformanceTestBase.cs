@@ -7,14 +7,13 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Typermedia.Abstractions;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
 
 //ncrunch: no coverage start
 
-namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
+namespace Compze.Tests.Performance.Internals.XUnit.Tessaging.Hypermedia;
 
-public abstract class PerformanceTestBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class PerformanceTestBase : IAsyncLifetime
 {
    protected ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
@@ -22,7 +21,7 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
    protected IRemoteHypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
    protected IInProcessHypermediaNavigator InProcessNavigator => ServerEndpoint.ServiceLocator.Resolve<IInProcessHypermediaNavigator>();
 
-   [SetUp] public async Task Setup()
+   protected PerformanceTestBase()
    {
       Host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
       ServerEndpoint = Host.RegisterEndpoint(
@@ -39,10 +38,11 @@ public abstract class PerformanceTestBase(string pluggableComponentsCombination)
          });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
-      await Host.StartAsync();
    }
 
-   [TearDown] public async Task TearDown() => await Host.DisposeAsync();
+   public async Task InitializeAsync() => await Host.StartAsync();
+
+   public async Task DisposeAsync() => await Host.DisposeAsync();
 
    protected internal class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
    protected internal class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult>;

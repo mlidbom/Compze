@@ -5,47 +5,47 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using NUnit.Framework;
-using CreatesItsOwnResultQuery = Compze.Tessaging.Abstractions.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
+using CreatesItsOwnResultQuery = Compze.Tessaging.Abstractions.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.XUnit.Tessaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
 
-namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
+namespace Compze.Tests.Performance.Internals.XUnit.Tessaging.Hypermedia;
 
-public class RemoteQueryPerformanceTests(string pluggableComponentsCombination) : PerformanceTestBase(pluggableComponentsCombination)
+public class RemoteQueryPerformanceTests : PerformanceTestBase
 {
-   [Test] public void SingleThreaded_Runs_100_local_requests_making_one_remote_query_each_in_60_milliseconds() =>
+   [PCT]  public void SingleThreaded_Runs_100_local_requests_making_one_remote_query_each_in_60_milliseconds() =>
       RunScenario(threaded: false, requests: 100, queriesPerRequest: 1, maxTotal: 60.Milliseconds().EnvMultiply(instrumented:1.5), query: new MyRemoteQuery());
 
-   [Test] public void SingleThreaded_Runs_100_local_requests_making_one_ICreateMyOwnResult_query_each_in_2_milliseconds() =>
+   [PCT]  public void SingleThreaded_Runs_100_local_requests_making_one_ICreateMyOwnResult_query_each_in_2_milliseconds() =>
       RunScenario(threaded: false, requests: 100, queriesPerRequest: 1, maxTotal: 2.Milliseconds().EnvMultiply(instrumented:2.4), query: new CreatesItsOwnResultQuery());
 
-   [Test] public void SingleThreaded_Runs_10_local_requests_making_10_remote_queries_each_in_60_milliseconds() =>
+   [PCT]  public void SingleThreaded_Runs_10_local_requests_making_10_remote_queries_each_in_60_milliseconds() =>
       RunScenario(threaded: false, requests: 10, queriesPerRequest: 10, maxTotal: 60.Milliseconds().EnvMultiply(1.3), query: new MyRemoteQuery());
 
-   [Test] public void SingleThreaded_Runs_10_local_requests_making_10_ICreateMyOwnResult_query_each_in_1_milliseconds() =>
+   [PCT]  public void SingleThreaded_Runs_10_local_requests_making_10_ICreateMyOwnResult_query_each_in_1_milliseconds() =>
       RunScenario(threaded: false, requests: 10, queriesPerRequest: 10, maxTotal: 1.Milliseconds().EnvMultiply(instrumented:1.3), query: new CreatesItsOwnResultQuery());
 
-   [Test] public void SingleThreaded_Runs_1_local_request_making_200_ICreateMyOwnResult_query_each_in_1_milliseconds() =>
+   [PCT]  public void SingleThreaded_Runs_1_local_request_making_200_ICreateMyOwnResult_query_each_in_1_milliseconds() =>
       RunScenario(threaded: false, requests: 1, queriesPerRequest: 200, maxTotal: 1.Milliseconds().EnvMultiply(instrumented:2.6), query: new CreatesItsOwnResultQuery());
 
-   [Test] public void MultiThreaded_Runs_100_local_requests_making_one_remote_query_each_in_12_milliseconds() =>
+   [PCT]  public void MultiThreaded_Runs_100_local_requests_making_one_remote_query_each_in_12_milliseconds() =>
       RunScenario(threaded: true, requests: 100, queriesPerRequest: 1, maxTotal: 12.Milliseconds().EnvMultiply(instrumented:2.5), query: new MyRemoteQuery());
 
-   [Test] public void MultiThreaded_Runs_10_local_requests_making_10_remote_queries_each_in_15_milliseconds() =>
+   [PCT]  public void MultiThreaded_Runs_10_local_requests_making_10_remote_queries_each_in_15_milliseconds() =>
       RunScenario(threaded: true, requests: 10, queriesPerRequest: 10, maxTotal: 15.Milliseconds().EnvMultiply(instrumented:2.5), query: new MyRemoteQuery());
 
-   [Test] public void MultiThreaded_Runs_10_local_request_making_200_ICreateMyOwnResult_query_each_in_3_milliseconds() =>
+   [PCT]  public void MultiThreaded_Runs_10_local_request_making_200_ICreateMyOwnResult_query_each_in_3_milliseconds() =>
       RunScenario(threaded: true, requests: 10, queriesPerRequest: 200, maxTotal: 3.Milliseconds().EnvMultiply(instrumented:2.2), query: new CreatesItsOwnResultQuery());
 
-   [Test] public async Task Async_Runs_100_local_requests_making_one_async_remote_query_each_in_10_milliseconds() =>
+   [PCT]  public async Task Async_Runs_100_local_requests_making_one_async_remote_query_each_in_10_milliseconds() =>
       await RunAsyncScenario(requests: 100, queriesPerRequest: 1, maxTotal: 10.Milliseconds().EnvMultiply(instrumented:2.4, unoptimized:1.5), query: new MyRemoteQuery());
 
-   [Test] public async Task Async_Runs_10_local_requests_making_10_async_remote_queries_each_in_7_milliseconds() =>
+   [PCT]  public async Task Async_Runs_10_local_requests_making_10_async_remote_queries_each_in_7_milliseconds() =>
       await RunAsyncScenario(requests: 10, queriesPerRequest: 10, maxTotal: 7.Milliseconds().EnvMultiply(instrumented:3, unoptimized:2.0), query: new MyRemoteQuery());
 
-   [Test] public async Task Async_Runs_10_local_request_making_200_ICreateMyOwnResult_query_each_in_9_milliseconds() =>
+   [PCT]  public async Task Async_Runs_10_local_request_making_200_ICreateMyOwnResult_query_each_in_9_milliseconds() =>
       await RunAsyncScenario(requests: 10, queriesPerRequest: 200, maxTotal: 9.Milliseconds().EnvMultiply(instrumented:3.4), query: new CreatesItsOwnResultQuery());
 
 
