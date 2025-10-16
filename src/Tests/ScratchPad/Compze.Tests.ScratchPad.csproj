@@ -25,6 +25,6 @@
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-    <ProjectReference Include="..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
+    <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

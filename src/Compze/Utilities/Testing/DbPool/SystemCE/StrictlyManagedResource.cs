@@ -136,7 +136,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor>(bool forceStackTra
    public virtual void Dispose()
    {
       Disposed = true;
-      dispose.All(_strictlyManagedResource);
+      _strictlyManagedResource.Dispose();
    }
 }
 

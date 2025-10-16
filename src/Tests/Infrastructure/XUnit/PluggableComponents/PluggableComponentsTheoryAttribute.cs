@@ -18,7 +18,7 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 public class PluggableComponentsTheoryAttribute : FactAttribute
 {
    const string PluggableComponentsTheoryAttributeFullTypeName = "Compze.Tests.Infrastructure.XUnit.PluggableComponents.PluggableComponentsTheoryDiscoverer";
-   const string PluggableComponentsDiscovererAssembly = "Compze.Tests.Infrastructure.XUnit";
+   const string PluggableComponentsDiscovererAssembly = "Compze.Tests.Infrastructure";
 
    static PluggableComponentsTheoryAttribute()
    {

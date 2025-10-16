@@ -159,13 +159,12 @@
   </Folder>
   <Folder Name="/_Tests/Infrastructure/">
     <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj" />
-    <Project Path="Tests/Infrastructure/XUnit/Compze.Tests.Infrastructure.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Integration/">
     <Project Path="Tests/Integration/XUnit/Compze.Tests.Integration.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Performance/">
-    <Project Path="Tests\Performance\Internals\XUnit\Compze.Tests.Performance.Internals.XUnit.csproj" Type="Classic C#">
+    <Project Path="Tests\Performance\Internals\XUnit\Compze.Tests.Performance.Internals.XUnit.csproj">
       <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
       <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
       <Configuration Solution="docs|Any CPU" Project="Debug|Any CPU" />
