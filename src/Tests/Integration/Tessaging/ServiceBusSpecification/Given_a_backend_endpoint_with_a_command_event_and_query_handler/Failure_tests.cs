@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Failure_tests(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
+public class Failure_tests(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
 {
    [Test] public async Task If_command_handler_with_result_throws_awaiting_SendAsync_throws()
    {

@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Retry_policies_AtMostOnceCommand_when_command_handler_fails(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
+public class Retry_policies_AtMostOnceCommand_when_command_handler_fails(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
 {
    [SetUp] public void SendCommandThatFails()
    {

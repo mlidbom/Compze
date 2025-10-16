@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Query_policies(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
+public class Query_policies(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
 {
    [Test] public async Task The_same_query_can_be_reused_in_parallel_without_issues()
    {

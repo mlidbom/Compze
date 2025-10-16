@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Fixture_tests(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
+public class EndpointHostTest_Tests(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
 {
    [Test] public async Task If_command_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {

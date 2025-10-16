@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
+public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
 {
    [Test]
    public async Task When_remote_endpoint_is_down_messages_are_stored_and_delivered_after_endpoint_restarts()

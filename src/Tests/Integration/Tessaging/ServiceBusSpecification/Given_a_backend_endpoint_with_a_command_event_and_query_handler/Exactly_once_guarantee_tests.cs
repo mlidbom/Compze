@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Exactly_once_guarantee_tests(string pluggableComponentsCombination) : NUnitFixtureBase(pluggableComponentsCombination)
+public class Exactly_once_guarantee_tests(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
 {
    [Test] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
    {
