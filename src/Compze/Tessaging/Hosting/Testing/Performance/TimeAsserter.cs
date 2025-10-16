@@ -104,7 +104,10 @@ static class TimeAsserter
             var failureMessage = GetFailureMessage(executionSummary, maxAverage, maxTotal);
             if(failureMessage.Length > 0)
             {
-               if(tries >= maxTries) throw new TimeOutException(failureMessage);
+               if(tries >= maxTries) throw new TimeOutException($"""
+                                                                 {description}:
+                                                                 {failureMessage.Indent()}
+                                                                 """);
                var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
                writer.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
                Thread.Sleep(waitTime);
