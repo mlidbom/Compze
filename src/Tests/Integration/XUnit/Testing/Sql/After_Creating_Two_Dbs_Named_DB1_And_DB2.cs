@@ -55,10 +55,9 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
       _pool.ConnectionStringFor(Db1).Should().NotBe(_pool.ConnectionStringFor(Db2));
    }
 
-   protected override void Dispose(bool disposing)
+   public void Dispose()
    {
       _pool.Dispose();
-      base.Dispose(disposing);
       // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
       _pool.Invoking(action: _ => _pool.ConnectionStringFor(Db1))
            .Should().Throw<Exception>()

@@ -19,10 +19,9 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
 
    readonly MachineWideSharedObject<SharedObject> _shared;
 
-   protected override void Dispose(bool disposing)
+   public void Dispose()
    {
       _shared.Dispose();
-      base.Dispose(disposing);
    }
 
    [XF] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()

@@ -9,25 +9,6 @@ namespace Compze.Tests.Infrastructure;
 /// This ensures GC and exception gathering happens only when tests actually run, not during assembly load.
 /// This class is internal to avoid ambiguous references with framework-specific UniversalTestBase classes.
 /// </summary>
-public abstract class UniversalTestBase : IDisposable
+public abstract class UniversalTestBase 
 {
-   bool _disposed;
-
-   public void Dispose()
-   {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-   }
-
-   protected virtual void Dispose(bool disposing)
-   {
-      if(_disposed) return;
-
-      if(disposing)
-         SurfaceAnyUncatchableExceptions();
-
-      _disposed = true;
-   }
-
-   static void SurfaceAnyUncatchableExceptions() => UncatchableExceptionsGatherer.ConsumeAndThrowAnyExceptionsGathered();
 }

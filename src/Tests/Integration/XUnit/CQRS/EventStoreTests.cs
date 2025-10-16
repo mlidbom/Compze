@@ -33,10 +33,9 @@ public class EventStoreTests : XUnitTestBase
    IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();
 
-   protected override void Dispose(bool disposing)
+   public void Dispose(bool disposing)
    {
       _serviceLocator.Dispose();
-      base.Dispose(disposing);
    }
 
    [PCT]

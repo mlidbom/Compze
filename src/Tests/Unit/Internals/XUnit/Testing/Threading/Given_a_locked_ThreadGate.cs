@@ -30,14 +30,13 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 
-      public class And_all_have_queued_up_calling_PassThrough : XUnitTestBase
+      public sealed class And_all_have_queued_up_calling_PassThrough : XUnitTestBase, IDisposable
       {
          readonly ThreadGateTestFixture _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
-         protected override void Dispose(bool disposing)
+         public void Dispose()
          {
             _fixture.Dispose();
-            base.Dispose(disposing);
          }
 
          [XF] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(0);
@@ -47,17 +46,16 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
       }
    }
 
-   public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once : XUnitTestBase
+   public sealed class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once : XUnitTestBase, IDisposable
    {
       readonly ThreadGateTestFixture _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
       public After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once() =>
          _fixture.Gate.AwaitLetOneThreadPassThrough();
 
-      protected override void Dispose(bool disposing)
+      public void Dispose()
       {
          _fixture.Dispose();
-         base.Dispose(disposing);
       }
 
       [XF] public void _10_milliseconds_later_one_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(1);
@@ -66,17 +64,16 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
       [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
    }
 
-   public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : XUnitTestBase
+   public sealed class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : XUnitTestBase, IDisposable
    {
       readonly ThreadGateTestFixture _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
       public After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times() =>
          1.Through(5).ForEach(_ => _fixture.Gate.AwaitLetOneThreadPassThrough());
 
-      protected override void Dispose(bool disposing)
+      public void Dispose()
       {
          _fixture.Dispose();
-         base.Dispose(disposing);
       }
 
       [XF] public void _10_milliseconds_later_five_threads_have_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(5);

@@ -47,7 +47,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
       var serviceLocator = _endpoint.ServiceLocator;
       _timeSource = serviceLocator.Resolve<IUtcTimeTimeSource>();
    }
-   
+
    public async Task DisposeAsync() => await _host.DisposeAsync();
 
    [PCT]  public void Messages_whose_due_time_has_passed_are_delivered()

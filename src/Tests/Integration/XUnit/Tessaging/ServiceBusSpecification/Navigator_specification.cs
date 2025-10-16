@@ -53,11 +53,7 @@ public class Navigator_specification : UniversalTestBase, IAsyncLifetime
 
    public async Task InitializeAsync() => await _host.StartAsync();
 
-   public async Task DisposeAsync()
-   {
-      await _host.DisposeAsync();
-      await _clientEndpoint.DisposeAsync();
-   }
+   public async Task DisposeAsync() => await _host.DisposeAsync();
 
    [PCT]  public void Can_get_command_result()
    {
