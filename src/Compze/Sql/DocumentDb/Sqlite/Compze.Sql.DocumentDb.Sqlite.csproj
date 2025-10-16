@@ -12,7 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
      <ProjectReference Include="..\Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
-	  <ProjectReference Include="..\..\Sqlite\Infrastructure\Compze.Sql.Sqlite.csproj" />
+	  <ProjectReference Include="..\..\Sqlite\Compze.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>
   <ItemGroup>

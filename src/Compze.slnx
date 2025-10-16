@@ -23,10 +23,10 @@
   </Folder>
   <Folder Name="/Compze/Sql/">
     <Project Path="Compze/Sql/Common/Compze.Sql.Common.csproj" />
-    <Project Path="Compze/Sql/MicrosoftSql/Infrastructure/Compze.Sql.MicrosoftSql.csproj" />
-    <Project Path="Compze/Sql/MySql/Infrastructure/Compze.Sql.MySql.csproj" />
-    <Project Path="Compze/Sql/PostgreSql/Infrastructure/Compze.Sql.PostgreSql.csproj" />
-    <Project Path="Compze/Sql/Sqlite/Infrastructure/Compze.Sql.Sqlite.csproj" />
+    <Project Path="Compze/Sql/MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
+    <Project Path="Compze/Sql/MySql/Compze.Sql.MySql.csproj" />
+    <Project Path="Compze/Sql/PostgreSql/Compze.Sql.PostgreSql.csproj" />
+    <Project Path="Compze/Sql/Sqlite/Compze.Sql.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze/Sql/DocumentDb/">
     <Project Path="Compze/Sql/DocumentDb/Abstractions/Compze.Sql.DocumentDb.Abstractions.csproj" />

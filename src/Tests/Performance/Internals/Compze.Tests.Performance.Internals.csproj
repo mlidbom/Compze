@@ -14,7 +14,7 @@
         <ProjectReference Include="..\..\Integration\Compze.Tests.Integration.csproj" />
         <ProjectReference Include="..\..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
         <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-        <ProjectReference Include="..\..\..\Compze\Sql\Sqlite\Infrastructure\Compze.Sql.Sqlite.csproj" />
+        <ProjectReference Include="..\..\..\Compze\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="8.7.1" />

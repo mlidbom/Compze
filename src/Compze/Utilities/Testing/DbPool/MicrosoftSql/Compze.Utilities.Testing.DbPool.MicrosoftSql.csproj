@@ -12,7 +12,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
-        <ProjectReference Include="..\..\..\..\Sql\MicrosoftSql\Infrastructure\Compze.Sql.MicrosoftSql.csproj" />
+        <ProjectReference Include="..\..\..\..\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql" />
