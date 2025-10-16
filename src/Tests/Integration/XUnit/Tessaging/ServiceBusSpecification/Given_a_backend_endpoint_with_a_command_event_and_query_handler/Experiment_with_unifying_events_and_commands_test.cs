@@ -72,13 +72,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
       _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<IEventStoreUpdater>().Save(UserRegistrarAggregate.Create()));
    }
    
-   public async Task DisposeAsync()
-   {
-      await _host.DisposeAsync();
-      await _userManagementDomainEndpoint.DisposeAsync();
-      await _clientEndpoint.DisposeAsync();
-      await _userDomainServiceLocator.DisposeAsync();
-   }
+   public async Task DisposeAsync() => await _host.DisposeAsync();
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {
