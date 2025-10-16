@@ -1,14 +1,15 @@
 using System.Threading.Tasks;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
-using NUnit.Framework;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Async_behavior_test(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
+public class Async_behavior_test : XUnitEndpointHostTestBase
 {
-   [Test] public async Task Query_returns_task_immediately_does_not_block_until_awaited()
+   [PCT] public async Task Query_returns_task_immediately_does_not_block_until_awaited()
    {
       QueryHandlerThreadGate.Close();
 

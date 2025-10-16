@@ -6,6 +6,6 @@ namespace Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given
 
 public abstract class XUnitEndpointHostTestBase : EndpointHostTestBase, IAsyncLifetime
 {
-   public Task InitializeAsync() => SetupAsync();
-   public Task DisposeAsync() => TearDownAsync();
+   public virtual Task InitializeAsync() => SetupAsync();
+   public virtual Task DisposeAsync() => TearDownAsync();
 }

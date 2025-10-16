@@ -4,17 +4,18 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
-using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Exactly_once_guarantee_tests(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
+public class Exactly_once_guarantee_tests : XUnitEndpointHostTestBase
 {
-   [Test] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
+   [PCT] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
    {
       FluentActions.Invoking(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
                     {
@@ -28,7 +29,7 @@ public class Exactly_once_guarantee_tests(string pluggableComponentsCombination)
                               .Be(false, "command should not reach handler");
    }
 
-   [Test] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceEvent_event_never_reaches_remote_handler_but_does_reach_local_handler()
+   [PCT] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceEvent_event_never_reaches_remote_handler_but_does_reach_local_handler()
    {
       const string exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));

@@ -3,19 +3,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
+public class Outbox_retry_tests : XUnitEndpointHostTestBase
 {
-   [Test]
+   [PCT]
    public async Task When_remote_endpoint_is_down_messages_are_stored_and_delivered_after_endpoint_restarts()
    {
       await BackendEndPoint.StopAsync();
@@ -45,7 +46,7 @@ public class Outbox_retry_tests(string pluggableComponentsCombination) : NUnitEn
       originalRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero).Should().HaveCount(0, "the new endpoint after restart should be using the same database");
    }
 
-   [Test]
+   [PCT]
    public async Task Outbox_records_detailed_failure_information2()
    {
       await BackendEndPoint.StopAsync();

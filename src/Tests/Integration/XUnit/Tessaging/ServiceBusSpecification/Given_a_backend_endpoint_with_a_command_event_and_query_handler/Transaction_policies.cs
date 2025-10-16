@@ -2,16 +2,17 @@ using System.Linq;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Utilities.Threading.Testing;
-using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using FluentAssertions;
-using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Transaction_policies(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
+public class Transaction_policies : XUnitEndpointHostTestBase
 {
-   [Test] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
+   [PCT] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
 
@@ -21,7 +22,7 @@ public class Transaction_policies(string pluggableComponentsCombination) : NUnit
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
-   [Test] public void Command_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
+   [PCT] public void Command_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
    {
       var commandResult = ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyAtMostOnceCommandWithResult.Create()));
 
@@ -33,7 +34,7 @@ public class Transaction_policies(string pluggableComponentsCombination) : NUnit
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
-   [Test] public void Event_handler_runs_in_transaction_with_isolation_level_Serializable()
+   [PCT] public void Event_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
 
@@ -43,7 +44,7 @@ public class Transaction_policies(string pluggableComponentsCombination) : NUnit
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
-   [Test] public void Query_handler_does_not_run_in_transaction()
+   [PCT] public void Query_handler_does_not_run_in_transaction()
    {
       ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery()));
 

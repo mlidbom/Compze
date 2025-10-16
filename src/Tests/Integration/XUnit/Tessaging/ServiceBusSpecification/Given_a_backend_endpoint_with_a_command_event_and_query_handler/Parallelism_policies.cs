@@ -2,19 +2,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Utilities.Threading.Testing;
-using Compze.Tests.Common.NUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.TasksCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using NUnit.Framework;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Parallelism_policies(string pluggableComponentsCombination) : NUnitEndpointHostTestBase(pluggableComponentsCombination)
+public class Parallelism_policies : XUnitEndpointHostTestBase
 {
-   [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_QueryAsync()
+   [PCT] public async Task Five_query_handlers_can_execute_in_parallel_when_using_QueryAsync()
    {
       QueryHandlerThreadGate.Close();
 
@@ -27,7 +28,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : NUnit
       await tasks;
    }
 
-   [Test] public async Task Five_query_handlers_can_execute_in_parallel_when_using_Query()
+   [PCT] public async Task Five_query_handlers_can_execute_in_parallel_when_using_Query()
    {
       QueryHandlerThreadGate.Close();
       var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())))).ToList();
@@ -37,7 +38,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : NUnit
       await Task.WhenAll(tasks);
    }
 
-   [Test] public void Two_event_handlers_cannot_execute_in_parallel()
+   [PCT] public void Two_event_handlers_cannot_execute_in_parallel()
    {
       MyRemoteAggregateEventHandlerThreadGate.Close();
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
@@ -47,7 +48,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : NUnit
                                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 
-   [Test] public void Two_exactly_once_command_handlers_cannot_execute_in_parallel()
+   [PCT] public void Two_exactly_once_command_handlers_cannot_execute_in_parallel()
    {
       CloseGates();
 
@@ -58,7 +59,7 @@ public class Parallelism_policies(string pluggableComponentsCombination) : NUnit
                               .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 
-   [Test] public void Two_AtMostOnce_command_handlers_from_the_same_session_cannot_execute_in_parallel()
+   [PCT] public void Two_AtMostOnce_command_handlers_from_the_same_session_cannot_execute_in_parallel()
    {
       CloseGates();
 

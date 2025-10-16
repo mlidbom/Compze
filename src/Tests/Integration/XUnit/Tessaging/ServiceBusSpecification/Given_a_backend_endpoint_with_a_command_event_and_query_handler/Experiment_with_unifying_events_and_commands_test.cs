@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
 using FluentAssertions;
-using NUnit.Framework;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
@@ -15,9 +14,11 @@ using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Tests.Infrastructure.NUnit;
+using Xunit;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing
@@ -25,7 +26,7 @@ using Compze.Tests.Infrastructure.NUnit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Experiment_with_unifying_events_and_commands_test(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class Experiment_with_unifying_events_and_commands_test : UniversalTestBase, IAsyncLifetime
 {
    ITestingEndpointHost _host;
 
@@ -34,7 +35,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
 
    IRemoteHypermediaNavigator RemoteNavigator => _clientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
 
-   [SetUp] public async Task Setup()
+   public async Task InitializeAsync()
    {
       _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
@@ -67,7 +68,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
       _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<IEventStoreUpdater>().Save(UserRegistrarAggregate.Create()));
    }
 
-   [Test] public void Can_register_user_and_fetch_user_resource()
+   [PCT] public void Can_register_user_and_fetch_user_resource()
    {
       var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() => UserRegistrarAggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
 
@@ -77,7 +78,7 @@ public class Experiment_with_unifying_events_and_commands_test(string pluggableC
       user.History.Count().Should().Be(1);
    }
 
-   [TearDown] public async Task TeardownAsync() => await _host.DisposeAsync();
+   public async Task DisposeAsync() => await _host.DisposeAsync();
 
    public static class UserEvent
    {
