@@ -4,11 +4,13 @@ using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using FluentAssertions;
 using System;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
- public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
+[Performance]
+public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    [XFact] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
    {

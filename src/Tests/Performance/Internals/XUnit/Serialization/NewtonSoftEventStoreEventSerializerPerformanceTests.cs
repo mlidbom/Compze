@@ -8,10 +8,12 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
+[Performance]
 public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTestBase
 {
    static IEventStoreSerializer _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);

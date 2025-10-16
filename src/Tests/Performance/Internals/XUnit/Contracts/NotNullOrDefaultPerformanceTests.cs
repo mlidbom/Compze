@@ -1,12 +1,14 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Assert = Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Performance.Internals.Contracts;
 
+[Performance]
 public class NotNullOrDefaultPerformanceTests : UniversalTestBase
 {
    [XFact] public void Should_run_10_000_tests_in_2_Millisecond()

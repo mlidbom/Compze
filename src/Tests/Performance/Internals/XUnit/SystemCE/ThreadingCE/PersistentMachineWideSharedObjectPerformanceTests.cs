@@ -1,13 +1,15 @@
 using System;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
- public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
+[Performance]
+public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    public PersistentMachineWideSharedObjectPerformanceTests()
    {

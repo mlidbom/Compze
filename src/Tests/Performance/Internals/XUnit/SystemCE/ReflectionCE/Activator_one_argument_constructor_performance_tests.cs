@@ -3,6 +3,7 @@ using System.Reflection;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
@@ -14,6 +15,7 @@ using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
+[Performance]
 public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
 {
    const string Argument = "AnArgument";
