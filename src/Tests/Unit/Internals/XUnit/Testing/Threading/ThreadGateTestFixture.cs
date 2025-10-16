@@ -1,0 +1,76 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Compze.Utilities.Threading.Testing;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.TasksCE;
+
+namespace Compze.Tests.Unit.Internals.XUnit.Testing.Threading;
+
+class ThreadGateTestFixture : IDisposable
+{
+   public readonly IThreadGate Gate;
+   public int NumberOfThreads { get; private init; }
+   IReadOnlyList<Entrant> _entrantEvents = [];
+   Task[] _tasksPassingGate = [];
+
+   class Entrant
+   {
+      public ManualResetEventSlim HasStarted { get; init; } = new();
+      public ManualResetEventSlim HasCompleted { get; init; } = new();
+   }
+
+   public static ThreadGateTestFixture StartEntrantsOnThreads(int threadCount)
+   {
+      var fixture = new ThreadGateTestFixture
+                    {
+                       NumberOfThreads = threadCount
+                    };
+      fixture.StartThreads();
+      return fixture;
+   }
+
+   ThreadGateTestFixture()
+   {
+      Gate = ThreadGate.CreateClosedWithTimeout(30.Seconds());
+      NumberOfThreads = 10;
+   }
+
+   void StartThreads()
+   {
+      _entrantEvents = 1.Through(NumberOfThreads)
+                       .Select(_ => new Entrant())
+                       .ToList();
+
+      _tasksPassingGate = _entrantEvents.Select(
+                                           entrantEvent => TaskCE.Run(
+                                              () =>
+                                              {
+                                                 entrantEvent.HasStarted.Set();
+                                                 Gate.AwaitPassThrough();
+                                                 entrantEvent.HasCompleted.Set();
+                                              }))
+                                       .ToArray();
+   }
+
+   public int ThreadsPassedTheGate(TimeSpan waitTime)
+   {
+      Thread.Sleep(waitTime);
+      return _entrantEvents.Count(entrant => entrant.HasCompleted.IsSet);
+   }
+
+   public ThreadGateTestFixture WaitForAllThreadsToQueueUpAtPassThrough()
+   {
+      Gate.AwaitQueueLengthEqualTo(NumberOfThreads);
+      return this;
+   }
+
+   public void Dispose()
+   {
+      Gate.Open();
+      Task.WaitAll(_tasksPassingGate);
+   }
+}

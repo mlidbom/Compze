@@ -94,7 +94,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : XUnitTestBase
    }
 
 
-   [XFact]public void Trying_to_create_instance_of_aggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
+   [XF]public void Trying_to_create_instance_of_aggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
    {
       FluentActions.Invoking(() => new Root(null!))
                    .Should().Throw<Exception>()
@@ -106,7 +106,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : XUnitTestBase
                    .And.NotContain(typeof(RootEvent.Ignored).FullName);
    }
 
-   [XFact] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
+   [XF] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
    {
       FluentActions.Invoking(() => new Root.AggComponent(null!))
                    .Should().Throw<Exception>()
@@ -118,7 +118,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : XUnitTestBase
    }
 
 
-   [XFact] public void Trying_to_create_instance_of_nested_nested_component_throws_and_lists_all_broken_types_in_exception()
+   [XF] public void Trying_to_create_instance_of_nested_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
       FluentActions.Invoking(() => new Root.AggComponent.NestedAggComponent(null!))
                    .Should().Throw<Exception>()
@@ -129,7 +129,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : XUnitTestBase
                    .And.Contain(typeof(RootEvent.Component.NestedComponent.Root).FullName);
    }
 
-   [XFact] public void Trying_to_create_instance_of_entity_throws_and_lists_all_broken_types_in_exception()
+   [XF] public void Trying_to_create_instance_of_entity_throws_and_lists_all_broken_types_in_exception()
    {
       FluentActions.Invoking(() => new Root.AggEntity(null!))
                    .Should().Throw<Exception>()
@@ -140,7 +140,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : XUnitTestBase
                    .And.Contain(typeof(RootEvent.Entity.Root).FullName);
    }
 
-   [XFact] public void Trying_to_create_instance_of_entity_nested_component_throws_and_lists_all_broken_types_in_exception()
+   [XF] public void Trying_to_create_instance_of_entity_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
       FluentActions.Invoking(() => new Root.AggEntity.EntNestedComp(null!))
                    .Should().Throw<Exception>()

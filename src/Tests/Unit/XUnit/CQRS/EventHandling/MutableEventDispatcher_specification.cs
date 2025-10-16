@@ -42,31 +42,31 @@ public static class MutableEventDispatcher_specification
                        .For<IUserSkillsAdded>(_ => ++CallsMade);
          }
 
-         [XFact] public void when_dispatching_an_ignored_event_no_calls_are_made_to_any_handlers()
+         [XF] public void when_dispatching_an_ignored_event_no_calls_are_made_to_any_handlers()
          {
             _dispatcher.Dispatch(new IgnoredUserEvent());
             CallsMade.Should().Be(0);
          }
 
-         [XFact] public void when_dispatching_an_unhandled_event_that_is_not_ignored_an_exception_is_thrown() =>
+         [XF] public void when_dispatching_an_unhandled_event_that_is_not_ignored_an_exception_is_thrown() =>
             FluentActions.Invoking(() => _dispatcher.Dispatch(new UnHandledUserEvent())).Should().Throw<EventUnhandledException>();
 
          public class when_dispatching_an_IUserCreatedEvent : with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_event_type
          {
             public when_dispatching_an_IUserCreatedEvent() => _dispatcher.Dispatch(new UserCreatedEvent());
 
-            [XFact] public void BeforeHandler1_is_called_first() => BeforeHandlers1CallOrder.Should().Be(1);
-            [XFact] public void BeforeHandler2_is_called_second() => BeforeHandlers2CallOrder.Should().Be(2);
-            [XFact] public void The_specific_handler_is_called_third() => UserCreatedCallOrder.Should().Be(3);
-            [XFact] public void AfterHandler1_is_called_fourth() => AfterHandlers1CallOrder.Should().Be(4);
-            [XFact] public void AfterHandler2_is_called_fifth() => AfterHandlers2CallOrder.Should().Be(5);
-            [XFact] public void Five_calls_are_made_in_total() => CallsMade.Should().Be(5);
+            [XF] public void BeforeHandler1_is_called_first() => BeforeHandlers1CallOrder.Should().Be(1);
+            [XF] public void BeforeHandler2_is_called_second() => BeforeHandlers2CallOrder.Should().Be(2);
+            [XF] public void The_specific_handler_is_called_third() => UserCreatedCallOrder.Should().Be(3);
+            [XF] public void AfterHandler1_is_called_fourth() => AfterHandlers1CallOrder.Should().Be(4);
+            [XF] public void AfterHandler2_is_called_fifth() => AfterHandlers2CallOrder.Should().Be(5);
+            [XF] public void Five_calls_are_made_in_total() => CallsMade.Should().Be(5);
          }
       }
 
       public class with_2_registered_handlers_for_the_same_event_type_then_when_dispatching_event : Given_an_instance
       {
-         [XFact] public void handlers_are_called_in_registration_order()
+         [XF] public void handlers_are_called_in_registration_order()
          {
             var calls = 0;
             var handler1CallOrder = 0;

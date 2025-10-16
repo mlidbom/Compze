@@ -13,7 +13,7 @@ static class MySqlDbPoolRegistrar
       MySqlDbPool.RegisterWith(registrar);
 }
 
-sealed class MySqlDbPool : DbPool
+sealed class MySqlDbPool : DbPoolBase
 {
    internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
    {

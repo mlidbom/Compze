@@ -8,7 +8,7 @@ using Serilog.Exceptions;
 namespace Compze.Tests.Infrastructure;
 
 /// <summary>
-/// Common test fixture setup/teardown logic shared between NUnit and XUnit test infrastructure.
+/// Common test fixture setup/teardown logic
 /// </summary>
 public static class TestFixtureHelper
 {

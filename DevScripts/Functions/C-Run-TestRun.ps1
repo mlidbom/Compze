@@ -48,7 +48,7 @@ function C-Run-TestRun {
     # Run tests and capture output
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
     if ($SingleThreaded) {
-        $testOutput = dotnet test $SolutionPath --no-build -- NUnit.NumberOfTestWorkers=0 2>&1
+        $testOutput = dotnet test $SolutionPath --no-build 2>&1
     } else {
         $testOutput = dotnet test $SolutionPath --no-build 2>&1
     }

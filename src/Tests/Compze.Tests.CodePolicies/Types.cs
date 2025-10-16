@@ -6,6 +6,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.CodePolicies;
 
+#pragma warning disable CA1724 //The type name Types conflicts in whole or in part with the namespace
 public static class Types
 {
    public static class InNamespace
@@ -14,7 +15,7 @@ public static class Types
       {
          public static class Internal
          {
-            [XFact(Skip = "TODO")] public static void ShouldBeInternal()
+            [XF(Skip = "TODO")] public static void ShouldBeInternal()
             {
                CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
@@ -37,3 +38,4 @@ public static class Types
       }
    }
 }
+#pragma warning restore CA1724 //The type name Types conflicts in whole or in part with the namespace

@@ -1,26 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
-  </PropertyGroup>
-  <PropertyGroup>
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-    <ProjectReference Include="..\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-    <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
+   </PropertyGroup>
+   <PropertyGroup>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj"/>
+      <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj"/>
+      <ProjectReference Include="..\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj"/>
+      <ProjectReference Include="..\..\Utilities\Threading\Compze.Utilities.Threading.csproj"/>
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore"/>
+      <InternalsVisibleTo Include="Compze.Tessaging"/>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals.XUnit"/>
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive"/>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit"/> 
+   </ItemGroup>
 </Project>

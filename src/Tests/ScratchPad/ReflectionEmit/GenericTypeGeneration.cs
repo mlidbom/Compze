@@ -4,13 +4,14 @@ using System.Linq;
 using System.Reflection;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
 using FluentAssertions;
-using NUnit.Framework;
+
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
@@ -23,7 +24,7 @@ class UserEvent : IUserEvent;
 
 public class Example
 {
-   [Test] public void BuildWrapperEventType()
+   [XF] public void BuildWrapperEventType()
    {
       var genericWrapperEventType = CreateGenericWrapperEventType(typeof(IUserWrapperEvent<>));
 

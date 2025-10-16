@@ -80,6 +80,7 @@ class UserRegistered(Guid userId, string email, string password) : UserEvent(use
    public string Password { get; private set; } = password;
 }
 
+#pragma warning disable CA1812
 interface IMigratedBeforeUserRegisteredEvent : IUserEvent, IAggregateCreatedEvent;
 [UsedImplicitly] class MigratedBeforeUserRegisteredEvent : UserEvent, IMigratedBeforeUserRegisteredEvent;
 
@@ -88,3 +89,5 @@ interface IMigratedAfterUserChangedEmailEvent : IUserEvent, IAggregateCreatedEve
 
 interface IMigratedReplaceUserChangedPasswordEvent : IUserEvent, IAggregateCreatedEvent;
 [UsedImplicitly] class MigratedReplaceUserChangedPasswordEvent : UserEvent, IMigratedReplaceUserChangedPasswordEvent;
+
+#pragma warning restore CA1812

@@ -17,7 +17,7 @@ public class TaskCEExceptionsTests : XUnitTestBase
       throw new Exception("I broke");
    }
 
-   [XFact] public async Task WithAggregateExceptions_throws_aggregate_exception_containing_all_exceptions() =>
+   [XF] public async Task WithAggregateExceptions_throws_aggregate_exception_containing_all_exceptions() =>
       (await Invoking(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions())
             .Should().ThrowAsync<AggregateException>())
      .Which.InnerExceptions.Should().HaveCount(10);

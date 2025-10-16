@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
-using NUnit.Framework;
+using Xunit;
+
 
 // ReSharper disable once CheckNamespace
 namespace AccountManagement;
@@ -45,32 +46,18 @@ static class TestData
 
       internal static string CreateUnusedEmail() => $"test.test@test{Interlocked.Increment(ref _registeredAccounts)}.se";
 
-      internal static IReadOnlyList<StringTestData> InvalidEmailsTestData =>
-         new List<StringTestData>
+      public static TheoryData<string?, string> InvalidEmailsTestData =>
+         new()
          {
-            new(null, "Is null"),
-            new(string.Empty, "Is empty"),
-            new("test.com", "Missing @ character"),
-            new("test@test.com ", "Missing domain"),
-            new("te st@test.com", "Contains space"),
-            new("test@test", "Missing domain"),
-            new("test@test..com", "Contains \"..\""),
-            new("test@.test.com", "Contains \"@.\""),
-            new("test.@test.com", "Contains \".@\"")
+            { null, "Is null" },
+            { string.Empty, "Is empty" },
+            { "test.com", "Missing @ character" },
+            { "test@test.com ", "Missing domain" },
+            { "te st@test.com", "Contains space" },
+            { "test@test", "Missing domain" },
+            { "test@test..com", "Contains \"..\"" },
+            { "test@.test.com", "Contains \"@.\"" },
+            { "test.@test.com", "Contains \".@\"" }
          };
-
-
-      public class StringTestData(string? data, string description) : TestData<string>(data, description);
-
-      public class TestData<TData> : TestCaseData
-         where TData : class
-      {
-         public TData? Data { get; }
-         public TestData(TData? data, string description) : base(data)
-         {
-            Data = data;
-            SetName($"_({description} ==  \"{data?.ToString() ?? "NULL"}\")");
-         }
-      }
    }
 }

@@ -14,27 +14,27 @@ public class Return_methods : AssertionMethodsTest
 
    public class ReturnNotNull_method
    {
-      [XFact] public void throws_for_null_int() => Invoking(() => Asserter.ReturnNotNull(NullInt))
+      [XF] public void throws_for_null_int() => Invoking(() => Asserter.ReturnNotNull(NullInt))
                                                   .Should().Throw<AssertionTestException>()
                                                   .Which.Message.Should().Contain(nameof(NullInt));
 
-      [XFact] public void throws_for_null_object() => Invoking(() => Asserter.ReturnNotNull(NullObject))
+      [XF] public void throws_for_null_object() => Invoking(() => Asserter.ReturnNotNull(NullObject))
                                                      .Should().Throw<AssertionTestException>()
                                                      .Which.Message.Should().Contain(nameof(NullObject));
 
-      [XFact] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(EmptyObject).Should().Be(EmptyObject);
+      [XF] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(EmptyObject).Should().Be(EmptyObject);
    }
 
    public class ReturnNotNullOrDefault_method
    {
-      [XFact] public void throws_for_null_int() => Invoking(() => Asserter.ReturnNotNullOrDefault(NullInt))
+      [XF] public void throws_for_null_int() => Invoking(() => Asserter.ReturnNotNullOrDefault(NullInt))
                                                   .Should().Throw<AssertionTestException>()
                                                   .Which.Message.Should().Contain(nameof(NullInt));
 
-      [XFact] public void throws_for_default_int() => Invoking(() => Asserter.ReturnNotNullOrDefault(DefaultInt))
+      [XF] public void throws_for_default_int() => Invoking(() => Asserter.ReturnNotNullOrDefault(DefaultInt))
                                                      .Should().Throw<AssertionTestException>()
                                                      .Which.Message.Should().Contain(nameof(DefaultInt));
 
-      [XFact] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(AnInt).Should().Be(AnInt);
+      [XF] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(AnInt).Should().Be(AnInt);
    }
 }

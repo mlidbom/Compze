@@ -21,7 +21,7 @@ public class IStaticInstancePropertySingleton_tests : XUnitTestBase
       ExplicitImplementation() { }
    }
 
-   [XFact]
+   [XF]
    public void Constructor_should_work_with_implicit_interface_implementation()
    {
       var instance1 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
@@ -32,7 +32,7 @@ public class IStaticInstancePropertySingleton_tests : XUnitTestBase
       instance1.Should().BeSameAs(ImplicitImplementation.Instance);
    }
 
-   [XFact]
+   [XF]
    public void Constructor_should_work_with_explicit_interface_implementation()
    {
       var instance1 = Constructor.For<ExplicitImplementation>.DefaultConstructor.Instance();

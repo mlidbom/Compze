@@ -156,20 +156,24 @@
   </Folder>
   <Folder Name="/_Tests/Common/">
     <Project Path="Tests/Common/Compze.Tests.Common.csproj" />
-    <Project Path="Tests/Common/NUnit/Compze.Tests.Common.NUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Infrastructure/">
     <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj" />
-    <Project Path="Tests/Infrastructure/NUnit/Compze.Tests.Infrastructure.NUnit.csproj" />
     <Project Path="Tests/Infrastructure/XUnit/Compze.Tests.Infrastructure.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Integration/">
-    <Project Path="Tests/Integration/Compze.Tests.Integration.csproj" />
-    <Project Path="Tests/Integration/Internals/Compze.Tests.Integration.Internals.csproj" />
     <Project Path="Tests/Integration/XUnit/Compze.Tests.Integration.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Performance/">
-    <Project Path="Tests/Performance/Internals/Compze.Tests.Performance.Internals.csproj" />
+    <Project Path="Tests\Performance\Internals\XUnit\Compze.Tests.Performance.Internals.XUnit.csproj" Type="Classic C#">
+      <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
+      <Configuration Solution="docs|Any CPU" Project="Debug|Any CPU" />
+      <Configuration Solution="docs|x64" Project="Debug|Any CPU" />
+      <Configuration Solution="docs|x86" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|x64" Project="Release|Any CPU" />
+      <Configuration Solution="Release|x86" Project="Release|Any CPU" />
+    </Project>
   </Folder>
   <Folder Name="/_Tests/ScratchPad/">
     <Project Path="Tests/ScratchPad/Compze.Tests.ScratchPad.csproj" />
@@ -178,7 +182,6 @@
     <Project Path="Tests/Unit/XUnit/Compze.Tests.Unit.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Unit/Internals/">
-    <Project Path="Tests/Unit/Internals/Compze.Tests.Unit.Internals.csproj" />
     <Project Path="Tests/Unit/Internals/XUnit/Compze.Tests.Unit.Internals.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Websites/">

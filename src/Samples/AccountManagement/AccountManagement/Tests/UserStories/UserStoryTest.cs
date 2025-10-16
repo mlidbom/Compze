@@ -5,25 +5,30 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.TasksCE;
+using Xunit;
 
 namespace AccountManagement.UserStories;
 
-public abstract class UserStoryTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class UserStoryTest : UniversalTestBase, IAsyncLifetime
 {
-   protected ITestingEndpointHost? Host { get; set; }
-   IEndpoint? _clientEndpoint;
+   protected ITestingEndpointHost Host { get; set; }
+   readonly IEndpoint _clientEndpoint;
    internal AccountScenarioApi Scenario => new(_clientEndpoint!);
 
-   [SetUp] public async Task SetupContainerAndBeginScope()
+   protected UserStoryTest()
    {
       Host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithRegisteredServiceLocator(runMode));
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
-      await Host.StartAsync().caf();
    }
 
-   [TearDown] public async Task Teardown() => await Host!.DisposeAsync().caf();
+   public virtual async Task InitializeAsync() => await Host.StartAsync().caf();
+
+   public async Task DisposeAsync()
+   {
+      await Host.DisposeAsync().caf();
+      await _clientEndpoint.DisposeAsync();
+   }
 }

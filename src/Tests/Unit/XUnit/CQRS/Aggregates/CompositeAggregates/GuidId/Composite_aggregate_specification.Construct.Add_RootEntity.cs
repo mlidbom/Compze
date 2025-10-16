@@ -20,8 +20,8 @@ public static partial class Composite_aggregate_specification
             _qmRootEntity = _queryModel.Entities.InCreationOrder[0];
          }
 
-         [XFact] public void RootEntity_Name_is_RootEntity() => _rootEntity.Name.Should().Be("RootEntity");
-         [XFact] public void QueryModel_Name_is_RootEntity() => _qmRootEntity.Name.Should().Be("RootEntity");
+         [XF] public void RootEntity_Name_is_RootEntity() => _rootEntity.Name.Should().Be("RootEntity");
+         [XF] public void QueryModel_Name_is_RootEntity() => _qmRootEntity.Name.Should().Be("RootEntity");
       }
    }
 }

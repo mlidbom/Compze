@@ -23,7 +23,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
 
  public class MachineWideSharedObjectTests : XUnitTestBase
 {
-   [XFact] public void Create()
+   [XF] public void Create()
    {
       var name = Guid.NewGuid().ToString();
       using var shared = MachineWideSharedObject<SharedObject>.For(name);
@@ -32,7 +32,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
       test.Name.Should().Be("Default");
    }
 
-   [XFact] public void Create_update_and_get()
+   [XF] public void Create_update_and_get()
    {
       var name = Guid.NewGuid().ToString();
       using var shared = MachineWideSharedObject<SharedObject>.For(name);
@@ -49,7 +49,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
       value.Name.Should().Be("Updated");
    }
 
-   [XFact] public void Two_instances_with_same_name_share_data()
+   [XF] public void Two_instances_with_same_name_share_data()
    {
       var name = Guid.NewGuid().ToString();
       using var shared1 = MachineWideSharedObject<SharedObject>.For(name);
@@ -70,7 +70,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
       test1.Name.Should().Be("Updated");
    }
 
-   [XFact] public void Non_persistent_Once_all_instance_are_disposed_data_is_gone()
+   [XF] public void Non_persistent_Once_all_instance_are_disposed_data_is_gone()
    {
       var name = Guid.NewGuid().ToString();
       MachineWideSharedObject<SharedObject> shared2;
@@ -90,7 +90,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
       }
    }
 
-   [XFact] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
+   [XF] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
@@ -111,7 +111,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE.ThreadingCE;
       }
    }
 
-   [XFact] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
+   [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = 1.Seconds();
       var updateGate = ThreadGate.CreateClosedWithTimeout(timeout);

@@ -16,7 +16,7 @@ public class DuplicateRegistrationTests : XUnitTestBase
    class TestService2 : ITestService2;
    class MultiService : ITestService, ITestService2;
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void Registering_same_singleton_service_twice_throws_InvalidOperationException()
    {
       var container = TestEnv.DIContainer.CreateWithRegisteredServiceLocator();
@@ -31,7 +31,7 @@ public class DuplicateRegistrationTests : XUnitTestBase
                                      .WithMessage("*already*registered*");
    }
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void Registering_same_scoped_service_twice_throws_InvalidOperationException()
    {
       var container = TestEnv.DIContainer.CreateWithRegisteredServiceLocator();
@@ -46,7 +46,7 @@ public class DuplicateRegistrationTests : XUnitTestBase
                                      .WithMessage("*already*registered*");
    }
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void Registering_service_with_multiple_service_types_then_reregistering_one_throws_InvalidOperationException()
    {
       var container = TestEnv.DIContainer.CreateWithRegisteredServiceLocator();
@@ -63,7 +63,7 @@ public class DuplicateRegistrationTests : XUnitTestBase
                                           .WithMessage("*already*registered*");
    }
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void Can_register_different_service_types_successfully()
    {
       var container = TestEnv.DIContainer.CreateWithRegisteredServiceLocator();

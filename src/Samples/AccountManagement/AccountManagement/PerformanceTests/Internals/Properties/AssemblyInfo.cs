@@ -1,7 +1,7 @@
+//Nothing in this project should run in parallel
 #if !NCRUNCH
-[assembly: NUnit.Framework.Parallelizable(NUnit.Framework.ParallelScope.None)]
+[assembly: Xunit.CollectionBehavior(DisableTestParallelization = true)]
 #endif
 
-//Nothing in this project should run in parallel
 [assembly: NCrunch.Framework.EnableRdi(false)]
-[assembly:NCrunch.Framework.Serial, NUnit.Framework.Category("Performance")]
+[assembly: NCrunch.Framework.Serial]

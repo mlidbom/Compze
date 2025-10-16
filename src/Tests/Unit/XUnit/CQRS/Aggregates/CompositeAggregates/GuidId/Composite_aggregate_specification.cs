@@ -34,12 +34,12 @@ public static partial class Composite_aggregate_specification
          eventStored.Commit(_queryModel.LoadFromHistory);
       }
 
-      [XFact] public void Aggregate_name_is_root() => _aggregate.Name.Should().Be("root");
-      [XFact] public void Query_model_name_is_root() => _queryModel.Name.Should().Be("root");
-      [XFact] public void Aggregate_id_is_the_supplied_id() => _aggregate.Id.Should().Be(_aggregateId);
-      [XFact] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.Should().Be(_aggregateId);
+      [XF] public void Aggregate_name_is_root() => _aggregate.Name.Should().Be("root");
+      [XF] public void Query_model_name_is_root() => _queryModel.Name.Should().Be("root");
+      [XF] public void Aggregate_id_is_the_supplied_id() => _aggregate.Id.Should().Be(_aggregateId);
+      [XF] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.Should().Be(_aggregateId);
 
-      [XFact] public void Aggregate_Component_Component_tests()
+      [XF] public void Aggregate_Component_Component_tests()
       {
          _aggregate.Component.CComponent.Name.Should().BeNullOrEmpty();
          _queryModel.Component.CComponent.Name.Should().BeNullOrEmpty();

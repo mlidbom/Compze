@@ -40,7 +40,6 @@ class OutboxRetryPoller : IDisposable
    Thread? _pollerThread;
 
    // Exponential backoff configuration
-   static readonly TimeSpan InitialRetryDelay = TimeSpan.FromSeconds(1);
    static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(1);
 
    OutboxRetryPoller(Outbox.IMessageStorage messageStorage,

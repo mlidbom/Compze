@@ -1,3 +1,9 @@
+using Compze.Abstractions.Internal;
+using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Tessaging.Abstractions;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.Threading.ResourceAccess;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -5,11 +11,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Compze.Abstractions.Internal;
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Tessaging.Abstractions;
-using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Common.Refactoring.Naming;
 
@@ -106,30 +107,50 @@ class TypeMapper : ITypeMapper
       }
    }
 
-   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => State.Update(state =>
+   static bool _currentlyLoadingTypes = false;
+   static bool _assembliesWhereLoadedWhileWeWereDetectingTypes = false;
+   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings()
    {
-      var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
-
-      foreach(var assembly in unHandledAssemblies)
+      //In rare situations we may encounter reentrancy here and if so we'd like to avoid a deadlock...
+      if(_currentlyLoadingTypes)
       {
+         _assembliesWhereLoadedWhileWeWereDetectingTypes = true;
+         return;
+      }
+      State.Update(state =>
+      {
+         using(ScopedChange.Enter(onEnter: () => _currentlyLoadingTypes = true, onDispose: () => _currentlyLoadingTypes = false))
          {
-            if(state.CheckedAssemblies.Contains(assembly))
-            {
-               return;
-            }
 
-            try
+            var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
+
+            foreach(var assembly in unHandledAssemblies)
             {
-               CheckAssemblyForRequiredMappings(assembly, state);
-               state.CheckedAssemblies.Add(assembly);
-            }
-            finally
-            {
-               state.CheckedAssemblies.Add(assembly);
+               {
+                  if(state.CheckedAssemblies.Contains(assembly))
+                  {
+                     continue;
+                  }
+
+                  try
+                  {
+                     CheckAssemblyForRequiredMappings(assembly, state);
+                  }
+                  finally
+                  {
+                     state.CheckedAssemblies.Add(assembly);
+                  }
+               }
             }
          }
-      }
-   });
+
+         if(_assembliesWhereLoadedWhileWeWereDetectingTypes)
+         {
+            _assembliesWhereLoadedWhileWeWereDetectingTypes = false;
+            EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+         }
+      });
+   }
 
    static void CheckAssemblyForRequiredMappings(Assembly assembly, MappingState state)
    {

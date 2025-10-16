@@ -22,14 +22,14 @@ public class PersistentEntityTests : XUnitTestBase
       }
    }
 
-   [XFact]
+   [XF]
    public void InstanceEqualsItself()
    {
       var person = new Person();
       AssertAreEqual(person, person);
    }
 
-   [XFact]
+   [XF]
    public void IntstanceEqualsOtherInstanceWithSameId()
    {
       var lhs = new Person();
@@ -37,7 +37,7 @@ public class PersistentEntityTests : XUnitTestBase
       AssertAreEqual(lhs, rhs);
    }
 
-   [XFact]
+   [XF]
    public void IntstanceNotEqualToinstanceWithOtherId()
    {
       var lhs = new Person(Guid.NewGuid());
@@ -45,7 +45,7 @@ public class PersistentEntityTests : XUnitTestBase
       AssertAreNotEqual(lhs, rhs);
    }
 
-   [XFact]
+   [XF]
    public void IntstancesWithSameIdHasSameHashCode()
    {
       var lhs = new Person();
@@ -55,7 +55,7 @@ public class PersistentEntityTests : XUnitTestBase
    }
 
 
-   [XFact]
+   [XF]
    public void ComparisonWithRhsNullReturnsFalse()
    {
       var lhs = new Person();
@@ -64,7 +64,7 @@ public class PersistentEntityTests : XUnitTestBase
       (lhs == null).Should().BeFalse();
    }
 
-   [XFact]
+   [XF]
    public void ComparisonWithLhsNullReturnsFalse()
    {
       var rhs = new Person();
@@ -72,7 +72,7 @@ public class PersistentEntityTests : XUnitTestBase
       (null == rhs).Should().BeFalse();
    }
 
-   [XFact]
+   [XF]
    public void ComparisonWithLhsNullAndRhsNullReturnsTrue()
    {
       Person? rhs = null;

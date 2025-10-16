@@ -1,22 +1,24 @@
+using System.Threading.Tasks;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using FluentAssertions;
-using NUnit.Framework;
 
 namespace AccountManagement.UserStories;
 
-public class _020_After_a_user_has_registered_an_account(string pluggableComponentsCombination) : UserStoryTest(pluggableComponentsCombination)
+public class _020_After_a_user_has_registered_an_account : UserStoryTest
 {
    RegisterAccountScenario? _registerAccountScenario;
 
-   [SetUp] public void RegisterAccount()
+   public override async Task InitializeAsync()
    {
+      await base.InitializeAsync();
       _registerAccountScenario = Scenario.Register;
-      var result= _registerAccountScenario.Execute().Result;
+      var result = _registerAccountScenario.Execute().Result;
       result.Status.Should().Be(RegistrationAttemptStatus.Successful);
    }
 
-   [Test] public void Login_with_the_correct_email_and_password_succeeds()
+   [PCT] public void Login_with_the_correct_email_and_password_succeeds()
    {
       var result = Scenario.Login(_registerAccountScenario!).Execute();
 
@@ -24,12 +26,12 @@ public class _020_After_a_user_has_registered_an_account(string pluggableCompone
       result.AuthenticationToken.Should().NotBeNullOrWhiteSpace();
    }
 
-   [Test] public void Login_with_the_correct_email_but_wrong_password_fails()
+   [PCT] public void Login_with_the_correct_email_but_wrong_password_fails()
       => Scenario.Login(_registerAccountScenario!).WithPassword("SomeOtherPassword").Execute().Succeeded.Should().Be(false);
 
-   [Test] public void Login_with_the_wrong_email_but_correct_password_fails()
+   [PCT] public void Login_with_the_wrong_email_but_correct_password_fails()
       => Scenario.Login(_registerAccountScenario!).WithEmail("some_other@email.com").Execute().Succeeded.Should().Be(false);
 
-   [Test] public void Registering_another_account_with_the_same_email_fails_with_email_already_registered_message() =>
+   [PCT] public void Registering_another_account_with_the_same_email_fails_with_email_already_registered_message() =>
       Scenario.Register.WithEmail(_registerAccountScenario!.Email).Execute().Result.Status.Should().Be(RegistrationAttemptStatus.EmailAlreadyRegistered);
 }

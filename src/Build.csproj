@@ -1,4 +1,4 @@
-﻿<!-- ReSharper disable MarkupAttributeTypo -->
+<!-- ReSharper disable MarkupAttributeTypo -->
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net8.0</TargetFramework>
@@ -13,7 +13,5 @@
       <None Include="**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="**/*.autoinclude.cs" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-
-       <None Include="TestUsingPluggableComponentCombinations*" />
    </ItemGroup>
 </Project>

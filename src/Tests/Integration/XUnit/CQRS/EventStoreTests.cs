@@ -28,18 +28,14 @@ class SomeEvent : AggregateEvent, ISomeEvent
    }
 }
 
-public class EventStoreTests : XUnitTestBase
+public class EventStoreTests : XUnitTestBase, IDisposable
 {
    IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();
 
-   protected override void Dispose(bool disposing)
-   {
-      _serviceLocator.Dispose();
-      base.Dispose(disposing);
-   }
+   public void Dispose() => _serviceLocator.Dispose();
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregateId = Guid.NewGuid();
@@ -51,7 +47,7 @@ public class EventStoreTests : XUnitTestBase
             .HaveCount(10);
    });
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void StreamEventsSinceReturnsWholeEventLogWhenFetchingALargeNumberOfEvents_EnsureBatchingDoesNotBreakThings() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       const int batchSize = 100;
@@ -74,7 +70,7 @@ public class EventStoreTests : XUnitTestBase
       }
    });
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void DeleteEventsDeletesTheEventsForOnlyTheSpecifiedAggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
@@ -102,7 +98,7 @@ public class EventStoreTests : XUnitTestBase
                 .BeEmpty();
    });
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void GetListOfAggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
@@ -123,7 +119,7 @@ public class EventStoreTests : XUnitTestBase
    });
 
    //Todo: This does not check that only aggregates of the correct type are returned since there are only events of type SomeEvent in the store..
-   [PluggableComponentsTheory]
+   [PCT]
    public void GetListOfAggregateIdsUsingEventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
@@ -142,10 +138,10 @@ public class EventStoreTests : XUnitTestBase
       allAggregateIds.Should().HaveCount(aggregatesWithEvents.Count);
    });
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void Does_not_call_db_in_constructor() => _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.Resolve<IEventStoreUpdater>());
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void ShouldNotCacheEventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var eventStore = _serviceLocator.EventStore();
@@ -163,7 +159,7 @@ public class EventStoreTests : XUnitTestBase
       eventStore.GetAggregateHistory(user.Id).Should().BeEmpty();
    });
 
-   [PluggableComponentsTheory]
+   [PCT]
    public void ShouldCacheEventsBetweenInstancesTransaction()
    {
       _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();

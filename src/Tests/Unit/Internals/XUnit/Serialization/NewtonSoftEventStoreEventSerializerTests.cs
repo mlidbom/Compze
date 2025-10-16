@@ -47,7 +47,7 @@ public class NewtonSoftEventStoreEventSerializerTests : XUnitTestBase
    }
 
 
-   [XFact]
+   [XF]
    public void IgnoresAllIAggregateEventProperties()
    {
       var eventWithAllValuesSet = new TestEvent(

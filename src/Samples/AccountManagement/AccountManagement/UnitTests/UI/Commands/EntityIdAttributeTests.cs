@@ -1,24 +1,25 @@
 using System;
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Tests.Unit.UI.Commands.UserCommands;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using JetBrains.Annotations;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+
 
 namespace AccountManagement.Tests.Unit.UI.Commands;
 
-[TestFixture]
-public class EntityIdAttributeTests: NUnitTestBase
+
+public class EntityIdAttributeTests: UniversalTestBase
 {
-   [Test]
+   [XF]
    public void IsValidIfIdIsNull()
    {
       CommandValidator.ValidationFailures(new ACommand {AnId = null})
                       .Should().NotBeEmpty();
    }
 
-   [Test]
+   [XF]
    public void IsNotValidIfIdIsEmpty()
    {
       CommandValidator.ValidationFailures(new ACommand {AnId = Guid.Empty})
