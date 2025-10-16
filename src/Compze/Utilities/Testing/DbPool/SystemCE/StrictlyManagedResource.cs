@@ -67,7 +67,11 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
 
    bool _disposed;
 
-   public virtual void Dispose() => _disposed = true;
+   public virtual void Dispose()
+   {
+      GC.SuppressFinalize(this);
+      _disposed = true;
+   }
 
    ~StrictlyManagedResource()
    {

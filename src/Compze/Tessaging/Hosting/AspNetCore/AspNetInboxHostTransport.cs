@@ -52,11 +52,7 @@ class AspNetInboxTransport : IInboxTransport
       _webApplication = null;
    }
 
-   public async ValueTask DisposeAsync()
-   {
-      await StopAsync().caf();
-      GC.SuppressFinalize(this);
-   }
+   public async ValueTask DisposeAsync() => await StopAsync().caf();
 
    async Task<WebApplication> StartServerAsync()
    {

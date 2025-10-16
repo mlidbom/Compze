@@ -88,9 +88,5 @@ public class EndpointHost : IEndpointHost
       }
    }
 
-   public async ValueTask DisposeAsync()
-   {
-      await DisposeAsync(true).WithAggregateExceptions().caf();
-      GC.SuppressFinalize(this);
-   }
+   public async ValueTask DisposeAsync() => await DisposeAsync(true).WithAggregateExceptions().caf();
 }
