@@ -22,7 +22,6 @@
 		<InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
 		<InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
 		<InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
-		<InternalsVisibleTo Include="Compze.Tests.Infrastructure.NUnit" />
 		<InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit" />
 		<InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.Performance.Internals.XUnit"/>

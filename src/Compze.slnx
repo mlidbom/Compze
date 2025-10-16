@@ -156,11 +156,9 @@
   </Folder>
   <Folder Name="/_Tests/Common/">
     <Project Path="Tests/Common/Compze.Tests.Common.csproj" />
-    <Project Path="Tests/Common/NUnit/Compze.Tests.Common.NUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Infrastructure/">
     <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj" />
-    <Project Path="Tests/Infrastructure/NUnit/Compze.Tests.Infrastructure.NUnit.csproj" />
     <Project Path="Tests/Infrastructure/XUnit/Compze.Tests.Infrastructure.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Integration/">

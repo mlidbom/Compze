@@ -2,15 +2,15 @@ using System.Threading.Tasks;
 using AccountManagement.API;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace AccountManagement;
 
-public class SetupTest(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class SetupTest : UniversalTestBase
 {
-   [Test] public async Task TestSetup()
+   [PCT] public async Task TestSetup()
    {
       var host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);

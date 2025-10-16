@@ -7,18 +7,11 @@ namespace Compze.Tessaging.Hosting.Testing;
 public static partial class TestEnv
 {
    internal static Func<PluggableComponents?>? XunitDiscoverer = null;
-   internal static Func<PluggableComponents?>? NunitDiscoverer = null;
 
    static PluggableComponents GetComponents()
    {
-      if(XunitDiscoverer == null && NunitDiscoverer == null)
-         throw new Exception("No test framework registered a discoverer");
-
       if(XunitDiscoverer?.Invoke() is {} xunitComponents)
          return xunitComponents;
-
-      if(NunitDiscoverer?.Invoke() is {} nunitComponents)
-         return nunitComponents;
 
       throw new Exception($"No components provider found any components");
    }

@@ -13,13 +13,12 @@
    </PropertyGroup>
 
    <ItemGroup>
+      <ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
       <ProjectReference Include="..\Compze.Utilities.Threading.csproj"/>
-      <ProjectReference Include="..\..\SystemExtensions\Testing\Compze.Utilities.SystemExtensions.Testing.csproj"/>
    </ItemGroup>
 
    <ItemGroup>
       <InternalsVisibleTo Include="Compze.Tests.Infrastructure"/>
-      <InternalsVisibleTo Include="Compze.Tests.Infrastructure.NUnit"/>
       <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit"/>
       <InternalsVisibleTo Include="Compze.Tests.Integration"/>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>

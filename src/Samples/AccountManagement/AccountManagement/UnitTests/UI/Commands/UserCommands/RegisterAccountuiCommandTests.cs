@@ -1,19 +1,20 @@
 using System;
 using System.Linq;
 using AccountManagement.API;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+
+
 
 namespace AccountManagement.Tests.Unit.UI.Commands.UserCommands;
 
-[TestFixture]
-public class RegisterAccountUICommandTests : NUnitTestBase
-{
-   AccountResource.Command.Register? _registerAccountUiCommand;
 
-   [SetUp]
-   public void CreateValidCommand()
+public class RegisterAccountUICommandTests : UniversalTestBase
+{
+   readonly AccountResource.Command.Register? _registerAccountUiCommand;
+
+   public RegisterAccountUICommandTests()
    {
       _registerAccountUiCommand = AccountResource.Command.Register.Create();
       _registerAccountUiCommand.Email = "valid.email@google.com";
@@ -22,35 +23,35 @@ public class RegisterAccountUICommandTests : NUnitTestBase
       CommandValidator.ValidationFailures(_registerAccountUiCommand).Should().BeEmpty();
    }
 
-   [Test]
+   [XF]
    public void IsInvalidifAccountIdIsEmpty()
    {
       _registerAccountUiCommand!.AccountId = Guid.Empty;
       CommandValidator.ValidationFailures(_registerAccountUiCommand).Should().NotBeEmpty();
    }
 
-   [Test]
+   [XF]
    public void IsInvalidIfEmailIsNull()
    {
       _registerAccountUiCommand!.Email = null!;
       CommandValidator.ValidationFailures(_registerAccountUiCommand).Should().NotBeEmpty();
    }
 
-   [Test]
+   [XF]
    public void IsInvalidIfEmailIsIncorrectFormat()
    {
       _registerAccountUiCommand!.Email = "invalid";
       CommandValidator.ValidationFailures(_registerAccountUiCommand).Should().NotBeEmpty();
    }
 
-   [Test]
+   [XF]
    public void IsInvalidIfPasswordIsNull()
    {
       _registerAccountUiCommand!.Password = null!;
       CommandValidator.ValidationFailures(_registerAccountUiCommand).Should().NotBeEmpty();
    }
 
-   [Test]
+   [XF]
    public void IsInvalidIfPasswordDoesNotMatchPolicy()
    {
       foreach(var invalidPassword in TestData.Passwords.Invalid.All)
@@ -60,7 +61,7 @@ public class RegisterAccountUICommandTests : NUnitTestBase
       }
    }
 
-   [Test]
+   [XF]
    public void WhenNotMatchingThePolicyTheFailureTellsHow()
    {
       _registerAccountUiCommand!.Password = TestData.Passwords.Invalid.ShorterThanFourCharacters;
@@ -79,7 +80,7 @@ public class RegisterAccountUICommandTests : NUnitTestBase
       ValidateAndGetFirstMessage().Should().Be(RegisterAccountCommandResources.PasswordMissing);
    }
 
-   [Test]
+   [XF]
    public void FailsIfUnHandledPolicyFailureIsDetected()
    {
       _registerAccountUiCommand!.Password = null!; //Null is normally caught by the Require attribute.

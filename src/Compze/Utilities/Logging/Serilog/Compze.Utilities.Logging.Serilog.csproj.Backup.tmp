@@ -21,7 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
-    <InternalsVisibleTo Include="Compze.Tests.Infrastructure.NUnit" />
     <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit" />
   </ItemGroup>
 </Project>

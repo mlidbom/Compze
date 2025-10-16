@@ -13,17 +13,16 @@
    <ItemGroup>
       <ProjectReference Include="..\Server\AccountManagement.Server.csproj" />
       <ProjectReference Include="..\UnitTests\AccountManagement.Tests.Unit.csproj" />
-      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
       <ProjectReference Include="..\..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.1" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
-      <PackageReference Include="NUnit" Version="4.4.0" />
-      <PackageReference Include="NUnit3TestAdapter" Version="5.2.0">
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="xunit" Version="2.9.3" />
    </ItemGroup>
 </Project>

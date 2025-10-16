@@ -58,7 +58,6 @@
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql"/>
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql"/>
       <InternalsVisibleTo Include="Compze.Tests.Infrastructure"/>
-      <InternalsVisibleTo Include="Compze.Tests.Infrastructure.NUnit"/>
       <InternalsVisibleTo Include="Compze.Tests.Infrastructure.XUnit"/>
       <InternalsVisibleTo Include="Compze.Tests.Integration"/>
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
