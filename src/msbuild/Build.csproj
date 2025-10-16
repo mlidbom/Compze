@@ -10,8 +10,8 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <None Include="**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="**/*.autoinclude.cs" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*.autoinclude.cs" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>

@@ -186,6 +186,10 @@
   <Folder Name="/_Websites/">
     <Project Path="Websites/Website/Website.csproj" />
   </Folder>
-  <Project Path="Build.csproj" />
-  <Project Path="Scripts.csproj" />
+  <Project Path="../DevScripts/Scripts.csproj">
+    <BuildType Solution="docs|*" Project="Release" />
+  </Project>
+  <Project Path="msbuild/Build.csproj">
+    <BuildType Solution="docs|*" Project="Release" />
+  </Project>
 </Solution>
