@@ -8,7 +8,7 @@ using Compze.Utilities.Testing.DbPool.SystemCE;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Compze.Tests.Performance.Internals.StrictlyManagedResource;
+namespace Compze.Tests.Performance.Internals.XUnit.StrictlyManagedResource;
 
 [Performance]
 public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
