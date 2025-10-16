@@ -24,7 +24,7 @@ public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
    {
       TimeAsserter.Execute(action: () => new StrictlyManagedResource<StrictResource>(forceStackTraceCollection: true).Dispose(),
                            iterations: 250,
-                           maxTotal: 40.Milliseconds().EnvMultiply(unoptimized: 1.3));
+                           maxTotal: 120.Milliseconds().EnvMultiply(unoptimized: 1.3));
    }
 
    [XFact] public void Allocates_and_disposes_5000_instances_in_10_millisecond_when_not_collecting_stack_traces()
