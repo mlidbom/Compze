@@ -25,7 +25,7 @@ using Xunit;
 namespace AccountManagement;
 
 [Performance]
-class PerformanceTest : UniversalTestBase, IAsyncLifetime
+public class PerformanceTest : UniversalTestBase, IAsyncLifetime
 {
    ITestingEndpointHost? _host;
    IEndpoint? _clientEndpoint;
@@ -41,8 +41,6 @@ class PerformanceTest : UniversalTestBase, IAsyncLifetime
       //Warmup
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
-
-   public async Task DisposeAsync() => await Task.CompletedTask;
 
    [PCT] public void SingleThreaded_creates_XX_accounts_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.Execute(
@@ -105,5 +103,5 @@ class PerformanceTest : UniversalTestBase, IAsyncLifetime
       return created;
    }
 
-   [TearDown] public async Task Teardown() => await _host!.DisposeAsync().caf();
+   public async Task DisposeAsync() => await _host!.DisposeAsync().caf();
 }

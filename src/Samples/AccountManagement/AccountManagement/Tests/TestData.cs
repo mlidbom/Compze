@@ -45,34 +45,18 @@ static class TestData
 
       internal static string CreateUnusedEmail() => $"test.test@test{Interlocked.Increment(ref _registeredAccounts)}.se";
 
-      internal static IEnumerable<string?> InvalidEmails => InvalidEmailsTestData.Select(it => it.Data);
-
-      internal static IReadOnlyList<StringTestData> InvalidEmailsTestData =>
-         new List<StringTestData>
+      internal static IEnumerable<string?> InvalidEmails =>
+         new List<string?>
          {
-            new(null, "Is null null"),
-            new(string.Empty, "Is empty"),
-            new("test.com", "Missing @ character"),
-            new("test@test.com ", "Missing domain"),
-            new("te st@test.com", "Contains space"),
-            new("test@test", "Missing domain"),
-            new("test@test..com", "Contains \"..\""),
-            new("test@.test.com", "Contains \"@.\""),
-            new("test.@test.com", "Contains \".@\"")
+            null,
+            string.Empty,
+            "test.com",
+            "test@test.com ",
+            "te st@test.com",
+            "test@test",
+            "test@test..com",
+            "test@.test.com",
+            "test.@test.com"
          };
-
-
-      public class StringTestData(string? data, string description) : TestData<string>(data, description);
-
-      public class TestData<TData> : TestCaseData
-         where TData : class
-      {
-         public TData? Data { get; }
-         public TestData(TData? data, string description) : base(data)
-         {
-            Data = data;
-            SetName($"{description} ==  \"{data?.ToString() ?? "NULL"}\"");
-         }
-      }
    }
 }

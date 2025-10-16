@@ -2,6 +2,7 @@ using AccountManagement.Domain;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
+using Xunit;
 using static FluentAssertions.FluentActions;
 
 
@@ -11,10 +12,10 @@ public class When_creating_a_new_email : UniversalTestBase
 {
    public class An_InvalidEmailException_containing_the_email_is_thrown_if_email : UniversalTestBase
    {
-      [XF, TestCaseSource(typeof(TestData.Emails), nameof(TestData.Emails.InvalidEmailsTestData))]
-      public void _(string invalidEmail) //The _ name is a hack that colludes with the test data source to manage to get the ReSharper, VS, and NCrunch test runners to all show a descriptive name based on the test source data for each case
+      [Theory, MemberData(nameof(TestData.Emails.InvalidEmailsTestData), MemberType = typeof(TestData.Emails))]
+      public void _(string? invalidEmail, string _)
       {
-         var invalidEmailException = Invoking(() => Email.Parse(invalidEmail))
+         var invalidEmailException = Invoking(() => Email.Parse(invalidEmail!))
                                     .Should().Throw<InvalidEmailException>().Which;
 
          if(!string.IsNullOrEmpty(invalidEmail))

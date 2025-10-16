@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using FluentAssertions;
@@ -9,8 +10,9 @@ public class _031_After_a_user_changes_their_password : UserStoryTest
 {
    ChangePasswordScenario? _changePasswordScenario;
 
-   public _031_After_a_user_changes_their_password()
+   public override async Task InitializeAsync()
    {
+      await base.InitializeAsync();
       _changePasswordScenario = Scenario.ChangePassword();
       _changePasswordScenario.Execute();
    }

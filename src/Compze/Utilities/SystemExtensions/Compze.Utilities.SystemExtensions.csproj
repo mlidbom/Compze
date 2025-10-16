@@ -81,8 +81,4 @@
       <InternalsVisibleTo Include="Compze.Utilities.SystemExtensions.Testing"/>
       <InternalsVisibleTo Include="Compze.Tests.CodePolicies"/>
    </ItemGroup>
-
-   <ItemGroup>
-     <Folder Include="Testing\TransactionsCE\" />
-   </ItemGroup>
 </Project>
