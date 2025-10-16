@@ -30,13 +30,12 @@ public abstract partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBas
    protected IReadOnlyList<Database> _transientCache = new List<Database>();
 
    static ILogger _log = CompzeLogger.For<DbPoolBase>();
-   bool _disposed;
 
    public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => _log = _log.WithLogLevel(logLevel));
 
    public string ConnectionStringFor(string reservationName) => _guard.Update(() =>
    {
-      Assert.State.IsNotDisposed(_disposed, this);
+      Assert.State.IsNotDisposed(Disposed, this);
 
       var reservedDatabase = _transientCache.SingleOrDefault(db => db.ReservationName == reservationName);
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
@@ -85,14 +84,13 @@ public abstract partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBas
 
    protected abstract string ConnectionStringFor(Database db);
 
-   protected override void Dispose(bool disposing)
+   public override void Dispose()
    {
-      if(_disposed) return;
-      _disposed = true;
+      if(Disposed) return;
+      base.Dispose();
 
       MachineWideState.Update(machineWide => machineWide.ReleaseReservationsFor(_poolId));
       MachineWideState.Dispose();
-      base.Dispose(disposing);
    }
 
    protected abstract void EnsureDatabaseExistsAndIsEmpty(Database db);

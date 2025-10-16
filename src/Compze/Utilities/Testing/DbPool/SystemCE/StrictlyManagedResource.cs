@@ -67,11 +67,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
 
    bool _disposed;
 
-   public void Dispose()
-   {
-      GC.SuppressFinalize(this);
-      _disposed = true;
-   }
+   public virtual void Dispose() => _disposed = true;
 
    ~StrictlyManagedResource()
    {
@@ -130,22 +126,13 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
 public abstract class StrictlyManagedResourceBase<TInheritor>(bool forceStackTraceAllocation = false, bool needsFileInfo = false) : IStrictlyManagedResource
    where TInheritor : StrictlyManagedResourceBase<TInheritor>
 {
-   bool _disposed;
+   protected bool Disposed;
    readonly StrictlyManagedResource<TInheritor> _strictlyManagedResource = new(forceStackTraceAllocation, needsFileInfo);
 
-   public void Dispose()
+   public virtual void Dispose()
    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-   }
-
-   protected virtual void Dispose(bool disposing)
-   {
-      if(!_disposed)
-      {
-         _disposed = true;
-         _strictlyManagedResource.Dispose();
-      }
+      Disposed = true;
+      dispose.All(_strictlyManagedResource);
    }
 }
 

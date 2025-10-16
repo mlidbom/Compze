@@ -40,18 +40,15 @@ class SqliteMemoryDbPool : DbPoolBase
    protected override void EnsureDatabaseExistsAndIsEmpty(Database db) => ResetDatabase(db);
    protected override void ResetDatabase(Database db) => _keepInMemoryDatabaseAliveConnections.Update(cons => cons[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db));
 
-   protected override void Dispose(bool disposing)
+   public override void Dispose()
    {
-      if(disposing)
+      if(Disposed) return;
+      base.Dispose();
+      _keepInMemoryDatabaseAliveConnections.Update(cons =>
       {
-         _keepInMemoryDatabaseAliveConnections.Update(cons =>
-         {
-            cons.Values.ForEach(connection => connection.Dispose());
-            cons.Clear();
-         });
-      }
-
-      base.Dispose(disposing);
+         cons.Values.ForEach(connection => connection.Dispose());
+         cons.Clear();
+      });
    }
 
    SqliteConnection CreateOpenConnectionThusCreatingANewInMemoryDatabase(Database db)

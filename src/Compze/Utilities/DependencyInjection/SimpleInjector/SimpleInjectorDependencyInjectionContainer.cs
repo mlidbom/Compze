@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.TasksCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -74,22 +75,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
    public TComponent[] ResolveAll<TComponent>() where TComponent : class => _container.GetAllInstances<TComponent>().ToArray();
    IDisposable IServiceLocator.BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
 
-   [SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "CA1063 reports 'Dispose should be public and sealed' but incorrectly flags the protected Dispose(bool) override instead of recognizing this sealed class already has a sealed public Dispose() inherited from the base class.")]
-   protected override void Dispose(bool disposing)
-   {
-      if(disposing)
-      {
-         _container.Dispose();
-      }
-
-      base.Dispose(disposing);
-   }
-
-   protected override async ValueTask DisposeAsyncCore()
-   {
-      await _container.DisposeAsync().ConfigureAwait(false);
-      await base.DisposeAsyncCore().ConfigureAwait(false);
-   }
+   public override void Dispose() => _container.Dispose();
+   public override async ValueTask DisposeAsync() => await _container.DisposeAsync().caf();
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>() => _container.GetInstance<TComponent>();
 }

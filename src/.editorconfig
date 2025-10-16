@@ -3,6 +3,10 @@ root = true
 [*.cs]
 charset = utf-8
 #options: 
+
+dotnet_diagnostic.CA1063.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
+dotnet_diagnostic.CA1816.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
+
 csharp_style_namespace_declarations = file_scoped
 csharp_style_var_elsewhere = true
 csharp_style_var_when_type_is_apparent = true

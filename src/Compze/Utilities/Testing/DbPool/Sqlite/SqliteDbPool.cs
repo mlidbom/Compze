@@ -63,35 +63,33 @@ class SqliteDbPool : DbPoolBase
 
    string CreateDbPath(Database db) => Path.Combine(_baseDirectory, $"{db.Name}.db");
 
-   protected override void Dispose(bool disposing)
+   public override void Dispose()
    {
-      if(disposing)
-      {
-         // Sqlite sometimes takes a moment to release the files, so we retry a few times
-         const int MaxCleanupAttempts = 10;
-         for(int attempt = 1; attempt <= MaxCleanupAttempts; attempt++)
-         {
-            SqliteConnection.ClearAllPools();
-            foreach(var db in _transientCache)
-            {
-               var dbPath = CreateDbPath(db);
-               try
-               {
-                  DeleteDb(dbPath);
-               }
-               catch
-               {
-                  if(attempt == MaxCleanupAttempts)
-                  {
-                     throw new Exception($"Failed to clean up database {dbPath}");
-                  }
+      if(Disposed) return;
+      base.Dispose();
 
-                  Thread.Sleep(10);
+      // Sqlite sometimes takes a moment to release the files, so we retry a few times
+      const int maxCleanupAttempts = 10;
+      for(var attempt = 1; attempt <= maxCleanupAttempts; attempt++)
+      {
+         SqliteConnection.ClearAllPools();
+         foreach(var db in _transientCache)
+         {
+            var dbPath = CreateDbPath(db);
+            try
+            {
+               DeleteDb(dbPath);
+            }
+            catch
+            {
+               if(attempt == maxCleanupAttempts)
+               {
+                  throw new Exception($"Failed to clean up database {dbPath}");
                }
+
+               Thread.Sleep(10);
             }
          }
-
-         base.Dispose(disposing);
       }
    }
 }
