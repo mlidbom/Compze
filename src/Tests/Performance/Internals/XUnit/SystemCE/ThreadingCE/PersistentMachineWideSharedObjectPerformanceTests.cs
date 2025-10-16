@@ -25,15 +25,15 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
       base.Dispose();
    }
 
-   [XFact] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
+   [XF] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 40.Milliseconds());
 
-   [XFact] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds() =>
+   [XF] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [XFact] public void Update_runs_single_threaded_100_times_in_80_milliseconds() =>
+   [XF] public void Update_runs_single_threaded_100_times_in_80_milliseconds() =>
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 
-   [XFact] public void Update_runs_multi_threaded_100_times_in_80_milliseconds() =>
+   [XF] public void Update_runs_multi_threaded_100_times_in_80_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 }

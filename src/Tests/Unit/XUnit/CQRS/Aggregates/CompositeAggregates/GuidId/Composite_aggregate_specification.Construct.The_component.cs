@@ -18,15 +18,15 @@ public static partial class Composite_aggregate_specification
             _component = _aggregate.Component;
             _qmComponent = _queryModel.Component;
          }
-         [XFact] public void Component_Name_is_empty_string() => _component.Name.Should().Be("");
-         [XFact] public void QueryModel_Name_is_empty_string() => _qmComponent.Name.Should().Be("");
+         [XF] public void Component_Name_is_empty_string() => _component.Name.Should().Be("");
+         [XF] public void QueryModel_Name_is_empty_string() => _qmComponent.Name.Should().Be("");
 
          public class After_calling_rename_with_string_newName : The_component
          {
             public After_calling_rename_with_string_newName() => _component.Rename("newName");
 
-            [XFact] public void Component_Name_is_newName() => _component.Name.Should().Be("newName");
-            [XFact] public void QueryModel_Name_is_newName() => _qmComponent.Name.Should().Be("newName");
+            [XF] public void Component_Name_is_newName() => _component.Name.Should().Be("newName");
+            [XF] public void QueryModel_Name_is_newName() => _qmComponent.Name.Should().Be("newName");
          }
       }
    }

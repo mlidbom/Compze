@@ -9,7 +9,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Linq;
 
 public class SeqTests : XUnitTestBase
 {
-   [XFact]
+   [XF]
    public void CreateShouldEnumerateAllParamsInOrder()
    {
       var oneToTen = 1.Through(10);

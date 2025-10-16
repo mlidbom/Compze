@@ -9,6 +9,6 @@ namespace Compze.Tests.Unit.Internals.XUnit;
 
 public class ObjectExtensionsTest : XUnitTestBase
 {
-   [XFact]
+   [XF]
    public void RepeatShouldCreateSequenceOfLengthEqualToParameter() => 12.Repeat(10).Count().Should().Be(10);
 }

@@ -11,7 +11,7 @@ public static class AppDomainExtensionsTests
 {
    public static class AllCompzeTypes
    {
-      [XFact]
+      [XF]
       public static void ReturnsTypesFromEveryCompzeAssembly()
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
@@ -40,7 +40,7 @@ public static class AppDomainExtensionsTests
              """);
       }
 
-      [XFact]
+      [XF]
       public static void ReturnsBothPublicAndInternalTypes()
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
@@ -54,7 +54,7 @@ public static class AppDomainExtensionsTests
          internalTypes.Should().NotBeEmpty("there should be internal types in Compze assemblies");
       }
 
-      [XFact]
+      [XF]
       public static void ReturnsClasses()
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
@@ -65,7 +65,7 @@ public static class AppDomainExtensionsTests
          classes.Should().NotBeEmpty("there should be classes in Compze assemblies");
       }
 
-      [XFact]
+      [XF]
       public static void ReturnsStructs()
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
@@ -76,7 +76,7 @@ public static class AppDomainExtensionsTests
          structs.Should().NotBeEmpty("there should be structs in Compze assemblies");
       }
 
-      [XFact]
+      [XF]
       public static void ReturnsInterfaces()
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();

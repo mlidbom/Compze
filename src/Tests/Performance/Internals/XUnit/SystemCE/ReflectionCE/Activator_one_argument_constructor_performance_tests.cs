@@ -29,9 +29,9 @@ public class Activator_one_argument_constructor_performance_tests : UniversalTes
 #pragma warning restore IDE0060 // Remove unused parameter
    }
 
-   [XFact] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument).Should().NotBe(null);
+   [XF] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument).Should().NotBe(null);
 
-   [XFact] public void _005_Constructs_1_00_000_instances_within_60_percent_of_normal_constructor_call()
+   [XF] public void _005_Constructs_1_00_000_instances_within_60_percent_of_normal_constructor_call()
    {
       var constructions = 1_00_000.EnvDivide(instrumented:4.7);
 
@@ -45,7 +45,7 @@ public class Activator_one_argument_constructor_performance_tests : UniversalTes
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime);
    }
 
-   [XFact] public void _005_Constructs_1_00_000_instances_20_times_faster_than_via_activator_createinstance()
+   [XF] public void _005_Constructs_1_00_000_instances_20_times_faster_than_via_activator_createinstance()
    {
       var constructions = 1_00_000.EnvDivide(instrumented:20);
 

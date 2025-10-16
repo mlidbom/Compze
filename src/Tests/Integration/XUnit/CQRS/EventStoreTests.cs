@@ -39,7 +39,7 @@ public class EventStoreTests : XUnitTestBase
       base.Dispose(disposing);
    }
 
-   [PCTheory]
+   [PCT]
    public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregateId = Guid.NewGuid();
@@ -51,7 +51,7 @@ public class EventStoreTests : XUnitTestBase
             .HaveCount(10);
    });
 
-   [PCTheory]
+   [PCT]
    public void StreamEventsSinceReturnsWholeEventLogWhenFetchingALargeNumberOfEvents_EnsureBatchingDoesNotBreakThings() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       const int batchSize = 100;
@@ -74,7 +74,7 @@ public class EventStoreTests : XUnitTestBase
       }
    });
 
-   [PCTheory]
+   [PCT]
    public void DeleteEventsDeletesTheEventsForOnlyTheSpecifiedAggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
@@ -102,7 +102,7 @@ public class EventStoreTests : XUnitTestBase
                 .BeEmpty();
    });
 
-   [PCTheory]
+   [PCT]
    public void GetListOfAggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
@@ -123,7 +123,7 @@ public class EventStoreTests : XUnitTestBase
    });
 
    //Todo: This does not check that only aggregates of the correct type are returned since there are only events of type SomeEvent in the store..
-   [PCTheory]
+   [PCT]
    public void GetListOfAggregateIdsUsingEventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var aggregatesWithEvents = 1.Through(10)
@@ -142,10 +142,10 @@ public class EventStoreTests : XUnitTestBase
       allAggregateIds.Should().HaveCount(aggregatesWithEvents.Count);
    });
 
-   [PCTheory]
+   [PCT]
    public void Does_not_call_db_in_constructor() => _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.Resolve<IEventStoreUpdater>());
 
-   [PCTheory]
+   [PCT]
    public void ShouldNotCacheEventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var eventStore = _serviceLocator.EventStore();
@@ -163,7 +163,7 @@ public class EventStoreTests : XUnitTestBase
       eventStore.GetAggregateHistory(user.Id).Should().BeEmpty();
    });
 
-   [PCTheory]
+   [PCT]
    public void ShouldCacheEventsBetweenInstancesTransaction()
    {
       _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();

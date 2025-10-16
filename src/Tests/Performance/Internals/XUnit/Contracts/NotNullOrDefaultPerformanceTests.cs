@@ -11,7 +11,7 @@ namespace Compze.Tests.Performance.Internals.XUnit.Contracts;
 [Performance]
 public class NotNullOrDefaultPerformanceTests : UniversalTestBase
 {
-   [XFact] public void Should_run_10_000_tests_in_2_Millisecond()
+   [XF] public void Should_run_10_000_tests_in_2_Millisecond()
    {
       int? notNullOrDefault = 1;
 

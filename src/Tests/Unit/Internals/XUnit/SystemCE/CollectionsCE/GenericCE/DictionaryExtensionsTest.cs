@@ -18,14 +18,14 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    
    public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : XUnitTestBase
    {
-      [XFact]
+      [XF]
       public void ShouldReturnResulOfConstructor()
       {
          var empty = new Dictionary<string, int>();
          empty.GetOrAdd(Key, Constructor).Should().Be(InsertedValue);
       }
 
-      [XFact]
+      [XF]
       public void ShouldAddResultOfConstructor()
       {
          var empty = new Dictionary<string, int>();
@@ -38,7 +38,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    
    public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : XUnitTestBase
    {
-      [XFact]
+      [XF]
       public void ShouldReturnExistingValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
@@ -46,7 +46,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          empty.GetOrAdd(Key, Constructor).Should().Be(ExistingValue);
       }
 
-      [XFact]
+      [XF]
       public void ShouldLeaveValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
@@ -60,14 +60,14 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    
    public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: XUnitTestBase
    {
-      [XFact]
+      [XF]
       public void ShouldReturnResulOfConstructor()
       {
          var empty = new Dictionary<string, int>();
          empty.GetOrAddDefault(Key).Should().Be(ResultOfDefaultConstructor);
       }
 
-      [XFact]
+      [XF]
       public void ShouldAddResultOfConstructor()
       {
          var empty = new Dictionary<string, int>();
@@ -80,7 +80,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    
    public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: XUnitTestBase
    {
-      [XFact]
+      [XF]
       public void ShouldReturnExistingValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
@@ -88,7 +88,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          empty.GetOrAddDefault(Key).Should().Be(ExistingValue);
       }
 
-      [XFact]
+      [XF]
       public void ShouldLeaveValue()
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };

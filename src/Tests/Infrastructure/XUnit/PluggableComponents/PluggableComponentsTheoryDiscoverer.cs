@@ -20,7 +20,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       ITestMethod testMethod,
       IAttributeInfo factAttribute)
    {
-      var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<Wiring.SqlLayer[]>(nameof(PCTheoryAttribute.ExcludeSqlLayers));
+      var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<Wiring.SqlLayer[]>(nameof(PCTAttribute.ExcludeSqlLayers));
       var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
 
       var combinations = PluggableComponentsReader.Combinations

@@ -17,7 +17,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
    class Unrelated;
 
 
-   [XFact]
+   [XF]
    public void TwoInstancesOfTheSameTypeWithTheSameIdAreEqualAndHaveTheSameHashCode()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
@@ -28,7 +28,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [XFact]
+   [XF]
    public void TwoInstancesOfTheSameTypeWithIdsDifferingOnlyByCaseAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("THEID");
@@ -39,7 +39,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [XFact]
+   [XF]
    public void TwoInstancesOfTheSameTypeWithIdsDifferingOnlyInTrailingSpacesAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theid  ");
@@ -50,7 +50,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [XFact]
+   [XF]
    public void TwoInstancesOfTheSameTypeWithDifferentIdsAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
@@ -60,7 +60,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       rhs.Should().NotBe(lhs);
    }
 
-   [XFact]
+   [XF]
    public void TwoInstancesWithInheritingTypesAndTheSameIdAreEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
@@ -71,7 +71,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
    }
 
-   [XFact]
+   [XF]
    public void TwoInstancesWithInheritingTypesAndDifferingIdsAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
@@ -81,7 +81,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
       rhs.Should().NotBe(lhs);
    }
 
-   [XFact]
+   [XF]
    public void TwoInstancesOfUnrelatedTypesAndSameIdAreNotEqual()
    {
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");

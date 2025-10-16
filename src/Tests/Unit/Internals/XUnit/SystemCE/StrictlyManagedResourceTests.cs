@@ -15,7 +15,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.SystemCE;
 public class StrictlyManagedResourceTests : XUnitTestBase
 {
    //Note: NonParallelizable removed in migration to XUnit. Should things turn flaky...
-   [XFact] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
+   [XF] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {
       UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
       {

@@ -11,7 +11,7 @@ namespace Compze.Tests.Performance.Internals.XUnit.Contracts;
 [Performance]
 public class ObjectNotDefaultPerformanceTests : UniversalTestBase
 {
-   [XFact] public void Should_run_10_000_tests_in_1_Millisecond()
+   [XF] public void Should_run_10_000_tests_in_1_Millisecond()
    {
       const int one = 1;
 

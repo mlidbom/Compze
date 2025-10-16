@@ -16,10 +16,10 @@ namespace Compze.Tests.Unit.XUnit.CQRS.Aggregates.CompositeAggregates.IntegerId;
 
 public class NestedEntitiesTests : XUnitTestBase
 {
-   [XFact]
+   [XF]
    public void ConstructorWorks() => new Root("root").Name.Should().Be("root");
 
-   [XFact]
+   [XF]
    public void Createing_nested_entities_works_and_events_dispatch_correctly()
    {
       var root = new Root("root");
@@ -60,7 +60,7 @@ public class NestedEntitiesTests : XUnitTestBase
       root.Invoking(_ => { var __ = root.Entities[entity1.Id]; }).Should().Throw<Exception>();
    }
 
-   [XFact]
+   [XF]
    public void ComponentPropertiesAreSetcorrectly() {
       var root = new Root("root");
 
@@ -71,7 +71,7 @@ public class NestedEntitiesTests : XUnitTestBase
       component.Name.Should().Be("newName");
    }
 
-   [XFact]
+   [XF]
    public void EntityNestedInComponentWorks()
    {
       var root = new Root("root").Component;
@@ -113,7 +113,7 @@ public class NestedEntitiesTests : XUnitTestBase
    }
 
 
-   [XFact]
+   [XF]
    public void EntityNestedInEntityWorks()
    {
       var root = new Root("root").AddEntity("RootEntityName");

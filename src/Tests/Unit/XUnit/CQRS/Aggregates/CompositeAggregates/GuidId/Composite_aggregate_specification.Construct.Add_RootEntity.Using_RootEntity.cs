@@ -15,8 +15,8 @@ public static partial class Composite_aggregate_specification
             {
                public After_calling_rename_with_string_newName() => _rootEntity.Rename("newName");
 
-               [XFact] public void Component_Name_is_newName() => _rootEntity.Name.Should().Be("newName");
-               [XFact] public void QueryModel_Name_is_newName() => _qmRootEntity.Name.Should().Be("newName");
+               [XF] public void Component_Name_is_newName() => _rootEntity.Name.Should().Be("newName");
+               [XF] public void QueryModel_Name_is_newName() => _qmRootEntity.Name.Should().Be("newName");
             }
          }
       }

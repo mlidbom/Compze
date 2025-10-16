@@ -18,9 +18,9 @@ public class Activator_default_constructor_Generic_argument_performance_tests : 
 {
    [UsedImplicitly] class Simple;
 
-   [XFact] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Should().NotBe(null);
+   [XF] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Should().NotBe(null);
 
-   [XFact] public void Constructs_1_000_000_instances_within_50_percent_of_default_constructor_time()
+   [XF] public void Constructs_1_000_000_instances_within_50_percent_of_default_constructor_time()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:4.7);
 
@@ -34,7 +34,7 @@ public class Activator_default_constructor_Generic_argument_performance_tests : 
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime);
    }
 
-   [XFact] public void Constructs_1_000_000_instances_50_percent_faster_than_via_new_constraint_constructor_time()
+   [XF] public void Constructs_1_000_000_instances_50_percent_faster_than_via_new_constraint_constructor_time()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:10);
 
@@ -48,7 +48,7 @@ public class Activator_default_constructor_Generic_argument_performance_tests : 
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime.EnvMultiply(instrumented: 4, unoptimized:1.3));
    }
 
-   [XFact] public void Constructs_1_000_000_instances_50_percent_times_faster_than_via_activator_CreateInstance()
+   [XF] public void Constructs_1_000_000_instances_50_percent_times_faster_than_via_activator_CreateInstance()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:10);
 

@@ -10,7 +10,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.Linq;
 
 public class LinqExtensionsTests : XUnitTestBase
 {
-   [XFact]
+   [XF]
    public void FlattenShouldIterateAllNestedCollectionInstances()
    {
       var nestedInts = new List<List<int>>
@@ -24,14 +24,14 @@ public class LinqExtensionsTests : XUnitTestBase
       flattened.Should().BeEquivalentTo(1.Through(7));
    }
 
-   [XFact]
+   [XF]
    public void ChoppingFollowedBySelectManyShouldEqualOriginalSequence()
    {
       var oneThroughAHundred = 1.Through(10003).ChopIntoSizesOf(10).SelectMany(me => me);
       oneThroughAHundred.Should().Equal(1.Through(10003));
    }
 
-   [XFact]
+   [XF]
    public void ChoppingListIntoListSizeChunksShouldReturnOnlyOneChunk()
    {
       var oneEntry = 1.Through(10).ChopIntoSizesOf(10);

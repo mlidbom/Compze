@@ -43,7 +43,7 @@ public class TaskRunnerExceptionHandlingTests : XUnitTestBase, IAsyncLifetime
 
    public async Task DisposeAsync() => await Task.CompletedTask;
 
-   [PCTheory]
+   [PCT]
    public async Task Should_throw_aggregate_exception_on_dispose_when_background_task_throws()
    {
       var gate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
@@ -59,7 +59,7 @@ public class TaskRunnerExceptionHandlingTests : XUnitTestBase, IAsyncLifetime
       flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
    }
 
-   [PCTheory]
+   [PCT]
    public async Task Should_not_throw_on_dispose_when_no_exceptions_occurred()
    {
       var gate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
@@ -72,7 +72,7 @@ public class TaskRunnerExceptionHandlingTests : XUnitTestBase, IAsyncLifetime
       await disposeAction.Should().NotThrowAsync();
    }
 
-   [PCTheory]
+   [PCT]
    public async Task Should_collect_multiple_exceptions_from_multiple_background_tasks()
    {
       var gate = ThreadGate.CreateOpenWithTimeout(20.Seconds());

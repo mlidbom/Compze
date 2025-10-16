@@ -19,7 +19,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
    static IEventStoreSerializer _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);
    
 
-   [XFact] public void Should_roundtrip_simple_event_1000_times_in_15_milliseconds()
+   [XF] public void Should_roundtrip_simple_event_1000_times_in_15_milliseconds()
    {
       var @event = new TestEvent(
          test1: "Test1",
@@ -42,7 +42,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
       );
    }
 
-   [XFact] public void Should_roundtrip_simple_event_within_50_percent_of_default_serializer_performance()
+   [XF] public void Should_roundtrip_simple_event_within_50_percent_of_default_serializer_performance()
    {
       const int iterations = 1000;
       const double allowedSlowdown = 1.5;

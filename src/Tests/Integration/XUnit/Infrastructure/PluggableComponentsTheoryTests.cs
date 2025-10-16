@@ -13,7 +13,7 @@ namespace Compze.Tests.Integration.XUnit.Infrastructure;
 /// </summary>
 public class PluggableComponentsTheoryTests : XUnitTestBase
 {
-   [PCTheory]
+   [PCT]
    public void Should_execute_with_context_object_injected()
    {
       // Access the parsed values directly from the context
@@ -53,7 +53,7 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
       testValue.Should().Be(expectedValue);
    }
 
-   [PCTheory]
+   [PCT]
    public void Can_use_ValueFor_directly_on_SqlLayer()
    {
       // Demonstrate using the extension method directly on the SqlLayer enum
@@ -82,7 +82,7 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
       timeout.Should().Be(expected);
    }
 
-   [XFact]
+   [XF]
    public void Regular_fact_test_should_run_only_once()
    {
       System.Console.WriteLine("✓ This regular Fact test runs exactly once");

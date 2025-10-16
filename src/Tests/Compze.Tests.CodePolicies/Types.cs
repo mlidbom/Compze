@@ -14,7 +14,7 @@ public static class Types
       {
          public static class Internal
          {
-            [XFact(Skip = "TODO")] public static void ShouldBeInternal()
+            [XF(Skip = "TODO")] public static void ShouldBeInternal()
             {
                CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 

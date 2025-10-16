@@ -16,12 +16,12 @@ namespace Compze.Tests.Unit.Internals.XUnit.Testing.Threading;
 
 public class Given_a_locked_ThreadGate : XUnitTestBase
 {
-   [XFact] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
+   [XF] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
       => Invoking(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough()).Should().Throw<AwaitingConditionTimeoutException>();
 
    public class After_starting_10_threads_that_all_call_PassThrough : XUnitTestBase
    {
-      [XFact] public void Within_500_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
+      [XF] public void Within_500_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
          using(ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()) {} //warmup
 
@@ -40,10 +40,10 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
             base.Dispose(disposing);
          }
 
-         [XFact] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(0);
-         [XFact] public void PassedThrough_is_0() => _fixture.Gate.Passed.Should().Be(0);
-         [XFact] public void QueueLength_is_10() => _fixture.Gate.Queued.Should().Be(10);
-         [XFact] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
+         [XF] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(0);
+         [XF] public void PassedThrough_is_0() => _fixture.Gate.Passed.Should().Be(0);
+         [XF] public void QueueLength_is_10() => _fixture.Gate.Queued.Should().Be(10);
+         [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
       }
    }
 
@@ -60,10 +60,10 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
          base.Dispose(disposing);
       }
 
-      [XFact] public void _10_milliseconds_later_one_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(1);
-      [XFact] public void PassedThrough_is_1() => _fixture.Gate.Passed.Should().Be(1);
-      [XFact] public void QueueLength_is_9() => _fixture.Gate.Queued.Should().Be(9);
-      [XFact] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
+      [XF] public void _10_milliseconds_later_one_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(1);
+      [XF] public void PassedThrough_is_1() => _fixture.Gate.Passed.Should().Be(1);
+      [XF] public void QueueLength_is_9() => _fixture.Gate.Queued.Should().Be(9);
+      [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
    }
 
    public class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : XUnitTestBase
@@ -79,10 +79,10 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
          base.Dispose(disposing);
       }
 
-      [XFact] public void _10_milliseconds_later_five_threads_have_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(5);
-      [XFact] public void PassedThrough_is_5() => _fixture.Gate.Passed.Should().Be(5);
-      [XFact] public void QueueLength_is_5() => _fixture.Gate.Queued.Should().Be(5);
-      [XFact] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
+      [XF] public void _10_milliseconds_later_five_threads_have_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(5);
+      [XF] public void PassedThrough_is_5() => _fixture.Gate.Passed.Should().Be(5);
+      [XF] public void QueueLength_is_5() => _fixture.Gate.Queued.Should().Be(5);
+      [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
    }
 
    public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y : XUnitTestBase
