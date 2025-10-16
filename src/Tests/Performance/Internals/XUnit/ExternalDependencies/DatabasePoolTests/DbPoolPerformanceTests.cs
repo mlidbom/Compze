@@ -6,25 +6,22 @@ using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Common.Testing.Sql;
-using Compze.Tests.Infrastructure.NUnit;
-using Compze.Tests.Integration.Internals.Testing.Sql;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Wiring;
-using NUnit.Framework;
 
-namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;
+namespace Compze.Tests.Performance.Internals.XUnit.ExternalDependencies.DatabasePoolTests;
 
-[TestFixture, TestFixtureSource(typeof(PluggableComponentsTestFixtureSource))]
-public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbPoolTestBase
+public class DbPoolPerformanceTests : DbPoolTestBase
 {
-   [OneTimeSetUp]public void WarmUpCache()
+   static DbPoolPerformanceTests()
    {
       using var pool = CreatePool();
       pool.ConnectionStringFor(Guid.NewGuid().ToString());
    }
 
-   [Test]
+   [PCT]
    public void Single_thread_can_reserve_and_release_5_identically_named_databases_in_milliseconds_msSql_150_mySql_150_pgSql_150_orcl_300_db2_150()
    {
       var dbName = Guid.NewGuid().ToString();
@@ -41,7 +38,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
          maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 150, mySql: 150, pgSql: 150, sqlite: 150).Milliseconds());
    }
 
-   [Test]
+   [PCT]
    public void Multiple_threads_can_reserve_and_release_5_identically_named_databases_in_milliseconds_db2_50_msSql_75_mySql_75_orcl_100_pgSql_25()
    {
       var maxTime = TestEnv.SqlLayer.ValueFor(msSql: 75, mySql: 75, pgSql: 25, sqlite: 75).Milliseconds().EnvMultiply(instrumented:1.2);
@@ -58,7 +55,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
          maxTotal: maxTime);
    }
 
-   [Test]
+   [PCT]
    public void Multiple_threads_can_reserve_and_release_5_differently_named_databases_in_milliseconds_msSql_125_mySql_175_pgSql_400_orcl_400_db2_100()
    {
       var maxTotal = TestEnv.SqlLayer.ValueFor(msSql: 70, mySql: 175, pgSql: 400, sqlite: 125).Milliseconds().EnvMultiply(instrumented:1.6);
@@ -73,7 +70,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
          maxTotal: maxTotal);
    }
 
-   [Test]
+   [PCT]
    public void Single_thread_can_reserve_and_release_5_differently_named_databases_in_milliseconds_msSql_100_mySql_100_pgSql_500_orcl_300_db2_100()
    {
       TimeAsserter.Execute(
@@ -87,7 +84,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
          maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 100, mySql: 170, pgSql: 500, sqlite: 100).Milliseconds());
    }
 
-   [Test]
+   [PCT]
    public void Repeated_fetching_of_same_connection_runs_20_times_in_1_milliseconds()
    {
       var dbName = Guid.NewGuid().ToString();
@@ -101,7 +98,7 @@ public class DbPoolPerformanceTests(string pluggableComponentsCombination) : DbP
          maxTotal: 1.Milliseconds());
    }
 
-   [Test]
+   [PCT]
    public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_50_MsSql_180_MySql_24_Oracle_140_PgSql_300()
    {
       var allowedTime = 10.Milliseconds().EnvMultiply(instrumented:2);
