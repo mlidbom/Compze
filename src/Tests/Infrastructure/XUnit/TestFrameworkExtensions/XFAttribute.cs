@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using JetBrains.Annotations;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -15,32 +12,24 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 /// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
 [XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
-public sealed class XFAttribute : FactAttribute
+public class XFactAttribute : FactAttribute
 {
    const string XFactDiscovererFullTypeName = "Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
    const string XFactDiscovererAssembly = "Compze.Tests.Infrastructure.XUnit";
 
-   static XFAttribute()
+   static XFactAttribute()
    {
       Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable());
       Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name);
    }
 }
 
+/// <summary>
+/// Short alias for <see cref="XFactAttribute"/>
+/// eXclusive Fact attribute.
+/// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
+/// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
+/// </summary>
+public sealed class XFAttribute : XFactAttribute {}
+
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
-[UsedImplicitly] class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
-{
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
-   readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
-
-   public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
-   {
-      var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
-      var currentType = testMethod.TestClass.Class.ToRuntimeType();
-
-      if(declaringType != currentType) // Skip tests declared in base classes
-         return [];
-
-      return [new XFactTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
-   }
-}
