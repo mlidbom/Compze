@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
@@ -15,7 +15,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using Xunit;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
+namespace Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification;
 
 public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBase, IAsyncLifetime
 {

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
@@ -17,7 +17,7 @@ using Xunit;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
+namespace Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification;
 
 public class Navigator_specification : UniversalTestBase, IAsyncLifetime
 {
