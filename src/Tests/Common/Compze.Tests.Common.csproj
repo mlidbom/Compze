@@ -25,6 +25,7 @@
       <InternalsVisibleTo Include="Compze.Tests.Integration.XUnit" />
    </ItemGroup>
    <ItemGroup>
+      <PackageReference Include="xunit" Version="2.9.3" />
       <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
    </ItemGroup>
 </Project>
