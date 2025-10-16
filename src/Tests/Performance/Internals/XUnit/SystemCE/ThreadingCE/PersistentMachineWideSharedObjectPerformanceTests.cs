@@ -3,31 +3,35 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
-[TestFixture] public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
+ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
-   MachineWideSharedObject<SharedObject> _shared;
-   [SetUp] public void SetupTask()
+   public PersistentMachineWideSharedObjectPerformanceTests()
    {
       var name = Guid.NewGuid().ToString();
       _shared = MachineWideSharedObject<SharedObject>.For(name, usePersistentFile: true);
    }
 
-   [TearDown] public void TearDownTask() => _shared.Dispose();
+   readonly MachineWideSharedObject<SharedObject> _shared;
 
-   [Test] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
+   public override void Dispose()
+   {
+      _shared.Dispose();
+      base.Dispose();
+   }
+
+   [XFact] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 40.Milliseconds());
 
-   [Test] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds() =>
+   [XFact] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [Test] public void Update_runs_single_threaded_100_times_in_80_milliseconds() =>
+   [XFact] public void Update_runs_single_threaded_100_times_in_80_milliseconds() =>
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 
-   [Test] public void Update_runs_multi_threaded_100_times_in_80_milliseconds() =>
+   [XFact] public void Update_runs_multi_threaded_100_times_in_80_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 }

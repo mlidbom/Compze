@@ -3,15 +3,14 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
-using NUnit.Framework;
 using Assert = Compze.Utilities.Contracts.Assert;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Performance.Internals.Contracts;
 
-[TestFixture] public class ObjectNotDefaultPerformanceTests : UniversalTestBase
+public class ObjectNotDefaultPerformanceTests : UniversalTestBase
 {
-   [Test] public void Should_run_10_000_tests_in_1_Millisecond()
+   [XFact] public void Should_run_10_000_tests_in_1_Millisecond()
    {
       const int one = 1;
 

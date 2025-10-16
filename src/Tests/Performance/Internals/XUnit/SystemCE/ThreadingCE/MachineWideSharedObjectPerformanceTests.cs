@@ -1,17 +1,16 @@
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Tests.Infrastructure.NUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using FluentAssertions;
-using NUnit.Framework;
 using System;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
-[TestFixture] public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
+ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
-   [Test] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
+   [XFact] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
       using var shared = MachineWideSharedObject<SharedObject>.For(name);
@@ -20,7 +19,7 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
       TimeAsserter.Execute(() => shared2.GetCopy(), iterations: 100, maxTotal: 40.Milliseconds());
    }
 
-   [Test] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds()
+   [XFact] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
       using var shared = MachineWideSharedObject<SharedObject>.For(name);
@@ -29,7 +28,7 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
       TimeAsserter.ExecuteThreaded(() => shared2.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
    }
 
-   [Test] public void Update_runs_single_threaded_100_times_in_100_milliseconds()
+   [XFact] public void Update_runs_single_threaded_100_times_in_100_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;
@@ -50,7 +49,7 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
          maxTotal: 100.Milliseconds());
    }
 
-   [Test] public void Update_runs_multi_threaded_100_times_in_80_milliseconds()
+   [XFact] public void Update_runs_multi_threaded_100_times_in_80_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;

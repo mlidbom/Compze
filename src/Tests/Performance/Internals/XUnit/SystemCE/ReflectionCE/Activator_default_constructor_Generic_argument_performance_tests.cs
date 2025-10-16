@@ -6,20 +6,19 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
 using JetBrains.Annotations;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 #pragma warning disable CA1806 // Do not ignore method results
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
-[TestFixture]public class Activator_default_constructor_Generic_argument_performance_tests : UniversalTestBase
+public class Activator_default_constructor_Generic_argument_performance_tests : UniversalTestBase
 {
    [UsedImplicitly] class Simple;
 
-   [Test] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Should().NotBe(null);
+   [XFact] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Should().NotBe(null);
 
-   [Test] public void Constructs_1_000_000_instances_within_50_percent_of_default_constructor_time()
+   [XFact] public void Constructs_1_000_000_instances_within_50_percent_of_default_constructor_time()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:4.7);
 
@@ -33,7 +32,7 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime);
    }
 
-   [Test] public void Constructs_1_000_000_instances_50_percent_faster_than_via_new_constraint_constructor_time()
+   [XFact] public void Constructs_1_000_000_instances_50_percent_faster_than_via_new_constraint_constructor_time()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:10);
 
@@ -47,7 +46,7 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime.EnvMultiply(instrumented: 4, unoptimized:1.3));
    }
 
-   [Test] public void Constructs_1_000_000_instances_50_percent_times_faster_than_via_activator_CreateInstance()
+   [XFact] public void Constructs_1_000_000_instances_50_percent_times_faster_than_via_activator_CreateInstance()
    {
       var constructions = 1_000_000.EnvDivide(instrumented:10);
 

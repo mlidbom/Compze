@@ -55,7 +55,12 @@ static partial class TestEnv
                                               },
                                               iterations: 500);
 
-         return time.Total > 1.Milliseconds();
+         // ReSharper disable once ConvertIfStatementToReturnStatement. We need the line coverage information
+         // ReSharper disable once ConvertIfStatementToReturnStatement
+         if (time.Total > 1.Milliseconds())
+            return true;
+         else
+            return false;
       }
 
       static readonly double MachineSlowness = DetectEnvironmentPerformanceAdjustment();

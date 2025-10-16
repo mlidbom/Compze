@@ -7,15 +7,14 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
 using JetBrains.Annotations;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1806  // Do not ignore method results
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
-[TestFixture]public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
+public class Activator_one_argument_constructor_performance_tests : UniversalTestBase
 {
    const string Argument = "AnArgument";
 
@@ -28,9 +27,9 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 #pragma warning restore IDE0060 // Remove unused parameter
    }
 
-   [Test] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument).Should().NotBe(null);
+   [XFact] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument).Should().NotBe(null);
 
-   [Test] public void _005_Constructs_1_00_000_instances_within_60_percent_of_normal_constructor_call()
+   [XFact] public void _005_Constructs_1_00_000_instances_within_60_percent_of_normal_constructor_call()
    {
       var constructions = 1_00_000.EnvDivide(instrumented:4.7);
 
@@ -44,7 +43,7 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
       TimeAsserter.Execute(DynamicModuleConstruct, constructions, maxTotal: maxTime);
    }
 
-   [Test] public void _005_Constructs_1_00_000_instances_20_times_faster_than_via_activator_createinstance()
+   [XFact] public void _005_Constructs_1_00_000_instances_20_times_faster_than_via_activator_createinstance()
    {
       var constructions = 1_00_000.EnvDivide(instrumented:20);
 

@@ -15,5 +15,5 @@ public abstract class UniversalTestBase : IDisposable
    protected UniversalTestBase() => OneTimeAssertion.RunIfNotExecutedBefore();
 
    public virtual void SurfaceAnyUncatchableExceptions() => UncatchableExceptionsGatherer.ConsumeAndThrowAnyExceptionsGathered();
-   public void Dispose() => SurfaceAnyUncatchableExceptions();
+   public virtual void Dispose() => SurfaceAnyUncatchableExceptions();
 }
