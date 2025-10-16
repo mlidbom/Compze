@@ -20,6 +20,7 @@ public partial class MonitorCE
 {
    readonly object _timeoutLock = new();
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
+   internal static Action? OnTimeOut;
 
    void Enter() => Enter(_timeout);
 
@@ -58,6 +59,7 @@ public partial class MonitorCE
 
    void RegisterAndThrowTimeoutException()
    {
+      OnTimeOut?.Invoke();
       lock(_timeoutLock)
       {
          var exception = new EnterLockTimeoutException(_timeout, _stackTraceFetchTimeout);
