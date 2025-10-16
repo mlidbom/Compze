@@ -10,10 +10,10 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Common.Sql.DocumentDb;
 
-public abstract class DocumentDbTestsBaseBase : UniversalTestBase
+public abstract class DocumentDbTestsBase : UniversalTestBase
 {
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
-   protected IServiceLocator ServiceLocator { get; private set; }
+   protected IServiceLocator ServiceLocator { get; set; }
    static IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
    
    public virtual void Setup() => ServiceLocator = CreateServiceLocator();

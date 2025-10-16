@@ -1,30 +1,36 @@
-using Compze.Abstractions;
-using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Tessaging.Hosting.Testing.DependencyInjection;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
-using FluentAssertions;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Tests.Common.NUnit.Sql.DocumentDb;
-using Compze.Tests.Infrastructure;
+using Compze.Abstractions;
+using Compze.Sql.DocumentDb.Abstractions;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tests.Common.Sql.DocumentDb;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
+using FluentAssertions;
+using Xunit;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Compze.Tests.Integration.Sql.DocumentDb;
+namespace Compze.Tests.Integration.XUnit.Sql.DocumentDb;
 
-class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTestsBase(pluggableComponentsCombination)
+public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
 {
-    [Test]
+   public DocumentDbTests() => ServiceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
+
+   public async Task InitializeAsync() => await Task.CompletedTask;
+   public async Task DisposeAsync() => await ServiceLocator.DisposeAsync();
+
+   [PluggableComponentsTheory]
     public void CanSaveAndLoadDocument()
     {
         var user = new User
@@ -53,7 +59,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetAllWithIdsReturnsAsManyResultsAsPassedIds()
     {
         var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
@@ -68,7 +74,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
                                    .Equal(ids.Take(5)));
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetAllWithIdsThrowsNoSuchDocumentExceptionExceptionIfAnyIdIsMissing()
     {
         var ids = 1.Through(9)
@@ -89,7 +95,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
     }
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetAllWithIdsReturnsTheSameInstanceForAnyPreviouslyFetchedDocuments()
     {
         var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
@@ -111,7 +117,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
 
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void CanSaveAndLoadAggregateForUpdate()
     {
         var user = new User
@@ -140,7 +146,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void CallingSaveWithAnInterfaceAsTypeParameterDoesNotExplode()
     {
         IPersistentEntity user1 = new User { Email = "user1" };
@@ -169,7 +175,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void AddingAndRemovingObjectResultsInNoObjectBeingSaved()
     {
         var user = new User();
@@ -186,7 +192,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
                             .BeFalse());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void AddingRemovingAndAddingObjectInTransactionResultsInNoObjectBeingSaved()
     {
         var user = new User();
@@ -201,7 +207,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         UseInScope(reader => reader.TryGet(user.Id, out user).Should().BeTrue());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ObjectsWhoseKeysDifferOnlyByCaseAreConsideredTheSameObjectForCompatibilityWithMsSql()
     {
         var lowerCase = new Email("theemail");
@@ -209,12 +215,12 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
 
         UseInTransactionalScope((reader, updater) =>
         {
-            updater.Save(lowerCase.TheEmail, lowerCase);
-            Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Should().Throw<ArgumentException>();
+           updater.Save(lowerCase.TheEmail, lowerCase);
+           Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Should().Throw<ArgumentException>();
 
-            reader.Get<Email>(lowerCase.TheEmail)
-                .Should()
-                .Be(reader.Get<Email>(upperCase.TheEmail));
+           reader.Get<Email>(lowerCase.TheEmail)
+                 .Should()
+                 .Be(reader.Get<Email>(upperCase.TheEmail));
         });
 
         UseInTransactionalScope((reader, updater) =>
@@ -234,7 +240,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ObjectsWhoseKeysDifferOnlyByTrailingSpacesTrailingWhiteSpaceCaseAreConsideredTheSameObjectForCompatibilityWithMsSql()
     {
         var noWhitespace = new Email("theemail");
@@ -266,7 +272,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void TryingToFetchNonExistentItemDoesNotCauseSessionToTryAndAddItWithANullInstance()
     {
         var user = new User();
@@ -276,7 +282,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
                                    .Be(false));
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void RepeatedlyAddingAndRemovingObjectResultsInNoObjectBeingSaved()
     {
         var user = new User();
@@ -296,7 +302,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
                                    .BeFalse());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void LoadingRemovingAndAddingObjectInTransactionResultsInObjectBeingSaved()
     {
         var user = new User();
@@ -331,7 +337,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
     }
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ReturnsSameInstanceOnRepeatedLoads()
     {
         var user = new User();
@@ -346,7 +352,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ReturnsSameInstanceOnLoadAfterSave()
     {
         var user = new User();
@@ -362,7 +368,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void HandlesHashSets()
     {
         var user = new User();
@@ -377,7 +383,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void HandlesHashSetsInObjects()
     {
         var userInSet = new User
@@ -402,7 +408,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
     }
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ThrowsExceptionWhenAttemptingToDeleteNonExistingValue()
     {
         UseInTransactionalScope((_, updater) =>
@@ -415,7 +421,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void HandlesDeletesOfInstancesAlreadyLoaded()
     {
         var user = new User();
@@ -435,7 +441,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void HandlesDeletesOfInstancesNotYetLoaded()
     {
         var user = new User();
@@ -451,7 +457,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void HandlesAValueBeingAddedAndDeletedDuringTheSameSession()
     {
         var user = new User();
@@ -466,7 +472,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void TracksAndUpdatesLoadedAggregates()
     {
         var user = new User();
@@ -486,7 +492,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ThrowsWhenAttemptingToSaveExistingAggregate()
     {
         var user = new User();
@@ -496,7 +502,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         Invoking(() => UseInTransactionalScope((_, updater) => updater.Save(user.Id, user))).Should().Throw<ArgumentException>();
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void HandlesInstancesOfDifferentTypesWithTheSameId()
     {
         var user = new User
@@ -525,7 +531,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
     }
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void FetchesAllinstancesPerType()
     {
         UseInTransactionalScope((_, updater) =>
@@ -543,7 +549,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         }
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ThrowsIfUsedByMultipleThreads()
     {
         IDocumentDbSession? session = null;
@@ -570,7 +576,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
     }
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetHandlesSubTyping()
     {
         var user1 = new User();
@@ -589,7 +595,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetAllHandlesSubTyping()
     {
         var user1 = new User();
@@ -611,7 +617,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         }
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void ThrowsExceptionIfYouTryToSaveAnIHasPersistentIdentityWithNoId()
     {
         var user1 = new User(Guid.Empty);
@@ -620,7 +626,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
                                                        .Should().Throw<Exception>());
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetByIdsShouldReturnOnlyMatchingResultEvenWhenMoreResultsAreInTheCache()
     {
         var user1 = new User(Guid.Parse("00000000-0000-0000-0000-000000000001"));
@@ -639,7 +645,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
     }
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetAllIdsShouldOnlyReturnResultsWithTheGivenType()
     {
         var userid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -671,7 +677,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         });
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public void GetAllIdsShouldOnlyReturnResultsWithTheGivenTypeWhenCalledWithinTheInsertingTransaction()
     {
         var userid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -701,7 +707,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
     }
 
 
-    [Test]
+    [PluggableComponentsTheory]
     public void DeletingAllObjectsOfATypeLeavesNoSuchObjectsInTheDbButLeavesOtherObjectsInPlaceAndReturnsTheNumberOfDeletedObjects()
     {
         using (ServiceLocator.BeginScope())
@@ -746,7 +752,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
                                                                                        .Save(new User(userId)));
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public async Task Can_get_document_of_previously_unknown_class_added_by_onother_documentDb_instance()
     {
         var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -759,7 +765,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         }
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public async Task Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance()
     {
         var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -772,7 +778,7 @@ class DocumentDbTests(string pluggableComponentsCombination) : NUnitDocumentDbTe
         }
     }
 
-    [Test]
+    [PluggableComponentsTheory]
     public async Task Can_get_all_documents_of_previously_unknown_class_added_by_onother_documentDb_instance_byId()
     {
         var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
