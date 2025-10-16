@@ -9,21 +9,21 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
-using FluentAssertions;
-using NUnit.Framework;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using FluentAssertions;
 
 // ReSharper disable AccessToDisposedClosure
 // ReSharper disable AccessToModifiedClosure
 
-namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Integration.XUnit.CQRS.EventRefactoring.Migrations;
 
 //Todo: Write tests that verify that none of the sql layers lose precision in the persisted ReadOrder when persisting refactorings.
-public class EventMigrationTest(string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
+public class EventMigrationTest : EventMigrationTestBase
 {
-   [Test]
+   [PCT]
    public async Task Base_class_method_should_detect_incorrect_type_order()
    {
       await this.Invoking(_ => RunMigrationTest<Exception>(
@@ -33,7 +33,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                 .Should().ThrowAsync<Exception>();
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -42,7 +42,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E1>.With<E2>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2_at_end_of_stream()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -51,7 +51,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E1>.With<E2>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2_E3_at_end_of_stream()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -60,7 +60,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E1>.With<E2, E3>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2_E3()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -69,7 +69,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E1>.With<E2, E3>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2_E3_2()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -78,7 +78,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E1>.With<E2, E3>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2_then_irrelevant_migration()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -88,7 +88,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E1>.With<E5>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2_E3_then_an_unrelated_migration_v2()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -98,7 +98,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E1>.With<E5>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Replacing_E1_with_E2_E3_then_E2_with_E4()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -108,7 +108,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E2>.With<E4>()));   //Ec1, E4, E3, Ef
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E3_before_E1()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -117,7 +117,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E1>.Insert<E3>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E3_E4_before_E1()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -126,7 +126,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E1>.Insert<E3, E4>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E2_before_E1_then_E3_before_E2()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -136,7 +136,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E2>.Insert<E3>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E3_E4_before_E1_then_E5_before_E3()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -146,7 +146,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E3>.Insert<E5>()));   //Ec1, E5, E3, E4, E1;
    }
 
-   [Test]
+   [PCT]
    public async Task Given_Ec1_E1_Ef_Inserting_E3_E4_before_E1_then_E5_before_E4()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -156,7 +156,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E4>.Insert<E5>()));   //Ec1, E3, E5, E4, E1, Ef
    }
 
-   [Test]
+   [PCT]
    public async Task Given_Ec1_E1_Inserting_E2_before_E1_then_E3_before_E2()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -166,7 +166,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E2>.Insert<E3>())); //Ec1, E3, E2, E1
    }
 
-   [Test]
+   [PCT]
    public async Task Given_Ec1_E1_Inserting_E3_E2_before_E1_then_E4_before_E3_then_E5_before_E4()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -177,7 +177,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E4>.Insert<E5>()));   //Ec1, E5, E4, E3, E2, E1
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -188,7 +188,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Replace<E3>.With<E6>()));    //Ec1, E6, E5, E4, E1, Ef
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E3_E4_before_E1_then_E5_before_E4_then_replace_E4_with_E6_then_replace_Ef_with_E7_then_insert_E8_after_E7()
    {
       await RunMigrationTest(new MigrationScenario(EnumerableCE.OfTypes<Ec1, E1, Ef>(),
@@ -200,7 +200,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                                    After<E7>.Insert<E8>()));    //Ec1, E6, E5, E4, E1, E7, E8
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E3_E4_before_E1_then_E5_before_E3_2()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -210,7 +210,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E3>.Insert<E5>()));   //Ec1, E5, E3, E4, E1, Ef, Ef
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E3_E4_before_E1_then_E5_before_E4_2()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -220,7 +220,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 Before<E4>.Insert<E5>()));   //Ec1, E3, E5, E4, E1, Ef, Ef
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E2_after_E1()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -229,7 +229,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 After<E1>.Insert<E2>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E2_after_E1_at_end_of_stream()
    {
       await RunMigrationTest(new MigrationScenario(
@@ -238,7 +238,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                                 After<E1>.Insert<E2>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
    {
       await this.Invoking(_ =>
@@ -251,7 +251,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
                 .Should().ThrowAsync<NonIdempotentMigrationDetectedException>();
    }
 
-   [Test]
+   [PCT]
    public async Task PersistingMigrationsOfTheSameAggregateMultipleTimes()
    {
       await DeferredConsoleWriter.ExecuteAsync(async writer =>
@@ -329,7 +329,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
       });
    }
 
-   [Test]
+   [PCT]
    public async Task PersistingMigrationsOfTheSameAggregateMultipleTimesWithEventsAddedInTheMiddleAndAfter()
    {
       await DeferredConsoleWriter.ExecuteAsync(async writer =>
@@ -414,7 +414,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
       });
    }
 
-   [Test]
+   [PCT]
    public async Task UpdatingAnAggregateAfterPersistingMigrations()
    {
       await DeferredConsoleWriter.ExecuteAsync(async writer =>
@@ -468,7 +468,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
       });
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E2_Before_E1_Persisting_and_then_Inserting_E3_before_E1()
    {
       await DeferredConsoleWriter.ExecuteAsync(async writer =>
@@ -520,7 +520,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
       });
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E2_After_E1_Persisting_and_then_Inserting_E3_after_E1()
    {
       await DeferredConsoleWriter.ExecuteAsync(async writer =>
@@ -572,7 +572,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
       });
    }
 
-   [Test]
+   [PCT]
    public async Task Inserting_E2_Before_E1()
    {
       await RunMigrationTest(
@@ -582,7 +582,7 @@ public class EventMigrationTest(string pluggableComponentsCombination) : EventMi
             Before<E1>.Insert<E2>()));
    }
 
-   [Test]
+   [PCT]
    public async Task Persisting_migrations_and_then_updating_the_aggregate_from_another_processes_EventStore_results_in_both_processes_seeing_identical_histories()
    {
       await DeferredConsoleWriter.ExecuteAsync(async writer =>

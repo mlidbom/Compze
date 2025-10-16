@@ -10,25 +10,26 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
-using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Tests.Integration.XUnit.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
 using Compze.Wiring;
+using Xunit;
 
-namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Performance.Internals.XUnit.CQRS.EventRefactoring.Migrations;
 
 [LongRunning]
-public class EventMigrationPerformanceTest(string pluggableComponentsCombination) : EventMigrationTestBase(pluggableComponentsCombination)
+public class EventMigrationPerformanceTest : EventMigrationTestBase, IAsyncLifetime
 {
-   List<AggregateEvent> _history;
-   TestAggregate _aggregate;
-   IServiceLocator? _container;
+   readonly List<AggregateEvent> _history;
+   readonly TestAggregate _aggregate;
+   readonly IServiceLocator? _container;
    IReadOnlyList<IEventMigration> _currentMigrations;
-   [OneTimeSetUp] public void Given_a_1000_events_large_aggregate()
+   public EventMigrationPerformanceTest()
    {
       var historyTypes = EnumerableCE.OfTypes<Ec1>()
                                      .Concat(
@@ -47,7 +48,9 @@ public class EventMigrationPerformanceTest(string pluggableComponentsCombination
       _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<IEventStore>().SaveSingleAggregateEvents(_history));
    }
 
-   [OneTimeTearDown] public async Task TearDownTask()
+   public async Task InitializeAsync() => await Task.CompletedTask;
+
+   public async Task DisposeAsync()
    {
       if(_container != null)
          await _container.DisposeAsync();
@@ -87,7 +90,7 @@ public class EventMigrationPerformanceTest(string pluggableComponentsCombination
    }
 
    //Performance: Figure out why oracle under performs so dramatically in these tests and fix it. (Hmm. Adding FOR UPDATE to the DB2 query really really slowed DB2 down. Might Oracle be similar?)
-   [Test] public async Task With_four_migrations_mutation_that_all_actually_changes_things_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds_mSSql_25_5_pgSql_25_5_mySql_25_5_orcl_125_5_inMem_15_DB2_30_5()
+   [PCT]  public async Task With_four_migrations_mutation_that_all_actually_changes_things_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds_mSSql_25_5_pgSql_25_5_mySql_25_5_orcl_125_5_inMem_15_DB2_30_5()
    {
       var eventMigrations = EnumerableCE.Create<IEventMigration>(
          Before<E2>.Insert<E3>(),
@@ -102,7 +105,7 @@ public class EventMigrationPerformanceTest(string pluggableComponentsCombination
          eventMigrations);
    }
 
-   [Test] public async Task With_four_migrations_that_change_nothing_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_X_milliseconds_mSSql_30_5_pgSql_30_5_mySql_30_5_orcl_120_5_inMem_15_DB2_30_5()
+   [PCT]  public async Task With_four_migrations_that_change_nothing_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_X_milliseconds_mSSql_30_5_pgSql_30_5_mySql_30_5_orcl_120_5_inMem_15_DB2_30_5()
    {
       var eventMigrations = EnumerableCE.Create<IEventMigration>(
          Before<E3>.Insert<E1>(),
@@ -117,7 +120,7 @@ public class EventMigrationPerformanceTest(string pluggableComponentsCombination
          eventMigrations);
    }
 
-   [Test] public async Task When_there_are_no_migrations_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds_mSSql_20_5_pgSql_20_5_mySql_20_5_orcl_125_5_inMem_10_DB2_30_5()
+   [PCT]  public async Task When_there_are_no_migrations_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds_mSSql_20_5_pgSql_20_5_mySql_20_5_orcl_125_5_inMem_10_DB2_30_5()
    {
       var eventMigrations = EnumerableCE.Create<IEventMigration>().ToArray();
       await AssertUncachedAndCachedAggregateLoadTimes(

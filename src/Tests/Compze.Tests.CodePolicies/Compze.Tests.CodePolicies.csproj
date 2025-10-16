@@ -16,10 +16,7 @@
       <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
       <ProjectReference Include="..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj" />
       <ProjectReference Include="..\Infrastructure\XUnit\Compze.Tests.Infrastructure.XUnit.csproj" />
-      <ProjectReference Include="..\Integration\Compze.Tests.Integration.csproj" />
-      <ProjectReference Include="..\Integration\Internals\Compze.Tests.Integration.Internals.csproj" />
       <ProjectReference Include="..\Integration\XUnit\Compze.Tests.Integration.XUnit.csproj" />
-      <ProjectReference Include="..\Performance\Internals\Compze.Tests.Performance.Internals.csproj" />
       <ProjectReference Include="..\ScratchPad\Compze.Tests.ScratchPad.csproj" />
       <ProjectReference Include="..\Unit\Internals\XUnit\Compze.Tests.Unit.Internals.XUnit.csproj" />
       <ProjectReference Include="..\Unit\XUnit\Compze.Tests.Unit.XUnit.csproj" />

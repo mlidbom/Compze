@@ -164,11 +164,9 @@
     <Project Path="Tests/Infrastructure/XUnit/Compze.Tests.Infrastructure.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Integration/">
-    <Project Path="Tests/Integration/Compze.Tests.Integration.csproj" />
     <Project Path="Tests/Integration/XUnit/Compze.Tests.Integration.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/Performance/">
-    <Project Path="Tests/Performance/Internals/Compze.Tests.Performance.Internals.csproj" />
     <Project Path="Tests\Performance\Internals\XUnit\Compze.Tests.Performance.Internals.XUnit.csproj" Type="Classic C#">
       <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
       <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />

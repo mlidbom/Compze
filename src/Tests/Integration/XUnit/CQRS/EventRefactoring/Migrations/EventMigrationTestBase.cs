@@ -10,23 +10,22 @@ using Compze.Tessaging.Teventive.EventStore;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
-using Compze.Tests.Infrastructure.Serialization;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Serialization;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using Newtonsoft.Json;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
 
 // ReSharper disable AccessToModifiedClosure
 
-namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Integration.XUnit.CQRS.EventRefactoring.Migrations;
 
 //refactor: this test. It is too monolithic and hard to read and extend.
-public abstract class EventMigrationTestBase(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public abstract class EventMigrationTestBase : UniversalTestBase
 {
    internal async Task RunMigrationTest(params MigrationScenario[] scenarios) => await RunMigrationTest(expectedException: null, scenarios);
 
@@ -212,7 +211,7 @@ public abstract class EventMigrationTestBase(string pluggableComponentsCombinati
             if(@event.GetType() != migratedHistory.ElementAt(index)
                                                   .GetType())
             {
-               throw new AssertionException(
+               throw new Exception(
                   $"Expected event at position {index} to be of type {@event.GetType()} but it was of type: {migratedHistory.ElementAt(index).GetType()}");
             }
          });

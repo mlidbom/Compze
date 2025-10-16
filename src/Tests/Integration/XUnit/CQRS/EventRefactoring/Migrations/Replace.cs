@@ -7,7 +7,7 @@ using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Integration.XUnit.CQRS.EventRefactoring.Migrations;
 
 class Replace<TEvent> : EventMigration<IRootEvent>
 {

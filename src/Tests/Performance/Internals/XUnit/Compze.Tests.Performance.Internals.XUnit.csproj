@@ -10,8 +10,8 @@
         <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Integration\Compze.Tests.Integration.csproj"/>
-        <ProjectReference Include="..\..\..\Integration\Internals\Compze.Tests.Integration.Internals.csproj"/>
+        <ProjectReference Include="..\..\..\Common\Compze.Tests.Common.csproj" />
+        <ProjectReference Include="..\..\..\Integration\XUnit\Compze.Tests.Integration.XUnit.csproj" />
         <ProjectReference Include="..\..\..\Unit\Internals\XUnit\Compze.Tests.Unit.Internals.XUnit.csproj"/>
         <ProjectReference Include="..\..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj"/>
         <ProjectReference Include="..\..\..\..\Compze\Sql\Sqlite\Infrastructure\Compze.Sql.Sqlite.Infrastructure.csproj"/>

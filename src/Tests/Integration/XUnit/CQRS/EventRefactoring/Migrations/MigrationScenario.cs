@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
-namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Integration.XUnit.CQRS.EventRefactoring.Migrations;
 
 class MigrationScenario
 {
