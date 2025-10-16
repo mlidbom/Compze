@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Wiring;
@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Compze.Tests.Performance.Internals.XUnit.Sql.DocumentDb;
 
-[LongRunning]
+[Performance, LongRunning]
 public class DocumentDbPerformanceTests : DocumentDbTestsBase, IAsyncLifetime
 {
    public DocumentDbPerformanceTests() => ServiceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
