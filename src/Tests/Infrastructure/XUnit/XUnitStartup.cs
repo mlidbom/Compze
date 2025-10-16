@@ -18,24 +18,24 @@ public static class XUnitInfrastructureModuleInitializer
       TestFixtureHelper.SetupSerilog(new XUnitTestSerilogEnricher());
       TestEnv.XunitDiscoverer = () => TestContext.Current?.PluggableComponents ?? throw new Exception("No pluggable components set for current test");
 
-      var monitorLogger = CompzeLogger.For(typeof(MonitorCE));
-      CompzeLogger.For(typeof(XUnitInfrastructureModuleInitializer)).Log().Warning("Registering to log for MonitorCE");
-      MonitorCE.OnTimeOut = () =>
-      {
-         try
-         {
-            throw new Exception("Lock timed out");
-         }
-         catch(Exception ex)
-         {
-            monitorLogger.Error(ex, $"""
-                                     Lock timed out
-                                     
-                                     Stacktrace:
-                                     
-                                     {new StackTrace(fNeedFileInfo: true)}
-                                     """);
-         }
-      };
+      //This seems to cause "interesting" issues, so keep it off until really needed
+      //MonitorCE.OnTimeOut = () =>
+      //{
+      //   try
+      //   {
+      //      throw new Exception("Lock timed out");
+      //   }
+      //   catch(Exception ex)
+      //   {
+      //      CompzeLogger.For(typeof(MonitorCE)).Error(ex,
+      //                                                $"""
+      //                                                 Lock timed out
+
+      //                                                 Stacktrace:
+
+      //                                                 {new StackTrace(fNeedFileInfo: true)}
+      //                                                 """);
+      //   }
+      //};
    }
 }
