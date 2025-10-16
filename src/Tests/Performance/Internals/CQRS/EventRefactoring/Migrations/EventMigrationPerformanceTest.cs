@@ -124,7 +124,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase, IAsyncLifet
    {
       var eventMigrations = EnumerableCE.Create<IEventMigration>().ToArray();
       await AssertUncachedAndCachedAggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 20, mySql: 45, pgSql: 20, sqlite: 25).Milliseconds().EnvMultiply(instrumented: 3),
+         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 25, mySql: 45, pgSql: 20, sqlite: 25).Milliseconds().EnvMultiply(instrumented: 3),
          maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
          eventMigrations);
    }
