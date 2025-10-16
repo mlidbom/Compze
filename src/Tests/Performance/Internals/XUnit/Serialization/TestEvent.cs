@@ -3,7 +3,7 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Compze.Tests.Performance.Internals.Serialization;
+namespace Compze.Tests.Performance.Internals.XUnit.Serialization;
 
 public class TestEvent : AggregateEvent
 {

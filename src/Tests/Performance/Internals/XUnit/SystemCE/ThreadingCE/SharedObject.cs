@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
+namespace Compze.Tests.Performance.Internals.XUnit.SystemCE.ThreadingCE;
 
 [UsedImplicitly] public class SharedObject
 {

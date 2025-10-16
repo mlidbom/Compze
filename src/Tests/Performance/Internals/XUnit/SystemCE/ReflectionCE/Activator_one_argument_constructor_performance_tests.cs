@@ -4,16 +4,16 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1806  // Do not ignore method results
 
-namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
+namespace Compze.Tests.Performance.Internals.XUnit.SystemCE.ReflectionCE;
 
 [Performance]
 public class Activator_one_argument_constructor_performance_tests : UniversalTestBase

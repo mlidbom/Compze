@@ -3,8 +3,8 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.SystemCE;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 
 // ReSharper disable UnusedMethodReturnValue.Local
@@ -13,7 +13,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 // ReSharper disable InconsistentlySynchronizedField
 
-namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Tests.Performance.Internals.XUnit.SystemCE.ThreadingCE.ResourceAccess;
 
 [Performance]
 public class MonitorCEPerformanceTests : UniversalTestBase

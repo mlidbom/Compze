@@ -1,13 +1,12 @@
-
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Assert = Compze.Utilities.Contracts.Assert;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
-namespace Compze.Tests.Performance.Internals.Contracts;
+namespace Compze.Tests.Performance.Internals.XUnit.Contracts;
 
 [Performance]
 public class ObjectNotDefaultPerformanceTests : UniversalTestBase

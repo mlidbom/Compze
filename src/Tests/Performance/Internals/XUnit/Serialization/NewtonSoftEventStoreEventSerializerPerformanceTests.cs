@@ -1,17 +1,17 @@
+using System;
+using System.Linq;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
-using Newtonsoft.Json;
-using System;
-using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Newtonsoft.Json;
 
-namespace Compze.Tests.Performance.Internals.Serialization;
+namespace Compze.Tests.Performance.Internals.XUnit.Serialization;
 
 [Performance]
 public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTestBase

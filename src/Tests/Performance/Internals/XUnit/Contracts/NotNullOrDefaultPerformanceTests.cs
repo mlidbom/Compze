@@ -6,7 +6,7 @@ using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Assert = Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tests.Performance.Internals.Contracts;
+namespace Compze.Tests.Performance.Internals.XUnit.Contracts;
 
 [Performance]
 public class NotNullOrDefaultPerformanceTests : UniversalTestBase
