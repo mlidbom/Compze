@@ -152,36 +152,14 @@
     <File Path="TestUsingPluggableComponentCombinations.example" />
   </Folder>
   <Folder Name="/_Tests/">
-    <Project Path="Tests/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
-  </Folder>
-  <Folder Name="/_Tests/Common/">
     <Project Path="Tests/Common/Compze.Tests.Common.csproj" />
-  </Folder>
-  <Folder Name="/_Tests/Infrastructure/">
+    <Project Path="Tests/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
     <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj" />
-  </Folder>
-  <Folder Name="/_Tests/Integration/">
     <Project Path="Tests/Integration/Compze.Tests.Integration.csproj" />
-  </Folder>
-  <Folder Name="/_Tests/Performance/">
-    <Project Path="Tests\Performance\Internals\Compze.Tests.Performance.Internals.csproj">
-      <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
-      <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
-      <Configuration Solution="docs|Any CPU" Project="Debug|Any CPU" />
-      <Configuration Solution="docs|x64" Project="Debug|Any CPU" />
-      <Configuration Solution="docs|x86" Project="Debug|Any CPU" />
-      <Configuration Solution="Release|x64" Project="Release|Any CPU" />
-      <Configuration Solution="Release|x86" Project="Release|Any CPU" />
-    </Project>
-  </Folder>
-  <Folder Name="/_Tests/ScratchPad/">
     <Project Path="Tests/ScratchPad/Compze.Tests.ScratchPad.csproj" />
-  </Folder>
-  <Folder Name="/_Tests/Unit/">
     <Project Path="Tests/Unit/Compze.Tests.Unit.csproj" />
-  </Folder>
-  <Folder Name="/_Tests/Unit/Internals/">
     <Project Path="Tests/Unit/Internals/Compze.Tests.Unit.Internals.csproj" />
+    <Project Path="Tests\Performance\Internals\Compze.Tests.Performance.Internals.csproj" />
   </Folder>
   <Folder Name="/_Websites/">
     <Project Path="Websites/Website/Website.csproj" />
