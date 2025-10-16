@@ -1,15 +1,15 @@
 using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
-using NUnit.Framework;
-using Compze.Tests.Infrastructure.NUnit;
 using static FluentAssertions.FluentActions;
 
-namespace Compze.Tests.Integration.Internals.DependencyInjection;
+namespace Compze.Tests.Integration.XUnit.DependencyInjection;
 
-public class LifestyleValidationTests(string pluggableComponentsCombination) : DuplicateByPluggableComponentTest(pluggableComponentsCombination)
+public class LifestyleValidationTests : UniversalTestBase
 {
-   [Test]
+   [PCT]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
       var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(RunMode.Testing);
@@ -27,7 +27,7 @@ public class LifestyleValidationTests(string pluggableComponentsCombination) : D
       exception.Message.Should().Contain("Scoped");
    }
 
-   [Test]
+   [PCT]
    public void Should_allow_singleton_depending_on_singleton()
    {
       var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(RunMode.Testing);
