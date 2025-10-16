@@ -18,7 +18,7 @@ partial class Outbox
    internal class MessageStorage : IMessageStorage
    {
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      internal static void RegisterWith(IDependencyRegistrar registrar)
+      internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<IMessageStorage>()
                                         .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
                                                       => new MessageStorage(sqlLayer, typeMapper, serializer)));

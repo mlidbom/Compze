@@ -74,7 +74,7 @@ class EventStoreSerializer : IEventStoreSerializer
 
    readonly RenamingSupportingJsonSerializer _serializer;
 
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<IEventStoreSerializer>()
                   .CreatedBy((ITypeMapper typeMapper) => new EventStoreSerializer(typeMapper)));
@@ -89,14 +89,14 @@ class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerial
 {
    DocumentDbSerializer(ITypeMapper typeMapper) : base(JsonSettings.SqlEventStoreSerializerSettings, typeMapper) {}
 
-   public static void RegisterWith(IDependencyRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IDocumentDbSerializer>()
                                      .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
 }
 
 static class RemotableMessageSerializerRegistrar
 {
-   internal static IDependencyRegistrar RemotableMessageSerializer(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar RemotableMessageSerializer(this IComponentRegistrar registrar)
       => registrar.Register(Serialization.RemotableMessageSerializer.RegisterWith);
 }
 
@@ -104,7 +104,7 @@ class RemotableMessageSerializer : IRemotableMessageSerializer
 {
    readonly RenamingSupportingJsonSerializer _serializer;
 
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRemotableMessageSerializer>()
                                      .CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)));
 

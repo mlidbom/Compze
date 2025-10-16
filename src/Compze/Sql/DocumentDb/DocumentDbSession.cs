@@ -18,7 +18,7 @@ namespace Compze.Sql.DocumentDb;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
 {
-   public static void RegisterWith(IDependencyRegistrar registrar) =>
+   public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
                                .CreatedBy((IDocumentDb documentDb) => new ContextEnsuringWrapper(new DocumentDbSession(documentDb))));
 

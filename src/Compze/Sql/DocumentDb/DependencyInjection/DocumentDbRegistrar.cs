@@ -9,7 +9,7 @@ public static class DocumentDbRegistrar
    public static DocumentDbRegistrationBuilder RegisterDocumentDb(this IEndpointBuilder @this)
       => @this.Container.Register().DocumentDb();
 
-   public static DocumentDbRegistrationBuilder DocumentDb(this IDependencyRegistrar registrar)
+   public static DocumentDbRegistrationBuilder DocumentDb(this IComponentRegistrar registrar)
    {
       registrar.Register(Sql.DocumentDb.DocumentDb.RegisterWith,
                          DocumentDbSerializer.RegisterWith,

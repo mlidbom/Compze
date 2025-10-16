@@ -27,7 +27,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       return RegisterInContainer(registrations);
    }
 
-   public IDependencyRegistrar Register() => new DependencyRegistrar(this);
+   public IComponentRegistrar Register() => new ComponentRegistrar(this);
 
    protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
 
@@ -58,29 +58,4 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
                                }
                             });
    }
-}
-
-class DependencyRegistrar(IDependencyInjectionContainer container) : IDependencyRegistrar
-{
-   readonly IDependencyInjectionContainer _container = container;
-
-   public IDependencyRegistrar Register(params ComponentRegistration[] registrations)
-   {
-      _container.Register(registrations);
-      return this;
-   }
-
-   public IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods)
-   {
-      foreach(var registrationMethod in registrationMethods)
-      {
-         registrationMethod(this);
-      }
-
-      return this;
-   }
-
-   public IDependencyInjectionContainer Container() => _container;
-
-   public IRunMode RunMode => _container.RunMode;
 }

@@ -9,13 +9,13 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 static class ServiceBusEventStoreEventPublisherRegistrar
 {
-   internal static IDependencyRegistrar ServiceBusEventStoreEventPublisher(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar ServiceBusEventStoreEventPublisher(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.ServiceBusEventStoreEventPublisher.RegisterWith);
 }
 
 [UsedImplicitly] class ServiceBusEventStoreEventPublisher : IEventStoreEventPublisher
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IEventStoreEventPublisher>()
                                      .CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
                                                    => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)));

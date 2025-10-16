@@ -7,7 +7,7 @@ namespace Compze.Sql.DocumentDb.MicrosoftSql;
 
 public static class MsSqlDocumentDbRegistrar
 {
-   public static IDependencyRegistrar MsSqlDocumentDb(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar MsSqlDocumentDb(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IDocumentDbSqlLayer>()
                   .CreatedBy((IMsSqlConnectionPool connectionProvider) => new MsSqlDocumentDbSqlLayer(connectionProvider)));

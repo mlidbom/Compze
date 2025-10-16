@@ -8,7 +8,7 @@ namespace Compze.Abstractions.Internal.Time;
 
 static class TestingTimeSourceRegistrar
 {
-   internal static IDependencyRegistrar TestingTimeSource(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar TestingTimeSource(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>()
                                      .CreatedBy(() => new TestingTimeSource()));
 }

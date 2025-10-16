@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Sql.Sqlite;
 
 public static class SqliteTessagingRegistrar
 {
-   public static IDependencyRegistrar SqliteTessaging(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar SqliteTessaging(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((ISqliteConnectionPool endpointSqlConnection) => new SqliteOutboxSqlLayer(endpointSqlConnection)),

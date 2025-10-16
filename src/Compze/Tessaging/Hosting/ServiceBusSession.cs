@@ -14,13 +14,13 @@ namespace Compze.Tessaging.Hosting;
 
 static class ServiceBusSessionRegistrar
 {
-   internal static IDependencyRegistrar ServiceBusSession(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar ServiceBusSession(this IComponentRegistrar registrar)
       => registrar.Register(Hosting.ServiceBusSession.RegisterWith);
 }
 
 [UsedImplicitly] class ServiceBusSession : IServiceBusSession
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IServiceBusSession>()
                                   .CreatedBy((IOutbox outbox, CommandScheduler commandScheduler)
                                                 => new ServiceBusSession(outbox, commandScheduler)));

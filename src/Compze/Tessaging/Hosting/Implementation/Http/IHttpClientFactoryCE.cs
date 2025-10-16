@@ -12,13 +12,13 @@ interface IHttpClientFactoryCE
 
 static class HttpClientFactoryCERegistrar
 {
-   internal static IDependencyRegistrar HttpClientFactoryCE(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar HttpClientFactoryCE(this IComponentRegistrar registrar)
       => registrar.Register(Http.HttpClientFactoryCE.RegisterWith);
 }
 
 class HttpClientFactoryCE : IHttpClientFactoryCE
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()));
 

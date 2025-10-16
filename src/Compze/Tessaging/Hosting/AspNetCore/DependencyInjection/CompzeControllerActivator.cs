@@ -8,7 +8,7 @@ namespace Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
 /// <summary>Custom controller activator that creates controllers using Compze's DI container.</summary>
 class CompzeControllerActivator : IControllerActivator
 {
-   internal static void RegisterWith(IDependencyRegistrar register)
+   internal static void RegisterWith(IComponentRegistrar register)
       => register.Register(Singleton.For<CompzeControllerActivator>()
                                     .CreatedBy((IServiceLocator serviceLocator) => new CompzeControllerActivator(serviceLocator)));
 

@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Sql.PostgreSql;
 
 public static class PgSqlTessagingRegistrar
 {
-   public static IDependencyRegistrar PgSqlTessaging(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar PgSqlTessaging(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool endpointSqlConnection) => new PgSqlOutboxSqlLayer(endpointSqlConnection)),

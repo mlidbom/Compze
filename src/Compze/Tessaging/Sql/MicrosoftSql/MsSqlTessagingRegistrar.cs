@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Sql.MicrosoftSql;
 
 public static class MsSqlTessagingRegistrar
 {
-   public static IDependencyRegistrar MsSqlTessaging(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar MsSqlTessaging(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IMsSqlConnectionPool endpointSqlConnection) => new MsSqlOutboxSqlLayer(endpointSqlConnection)),

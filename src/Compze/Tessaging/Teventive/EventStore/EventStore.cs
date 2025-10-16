@@ -30,7 +30,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
    readonly EventCache _cache;
    readonly IReadOnlyList<IEventMigration> _migrationFactories;
 
-   internal static void RegisterWith(IDependencyRegistrar registrar, Func<IReadOnlyList<IEventMigration>> migrations)
+   internal static void RegisterWith(IComponentRegistrar registrar, Func<IReadOnlyList<IEventMigration>> migrations)
       => registrar.Register(Scoped.For<IEventStore>()
                                   .CreatedBy((IEventStoreSqlLayer sqlLayer, ITypeMapper typeMapper, IEventStoreSerializer serializer, EventCache cache) =>
                                                 new EventStore(sqlLayer, typeMapper, serializer, cache, migrations())));

@@ -20,7 +20,7 @@ namespace Compze.Sql.DocumentDb;
 
 class DocumentDb : IDocumentDb
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
                                   .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer)
                                                 => new DocumentDb(timeSource, serializer, typeMapper, sqlLayer)));

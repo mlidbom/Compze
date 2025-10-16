@@ -19,7 +19,7 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 class OutboxRetryPoller : IDisposable
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<OutboxRetryPoller>()
                                      .CreatedBy((Outbox.IMessageStorage messageStorage,
                                                  ITransport transport,

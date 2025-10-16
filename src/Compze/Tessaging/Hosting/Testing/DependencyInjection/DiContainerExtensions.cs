@@ -35,7 +35,7 @@ public static class DiContainerExtensions
       return container;
    }
 
-   public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IDependencyRegistrar> setup)
+   public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
    {
       var container = @this.CreateWithRegisteredServiceLocator(RunMode.Testing);
       container.Register()
@@ -52,7 +52,7 @@ public static class DiContainerExtensions
 
    public const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
-   public static IServiceLocator SetupTestingServiceLocator(this DIContainer @this, [InstantHandle] Action<IDependencyRegistrar>? configureContainer = null) =>
+   public static IServiceLocator SetupTestingServiceLocator(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
       CompzeLogger.For(typeof(DiContainerExtensions)).ExceptionsAndRethrow(() =>
                                                                               @this.CreateServiceLocatorForTesting(register =>
                                                                               {

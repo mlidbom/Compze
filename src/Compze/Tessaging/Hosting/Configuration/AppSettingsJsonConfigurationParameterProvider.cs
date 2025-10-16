@@ -9,7 +9,7 @@ namespace Compze.Tessaging.Hosting.Configuration;
 
 static class AppSettingsJsonConfigurationParameterProviderRegistrar
 {
-   public static IDependencyRegistrar JSonAppConfigFileConfigurationParameterProvider(this IDependencyRegistrar @this)
+   public static IComponentRegistrar JSonAppConfigFileConfigurationParameterProvider(this IComponentRegistrar @this)
       => @this.Register(AppSettingsJsonConfigurationParameterProvider.RegisterWith);
 }
 
@@ -17,7 +17,7 @@ static class AppSettingsJsonConfigurationParameterProviderRegistrar
 ///<summary>Fetches configuration variables from the application configuration file.</summary>
 class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton<IConfigurationParameterProvider>
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                      .CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
 

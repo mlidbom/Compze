@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
 
 static class DummyConfigurationParameterProviderRegistrar
 {
-   internal static IDependencyRegistrar DummyConfigurationParameterProvider(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar DummyConfigurationParameterProvider(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                      .CreatedBy(() => new DummyConfigurationParameterProviderImpl()));
 

@@ -9,13 +9,13 @@ namespace Compze.Utilities.Testing.DbPool.MySql;
 
 static class MySqlDbPoolRegistrar
 {
-   public static IDependencyRegistrar MySqlDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar MySqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       MySqlDbPool.RegisterWith(registrar);
 }
 
 sealed class MySqlDbPool : DbPoolBase
 {
-   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
       if(registrar.Container().IsRegistered<MySqlDbPool>())
          return registrar;

@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Sql.MySql;
 
 public static class MySqlTessagingRegistrar
 {
-   public static IDependencyRegistrar MySqlTessaging(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar MySqlTessaging(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IMySqlConnectionPool endpointSqlConnection) => new MySqlOutboxSqlLayer(endpointSqlConnection)),

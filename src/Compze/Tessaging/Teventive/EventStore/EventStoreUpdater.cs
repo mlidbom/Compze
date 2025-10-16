@@ -24,7 +24,7 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    readonly List<IDisposable> _disposableResources = [];
    IUtcTimeTimeSource TimeSource { get; set; }
 
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<IEventStoreUpdater, IEventStoreReader>()
                .CreatedBy((IEventStoreEventPublisher eventPublisher, IEventStore eventStore, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator) =>

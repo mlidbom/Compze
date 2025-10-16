@@ -8,7 +8,7 @@ namespace Compze.Tessaging.Hosting.Sql.Sqlite;
 
 public static class SqliteSqlLayerRegistrar
 {
-   public static IDependencyRegistrar SqliteConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar SqliteConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
    {
       if(registrar.RunMode.IsTesting)
       {
@@ -21,16 +21,16 @@ public static class SqliteSqlLayerRegistrar
       return registrar;
    }
 
-   public static IDependencyRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IDependencyRegistrar registrar)
+   public static IComponentRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IComponentRegistrar registrar)
       => registrar.DbPoolAndConnectionPoolForConnectionStringName(Guid.NewGuid().ToString());
 
-   public static IDependencyRegistrar SqliteProductionConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
       => registrar.Register(
          Singleton.For<ISqliteConnectionPool>()
                   .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => ISqliteConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                   .DelegateToParentServiceLocatorWhenCloning());
 
-   public static IDependencyRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
    {
       registrar.SqliteDbPoolIfNotAlreadyRegistered();
 
@@ -39,7 +39,7 @@ public static class SqliteSqlLayerRegistrar
                   .CreatedBy((SqliteDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
 
-   public static IDependencyRegistrar SqliteMemoryConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar SqliteMemoryConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
    {
       if(registrar.RunMode.IsTesting)
       {
@@ -52,7 +52,7 @@ public static class SqliteSqlLayerRegistrar
       return registrar;
    }
 
-   public static IDependencyRegistrar SqliteMemoryDbPoolAndConnectionPoolForConnectionStringName(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar SqliteMemoryDbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
    {
       registrar.SqliteMemoryDbPoolIfNotAlreadyRegistered();
 

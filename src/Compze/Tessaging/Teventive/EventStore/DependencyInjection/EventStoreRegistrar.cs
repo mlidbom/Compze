@@ -22,15 +22,15 @@ public static class EventStoreRegistrar
       return new EventStoreRegistrationBuilder(@this.RegisterHandlers);
    }
 
-   public static IDependencyRegistrar EventStore(this IDependencyRegistrar registrar, string connectionName) =>
+   public static IComponentRegistrar EventStore(this IComponentRegistrar registrar, string connectionName) =>
       registrar.EventStore(connectionName, EmptyMigrationsArray);
 
-   public static IDependencyRegistrar EventStore(this IDependencyRegistrar @this,
+   public static IComponentRegistrar EventStore(this IComponentRegistrar @this,
                                                  string connectionName,
                                                  IReadOnlyList<IEventMigration> migrations) =>
       @this.EventStoreForFlexibleTesting(connectionName, () => migrations);
 
-   public static IDependencyRegistrar EventStoreForFlexibleTesting(this IDependencyRegistrar registrar,
+   public static IComponentRegistrar EventStoreForFlexibleTesting(this IComponentRegistrar registrar,
                                                                    string connectionName,
                                                                    Func<IReadOnlyList<IEventMigration>> migrations)
    {

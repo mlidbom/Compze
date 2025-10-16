@@ -6,7 +6,7 @@ namespace Compze.Common.Refactoring.Naming.Wiring;
 
 static class CompzeCommonRefactoringRenamingWiring
 {
-   public static IDependencyRegistrar TypeMapper(this IDependencyRegistrar @this)
+   public static IComponentRegistrar TypeMapper(this IComponentRegistrar @this)
       => @this.Register(Singleton.For<ITypeMapper, TypeMapper>()
                                  .Instance(Naming.TypeMapper.Instance));
 }

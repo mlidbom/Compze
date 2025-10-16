@@ -19,13 +19,13 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 static class CommandSchedulerRegistrar
 {
-   internal static IDependencyRegistrar CommandScheduler(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar CommandScheduler(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.CommandScheduler.RegisterWith);
 }
 
 class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) : IDisposable
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<CommandScheduler>()
                                      .CreatedBy((IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner)
                                                    => new CommandScheduler(transport, timeSource, taskRunner)));

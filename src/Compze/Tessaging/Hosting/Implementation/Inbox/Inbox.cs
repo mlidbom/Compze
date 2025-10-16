@@ -12,13 +12,13 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 static class InboxRegistrar
 {
-   internal static IDependencyRegistrar Inbox(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar Inbox(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.Inbox.RegisterWith);
 }
 
 [UsedImplicitly] partial class Inbox : IInbox, IAsyncDisposable
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<Inbox.IMessageStorage>()
                   .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)

@@ -7,7 +7,7 @@ namespace Compze.Sql.DocumentDb.Sqlite;
 
 public static class SqliteDocumentDbRegistrar
 {
-   public static IDependencyRegistrar SqliteDocumentDb(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar SqliteDocumentDb(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IDocumentDbSqlLayer>()
                   .CreatedBy((ISqliteConnectionPool connectionProvider) => new SqliteDocumentDbSqlLayer(connectionProvider)));

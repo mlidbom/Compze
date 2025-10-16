@@ -15,7 +15,7 @@ namespace Compze.Tessaging.Hosting.AspNetCore;
 
 class RpcController : ControllerBase
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar) =>
+   internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<RpcController>()
                .CreatedBy((IRemotableMessageSerializer serializer,

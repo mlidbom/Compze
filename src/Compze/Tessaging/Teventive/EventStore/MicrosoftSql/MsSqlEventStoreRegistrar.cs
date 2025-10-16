@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
 
 public static class MsSqlEventStoreRegistrar
 {
-   public static IDependencyRegistrar MsSqlEventStore(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar MsSqlEventStore(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<MsSqlEventStoreConnectionManager>()
                   .CreatedBy((IMsSqlConnectionPool sqlConnectionProvider) => new MsSqlEventStoreConnectionManager(sqlConnectionProvider)),

@@ -22,7 +22,7 @@ public interface IEventCache
 
 class EventCache : IDisposable, IEventCache
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<EventCache, IEventCache>()
                   .CreatedBy(() => new EventCache()));

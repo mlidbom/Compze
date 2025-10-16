@@ -7,7 +7,7 @@ namespace Compze.Sql.DocumentDb.PostgreSql;
 
 public static class PgSqlDocumentDbRegistrar
 {
-   public static IDependencyRegistrar PgSqlDocumentDb(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar PgSqlDocumentDb(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IDocumentDbSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool connectionProvider) => new PgSqlDocumentDbSqlLayer(connectionProvider)));

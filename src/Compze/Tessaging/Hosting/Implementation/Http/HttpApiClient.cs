@@ -10,13 +10,13 @@ namespace Compze.Tessaging.Hosting.Implementation.Http;
 
 static class HttpApiClientRegistrar
 {
-   internal static IDependencyRegistrar HttpApiClient(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar HttpApiClient(this IComponentRegistrar registrar)
       => registrar.Register(Http.HttpApiClient.RegisterWith);
 }
 
 class HttpApiClient : IHttpApiClient
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IHttpApiClient>()
                                      .CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer)));
 

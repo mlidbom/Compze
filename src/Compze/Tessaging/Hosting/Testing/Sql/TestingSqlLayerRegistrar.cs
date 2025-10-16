@@ -22,10 +22,10 @@ namespace Compze.Tessaging.Hosting.Testing.Sql;
 
 public static class TestingSqlLayerRegistrar
 {
-   public static IDependencyRegistrar CurrentTestsConfiguredSqlLayer(this IDependencyRegistrar register) =>
+   public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this IComponentRegistrar register) =>
       register.CurrentTestsConfiguredSqlLayer(Guid.NewGuid().ToString());
 
-   public static IDependencyRegistrar CurrentTestsConfiguredSqlLayer(this IDependencyRegistrar register, string connectionStringName)
+   public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this IComponentRegistrar register, string connectionStringName)
    {
       register.CurrentTestsDbPoolIfNotAlreadyRegistered();
       switch(TestEnv.SqlLayer)

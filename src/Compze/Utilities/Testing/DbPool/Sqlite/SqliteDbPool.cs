@@ -6,13 +6,13 @@ namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
 static class SqliteDbPoolRegistrar
 {
-   public static IDependencyRegistrar SqliteDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar SqliteDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       SqliteDbPool.RegisterWith(registrar);
 }
 
 class SqliteDbPool : DbPoolBase
 {
-   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
       if(registrar.Container().IsRegistered<SqliteDbPool>())
          return registrar;

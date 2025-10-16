@@ -12,13 +12,13 @@ namespace Compze.Utilities.Testing.DbPool.PostgreSql;
 
 static class PgSqlDbPoolRegistrar
 {
-   public static IDependencyRegistrar PgSqlDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar PgSqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       PgSqlDbPool.RegisterWith(registrar);
 }
 
 sealed class PgSqlDbPool : DbPoolBase
 {
-   internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
       if(registrar.Container().IsRegistered<PgSqlDbPool>())
          return registrar;

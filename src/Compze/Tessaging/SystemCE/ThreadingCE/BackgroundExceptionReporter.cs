@@ -9,12 +9,12 @@ namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 static class BackgroundExceptionReporterRegistrar
 {
-   internal static IDependencyRegistrar BackgroundExceptionReporter(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar BackgroundExceptionReporter(this IComponentRegistrar registrar)
       => registrar.Register(BackgroundExceptionReporterImpl.RegisterWith);
 
    class BackgroundExceptionReporterImpl : IBackgroundExceptionReporter
    {
-      internal static void RegisterWith(IDependencyRegistrar registrar)
+      internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<IBackgroundExceptionReporter>().CreatedBy(() => new BackgroundExceptionReporterImpl()));
 
       readonly IThreadShared<List<Exception>> _collectedExceptions = ThreadShared.WithDefaultTimeout(new List<Exception>());

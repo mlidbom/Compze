@@ -23,7 +23,7 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 static class MessageHandlerRegistryRegistrar
 {
-   internal static IDependencyRegistrar MessageHandlerRegistry(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar MessageHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IMessageHandlerRegistrar, IMessageHandlerRegistry, MessageHandlerRegistry>()
                                      .CreatedBy((ITypeMapper typeMapper) => new MessageHandlerRegistry(typeMapper)));
 }

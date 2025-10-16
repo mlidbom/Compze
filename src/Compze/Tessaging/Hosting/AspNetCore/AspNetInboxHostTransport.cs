@@ -29,7 +29,7 @@ class AspNetInboxTransport : IInboxTransport
    WebApplication? _webApplication;
    readonly CompzeControllerActivator _controllerActivator;
 
-   internal static void RegisterWith(IDependencyRegistrar registrar) =>
+   internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IInboxTransport>()
                   .CreatedBy((IServiceLocator serviceLocator, CompzeControllerActivator activator)

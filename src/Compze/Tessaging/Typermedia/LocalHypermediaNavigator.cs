@@ -10,13 +10,13 @@ namespace Compze.Tessaging.Typermedia;
 
 static class LocalHypermediaNavigatorRegistrar
 {
-   internal static IDependencyRegistrar InProcessHypermediaNavigator(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar InProcessHypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(Typermedia.InProcessHypermediaNavigator.RegisterWith);
 }
 
 class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IInProcessHypermediaNavigator>()
                                   .CreatedBy((IMessageHandlerRegistry messageHandlerRegistry)
                                                 => new InProcessHypermediaNavigator(messageHandlerRegistry)));

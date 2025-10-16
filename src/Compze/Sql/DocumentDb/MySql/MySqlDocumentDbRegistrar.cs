@@ -7,7 +7,7 @@ namespace Compze.Sql.DocumentDb.MySql;
 
 public static class MySqlDocumentDbRegistrar
 {
-   public static IDependencyRegistrar MySqlDocumentDb(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar MySqlDocumentDb(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IDocumentDbSqlLayer>()
                   .CreatedBy((IMySqlConnectionPool connectionProvider) => new MySqlDocumentDbSqlLayer(connectionProvider)));

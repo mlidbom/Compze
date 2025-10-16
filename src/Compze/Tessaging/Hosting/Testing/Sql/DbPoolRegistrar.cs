@@ -10,7 +10,7 @@ namespace Compze.Tessaging.Hosting.Testing.Sql;
 
 public static class DbPoolRegistrar
 {
-   public static IDependencyRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this IDependencyRegistrar register)
+   public static IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this IComponentRegistrar register)
    {
       switch(TestEnv.SqlLayer)
       {

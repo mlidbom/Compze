@@ -19,13 +19,13 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 static class TransportRegistrar
 {
-   internal static IDependencyRegistrar Transport(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar Transport(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.Transport.RegisterWith);
 }
 
 partial class Transport : ITransport, IDisposable
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
                                                                      => new Transport(messagesInFlightTracker, typeMapper, serializer, httpApiClient)));
 

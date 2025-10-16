@@ -17,13 +17,13 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 static class OutboxRegistrar
 {
-   internal static IDependencyRegistrar Outbox(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar Outbox(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.Outbox.RegisterWith);
 }
 
 partial class Outbox : IOutbox
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
                                   .CreatedBy((EndpointConfiguration configuration, ITransport transport, IMessageStorage messageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)

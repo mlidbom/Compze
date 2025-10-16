@@ -14,7 +14,7 @@ namespace Compze.Tessaging.Hosting.AspNetCore;
 
 class TessagingController : ControllerBase
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar) =>
+   internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<TessagingController>()
                                .CreatedBy((IRemotableMessageSerializer serializer,
                                            ITypeMapper typeMapper,

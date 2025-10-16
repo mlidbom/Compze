@@ -12,7 +12,7 @@ public static class PgSqlSqlLayerRegistrar
    internal static void RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(this IEndpointBuilder @this) =>
       @this.Container.Register().PgSqlConnectionPoolIfNotAlreadyRegistered(@this.Configuration.ConnectionStringName);
 
-   public static IDependencyRegistrar PgSqlConnectionPoolIfNotAlreadyRegistered(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar PgSqlConnectionPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
    {
       if(registrar.RunMode.IsTesting)
       {
@@ -25,16 +25,16 @@ public static class PgSqlSqlLayerRegistrar
       return registrar;
    }
 
-   public static IDependencyRegistrar PgSqlProductionConnectionPool(this IDependencyRegistrar registrar, string connectionStringName) =>
+   public static IComponentRegistrar PgSqlProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName) =>
       registrar.Register(
          Singleton.For<IPgSqlConnectionPool>()
                   .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IPgSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                   .DelegateToParentServiceLocatorWhenCloning());
 
-   public static IDependencyRegistrar PgSqlNewDbPoolWithConnectionPool(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar PgSqlNewDbPoolWithConnectionPool(this IComponentRegistrar registrar) =>
       registrar.PgSqlDbPoolWithConnectionPool(Guid.NewGuid().ToString());
 
-   public static IDependencyRegistrar PgSqlDbPoolWithConnectionPool(this IDependencyRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar PgSqlDbPoolWithConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
    {
       registrar.PgSqlDbPoolIfNotAlreadyRegistered();
 

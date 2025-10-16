@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Teventive.EventStore.Sqlite;
 
 public static class SqliteEventStoreRegistrar
 {
-   public static IDependencyRegistrar SqliteEventStore(this IDependencyRegistrar registrar) =>
+   public static IComponentRegistrar SqliteEventStore(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<SqliteEventStoreConnectionManager>()
                   .CreatedBy((ISqliteConnectionPool sqlConnectionProvider) => new SqliteEventStoreConnectionManager(sqlConnectionProvider)),

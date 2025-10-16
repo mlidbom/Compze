@@ -70,7 +70,7 @@ static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
 
 [UsedImplicitly] class AggregateTypeValidator : IAggregateTypeValidator
 {
-   internal static void RegisterWith(IDependencyRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IAggregateTypeValidator>()
                                      .CreatedBy((ITypeMapper typeMapper) => new AggregateTypeValidator(typeMapper)));
 

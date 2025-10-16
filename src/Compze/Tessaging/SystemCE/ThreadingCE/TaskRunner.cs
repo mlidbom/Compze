@@ -19,12 +19,12 @@ interface ITaskRunner
 
 static class TaskRunnerRegistrar
 {
-   internal static IDependencyRegistrar TaskRunner(this IDependencyRegistrar registrar)
+   internal static IComponentRegistrar TaskRunner(this IComponentRegistrar registrar)
       => registrar.Register(TaskRunnerImpl.RegisterWith);
 
    class TaskRunnerImpl : ITaskRunner, IDisposable
    {
-      internal static void RegisterWith(IDependencyRegistrar registrar)
+      internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerImpl(exceptionReporter)));
 
       readonly IBackgroundExceptionReporter _exceptionReporter;

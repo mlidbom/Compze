@@ -6,11 +6,11 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.DependencyInjection.Abstractions;
 
-public interface IDependencyRegistrar
+public interface IComponentRegistrar
 {
-   IDependencyRegistrar Register(params ComponentRegistration[] registrations);
+   IComponentRegistrar Register(params ComponentRegistration[] registrations);
 
-   IDependencyRegistrar Register(params Action<IDependencyRegistrar>[] registrationMethods)
+   IComponentRegistrar Register(params Action<IComponentRegistrar>[] registrationMethods)
       => registrationMethods.ForEach(it => it(this))
                             .then(this);
 
@@ -21,7 +21,7 @@ public interface IDependencyRegistrar
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
    IRunMode RunMode { get; }
-   IDependencyRegistrar Register();
+   IComponentRegistrar Register();
    IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    IServiceLocator ServiceLocator { get; }
