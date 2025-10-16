@@ -104,6 +104,11 @@ function C-Test {
             $cumulativeFailures = ($iterationResults + $result | Measure-Object -Property Failed -Sum).Sum
             Show-TestIterationSummary -IterationNumber $i -TotalIterations $Iterations -Failed $result.Failed -Passed $result.Succeeded -Skipped $result.Skipped -Total $result.Executed -CumulativeFailures $cumulativeFailures -ElapsedSeconds $result.ElapsedSeconds
             
+            # Display failed tests from this iteration if any
+            if ($result.Failed -gt 0 -and $result.FailedTests.Count -gt 0) {
+                Show-FailedTestsSummary -FailedTests $result.FailedTests
+            }
+            
             $iterationResults += $result
         }
         
@@ -130,12 +135,25 @@ function C-Test {
             Write-Host "$successfulRuns succeeded" -NoNewline -ForegroundColor Green
             Write-Host ", " -NoNewline
             Write-Host "$failedRuns failed" -ForegroundColor $(if ($failedRuns -gt 0) { "Red" } else { "Green" })
+            
+            # Show summary of all unique failed tests across all iterations
+            if ($allFailedTests.Count -gt 0) {
+                Write-Host "`n=== All Unique Failed Tests Across All Iterations ===" -ForegroundColor Red
+                $uniqueFailedTests = $allFailedTests | Select-Object -Property FullName -Unique
+                foreach ($test in $uniqueFailedTests) {
+                    Write-Host $test.FullName -ForegroundColor Red
+                }
+                Write-Host "`nTotal unique failed tests: $($uniqueFailedTests.Count)" -ForegroundColor Red
+            }
         }
         
         # Set exit code based on whether any tests failed
         $totalFailedTests = ($iterationResults | Measure-Object -Property Failed -Sum).Sum
         if ($totalFailedTests -gt 0) {
-            Show-FailedTestsSummary -FailedTests $allFailedTests
+            # For single iteration, show the failed tests
+            if ($Iterations -eq 1) {
+                Show-FailedTestsSummary -FailedTests $allFailedTests
+            }
             $global:LASTEXITCODE = 1
         } else {
             $global:LASTEXITCODE = 0
