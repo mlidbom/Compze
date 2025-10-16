@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public partial class DbPool
+public partial class DbPoolBase
 {
    public class Database
    {

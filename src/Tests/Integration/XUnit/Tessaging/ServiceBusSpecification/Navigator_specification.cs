@@ -21,10 +21,10 @@ namespace Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification;
 
 public class Navigator_specification : UniversalTestBase, IAsyncLifetime
 {
-   ITestingEndpointHost _host;
-   IEndpoint _clientEndpoint;
+   readonly ITestingEndpointHost _host;
+   readonly IEndpoint _clientEndpoint;
 
-   public async Task InitializeAsync()
+   public Navigator_specification()
    {
       var queryResults = new List<UserResource>();
 
@@ -49,11 +49,15 @@ public class Navigator_specification : UniversalTestBase, IAsyncLifetime
          });
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
-
-      await _host.StartAsync();
    }
 
-   public async Task DisposeAsync() => await _host.DisposeAsync();
+   public async Task InitializeAsync() => await _host.StartAsync();
+
+   public async Task DisposeAsync()
+   {
+      await _host.DisposeAsync();
+      await _clientEndpoint.DisposeAsync();
+   }
 
    [PCT]  public void Can_get_command_result()
    {

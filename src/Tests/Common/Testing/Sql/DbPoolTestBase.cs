@@ -17,7 +17,7 @@ namespace Compze.Tests.Common.Testing.Sql;
 
 public abstract class DbPoolTestBase : UniversalTestBase
 {
-   public static DbPool CreatePool() =>
+   public static DbPoolBase CreatePool() =>
       TestEnv.SqlLayer switch
       {
          SqlLayer.MicrosoftSqlServer => new MsSqlDbPool(),
@@ -28,7 +28,7 @@ public abstract class DbPoolTestBase : UniversalTestBase
          _                           => throw new ArgumentOutOfRangeException()
       };
 
-   internal static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
+   internal static void UseConnection(string connectionString, DbPoolBase pool, Action<ICompzeDbConnection> func)
    {
       switch(TestEnv.SqlLayer)
       {

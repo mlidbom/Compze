@@ -29,9 +29,10 @@ public class StrictlyManagedResourceTests : XUnitTestBase
            .Which.InnerExceptions.Should().HaveCount(1);
       });
    }
-
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes
    [UsedImplicitly] class MyClass : IStrictlyManagedResource
    {
       public void Dispose() => throw new NotImplementedException();
    }
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 }

@@ -5,9 +5,9 @@ using Xunit.Sdk;
 
 namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
 [UsedImplicitly] class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
 {
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
    readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 
    public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
@@ -21,3 +21,4 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
       return [new XFactTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];
    }
 }
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.

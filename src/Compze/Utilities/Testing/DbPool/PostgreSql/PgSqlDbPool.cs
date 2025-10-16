@@ -16,7 +16,7 @@ static class PgSqlDbPoolRegistrar
       PgSqlDbPool.RegisterWith(registrar);
 }
 
-sealed class PgSqlDbPool : DbPool
+sealed class PgSqlDbPool : DbPoolBase
 {
    internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
    {

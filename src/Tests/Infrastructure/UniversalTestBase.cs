@@ -11,9 +11,23 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public abstract class UniversalTestBase : IDisposable
 {
-   static readonly RunJustOnce OneTimeAssertion = new(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions);
-   protected UniversalTestBase() => OneTimeAssertion.RunIfNotExecutedBefore();
+   bool _disposed;
 
-   public virtual void SurfaceAnyUncatchableExceptions() => UncatchableExceptionsGatherer.ConsumeAndThrowAnyExceptionsGathered();
-   public virtual void Dispose() => SurfaceAnyUncatchableExceptions();
+   public void Dispose()
+   {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+   }
+
+   protected virtual void Dispose(bool disposing)
+   {
+      if(_disposed) return;
+
+      if(disposing)
+         SurfaceAnyUncatchableExceptions();
+
+      _disposed = true;
+   }
+
+   static void SurfaceAnyUncatchableExceptions() => UncatchableExceptionsGatherer.ConsumeAndThrowAnyExceptionsGathered();
 }

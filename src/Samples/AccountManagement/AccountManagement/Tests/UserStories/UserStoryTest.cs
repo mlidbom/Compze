@@ -13,17 +13,22 @@ namespace AccountManagement.UserStories;
 
 public abstract class UserStoryTest : UniversalTestBase, IAsyncLifetime
 {
-   protected ITestingEndpointHost? Host { get; set; }
-   IEndpoint? _clientEndpoint;
+   protected ITestingEndpointHost Host { get; set; }
+   readonly IEndpoint _clientEndpoint;
    internal AccountScenarioApi Scenario => new(_clientEndpoint!);
 
-   public virtual async Task InitializeAsync()
+   protected UserStoryTest()
    {
       Host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithRegisteredServiceLocator(runMode));
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
-      await Host.StartAsync().caf();
    }
 
-   public async Task DisposeAsync() => await Host!.DisposeAsync().caf();
+   public virtual async Task InitializeAsync() => await Host.StartAsync().caf();
+
+   public async Task DisposeAsync()
+   {
+      await Host.DisposeAsync().caf();
+      await _clientEndpoint.DisposeAsync();
+   }
 }

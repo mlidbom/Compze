@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public partial class DbPool
+public partial class DbPoolBase
 {
    [UsedImplicitly] protected class SharedState
    {

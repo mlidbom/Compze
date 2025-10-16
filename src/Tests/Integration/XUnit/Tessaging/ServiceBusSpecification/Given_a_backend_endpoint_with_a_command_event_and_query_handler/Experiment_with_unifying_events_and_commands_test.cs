@@ -28,18 +28,19 @@ namespace Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification.Given
 
 public class Experiment_with_unifying_events_and_commands_test : UniversalTestBase, IAsyncLifetime
 {
-   ITestingEndpointHost _host;
+   readonly ITestingEndpointHost _host;
 
-   IServiceLocator _userDomainServiceLocator;
-   IEndpoint _clientEndpoint;
+   IServiceLocator _userDomainServiceLocator = null!;
+   readonly IEndpoint _clientEndpoint;
+   readonly IEndpoint _userManagementDomainEndpoint;
 
    IRemoteHypermediaNavigator RemoteNavigator => _clientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
 
-   public async Task InitializeAsync()
+   public Experiment_with_unifying_events_and_commands_test()
    {
       _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
-      var userManagementDomainEndpoint = _host.RegisterEndpoint(
+      _userManagementDomainEndpoint = _host.RegisterEndpoint(
          "UserManagement.Domain",
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
          builder =>
@@ -60,12 +61,23 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
          });
 
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
+   }
 
+   public async Task InitializeAsync()
+   {
       await _host.StartAsync();
 
-      _userDomainServiceLocator = userManagementDomainEndpoint.ServiceLocator;
+      _userDomainServiceLocator = _userManagementDomainEndpoint.ServiceLocator;
 
       _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<IEventStoreUpdater>().Save(UserRegistrarAggregate.Create()));
+   }
+   
+   public async Task DisposeAsync()
+   {
+      await _host.DisposeAsync();
+      await _userManagementDomainEndpoint.DisposeAsync();
+      await _clientEndpoint.DisposeAsync();
+      await _userDomainServiceLocator.DisposeAsync();
    }
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
@@ -77,8 +89,6 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
       user.Should().NotBe(null);
       user.History.Count().Should().Be(1);
    }
-
-   public async Task DisposeAsync() => await _host.DisposeAsync();
 
    public static class UserEvent
    {

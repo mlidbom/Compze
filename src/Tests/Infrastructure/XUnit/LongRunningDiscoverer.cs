@@ -4,6 +4,7 @@ using Xunit.Sdk;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
+#pragma warning disable CA1812 //uninstantiated class
 class LongRunningDiscoverer : ITraitDiscoverer
 #pragma warning restore CA1812
 {

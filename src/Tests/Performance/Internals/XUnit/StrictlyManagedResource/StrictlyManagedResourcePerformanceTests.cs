@@ -14,11 +14,12 @@ namespace Compze.Tests.Performance.Internals.XUnit.StrictlyManagedResource;
 public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
 {
    // ReSharper disable once ClassNeverInstantiated.Local
-#pragma warning disable ca1812 // Class is never instantiated
+#pragma warning disable CA1812 // Class is never instantiated
    class StrictResource : IStrictlyManagedResource
    {
       public void Dispose() {}
    }
+#pragma warning restore CA1812 // Class is never instantiated
 
    [XF] public void Allocated_and_disposes_250_instances_in_40_millisecond_when_actually_collecting_stack_traces()
    {

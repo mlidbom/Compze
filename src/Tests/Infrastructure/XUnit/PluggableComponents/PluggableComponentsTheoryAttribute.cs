@@ -4,6 +4,8 @@ using Xunit.Sdk;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+#pragma warning disable CA1813 //avoid unsealed attributes
+
 // ReSharper disable GrammarMistakeInComment
 //XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 /// <summary>
@@ -37,5 +39,4 @@ public class PluggableComponentsTheoryAttribute : FactAttribute
 public sealed class PCTAttribute : PluggableComponentsTheoryAttribute
 {
 }
-
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
+#pragma warning restore CA1813 //avoid unsealed attributes

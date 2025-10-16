@@ -14,12 +14,8 @@ using Xunit;
 namespace Compze.Tests.Performance.Internals.XUnit.Sql.DocumentDb;
 
 [Performance, LongRunning]
-public class DocumentDbPerformanceTests : DocumentDbTestsBase, IAsyncLifetime
+public class DocumentDbPerformanceTests : DocumentDbTestsBase
 {
-   public DocumentDbPerformanceTests() => ServiceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
-
-   public async Task InitializeAsync() => await Task.CompletedTask;
-   public async Task DisposeAsync() => await ServiceLocator.DisposeAsync();
    [PCT] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()
    {
       ServiceLocator.ExecuteInIsolatedScope(() =>

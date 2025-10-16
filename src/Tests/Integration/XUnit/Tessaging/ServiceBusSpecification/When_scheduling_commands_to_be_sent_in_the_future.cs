@@ -19,10 +19,10 @@ namespace Compze.Tests.Integration.XUnit.Tessaging.ServiceBusSpecification;
 
 public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBase, IAsyncLifetime
 {
-   IUtcTimeTimeSource _timeSource;
-   IThreadGate _receivedCommandGate;
-   ITestingEndpointHost _host;
-   IEndpoint _endpoint;
+   IUtcTimeTimeSource _timeSource = DateTimeNowTimeSource.Instance;
+   readonly IThreadGate _receivedCommandGate;
+   readonly ITestingEndpointHost _host;
+   readonly IEndpoint _endpoint;
 
    public When_scheduling_commands_to_be_sent_in_the_future()
    {
@@ -47,6 +47,12 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
       var serviceLocator = _endpoint.ServiceLocator;
       _timeSource = serviceLocator.Resolve<IUtcTimeTimeSource>();
    }
+   
+   public async Task DisposeAsync()
+   {
+      await _host.DisposeAsync();
+      await _endpoint.DisposeAsync();
+   }
 
    [PCT]  public void Messages_whose_due_time_has_passed_are_delivered()
    {
@@ -67,8 +73,6 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
       _receivedCommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: .5.Seconds())
                           .Should().Be(false);
    }
-
-   public async Task DisposeAsync() => await _host.DisposeAsync();
 
    internal class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command;
 }

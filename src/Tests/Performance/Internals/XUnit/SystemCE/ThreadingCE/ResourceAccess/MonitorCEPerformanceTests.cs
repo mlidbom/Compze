@@ -18,7 +18,23 @@ namespace Compze.Tests.Performance.Internals.XUnit.SystemCE.ThreadingCE.Resource
 [Performance]
 public class MonitorCEPerformanceTests : UniversalTestBase
 {
-   public MonitorCEPerformanceTests() => WarmUp();
+   readonly MyLong _guarded;
+   static readonly long TotalLocks = 10_000_000.EnvDivide(unoptimized: 10, instrumented: 100);
+   const int Iterations = 100;
+   static readonly long LocksPerIteration = TotalLocks / Iterations;
+
+   public MonitorCEPerformanceTests()
+   {
+      _guarded = new MyLong();
+      _guarded.Read_Unsafe();
+      _guarded.Read_Locked();
+      _guarded.Read_MonitorCE_Using_EnterLock();
+      _guarded.Read_MonitorCE_Read();
+      _guarded.Increment_Unsafe();
+      _guarded.Increment_Locked();
+      _guarded.Increment_MonitorCE_Using_EnterLock();
+      _guarded.Increment_MonitorCE_Update();
+   }
 
    class MyLong
    {
@@ -57,24 +73,6 @@ public class MonitorCEPerformanceTests : UniversalTestBase
       }
 
       internal void Increment_MonitorCE_Update() => _monitor.Update(Increment_Unsafe);
-   }
-
-   MyLong _guarded;
-   static readonly long TotalLocks = 10_000_000.EnvDivide(unoptimized: 10, instrumented: 100);
-   const int Iterations = 100;
-   static readonly long LocksPerIteration = TotalLocks / Iterations;
-
-   public void WarmUp()
-   {
-      _guarded = new MyLong();
-      _guarded.Read_Unsafe();
-      _guarded.Read_Locked();
-      _guarded.Read_MonitorCE_Using_EnterLock();
-      _guarded.Read_MonitorCE_Read();
-      _guarded.Increment_Unsafe();
-      _guarded.Increment_Locked();
-      _guarded.Increment_MonitorCE_Using_EnterLock();
-      _guarded.Increment_MonitorCE_Update();
    }
 
    static void RunSingleThreadedScenario(Action action, TimeSpan singleThreadMaxTime)

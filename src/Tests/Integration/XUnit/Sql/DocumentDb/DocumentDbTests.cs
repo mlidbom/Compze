@@ -23,13 +23,8 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Integration.XUnit.Sql.DocumentDb;
 
-public class DocumentDbTests : DocumentDbTestsBase, IAsyncLifetime
+public class DocumentDbTests : DocumentDbTestsBase
 {
-   public DocumentDbTests() => ServiceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
-
-   public async Task InitializeAsync() => await Task.CompletedTask;
-   public async Task DisposeAsync() => await ServiceLocator.DisposeAsync();
-
    [PCT]
     public void CanSaveAndLoadDocument()
     {

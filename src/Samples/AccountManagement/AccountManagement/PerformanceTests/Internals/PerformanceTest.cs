@@ -42,6 +42,12 @@ public class PerformanceTest : UniversalTestBase, IAsyncLifetime
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
 
+   public async Task DisposeAsync()
+   {
+      await _host!.DisposeAsync().caf();
+      if(_clientEndpoint != null) await _clientEndpoint.DisposeAsync();
+   }
+
    [PCT] public void SingleThreaded_creates_XX_accounts_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.Execute(
          description: "Register accounts",
@@ -102,6 +108,4 @@ public class PerformanceTest : UniversalTestBase, IAsyncLifetime
          iterations: accountCount);
       return created;
    }
-
-   public async Task DisposeAsync() => await _host!.DisposeAsync().caf();
 }

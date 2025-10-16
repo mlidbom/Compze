@@ -10,26 +10,26 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public abstract partial class DbPool : StrictlyManagedResourceBase<DbPool>
+public abstract partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBase>
 {
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
    static TimeSpan _reservationLength;
    const int NumberOfDatabases = 30;
 
-   protected DbPool() : base(forceStackTraceAllocation:true)
+   protected DbPoolBase() : base(forceStackTraceAllocation:true)
    {
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? TimeSpanCE.Minutes(10) : TimeSpanCE.Seconds(65);
 
       MachineWideState = MachineWideSharedObject<SharedState>.For(GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), usePersistentFile: true);
    }
 
-   const string PoolDatabaseNamePrefix = $"Compze_{nameof(DbPool)}_";
+   const string PoolDatabaseNamePrefix = $"Compze_{nameof(DbPoolBase)}_";
 
    readonly MonitorCE _guard = MonitorCE.WithTimeout(TimeSpanCE.Seconds(30));
    readonly Guid _poolId = Guid.NewGuid();
    protected IReadOnlyList<Database> _transientCache = new List<Database>();
 
-   static ILogger _log = CompzeLogger.For<DbPool>();
+   static ILogger _log = CompzeLogger.For<DbPoolBase>();
    bool _disposed;
 
    public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => _log = _log.WithLogLevel(logLevel));

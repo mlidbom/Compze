@@ -12,7 +12,7 @@ static class SqliteMemoryDbPoolRegistrar
       MsSqlDbPool.RegisterWith(registrar);
 }
 
-class MsSqlDbPool : DbPool
+class MsSqlDbPool : DbPoolBase
 {
    internal static IDependencyRegistrar RegisterWith(IDependencyRegistrar registrar)
    {

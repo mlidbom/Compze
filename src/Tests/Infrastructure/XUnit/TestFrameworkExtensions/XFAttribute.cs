@@ -4,6 +4,7 @@ using Xunit.Sdk;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+#pragma warning disable CA1813 //avoid unsealed attributes
 
 //XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 /// <summary>
@@ -32,4 +33,4 @@ public class XFactAttribute : FactAttribute
 /// </summary>
 public sealed class XFAttribute : XFactAttribute {}
 
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
+#pragma warning restore CA1813 //avoid unsealed attributes

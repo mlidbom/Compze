@@ -8,6 +8,7 @@ namespace Compze.Tests.Unit.Internals.XUnit.KeyValueStorage;
 
 public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
 {
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes
    class Base;
 
    // ReSharper disable once ClassNeverInstantiated.Local
@@ -15,7 +16,7 @@ public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
 
    // ReSharper disable once ClassNeverInstantiated.Local
    class Unrelated;
-
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 
    [XF]
    public void TwoInstancesOfTheSameTypeWithTheSameIdAreEqualAndHaveTheSameHashCode()

@@ -10,7 +10,7 @@ namespace Compze.Tests.Integration.XUnit.Testing.Sql;
 
 public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
 {
-   readonly DbPool _pool = CreatePool();
+   readonly DbPoolBase _pool = CreatePool();
    const string Db1 = "LocalDBManagerTests_After_creating_connection_Db1";
    const string Db2 = "LocalDBManagerTests_After_creating_connection_Db2";
 
@@ -55,10 +55,10 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
       _pool.ConnectionStringFor(Db1).Should().NotBe(_pool.ConnectionStringFor(Db2));
    }
 
-   public override void Dispose()
+   protected override void Dispose(bool disposing)
    {
       _pool.Dispose();
-      base.Dispose();
+      base.Dispose(disposing);
       // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
       _pool.Invoking(action: _ => _pool.ConnectionStringFor(Db1))
            .Should().Throw<Exception>()
