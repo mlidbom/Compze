@@ -22,19 +22,19 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
 
       // Verify the values are valid parsed enums (not relying on default check since MicrosoftSqlServer happens to be 0)
       TestEnv.SqlLayer.Should().BeOneOf(
-         Compze.Wiring.SqlLayer.MicrosoftSqlServer,
-         Compze.Wiring.SqlLayer.MySql,
-         Compze.Wiring.SqlLayer.PostgreSql,
-         Compze.Wiring.SqlLayer.Sqlite,
-         Compze.Wiring.SqlLayer.SqliteMemory
+         SqlLayer.MicrosoftSqlServer,
+         SqlLayer.MySql,
+         SqlLayer.PostgreSql,
+         SqlLayer.Sqlite,
+         SqlLayer.SqliteMemory
       );
       TestEnv.DIContainer.Should().BeOneOf(
-         Compze.Wiring.DIContainer.Microsoft,
-         Compze.Wiring.DIContainer.SimpleInjector
+         DIContainer.Microsoft,
+         DIContainer.SimpleInjector
       );
 
       // Test the ValueForDb functionality (alias for SqlLayer.ValueFor)
-      var testValue = TestEnv.SqlLayer.ValueFor(msSql: "SQL Server", mySql: "MySQL", pgSql: "PostgreSQL", sqlite: "SQLite");
+      var testValue = TestEnv.SqlLayer.ValueFor(msSql: "SQL Server", mySql: "MySQL", pgSql: "PostgreSQL", sqlite: "SQLite", sqliteMemory: "SQLiteMemory");
 
       System.Console.WriteLine($"  ValueForDb result: {testValue}");
       testValue.Should().NotBeNull();
@@ -42,11 +42,11 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
       // Verify the value matches the current sql layer
       var expectedValue = TestEnv.SqlLayer switch
       {
-         Compze.Wiring.SqlLayer.MicrosoftSqlServer => "SQL Server",
-         Compze.Wiring.SqlLayer.MySql              => "MySQL",
-         Compze.Wiring.SqlLayer.PostgreSql         => "PostgreSQL",
-         Compze.Wiring.SqlLayer.Sqlite             => "SQLite",
-         Compze.Wiring.SqlLayer.SqliteMemory       => "SQLite",
+         SqlLayer.MicrosoftSqlServer => "SQL Server",
+         SqlLayer.MySql              => "MySQL",
+         SqlLayer.PostgreSql         => "PostgreSQL",
+         SqlLayer.Sqlite             => "SQLite",
+         SqlLayer.SqliteMemory       => "SQLiteMemory",
          _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       };
 
@@ -61,7 +61,8 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
          msSql: System.TimeSpan.FromSeconds(5),
          mySql: System.TimeSpan.FromSeconds(10),
          pgSql: System.TimeSpan.FromSeconds(7),
-         sqlite: System.TimeSpan.FromSeconds(6)
+         sqlite: System.TimeSpan.FromSeconds(6),
+         sqliteMemory: System.TimeSpan.FromSeconds(6)
       );
 
       System.Console.WriteLine($"✓ Timeout for {TestEnv.SqlLayer}: {timeout}");
@@ -71,11 +72,11 @@ public class PluggableComponentsTheoryTests : XUnitTestBase
       // Verify it matches expected value
       var expected = TestEnv.SqlLayer switch
       {
-         Compze.Wiring.SqlLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
-         Compze.Wiring.SqlLayer.MySql              => System.TimeSpan.FromSeconds(10),
-         Compze.Wiring.SqlLayer.PostgreSql         => System.TimeSpan.FromSeconds(7),
-         Compze.Wiring.SqlLayer.Sqlite             => System.TimeSpan.FromSeconds(6),
-         Compze.Wiring.SqlLayer.SqliteMemory       => System.TimeSpan.FromSeconds(6),
+         SqlLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
+         SqlLayer.MySql              => System.TimeSpan.FromSeconds(10),
+         SqlLayer.PostgreSql         => System.TimeSpan.FromSeconds(7),
+         SqlLayer.Sqlite             => System.TimeSpan.FromSeconds(6),
+         SqlLayer.SqliteMemory       => System.TimeSpan.FromSeconds(6),
          _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       };
 

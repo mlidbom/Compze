@@ -100,8 +100,8 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase, IAsyncLifet
       ).ToArray();
 
       await AssertUncachedAndCachedAggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 25, mySql: 55, pgSql: 25, sqlite: 30).Milliseconds().EnvMultiply(instrumented: 2.5),
-         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
+         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 25, mySql: 55, pgSql: 25, sqlite: 30, sqliteMemory: 30).Milliseconds().EnvMultiply(instrumented: 2.5),
+         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
          eventMigrations);
    }
 
@@ -115,8 +115,8 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase, IAsyncLifet
       ).ToArray();
 
       await AssertUncachedAndCachedAggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 30, mySql: 30, pgSql: 30, sqlite: 35).Milliseconds().EnvMultiply(instrumented: 2.5),
-         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10).Milliseconds().EnvMultiply(instrumented: 2),
+         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 30, mySql: 30, pgSql: 30, sqlite: 35, sqliteMemory: 35).Milliseconds().EnvMultiply(instrumented: 2.5),
+         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2),
          eventMigrations);
    }
 
@@ -124,8 +124,8 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase, IAsyncLifet
    {
       var eventMigrations = EnumerableCE.Create<IEventMigration>().ToArray();
       await AssertUncachedAndCachedAggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 25, mySql: 45, pgSql: 20, sqlite: 25).Milliseconds().EnvMultiply(instrumented: 3),
-         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
+         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 25, mySql: 45, pgSql: 20, sqlite: 25, sqliteMemory: 25).Milliseconds().EnvMultiply(instrumented: 3),
+         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
          eventMigrations);
    }
 }

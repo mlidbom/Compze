@@ -36,7 +36,7 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
                     });
    }
 
-   static string LayerSpecificCommandText() => TestEnv.SqlLayer.ValueFor(msSql: "select 1", mySql: "select 1", pgSql: "select 1", sqlite: "select 1");
+   static string LayerSpecificCommandText() => TestEnv.SqlLayer.ValueFor(msSql: "select 1", mySql: "select 1", pgSql: "select 1", sqlite: "select 1", sqliteMemory: "select 1");
 
    [PCT] public void The_same_connection_string_is_returned_by_each_call_to_CreateOrGetLocalDb_Db1()
    {

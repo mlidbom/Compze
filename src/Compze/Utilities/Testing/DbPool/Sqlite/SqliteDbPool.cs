@@ -69,7 +69,7 @@ class SqliteDbPool : DbPoolBase
       base.Dispose();
 
       // Sqlite sometimes takes a moment to release the files, so we retry a few times
-      const int maxCleanupAttempts = 10;
+      const int maxCleanupAttempts = 20;
       for(var attempt = 1; attempt <= maxCleanupAttempts; attempt++)
       {
          SqliteConnection.ClearAllPools();

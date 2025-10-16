@@ -34,12 +34,12 @@ public class DbPoolPerformanceTests : DbPoolTestBase
             dbPool.ConnectionStringFor(dbName);
          },
          iterations: 5,
-         maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 150, mySql: 150, pgSql: 150, sqlite: 150).Milliseconds());
+         maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 150, mySql: 150, pgSql: 150, sqlite: 150, sqliteMemory: 150).Milliseconds());
    }
 
    [PCT] public void Multiple_threads_can_reserve_and_release_5_identically_named_databases_in_milliseconds_db2_50_msSql_75_mySql_75_orcl_100_pgSql_25()
    {
-      var maxTime = TestEnv.SqlLayer.ValueFor(msSql: 75, mySql: 75, pgSql: 25, sqlite: 75).Milliseconds().EnvMultiply(instrumented: 1.2);
+      var maxTime = TestEnv.SqlLayer.ValueFor(msSql: 75, mySql: 75, pgSql: 25, sqlite: 75, sqliteMemory: 75).Milliseconds().EnvMultiply(instrumented: 1.2);
       var dbName = Guid.NewGuid().ToString();
       TimeAsserter.ExecuteThreaded(
          action:
@@ -55,7 +55,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
 
    [PCT] public void Multiple_threads_can_reserve_and_release_5_differently_named_databases_in_milliseconds_msSql_125_mySql_175_pgSql_400_orcl_400_db2_100()
    {
-      var maxTotal = TestEnv.SqlLayer.ValueFor(msSql: 70, mySql: 175, pgSql: 400, sqlite: 125).Milliseconds().EnvMultiply(instrumented: 1.6);
+      var maxTotal = TestEnv.SqlLayer.ValueFor(msSql: 70, mySql: 175, pgSql: 400, sqlite: 125, sqliteMemory: 125).Milliseconds().EnvMultiply(instrumented: 1.6);
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
@@ -77,7 +77,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
          iterations: 5,
-         maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 100, mySql: 170, pgSql: 500, sqlite: 100).Milliseconds());
+         maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 100, mySql: 170, pgSql: 500, sqlite: 100, sqliteMemory: 100).Milliseconds());
    }
 
    [PCT] public void Repeated_fetching_of_same_connection_runs_20_times_in_1_milliseconds()
@@ -96,7 +96,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
    [PCT] public void Once_DB_Fetched_Can_use_XX_connections_in_10_millisecond_db2_50_MsSql_180_MySql_24_Oracle_140_PgSql_300()
    {
       var allowedTime = 10.Milliseconds().EnvMultiply(instrumented: 2);
-      var iterations = TestEnv.SqlLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300, sqlite: 180);
+      var iterations = TestEnv.SqlLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300, sqlite: 180, sqliteMemory: 180);
 
       using var manager = CreatePool();
       manager.SetLogLevel(LogLevel.Warning);
