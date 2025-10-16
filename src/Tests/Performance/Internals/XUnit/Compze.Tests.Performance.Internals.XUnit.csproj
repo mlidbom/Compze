@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <PropertyGroup>
+        <NuGetAuditMode>direct</NuGetAuditMode>
+        <AnalysisLevel>latest-all</AnalysisLevel>
+        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Integration\Compze.Tests.Integration.csproj"/>
+        <ProjectReference Include="..\..\..\Integration\Internals\Compze.Tests.Integration.Internals.csproj"/>
+        <ProjectReference Include="..\..\..\Unit\Internals\XUnit\Compze.Tests.Unit.Internals.XUnit.csproj"/>
+        <ProjectReference Include="..\..\..\Infrastructure\NUnit\Compze.Tests.Infrastructure.NUnit.csproj"/>
+        <ProjectReference Include="..\..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj"/>
+        <ProjectReference Include="..\..\..\..\Compze\Sql\Sqlite\Infrastructure\Compze.Sql.Sqlite.Infrastructure.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="8.7.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0"/>
+        <PackageReference Include="NCrunch.Framework" Version="5.11.0"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="xunit" Version="2.9.3"/>
+    </ItemGroup>
+</Project>

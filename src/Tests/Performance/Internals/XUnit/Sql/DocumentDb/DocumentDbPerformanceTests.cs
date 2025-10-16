@@ -1,20 +1,26 @@
+using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Tests.Common.NUnit.Sql.DocumentDb;
-using Compze.Tests.Infrastructure;
 using Compze.Tests.Common.Sql.DocumentDb;
-using Compze.Utilities.DependencyInjection;
-using FluentAssertions.Extensions;
-using NUnit.Framework;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.NUnit;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Utilities.DependencyInjection;
 using Compze.Wiring;
+using FluentAssertions.Extensions;
+using Xunit;
 
-namespace Compze.Tests.Performance.Internals.Sql.DocumentDb;
+namespace Compze.Tests.Performance.Internals.XUnit.Sql.DocumentDb;
 
 [LongRunning]
-class DocumentDbPerformanceTests(string pluggableComponentsCombination) : NUnitDocumentDbTestsBase(pluggableComponentsCombination)
+public class DocumentDbPerformanceTests : DocumentDbTestsBase, IAsyncLifetime
 {
-   [Test] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()
+   public DocumentDbPerformanceTests() => ServiceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
+
+   public async Task InitializeAsync() => await Task.CompletedTask;
+   public async Task DisposeAsync() => await ServiceLocator.DisposeAsync();
+   [PluggableComponentsTheory] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()
    {
       ServiceLocator.ExecuteInIsolatedScope(() =>
       {
