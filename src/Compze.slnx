@@ -8,7 +8,6 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Compze/">
-    <Project Path="Compze/Wiring/Compze.Wiring.csproj" />
     <File Path="Directory.Build.props" />
   </Folder>
   <Folder Name="/Compze/Abstractions/">
@@ -161,4 +160,8 @@
   <Project Path="msbuild/Build.csproj">
     <BuildType Solution="docs|*" Project="Release" />
   </Project>
+  <Folder Name="/Compze/Wiring/">
+    <Project Path="Compze/Wiring/Compze.Wiring.csproj" />
+    <Project Path="Compze/Wiring/Testing/Compze.Wiring.Testing.csproj" />
+  </Folder>
 </Solution>

@@ -1,35 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
-	</PropertyGroup>
-	<PropertyGroup>
-		<NuGetAuditMode>direct</NuGetAuditMode>
-		<AnalysisLevel>latest-all</AnalysisLevel>
-		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-	</PropertyGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-		<ProjectReference Include="..\..\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
-		<ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Common" />
-		<InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
-		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
-		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
-		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
-		<InternalsVisibleTo Include="Compze.Sql.DocumentDb.Sqlite" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
-		<InternalsVisibleTo Include="Compze.Serialization" />
-		<InternalsVisibleTo Include="Compze.Tessaging" />
-		<InternalsVisibleTo Include="Compze.Wiring" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
-		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
+   </PropertyGroup>
+   <PropertyGroup>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Common" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.Sqlite" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
+      <InternalsVisibleTo Include="Compze.Serialization" />
+      <InternalsVisibleTo Include="Compze.Tessaging" />
+      <InternalsVisibleTo Include="Compze.Wiring" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
       <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-	</ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+      <InternalsVisibleTo Include="Compze.Wiring.Testing" />
+   </ItemGroup>
 </Project>

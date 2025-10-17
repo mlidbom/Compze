@@ -1,167 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-  </PropertyGroup>
-<ItemGroup>
-    <ProjectReference Include="..\Common\Compze.Common.csproj" />
-    <ProjectReference Include="..\Wiring\Compze.Wiring.csproj" />
-    <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
-    <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-    <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
-    <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
-    <ProjectReference Include="..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-    <ProjectReference Include="..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
-    <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
-    <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
-    <ProjectReference Include="..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.MySql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sql\DocumentDb\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Http">
-      <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <!-- Exclude _docs files from compilation but keep them visible.
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <PropertyGroup>
+      <NuGetAuditMode>direct</NuGetAuditMode>
+      <AnalysisLevel>latest-all</AnalysisLevel>
+      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Common\Compze.Common.csproj" />
+      <ProjectReference Include="..\Wiring\Compze.Wiring.csproj" />
+      <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
+      <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
+      <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
+      <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
+      <ProjectReference Include="..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
+      <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
+      <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
+      <ProjectReference Include="..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+      <ProjectReference Include="..\Wiring\Testing\Compze.Wiring.Testing.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MySql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Sql.PostgreSql" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Sql.Sqlite" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration" />
+   </ItemGroup>
+   <ItemGroup>
+      <Folder Include="Sql\DocumentDb\" />
+   </ItemGroup>
+   <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Http">
+         <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
+      </Reference>
+   </ItemGroup>
+   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="_docs\**\*.cs" />
-    <None Include="_docs\**\*.cs" />
-    <Content Include="_docs\**\*.md" />
-    <Compile Remove="Abstractions\_Docs\**\*.cs" />
-    <None Include="Abstractions\_Docs\**\*.cs" />
-    <Content Include="Abstractions\_Docs\**\*.md" />
-    <Compile Remove="Teventive\_docs\**\*.cs" />
-    <None Include="Teventive\_docs\**\*.cs" />
-    <Content Include="Teventive\_docs\**\*.md" />
-    <Compile Remove="Typermedia\_docs\**\*.cs" />
-    <None Include="Typermedia\_docs\**\*.cs" />
-    <Content Include="Typermedia\_docs\**\*.md" />
-  </ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+   <ItemGroup>
+      <Compile Remove="_docs\**\*.cs" />
+      <None Include="_docs\**\*.cs" />
+      <Content Include="_docs\**\*.md" />
+      <Compile Remove="Abstractions\_Docs\**\*.cs" />
+      <None Include="Abstractions\_Docs\**\*.cs" />
+      <Content Include="Abstractions\_Docs\**\*.md" />
+      <Compile Remove="Teventive\_docs\**\*.cs" />
+      <None Include="Teventive\_docs\**\*.cs" />
+      <Content Include="Teventive\_docs\**\*.md" />
+      <Compile Remove="Typermedia\_docs\**\*.cs" />
+      <None Include="Typermedia\_docs\**\*.cs" />
+      <Content Include="Typermedia\_docs\**\*.md" />
+   </ItemGroup>
+   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <EmbeddedResource Remove="Abstractions\**" />
-    <None Remove="Abstractions\**" />
-    <Content Remove="Abstractions\**" />
-    <Compile Remove="Common\**" />
-    <EmbeddedResource Remove="Common\**" />
-    <None Remove="Common\**" />
-    <Content Remove="Common\**" />
-    <Compile Remove="Hosting\Abstractions\**" />
-    <EmbeddedResource Remove="Hosting\Abstractions\**" />
-    <None Remove="Hosting\Abstractions\**" />
-    <Content Remove="Hosting\Abstractions\**" />
-    <Compile Remove="Hosting\AspNetCore\**" />
-    <EmbeddedResource Remove="Hosting\AspNetCore\**" />
-    <None Remove="Hosting\AspNetCore\**" />
-    <Content Remove="Hosting\AspNetCore\**" />
-    <Compile Remove="Hosting\Configuration\**" />
-    <EmbeddedResource Remove="Hosting\Configuration\**" />
-    <None Remove="Hosting\Configuration\**" />
-    <Content Remove="Hosting\Configuration\**" />
-    <Compile Remove="Hosting\Configuration\Abstractions\**" />
-    <EmbeddedResource Remove="Hosting\Configuration\Abstractions\**" />
-    <None Remove="Hosting\Configuration\Abstractions\**" />
-    <Content Remove="Hosting\Configuration\Abstractions\**" />
-    <Compile Remove="Hosting\Sql\MicrosoftSql\**" />
-    <EmbeddedResource Remove="Hosting\Sql\MicrosoftSql\**" />
-    <None Remove="Hosting\Sql\MicrosoftSql\**" />
-    <Content Remove="Hosting\Sql\MicrosoftSql\**" />
-    <Compile Remove="Hosting\Sql\MySql\**" />
-    <EmbeddedResource Remove="Hosting\Sql\MySql\**" />
-    <None Remove="Hosting\Sql\MySql\**" />
-    <Content Remove="Hosting\Sql\MySql\**" />
-    <Compile Remove="Hosting\Sql\PostgreSql\**" />
-    <EmbeddedResource Remove="Hosting\Sql\PostgreSql\**" />
-    <None Remove="Hosting\Sql\PostgreSql\**" />
-    <Content Remove="Hosting\Sql\PostgreSql\**" />
-    <Compile Remove="Hosting\Sql\Sqlite\**" />
-    <EmbeddedResource Remove="Hosting\Sql\Sqlite\**" />
-    <None Remove="Hosting\Sql\Sqlite\**" />
-    <Content Remove="Hosting\Sql\Sqlite\**" />
-    <Compile Remove="Hosting\Testing\**" />
-    <EmbeddedResource Remove="Hosting\Testing\**" />
-    <None Remove="Hosting\Testing\**" />
-    <Content Remove="Hosting\Testing\**" />
-    <Compile Remove="Sql\MicrosoftSql\**" />
-    <EmbeddedResource Remove="Sql\MicrosoftSql\**" />
-    <None Remove="Sql\MicrosoftSql\**" />
-    <Content Remove="Sql\MicrosoftSql\**" />
-    <Compile Remove="Sql\MySql\**" />
-    <EmbeddedResource Remove="Sql\MySql\**" />
-    <None Remove="Sql\MySql\**" />
-    <Content Remove="Sql\MySql\**" />
-    <Compile Remove="Sql\PostgreSql\**" />
-    <EmbeddedResource Remove="Sql\PostgreSql\**" />
-    <None Remove="Sql\PostgreSql\**" />
-    <Content Remove="Sql\PostgreSql\**" />
-    <Compile Remove="Sql\Sqlite\**" />
-    <EmbeddedResource Remove="Sql\Sqlite\**" />
-    <None Remove="Sql\Sqlite\**" />
-    <Content Remove="Sql\Sqlite\**" />
-    <Compile Remove="Teventive\**" />
-    <EmbeddedResource Remove="Teventive\**" />
-    <None Remove="Teventive\**" />
-    <Content Remove="Teventive\**" />
-    <Compile Remove="Teventive\Abstractions\**" />
-    <EmbeddedResource Remove="Teventive\Abstractions\**" />
-    <None Remove="Teventive\Abstractions\**" />
-    <Content Remove="Teventive\Abstractions\**" />
-    <Compile Remove="Teventive\EventStore\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\**" />
-    <None Remove="Teventive\EventStore\**" />
-    <Content Remove="Teventive\EventStore\**" />
-    <Compile Remove="Teventive\EventStore\Abstractions\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\Abstractions\**" />
-    <None Remove="Teventive\EventStore\Abstractions\**" />
-    <Content Remove="Teventive\EventStore\Abstractions\**" />
-    <Compile Remove="Teventive\EventStore\MicrosoftSql\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\MicrosoftSql\**" />
-    <None Remove="Teventive\EventStore\MicrosoftSql\**" />
-    <Content Remove="Teventive\EventStore\MicrosoftSql\**" />
-    <Compile Remove="Teventive\EventStore\MySql\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\MySql\**" />
-    <None Remove="Teventive\EventStore\MySql\**" />
-    <Content Remove="Teventive\EventStore\MySql\**" />
-    <Compile Remove="Teventive\EventStore\PostgreSql\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\PostgreSql\**" />
-    <None Remove="Teventive\EventStore\PostgreSql\**" />
-    <Content Remove="Teventive\EventStore\PostgreSql\**" />
-    <Compile Remove="Teventive\EventStore\Sqlite\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\Sqlite\**" />
-    <None Remove="Teventive\EventStore\Sqlite\**" />
-    <Content Remove="Teventive\EventStore\Sqlite\**" />
-    <Compile Remove="Typermedia\Abstractions\**" />
-    <EmbeddedResource Remove="Typermedia\Abstractions\**" />
-    <None Remove="Typermedia\Abstractions\**" />
-    <Content Remove="Typermedia\Abstractions\**" />
-  </ItemGroup>
+   <ItemGroup>
+      <Compile Remove="Abstractions\**" />
+      <EmbeddedResource Remove="Abstractions\**" />
+      <None Remove="Abstractions\**" />
+      <Content Remove="Abstractions\**" />
+      <Compile Remove="Common\**" />
+      <EmbeddedResource Remove="Common\**" />
+      <None Remove="Common\**" />
+      <Content Remove="Common\**" />
+      <Compile Remove="Hosting\Abstractions\**" />
+      <EmbeddedResource Remove="Hosting\Abstractions\**" />
+      <None Remove="Hosting\Abstractions\**" />
+      <Content Remove="Hosting\Abstractions\**" />
+      <Compile Remove="Hosting\AspNetCore\**" />
+      <EmbeddedResource Remove="Hosting\AspNetCore\**" />
+      <None Remove="Hosting\AspNetCore\**" />
+      <Content Remove="Hosting\AspNetCore\**" />
+      <Compile Remove="Hosting\Configuration\**" />
+      <EmbeddedResource Remove="Hosting\Configuration\**" />
+      <None Remove="Hosting\Configuration\**" />
+      <Content Remove="Hosting\Configuration\**" />
+      <Compile Remove="Hosting\Configuration\Abstractions\**" />
+      <EmbeddedResource Remove="Hosting\Configuration\Abstractions\**" />
+      <None Remove="Hosting\Configuration\Abstractions\**" />
+      <Content Remove="Hosting\Configuration\Abstractions\**" />
+      <Compile Remove="Hosting\Sql\MicrosoftSql\**" />
+      <EmbeddedResource Remove="Hosting\Sql\MicrosoftSql\**" />
+      <None Remove="Hosting\Sql\MicrosoftSql\**" />
+      <Content Remove="Hosting\Sql\MicrosoftSql\**" />
+      <Compile Remove="Hosting\Sql\MySql\**" />
+      <EmbeddedResource Remove="Hosting\Sql\MySql\**" />
+      <None Remove="Hosting\Sql\MySql\**" />
+      <Content Remove="Hosting\Sql\MySql\**" />
+      <Compile Remove="Hosting\Sql\PostgreSql\**" />
+      <EmbeddedResource Remove="Hosting\Sql\PostgreSql\**" />
+      <None Remove="Hosting\Sql\PostgreSql\**" />
+      <Content Remove="Hosting\Sql\PostgreSql\**" />
+      <Compile Remove="Hosting\Sql\Sqlite\**" />
+      <EmbeddedResource Remove="Hosting\Sql\Sqlite\**" />
+      <None Remove="Hosting\Sql\Sqlite\**" />
+      <Content Remove="Hosting\Sql\Sqlite\**" />
+      <Compile Remove="Hosting\Testing\**" />
+      <EmbeddedResource Remove="Hosting\Testing\**" />
+      <None Remove="Hosting\Testing\**" />
+      <Content Remove="Hosting\Testing\**" />
+      <Compile Remove="Sql\MicrosoftSql\**" />
+      <EmbeddedResource Remove="Sql\MicrosoftSql\**" />
+      <None Remove="Sql\MicrosoftSql\**" />
+      <Content Remove="Sql\MicrosoftSql\**" />
+      <Compile Remove="Sql\MySql\**" />
+      <EmbeddedResource Remove="Sql\MySql\**" />
+      <None Remove="Sql\MySql\**" />
+      <Content Remove="Sql\MySql\**" />
+      <Compile Remove="Sql\PostgreSql\**" />
+      <EmbeddedResource Remove="Sql\PostgreSql\**" />
+      <None Remove="Sql\PostgreSql\**" />
+      <Content Remove="Sql\PostgreSql\**" />
+      <Compile Remove="Sql\Sqlite\**" />
+      <EmbeddedResource Remove="Sql\Sqlite\**" />
+      <None Remove="Sql\Sqlite\**" />
+      <Content Remove="Sql\Sqlite\**" />
+      <Compile Remove="Teventive\**" />
+      <EmbeddedResource Remove="Teventive\**" />
+      <None Remove="Teventive\**" />
+      <Content Remove="Teventive\**" />
+      <Compile Remove="Teventive\Abstractions\**" />
+      <EmbeddedResource Remove="Teventive\Abstractions\**" />
+      <None Remove="Teventive\Abstractions\**" />
+      <Content Remove="Teventive\Abstractions\**" />
+      <Compile Remove="Teventive\EventStore\**" />
+      <EmbeddedResource Remove="Teventive\EventStore\**" />
+      <None Remove="Teventive\EventStore\**" />
+      <Content Remove="Teventive\EventStore\**" />
+      <Compile Remove="Teventive\EventStore\Abstractions\**" />
+      <EmbeddedResource Remove="Teventive\EventStore\Abstractions\**" />
+      <None Remove="Teventive\EventStore\Abstractions\**" />
+      <Content Remove="Teventive\EventStore\Abstractions\**" />
+      <Compile Remove="Teventive\EventStore\MicrosoftSql\**" />
+      <EmbeddedResource Remove="Teventive\EventStore\MicrosoftSql\**" />
+      <None Remove="Teventive\EventStore\MicrosoftSql\**" />
+      <Content Remove="Teventive\EventStore\MicrosoftSql\**" />
+      <Compile Remove="Teventive\EventStore\MySql\**" />
+      <EmbeddedResource Remove="Teventive\EventStore\MySql\**" />
+      <None Remove="Teventive\EventStore\MySql\**" />
+      <Content Remove="Teventive\EventStore\MySql\**" />
+      <Compile Remove="Teventive\EventStore\PostgreSql\**" />
+      <EmbeddedResource Remove="Teventive\EventStore\PostgreSql\**" />
+      <None Remove="Teventive\EventStore\PostgreSql\**" />
+      <Content Remove="Teventive\EventStore\PostgreSql\**" />
+      <Compile Remove="Teventive\EventStore\Sqlite\**" />
+      <EmbeddedResource Remove="Teventive\EventStore\Sqlite\**" />
+      <None Remove="Teventive\EventStore\Sqlite\**" />
+      <Content Remove="Teventive\EventStore\Sqlite\**" />
+      <Compile Remove="Typermedia\Abstractions\**" />
+      <EmbeddedResource Remove="Typermedia\Abstractions\**" />
+      <None Remove="Typermedia\Abstractions\**" />
+      <Content Remove="Typermedia\Abstractions\**" />
+   </ItemGroup>
 </Project>
