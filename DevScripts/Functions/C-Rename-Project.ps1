@@ -59,17 +59,7 @@ function C-Rename-Project {
     
     $solutionDir = Split-Path -Parent $SolutionPath
     
-    Write-Host "="*80 -ForegroundColor Cyan
-    Write-Host "PROJECT RENAME OPERATION" -ForegroundColor Cyan
-    Write-Host "="*80 -ForegroundColor Cyan
-    Write-Host "Old Name: $Old" -ForegroundColor Yellow
-    Write-Host "New Name: $New" -ForegroundColor Green
-    Write-Host "Solution: $SolutionPath" -ForegroundColor Cyan
-    Write-Host ""
-    
     # Step 1: Find the project file
-    Write-Host "[Step 1/5] Finding project file..." -ForegroundColor Cyan
-    
     $oldProjectFileName = "$Old.csproj"
     $newProjectFileName = "$New.csproj"
     
@@ -84,20 +74,13 @@ function C-Rename-Project {
     $projectDir = Split-Path -Parent $projectFile.FullName
     $newProjectPath = Join-Path $projectDir $newProjectFileName
     
-    Write-Host "  Found: $($projectFile.FullName)" -ForegroundColor Green
-    Write-Host "  Will rename to: $newProjectPath" -ForegroundColor Green
-    Write-Host ""
-    
     # Step 2: Rename the project file and any associated .ncrunchproject files
-    Write-Host "[Step 2/6] Renaming project file and associated files..." -ForegroundColor Cyan
-    
     if (Test-Path $newProjectPath) {
         Write-Error "Target project file already exists: $newProjectPath"
         return
     }
     
     Rename-Item -Path $projectFile.FullName -NewName $newProjectFileName
-    Write-Host "  ✓ Renamed: $oldProjectFileName -> $newProjectFileName" -ForegroundColor Green
     
     # Check for and rename any .ncrunchproject files
     $ncrunchFiles = Get-ChildItem -Path $projectDir -Filter "$Old.*.ncrunchproject" -ErrorAction SilentlyContinue
@@ -108,17 +91,9 @@ function C-Rename-Project {
         $newNcrunchFileName = "$New$ncrunchExtension"
         Rename-Item -Path $ncrunchFile.FullName -NewName $newNcrunchFileName
         $ncrunchFilesRenamed++
-        Write-Host "  ✓ Renamed: $($ncrunchFile.Name) -> $newNcrunchFileName" -ForegroundColor Green
     }
-    
-    if ($ncrunchFilesRenamed -gt 0) {
-        Write-Host "  Renamed $ncrunchFilesRenamed .ncrunchproject file(s)" -ForegroundColor Green
-    }
-    Write-Host ""
     
     # Step 3: Update ProjectReference elements in all .csproj files
-    Write-Host "[Step 3/6] Updating ProjectReference elements in .csproj files..." -ForegroundColor Cyan
-    
     $allCsprojFiles = Get-ChildItem -Path $solutionDir -Filter "*.csproj" -Recurse
     $projectReferencesUpdated = 0
     
@@ -133,16 +108,10 @@ function C-Rename-Project {
             $content = $content -replace $pattern, ('$1' + $New + '$3')
             Set-Content -Path $csproj.FullName -Value $content -NoNewline -Encoding UTF8
             $projectReferencesUpdated++
-            Write-Host "  ✓ Updated: $($csproj.Name)" -ForegroundColor Green
         }
     }
     
-    Write-Host "  Updated $projectReferencesUpdated ProjectReference(s)" -ForegroundColor Green
-    Write-Host ""
-    
     # Step 4: Update InternalsVisibleTo attributes in all .csproj files
-    Write-Host "[Step 4/6] Updating InternalsVisibleTo attributes in .csproj files..." -ForegroundColor Cyan
-    
     $internalsVisibleToUpdated = 0
     
     foreach ($csproj in $allCsprojFiles) {
@@ -156,65 +125,27 @@ function C-Rename-Project {
             $content = $content -replace $pattern, ('$1' + $New + '$3')
             Set-Content -Path $csproj.FullName -Value $content -NoNewline -Encoding UTF8
             $internalsVisibleToUpdated++
-            Write-Host "  ✓ Updated: $($csproj.Name)" -ForegroundColor Green
         }
     }
     
-    Write-Host "  Updated $internalsVisibleToUpdated InternalsVisibleTo attribute(s)" -ForegroundColor Green
-    Write-Host ""
-    
     # Step 5: Update solution files (.slnx and .sln)
-    Write-Host "[Step 5/6] Updating solution files..." -ForegroundColor Cyan
-    
     $slnxFiles = Get-ChildItem -Path $solutionDir -Filter "*.slnx" -Recurse
     $slnFiles = Get-ChildItem -Path $solutionDir -Filter "*.sln" -Recurse
     $allSolutionFiles = @($slnxFiles) + @($slnFiles)
     $solutionFilesUpdated = 0
     
-    if ($allSolutionFiles.Count -eq 0) {
-        Write-Host "  No solution files found" -ForegroundColor Yellow
-    } else {
-        Write-Host "  Found $($allSolutionFiles.Count) solution file(s) to check" -ForegroundColor Cyan
+    foreach ($solutionFile in $allSolutionFiles) {
+        $content = Get-Content $solutionFile.FullName -Raw
         
-        foreach ($solutionFile in $allSolutionFiles) {
-            $content = Get-Content $solutionFile.FullName -Raw
-            
-            # Match Project Path with the old project name
-            # Pattern: <Project Path="...path.../OldName.csproj" /> (for .slnx files)
-            # Note: Solution files use forward slashes, so we match both / and \
-            $pattern = '(<Project\s+Path="[^"]*[/\\])(' + [regex]::Escape($Old) + ')(\.csproj")'
-            
-            if ($content -match $pattern) {
-                $content = $content -replace $pattern, ('$1' + $New + '$3')
-                Set-Content -Path $solutionFile.FullName -Value $content -NoNewline -Encoding UTF8
-                $solutionFilesUpdated++
-                Write-Host "  ✓ Updated: $($solutionFile.Name)" -ForegroundColor Green
-            }
-        }
+        # Match Project Path with the old project name
+        # Pattern: <Project Path="...path.../OldName.csproj" /> (for .slnx files)
+        # Note: Solution files use forward slashes, so we match both / and \
+        $pattern = '(<Project\s+Path="[^"]*[/\\])(' + [regex]::Escape($Old) + ')(\.csproj")'
         
-        if ($solutionFilesUpdated -eq 0) {
-            Write-Host "  No solution files needed updating" -ForegroundColor Yellow
+        if ($content -match $pattern) {
+            $content = $content -replace $pattern, ('$1' + $New + '$3')
+            Set-Content -Path $solutionFile.FullName -Value $content -NoNewline -Encoding UTF8
+            $solutionFilesUpdated++
         }
     }
-    
-    Write-Host "  Updated $solutionFilesUpdated solution file(s)" -ForegroundColor Green
-    Write-Host ""
-    
-    
-    # Summary
-    Write-Host "="*80 -ForegroundColor Cyan
-    Write-Host "RENAME OPERATION COMPLETED" -ForegroundColor Green
-    Write-Host "="*80 -ForegroundColor Cyan
-    Write-Host "Project file renamed: 1" -ForegroundColor Green
-    Write-Host ".ncrunchproject files renamed: $ncrunchFilesRenamed" -ForegroundColor Green
-    Write-Host "ProjectReferences updated: $projectReferencesUpdated" -ForegroundColor Green
-    Write-Host "InternalsVisibleTo attributes updated: $internalsVisibleToUpdated" -ForegroundColor Green
-    Write-Host "Solution files updated: $solutionFilesUpdated" -ForegroundColor Green
-    Write-Host ".ncrunchsolution files updated: $ncrunchSolutionFilesUpdated" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Next steps:" -ForegroundColor Yellow
-    Write-Host "  1. Build the solution to verify all references are correct" -ForegroundColor White
-    Write-Host "  2. Run tests to ensure everything still works" -ForegroundColor White
-    Write-Host "  3. Consider running C-Validate-SolutionStructure" -ForegroundColor White
-    Write-Host ""
 }
