@@ -4,7 +4,7 @@
 using System;
 using Compze.Tessaging.Abstractions;
 
-namespace ScratchPad.Internals.APIDraft.Policyv2;
+namespace Compze.Tests.ScratchPad.APIDraft.Policyv2;
 
 interface IHandlerPolicyConfigurationBuilder
 {

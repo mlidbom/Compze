@@ -17,6 +17,7 @@
   </Folder>
   <Folder Name="/Compze/Common/">
     <Project Path="Compze/Common/Compze.Common.csproj" />
+    <Project Path="Compze/Common/Configuration/Compze.Common.Configuration.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze/Serialization/Compze.Serialization.csproj" />
@@ -50,7 +51,6 @@
     <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/Configuration/">
-    <Project Path="Compze/Tessaging/Hosting/Configuration/Compze.Tessaging.Hosting.Configuration.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/Sql/">
     <Project Path="Compze/Tessaging/Hosting/Sql/MicrosoftSql/Compze.Tessaging.Hosting.Sql.MicrosoftSql.csproj" />

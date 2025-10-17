@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.Infrastructure.SystemExtensions;
+namespace Compze.Sql.MySql.SystemExtensions;
 
 internal interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
 {

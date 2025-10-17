@@ -1,7 +1,7 @@
 using Compze.Sql.Common;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.Infrastructure.SystemExtensions;
+namespace Compze.Sql.MySql.SystemExtensions;
 
 internal static class MyMySqlCommandExtensions
 {

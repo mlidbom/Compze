@@ -27,7 +27,7 @@
       <InternalsVisibleTo Include="Compze.Abstractions"/>
       <InternalsVisibleTo Include="Compze.Abstractions.Internal"/>
       <InternalsVisibleTo Include="Compze.Common"/>
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Configuration"/>
+      <InternalsVisibleTo Include="Compze.Common.Configuration"/>
       <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection"/>
       <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.Microsoft"/>
       <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.SimpleInjector"/>

@@ -1,8 +1,7 @@
-
 using Compze.Utilities.SystemCE;
 using Npgsql;
 
-namespace Compze.Sql.PostgreSql.Infrastructure;
+namespace Compze.Sql.PostgreSql;
 
 //We will most likely want to make higher level policy based on this information, so let's start concentrating it here rather than spreading it everywhere.
 static class SqlExceptions

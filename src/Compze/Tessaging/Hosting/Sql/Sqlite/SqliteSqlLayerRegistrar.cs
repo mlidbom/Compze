@@ -1,5 +1,5 @@
-using Compze.Sql.Sqlite.Infrastructure;
-using Compze.Tessaging.Hosting.Configuration;
+using Compze.Common.Configuration;
+using Compze.Sql.Sqlite;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool.Sqlite;
@@ -24,13 +24,13 @@ public static class SqliteSqlLayerRegistrar
    public static IComponentRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IComponentRegistrar registrar)
       => registrar.DbPoolAndConnectionPoolForConnectionStringName(Guid.NewGuid().ToString());
 
-   public static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
+   static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
       => registrar.Register(
          Singleton.For<ISqliteConnectionPool>()
                   .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => ISqliteConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                   .DelegateToParentServiceLocatorWhenCloning());
 
-   public static IComponentRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
+   static IComponentRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
    {
       registrar.SqliteDbPoolIfNotAlreadyRegistered();
 

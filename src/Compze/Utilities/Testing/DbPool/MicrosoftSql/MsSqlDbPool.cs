@@ -1,4 +1,4 @@
-using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
@@ -6,8 +6,17 @@ using Microsoft.Data.SqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
-static class SqliteMemoryDbPoolRegistrar
+static class MicrosoftSqlDbPoolRegistrar
 {
+   public static IComponentRegistrar MicrosoftSqlDbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
+   {
+      registrar.MsSqlDbPoolIfNotAlreadyRegistered();
+
+      return registrar.Register(
+         Singleton.For<IMsSqlConnectionPool>()
+                  .CreatedBy((MsSqlDbPool pool) => IMsSqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+   }
+
    public static IComponentRegistrar MsSqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       MsSqlDbPool.RegisterWith(registrar);
 }

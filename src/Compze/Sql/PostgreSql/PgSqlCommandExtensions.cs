@@ -1,7 +1,7 @@
 using Compze.Sql.Common;
 using Npgsql;
 
-namespace Compze.Sql.PostgreSql.Infrastructure;
+namespace Compze.Sql.PostgreSql;
 
 static class MyNpgsqlCommandExtensions
 {

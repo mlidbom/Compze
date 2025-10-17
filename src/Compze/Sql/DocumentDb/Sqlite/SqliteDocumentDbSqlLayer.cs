@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Sql.Common;
 using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.Sqlite.Infrastructure;
+using Compze.Sql.Sqlite;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;

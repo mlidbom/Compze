@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Sql.Common;
 using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Sql.PostgreSql;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Npgsql;

@@ -47,6 +47,26 @@ Then reload: `. $PROFILE`
 
 - **C-Validate-SolutionStructure** - Validates the Compze solution structure
 
+### Project Management
+
+- **C-Rename-Project** - Renames a project and updates all references including InternalsVisibleTo
+  - `-Old` - Current project name (e.g., "Compze.Tessaging.Hosting.Configuration")
+  - `-New` - New project name (e.g., "Compze.Common.Configuration")
+  - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
+  - Updates project file name, ProjectReferences, InternalsVisibleTo attributes, and all solution files (.slnx and .sln)
+
+- **C-Relocate-Project** - Moves a project to match solution structure conventions
+  - `-ProjectName` - Name of the project to relocate (e.g., "Compze.Common.Configuration")
+  - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
+  - Moves project directory to match name (Compze.A.B.C -> Compze/A/B/C)
+  - Updates all ProjectReferences, solution paths, and solution folder structure
+
+- **C-Relocate-ProjectInSolution** - Updates solution folder structure for a project
+  - `-ProjectName` - Name of the project (e.g., "Compze.Common.Configuration")
+  - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
+  - Only updates the solution file folder structure, doesn't move any files
+  - Useful for fixing solution organization without moving files
+
 ### Pluggable Components
 
 - **C-Get-PluggableComponents** - Displays the currently active pluggable component combinations

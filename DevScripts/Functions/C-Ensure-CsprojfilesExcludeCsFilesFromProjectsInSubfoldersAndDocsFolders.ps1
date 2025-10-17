@@ -106,7 +106,6 @@ $($docsLines -join "`r`n")
 
     # Find all .csproj files
     $allCsprojFiles = Get-ChildItem -Path $srcPath -Filter "*.csproj" -Recurse
-    Write-Host "Found $($allCsprojFiles.Count) total .csproj files" -ForegroundColor Cyan
 
     $processedCount = 0
 
@@ -126,14 +125,6 @@ $($docsLines -join "`r`n")
         
         if ($childProjects.Count -eq 0 -and $docsFolders.Count -eq 0) {
             continue
-        }
-        
-        Write-Host "`nProcessing: $($csprojFile.FullName)" -ForegroundColor Yellow
-        if ($childProjects.Count -gt 0) {
-            Write-Host "  Found $($childProjects.Count) child project(s)" -ForegroundColor Cyan
-        }
-        if ($docsFolders.Count -gt 0) {
-            Write-Host "  Found $($docsFolders.Count) _docs folder(s)" -ForegroundColor Cyan
         }
         
         # Get the relative path from project dir to each child project's directory
@@ -205,25 +196,8 @@ $($docsLines -join "`r`n")
             $content = $content -replace '\s*</Project>', "`r`n$allItemGroups`r`n</Project>"
             
             Set-Content -Path $csprojFile.FullName -Value $content -NoNewline
-            Write-Host "  ✓ Updated: $($csprojFile.Name)" -ForegroundColor Green
-            
-            if ($docsFolders.Count -gt 0) {
-                foreach ($folder in $docsFolders) {
-                    Write-Host "    - Configured _docs: $folder\" -ForegroundColor Cyan
-                }
-            }
-            
-            if ($subdirsToExclude.Count -gt 0) {
-                foreach ($subdir in $subdirsToExclude) {
-                    Write-Host "    - Excluded subfolder: $subdir\" -ForegroundColor Cyan
-                }
-            }
             
             $processedCount++
-        } else {
-            Write-Host "  Already correctly configured: $($csprojFile.Name)" -ForegroundColor Gray
         }
     }
-
-    Write-Host "`n✓ Complete! Updated $processedCount project file(s)." -ForegroundColor Green
 }

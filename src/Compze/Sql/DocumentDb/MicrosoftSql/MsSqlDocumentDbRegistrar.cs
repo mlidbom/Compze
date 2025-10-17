@@ -1,5 +1,5 @@
 using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

@@ -2,7 +2,7 @@ using System.Data;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite.Infrastructure;
+namespace Compze.Sql.Sqlite;
 
 internal static class SqliteCommandParameterExtensions
 {

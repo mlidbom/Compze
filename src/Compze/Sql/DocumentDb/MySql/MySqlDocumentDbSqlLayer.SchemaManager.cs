@@ -1,4 +1,4 @@
-using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Document = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;

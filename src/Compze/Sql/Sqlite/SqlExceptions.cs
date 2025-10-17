@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite.Infrastructure;
+namespace Compze.Sql.Sqlite;
 
 //We will most likely want to make higher level policy based on this information, so let's start concentrating it here rather than spreading it everywhere.
 internal static class SqlExceptions

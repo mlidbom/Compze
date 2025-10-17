@@ -4,7 +4,7 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 #pragma warning disable IDE0051 // Remove unused private members
 
-namespace ScratchPad.Internals.SemanticEvents.v01;
+namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
 
 //todo: Try implementing inheritable aggregate and see how it goes.
 //When persisting event we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage.

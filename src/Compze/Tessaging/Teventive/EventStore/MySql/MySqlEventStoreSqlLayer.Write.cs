@@ -1,6 +1,6 @@
 using Compze.Sql.Common;
-using Compze.Sql.MySql.Infrastructure;
-using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Sql.MySql;
+using Compze.Sql.MySql.SystemExtensions;
 using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;

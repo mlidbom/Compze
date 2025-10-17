@@ -24,7 +24,7 @@
 		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-		<ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+		<ProjectReference Include="..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+		<ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 using Compze.Sql.Common;
-using Compze.Sql.Sqlite.Infrastructure;
+using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;

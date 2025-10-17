@@ -1,6 +1,6 @@
 using System.Transactions;
-using Compze.Sql.MySql.Infrastructure;
-using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Sql.MySql;
+using Compze.Sql.MySql.SystemExtensions;
 using JetBrains.Annotations;
 using MySql.Data.MySqlClient;
 

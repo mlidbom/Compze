@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\..\..\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\Sqlite\Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+   </ItemGroup>
 </Project>

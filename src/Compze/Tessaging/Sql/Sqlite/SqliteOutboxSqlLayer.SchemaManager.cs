@@ -1,4 +1,4 @@
-using Compze.Sql.Sqlite.Infrastructure;
+using Compze.Sql.Sqlite;
 using Compze.Utilities.Threading.TasksCE;
 using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
 using D = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
