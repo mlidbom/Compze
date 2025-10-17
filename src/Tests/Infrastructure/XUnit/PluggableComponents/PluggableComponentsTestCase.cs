@@ -28,7 +28,7 @@ public class PluggableComponentsTestCase : XunitTestCase
              defaultMethodDisplay,
              defaultMethodDisplayOptions,
              testMethod,
-             testMethodArguments)
+             [combination]) // Pass combination as argument for test runner identification
    {
       _combination = combination;
       DisplayName = $"{testMethod.Method.Name}({combination})";
@@ -41,8 +41,8 @@ public class PluggableComponentsTestCase : XunitTestCase
                                                    CancellationTokenSource cancellationTokenSource)
    {
       return await TestContext.RunTestInContextAsync(
-         new TestContextData(_combination, TestMethod),
-         () => base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
+                new TestContextData(_combination, TestMethod),
+                async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync());
    }
 
    public override void Serialize(IXunitSerializationInfo data)
