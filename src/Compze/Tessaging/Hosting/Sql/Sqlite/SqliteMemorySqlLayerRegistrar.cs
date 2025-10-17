@@ -20,6 +20,7 @@ public static class SqliteMemorySqlLayerRegistrar
          return testingRegistrar.Register(connectionStringName);
       } else
       {
+         //tod: Why? Any reason not to support using Sqlite memory as for transient storage in production?
          throw new InvalidOperationException("SqliteMemory is only supported in testing mode");
       }
 
