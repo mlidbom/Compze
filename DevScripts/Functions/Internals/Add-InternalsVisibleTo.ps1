@@ -24,10 +24,12 @@ function Add-InternalsVisibleTo {
         [string]$AssemblyName
     )
     
-    $xml = Open-XmlDocumentPreservingWhitespace -Path $CsprojPath
-    if (-not $xml) {
+    if (-not (Test-Path $CsprojPath)) {
+        Write-Error "Project file not found: $CsprojPath"
         return
     }
+    
+    [xml]$xml = Get-Content $CsprojPath
     
     # Check if InternalsVisibleTo already exists
     $existingIVT = $xml.SelectNodes("//InternalsVisibleTo[@Include]") | 
@@ -52,5 +54,5 @@ function Add-InternalsVisibleTo {
     $ivt.SetAttribute("Include", $AssemblyName)
     $itemGroup.AppendChild($ivt) | Out-Null
     
-    $xml.Save($CsprojPath)
+    Save-XmlWithThreeSpacesIndentation -Xml $xml -Path $CsprojPath
 }
