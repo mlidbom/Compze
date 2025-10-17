@@ -56,4 +56,6 @@ public class PluggableComponentsTestCase : XunitTestCase
       base.Deserialize(data);
       _combination = Tessaging.Hosting.Testing.PluggableComponents.FromString(data.GetValue<string>(nameof(_combination)).NotNull());
    }
+
+   protected override string GetUniqueID() => $"{base.GetUniqueID()}:{_combination}";
 }
