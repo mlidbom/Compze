@@ -11,16 +11,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-    <InternalsVisibleTo Include="Compze.Tests.Common" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-  </ItemGroup>
-</Project>
+  </Project>

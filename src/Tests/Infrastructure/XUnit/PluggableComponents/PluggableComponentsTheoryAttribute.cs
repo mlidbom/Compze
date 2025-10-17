@@ -1,4 +1,5 @@
 using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Wiring.Testing;
 using Xunit;
 using Xunit.Sdk;
 using static Compze.Utilities.Contracts.Assert;
@@ -36,7 +37,7 @@ public class PluggableComponentsTheoryAttribute : FactAttribute
                        """);
    }
 
-   public Wiring.SqlLayer[] ExcludeSqlLayers { get; init; } = [];
+   public SqlLayer[] ExcludeSqlLayers { get; init; } = [];
 }
 
 /// <summary>

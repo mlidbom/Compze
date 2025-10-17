@@ -2,6 +2,12 @@
 
 PowerShell commands for Compze development workflows.
 
+## Important: Logging Convention
+
+**Scripts that make changes should NOT log everything they do. They should only write output if something goes wrong.**
+
+This keeps the console clean and makes it easy to spot actual problems. Success should be silent.
+
 ## Setup
 
 Add to your PowerShell profile (`notepad $PROFILE`):

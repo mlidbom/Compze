@@ -22,6 +22,5 @@ foreach ($file in $functionFiles) {
     $functionNames += $functionName
 }
 
-# Export only C- functions. "public" functions.
-$publicFunctions = $functionNames | Where-Object { $_ -like 'C-*' }
-Export-ModuleMember -Function $publicFunctions
+# Export all functions. The C- prefix indicates "public" API functions.
+Export-ModuleMember -Function $functionNames

@@ -13,17 +13,6 @@
 		<PackageReference Include="SimpleInjector" Version="5.5.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MySql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.Sqlite" />
-		<InternalsVisibleTo Include="Compze.Tessaging" />
-		<InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
-		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-		<InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
 		<ProjectReference Include="..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>

@@ -18,19 +18,7 @@
 		<ProjectReference Include="..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 		<ProjectReference Include="..\Threading\Compze.Utilities.Threading.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-		<InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.Microsoft" />
-		<InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.SimpleInjector" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MicrosoftSql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MySql" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql" />
-		<InternalsVisibleTo Include="Compze.Tessaging" />
-		<InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-		<InternalsVisibleTo Include="Compze.Tests.Integration" />
-		<InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-	</ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+	<!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
     <Compile Remove="Microsoft\**" />

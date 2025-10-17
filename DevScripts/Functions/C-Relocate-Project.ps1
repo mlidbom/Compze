@@ -1,3 +1,4 @@
+# NOTE: Scripts that make changes should NOT log everything they do. They should only write output if something goes wrong.
 function C-Relocate-Project {
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -13,8 +14,7 @@ function C-Relocate-Project {
     $solutionDir = Split-Path -Parent $SolutionPath
     
     # Step 1: Find project
-    $projectFileName = "$ProjectName.csproj"
-    $projectFile = Get-ChildItem -Path $solutionDir -Filter $projectFileName -Recurse | Select-Object -First 1
+    $projectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $ProjectName
     if (-not $projectFile) { Write-Error "Project file not found"; return }
     
     $currentProjectDir = Split-Path -Parent $projectFile.FullName
@@ -66,7 +66,8 @@ function C-Relocate-Project {
     }
     
     # Step 5: Update csproj references in other projects
-    Get-ChildItem -Path $solutionDir -Filter "*.csproj" -Recurse | ForEach-Object {
+    $allProjects = Get-AllProjectFiles -SolutionPath $SolutionPath
+    $allProjects | ForEach-Object {
         $content = Get-Content $_.FullName -Raw
         $pattern = '(<ProjectReference\s+Include=")([^"]*[/\\]' + [regex]::Escape($ProjectName) + '\.csproj)(")'
         if ($content -match $pattern) {

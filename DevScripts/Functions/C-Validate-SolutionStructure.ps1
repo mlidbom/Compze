@@ -1,3 +1,4 @@
+# NOTE: Scripts that make changes should NOT log everything they do. They should only write output if something goes wrong.
 function C-Validate-SolutionStructure {
     <#
     .SYNOPSIS
@@ -16,7 +17,7 @@ function C-Validate-SolutionStructure {
     $violations = @()
 
     # Get all .csproj files in Compze directory
-    $projects = Get-ChildItem -Path "$srcRoot\Compze" -Recurse -Filter "*.csproj"
+    $projects = Get-ProjectFilesInPath -Path "$srcRoot\Compze"
 
     foreach ($project in $projects) {
         $projectName = $project.BaseName

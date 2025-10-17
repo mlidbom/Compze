@@ -3,6 +3,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Wiring;
+using Compze.Wiring.Testing;
 using FluentAssertions;
 
 namespace Compze.Tests.Integration.Infrastructure;

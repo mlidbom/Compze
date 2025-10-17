@@ -11,16 +11,4 @@
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.4" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-    <InternalsVisibleTo Include="Compze.Tests.Common" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-  </ItemGroup>
-</Project>
+  </Project>

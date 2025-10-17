@@ -1,3 +1,4 @@
+# NOTE: Scripts that make changes should NOT log everything they do. They should only write output if something goes wrong.
 function C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders {
     <#
     .SYNOPSIS
@@ -105,7 +106,7 @@ $($docsLines -join "`r`n")
     }
 
     # Find all .csproj files
-    $allCsprojFiles = Get-ChildItem -Path $srcPath -Filter "*.csproj" -Recurse
+    $allCsprojFiles = Get-ProjectFilesInPath -Path $srcPath
 
     $processedCount = 0
 
@@ -113,7 +114,7 @@ $($docsLines -join "`r`n")
         $projectDir = $csprojFile.Directory.FullName
         
         # Find all .csproj files in subdirectories
-        $childProjects = Get-ChildItem -Path $projectDir -Filter "*.csproj" -Recurse | 
+        $childProjects = Get-ProjectFilesInPath -Path $projectDir | 
             Where-Object { $_.FullName -ne $csprojFile.FullName }
         
         # Find all _docs directories in this project

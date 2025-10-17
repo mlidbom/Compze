@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
+      <ProjectReference Include="..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+   </ItemGroup>
+</Project>

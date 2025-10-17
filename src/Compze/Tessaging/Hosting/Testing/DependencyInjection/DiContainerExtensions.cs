@@ -10,6 +10,7 @@ using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.Logging;
 using Compze.Wiring;
+using Compze.Wiring.Testing;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;

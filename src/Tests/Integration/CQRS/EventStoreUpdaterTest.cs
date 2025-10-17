@@ -28,6 +28,7 @@ using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 using Compze.Wiring;
+using Compze.Wiring.Testing;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure
@@ -598,7 +599,7 @@ public class EventStoreUpdaterTest : XUnitTestBase, IAsyncLifetime
    }
 
     //We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...
-    [PCT(ExcludeSqlLayers = [Wiring.SqlLayer.Sqlite, Wiring.SqlLayer.SqliteMemory])]
+    [PCT(ExcludeSqlLayers = [SqlLayer.Sqlite, SqlLayer.SqliteMemory])]
    public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed()
    {
 

@@ -19,8 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Compze.Utilities.Logging.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
-    <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
-  </ItemGroup>
-</Project>
+  </Project>

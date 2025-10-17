@@ -11,7 +11,4 @@
     <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
   </ItemGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-   </ItemGroup>
-</Project>
+   </Project>

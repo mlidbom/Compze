@@ -8,6 +8,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Wiring;
+using Compze.Wiring.Testing;
 using FluentAssertions.Extensions;
 using Xunit;
 

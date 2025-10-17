@@ -15,13 +15,4 @@
       <ProjectReference Include="..\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj"/>
       <ProjectReference Include="..\..\Utilities\Threading\Compze.Utilities.Threading.csproj"/>
    </ItemGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore"/>
-      <InternalsVisibleTo Include="Compze.Tessaging"/>
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tests.Unit.Internals"/>
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive"/>
-      <InternalsVisibleTo Include="Compze.Tests.Integration"/> 
-   </ItemGroup>
-</Project>
+   </Project>

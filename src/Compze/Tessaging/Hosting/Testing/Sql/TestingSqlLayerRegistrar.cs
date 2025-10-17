@@ -17,6 +17,7 @@ using Compze.Tessaging.Teventive.EventStore.PostgreSql;
 using Compze.Tessaging.Teventive.EventStore.Sqlite;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Wiring;
+using Compze.Wiring.Testing;
 
 namespace Compze.Tessaging.Hosting.Testing.Sql;
 
