@@ -49,6 +49,12 @@ Then reload: `. $PROFILE`
 
 ### Project Management
 
+- **C-Create-Project** - Creates a new project with proper directory structure and adds it to the solution
+  - `-ProjectName` - Full name of the project to create (e.g., "Compze.Wiring.Testing")
+  - Creates project directory based on namespace (Compze.Wiring.Testing -> src/Compze/Wiring/Testing/)
+  - Creates basic .csproj file
+  - Adds to solution file in correct folder structure
+
 - **C-Rename-Project** - Renames a project and updates all references including InternalsVisibleTo
   - `-Old` - Current project name (e.g., "Compze.Tessaging.Hosting.Configuration")
   - `-New` - New project name (e.g., "Compze.Common.Configuration")
@@ -61,11 +67,12 @@ Then reload: `. $PROFILE`
   - Moves project directory to match name (Compze.A.B.C -> Compze/A/B/C)
   - Updates all ProjectReferences, solution paths, and solution folder structure
 
-- **C-Relocate-ProjectInSolution** - Updates solution folder structure for a project
+- **C-Place-ProjectInSolution** - Places a project in the correct solution folder structure
   - `-ProjectName` - Name of the project (e.g., "Compze.Common.Configuration")
   - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
+  - Adds project to solution if it doesn't exist
+  - Moves project to correct folder based on its path
   - Only updates the solution file folder structure, doesn't move any files
-  - Useful for fixing solution organization without moving files
 
 ### Pluggable Components
 

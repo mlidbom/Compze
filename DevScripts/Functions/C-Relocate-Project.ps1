@@ -93,7 +93,7 @@ function C-Relocate-Project {
     }
     
     # Step 7: Update solution folder structure
-    C-Relocate-ProjectInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
+    C-Place-ProjectInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
     
     # Step 8: Ensure csproj files are correct
     C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
