@@ -54,7 +54,7 @@ Then reload: `. $PROFILE`
   - `-New` - New project name (e.g., "Compze.Common.Configuration")
   - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
   - `-WhatIf` - Preview changes without applying
-  - Updates project file name, ProjectReferences, InternalsVisibleTo attributes, and solution files
+  - Updates project file name, ProjectReferences, InternalsVisibleTo attributes, and all solution files (.slnx and .sln)
 
 ### Pluggable Components
 

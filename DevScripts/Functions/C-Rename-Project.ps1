@@ -8,10 +8,13 @@ function C-Rename-Project {
     - Renames the project file (.csproj)
     - Updates ProjectReference elements in all .csproj files
     - Updates InternalsVisibleTo attributes in all .csproj files
-    - Updates Project Path references in .slnx files
+    - Updates Project Path references in all solution files (.slnx and .sln)
     
     This tool is essential because standard refactoring tools cannot handle
     InternalsVisibleTo attributes, which are extensively used in this codebase.
+    
+    The script will search for and update ALL solution files found in the solution
+    directory, not just a single file.
     
     .PARAMETER Old
     The current name of the project to rename (e.g., "Compze.Tessaging.Hosting.Configuration")
@@ -150,32 +153,44 @@ function C-Rename-Project {
     Write-Host "  Updated $internalsVisibleToUpdated InternalsVisibleTo attribute(s)" -ForegroundColor Green
     Write-Host ""
     
-    # Step 5: Update .slnx files
-    Write-Host "[Step 5/5] Updating .slnx solution files..." -ForegroundColor Cyan
+    # Step 5: Update solution files (.slnx and .sln)
+    Write-Host "[Step 5/5] Updating solution files..." -ForegroundColor Cyan
     
     $slnxFiles = Get-ChildItem -Path $solutionDir -Filter "*.slnx" -Recurse
-    $slnxUpdated = 0
+    $slnFiles = Get-ChildItem -Path $solutionDir -Filter "*.sln" -Recurse
+    $allSolutionFiles = @($slnxFiles) + @($slnFiles)
+    $solutionFilesUpdated = 0
     
-    foreach ($slnx in $slnxFiles) {
-        $content = Get-Content $slnx.FullName -Raw
+    if ($allSolutionFiles.Count -eq 0) {
+        Write-Host "  No solution files found" -ForegroundColor Yellow
+    } else {
+        Write-Host "  Found $($allSolutionFiles.Count) solution file(s) to check" -ForegroundColor Cyan
         
-        # Match Project Path with the old project name
-        # Pattern: <Project Path="...path.../OldName.csproj" />
-        # Note: Solution files use forward slashes, so we match both / and \
-        $pattern = '(<Project\s+Path="[^"]*[/\\])(' + [regex]::Escape($Old) + ')(\.csproj")'
-        
-        if ($content -match $pattern) {
-            $content = $content -replace $pattern, ('$1' + $New + '$3')
+        foreach ($solutionFile in $allSolutionFiles) {
+            $content = Get-Content $solutionFile.FullName -Raw
             
-            if ($PSCmdlet.ShouldProcess($slnx.FullName, "Update Project Path")) {
-                Set-Content -Path $slnx.FullName -Value $content -NoNewline -Encoding UTF8
-                $slnxUpdated++
-                Write-Host "  ✓ Updated: $($slnx.Name)" -ForegroundColor Green
+            # Match Project Path with the old project name
+            # Pattern: <Project Path="...path.../OldName.csproj" /> (for .slnx files)
+            # Note: Solution files use forward slashes, so we match both / and \
+            $pattern = '(<Project\s+Path="[^"]*[/\\])(' + [regex]::Escape($Old) + ')(\.csproj")'
+            
+            if ($content -match $pattern) {
+                $content = $content -replace $pattern, ('$1' + $New + '$3')
+                
+                if ($PSCmdlet.ShouldProcess($solutionFile.FullName, "Update Project Path")) {
+                    Set-Content -Path $solutionFile.FullName -Value $content -NoNewline -Encoding UTF8
+                    $solutionFilesUpdated++
+                    Write-Host "  ✓ Updated: $($solutionFile.Name)" -ForegroundColor Green
+                }
             }
+        }
+        
+        if ($solutionFilesUpdated -eq 0) {
+            Write-Host "  No solution files needed updating" -ForegroundColor Yellow
         }
     }
     
-    Write-Host "  Updated $slnxUpdated solution file(s)" -ForegroundColor Green
+    Write-Host "  Updated $solutionFilesUpdated solution file(s)" -ForegroundColor Green
     Write-Host ""
     
     # Summary
@@ -185,7 +200,7 @@ function C-Rename-Project {
     Write-Host "Project file renamed: 1" -ForegroundColor Green
     Write-Host "ProjectReferences updated: $projectReferencesUpdated" -ForegroundColor Green
     Write-Host "InternalsVisibleTo attributes updated: $internalsVisibleToUpdated" -ForegroundColor Green
-    Write-Host "Solution files updated: $slnxUpdated" -ForegroundColor Green
+    Write-Host "Solution files updated: $solutionFilesUpdated" -ForegroundColor Green
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Yellow
     Write-Host "  1. Build the solution to verify all references are correct" -ForegroundColor White
