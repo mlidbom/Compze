@@ -15,11 +15,18 @@ class TestingComponentRegistrar : ComponentRegistrar
    {
       _testingRegistrars = new Dictionary<Type, object>()
       {
-         //{typeof(MsSqlSqlLayerRegistrar.ITestingRegistrar), new MsSqlDbPoolRegistrar(this)}
+         {typeof(MsSqlSqlLayerRegistrar.ITestingRegistrar), new MsSqlDbPoolRegistrar(this)}
       };
    }
 
-   public override TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class  => null;
+   public override TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class
+   {
+      if(_testingRegistrars.TryGetValue(typeof(TTestingRegistrar), out var value))
+      {
+         return (TTestingRegistrar)value;
+      }
+      return null;
+   }
 
    public override IRunMode RunMode => Utilities.DependencyInjection.RunMode.Testing;
 

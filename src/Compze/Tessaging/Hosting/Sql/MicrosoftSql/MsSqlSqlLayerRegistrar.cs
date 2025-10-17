@@ -17,24 +17,13 @@ public static class MsSqlSqlLayerRegistrar
    {
       if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
       {
-            return testingRegistrar.Register(connectionStringName);
-      }
-      if(registrar.RunMode.IsTesting)
-      {
-         registrar.MicrosoftSqlDbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
+         return testingRegistrar.Register(connectionStringName);
       } else
       {
-         registrar.MsSqlProductionConnectionPool(connectionStringName);
+         return registrar.Register(
+            Singleton.For<IMsSqlConnectionPool>()
+                     .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMsSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
+                     .DelegateToParentServiceLocatorWhenCloning());
       }
-
-      return registrar;
    }
-
-   public static IComponentRegistrar MsSqlProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
-      => registrar.Register(
-         Singleton.For<IMsSqlConnectionPool>()
-                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMsSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
-                  .DelegateToParentServiceLocatorWhenCloning());
-
-
 }
