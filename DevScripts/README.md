@@ -61,6 +61,12 @@ Then reload: `. $PROFILE`
   - Moves project directory to match name (Compze.A.B.C -> Compze/A/B/C)
   - Updates all ProjectReferences, solution paths, and solution folder structure
 
+- **C-Relocate-ProjectInSolution** - Updates solution folder structure for a project
+  - `-ProjectName` - Name of the project (e.g., "Compze.Common.Configuration")
+  - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
+  - Only updates the solution file folder structure, doesn't move any files
+  - Useful for fixing solution organization without moving files
+
 ### Pluggable Components
 
 - **C-Get-PluggableComponents** - Displays the currently active pluggable component combinations

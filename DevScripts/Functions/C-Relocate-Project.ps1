@@ -41,7 +41,15 @@ function C-Relocate-Project {
     }
     
     # Step 3: Move directory
-    if (Test-Path $targetProjectDir) { Write-Error "Target already exists"; return }
+    if (Test-Path $targetProjectDir) {
+        $targetCsproj = Get-ChildItem -Path $targetProjectDir -Filter "*.csproj" | Select-Object -First 1
+        if ($targetCsproj) {
+            Write-Error "Target directory already exists with a project file"
+            return
+        }
+        Write-Host "  Removing empty target directory" -ForegroundColor Yellow
+        Remove-Item -Path $targetProjectDir -Recurse -Force
+    }
     $targetParentDir = Split-Path -Parent $targetProjectDir
     if (-not (Test-Path $targetParentDir)) {
         New-Item -ItemType Directory -Path $targetParentDir -Force | Out-Null
@@ -87,37 +95,8 @@ function C-Relocate-Project {
     Write-Host "Updated $slnUpdated solution file(s)" -ForegroundColor Green
     Write-Host ""
     
-    # Step 6: Update solution folders
-    $folderUpdated = 0
-    Get-ChildItem -Path $solutionDir -Filter "*.slnx" -Recurse | ForEach-Object {
-        [xml]$xml = Get-Content $_.FullName
-        $modified = $false
-        $xml.SelectNodes("//Project[@Path]") | ForEach-Object {
-            if ($_.Path -like "*$ProjectName.csproj") {
-                $currentFolder = $_.ParentNode
-                if ($currentFolder.Name -eq "Folder") {
-                    $currentFolderName = $currentFolder.GetAttribute("Name")
-                    if ($currentFolderName -ne $targetSolutionFolder) {
-                        $currentFolder.RemoveChild($_) | Out-Null
-                        $targetFolder = $xml.SelectSingleNode("//Folder[@Name='$targetSolutionFolder']")
-                        if (-not $targetFolder) {
-                            $targetFolder = $xml.CreateElement("Folder")
-                            $targetFolder.SetAttribute("Name", $targetSolutionFolder)
-                            $xml.DocumentElement.AppendChild($targetFolder) | Out-Null
-                        }
-                        $targetFolder.AppendChild($_) | Out-Null
-                        $modified = $true
-                    }
-                }
-            }
-        }
-        if ($modified) {
-            $xml.Save($_.FullName)
-            $folderUpdated++
-            Write-Host "Updated solution folder: $($_.Name)" -ForegroundColor Green
-        }
-    }
-    Write-Host "Updated $folderUpdated solution folder(s)" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "COMPLETED" -ForegroundColor Green
+    # Step 6: Update solution folder structure
+    C-Relocate-ProjectInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
+    
+    Write-Host "RELOCATION COMPLETED" -ForegroundColor Green
 }
