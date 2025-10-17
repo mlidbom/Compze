@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Wiring.Testing;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -20,7 +21,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       ITestMethod testMethod,
       IAttributeInfo factAttribute)
    {
-      var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<Wiring.SqlLayer[]>(nameof(PCTAttribute.ExcludeSqlLayers));
+      var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<SqlLayer[]>(nameof(PCTAttribute.ExcludeSqlLayers));
       var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
 
       var combinations = PluggableComponentsReader.Combinations

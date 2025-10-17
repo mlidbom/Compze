@@ -1,4 +1,4 @@
-namespace Compze.Wiring;
+namespace Compze.Wiring.Testing;
 
 public enum SqlLayer
 {

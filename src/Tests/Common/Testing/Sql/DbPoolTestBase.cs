@@ -12,6 +12,7 @@ using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
 using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Wiring;
+using Compze.Wiring.Testing;
 
 namespace Compze.Tests.Common.Testing.Sql;
 

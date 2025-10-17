@@ -5,6 +5,7 @@ using System.Linq;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Wiring;
+using Compze.Wiring.Testing;
 
 namespace Compze.Tessaging.Hosting.Testing;
 
