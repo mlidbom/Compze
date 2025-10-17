@@ -53,13 +53,11 @@ Then reload: `. $PROFILE`
   - `-Old` - Current project name (e.g., "Compze.Tessaging.Hosting.Configuration")
   - `-New` - New project name (e.g., "Compze.Common.Configuration")
   - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
-  - `-WhatIf` - Preview changes without applying
   - Updates project file name, ProjectReferences, InternalsVisibleTo attributes, and all solution files (.slnx and .sln)
 
 - **C-Relocate-Project** - Moves a project to match solution structure conventions
   - `-ProjectName` - Name of the project to relocate (e.g., "Compze.Common.Configuration")
   - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
-  - `-WhatIf` - Preview changes without applying
   - Moves project directory to match name (Compze.A.B.C -> Compze/A/B/C)
   - Updates all ProjectReferences, solution paths, and solution folder structure
 

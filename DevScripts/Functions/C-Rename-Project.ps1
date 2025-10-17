@@ -33,7 +33,7 @@ function C-Rename-Project {
     C-Rename-Project -Old Compze.Old.Name -New Compze.New.Name -SolutionPath "src\MySolution.slnx"
     Renames the project using a custom solution path
     #>
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [Parameter(Mandatory = $true)]
@@ -94,10 +94,8 @@ function C-Rename-Project {
         return
     }
     
-    if ($PSCmdlet.ShouldProcess($projectFile.FullName, "Rename to $newProjectFileName")) {
-        Rename-Item -Path $projectFile.FullName -NewName $newProjectFileName
-        Write-Host "  ✓ Renamed: $oldProjectFileName -> $newProjectFileName" -ForegroundColor Green
-    }
+    Rename-Item -Path $projectFile.FullName -NewName $newProjectFileName
+    Write-Host "  ✓ Renamed: $oldProjectFileName -> $newProjectFileName" -ForegroundColor Green
     Write-Host ""
     
     # Step 3: Update ProjectReference elements in all .csproj files
@@ -115,12 +113,9 @@ function C-Rename-Project {
         
         if ($content -match $pattern) {
             $content = $content -replace $pattern, ('$1' + $New + '$3')
-            
-            if ($PSCmdlet.ShouldProcess($csproj.FullName, "Update ProjectReference")) {
-                Set-Content -Path $csproj.FullName -Value $content -NoNewline -Encoding UTF8
-                $projectReferencesUpdated++
-                Write-Host "  ✓ Updated: $($csproj.Name)" -ForegroundColor Green
-            }
+            Set-Content -Path $csproj.FullName -Value $content -NoNewline -Encoding UTF8
+            $projectReferencesUpdated++
+            Write-Host "  ✓ Updated: $($csproj.Name)" -ForegroundColor Green
         }
     }
     
@@ -141,12 +136,9 @@ function C-Rename-Project {
         
         if ($content -match $pattern) {
             $content = $content -replace $pattern, ('$1' + $New + '$3')
-            
-            if ($PSCmdlet.ShouldProcess($csproj.FullName, "Update InternalsVisibleTo")) {
-                Set-Content -Path $csproj.FullName -Value $content -NoNewline -Encoding UTF8
-                $internalsVisibleToUpdated++
-                Write-Host "  ✓ Updated: $($csproj.Name)" -ForegroundColor Green
-            }
+            Set-Content -Path $csproj.FullName -Value $content -NoNewline -Encoding UTF8
+            $internalsVisibleToUpdated++
+            Write-Host "  ✓ Updated: $($csproj.Name)" -ForegroundColor Green
         }
     }
     
@@ -176,12 +168,9 @@ function C-Rename-Project {
             
             if ($content -match $pattern) {
                 $content = $content -replace $pattern, ('$1' + $New + '$3')
-                
-                if ($PSCmdlet.ShouldProcess($solutionFile.FullName, "Update Project Path")) {
-                    Set-Content -Path $solutionFile.FullName -Value $content -NoNewline -Encoding UTF8
-                    $solutionFilesUpdated++
-                    Write-Host "  ✓ Updated: $($solutionFile.Name)" -ForegroundColor Green
-                }
+                Set-Content -Path $solutionFile.FullName -Value $content -NoNewline -Encoding UTF8
+                $solutionFilesUpdated++
+                Write-Host "  ✓ Updated: $($solutionFile.Name)" -ForegroundColor Green
             }
         }
         
