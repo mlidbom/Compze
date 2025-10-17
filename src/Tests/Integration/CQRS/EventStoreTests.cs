@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 using System.Transactions;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 

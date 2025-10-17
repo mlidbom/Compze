@@ -3,7 +3,7 @@ using Compze.Common.Configuration;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
+namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 static class DummyConfigurationParameterProviderRegistrar
 {

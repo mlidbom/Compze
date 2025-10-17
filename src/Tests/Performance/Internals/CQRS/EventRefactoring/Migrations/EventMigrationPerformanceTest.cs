@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
@@ -18,7 +18,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Wiring;
-using Compze.Wiring.Testing;
+using Compze.Wiring.Testing.Sql;
 using Xunit;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;

@@ -1,6 +1,5 @@
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Sql.EventStore;
@@ -14,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Xunit;
 
 // ReSharper disable ClassNeverInstantiated.Global

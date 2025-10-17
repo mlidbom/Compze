@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Wiring;
-using Compze.Wiring.Testing;
+using Compze.Wiring.Testing.Sql;
 using FluentAssertions;
 
 namespace Compze.Tests.Integration.Testing.Sql;

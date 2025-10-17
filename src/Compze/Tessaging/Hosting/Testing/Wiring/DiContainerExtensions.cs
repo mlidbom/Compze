@@ -13,7 +13,7 @@ using Compze.Wiring;
 using Compze.Wiring.Testing;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
+namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class DiContainerExtensions
 {

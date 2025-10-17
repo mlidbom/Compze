@@ -7,7 +7,7 @@ using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Tessaging.Hosting.Testing.DependencyInjection;
+namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 static class ContainerCloner
 {

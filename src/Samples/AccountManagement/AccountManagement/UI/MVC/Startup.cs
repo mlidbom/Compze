@@ -1,7 +1,7 @@
 using AccountManagement.API;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Testing.DependencyInjection;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 using JetBrains.Annotations;

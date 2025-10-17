@@ -1,5 +1,5 @@
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Wiring.Testing;
+using Compze.Wiring.Testing.Sql;
 using Xunit;
 using Xunit.Sdk;
 using static Compze.Utilities.Contracts.Assert;

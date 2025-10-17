@@ -7,9 +7,9 @@ using AccountManagement.UserStories.Scenarios;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
@@ -20,8 +20,8 @@ using FluentAssertions.Extensions;
 
 using Compze.Utilities.Threading.TasksCE;
 using Compze.Wiring;
-using Compze.Wiring.Testing;
 using Xunit;
+using Compze.Wiring.Testing.Sql;
 
 namespace AccountManagement;
 

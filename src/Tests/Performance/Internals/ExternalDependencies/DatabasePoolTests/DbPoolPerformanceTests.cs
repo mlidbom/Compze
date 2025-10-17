@@ -10,7 +10,7 @@ using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Wiring;
-using Compze.Wiring.Testing;
+using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;
 

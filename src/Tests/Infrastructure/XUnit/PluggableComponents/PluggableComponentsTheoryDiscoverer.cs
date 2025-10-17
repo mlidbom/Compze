@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Wiring.Testing;
+using Compze.Wiring.Testing.Sql;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 

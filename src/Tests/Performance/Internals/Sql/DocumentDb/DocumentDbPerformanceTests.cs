@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
@@ -8,7 +7,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Wiring;
-using Compze.Wiring.Testing;
+using Compze.Wiring.Testing.Sql;
 using FluentAssertions.Extensions;
 using Xunit;
 
