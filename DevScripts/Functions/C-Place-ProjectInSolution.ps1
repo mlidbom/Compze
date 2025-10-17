@@ -29,50 +29,7 @@ function C-Place-ProjectInSolution {
     if (-not (Test-Path $SolutionPath)) { Write-Error "Solution file not found: $SolutionPath"; return }
     if (-not $SolutionPath.EndsWith('.slnx')) { Write-Error "Only works with .slnx files"; return }
     
-    [xml]$xml = Get-Content $SolutionPath
+    Ensure-ProjectIsInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
     
-    # Calculate the expected project path
-    $solutionProjectPath = $ProjectName -replace '\.', '/'
-    $solutionProjectPath = "$solutionProjectPath/$ProjectName.csproj"
-    
-    # Try to find the project
-    $projectElement = $xml.SelectNodes("//Project[@Path]") | Where-Object { $_.Path -eq $solutionProjectPath } | Select-Object -First 1
-    
-    # If project doesn't exist, create it
-    if (-not $projectElement) {
-        $projectElement = $xml.CreateElement("Project")
-        $projectElement.SetAttribute("Path", $solutionProjectPath)
-        $xml.DocumentElement.AppendChild($projectElement) | Out-Null
-    }
-    
-    $currentPath = $projectElement.GetAttribute("Path")
-    
-    # Calculate target folder: "Compze/Common/Configuration/Compze.Common.Configuration.csproj" -> "/Compze/Common/"
-    $pathParts = $currentPath -split '/'
-    if ($pathParts.Length -lt 2) { Write-Error "Unexpected path format"; return }
-    
-    $directoryPath = $pathParts[0..($pathParts.Length - 2)] -join '/'
-    $targetFolderParts = $directoryPath -split '/'
-    $targetSolutionFolder = if ($targetFolderParts.Length -lt 2) {
-        "/" + $targetFolderParts[0] + "/"
-    } else {
-        "/" + ($targetFolderParts[0..($targetFolderParts.Length - 2)] -join '/') + "/"
-    }
-    
-    $currentFolder = $projectElement.ParentNode
-    if ($currentFolder.Name -eq "Folder" -and $currentFolder.GetAttribute("Name") -eq $targetSolutionFolder) {
-        return
-    }
-    
-    $currentFolder.RemoveChild($projectElement) | Out-Null
-    $targetFolder = $xml.SelectSingleNode("//Folder[@Name='$targetSolutionFolder']")
-    
-    if (-not $targetFolder) {
-        $targetFolder = $xml.CreateElement("Folder")
-        $targetFolder.SetAttribute("Name", $targetSolutionFolder)
-        $xml.DocumentElement.AppendChild($targetFolder) | Out-Null
-    }
-    
-    $targetFolder.AppendChild($projectElement) | Out-Null
-    $xml.Save($SolutionPath)
+    Place-ProjectInCorrectSolutionFolder -ProjectName $ProjectName -SolutionPath $SolutionPath
 }
