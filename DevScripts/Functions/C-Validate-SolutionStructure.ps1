@@ -17,7 +17,7 @@ function C-Validate-SolutionStructure {
     $violations = @()
 
     # Get all .csproj files in Compze directory
-    $projects = Get-ChildItem -Path "$srcRoot\Compze" -Recurse -Filter "*.csproj"
+    $projects = Get-ProjectFilesInPath -Path "$srcRoot\Compze"
 
     foreach ($project in $projects) {
         $projectName = $project.BaseName

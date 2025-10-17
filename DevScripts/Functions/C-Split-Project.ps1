@@ -57,7 +57,7 @@ function C-Split-Project {
     $solutionDir = Split-Path -Parent $SolutionPath
     
     # Step 1: Find the parent project
-    $parentProjectFile = Get-ChildItem -Path $solutionDir -Filter "$Parent.csproj" -Recurse | Select-Object -First 1
+    $parentProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $Parent
     
     if (-not $parentProjectFile) {
         Write-Error "Parent project not found: $Parent"
@@ -68,7 +68,7 @@ function C-Split-Project {
     C-Create-Project -ProjectName $New
     
     # Verify the new project was created
-    $newProjectFile = Get-ChildItem -Path $solutionDir -Filter "$New.csproj" -Recurse | Select-Object -First 1
+    $newProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $New
     
     if (-not $newProjectFile) {
         Write-Error "Failed to create new project: $New"

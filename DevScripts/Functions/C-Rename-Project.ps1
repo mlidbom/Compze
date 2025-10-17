@@ -95,7 +95,7 @@ function C-Rename-Project {
     }
     
     # Step 3: Update ProjectReference elements in all .csproj files
-    $allCsprojFiles = Get-ChildItem -Path $solutionDir -Filter "*.csproj" -Recurse
+    $allCsprojFiles = Get-AllProjectFiles -SolutionPath $SolutionPath
     $projectReferencesUpdated = 0
     
     foreach ($csproj in $allCsprojFiles) {

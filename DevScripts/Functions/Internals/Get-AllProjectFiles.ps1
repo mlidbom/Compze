@@ -26,5 +26,5 @@ function Get-AllProjectFiles {
     }
     
     $solutionDir = Split-Path -Parent $SolutionPath
-    return Get-ChildItem -Path $solutionDir -Filter "*.csproj" -Recurse
+    return Get-CsprojFiles -Path $solutionDir
 }
