@@ -7,6 +7,7 @@ applyTo: '**'
   - Sprinkle explanatory comments everywhere. Use descriptive names instead.
 - - Add // Arrange etc comments in tests. The developers know how to write tests.
   - Write one test per pluggable component, instead use the DuplicateByPluggableComponentTest structure so that they are ALL tested automatically, including future versions
+  - Write log spam in DevScripts PowerShell functions. Scripts that make changes should only write output if something goes wrong. Success should be silent.
 - DO
   - Use descriptive variable and method names. Long names are fine if they make the code clearer.
   - Use InternalsVisibleTo to maintain encapsulation within framework code

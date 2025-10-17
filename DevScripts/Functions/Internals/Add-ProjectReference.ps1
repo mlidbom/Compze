@@ -1,3 +1,5 @@
+# NOTE: Scripts that make changes should NOT log everything they do. They should only write output if something goes wrong.
+
 function Add-ProjectReference {
     <#
     .SYNOPSIS
