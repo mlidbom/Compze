@@ -1,8 +1,8 @@
 using Compze.Sql.Common;
-using Compze.Sql.Sqlite.Infrastructure;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
 using System.Globalization;
+using Compze.Sql.Sqlite;
 using MessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
 

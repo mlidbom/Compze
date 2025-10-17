@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

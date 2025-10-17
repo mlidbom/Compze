@@ -1,11 +1,11 @@
+using System;
+using System.IO;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
 
-namespace Compze.Tessaging.Hosting.Configuration;
+namespace Compze.Common.Configuration;
 
 static class AppSettingsJsonConfigurationParameterProviderRegistrar
 {

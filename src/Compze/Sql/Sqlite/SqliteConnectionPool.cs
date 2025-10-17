@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite.Infrastructure;
+namespace Compze.Sql.Sqlite;
 
 internal interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>
 {

@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Sql.Common;
 using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.MySql.Infrastructure;
-using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Sql.MySql;
+using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;

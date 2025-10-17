@@ -1,4 +1,4 @@
-using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Sql.PostgreSql;
 using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

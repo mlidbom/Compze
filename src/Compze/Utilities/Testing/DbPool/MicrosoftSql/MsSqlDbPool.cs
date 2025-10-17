@@ -1,4 +1,4 @@
-using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;

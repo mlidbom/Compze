@@ -1,4 +1,4 @@
-using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Sql.MicrosoftSql;
 
 namespace Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
 

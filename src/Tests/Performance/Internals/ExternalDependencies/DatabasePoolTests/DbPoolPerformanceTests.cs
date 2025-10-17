@@ -1,8 +1,8 @@
 using System;
-using Compze.Sql.MicrosoftSql.Infrastructure;
-using Compze.Sql.MySql.Infrastructure.SystemExtensions;
-using Compze.Sql.PostgreSql.Infrastructure;
-using Compze.Sql.Sqlite.Infrastructure;
+using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.PostgreSql;
+using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Common.Testing.Sql;

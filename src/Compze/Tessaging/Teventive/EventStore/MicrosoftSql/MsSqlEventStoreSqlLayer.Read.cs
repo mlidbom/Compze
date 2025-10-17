@@ -1,7 +1,7 @@
 using System.Data;
 using System.Data.SqlTypes;
 using Compze.Sql.Common;
-using Compze.Sql.MicrosoftSql.Infrastructure;
+using Compze.Sql.MicrosoftSql;
 using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Microsoft.Data.SqlClient;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;

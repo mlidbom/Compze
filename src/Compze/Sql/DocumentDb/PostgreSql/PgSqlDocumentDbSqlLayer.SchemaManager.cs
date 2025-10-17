@@ -1,4 +1,4 @@
-using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Sql.PostgreSql;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Document = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;

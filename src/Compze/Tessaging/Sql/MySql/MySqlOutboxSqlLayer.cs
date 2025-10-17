@@ -1,5 +1,5 @@
 using Compze.Sql.Common;
-using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Sql.MySql.SystemExtensions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
 using MessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;

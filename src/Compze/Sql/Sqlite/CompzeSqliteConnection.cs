@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite.Infrastructure;
+namespace Compze.Sql.Sqlite;
 
 internal interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<SqliteCommand>
 {

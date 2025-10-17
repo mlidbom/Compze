@@ -1,4 +1,4 @@
-using Compze.Sql.Sqlite.Infrastructure;
+using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

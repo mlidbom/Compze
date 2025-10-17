@@ -1,7 +1,7 @@
 // ReSharper disable All
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
 
-namespace ScratchPad.Internals.APIDraft.Policyv2;
+namespace Compze.Tests.ScratchPad.APIDraft.Policyv2;
 
 // ReSharper disable once UnusedMember.Global
 public class ModifyTheDefaults

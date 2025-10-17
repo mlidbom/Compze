@@ -4,7 +4,7 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 #pragma warning disable 414
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 
-namespace ScratchPad.Internals.SemanticEvents.v01;
+namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
 
 //todo: Implement the ability to use this pattern in the aggregate root and ensure that routing on the bus also work correctly.
 interface IAggregate1Event : IAggregateEvent{}

@@ -1,4 +1,4 @@
-using Compze.Sql.MySql.Infrastructure.SystemExtensions;
+using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.Threading.TasksCE;
 using T =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
 

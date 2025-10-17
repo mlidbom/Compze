@@ -6,7 +6,7 @@ using System;
 #pragma warning disable IDE0051 // Remove unused private members
 
 //When persisting event we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage and maybe one could even move events between clases in the hierarchy?
-namespace ScratchPad.Internals.SemanticEvents.v02;
+namespace Compze.Tests.ScratchPad.SemanticEvents.v02;
 
 interface IEvent {}
 

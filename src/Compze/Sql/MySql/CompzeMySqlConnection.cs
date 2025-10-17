@@ -3,7 +3,7 @@ using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.Infrastructure;
+namespace Compze.Sql.MySql;
 
 internal interface ICompzeMySqlConnection : IPoolableConnection, ICompzeDbConnection<MySqlCommand>
 {

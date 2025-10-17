@@ -3,7 +3,7 @@ using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Sql.MicrosoftSql.Infrastructure;
+namespace Compze.Sql.MicrosoftSql;
 
 internal interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlCommand>
 {

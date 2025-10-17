@@ -1,6 +1,6 @@
 using System.Transactions;
 using Compze.Sql.Common;
-using Compze.Sql.PostgreSql.Infrastructure;
+using Compze.Sql.PostgreSql;
 using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Npgsql;
 using NpgsqlTypes;

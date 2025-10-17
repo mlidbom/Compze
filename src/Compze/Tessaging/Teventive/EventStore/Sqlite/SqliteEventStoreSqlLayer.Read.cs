@@ -1,5 +1,5 @@
 using Compze.Sql.Common;
-using Compze.Sql.Sqlite.Infrastructure;
+using Compze.Sql.Sqlite;
 using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Microsoft.Data.Sqlite;
 using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;

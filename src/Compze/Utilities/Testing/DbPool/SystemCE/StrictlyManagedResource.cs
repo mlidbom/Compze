@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Compze.Tessaging.Hosting.Configuration;
+using Compze.Common.Configuration;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;

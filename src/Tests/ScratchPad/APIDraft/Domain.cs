@@ -1,6 +1,6 @@
 // ReSharper disable All
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
-namespace ScratchPad.Internals.APIDraft;
+namespace Compze.Tests.ScratchPad.APIDraft;
 
 interface IAccountEvent { }
 
