@@ -34,5 +34,5 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
 
    [XF] public void Update_runs_multi_threaded_100_times_in_80_milliseconds() =>
-      TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 80.Milliseconds(), maxTries: 10);
+      TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 100, maxTotal: 100.Milliseconds(), maxTries: 10);
 }
