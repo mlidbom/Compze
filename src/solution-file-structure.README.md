@@ -10,6 +10,6 @@
    
 - the file system structure to filename matching should ALWAYS be this
   - file-name: Compze.A.B.C.D.csproj 
-  - directory: Compze/A/B/C/D
+  - directory: src/Compze/A/B/C/D
 
 - Not every file system folder must have a csproj file. It is fine for it to just be a folder belonging to a csproj in a parent folder
