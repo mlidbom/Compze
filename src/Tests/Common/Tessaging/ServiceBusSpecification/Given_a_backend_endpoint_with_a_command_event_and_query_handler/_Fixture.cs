@@ -76,13 +76,13 @@ public abstract class EndpointHostTestBase : IAsyncLifetime
 
    void InitializeHost()
    {
-      IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed(IRunMode mode)
+      IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed()
       {
          var clone = _rootContainer.Clone();
          return clone;
       }
 
-      Host = TestingEndpointHost.Create(CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed);
+      Host = TestingEndpointHost.Create(x => CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed());
 
       BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
@@ -91,7 +91,7 @@ public abstract class EndpointHostTestBase : IAsyncLifetime
          {
             builder.Container.Register()
                    .AspNetCoreTransport()
-                   .CurrentTestsConfiguredSqlLayer("Backend");
+                   .CurrentTestsConfiguredSqlLayer("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6");
 
             builder.RegisterEventStore()
                    .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
@@ -128,7 +128,7 @@ public abstract class EndpointHostTestBase : IAsyncLifetime
                                              {
                                                 builder.Container.Register()
                                                        .AspNetCoreTransport()
-                                                       .CurrentTestsConfiguredSqlLayer("Remote");
+                                                       .CurrentTestsConfiguredSqlLayer("E72924D3-5279-44B5-B20D-D682E537672B");
                                                 builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
                                              });
 

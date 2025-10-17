@@ -12,7 +12,7 @@ public class LifestyleValidationTests : UniversalTestBase
    [PCT]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
-      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(RunMode.Testing);
+      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(new TestingComponentRegistrar());
 
       var exception = Invoking(() =>
       {
@@ -30,7 +30,7 @@ public class LifestyleValidationTests : UniversalTestBase
    [PCT]
    public void Should_allow_singleton_depending_on_singleton()
    {
-      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(RunMode.Testing);
+      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(new TestingComponentRegistrar());
 
       container.Register(
          Singleton.For<ISingletonDependency>().CreatedBy(() => new SingletonDependency()),

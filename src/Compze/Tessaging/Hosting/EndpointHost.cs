@@ -15,29 +15,29 @@ namespace Compze.Tessaging.Hosting;
 
 public class EndpointHost : IEndpointHost
 {
-   readonly IRunMode _mode;
-   readonly Func<IRunMode, IDependencyInjectionContainer> _containerFactory;
+   readonly IComponentRegistrar _registrar;
+   readonly Func<IComponentRegistrar, IDependencyInjectionContainer> _containerFactory;
    bool _disposed;
    protected IList<IEndpoint> Endpoints { get; } = [];
    internal IMessagesInFlightTracker MessagesInFlightTracker;
 
-   protected EndpointHost(IRunMode mode, Func<IRunMode, IDependencyInjectionContainer> containerFactory)
+   protected EndpointHost(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory)
    {
-      _mode = mode;
+      _registrar = registrar;
       _containerFactory = containerFactory;
       MessagesInFlightTracker = new NullOpMessagesInFlightTracker();
    }
 
    public static class Production
    {
-      public static IEndpointHost Create(Func<IRunMode, IDependencyInjectionContainer> containerFactory) => new EndpointHost(RunMode.Production, containerFactory);
+      public static IEndpointHost Create(Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) => new EndpointHost(new ComponentRegistrar(), containerFactory);
    }
 
    public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id, isPureClientEndpoint: false), setup);
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
-      using var builder = new ServerEndpointBuilder(this, MessagesInFlightTracker, _containerFactory(_mode), configuration);
+      using var builder = new ServerEndpointBuilder(this, MessagesInFlightTracker, _containerFactory(_registrar), configuration);
       setup(builder);
 
       var endpoint = builder.Build();

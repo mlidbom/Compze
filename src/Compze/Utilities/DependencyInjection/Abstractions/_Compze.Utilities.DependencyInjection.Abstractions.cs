@@ -22,6 +22,8 @@ public interface IComponentRegistrar
    TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class;
 
    IRunMode RunMode { get; }
+   void SetContainer(IDependencyInjectionContainer container);
+   IComponentRegistrar Clone();
 }
 
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable

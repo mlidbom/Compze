@@ -15,7 +15,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 {
    readonly Container _container;
 
-   public SimpleInjectorDependencyInjectionContainer(IRunMode runMode) : base(runMode)
+   public SimpleInjectorDependencyInjectionContainer(IComponentRegistrar register) : base(register)
    {
       _container = new Container();
       _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();

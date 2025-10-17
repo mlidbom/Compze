@@ -29,8 +29,8 @@ static class ContainerCloner
       IDependencyInjectionContainer cloneContainer = sourceContainer switch
       {
 #pragma warning disable CA2000 // Dispose objects before losing scope: Review: OK-ish. We dispose the container by registering its created serviceLocator in the container. It will dispose the container when disposed.
-         SimpleInjectorDependencyInjectionContainer _ => new SimpleInjectorDependencyInjectionContainer(sourceContainer.RunMode),
-         MicrosoftDependencyInjectionContainer        => new MicrosoftDependencyInjectionContainer(sourceContainer.RunMode),
+         SimpleInjectorDependencyInjectionContainer _ => new SimpleInjectorDependencyInjectionContainer(sourceContainer.Register().Clone()),
+         MicrosoftDependencyInjectionContainer        => new MicrosoftDependencyInjectionContainer(sourceContainer.Register().Clone()),
          _                                            => throw new ArgumentOutOfRangeException()
 #pragma warning restore CA2000 // Dispose objects before losing scope
       };

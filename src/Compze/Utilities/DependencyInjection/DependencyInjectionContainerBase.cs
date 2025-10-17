@@ -11,10 +11,15 @@ namespace Compze.Utilities.DependencyInjection;
 public abstract class DependencyInjectionContainerBase : IDependencyInjectionContainer
 {
    readonly List<ComponentRegistration> _registeredComponents = [];
+   readonly IComponentRegistrar _registrar;
 
-   protected DependencyInjectionContainerBase(IRunMode runMode) => RunMode = runMode;
+   protected DependencyInjectionContainerBase(IComponentRegistrar registrar)
+   {
+      _registrar = registrar;
+      _registrar.SetContainer(this);
+   }
 
-   public IRunMode RunMode { get; }
+   public IRunMode RunMode => Register().RunMode;
 
    public abstract void Dispose();
    public abstract ValueTask DisposeAsync();
@@ -27,7 +32,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       return RegisterInContainer(registrations);
    }
 
-   public IComponentRegistrar Register() => new ComponentRegistrar(this);
+   public IComponentRegistrar Register() => _registrar;
 
    protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
 

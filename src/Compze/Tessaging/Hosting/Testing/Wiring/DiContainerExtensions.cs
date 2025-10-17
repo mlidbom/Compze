@@ -17,20 +17,19 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class DiContainerExtensions
 {
-   public static IDependencyInjectionContainer CreateWithRegisteredServiceLocator(this DIContainer @this, IRunMode? runMode = null)
+   public static IDependencyInjectionContainer CreateWithRegisteredServiceLocator(this DIContainer @this)
    {
       var container = @this.Create();
       container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
       return container;
    }
 
-   public static IDependencyInjectionContainer Create(this DIContainer @this, IRunMode? runMode = null)
+   public static IDependencyInjectionContainer Create(this DIContainer @this)
    {
-      runMode = runMode ?? RunMode.Testing;
       IDependencyInjectionContainer container = @this switch
       {
-         DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(runMode),
-         DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(runMode),
+         DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(new TestingComponentRegistrar()),
+         DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(new TestingComponentRegistrar()),
          _                          => throw new ArgumentOutOfRangeException()
       };
       return container;
@@ -38,7 +37,7 @@ public static class DiContainerExtensions
 
    public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
    {
-      var container = @this.CreateWithRegisteredServiceLocator(RunMode.Testing);
+      var container = @this.CreateWithRegisteredServiceLocator();
       container.Register()
                .TimeSource()
                .TypeMapper()

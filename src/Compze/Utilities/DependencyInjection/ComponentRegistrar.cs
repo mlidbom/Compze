@@ -1,14 +1,24 @@
 using System;
+using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Utilities.DependencyInjection;
 
-class ComponentRegistrar(IDependencyInjectionContainer container) : IComponentRegistrar
+class ComponentRegistrar : IComponentRegistrar
 {
-   readonly IDependencyInjectionContainer _container = container;
+   IDependencyInjectionContainer? _container = null;
+
+   public void SetContainer(IDependencyInjectionContainer container)
+   {
+      Assert.State.Is(_container == null, () => "Container has already been set");
+      _container = container;
+   }
+
+   public virtual IComponentRegistrar Clone() => new ComponentRegistrar();
 
    public IComponentRegistrar Register(params ComponentRegistration[] registrations)
    {
+      if(_container == null) throw new InvalidOperationException("Container has not been set yet");
       _container.Register(registrations);
       return this;
    }
@@ -23,8 +33,13 @@ class ComponentRegistrar(IDependencyInjectionContainer container) : IComponentRe
       return this;
    }
 
-   public IDependencyInjectionContainer Container() => _container;
+   public IDependencyInjectionContainer Container()
+   {
+      if(_container == null) throw new InvalidOperationException("Container has not been set yet");
+      return _container;
+   }
+
    public virtual TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class => null;
 
-   public IRunMode RunMode => _container.RunMode;
+   public virtual IRunMode RunMode => DependencyInjection.RunMode.Production;
 }
