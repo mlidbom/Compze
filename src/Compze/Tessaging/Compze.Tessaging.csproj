@@ -12,7 +12,7 @@
 <ItemGroup>
     <ProjectReference Include="..\Common\Compze.Common.csproj" />
     <ProjectReference Include="..\Wiring\Compze.Wiring.csproj" />
-    <ProjectReference Include="Hosting\Configuration\Compze.Common.Configuration.csproj" />
+    <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
     <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
     <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
     <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
