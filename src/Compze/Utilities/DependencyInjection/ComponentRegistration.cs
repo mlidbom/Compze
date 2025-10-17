@@ -65,10 +65,8 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes);
       }
 
-      Assert.State.Is(Lifestyle == Lifestyle.Singleton);
-      //We must use singleton instance registrations when delegating because otherwise the containers will both attempt to dispose the service.
-      //Instance registrations are not disposed.
-      return new ComponentRegistration<TService>(
+      Assert.State.Is(Lifestyle == Lifestyle.Singleton, () => "Only Singletons can delegate to parent container when cloning, because otherwise both containers would attempt to dispose the component");
+      return new ComponentRegistration<TService>(////Instance registrations are not disposed.
          lifestyle: Lifestyle.Singleton,
          serviceTypes: ServiceTypes,
          instantiationSpec: InstantiationSpec.FromInstance(currentLocator.Resolve<TService>()),
