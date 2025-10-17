@@ -9,14 +9,19 @@ namespace Compze.Tessaging.Hosting.Sql.PostgreSql;
 
 public static class PgSqlSqlLayerRegistrar
 {
+   public interface ITestingRegistrar
+   {
+      public IComponentRegistrar Register(string connectionStringName);
+   }
+
    internal static void RegisterPgSqlConnectionPoolIfNotAlreadyRegistered(this IEndpointBuilder @this) =>
       @this.Container.Register().PgSqlConnectionPoolIfNotAlreadyRegistered(@this.Configuration.ConnectionStringName);
 
    public static IComponentRegistrar PgSqlConnectionPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
    {
-      if(registrar.RunMode.IsTesting)
+      if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
       {
-         registrar.PgSqlDbPoolWithConnectionPool(connectionStringName);
+         return testingRegistrar.Register(connectionStringName);
       } else
       {
          registrar.PgSqlProductionConnectionPool(connectionStringName);
@@ -32,9 +37,9 @@ public static class PgSqlSqlLayerRegistrar
                   .DelegateToParentServiceLocatorWhenCloning());
 
    public static IComponentRegistrar PgSqlNewDbPoolWithConnectionPool(this IComponentRegistrar registrar) =>
-      registrar.PgSqlDbPoolWithConnectionPool(Guid.NewGuid().ToString());
+      registrar.PgSqlDbPoolWithConnectionPoolIfNotAlreadyRegistered(Guid.NewGuid().ToString());
 
-   public static IComponentRegistrar PgSqlDbPoolWithConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar PgSqlDbPoolWithConnectionPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
    {
       registrar.PgSqlDbPoolIfNotAlreadyRegistered();
 

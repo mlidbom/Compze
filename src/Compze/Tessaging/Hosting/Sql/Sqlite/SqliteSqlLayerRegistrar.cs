@@ -8,11 +8,16 @@ namespace Compze.Tessaging.Hosting.Sql.Sqlite;
 
 public static class SqliteSqlLayerRegistrar
 {
+   public interface ITestingRegistrar
+   {
+      public IComponentRegistrar Register(string connectionStringName);
+   }
+
    public static IComponentRegistrar SqliteConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
    {
-      if(registrar.RunMode.IsTesting)
+      if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
       {
-         registrar.DbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
+         return testingRegistrar.Register(connectionStringName);
       } else
       {
          registrar.SqliteProductionConnectionPool(connectionStringName);
@@ -22,7 +27,7 @@ public static class SqliteSqlLayerRegistrar
    }
 
    public static IComponentRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IComponentRegistrar registrar)
-      => registrar.DbPoolAndConnectionPoolForConnectionStringName(Guid.NewGuid().ToString());
+      => registrar.SqliteDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(Guid.NewGuid().ToString());
 
    static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
       => registrar.Register(
@@ -30,34 +35,12 @@ public static class SqliteSqlLayerRegistrar
                   .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => ISqliteConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                   .DelegateToParentServiceLocatorWhenCloning());
 
-   static IComponentRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar SqliteDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
    {
       registrar.SqliteDbPoolIfNotAlreadyRegistered();
 
       return registrar.Register(
          Singleton.For<ISqliteConnectionPool>()
                   .CreatedBy((SqliteDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
-   }
-
-   public static IComponentRegistrar SqliteMemoryConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      if(registrar.RunMode.IsTesting)
-      {
-         registrar.SqliteMemoryDbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
-      } else
-      {
-         throw new InvalidOperationException("SqliteMemory is only supported in testing mode");
-      }
-
-      return registrar;
-   }
-
-   public static IComponentRegistrar SqliteMemoryDbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      registrar.SqliteMemoryDbPoolIfNotAlreadyRegistered();
-
-      return registrar.Register(
-         Singleton.For<ISqliteConnectionPool>()
-                  .CreatedBy((SqliteMemoryDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
 }

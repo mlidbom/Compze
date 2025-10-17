@@ -8,11 +8,16 @@ namespace Compze.Tessaging.Hosting.Sql.MySql;
 
 public static class MySqlSqlLayerRegistrar
 {
+   public interface ITestingRegistrar
+   {
+      public IComponentRegistrar Register(string connectionStringName);
+   }
+
    public static IComponentRegistrar MySqlConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
    {
-      if(registrar.RunMode.IsTesting)
+      if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
       {
-         registrar.MySqlDbPoolWithConnectionPool(connectionStringName);
+         return testingRegistrar.Register(connectionStringName);
       } else
       {
          registrar.MySqlProductionConnectionPool(connectionStringName);
@@ -21,7 +26,7 @@ public static class MySqlSqlLayerRegistrar
       return registrar;
    }
 
-   public static IComponentRegistrar MySqlDbPoolWithConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar MySqlDbPoolWithConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
    {
       registrar.MySqlDbPoolIfNotAlreadyRegistered();
 

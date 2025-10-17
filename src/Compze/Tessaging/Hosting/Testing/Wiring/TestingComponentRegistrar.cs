@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Sql.MicrosoftSql;
+using Compze.Tessaging.Hosting.Sql.MySql;
+using Compze.Tessaging.Hosting.Sql.PostgreSql;
+using Compze.Tessaging.Hosting.Sql.Sqlite;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql;
@@ -14,9 +17,13 @@ class TestingComponentRegistrar : ComponentRegistrar
    public TestingComponentRegistrar()
    {
       _testingRegistrars = new Dictionary<Type, object>()
-      {
-         {typeof(MsSqlSqlLayerRegistrar.ITestingRegistrar), new MsSqlDbPoolRegistrar(this)}
-      };
+                           {
+                              { typeof(MsSqlSqlLayerRegistrar.ITestingRegistrar), new MsSqlDbPoolRegistrar(this) },
+                              { typeof(MySqlSqlLayerRegistrar.ITestingRegistrar), new MySqlDbPoolRegistrar(this) },
+                              { typeof(PgSqlSqlLayerRegistrar.ITestingRegistrar), new PostgreSqlSqlDbPoolRegistrar(this) },
+                              { typeof(SqliteSqlLayerRegistrar.ITestingRegistrar), new SqliteSqlDbPoolRegistrar(this) },
+                              { typeof(SqliteMemorySqlLayerRegistrar.ITestingRegistrar), new SqliteMemoryDbPoolRegistrar(this) },
+                           };
    }
 
    public override TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class
@@ -25,6 +32,7 @@ class TestingComponentRegistrar : ComponentRegistrar
       {
          return (TTestingRegistrar)value;
       }
+
       return null;
    }
 
@@ -33,10 +41,32 @@ class TestingComponentRegistrar : ComponentRegistrar
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();
 }
 
-
-class MsSqlDbPoolRegistrar : MsSqlSqlLayerRegistrar.ITestingRegistrar
+class MsSqlDbPoolRegistrar(IComponentRegistrar registrar) : MsSqlSqlLayerRegistrar.ITestingRegistrar
 {
-   readonly IComponentRegistrar _registrar;
-   public MsSqlDbPoolRegistrar(IComponentRegistrar registrar) => _registrar = registrar;
+   readonly IComponentRegistrar _registrar = registrar;
    public IComponentRegistrar Register(string connectionStringName) => _registrar.MicrosoftSqlDbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
+}
+
+class MySqlDbPoolRegistrar(IComponentRegistrar registrar) : MySqlSqlLayerRegistrar.ITestingRegistrar
+{
+   readonly IComponentRegistrar _registrar = registrar;
+   public IComponentRegistrar Register(string connectionStringName) => _registrar.MySqlDbPoolWithConnectionPoolForConnectionStringName(connectionStringName);
+}
+
+class PostgreSqlSqlDbPoolRegistrar(IComponentRegistrar registrar) : PgSqlSqlLayerRegistrar.ITestingRegistrar
+{
+   readonly IComponentRegistrar _registrar = registrar;
+   public IComponentRegistrar Register(string connectionStringName) => _registrar.PgSqlDbPoolWithConnectionPoolIfNotAlreadyRegistered(connectionStringName);
+}
+
+class SqliteSqlDbPoolRegistrar(IComponentRegistrar registrar) : SqliteSqlLayerRegistrar.ITestingRegistrar
+{
+   readonly IComponentRegistrar _registrar = registrar;
+   public IComponentRegistrar Register(string connectionStringName) => _registrar.SqliteDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(connectionStringName);
+}
+
+class SqliteMemoryDbPoolRegistrar(IComponentRegistrar registrar) : SqliteMemorySqlLayerRegistrar.ITestingRegistrar
+{
+   readonly IComponentRegistrar _registrar = registrar;
+   public IComponentRegistrar Register(string connectionStringName) => _registrar.SqliteMemoryDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(connectionStringName);
 }
