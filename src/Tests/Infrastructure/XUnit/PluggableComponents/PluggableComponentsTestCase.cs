@@ -28,7 +28,7 @@ public class PluggableComponentsTestCase : XunitTestCase
              defaultMethodDisplay,
              defaultMethodDisplayOptions,
              testMethod,
-             [combination]) // Pass combination as argument for test runner identification
+             [combination.ToString()]) // Pass as string or test discovery in dotnet test breaks
    {
       _combination = combination;
       DisplayName = $"{testMethod.Method.Name}({combination})";
@@ -42,6 +42,7 @@ public class PluggableComponentsTestCase : XunitTestCase
    {
       return await TestContext.RunTestInContextAsync(
                 new TestContextData(_combination, TestMethod),
+                //Manually override this rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
                 async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync());
    }
 
