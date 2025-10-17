@@ -47,6 +47,15 @@ Then reload: `. $PROFILE`
 
 - **C-Validate-SolutionStructure** - Validates the Compze solution structure
 
+### Project Management
+
+- **C-Rename-Project** - Renames a project and updates all references including InternalsVisibleTo
+  - `-Old` - Current project name (e.g., "Compze.Tessaging.Hosting.Configuration")
+  - `-New` - New project name (e.g., "Compze.Common.Configuration")
+  - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
+  - `-WhatIf` - Preview changes without applying
+  - Updates project file name, ProjectReferences, InternalsVisibleTo attributes, and solution files
+
 ### Pluggable Components
 
 - **C-Get-PluggableComponents** - Displays the currently active pluggable component combinations
