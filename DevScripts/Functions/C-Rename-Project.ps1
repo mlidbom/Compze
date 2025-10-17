@@ -6,9 +6,11 @@ function C-Rename-Project {
     .DESCRIPTION
     Renames a project file and updates all references throughout the solution:
     - Renames the project file (.csproj)
+    - Renames any associated .ncrunchproject files
     - Updates ProjectReference elements in all .csproj files
     - Updates InternalsVisibleTo attributes in all .csproj files
     - Updates Project Path references in all solution files (.slnx and .sln)
+    - Updates .ncrunchproject references in .ncrunchsolution files
     
     This tool is essential because standard refactoring tools cannot handle
     InternalsVisibleTo attributes, which are extensively used in this codebase.
@@ -86,8 +88,8 @@ function C-Rename-Project {
     Write-Host "  Will rename to: $newProjectPath" -ForegroundColor Green
     Write-Host ""
     
-    # Step 2: Rename the project file
-    Write-Host "[Step 2/5] Renaming project file..." -ForegroundColor Cyan
+    # Step 2: Rename the project file and any associated .ncrunchproject files
+    Write-Host "[Step 2/6] Renaming project file and associated files..." -ForegroundColor Cyan
     
     if (Test-Path $newProjectPath) {
         Write-Error "Target project file already exists: $newProjectPath"
@@ -96,10 +98,26 @@ function C-Rename-Project {
     
     Rename-Item -Path $projectFile.FullName -NewName $newProjectFileName
     Write-Host "  ✓ Renamed: $oldProjectFileName -> $newProjectFileName" -ForegroundColor Green
+    
+    # Check for and rename any .ncrunchproject files
+    $ncrunchFiles = Get-ChildItem -Path $projectDir -Filter "$Old.*.ncrunchproject" -ErrorAction SilentlyContinue
+    $ncrunchFilesRenamed = 0
+    
+    foreach ($ncrunchFile in $ncrunchFiles) {
+        $ncrunchExtension = $ncrunchFile.Name.Substring($Old.Length) # e.g., ".v3.ncrunchproject"
+        $newNcrunchFileName = "$New$ncrunchExtension"
+        Rename-Item -Path $ncrunchFile.FullName -NewName $newNcrunchFileName
+        $ncrunchFilesRenamed++
+        Write-Host "  ✓ Renamed: $($ncrunchFile.Name) -> $newNcrunchFileName" -ForegroundColor Green
+    }
+    
+    if ($ncrunchFilesRenamed -gt 0) {
+        Write-Host "  Renamed $ncrunchFilesRenamed .ncrunchproject file(s)" -ForegroundColor Green
+    }
     Write-Host ""
     
     # Step 3: Update ProjectReference elements in all .csproj files
-    Write-Host "[Step 3/5] Updating ProjectReference elements in .csproj files..." -ForegroundColor Cyan
+    Write-Host "[Step 3/6] Updating ProjectReference elements in .csproj files..." -ForegroundColor Cyan
     
     $allCsprojFiles = Get-ChildItem -Path $solutionDir -Filter "*.csproj" -Recurse
     $projectReferencesUpdated = 0
@@ -123,7 +141,7 @@ function C-Rename-Project {
     Write-Host ""
     
     # Step 4: Update InternalsVisibleTo attributes in all .csproj files
-    Write-Host "[Step 4/5] Updating InternalsVisibleTo attributes in .csproj files..." -ForegroundColor Cyan
+    Write-Host "[Step 4/6] Updating InternalsVisibleTo attributes in .csproj files..." -ForegroundColor Cyan
     
     $internalsVisibleToUpdated = 0
     
@@ -146,7 +164,7 @@ function C-Rename-Project {
     Write-Host ""
     
     # Step 5: Update solution files (.slnx and .sln)
-    Write-Host "[Step 5/5] Updating solution files..." -ForegroundColor Cyan
+    Write-Host "[Step 5/6] Updating solution files..." -ForegroundColor Cyan
     
     $slnxFiles = Get-ChildItem -Path $solutionDir -Filter "*.slnx" -Recurse
     $slnFiles = Get-ChildItem -Path $solutionDir -Filter "*.sln" -Recurse
@@ -182,14 +200,17 @@ function C-Rename-Project {
     Write-Host "  Updated $solutionFilesUpdated solution file(s)" -ForegroundColor Green
     Write-Host ""
     
+    
     # Summary
     Write-Host "="*80 -ForegroundColor Cyan
     Write-Host "RENAME OPERATION COMPLETED" -ForegroundColor Green
     Write-Host "="*80 -ForegroundColor Cyan
     Write-Host "Project file renamed: 1" -ForegroundColor Green
+    Write-Host ".ncrunchproject files renamed: $ncrunchFilesRenamed" -ForegroundColor Green
     Write-Host "ProjectReferences updated: $projectReferencesUpdated" -ForegroundColor Green
     Write-Host "InternalsVisibleTo attributes updated: $internalsVisibleToUpdated" -ForegroundColor Green
     Write-Host "Solution files updated: $solutionFilesUpdated" -ForegroundColor Green
+    Write-Host ".ncrunchsolution files updated: $ncrunchSolutionFilesUpdated" -ForegroundColor Green
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Yellow
     Write-Host "  1. Build the solution to verify all references are correct" -ForegroundColor White
