@@ -104,10 +104,9 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    public override void Dispose()
    {
-      if(_isDisposed) return;
-      Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(!_isDisposed)
       {
+         Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          _serviceProvider?.Dispose();
          _serviceProvider = null;
@@ -116,10 +115,9 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    public override async ValueTask DisposeAsync()
    {
-      if(_isDisposed) return;
-      Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
       if(!_isDisposed)
       {
+         Assert.State.Is(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          if(_serviceProvider != null)
          {
