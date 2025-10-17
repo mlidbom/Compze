@@ -11,16 +11,4 @@
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.4.0" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.MySql" />
-    <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MySql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.MySql" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-    <InternalsVisibleTo Include="Compze.Tests.Common" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-  </ItemGroup>
-</Project>
+  </Project>

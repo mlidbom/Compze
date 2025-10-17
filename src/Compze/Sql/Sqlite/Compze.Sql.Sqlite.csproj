@@ -11,16 +11,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Sql.DocumentDb.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sql.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-    <InternalsVisibleTo Include="Compze.Tests.Common" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-  </ItemGroup>
-</Project>
+  </Project>

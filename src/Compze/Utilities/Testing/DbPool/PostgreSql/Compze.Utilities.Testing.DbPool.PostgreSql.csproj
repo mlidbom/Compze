@@ -15,10 +15,4 @@
         <ProjectReference Include="..\..\..\..\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
         <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Sql.PostgreSql" />
-        <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-        <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-        <InternalsVisibleTo Include="Compze.Tests.Common" />
-    </ItemGroup>
-</Project>
+    </Project>

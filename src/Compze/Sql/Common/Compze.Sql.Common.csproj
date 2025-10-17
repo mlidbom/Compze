@@ -15,33 +15,4 @@
       <ProjectReference Include="..\..\Utilities\Logging\Compze.Utilities.Logging.csproj" />
       <ProjectReference Include="..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
    </ItemGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.MySql" />
-      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Sql.DocumentDb.Sqlite" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore.Sqlite" />
-      <InternalsVisibleTo Include="Compze.Sql.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Sql.MySql" />
-      <InternalsVisibleTo Include="Compze.Sql.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Sql.Sqlite" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.Sqlite" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.Sqlite" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-      <InternalsVisibleTo Include="Compze.Tests.Common" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-   </ItemGroup>
-</Project>
+   </Project>

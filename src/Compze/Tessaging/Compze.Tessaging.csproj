@@ -29,19 +29,6 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sql.Sqlite" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
-   </ItemGroup>
-   <ItemGroup>
       <Folder Include="Sql\DocumentDb\" />
    </ItemGroup>
    <ItemGroup>

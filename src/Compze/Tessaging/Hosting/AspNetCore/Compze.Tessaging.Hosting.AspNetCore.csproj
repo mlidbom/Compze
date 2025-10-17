@@ -20,12 +20,4 @@
   <ItemGroup>
     <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Integration" />
-  </ItemGroup>
-</Project>
+  </Project>

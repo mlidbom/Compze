@@ -19,9 +19,6 @@
     <ProjectReference Include="..\Common\Compze.Tessaging.Common.csproj" />
     <ProjectReference Include="Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-  </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>

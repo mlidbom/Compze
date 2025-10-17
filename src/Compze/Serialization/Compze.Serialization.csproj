@@ -13,18 +13,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Sql.DocumentDb" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.EventStore" />
-    <InternalsVisibleTo Include="Compze.Utilities.Logging" />
-    <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
-    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
-     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals"/>
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
     <ProjectReference Include="..\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <ProjectReference Include="..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
