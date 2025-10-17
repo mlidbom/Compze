@@ -41,7 +41,31 @@ function C-Relocate-Project {
     }
     Move-Item -Path $currentProjectDir -Destination $targetProjectDir
     
-    # Step 4: Update csproj references
+    # Step 4: Update the moved project's own references
+    $movedProjectFile = Join-Path $targetProjectDir $projectFileName
+    $movedProjectContent = Get-Content $movedProjectFile -Raw
+    $movedProjectDir = Split-Path -Parent $movedProjectFile
+    
+    $referencePattern = '<ProjectReference\s+Include="([^"]+)"'
+    $updatedContent = $movedProjectContent
+    
+    if ($movedProjectContent -match $referencePattern) {
+        $matches = [regex]::Matches($movedProjectContent, $referencePattern)
+        foreach ($match in $matches) {
+            $oldRelativePath = $match.Groups[1].Value
+            # Convert old relative path to absolute path from old location
+            $absolutePath = [System.IO.Path]::GetFullPath((Join-Path $currentProjectDir $oldRelativePath))
+            # Calculate new relative path from new location
+            $newRelativePath = [System.IO.Path]::GetRelativePath($movedProjectDir, $absolutePath)
+            # Replace in content
+            $updatedContent = $updatedContent -replace [regex]::Escape($oldRelativePath), $newRelativePath
+        }
+        if ($updatedContent -ne $movedProjectContent) {
+            Set-Content -Path $movedProjectFile -Value $updatedContent -NoNewline -Encoding UTF8
+        }
+    }
+    
+    # Step 5: Update csproj references in other projects
     Get-ChildItem -Path $solutionDir -Filter "*.csproj" -Recurse | ForEach-Object {
         $content = Get-Content $_.FullName -Raw
         $pattern = '(<ProjectReference\s+Include=")([^"]*[/\\]' + [regex]::Escape($ProjectName) + '\.csproj)(")'
@@ -55,7 +79,7 @@ function C-Relocate-Project {
         }
     }
     
-    # Step 5: Update solution paths
+    # Step 6: Update solution paths
     Get-ChildItem -Path $solutionDir -Filter "*.slnx" -Recurse | ForEach-Object {
         $content = Get-Content $_.FullName -Raw
         $pattern = '(<Project\s+Path=")([^"]*[/\\]' + [regex]::Escape($ProjectName) + '\.csproj)(")'
@@ -68,9 +92,9 @@ function C-Relocate-Project {
         }
     }
     
-    # Step 6: Update solution folder structure
+    # Step 7: Update solution folder structure
     C-Relocate-ProjectInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
     
-    # Step 7: Ensure csproj files are correct
+    # Step 8: Ensure csproj files are correct
     C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
 }
