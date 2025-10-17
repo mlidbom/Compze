@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\..\..\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
-    <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
   </ItemGroup>
    </Project>

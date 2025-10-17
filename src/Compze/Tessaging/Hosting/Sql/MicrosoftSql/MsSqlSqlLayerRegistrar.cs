@@ -2,7 +2,6 @@ using Compze.Common.Configuration;
 using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
 namespace Compze.Tessaging.Hosting.Sql.MicrosoftSql;
 

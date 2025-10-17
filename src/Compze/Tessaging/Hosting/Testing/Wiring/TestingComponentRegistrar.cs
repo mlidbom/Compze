@@ -7,6 +7,9 @@ using Compze.Tessaging.Hosting.Sql.Sqlite;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool.MicrosoftSql;
+using Compze.Utilities.Testing.DbPool.MySql;
+using Compze.Utilities.Testing.DbPool.PostgreSql;
+using Compze.Utilities.Testing.DbPool.Sqlite;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
