@@ -119,10 +119,10 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
             while(reader.Read())
             {
                messages.Add(new IServiceBusSqlLayer.UndeliveredMessage(
-                  messageId: Guid.Parse(reader.GetString(0)),
-                  typeIdGuid: Guid.Parse(reader.GetString(1)),
+                  messageId: reader.GetGuid(0),
+                  typeIdGuid: reader.GetGuid(1),
                   serializedMessage: reader.GetString(2),
-                  targetEndpointId: Guid.Parse(reader.GetString(3)),
+                  targetEndpointId: reader.GetGuid(3),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }

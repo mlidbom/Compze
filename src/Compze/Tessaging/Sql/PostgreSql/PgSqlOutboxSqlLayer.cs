@@ -85,7 +85,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory) : ISer
                         """)
                    .AddParameter(DispatchingTable.MessageId, messageId)
                    .AddParameter(DispatchingTable.EndpointId, endpointId)
-                   .AddParameter(DispatchingTable.LastAttemptTime, NpgsqlDbType.Timestamp, DateTime.UtcNow)
+                   .AddTimestampWithTimeZone(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
                    .PrepareStatement()
                    .ExecuteNonQuery());
@@ -118,7 +118,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory) : ISer
                     ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime} NULLS FIRST;
 
                     """)
-               .AddParameter("cutoffTime", NpgsqlDbType.Timestamp, cutoffTime)
+               .AddTimestampWithTimeZone("cutoffTime", cutoffTime)
                .PrepareStatement();
             
             using var reader = command.ExecuteReader();
