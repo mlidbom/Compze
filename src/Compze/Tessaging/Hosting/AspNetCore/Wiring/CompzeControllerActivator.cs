@@ -3,10 +3,10 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
+namespace Compze.Tessaging.Hosting.AspNetCore.Wiring;
 
 /// <summary>Custom controller activator that creates controllers using Compze's DI container.</summary>
-class CompzeControllerActivator : IControllerActivator
+class  CompzeControllerActivator : IControllerActivator
 {
    internal static void RegisterWith(IComponentRegistrar register)
       => register.Register(Singleton.For<CompzeControllerActivator>()

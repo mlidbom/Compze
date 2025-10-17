@@ -1,6 +1,6 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
+namespace Compze.Tessaging.Hosting.AspNetCore.Wiring;
 
 public static class AspNetCoreTransportRegistrar
 {

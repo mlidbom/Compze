@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.AspNetCore.DependencyInjection;
+using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
