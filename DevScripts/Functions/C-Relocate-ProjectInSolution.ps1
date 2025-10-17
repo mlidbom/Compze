@@ -28,22 +28,19 @@ function C-Relocate-ProjectInSolution {
     if (-not (Test-Path $SolutionPath)) { Write-Error "Solution file not found: $SolutionPath"; return }
     if (-not $SolutionPath.EndsWith('.slnx')) { Write-Error "Only works with .slnx files"; return }
     
-    Write-Host "[Step 6/6] Updating solution folder structure..." -ForegroundColor Cyan
-    
     [xml]$xml = Get-Content $SolutionPath
     $projectElement = $xml.SelectNodes("//Project[@Path]") | Where-Object { $_.Path -like "*$ProjectName.csproj" } | Select-Object -First 1
     
     if (-not $projectElement) {
-        Write-Host "  Project not found in solution" -ForegroundColor Yellow
+        Write-Error "Project not found in solution"
         return
     }
     
     $currentPath = $projectElement.GetAttribute("Path")
-    Write-Host "  Project path: $currentPath" -ForegroundColor Cyan
     
     # Calculate target folder: "Compze/Common/Configuration/Compze.Common.Configuration.csproj" -> "/Compze/Common/"
     $pathParts = $currentPath -split '/'
-    if ($pathParts.Length -lt 2) { Write-Host "  Unexpected path format" -ForegroundColor Yellow; return }
+    if ($pathParts.Length -lt 2) { Write-Error "Unexpected path format"; return }
     
     $directoryPath = $pathParts[0..($pathParts.Length - 2)] -join '/'
     $targetFolderParts = $directoryPath -split '/'
@@ -53,11 +50,8 @@ function C-Relocate-ProjectInSolution {
         "/" + ($targetFolderParts[0..($targetFolderParts.Length - 2)] -join '/') + "/"
     }
     
-    Write-Host "  Target folder: $targetSolutionFolder" -ForegroundColor Cyan
-    
     $currentFolder = $projectElement.ParentNode
     if ($currentFolder.Name -eq "Folder" -and $currentFolder.GetAttribute("Name") -eq $targetSolutionFolder) {
-        Write-Host "  ✓ Already in correct folder!" -ForegroundColor Green
         return
     }
     
@@ -68,11 +62,8 @@ function C-Relocate-ProjectInSolution {
         $targetFolder = $xml.CreateElement("Folder")
         $targetFolder.SetAttribute("Name", $targetSolutionFolder)
         $xml.DocumentElement.AppendChild($targetFolder) | Out-Null
-        Write-Host "  Created folder: $targetSolutionFolder" -ForegroundColor Green
     }
     
     $targetFolder.AppendChild($projectElement) | Out-Null
     $xml.Save($SolutionPath)
-    Write-Host "  ✓ Moved to: $targetSolutionFolder" -ForegroundColor Green
-    Write-Host ""
 }
