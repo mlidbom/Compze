@@ -7,9 +7,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/Compze/">
-    <File Path="Directory.Build.props" />
-  </Folder>
+  <Folder Name="/Compze/" />
   <Folder Name="/Compze/Abstractions/">
     <Project Path="Compze/Abstractions/Compze.Abstractions.csproj" />
     <Project Path="Compze/Abstractions/Internal/Compze.Abstractions.Internal.csproj" />
@@ -49,8 +47,7 @@
     <Project Path="Compze/Tessaging/Hosting/Abstractions/Compze.Tessaging.Hosting.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
   </Folder>
-  <Folder Name="/Compze/Tessaging/Hosting/Configuration/">
-  </Folder>
+  <Folder Name="/Compze/Tessaging/Hosting/Configuration/" />
   <Folder Name="/Compze/Tessaging/Hosting/Sql/">
     <Project Path="Compze/Tessaging/Hosting/Sql/MicrosoftSql/Compze.Tessaging.Hosting.Sql.MicrosoftSql.csproj" />
     <Project Path="Compze/Tessaging/Hosting/Sql/MySql/Compze.Tessaging.Hosting.Sql.MySql.csproj" />
@@ -112,6 +109,10 @@
     <Project Path="Compze/Utilities/Threading/Compze.Utilities.Threading.csproj" />
     <Project Path="Compze/Utilities/Threading/Testing/Compze.Utilities.Threading.Testing.csproj" />
   </Folder>
+  <Folder Name="/Compze/Wiring/">
+    <Project Path="Compze/Wiring/Compze.Wiring.csproj" />
+    <Project Path="Compze/Wiring/Testing/Compze.Wiring.Testing.csproj" />
+  </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
     <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj" />
@@ -154,14 +155,6 @@
   <Folder Name="/_Websites/">
     <Project Path="Websites/Website/Website.csproj" />
   </Folder>
-  <Project Path="../DevScripts/Scripts.csproj">
-    <BuildType Solution="docs|*" Project="Release" />
-  </Project>
-  <Project Path="msbuild/Build.csproj">
-    <BuildType Solution="docs|*" Project="Release" />
-  </Project>
-  <Folder Name="/Compze/Wiring/">
-    <Project Path="Compze/Wiring/Compze.Wiring.csproj" />
-    <Project Path="Compze/Wiring/Testing/Compze.Wiring.Testing.csproj" />
-  </Folder>
+  <Project Path="../DevScripts/Scripts.csproj" />
+  <Project Path="msbuild/Build.csproj" />
 </Solution>
