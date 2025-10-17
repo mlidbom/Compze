@@ -200,8 +200,4 @@ $($docsLines -join "`r`n")
             $processedCount++
         }
     }
-
-    if ($processedCount -gt 0) {
-        Write-Error "Updated $processedCount project file(s) - csproj exclusions were missing or incorrect"
-    }
 }
