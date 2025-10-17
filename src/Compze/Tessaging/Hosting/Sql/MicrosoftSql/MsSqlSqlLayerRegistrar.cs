@@ -8,11 +8,20 @@ namespace Compze.Tessaging.Hosting.Sql.MicrosoftSql;
 
 public static class MsSqlSqlLayerRegistrar
 {
+   public interface ITestingRegistrar
+   {
+      public IComponentRegistrar Register(string connectionStringName);
+   }
+
    public static IComponentRegistrar MsSqlConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
    {
+      if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
+      {
+            return testingRegistrar.Register(connectionStringName);
+      }
       if(registrar.RunMode.IsTesting)
       {
-         registrar.DbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
+         registrar.MicrosoftSqlDbPoolAndConnectionPoolForConnectionStringName(connectionStringName);
       } else
       {
          registrar.MsSqlProductionConnectionPool(connectionStringName);
@@ -27,12 +36,5 @@ public static class MsSqlSqlLayerRegistrar
                   .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMsSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
                   .DelegateToParentServiceLocatorWhenCloning());
 
-   public static IComponentRegistrar DbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      registrar.MsSqlDbPoolIfNotAlreadyRegistered();
 
-      return registrar.Register(
-         Singleton.For<IMsSqlConnectionPool>()
-                  .CreatedBy((MsSqlDbPool pool) => IMsSqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
-   }
 }

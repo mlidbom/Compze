@@ -18,6 +18,9 @@ public interface IComponentRegistrar
                             .then(this);
 
    IDependencyInjectionContainer Container();
+
+   TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class;
+
    IRunMode RunMode { get; }
 }
 

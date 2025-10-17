@@ -24,6 +24,7 @@ class ComponentRegistrar(IDependencyInjectionContainer container) : IComponentRe
    }
 
    public IDependencyInjectionContainer Container() => _container;
+   public virtual TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class => null;
 
    public IRunMode RunMode => _container.RunMode;
 }

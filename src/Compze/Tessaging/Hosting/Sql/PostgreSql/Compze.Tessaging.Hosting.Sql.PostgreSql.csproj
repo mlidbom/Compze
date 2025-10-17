@@ -9,8 +9,9 @@
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\..\..\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+   </ItemGroup>
 </Project>
