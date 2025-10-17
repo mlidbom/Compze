@@ -24,12 +24,10 @@ function Add-ProjectReference {
         [string]$ReferencePath
     )
     
-    if (-not (Test-Path $CsprojPath)) {
-        Write-Error "Project file not found: $CsprojPath"
+    $xml = Open-XmlDocumentPreservingWhitespace -Path $CsprojPath
+    if (-not $xml) {
         return
     }
-    
-    [xml]$xml = Get-Content $CsprojPath
     
     # Check if reference already exists
     $existingRef = $xml.SelectNodes("//ProjectReference[@Include]") | 
