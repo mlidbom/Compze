@@ -3,7 +3,7 @@ using Compze.Sql.PostgreSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.DocumentDb.PostgreSql;
+namespace Compze.Sql.DocumentDb.PostgreSql.Wiring;
 
 public static class PgSqlDocumentDbRegistrar
 {

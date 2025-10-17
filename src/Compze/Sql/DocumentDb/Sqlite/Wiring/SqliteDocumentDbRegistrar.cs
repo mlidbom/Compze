@@ -3,7 +3,7 @@ using Compze.Sql.Sqlite;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.DocumentDb.Sqlite;
+namespace Compze.Sql.DocumentDb.Sqlite.Wiring;
 
 public static class SqliteDocumentDbRegistrar
 {

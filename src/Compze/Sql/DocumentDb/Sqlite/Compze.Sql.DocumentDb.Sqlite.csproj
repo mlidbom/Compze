@@ -15,6 +15,4 @@
 	  <ProjectReference Include="..\..\Sqlite\Compze.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
 </Project>

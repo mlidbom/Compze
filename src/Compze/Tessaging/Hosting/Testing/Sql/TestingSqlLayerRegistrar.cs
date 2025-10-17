@@ -1,8 +1,8 @@
 using System;
-using Compze.Sql.DocumentDb.MicrosoftSql;
-using Compze.Sql.DocumentDb.MySql;
-using Compze.Sql.DocumentDb.PostgreSql;
-using Compze.Sql.DocumentDb.Sqlite;
+using Compze.Sql.DocumentDb.MicrosoftSql.Wiring;
+using Compze.Sql.DocumentDb.MySql.Wiring;
+using Compze.Sql.DocumentDb.PostgreSql.Wiring;
+using Compze.Sql.DocumentDb.Sqlite.Wiring;
 using Compze.Tessaging.Hosting.Sql.MicrosoftSql;
 using Compze.Tessaging.Hosting.Sql.MySql;
 using Compze.Tessaging.Hosting.Sql.PostgreSql;

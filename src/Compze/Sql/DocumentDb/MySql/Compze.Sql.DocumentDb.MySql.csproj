@@ -15,6 +15,4 @@
 	  <ProjectReference Include="..\..\MySql\Compze.Sql.MySql.csproj" />
     <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
 </Project>

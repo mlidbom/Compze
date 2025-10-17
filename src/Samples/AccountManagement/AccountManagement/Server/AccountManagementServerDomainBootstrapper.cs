@@ -4,7 +4,7 @@ using AccountManagement.Domain.Events;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.Sql.DocumentDb.DependencyInjection;
-using Compze.Sql.DocumentDb.MicrosoftSql;
+using Compze.Sql.DocumentDb.MicrosoftSql.Wiring;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Sql.MicrosoftSql;
