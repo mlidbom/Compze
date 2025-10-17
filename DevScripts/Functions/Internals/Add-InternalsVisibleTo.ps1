@@ -3,13 +3,14 @@
 function Add-InternalsVisibleTo {
     <#
     .SYNOPSIS
-    Adds an InternalsVisibleTo entry to a .csproj file
+    Adds an InternalsVisibleTo entry to the centralized Directory.Build.props file
     
     .DESCRIPTION
-    Adds an InternalsVisibleTo element to a .csproj file if it doesn't already exist
+    Adds an InternalsVisibleTo element to src/Compze/Directory.Build.props if it doesn't already exist.
+    For now at least, we make the internals of every Compze.* assembly visible to every other Compze.* assembly through this shared file.
     
     .PARAMETER CsprojPath
-    Path to the .csproj file
+    Path to a .csproj file (used to locate the Directory.Build.props file, parameter kept for compatibility)
     
     .PARAMETER AssemblyName
     Name of the assembly to grant InternalsVisibleTo access
@@ -24,12 +25,15 @@ function Add-InternalsVisibleTo {
         [string]$AssemblyName
     )
     
-    if (-not (Test-Path $CsprojPath)) {
-        Write-Error "Project file not found: $CsprojPath"
+    # Locate the centralized Directory.Build.props file
+    $directoryBuildPropsPath = Join-Path (Split-Path $PSScriptRoot -Parent) "..\src\Compze\Directory.Build.props" | Resolve-Path
+    
+    if (-not (Test-Path $directoryBuildPropsPath)) {
+        Write-Error "Directory.Build.props not found at: $directoryBuildPropsPath"
         return
     }
     
-    [xml]$xml = Get-Content $CsprojPath
+    [xml]$xml = Get-Content $directoryBuildPropsPath
     
     # Check if InternalsVisibleTo already exists
     $existingIVT = $xml.SelectNodes("//InternalsVisibleTo[@Include]") | 
@@ -40,19 +44,34 @@ function Add-InternalsVisibleTo {
         return # Already exists
     }
     
-    # Find or create ItemGroup for InternalsVisibleTo
+    # Find the ItemGroup that contains InternalsVisibleTo entries
     $itemGroup = $xml.SelectSingleNode("//ItemGroup[InternalsVisibleTo]")
     
     if (-not $itemGroup) {
-        # Create a new ItemGroup
-        $itemGroup = $xml.CreateElement("ItemGroup")
-        $xml.DocumentElement.AppendChild($itemGroup) | Out-Null
+        Write-Error "InternalsVisibleTo ItemGroup not found in Directory.Build.props"
+        return
     }
     
     # Create and add the InternalsVisibleTo element
     $ivt = $xml.CreateElement("InternalsVisibleTo")
     $ivt.SetAttribute("Include", $AssemblyName)
-    $itemGroup.AppendChild($ivt) | Out-Null
     
-    Save-XmlWithThreeSpacesIndentation -Xml $xml -Path $CsprojPath
+    # Insert in alphabetical order
+    $inserted = $false
+    foreach ($child in $itemGroup.ChildNodes) {
+        if ($child.Name -eq "InternalsVisibleTo") {
+            $existingName = $child.GetAttribute("Include")
+            if ([string]::Compare($AssemblyName, $existingName, [System.StringComparison]::OrdinalIgnoreCase) -lt 0) {
+                $itemGroup.InsertBefore($ivt, $child) | Out-Null
+                $inserted = $true
+                break
+            }
+        }
+    }
+    
+    if (-not $inserted) {
+        $itemGroup.AppendChild($ivt) | Out-Null
+    }
+    
+    Save-XmlWithThreeSpacesIndentation -Xml $xml -Path $directoryBuildPropsPath
 }
