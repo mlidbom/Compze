@@ -1,0 +1,42 @@
+function Ensure-ProjectIsInSolution {
+    <#
+    .SYNOPSIS
+    Ensures a project exists in the solution file
+    
+    .DESCRIPTION
+    Adds a project to the solution file if it doesn't already exist.
+    The project will be added to the root Solution element.
+    
+    .PARAMETER ProjectName
+    The name of the project to ensure exists in the solution
+    
+    .PARAMETER SolutionPath
+    Path to the solution file
+    #>
+    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ProjectName,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$SolutionPath
+    )
+    
+    [xml]$xml = Get-Content $SolutionPath
+    
+    # Calculate the expected project path
+    $solutionProjectPath = $ProjectName -replace '\.', '/'
+    $solutionProjectPath = "$solutionProjectPath/$ProjectName.csproj"
+    
+    # Try to find the project
+    $projectElement = $xml.SelectNodes("//Project[@Path]") | Where-Object { $_.Path -eq $solutionProjectPath } | Select-Object -First 1
+    
+    # If project doesn't exist, create it
+    if (-not $projectElement) {
+        $projectElement = $xml.CreateElement("Project")
+        $projectElement.SetAttribute("Path", $solutionProjectPath)
+        $xml.DocumentElement.AppendChild($projectElement) | Out-Null
+        $xml.Save($SolutionPath)
+    }
+}
