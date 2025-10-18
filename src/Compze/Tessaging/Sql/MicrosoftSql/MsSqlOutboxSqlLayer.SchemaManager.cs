@@ -1,7 +1,7 @@
 using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.Threading.TasksCE;
-using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
-using D = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Outbox = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
+using Dispatching = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
 
 namespace Compze.Tessaging.Sql.MicrosoftSql;
 
@@ -15,33 +15,33 @@ partial class MsSqlOutboxSqlLayer
          // ReSharper disable once MethodHasAsyncOverload | THis crashes with weird exception if called async so ...
          await connectionFactory.ExecuteNonQueryAsync($"""
 
-                                            IF NOT EXISTS (select name from sys.tables where name = '{Message.TableName}')
+                                            IF NOT EXISTS (select name from sys.tables where name = '{Outbox.TableName}')
                                             BEGIN
-                                                CREATE TABLE {Message.TableName}
+                                                CREATE TABLE {Outbox.TableName}
                                                 (
-                                                    {Message.GeneratedId}       bigint IDENTITY(1,1) NOT NULL,
-                                                    {Message.TypeIdGuidValue}   uniqueidentifier     NOT NULL,
-                                                    {Message.MessageId}         uniqueidentifier     NOT NULL,
-                                                    {Message.SerializedMessage} nvarchar(MAX)        NOT NULL,
+                                                    {Outbox.GeneratedId}       bigint IDENTITY(1,1) NOT NULL,
+                                                    {Outbox.TypeIdGuidValue}   uniqueidentifier     NOT NULL,
+                                                    {Outbox.MessageId}         uniqueidentifier     NOT NULL,
+                                                    {Outbox.SerializedMessage} nvarchar(MAX)        NOT NULL,
                                             
-                                                    CONSTRAINT PK_{Message.TableName} PRIMARY KEY CLUSTERED ( [{Message.GeneratedId}] ASC ),
+                                                    CONSTRAINT PK_{Outbox.TableName} PRIMARY KEY CLUSTERED ( [{Outbox.GeneratedId}] ASC ),
                                             
-                                                    CONSTRAINT IX_{Message.TableName}_Unique_{Message.MessageId} UNIQUE ( {Message.MessageId} )
+                                                    CONSTRAINT IX_{Outbox.TableName}_Unique_{Outbox.MessageId} UNIQUE ( {Outbox.MessageId} )
                                                 )
                                             
-                                                CREATE TABLE {D.TableName}
+                                                CREATE TABLE {Dispatching.TableName}
                                                 (
-                                                    {D.MessageId}        uniqueidentifier NOT NULL,
-                                                    {D.EndpointId}       uniqueidentifier NOT NULL,
-                                                    {D.IsReceived}       bit              NOT NULL,
-                                                    {D.RetryCount}       int              NOT NULL DEFAULT 0,
-                                                    {D.LastAttemptTime}  datetime2        NULL,
-                                                    {D.FailureReason}    nvarchar(MAX)    NULL,
+                                                    {Dispatching.MessageId}        uniqueidentifier NOT NULL,
+                                                    {Dispatching.EndpointId}       uniqueidentifier NOT NULL,
+                                                    {Dispatching.IsReceived}       bit              NOT NULL,
+                                                    {Dispatching.RetryCount}       int              NOT NULL DEFAULT 0,
+                                                    {Dispatching.LastAttemptTime}  datetime2        NULL,
+                                                    {Dispatching.FailureReason}    nvarchar(MAX)    NULL,
                                             
-                                                    CONSTRAINT PK_{D.TableName} PRIMARY KEY CLUSTERED( {D.MessageId}, {D.EndpointId})
+                                                    CONSTRAINT PK_{Dispatching.TableName} PRIMARY KEY CLUSTERED( {Dispatching.MessageId}, {Dispatching.EndpointId})
                                                         WITH (ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = OFF),
                                             
-                                                    CONSTRAINT FK_{D.TableName}_{D.MessageId} FOREIGN KEY ( {D.MessageId} )  REFERENCES {Message.TableName} ({Message.MessageId})
+                                                    CONSTRAINT FK_{Dispatching.TableName}_{Dispatching.MessageId} FOREIGN KEY ( {Dispatching.MessageId} )  REFERENCES {Outbox.TableName} ({Outbox.MessageId})
                                                 )
                                             END
 

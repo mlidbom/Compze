@@ -89,12 +89,12 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
    public IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan)
    {
       var cutoffTime = DateTime.UtcNow - olderThan;
-      
+
       return _connectionFactory.UseCommand(
          command =>
          {
             var messages = new List<IServiceBusSqlLayer.UndeliveredMessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -114,7 +114,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
 
                     """)
                .AddDateTime2Parameter("cutoffTime", cutoffTime);
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -126,7 +126,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
-            
+
             return messages;
          });
    }

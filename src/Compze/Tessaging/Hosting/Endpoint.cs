@@ -98,9 +98,10 @@ class Endpoint : IEndpoint
    {
       State.Is(IsRunning);
       IsRunning = false;
-      _transport.Stop();
       if(_serverComponents != null)
          await _serverComponents.StopAsync().caf();
+
+      _transport.Stop();
    }
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoMessagesInFlight(timeoutOverride);

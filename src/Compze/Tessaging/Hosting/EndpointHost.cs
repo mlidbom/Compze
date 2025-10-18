@@ -17,7 +17,6 @@ public class EndpointHost : IEndpointHost
 {
    readonly IComponentRegistrar _registrar;
    readonly Func<IComponentRegistrar, IDependencyInjectionContainer> _containerFactory;
-   bool _disposed;
    protected IList<IEndpoint> Endpoints { get; } = [];
    internal IMessagesInFlightTracker MessagesInFlightTracker;
 
@@ -73,6 +72,7 @@ public class EndpointHost : IEndpointHost
 
    public void Start() => StartAsync().WaitUnwrappingException();
 
+   bool _disposed;
    protected virtual async ValueTask DisposeAsync(bool disposing)
    {
       if(!_disposed)
