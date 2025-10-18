@@ -9,14 +9,16 @@ namespace Compze.Utilities.Logging.Serilog;
 class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 {
    readonly global::Serilog.ILogger _logger = logger;
-   LogLevel _logLevel = LogLevel.Warning;
+   LogLevel? _configuredLogLevel;
+   LogLevel LogLevel => _configuredLogLevel ?? CompzeLogger.LogLevel;
+
    public static ILogger Create(Type type) => new SerilogLogger(Log.ForContext(type));
 
-   public ILogger WithLogLevel(LogLevel level) => new SerilogLogger(_logger) {_logLevel =  level};
+   public ILogger WithLogLevel(LogLevel level) => new SerilogLogger(_logger) {_configuredLogLevel =  level};
 
    public unit Error(Exception exception, string? message = null) => unit.From(() =>
    {
-      if(_logLevel >= LogLevel.Error)
+      if(LogLevel >= LogLevel.Error)
       {
          _logger.Error(exception, message ?? exception.GetType().FullName ?? "");
       }
@@ -24,7 +26,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 
    public unit Warning(string message) => unit.From(() => unit.From(() =>
    {
-      if(_logLevel >= LogLevel.Warning)
+      if(LogLevel >= LogLevel.Warning)
       {
          _logger.Warning(message);
       }
@@ -32,7 +34,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 
    public unit Warning(Exception exception, string message) => unit.From(() => unit.From(() =>
    {
-      if(_logLevel >= LogLevel.Warning)
+      if(LogLevel >= LogLevel.Warning)
       {
          _logger.Warning(exception, message);
       }
@@ -40,7 +42,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 
    public unit Info(string message) => unit.From(() => unit.From(() =>
    {
-      if(_logLevel >= LogLevel.Info)
+      if(LogLevel >= LogLevel.Info)
       {
          _logger.Information(message);
       }
@@ -48,7 +50,7 @@ class SerilogLogger(global::Serilog.ILogger logger) : ILogger
 
    public unit Debug(string message) => unit.From(() => unit.From(() =>
    {
-      if(_logLevel >= LogLevel.Debug)
+      if(LogLevel >= LogLevel.Debug)
       {
          _logger.Debug(message);
       }

@@ -9,16 +9,18 @@ class ConsoleLogger : ILogger
 {
    readonly Type _type;
 
-   LogLevel _logLevel = LogLevel.Warning;
+   LogLevel? _configuredLogLevel;
+
+   LogLevel LogLevel => _configuredLogLevel ?? CompzeLogger.LogLevel;
 
    ConsoleLogger(Type type) => _type = type;
 
    public static ILogger Create(Type type) => new ConsoleLogger(type);
-   public ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type) { _logLevel = level };
+   public ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type) { _configuredLogLevel = level };
 
    public unit Error(Exception exception, string? message)
    {
-      if(_logLevel >= LogLevel.Error)
+      if(LogLevel >= LogLevel.Error)
       {
          ConsoleCE.WriteLine(ExceptionMessageBuilder.BuildExceptionLogMessage(exception, _type, message));
       }
@@ -28,7 +30,7 @@ class ConsoleLogger : ILogger
 
    public unit Warning(string message)
    {
-      if(_logLevel >= LogLevel.Warning)
+      if(LogLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
@@ -38,7 +40,7 @@ class ConsoleLogger : ILogger
 
    public unit Warning(Exception exception, string message)
    {
-      if(_logLevel >= LogLevel.Warning)
+      if(LogLevel >= LogLevel.Warning)
       {
          ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}, \n: Exception: {exception}");
       }
@@ -48,7 +50,7 @@ class ConsoleLogger : ILogger
 
    public unit Info(string message)
    {
-      if(_logLevel >= LogLevel.Info)
+      if(LogLevel >= LogLevel.Info)
       {
          ConsoleCE.WriteLine($"INFO:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }
@@ -58,7 +60,7 @@ class ConsoleLogger : ILogger
 
    public unit Debug(string message)
    {
-      if(_logLevel >= LogLevel.Debug)
+      if(LogLevel >= LogLevel.Debug)
       {
          ConsoleCE.WriteLine($"DEBUG:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
       }

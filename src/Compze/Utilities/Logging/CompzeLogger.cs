@@ -20,4 +20,6 @@ static class CompzeLogger
       // ReSharper disable once StaticFieldInGenericType
       public static readonly ILogger Logger = LoggerFactoryMethod(typeof(T));
    }
+
+   internal static LogLevel LogLevel = LogLevel.Info;
 }
