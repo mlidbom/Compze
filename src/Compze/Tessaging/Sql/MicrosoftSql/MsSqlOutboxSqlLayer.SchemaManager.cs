@@ -17,7 +17,7 @@ partial class MsSqlOutboxSqlLayer
 
                                             IF NOT EXISTS (select name from sys.tables where name = '{Message.TableName}')
                                             BEGIN
-                                                CREATE TABLE {Message.TableName}
+                                                CREATE TABLE dbo.{Message.TableName}
                                                 (
                                                     {Message.GeneratedId}       bigint IDENTITY(1,1) NOT NULL,
                                                     {Message.TypeIdGuidValue}   uniqueidentifier     NOT NULL,
