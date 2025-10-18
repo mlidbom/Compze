@@ -11,10 +11,16 @@ interface IServiceBusSqlLayer
    interface IOutboxSqlLayer
    {
       void SaveMessage(OutboxMessageWithReceivers messageWithReceivers);
-      int MarkAsReceived(Guid messageId, Guid endpointId);
+      MarkAsReceivedResult MarkAsReceived(Guid messageId, Guid endpointId);
       void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason);
       IReadOnlyList<UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan);
       Task InitAsync();
+   }
+
+   enum MarkAsReceivedResult
+   {
+      Initial,
+      WasAlreadyMarked
    }
 
    enum SaveMessageResult

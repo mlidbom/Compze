@@ -45,9 +45,9 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
          });
    }
 
-   public int MarkAsReceived(Guid messageId, Guid endpointId)
+   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(Guid messageId, Guid endpointId)
    {
-      return _connectionFactory.UseCommand(
+      var affectedRows = _connectionFactory.UseCommand(
          command => command
                    .SetCommandText(
                        $"""
@@ -62,6 +62,10 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
                    .AddVarcharParameter(DispatchingTable.MessageId, 36, messageId.ToString())
                    .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
                    .ExecuteNonQuery());
+
+      return affectedRows == 1
+                ? IServiceBusSqlLayer.MarkAsReceivedResult.Initial
+                : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
    public void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason)

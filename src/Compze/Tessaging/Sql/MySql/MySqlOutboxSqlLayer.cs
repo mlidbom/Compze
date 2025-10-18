@@ -45,9 +45,9 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
          });
    }
 
-   public int MarkAsReceived(Guid messageId, Guid endpointId)
+   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(Guid messageId, Guid endpointId)
    {
-      return _connectionFactory.UseCommand(
+      var affectedRows = _connectionFactory.UseCommand(
          command => command
                    .SetCommandText(
                        $"""
@@ -62,6 +62,10 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
                    .AddParameter(DispatchingTable.MessageId, messageId)
                    .AddParameter(DispatchingTable.EndpointId, endpointId)
                    .ExecuteNonQuery());
+
+      return affectedRows == 1
+                ? IServiceBusSqlLayer.MarkAsReceivedResult.Initial
+                : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
    public void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason)

@@ -6,9 +6,9 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Logging;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;
@@ -47,8 +47,12 @@ partial class Outbox
       public void MarkAsReceived(Guid messageId, EndpointId receiverId)
       {
          var endpointIdGuidValue = receiverId.GuidValue;
-         var affectedRows = _sqlLayer.MarkAsReceived(messageId, endpointIdGuidValue);
-         Assert.Result.Is(affectedRows == 1);
+         var result = _sqlLayer.MarkAsReceived(messageId, endpointIdGuidValue);
+
+         if(result == IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
+         {
+            this.Log().Warning($"Message {messageId} to endpoint {receiverId.GuidValue} was already marked as received.");
+         }
       }
 
       public void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, Exception? exception)
@@ -56,7 +60,7 @@ partial class Outbox
          var failureReason = exception != null
                                 ? $"{exception.GetType().Name}: {exception.Message}\n{exception.StackTrace}"
                                 : "Unknown failure";
-         
+
          _sqlLayer.RecordDeliveryFailure(messageId, receiverId.GuidValue, failureReason);
       }
 
