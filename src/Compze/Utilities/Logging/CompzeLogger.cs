@@ -1,4 +1,8 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
 
 // ReSharper disable UnusedMember.Global
 
@@ -21,5 +25,18 @@ static class CompzeLogger
       public static readonly ILogger Logger = LoggerFactoryMethod(typeof(T));
    }
 
+   // ReSharper disable once FieldCanBeMadeReadOnly.Global It is meant to be settable
    internal static LogLevel LogLevel = LogLevel.Info;
+
+   static readonly AsyncLocal<bool> LoggingSuppressedTemporarily = new();
+   internal static bool LoggingSuppressed => LoggingSuppressedTemporarily.Value;
+
+
+   internal static async Task SuppressLoggingWhileRunningAsync(Func<Task> action)
+   {
+      using(ScopedChange.Enter(() => LoggingSuppressedTemporarily.Value = true, () => LoggingSuppressedTemporarily.Value = false))
+      {
+         await action();
+      }
+   }
 }
