@@ -17,7 +17,7 @@ partial class MsSqlOutboxSqlLayer
 
                                             IF NOT EXISTS (select name from sys.tables where name = '{Message.TableName}')
                                             BEGIN
-                                                CREATE TABLE dbo.{Message.TableName}
+                                                CREATE TABLE {Message.TableName}
                                                 (
                                                     {Message.GeneratedId}       bigint IDENTITY(1,1) NOT NULL,
                                                     {Message.TypeIdGuidValue}   uniqueidentifier     NOT NULL,
@@ -29,7 +29,7 @@ partial class MsSqlOutboxSqlLayer
                                                     CONSTRAINT IX_{Message.TableName}_Unique_{Message.MessageId} UNIQUE ( {Message.MessageId} )
                                                 )
                                             
-                                                CREATE TABLE dbo.{D.TableName}
+                                                CREATE TABLE {D.TableName}
                                                 (
                                                     {D.MessageId}        uniqueidentifier NOT NULL,
                                                     {D.EndpointId}       uniqueidentifier NOT NULL,

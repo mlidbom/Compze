@@ -23,7 +23,7 @@ partial class MsSqlDocumentDbSqlLayer
 
                                                 IF NOT EXISTS(select name from sys.tables where name = '{Document.TableName}')
                                                 BEGIN 
-                                                    CREATE TABLE dbo.{Document.TableName}
+                                                    CREATE TABLE {Document.TableName}
                                                     (
                                                         {Document.Id}          nvarchar(500)    NOT NULL,
                                                         {Document.ValueTypeId} uniqueidentifier NOT NULL,

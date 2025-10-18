@@ -17,7 +17,7 @@ partial class MsSqlEventStoreSqlLayer
 
                                                                            IF NOT EXISTS(SELECT NAME FROM sys.tables WHERE name = '{Event.TableName}')
                                                                            BEGIN
-                                                                               CREATE TABLE dbo.{Event.TableName}
+                                                                               CREATE TABLE {Event.TableName}
                                                                                (
                                                                                    {Event.InsertionOrder}       bigint IDENTITY(1,1)               NOT NULL,
                                                                                    {Event.AggregateId}          uniqueidentifier                   NOT NULL,  
@@ -46,7 +46,7 @@ partial class MsSqlEventStoreSqlLayer
                                                                                        REFERENCES {Event.TableName} ({Event.EventId}) 
                                                                                )
                                                                            
-                                                                                   CREATE NONCLUSTERED INDEX IX_{Event.TableName}_{Event.ReadOrder} ON dbo.{Event.TableName}
+                                                                                   CREATE NONCLUSTERED INDEX IX_{Event.TableName}_{Event.ReadOrder} ON {Event.TableName}
                                                                                        ({Event.ReadOrder}, {Event.EffectiveVersion})
                                                                                        INCLUDE ({Event.EventType}, {Event.InsertionOrder})
                                                                            END 

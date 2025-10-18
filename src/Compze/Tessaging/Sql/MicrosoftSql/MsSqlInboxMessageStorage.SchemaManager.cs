@@ -15,7 +15,7 @@ partial class MsSqlInboxSqlLayer
 
                                             IF NOT EXISTS(select name from sys.tables where name = '{Message.TableName}')
                                             BEGIN
-                                                CREATE TABLE dbo.{Message.TableName}
+                                                CREATE TABLE {Message.TableName}
                                                 (
                                                     {Message.GeneratedId}         bigint IDENTITY(1,1) NOT NULL,
                                                     {Message.TypeId}              uniqueidentifier     NOT NULL,
