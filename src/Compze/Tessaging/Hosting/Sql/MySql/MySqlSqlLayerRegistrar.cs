@@ -2,7 +2,6 @@ using Compze.Common.Configuration;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool.MySql;
 
 namespace Compze.Tessaging.Hosting.Sql.MySql;
 
@@ -24,16 +23,6 @@ public static class MySqlSqlLayerRegistrar
       }
 
       return registrar;
-   }
-
-   public static IComponentRegistrar MySqlDbPoolWithConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      registrar.MySqlDbPoolIfNotAlreadyRegistered();
-
-      return registrar.Register(
-         Singleton.For<IMySqlConnectionPool>()
-                  .CreatedBy((MySqlDbPool pool) => IMySqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
-      );
    }
 
    public static IComponentRegistrar MySqlProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)

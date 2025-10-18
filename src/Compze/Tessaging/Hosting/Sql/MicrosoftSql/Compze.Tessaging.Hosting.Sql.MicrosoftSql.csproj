@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
     <ProjectReference Include="..\..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\..\..\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-    <ProjectReference Include="..\..\..\..\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
   </ItemGroup>
   </Project>

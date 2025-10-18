@@ -1,3 +1,4 @@
+using Compze.Sql.Sqlite;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.Data.Sqlite;
@@ -8,6 +9,18 @@ static class SqliteDbPoolRegistrar
 {
    public static IComponentRegistrar SqliteDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       SqliteDbPool.RegisterWith(registrar);
+
+   public static IComponentRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IComponentRegistrar registrar)
+      => registrar.SqliteDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(Guid.NewGuid().ToString());
+
+   public static IComponentRegistrar SqliteDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
+   {
+      registrar.SqliteDbPoolIfNotAlreadyRegistered();
+
+      return registrar.Register(
+         Singleton.For<ISqliteConnectionPool>()
+                  .CreatedBy((SqliteDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+   }
 }
 
 class SqliteDbPool : DbPoolBase

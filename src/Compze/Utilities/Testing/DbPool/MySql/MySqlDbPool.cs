@@ -11,6 +11,16 @@ static class MySqlDbPoolRegistrar
 {
    public static IComponentRegistrar MySqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       MySqlDbPool.RegisterWith(registrar);
+
+   public static IComponentRegistrar MySqlDbPoolWithConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
+   {
+      registrar.MySqlDbPoolIfNotAlreadyRegistered();
+
+      return registrar.Register(
+         Singleton.For<IMySqlConnectionPool>()
+                  .CreatedBy((MySqlDbPool pool) => IMySqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
+      );
+   }
 }
 
 sealed class MySqlDbPool : DbPoolBase

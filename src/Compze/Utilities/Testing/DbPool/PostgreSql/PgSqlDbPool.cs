@@ -14,6 +14,20 @@ static class PgSqlDbPoolRegistrar
 {
    public static IComponentRegistrar PgSqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       PgSqlDbPool.RegisterWith(registrar);
+
+   public static IComponentRegistrar PgSqlNewDbPoolWithConnectionPool(this IComponentRegistrar registrar) =>
+      registrar.PgSqlDbPoolWithConnectionPoolIfNotAlreadyRegistered(Guid.NewGuid().ToString());
+
+   public static IComponentRegistrar PgSqlDbPoolWithConnectionPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
+   {
+      registrar.PgSqlDbPoolIfNotAlreadyRegistered();
+
+      registrar.Register(
+         Singleton.For<IPgSqlConnectionPool>()
+                  .CreatedBy((PgSqlDbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
+
+      return registrar;
+   }
 }
 
 sealed class PgSqlDbPool : DbPoolBase
