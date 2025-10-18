@@ -52,6 +52,12 @@ static class InboxRegistrar
       await Task.WhenAll(storageStartTask, _transport.StartAsync()).caf();
    }
 
+   public async Task<object?> Receive(TransportMessage.InComing message)
+   {
+        _storage.SaveIncomingMessage(message);
+        return await _handlerExecutionEngine.Enqueue(message).caf();
+   }
+
    public async Task StopAsync() => await _transport.StopAsync().caf();
 
    public async ValueTask DisposeAsync()

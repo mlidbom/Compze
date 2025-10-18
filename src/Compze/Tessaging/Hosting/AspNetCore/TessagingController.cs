@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -18,11 +19,12 @@ class TessagingController : ControllerBase
       registrar.Register(Scoped.For<TessagingController>()
                                .CreatedBy((IRemotableMessageSerializer serializer,
                                            ITypeMapper typeMapper,
-                                           Inbox.HandlerExecutionEngine handlerExecutionEngine,
-                                           Inbox.IMessageStorage messageStorage)
-                                             => new TessagingController(serializer, typeMapper, handlerExecutionEngine, messageStorage)));
+                                           IInbox inbox,
+                                           Inbox.HandlerExecutionEngine handlerExecutionEngine)
+                                             => new TessagingController(serializer, typeMapper, inbox, handlerExecutionEngine)));
 
-   public TessagingController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : base(serializer, typeMapper, handlerExecutionEngine, storage) {}
+   public TessagingController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) :
+      base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
    [HttpPost(HttpConstants.Routes.Tessaging.Event)]
    public async Task<IActionResult> Event()
@@ -30,8 +32,7 @@ class TessagingController : ControllerBase
       var incomingMessage = await CreateIncomingMessage().caf();
       try
       {
-         Storage.SaveIncomingMessage(incomingMessage);
-         await HandlerExecutionEngine.Enqueue(incomingMessage).caf();
+         await Inbox.Receive(incomingMessage).caf();
          return Ok();
       }
       catch(Exception exception)
@@ -47,8 +48,7 @@ class TessagingController : ControllerBase
 
       try
       {
-         Storage.SaveIncomingMessage(incomingMessage);
-         await HandlerExecutionEngine.Enqueue(incomingMessage).caf();
+         await Inbox.Receive(incomingMessage).caf();
          return Ok();
       }
       catch(Exception exception)

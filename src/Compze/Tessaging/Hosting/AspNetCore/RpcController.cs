@@ -1,8 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -10,6 +9,8 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;
 
@@ -20,14 +21,14 @@ class RpcController : ControllerBase
          Scoped.For<RpcController>()
                .CreatedBy((IRemotableMessageSerializer serializer,
                            ITypeMapper typeMapper,
-                           Inbox.HandlerExecutionEngine handlerExecutionEngine,
-                           Inbox.IMessageStorage messageStorage)
-                             => new RpcController(serializer, typeMapper, handlerExecutionEngine, messageStorage)));
+                           IInbox inbox,
+                           Inbox.HandlerExecutionEngine handlerExecutionEngine)
+                             => new RpcController(serializer, typeMapper, inbox, handlerExecutionEngine)));
 
    RpcController(IRemotableMessageSerializer serializer,
                  ITypeMapper typeMapper,
-                 Inbox.HandlerExecutionEngine handlerExecutionEngine,
-                 Inbox.IMessageStorage storage) : base(serializer, typeMapper, handlerExecutionEngine, storage) {}
+                 IInbox inbox,
+                 Inbox.HandlerExecutionEngine handlerExecutionEngine) : base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
    [HttpPost(HttpConstants.Routes.Rpc.Query)]
    public async Task<IActionResult> Query()
@@ -53,8 +54,7 @@ class RpcController : ControllerBase
 
       try
       {
-         Storage.SaveIncomingMessage(incomingMessage);
-         var commandResponse = (await HandlerExecutionEngine.Enqueue(incomingMessage).caf()).NotNull();
+         var commandResponse = (await Inbox.Receive(incomingMessage).caf()).NotNull();
          var commandResponseJson = Serializer.SerializeResponse(commandResponse);
          return Ok(commandResponseJson);
       }
@@ -71,8 +71,7 @@ class RpcController : ControllerBase
 
       try
       {
-         Storage.SaveIncomingMessage(incomingMessage);
-         await HandlerExecutionEngine.Enqueue(incomingMessage).caf();
+         await Inbox.Receive(incomingMessage).caf();
          return Ok();
       }
       catch(Exception exception)

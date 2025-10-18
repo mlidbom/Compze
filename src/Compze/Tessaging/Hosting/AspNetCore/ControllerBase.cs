@@ -5,6 +5,7 @@ using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
@@ -12,11 +13,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;
 
-abstract class ControllerBase(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage storage) : Controller
+abstract class ControllerBase(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
 {
    readonly ITypeMapper _typeMapper = typeMapper;
+   protected readonly IInbox Inbox = inbox;
    protected readonly IRemotableMessageSerializer Serializer = serializer;
-   protected readonly Inbox.IMessageStorage Storage = storage;
    protected readonly Inbox.HandlerExecutionEngine HandlerExecutionEngine = handlerExecutionEngine;
 
    protected async Task<TransportMessage.InComing> CreateIncomingMessage()

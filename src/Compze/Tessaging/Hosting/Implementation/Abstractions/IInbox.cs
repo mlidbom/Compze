@@ -8,4 +8,6 @@ interface IInbox
    EndPointAddress Address { get; }
    Task StartAsync();
    Task StopAsync();
+
+   Task<object?> Receive(TransportMessage.InComing message);
 }
