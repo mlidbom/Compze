@@ -22,28 +22,18 @@ public static class FailExecutionOnProcessExitIfTestsThrewUncatchableExceptions
          {
             try
             {
-               Log.Error(ex, "FATAL: UNCATCHABLE EXCEPTIONS DETECTED");
+               Log.Error(ex, "UNCATCHABLE EXCEPTIONS DETECTED");
             }
             catch
             {
                // ignore this might be overkill, but with the pretty much undiagnosable NCrunch trouble we keep seeing I figure better safe than sorry.
             }
-#if NCRUNCH
-#else
             Console.Error.WriteLine($"""
                                      ========================================
-                                     ========================================
-                                     ========================================
-                                     ========================================
-                                     FATAL: UNCATCHABLE EXCEPTIONS DETECTED
-                                     ========================================
-                                     ========================================
-                                     ========================================
+                                          UNCATCHABLE EXCEPTIONS DETECTED
                                      ========================================
                                      """);
             Console.Error.WriteLine(ex);
-
-#endif
          }
       };
    }
