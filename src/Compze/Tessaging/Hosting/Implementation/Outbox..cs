@@ -96,6 +96,12 @@ partial class Outbox : IOutbox
       });
    }
 
+   public async Task StopAsync()
+   {
+      _retryPoller.Stop();
+      await Task.CompletedTask.caf();
+   }
+
    public async Task StartAsync()
    {
       if(!_configuration.IsPureClientEndpoint)

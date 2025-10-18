@@ -25,7 +25,8 @@ class Endpoint : IEndpoint
       public async Task StopAsync()
       {
          _commandScheduler.Stop();
-         await Task.WhenAll(Inbox.StopAsync(), _outbox.StartAsync()).caf();
+         await _outbox.StopAsync().caf();
+         await Inbox.StopAsync().caf();
       }
 
       public void Dispose() => _commandScheduler.Dispose();

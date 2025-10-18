@@ -174,7 +174,7 @@ class OutboxRetryPoller : IDisposable
    void RecordFailure(Guid messageId, Guid endpointId, Exception? exception) =>
       _messageStorage.RecordDeliveryFailure(messageId, new EndpointId(endpointId), exception);
 
-   void Stop()
+   internal void Stop()
    {
       this.Log().Info("Stopping OutboxRetryPoller...");
       _cancellationTokenSource.Cancel();
