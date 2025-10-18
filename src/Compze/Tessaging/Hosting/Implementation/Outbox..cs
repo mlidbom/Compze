@@ -88,8 +88,7 @@ partial class Outbox : IOutbox
       {
          if(completedSendTask.IsFaulted)
          {
-            var exception = completedSendTask.Exception?.GetBaseException();
-            _storage.RecordDeliveryFailure(messageId, receiverId, exception);
+            _storage.RecordDeliveryFailure(messageId, receiverId, completedSendTask.Exception);
          } else
          {
             _storage.MarkAsReceived(messageId, receiverId);

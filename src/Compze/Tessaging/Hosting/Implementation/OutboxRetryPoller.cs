@@ -154,16 +154,15 @@ class OutboxRetryPoller : IDisposable
       {
          if(completedSendTask.IsFaulted)
          {
-            var exception = completedSendTask.Exception?.GetBaseException();
-            if(exception != null)
+            if(completedSendTask.Exception != null)
             {
-               this.Log().Warning(exception, $"Retry failed for message {messageId} to endpoint {endpointId}");
+               this.Log().Warning(completedSendTask.Exception, $"Retry failed for message {messageId} to endpoint {endpointId}");
             } else
             {
                this.Log().Warning($"Retry failed for message {messageId} to endpoint {endpointId} - no exception details available");
             }
 
-            RecordFailure(messageId, endpointId, exception);
+            RecordFailure(messageId, endpointId, completedSendTask.Exception);
          } else
          {
             this.Log().Info($"Successfully delivered message {messageId} to endpoint {endpointId}");
