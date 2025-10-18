@@ -11,18 +11,19 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
 {
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
 
-   public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
+   public IServiceBusSqlLayer.SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
    {
-      _connectionFactory.UseCommand(
+      return _connectionFactory.UseCommand(
          command =>
          {
-            command
+            var affectedRows = command
               .SetCommandText(
                   $"""
 
                    INSERT {Schema.TableName} 
                                ({Schema.MessageId},  {Schema.TypeId},  {Schema.Body}, {Schema.Status}) 
                        VALUES (@{Schema.MessageId}, @{Schema.TypeId}, @{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled})
+                   ON DUPLICATE KEY UPDATE {Schema.MessageId} = {Schema.MessageId}
 
                    """)
               .AddParameter(Schema.MessageId, messageId)
@@ -30,6 +31,10 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                //performance: Like with the event store, keep all framework properties out of the JSON and put it into separate columns instead. For events. Reuse a pre-serialized instance from the persisting to the event store.
               .AddMediumTextParameter(Schema.Body, serializedMessage)
               .ExecuteNonQuery();
+
+            return affectedRows == 1 
+               ? IServiceBusSqlLayer.SaveMessageResult.NewMessage 
+               : IServiceBusSqlLayer.SaveMessageResult.Duplicate;
          });
    }
 

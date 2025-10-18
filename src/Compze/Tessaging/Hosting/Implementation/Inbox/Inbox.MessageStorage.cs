@@ -9,7 +9,7 @@ class InboxMessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.I
 {
    readonly IServiceBusSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 
-   public void SaveIncomingMessage(TransportMessage.InComing message)
+   public IServiceBusSqlLayer.SaveMessageResult SaveIncomingMessage(TransportMessage.InComing message)
       => _sqlLayer.SaveMessage(message.MessageId, message.MessageTypeId.GuidValue, message.Body);
 
    public void MarkAsSucceeded(TransportMessage.InComing message)

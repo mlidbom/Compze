@@ -17,9 +17,15 @@ interface IServiceBusSqlLayer
       Task InitAsync();
    }
 
+   enum SaveMessageResult
+   {
+      NewMessage,
+      Duplicate
+   }
+
    interface IInboxSqlLayer
    {
-      void SaveMessage(Guid messageId, Guid typeId, string serializedMessage);
+      SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage);
       void MarkAsSucceeded(Guid messageId);
       int RecordException(Guid messageId, string exceptionStackTrace, string exceptionMessage, string exceptionType);
       int MarkAsFailed(Guid messageId);

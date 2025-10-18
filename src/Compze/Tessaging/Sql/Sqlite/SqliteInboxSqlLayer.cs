@@ -11,24 +11,29 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
 
-   public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
+   public IServiceBusSqlLayer.SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
    {
-      _connectionFactory.UseCommand(
+      return _connectionFactory.UseCommand(
          command =>
          {
-            command
+            var affectedRows = command
               .SetCommandText(
                   $"""
 
                    INSERT INTO {Schema.TableName} 
                                ({Schema.MessageId},  {Schema.TypeId},  {Schema.Body}, {Schema.Status}) 
                        VALUES (@{Schema.MessageId}, @{Schema.TypeId}, @{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled})
+                   ON CONFLICT ({Schema.MessageId}) DO NOTHING
 
                    """)
               .AddVarcharParameter(Schema.MessageId, 36, messageId.ToString())
               .AddVarcharParameter(Schema.TypeId, 36, typeId.ToString())
               .AddMediumTextParameter(Schema.Body, serializedMessage)
               .ExecuteNonQuery();
+
+            return affectedRows == 0 
+               ? IServiceBusSqlLayer.SaveMessageResult.Duplicate 
+               : IServiceBusSqlLayer.SaveMessageResult.NewMessage;
          });
    }
 

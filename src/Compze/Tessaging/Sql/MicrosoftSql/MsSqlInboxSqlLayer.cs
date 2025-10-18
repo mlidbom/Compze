@@ -11,18 +11,22 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServ
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
 
-   public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
+   public IServiceBusSqlLayer.SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
    {
-      _connectionFactory.UseCommand(
+      return _connectionFactory.UseCommand(
          command =>
          {
-            command
+            var affectedRows = command
               .SetCommandText(
                   $"""
-
-                   INSERT {Schema.TableName} 
-                               ({Schema.MessageId},  {Schema.TypeId},  {Schema.Body}, {Schema.Status}) 
-                       VALUES (@{Schema.MessageId}, @{Schema.TypeId}, @{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled})
+                   MERGE {Schema.TableName} AS target
+                   USING (SELECT @{Schema.MessageId} AS {Schema.MessageId}, --create a one row table "source" to be merged if its rows are not already in the table
+                                 @{Schema.TypeId} AS {Schema.TypeId}, 
+                                 @{Schema.Body} AS {Schema.Body}) AS source
+                   ON target.{Schema.MessageId} = source.{Schema.MessageId}
+                   WHEN NOT MATCHED THEN
+                       INSERT ({Schema.MessageId}, {Schema.TypeId}, {Schema.Body}, {Schema.Status})
+                       VALUES (source.{Schema.MessageId}, source.{Schema.TypeId}, source.{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled});
 
                    """)
               .AddParameter(Schema.MessageId, messageId)
@@ -30,6 +34,10 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServ
                //performance: Like with the event store, keep all framework properties out of the JSON and put it into separate columns instead. For events. Reuse a pre-serialized instance from the persisting to the event store.
               .AddNVarcharMaxParameter(Schema.Body, serializedMessage)
               .ExecuteNonQuery();
+
+            return affectedRows == 0 
+               ? IServiceBusSqlLayer.SaveMessageResult.Duplicate 
+               : IServiceBusSqlLayer.SaveMessageResult.NewMessage;
          });
    }
 

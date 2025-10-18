@@ -7,7 +7,7 @@ partial class Inbox
 {
    public interface IMessageStorage
    {
-      void SaveIncomingMessage(TransportMessage.InComing message);
+      IServiceBusSqlLayer.SaveMessageResult SaveIncomingMessage(TransportMessage.InComing message);
       void MarkAsSucceeded(TransportMessage.InComing message);
       void RecordException(TransportMessage.InComing message, Exception exception );
       void MarkAsFailed(TransportMessage.InComing message);

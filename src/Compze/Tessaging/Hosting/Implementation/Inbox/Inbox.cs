@@ -54,8 +54,14 @@ static class InboxRegistrar
 
    public async Task<object?> Receive(TransportMessage.InComing message)
    {
-        _storage.SaveIncomingMessage(message);
-        return await _handlerExecutionEngine.Enqueue(message).caf();
+      var saveResult = _storage.SaveIncomingMessage(message);
+
+      if(saveResult == IServiceBusSqlLayer.SaveMessageResult.Duplicate)
+      {
+         return null;
+      }
+
+      return await _handlerExecutionEngine.Enqueue(message).caf();
    }
 
    public async Task StopAsync() => await _transport.StopAsync().caf();

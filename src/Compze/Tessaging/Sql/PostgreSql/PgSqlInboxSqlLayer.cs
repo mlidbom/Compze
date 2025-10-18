@@ -11,18 +11,19 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServ
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
 
-   public void SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
+   public IServiceBusSqlLayer.SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
    {
-      _connectionFactory.UseCommand(
+      return _connectionFactory.UseCommand(
          command =>
          {
-            command
+            var affectedRows = command
               .SetCommandText(
                   $"""
 
                    INSERT INTO {Schema.TableName} 
                                ({Schema.MessageId},  {Schema.TypeId},  {Schema.Body}, {Schema.Status}) 
-                       VALUES (@{Schema.MessageId}, @{Schema.TypeId}, @{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled});
+                       VALUES (@{Schema.MessageId}, @{Schema.TypeId}, @{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled})
+                   ON CONFLICT ({Schema.MessageId}) DO NOTHING;
 
                    """)
               .AddParameter(Schema.MessageId, messageId)
@@ -31,6 +32,10 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServ
               .AddMediumTextParameter(Schema.Body, serializedMessage)
               .PrepareStatement()
               .ExecuteNonQuery();
+
+            return affectedRows == 0 
+               ? IServiceBusSqlLayer.SaveMessageResult.Duplicate 
+               : IServiceBusSqlLayer.SaveMessageResult.NewMessage;
          });
    }
 
