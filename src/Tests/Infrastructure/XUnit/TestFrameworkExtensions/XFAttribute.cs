@@ -20,7 +20,7 @@ public class XFactAttribute : FactAttribute
 
    static XFactAttribute()
    {
-      Invariant.Is(XFactDiscovererFullTypeName == typeof(Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer).GetFullNameCompilable(),
+      Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable(),
                    () =>
                       $"""
                        Expected: {typeof(XFactDiscoverer).GetFullNameCompilable()}

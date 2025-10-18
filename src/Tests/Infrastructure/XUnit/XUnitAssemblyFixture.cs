@@ -13,13 +13,7 @@ namespace Compze.Tests.Infrastructure.XUnit;
 [Obsolete("XUnit v2 doesn't support assembly fixtures. Use test class fixtures or collection fixtures instead.")]
 public sealed class XUnitAssemblyFixture : IDisposable
 {
-   public XUnitAssemblyFixture()
-   {
-      UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
-   }
+   public XUnitAssemblyFixture() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
 
-   public void Dispose()
-   {
-      TestFixtureHelper.PerformTeardown();
-   }
+   public void Dispose() => TestFixtureHelper.PerformTeardown();
 }
