@@ -17,17 +17,18 @@ public class StrictlyManagedResourceTests : XUnitTestBase
    //Note: NonParallelizable removed in migration to XUnit. Should things turn flaky...
    [XF] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {
-      UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
-      {
-         unit.From(() =>
-         {
-            _ = new StrictlyManagedResource<MyClass>();
-         });
+      StrictlyManagedResources.SuppressLoggingWhileExecuting(() =>
+                                                                UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
+                                                                {
+                                                                   unit.From(() =>
+                                                                   {
+                                                                      _ = new StrictlyManagedResource<MyClass>();
+                                                                   });
 
-         Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
-           .Should().Throw<AggregateException>()
-           .Which.InnerExceptions.Should().HaveCount(1);
-      });
+                                                                   Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
+                                                                     .Should().Throw<AggregateException>()
+                                                                     .Which.InnerExceptions.Should().HaveCount(1);
+                                                                }));
    }
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes
    [UsedImplicitly] class MyClass : IStrictlyManagedResource

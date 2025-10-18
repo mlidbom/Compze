@@ -10,6 +10,16 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE;
 
 static class StrictlyManagedResources
 {
+   internal static bool LoggingTemporarilySuppressed = false;
+
+   internal static void SuppressLoggingWhileExecuting(Action action)
+   {
+      using(ScopedChange.Enter(() => LoggingTemporarilySuppressed = true, () => LoggingTemporarilySuppressed = false))
+      {
+         action();
+      }
+   }
+
    public static readonly string CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName =
       ExpressionUtil.ExtractMemberPath(() => CollectStackTracesForAllStrictlyManagedResources);
 
@@ -56,6 +66,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
    static readonly MonitorCE StaticMonitor = MonitorCE.WithDefaultTimeout();
    public static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesFor<TManagedResource>();
    bool _collectStackTraces;
+
    public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false)
    {
       _collectStackTraces = forceStackTraceCollection || CollectStackTracesByDefault || StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResources;
@@ -91,16 +102,20 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
             try
             {
                UncatchableExceptionsGatherer.Register(exception);
-               this.Log().Error(exception, $"{typeof(TManagedResource).GetFullNameCompilable()} was finalized without being disposed.");
-               if(!_collectStackTraces)
+               if(!StrictlyManagedResources.LoggingTemporarilySuppressed)
                {
-                  //Todo: Log metric here.
-                  using(StaticMonitor.TakeUpdateLock())
+                  this.Log().Error(exception, $"{typeof(TManagedResource).GetFullNameCompilable()} was finalized without being disposed.");
+
+                  if(!_collectStackTraces)
                   {
-                     if(!CollectStackTracesByDefault)
+                     //Todo: Log metric here.
+                     using(StaticMonitor.TakeUpdateLock())
                      {
-                        this.Log().Warning($"Enabling collection of stacktraces for {typeof(TManagedResource).GetFullNameCompilable()} since it is not always disposed.");
-                        CollectStackTracesByDefault = true;
+                        if(!CollectStackTracesByDefault)
+                        {
+                           this.Log().Warning($"Enabling collection of stacktraces for {typeof(TManagedResource).GetFullNameCompilable()} since it is not always disposed.");
+                           CollectStackTracesByDefault = true;
+                        }
                      }
                   }
                }
