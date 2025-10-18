@@ -39,8 +39,9 @@ class OutboxRetryPoller : IDisposable
    readonly CancellationTokenSource _cancellationTokenSource = new();
    Thread? _pollerThread;
 
-   // Exponential backoff configuration
+   //Todo: implement a sane way of handling retries, something like an exponential backoff
    static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
+   static readonly TimeSpan MessageAgeThatIsConsideredFailed = TimeSpan.FromSeconds(5);
 
    OutboxRetryPoller(Outbox.IMessageStorage messageStorage,
                      ITransport transport,
@@ -90,7 +91,7 @@ class OutboxRetryPoller : IDisposable
 
    void RetryUndeliveredMessages()
    {
-      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(TimeSpan.Zero);
+      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(MessageAgeThatIsConsideredFailed);
       if(undeliveredMessages.Count == 0)
          return;
 

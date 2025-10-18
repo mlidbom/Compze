@@ -5,6 +5,7 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
@@ -12,6 +13,7 @@ using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
+[LongRunning]
 public class Outbox_retry_tests : XUnitEndpointHostTestBase
 {
    [PCT]
@@ -35,7 +37,7 @@ public class Outbox_retry_tests : XUnitEndpointHostTestBase
 
       var newRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
 
-      MyExactlyOnceCommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 5.Seconds());
+      MyExactlyOnceCommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 15.Seconds());
       await Await.Async(() => newRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero).Count == 0,
                         10.Seconds(),
                         10.Milliseconds(),
