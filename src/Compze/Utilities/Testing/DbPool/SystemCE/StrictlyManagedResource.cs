@@ -54,10 +54,12 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
 {
    // ReSharper disable once StaticMemberInGenericType
    static readonly MonitorCE StaticMonitor = MonitorCE.WithDefaultTimeout();
-   static bool _collectStackTraces = StrictlyManagedResources.CollectStackTracesFor<TManagedResource>();
+   public static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesFor<TManagedResource>();
+   bool _collectStackTraces;
    public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false)
    {
-      if(forceStackTraceCollection || _collectStackTraces || StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResources)
+      _collectStackTraces = forceStackTraceCollection || CollectStackTracesByDefault || StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResources;
+      if(_collectStackTraces)
       {
          ReservationCallStack = new StackTrace(fNeedFileInfo: needsFileInfo).ToString();
       }
@@ -90,13 +92,16 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
             {
                UncatchableExceptionsGatherer.Register(exception);
                this.Log().Error(exception, $"{typeof(TManagedResource).GetFullNameCompilable()} was finalized without being disposed.");
-               //Todo: Log metric here.
-               using(StaticMonitor.TakeUpdateLock())
+               if(!_collectStackTraces)
                {
-                  if(!_collectStackTraces)
+                  //Todo: Log metric here.
+                  using(StaticMonitor.TakeUpdateLock())
                   {
-                     this.Log().Warning($"Enabling collection of stacktraces for {typeof(TManagedResource).GetFullNameCompilable()} since it is not always disposed.");
-                     _collectStackTraces = true;
+                     if(!CollectStackTracesByDefault)
+                     {
+                        this.Log().Warning($"Enabling collection of stacktraces for {typeof(TManagedResource).GetFullNameCompilable()} since it is not always disposed.");
+                        CollectStackTracesByDefault = true;
+                     }
                   }
                }
             }
