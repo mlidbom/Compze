@@ -63,10 +63,30 @@ function Get-FailedTestsFromOutput {
                 }
             }
             
-            $fullName = $lastMethodFound
-            
-            # If we couldn't find it in the stack trace, use the display name
-            if (-not $fullName) {
+            # If we found a method in the stack trace, check if the display name contains
+            # additional info (like pluggable components) and append it
+            if ($lastMethodFound) {
+                # Extract the base method name and pluggable component suffix from display name
+                # Pattern: method_name(PluggableComponent:Provider) where the parentheses contain the pluggable components
+                if ($displayName -match '^(.+?)(\([^)]+:[^)]+\))$') {
+                    $baseMethodName = $matches[1]
+                    $pluggableComponentSuffix = $matches[2]
+                    # Escape the base method name for use in regex matching
+                    $escapedBaseMethodName = [regex]::Escape($baseMethodName)
+                    # Check if the method found ends with the base name
+                    if ($lastMethodFound -match "\.$escapedBaseMethodName$") {
+                        # Append the pluggable component suffix to create the full display name
+                        $fullName = $lastMethodFound + $pluggableComponentSuffix
+                    } else {
+                        # Fallback to the display name if pattern doesn't match
+                        $fullName = $displayName
+                    }
+                } else {
+                    # No pluggable component suffix, use the method found
+                    $fullName = $lastMethodFound
+                }
+            } else {
+                # If we couldn't find it in the stack trace, use the display name
                 $fullName = $displayName
             }
             
