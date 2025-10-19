@@ -79,10 +79,9 @@ class SqliteDbPool : DbPoolBase
    public override void Dispose()
    {
       if(Disposed) return;
-      base.Dispose();
 
-      // Sqlite sometimes takes a moment to release the files, so we retry a few times
-      const int maxCleanupAttempts = 20;
+      // Sqlite sometimes takes a moment to release the files, so we retry in a loop
+      const int maxCleanupAttempts = 1000;
       for(var attempt = 1; attempt <= maxCleanupAttempts; attempt++)
       {
          SqliteConnection.ClearAllPools();
@@ -92,17 +91,20 @@ class SqliteDbPool : DbPoolBase
             try
             {
                DeleteDb(dbPath);
+               _transientCache = _transientCache.Where(it => it != db).ToList();
             }
             catch
             {
                if(attempt == maxCleanupAttempts)
                {
+                  base.Dispose();
                   throw new Exception($"Failed to clean up database {dbPath}");
                }
 
-               Thread.Sleep(10);
+               Thread.Sleep(TimeSpan.FromMilliseconds(10));
             }
          }
       }
+      base.Dispose();
    }
 }
