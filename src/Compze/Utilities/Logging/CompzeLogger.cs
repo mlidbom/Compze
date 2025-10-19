@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable UnusedMember.Global
 
@@ -35,7 +36,7 @@ static class CompzeLogger
    {
       using(ScopedChange.Enter(() => LoggingSuppressedTemporarily.Value = true, () => LoggingSuppressedTemporarily.Value = false))
       {
-         await action();
+         await action().caf();
       }
    }
 }
