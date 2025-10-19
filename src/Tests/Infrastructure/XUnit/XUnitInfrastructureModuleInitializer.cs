@@ -1,11 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit.Logging;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
-using Compze.Utilities.Logging;
-using Compze.Utilities.Threading.ResourceAccess;
-using Serilog.Core;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.XUnit;
@@ -16,26 +12,12 @@ public static class XUnitInfrastructureModuleInitializer
    public static void Initialize()
    {
       TestFixtureHelper.SetupSerilog(new XUnitTestSerilogEnricher());
-      TestEnv.XunitDiscoverer = () => TestContext.Current?.PluggableComponents ?? throw new Exception("No pluggable components set for current test");
 
-      //This seems to cause "interesting" issues, so keep it off until really needed
-      //MonitorCE.OnTimeOut = () =>
-      //{
-      //   try
-      //   {
-      //      throw new Exception("Lock timed out");
-      //   }
-      //   catch(Exception ex)
-      //   {
-      //      CompzeLogger.For(typeof(MonitorCE)).Error(ex,
-      //                                                $"""
-      //                                                 Lock timed out
-
-      //                                                 Stacktrace:
-
-      //                                                 {new StackTrace(fNeedFileInfo: true)}
-      //                                                 """);
-      //   }
-      //};
+      TestEnv.XunitDiscoverer = () =>
+      {
+         if(TestContext.CurrentTestCase == null) throw new Exception("No test context has been set");
+         if(typeof(PluggableComponentsTestCase) != TestContext.CurrentTestCase.GetType()) throw new Exception("The current test is not a pluggable components tes");
+         return ((PluggableComponentsTestCase)TestContext.CurrentTestCase!).Components;
+      };
    }
 }

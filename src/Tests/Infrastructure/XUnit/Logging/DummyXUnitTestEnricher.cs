@@ -11,17 +11,15 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
 {
    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
    {
-      if(TestContext.Current == null) return;
-      var context = TestContext.Current.Value;
+      if(TestContext.CurrentTestCase == null) return;
+      var testCase = TestContext.CurrentTestCase;
 
-      var testClassName = context.TestMethod.TestClass.Class.ToRuntimeType().GetFullNameCompilable();
-      var testName = context.TestMethod.Method.Name;
-      var fullTestName = $"{testClassName}.{testName}";
       logEvent.AddOrUpdateProperty(
          propertyFactory.CreateProperty("XUnit",
                                         new Dictionary<string, object>
                                         {
-                                           ["Test"] = fullTestName,
+                                           ["TestClass"] = testCase.TestMethod.TestClass.Class.ToRuntimeType().GetFullNameCompilable(),
+                                           ["TestName"] = testCase.DisplayName,
                                         },
                                         destructureObjects: true));
    }

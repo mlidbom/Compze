@@ -33,7 +33,7 @@ public class XFactTestCase : XunitTestCase
                                                    CancellationTokenSource cancellationTokenSource)
    {
       return await TestContext.RunTestInContextAsync(
-         new TestContextData(null, TestMethod),
+         this,
          () => base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
    }
 }

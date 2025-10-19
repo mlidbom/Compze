@@ -41,7 +41,7 @@ public class PluggableComponentsTestCase : XunitTestCase
                                                    CancellationTokenSource cancellationTokenSource)
    {
       return await TestContext.RunTestInContextAsync(
-                new TestContextData(_combination, TestMethod),
+                this,
                 //Manually override this rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
                 async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync());
    }
