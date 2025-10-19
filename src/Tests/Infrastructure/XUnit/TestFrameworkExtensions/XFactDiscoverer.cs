@@ -15,7 +15,7 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
       var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
       var currentType = testMethod.TestClass.Class.ToRuntimeType();
 
-      if(declaringType != currentType) //We only run this these tests for the classes that declares them.
+      if(declaringType != currentType) //We only run these tests for the classes that declares them.
          return [];
 
       return [new XFactTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)];

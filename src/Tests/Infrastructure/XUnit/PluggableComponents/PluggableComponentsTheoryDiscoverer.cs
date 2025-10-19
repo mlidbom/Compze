@@ -24,7 +24,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
       var currentType = testMethod.TestClass.Class.ToRuntimeType();
 
-      if(declaringType != currentType) //We only run this these tests for the classes that declares them. Just like XFact
+      if(declaringType != currentType) //We only run these tests for the classes that declares them. Just like XFact
          return [];
 
       var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<SqlLayer[]>(nameof(PCTAttribute.ExcludeSqlLayers));
