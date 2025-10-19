@@ -75,17 +75,8 @@ partial class Inbox
                               _messageStorage.MarkAsFailed(TransportMessage);
                            }
 
-                           try { _taskCompletionSource.SetException(exception); }
-                           catch(Exception e)
-                           {
-                              this.Log().Error(e);
-                           }
-
-                           try { _coordinator.Failed(this, exception); }
-                           catch(Exception e)
-                           {
-                              this.Log().Error(e);
-                           }
+                           _taskCompletionSource.SetException(exception);
+                           _coordinator.Failed(this, exception);
                            return;
                         }
                      }
