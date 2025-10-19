@@ -15,25 +15,11 @@ class Endpoint : IEndpoint
 {
    class ServerComponents(CommandScheduler commandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
-      readonly CommandScheduler _commandScheduler = commandScheduler;
+      public readonly CommandScheduler CommandScheduler = commandScheduler;
       public readonly IInbox Inbox = inbox;
-      readonly IOutbox _outbox = outbox;
+      public readonly IOutbox Outbox = outbox;
 
-      public async Task StartListeningComponentsAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync()).caf();
-      public async Task StartSendingComponentsAsync() => await Task.WhenAll(_outbox.StartAsync()).caf();
-
-      public async Task StopSendingComponentsAsync()
-      {
-         _commandScheduler.Stop();
-         await _outbox.StopAsync().caf();
-      }
-
-      public async Task StopListeningComponentsAsync()
-      {
-         await Inbox.StopAsync().caf();
-      }
-
-      public void Dispose() => _commandScheduler.Dispose();
+      public void Dispose() => CommandScheduler.Dispose();
    }
 
    readonly EndpointConfiguration _configuration;
@@ -80,7 +66,7 @@ class Endpoint : IEndpoint
       {
          _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await _serverComponents.StartListeningComponentsAsync().caf();
+         await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.CommandScheduler.StartAsync()).caf();
       }
    }
 
@@ -92,7 +78,7 @@ class Endpoint : IEndpoint
       await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
-         await _serverComponents.StartSendingComponentsAsync().caf();
+         await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
          serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
       }
    }
@@ -109,7 +95,8 @@ class Endpoint : IEndpoint
          _isSending = false;
          if(_serverComponents != null)
          {
-            await _serverComponents.StopSendingComponentsAsync().caf();
+            _serverComponents.CommandScheduler.Stop();
+            await _serverComponents.Outbox.StopAsync().caf();
          }
       }
    }
@@ -121,7 +108,7 @@ class Endpoint : IEndpoint
          _isListening = false;
          if(_serverComponents != null)
          {
-            await _serverComponents.StopListeningComponentsAsync().caf();
+            await _serverComponents.Inbox.StopAsync().caf();
          }
 
          _transport.Stop();
