@@ -60,15 +60,16 @@ interface IStrictlyManagedResource : IDisposable;
 ///}
 /// </code>
 ///</example>
-class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : IStrictlyManagedResource
+class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
 {
    // ReSharper disable once StaticMemberInGenericType
    static readonly MonitorCE StaticMonitor = MonitorCE.WithDefaultTimeout();
    public static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesFor<TManagedResource>();
-   bool _collectStackTraces;
+   readonly bool _collectStackTraces;
 
-   public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false)
+   public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false, TManagedResource? instance = null)
    {
+      _instance = instance;
       _collectStackTraces = forceStackTraceCollection || CollectStackTracesByDefault || StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResources;
       if(_collectStackTraces)
       {
@@ -79,12 +80,15 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
    string? ReservationCallStack { get; }
 
    bool _disposed;
+   readonly TManagedResource? _instance;
 
    public virtual void Dispose()
    {
       GC.SuppressFinalize(this);
       _disposed = true;
    }
+
+   Type ManagedType => _instance?.GetType() ?? GetType();
 
    ~StrictlyManagedResource()
    {
@@ -94,7 +98,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
          try
          {
 #pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
-            throw new StrictlyManagedResourceWasFinalizedException(GetType(), ReservationCallStack);
+            throw new StrictlyManagedResourceWasFinalizedException(ManagedType, ReservationCallStack);
 #pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
          }
          catch(StrictlyManagedResourceWasFinalizedException exception)
@@ -104,7 +108,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
                UncatchableExceptionsGatherer.Register(exception);
                if(!StrictlyManagedResources.LoggingTemporarilySuppressed)
                {
-                  this.Log().Error(exception, $"{typeof(TManagedResource).GetFullNameCompilable()} was finalized without being disposed.");
+                  this.Log().Error(exception, $"{ManagedType.GetFullNameCompilable()} was finalized without being disposed.");
 
                   if(!_collectStackTraces)
                   {
@@ -113,7 +117,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
                      {
                         if(!CollectStackTracesByDefault)
                         {
-                           this.Log().Warning($"Enabling collection of stacktraces for {typeof(TManagedResource).GetFullNameCompilable()} since it is not always disposed.");
+                           this.Log().Warning($"Enabling collection of stacktraces for {ManagedType.GetFullNameCompilable()} since it is not always disposed.");
                            CollectStackTracesByDefault = true;
                         }
                      }
@@ -147,11 +151,14 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
 ///}
 ///</code>
 ///</example>
-public abstract class StrictlyManagedResourceBase<TInheritor>(bool forceStackTraceAllocation = false, bool needsFileInfo = false) : IStrictlyManagedResource
+public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManagedResource
    where TInheritor : StrictlyManagedResourceBase<TInheritor>
 {
    protected bool Disposed;
-   readonly StrictlyManagedResource<TInheritor> _strictlyManagedResource = new(forceStackTraceAllocation, needsFileInfo);
+   readonly StrictlyManagedResource<StrictlyManagedResourceBase<TInheritor>> _strictlyManagedResource;
+
+   protected StrictlyManagedResourceBase(bool forceStackTraceAllocation = false, bool needsFileInfo = false) => 
+      _strictlyManagedResource = new StrictlyManagedResource<StrictlyManagedResourceBase<TInheritor>>(forceStackTraceAllocation, needsFileInfo, instance:this);
 
    public virtual void Dispose()
    {
