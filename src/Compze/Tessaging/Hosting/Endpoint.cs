@@ -22,10 +22,14 @@ class Endpoint : IEndpoint
       public async Task StartListeningComponentsAsync() => await Task.WhenAll(Inbox.StartAsync(), _commandScheduler.StartAsync()).caf();
       public async Task StartSendingComponentsAsync() => await Task.WhenAll(_outbox.StartAsync()).caf();
 
-      public async Task StopAsync()
+      public async Task StopSendingComponentsAsync()
       {
          _commandScheduler.Stop();
          await _outbox.StopAsync().caf();
+      }
+
+      public async Task StopListeningComponentsAsync()
+      {
          await Inbox.StopAsync().caf();
       }
 
@@ -33,7 +37,6 @@ class Endpoint : IEndpoint
    }
 
    readonly EndpointConfiguration _configuration;
-   public bool IsRunning { get; private set; }
 
    public Endpoint(IServiceLocator serviceLocator,
                    IMessagesInFlightTracker globalStateTracker,
@@ -59,9 +62,14 @@ class Endpoint : IEndpoint
 
    ServerComponents? _serverComponents;
 
+   public bool IsRunning => _isListening && _isSending;
+   bool _isListening = false;
+   bool _isSending = false;
+
    public async Task StartListeningComponentsAsync()
    {
-      State.Is(!IsRunning);
+      State.Is(!_isListening);
+      _isListening = true;
 
       RunSanityChecks();
 
@@ -74,12 +82,12 @@ class Endpoint : IEndpoint
 
          await _serverComponents.StartListeningComponentsAsync().caf();
       }
-
-      IsRunning = true;
    }
 
    public async Task StartSendingComponentsAsync()
    {
+      State.Is(!_isSending);
+      _isSending = true;
       var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
       await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
       if(_serverComponents != null)
@@ -94,30 +102,48 @@ class Endpoint : IEndpoint
    //todo: figure out how to do this sanely
    static void AssertAllTypesNeedingMappingsAreMapped() {}
 
-   public async Task StopAsync()
+   public async Task StopSendingComponentsAsync()
    {
-      State.Is(IsRunning);
-      IsRunning = false;
-      if(_serverComponents != null)
-         await _serverComponents.StopAsync().caf();
+      if(_isSending)
+      {
+         _isSending = false;
+         if(_serverComponents != null)
+         {
+            await _serverComponents.StopSendingComponentsAsync().caf();
+         }
+      }
+   }
 
-      _transport.Stop();
+   public async Task StopListeningComponentsAsync()
+   {
+      if(_isListening)
+      {
+         _isListening = false;
+         if(_serverComponents != null)
+         {
+            await _serverComponents.StopListeningComponentsAsync().caf();
+         }
+
+         _transport.Stop();
+      }
    }
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoMessagesInFlight(timeoutOverride);
 
    public async ValueTask DisposeAsync()
    {
-      if(IsRunning) await StopAsync().caf();
-
-      // Check for any exceptions collected on background threads before disposing
-      if(!_configuration.IsPureClientEndpoint)
+      State.Is(!_isListening).Is(!_isSending);
+      if(_serverComponents != null)
       {
-         var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
-         exceptionReporter.ThrowIfAnyExceptions();
-      }
+         // Check for any exceptions collected on background threads before disposing
+         if(!_configuration.IsPureClientEndpoint)
+         {
+            var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
+            exceptionReporter.ThrowIfAnyExceptions();
+         }
 
-      await ServiceLocator.DisposeAsync().caf();
-      _serverComponents?.Dispose();
+         await ServiceLocator.DisposeAsync().caf();
+         _serverComponents.Dispose();
+      }
    }
 }

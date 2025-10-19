@@ -19,7 +19,7 @@ public class Outbox_retry_tests : XUnitEndpointHostTestBase
    [PCT]
    public async Task When_remote_endpoint_is_down_messages_are_stored_and_delivered_after_endpoint_restarts()
    {
-      await BackendEndPoint.StopAsync();
+      await BackendEndPoint.StopListeningComponentsAsync();
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
 
       var originalRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
@@ -49,7 +49,7 @@ public class Outbox_retry_tests : XUnitEndpointHostTestBase
    [PCT]
    public async Task Outbox_records_detailed_failure_information2()
    {
-      await BackendEndPoint.StopAsync();
+      await BackendEndPoint.StopListeningComponentsAsync();
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
 
       var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();

@@ -81,7 +81,8 @@ public class EndpointHost : IEndpointHost
          if(_isStarted)
          {
             _isStarted = false;
-            await Task.WhenAll(Endpoints.Where(endpoint => endpoint.IsRunning).Select(endpoint => endpoint.StopAsync())).WithAggregateExceptions().caf();
+            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopSendingComponentsAsync())).WithAggregateExceptions().caf();
+            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopListeningComponentsAsync())).WithAggregateExceptions().caf();
          }
 
          await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().caf();

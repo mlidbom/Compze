@@ -12,6 +12,7 @@ public interface IEndpoint : IAsyncDisposable
     bool IsRunning { get; }
     Task StartListeningComponentsAsync();
     Task StartSendingComponentsAsync();
-    Task StopAsync();
+    Task StopListeningComponentsAsync();
     void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride);
+    Task StopSendingComponentsAsync();
 }
