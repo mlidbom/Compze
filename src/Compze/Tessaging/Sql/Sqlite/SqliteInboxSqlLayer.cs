@@ -3,7 +3,7 @@ using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
-using Schema =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
+using MessageTable =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sql.Sqlite;
 
@@ -20,15 +20,15 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {Schema.TableName} 
-                               ({Schema.MessageId},  {Schema.TypeId},  {Schema.Body}, {Schema.Status}) 
-                       VALUES (@{Schema.MessageId}, @{Schema.TypeId}, @{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled})
-                   ON CONFLICT ({Schema.MessageId}) DO NOTHING
+                   INSERT INTO {MessageTable.TableName} 
+                               ({MessageTable.MessageId},  {MessageTable.TypeId},  {MessageTable.Body}, {MessageTable.Status}) 
+                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)Inbox.MessageStatus.UnHandled})
+                   ON CONFLICT ({MessageTable.MessageId}) DO NOTHING
 
                    """)
-              .AddVarcharParameter(Schema.MessageId, 36, messageId.ToString())
-              .AddVarcharParameter(Schema.TypeId, 36, typeId.ToString())
-              .AddMediumTextParameter(Schema.Body, serializedMessage)
+              .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
+              .AddVarcharParameter(MessageTable.TypeId, 36, typeId.ToString())
+              .AddMediumTextParameter(MessageTable.Body, serializedMessage)
               .ExecuteNonQuery();
 
             return affectedRows == 0 
@@ -46,13 +46,13 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
                               .SetCommandText(
                                   $"""
 
-                                   UPDATE {Schema.TableName} 
-                                       SET {Schema.Status} = {(int)Inbox.MessageStatus.Succeeded}
-                                   WHERE {Schema.MessageId} = @{Schema.MessageId}
-                                       AND {Schema.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                                   UPDATE {MessageTable.TableName} 
+                                       SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Succeeded}
+                                   WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
+                                       AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
 
                                    """)
-                              .AddVarcharParameter(Schema.MessageId, 36, messageId.ToString())
+                              .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
                               .ExecuteNonQuery();
 
             Assert.Result.Is(affectedRows == 1);
@@ -67,19 +67,19 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
                    .SetCommandText(
                        $"""
 
-                        UPDATE {Schema.TableName} 
-                            SET {Schema.ExceptionCount} = {Schema.ExceptionCount} + 1,
-                                {Schema.ExceptionType} = @{Schema.ExceptionType},
-                                {Schema.ExceptionStackTrace} = @{Schema.ExceptionStackTrace},
-                                {Schema.ExceptionMessage} = @{Schema.ExceptionMessage}
+                        UPDATE {MessageTable.TableName} 
+                            SET {MessageTable.ExceptionCount} = {MessageTable.ExceptionCount} + 1,
+                                {MessageTable.ExceptionType} = @{MessageTable.ExceptionType},
+                                {MessageTable.ExceptionStackTrace} = @{MessageTable.ExceptionStackTrace},
+                                {MessageTable.ExceptionMessage} = @{MessageTable.ExceptionMessage}
                                 
-                        WHERE {Schema.MessageId} = @{Schema.MessageId}
+                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
 
                         """)
-                   .AddVarcharParameter(Schema.MessageId, 36, messageId.ToString())
-                   .AddMediumTextParameter(Schema.ExceptionStackTrace, exceptionStackTrace)
-                   .AddMediumTextParameter(Schema.ExceptionMessage, exceptionMessage)
-                   .AddVarcharParameter(Schema.ExceptionType, 500, exceptionType)
+                   .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
+                   .AddMediumTextParameter(MessageTable.ExceptionStackTrace, exceptionStackTrace)
+                   .AddMediumTextParameter(MessageTable.ExceptionMessage, exceptionMessage)
+                   .AddVarcharParameter(MessageTable.ExceptionType, 500, exceptionType)
                    .ExecuteNonQuery());
    }
 
@@ -90,12 +90,12 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
                    .SetCommandText(
                        $"""
 
-                        UPDATE {Schema.TableName} 
-                            SET {Schema.Status} = {(int)Inbox.MessageStatus.Failed}
-                        WHERE {Schema.MessageId} = @{Schema.MessageId}
-                            AND {Schema.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                        UPDATE {MessageTable.TableName} 
+                            SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Failed}
+                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
+                            AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
                         """)
-                   .AddVarcharParameter(Schema.MessageId, 36, messageId.ToString())
+                   .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
                    .ExecuteNonQuery());
    }
 

@@ -3,7 +3,7 @@ using Compze.Sql.PostgreSql;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
-using Schema =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
+using MessageTable =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sql.PostgreSql;
 
@@ -20,16 +20,16 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServ
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {Schema.TableName} 
-                               ({Schema.MessageId},  {Schema.TypeId},  {Schema.Body}, {Schema.Status}) 
-                       VALUES (@{Schema.MessageId}, @{Schema.TypeId}, @{Schema.Body}, {(int)Inbox.MessageStatus.UnHandled})
-                   ON CONFLICT ({Schema.MessageId}) DO NOTHING;
+                   INSERT INTO {MessageTable.TableName} 
+                               ({MessageTable.MessageId},  {MessageTable.TypeId},  {MessageTable.Body}, {MessageTable.Status}) 
+                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)Inbox.MessageStatus.UnHandled})
+                   ON CONFLICT ({MessageTable.MessageId}) DO NOTHING;
 
                    """)
-              .AddParameter(Schema.MessageId, messageId)
-              .AddParameter(Schema.TypeId, typeId)
+              .AddParameter(MessageTable.MessageId, messageId)
+              .AddParameter(MessageTable.TypeId, typeId)
                //performance: Like with the event store, keep all framework properties out of the JSON and put it into separate columns instead. For events. Reuse a pre-serialized instance from the persisting to the event store.
-              .AddMediumTextParameter(Schema.Body, serializedMessage)
+              .AddMediumTextParameter(MessageTable.Body, serializedMessage)
               .PrepareStatement()
               .ExecuteNonQuery();
 
@@ -48,13 +48,13 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServ
                               .SetCommandText(
                                   $"""
 
-                                   UPDATE {Schema.TableName} 
-                                       SET {Schema.Status} = {(int)Inbox.MessageStatus.Succeeded}
-                                   WHERE {Schema.MessageId} = @{Schema.MessageId}
-                                       AND {Schema.Status} = {(int)Inbox.MessageStatus.UnHandled};
+                                   UPDATE {MessageTable.TableName} 
+                                       SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Succeeded}
+                                   WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
+                                       AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled};
 
                                    """)
-                              .AddParameter(Schema.MessageId, messageId)
+                              .AddParameter(MessageTable.MessageId, messageId)
                               .PrepareStatement()
                               .ExecuteNonQuery();
 
@@ -70,19 +70,19 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServ
                    .SetCommandText(
                        $"""
 
-                        UPDATE {Schema.TableName} 
-                            SET {Schema.ExceptionCount} = {Schema.ExceptionCount} + 1,
-                                {Schema.ExceptionType} = @{Schema.ExceptionType},
-                                {Schema.ExceptionStackTrace} = @{Schema.ExceptionStackTrace},
-                                {Schema.ExceptionMessage} = @{Schema.ExceptionMessage}
+                        UPDATE {MessageTable.TableName} 
+                            SET {MessageTable.ExceptionCount} = {MessageTable.ExceptionCount} + 1,
+                                {MessageTable.ExceptionType} = @{MessageTable.ExceptionType},
+                                {MessageTable.ExceptionStackTrace} = @{MessageTable.ExceptionStackTrace},
+                                {MessageTable.ExceptionMessage} = @{MessageTable.ExceptionMessage}
                                 
-                        WHERE {Schema.MessageId} = @{Schema.MessageId};
+                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId};
 
                         """)
-                   .AddParameter(Schema.MessageId, messageId)
-                   .AddMediumTextParameter(Schema.ExceptionStackTrace, exceptionStackTrace)
-                   .AddMediumTextParameter(Schema.ExceptionMessage, exceptionMessage)
-                   .AddVarcharParameter(Schema.ExceptionType, 500, exceptionType)
+                   .AddParameter(MessageTable.MessageId, messageId)
+                   .AddMediumTextParameter(MessageTable.ExceptionStackTrace, exceptionStackTrace)
+                   .AddMediumTextParameter(MessageTable.ExceptionMessage, exceptionMessage)
+                   .AddVarcharParameter(MessageTable.ExceptionType, 500, exceptionType)
                    .PrepareStatement()
                    .ExecuteNonQuery());
    }
@@ -94,12 +94,12 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServ
                    .SetCommandText(
                        $"""
 
-                        UPDATE {Schema.TableName} 
-                            SET {Schema.Status} = {(int)Inbox.MessageStatus.Failed}
-                        WHERE {Schema.MessageId} = @{Schema.MessageId}
-                            AND {Schema.Status} = {(int)Inbox.MessageStatus.UnHandled};
+                        UPDATE {MessageTable.TableName} 
+                            SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Failed}
+                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
+                            AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled};
                         """)
-                   .AddParameter(Schema.MessageId, messageId)
+                   .AddParameter(MessageTable.MessageId, messageId)
                    .PrepareStatement()
                    .ExecuteNonQuery());
    }
