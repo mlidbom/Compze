@@ -182,9 +182,5 @@ class OutboxRetryPoller : IDisposable
       _pollerThread?.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
    }
 
-   public void Dispose()
-   {
-      Stop();
-      _cancellationTokenSource.Dispose();
-   }
+   public void Dispose() => Stop();
 }
