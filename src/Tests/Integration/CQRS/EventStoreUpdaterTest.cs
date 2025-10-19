@@ -19,7 +19,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Utilities.DependencyInjection;
@@ -35,7 +34,7 @@ using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Integration.CQRS;
 
-public class EventStoreUpdaterTest : XUnitTestBase, IAsyncLifetime
+public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
 {
    class EventSpy
    {

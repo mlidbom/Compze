@@ -1,6 +1,6 @@
 using System;
 using Compze.Abstractions;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
@@ -9,7 +9,7 @@ namespace Compze.Tests.Unit.DDD;
 
 #pragma warning disable CA1508 //Avoid dead conditional code
 
-public class PersistentEntityTests : XUnitTestBase
+public class PersistentEntityTests : UniversalTestBase
 {
    class Person : PersistentEntity<Person>
    {

@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 
 
-public class LinqExtensionsTests : XUnitTestBase
+public class LinqExtensionsTests : UniversalTestBase
 {
    [XF]
    public void FlattenShouldIterateAllNestedCollectionInstances()

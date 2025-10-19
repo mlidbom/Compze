@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using JetBrains.Annotations;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.TasksCE;
 
@@ -21,7 +21,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    public string Name { get; set; } = "Default";
 }
 
- public class MachineWideSharedObjectTests : XUnitTestBase
+ public class MachineWideSharedObjectTests : UniversalTestBase
 {
    [XF] public void Create()
    {

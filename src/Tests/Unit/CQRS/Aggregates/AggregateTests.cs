@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using FluentAssertions;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates;
 
-public class AggregateTests : XUnitTestBase
+public class AggregateTests : UniversalTestBase
 {
    [XF]
    public void VersionIncreasesWithEachAppliedEvent()

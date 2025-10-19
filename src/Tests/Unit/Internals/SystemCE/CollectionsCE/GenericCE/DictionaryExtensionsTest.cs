@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
@@ -16,7 +16,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    const int ResultOfDefaultConstructor = new();
 
    
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : XUnitTestBase
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : UniversalTestBase
    {
       [XF]
       public void ShouldReturnResulOfConstructor()
@@ -36,7 +36,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
    
-   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : XUnitTestBase
+   public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : UniversalTestBase
    {
       [XF]
       public void ShouldReturnExistingValue()
@@ -58,7 +58,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
 
 
    
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: XUnitTestBase
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: UniversalTestBase
    {
       [XF]
       public void ShouldReturnResulOfConstructor()
@@ -78,7 +78,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
    
-   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: XUnitTestBase
+   public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: UniversalTestBase
    {
       [XF]
       public void ShouldReturnExistingValue()

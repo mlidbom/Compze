@@ -1,15 +1,15 @@
 using System;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
 using static FluentAssertions.FluentActions;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.Sql.EventStore;
 
- public class ReadOrderTests : XUnitTestBase
+ public class ReadOrderTests : UniversalTestBase
 {
    [XF] public void Parse_followed_by_ToString_always_results_in_identical_string()
    {

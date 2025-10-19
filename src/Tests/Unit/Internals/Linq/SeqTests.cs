@@ -1,13 +1,13 @@
 using System.Linq;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 
 
-public class SeqTests : XUnitTestBase
+public class SeqTests : UniversalTestBase
 {
    [XF]
    public void CreateShouldEnumerateAllParamsInOrder()

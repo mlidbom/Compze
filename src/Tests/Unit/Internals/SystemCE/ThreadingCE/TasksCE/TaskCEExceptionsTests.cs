@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
 
-public class TaskCEExceptionsTests : XUnitTestBase
+public class TaskCEExceptionsTests : UniversalTestBase
 {
    static async Task FailingMethod()
    {

@@ -1,14 +1,14 @@
 using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using FluentAssertions;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 
-public class DuplicateRegistrationTests : XUnitTestBase
+public class DuplicateRegistrationTests : UniversalTestBase
 {
    interface ITestService;
    class TestService : ITestService;

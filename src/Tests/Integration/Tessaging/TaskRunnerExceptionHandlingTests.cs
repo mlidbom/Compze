@@ -6,7 +6,7 @@ using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.SystemCE.ThreadingCE;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
@@ -18,7 +18,7 @@ using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging;
 
-public class TaskRunnerExceptionHandlingTests : XUnitTestBase, IAsyncLifetime
+public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetime
 {
 #pragma warning disable CA2213 // Disposable fields should be disposed
     readonly ITestingEndpointHost _host;

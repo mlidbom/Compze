@@ -1,10 +1,10 @@
 using System;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using Xunit;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.ResourceAccess;
 using static FluentAssertions.FluentActions;
@@ -14,12 +14,12 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Testing.Threading;
 
-public class Given_a_locked_ThreadGate : XUnitTestBase
+public class Given_a_locked_ThreadGate : UniversalTestBase
 {
    [XF] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
       => Invoking(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough()).Should().Throw<AwaitingConditionTimeoutException>();
 
-   public class After_starting_10_threads_that_all_call_PassThrough : XUnitTestBase
+   public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {
       [XF] public void Within_500_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
@@ -30,7 +30,7 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
       }
 
-      public sealed class And_all_have_queued_up_calling_PassThrough : XUnitTestBase, IDisposable
+      public sealed class And_all_have_queued_up_calling_PassThrough : UniversalTestBase, IDisposable
       {
          readonly ThreadGateTestFixture _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
@@ -46,7 +46,7 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
       }
    }
 
-   public sealed class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once : XUnitTestBase, IDisposable
+   public sealed class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once : UniversalTestBase, IDisposable
    {
       readonly ThreadGateTestFixture _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
@@ -64,7 +64,7 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
       [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
    }
 
-   public sealed class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : XUnitTestBase, IDisposable
+   public sealed class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : UniversalTestBase, IDisposable
    {
       readonly ThreadGateTestFixture _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
@@ -82,7 +82,7 @@ public class Given_a_locked_ThreadGate : XUnitTestBase
       [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
    }
 
-   public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y : XUnitTestBase
+   public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y : UniversalTestBase
    {
       public static TheoryData<int, int> ThreadPassThroughTestData => new()
                                                                       {

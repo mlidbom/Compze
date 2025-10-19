@@ -2,12 +2,12 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.CQRS.EventHandling;
 
-public class MutableEventDispatcher_WrappedEventsTests : XUnitTestBase
+public class MutableEventDispatcher_WrappedEventsTests : UniversalTestBase
 {
    interface IUserWrapperEvent<out TEvent> : IWrapperEvent<TEvent> where TEvent : IUserEvent;
    class UserWrapperEvent<TEvent>(TEvent @event) : WrapperEvent<TEvent>(@event), IUserWrapperEvent<TEvent>

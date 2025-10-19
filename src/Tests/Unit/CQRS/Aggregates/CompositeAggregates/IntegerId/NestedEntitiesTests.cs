@@ -1,5 +1,5 @@
 using System;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
 using FluentAssertions;
@@ -14,7 +14,7 @@ using FluentAssertions;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId;
 
-public class NestedEntitiesTests : XUnitTestBase
+public class NestedEntitiesTests : UniversalTestBase
 {
    [XF]
    public void ConstructorWorks() => new Root("root").Name.Should().Be("root");

@@ -1,13 +1,13 @@
 using System;
 using System.Globalization;
 using Compze.Abstractions.Internal.Time;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.GenericAbstractions.Time;
 
-public class DummyTimeSourceTests : XUnitTestBase
+public class DummyTimeSourceTests : UniversalTestBase
 {
    [XF]
    public void Now_should_return_within_100_millisecond_of_datetime_UtcNow()

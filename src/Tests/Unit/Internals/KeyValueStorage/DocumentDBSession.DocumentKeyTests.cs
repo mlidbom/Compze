@@ -1,12 +1,12 @@
 using Compze.Sql.DocumentDb;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.KeyValueStorage;
 
 
-public class DocumentDBSession_DocumentKeyTests : XUnitTestBase
+public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
 {
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes
    class Base;

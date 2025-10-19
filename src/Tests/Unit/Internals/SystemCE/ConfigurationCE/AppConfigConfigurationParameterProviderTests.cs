@@ -1,12 +1,12 @@
 using System;
 using Compze.Common.Configuration;
+using Compze.Tests.Infrastructure;
 using FluentAssertions;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
 
-public class AppConfigConfigurationParameterProviderTests: XUnitTestBase
+public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
 {
    readonly IConfigurationParameterProvider _provider;
    

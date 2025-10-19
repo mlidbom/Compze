@@ -1,7 +1,7 @@
 using System;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
@@ -11,14 +11,14 @@ namespace Compze.Tests.Unit.Internals.Tessaging;
 interface INonGenericWrapperEvent : IWrapperEvent<IEvent>;
 interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
 
-public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : XUnitTestBase
+public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
 {
    static void AssertInvalidForSending<TMessage>() => Invoking(MessageInspector.AssertValid<TMessage>).Should().Throw<MessageTypeInspector.MessageTypeDesignViolationException>();
    static void AssertInvalidForSubscription<TMessage>() => Invoking(MessageInspector.AssertValidForSubscription<TMessage>).Should().Throw<MessageTypeInspector.MessageTypeDesignViolationException>();
 
-   public class Inspecting_type_for_subscription_ : XUnitTestBase
+   public class Inspecting_type_for_subscription_ : UniversalTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_ : XUnitTestBase
+      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
          [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 
@@ -26,9 +26,9 @@ public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_
       }
    }
 
-   public class Inspecting_type_for_sending_and_ : XUnitTestBase
+   public class Inspecting_type_for_sending_and_ : UniversalTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_ : XUnitTestBase
+      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
          [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
 

@@ -1,4 +1,4 @@
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.GenericAbstractions;
 
-public class IStaticInstancePropertySingleton_tests : XUnitTestBase
+public class IStaticInstancePropertySingleton_tests : UniversalTestBase
 {
    [UsedImplicitly] class ImplicitImplementation : IStaticInstancePropertySingleton<ImplicitImplementation>
    {

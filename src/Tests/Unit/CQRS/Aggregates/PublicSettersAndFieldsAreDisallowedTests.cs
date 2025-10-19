@@ -2,7 +2,7 @@ using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates;
 
-public class PublicSettersAndFieldsAreDisallowedTests : XUnitTestBase
+public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {
    public static class RootEvent
    {

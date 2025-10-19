@@ -1,5 +1,4 @@
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -28,7 +27,7 @@ class SomeEvent : AggregateEvent, ISomeEvent
    }
 }
 
-public class EventStoreTests : XUnitTestBase, IDisposable
+public class EventStoreTests : UniversalTestBase, IDisposable
 {
    IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();

@@ -1,5 +1,5 @@
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Wiring;
@@ -13,7 +13,7 @@ namespace Compze.Tests.Integration.Infrastructure;
 /// Test to verify that the PluggableComponentsTheory attribute works correctly.
 /// This test should run once for each combination in TestUsingPluggableComponentCombinations.
 /// </summary>
-public class PluggableComponentsTheoryTests : XUnitTestBase
+public class PluggableComponentsTheoryTests : UniversalTestBase
 {
    [PCT]
    public void Should_execute_with_context_object_injected()
