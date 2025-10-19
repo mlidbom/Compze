@@ -1,5 +1,4 @@
 using System;
-using Compze.Wiring;
 using Compze.Wiring.Testing;
 using Compze.Wiring.Testing.Sql;
 

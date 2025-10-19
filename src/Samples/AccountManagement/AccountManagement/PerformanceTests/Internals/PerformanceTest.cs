@@ -19,8 +19,6 @@ using FluentAssertions.Extensions;
 
 
 using Compze.Utilities.Threading.TasksCE;
-using Compze.Wiring;
-using Xunit;
 using Compze.Wiring.Testing.Sql;
 
 namespace AccountManagement;

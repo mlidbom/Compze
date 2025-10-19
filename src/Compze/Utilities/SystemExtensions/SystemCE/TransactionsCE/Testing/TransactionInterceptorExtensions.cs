@@ -1,6 +1,5 @@
 using System;
 using System.Transactions;
-using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE.Testing;
 

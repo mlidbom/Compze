@@ -4,7 +4,6 @@ using Compze.Utilities.Testing.DbPool.MicrosoftSql;
 using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
 using Compze.Utilities.Testing.DbPool.Sqlite;
-using Compze.Wiring;
 using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tessaging.Hosting.Testing.Sql;

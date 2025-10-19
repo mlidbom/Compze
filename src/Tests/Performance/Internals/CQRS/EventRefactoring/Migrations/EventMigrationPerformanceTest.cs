@@ -17,9 +17,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Wiring;
 using Compze.Wiring.Testing.Sql;
-using Xunit;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 

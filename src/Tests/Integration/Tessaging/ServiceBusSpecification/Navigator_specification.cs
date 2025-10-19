@@ -13,7 +13,6 @@ using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using FluentAssertions;
-using Xunit;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 

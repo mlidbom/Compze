@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
-using Compze.Wiring;
 using Compze.Wiring.Testing;
 using Compze.Wiring.Testing.Sql;
 

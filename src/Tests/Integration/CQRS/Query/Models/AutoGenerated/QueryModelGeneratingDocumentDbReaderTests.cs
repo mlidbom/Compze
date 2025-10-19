@@ -17,7 +17,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Xunit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

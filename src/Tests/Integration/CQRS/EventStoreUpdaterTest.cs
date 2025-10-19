@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Xunit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
@@ -26,7 +25,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
-using Compze.Wiring;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 using Compze.Wiring.Testing.Sql;
 

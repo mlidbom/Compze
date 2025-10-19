@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Abstractions;
 using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
@@ -16,7 +15,6 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 using FluentAssertions;
-using Xunit;
 using static FluentAssertions.FluentActions;
 
 // ReSharper disable AccessToDisposedClosure
