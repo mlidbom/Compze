@@ -9,6 +9,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
@@ -58,7 +59,26 @@ class OutboxRetryPoller : IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
-   public void Start() => _pollerThread = _taskRunner.RunOnNamedThread("OutboxRetryPoller", PollerLoop, ThreadPriority.BelowNormal);
+   bool _running = false;
+   public void Start()
+   {
+      Assert.State.Is(!_running);
+      _running = true;
+      _pollerThread = _taskRunner.RunOnNamedThread("OutboxRetryPoller", PollerLoop, ThreadPriority.BelowNormal);
+   }
+
+   internal void Stop()
+   {
+      if(_running)
+      {
+         _running = false;
+         this.Log().Info("Stopping OutboxRetryPoller...");
+         _cancellationTokenSource.Cancel();
+         _pollerThread?.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
+      }
+   }
+
+   public void Dispose() => Stop();
 
    void PollerLoop()
    {
@@ -153,6 +173,8 @@ class OutboxRetryPoller : IDisposable
    {
       _exceptionReporter.RunAndReportAnyExceptions(() =>
       {
+         if(!_running)
+            return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this message after restart.
          if(completedSendTask.IsFaulted)
          {
             if(completedSendTask.Exception != null)
@@ -175,12 +197,4 @@ class OutboxRetryPoller : IDisposable
    void RecordFailure(Guid messageId, Guid endpointId, Exception? exception) =>
       _messageStorage.RecordDeliveryFailure(messageId, new EndpointId(endpointId), exception);
 
-   internal void Stop()
-   {
-      this.Log().Info("Stopping OutboxRetryPoller...");
-      _cancellationTokenSource.Cancel();
-      _pollerThread?.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
-   }
-
-   public void Dispose() => Stop();
 }
