@@ -123,15 +123,14 @@ class Endpoint : IEndpoint
       await StopListeningComponentsAsync().caf();
       if(_serverComponents != null)
       {
+         var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
+         await ServiceLocator.DisposeAsync().caf();
+         _serverComponents.Dispose();
          // Check for any exceptions collected on background threads before disposing
          if(!_configuration.IsPureClientEndpoint)
          {
-            var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
             exceptionReporter.ThrowIfAnyExceptions();
          }
-
-         await ServiceLocator.DisposeAsync().caf();
-         _serverComponents.Dispose();
       }
    }
 }
