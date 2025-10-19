@@ -53,12 +53,12 @@ class SqliteMemoryDbPool : DbPoolBase
    public override void Dispose()
    {
       if(Disposed) return;
-      base.Dispose();
       _keepInMemoryDatabaseAliveConnections.Update(cons =>
       {
          cons.Values.ForEach(connection => connection.Dispose());
          cons.Clear();
       });
+      base.Dispose();
    }
 
    SqliteConnection CreateOpenConnectionThusCreatingANewInMemoryDatabase(Database db)
