@@ -22,8 +22,7 @@ public class PluggableComponentsTestCase : XunitTestCase
       TestMethodDisplay defaultMethodDisplay,
       TestMethodDisplayOptions defaultMethodDisplayOptions,
       ITestMethod testMethod,
-      Tessaging.Hosting.Testing.PluggableComponents combination,
-      object[]? testMethodArguments = null)
+      Tessaging.Hosting.Testing.PluggableComponents combination)
       : base(diagnosticMessageSink,
              defaultMethodDisplay,
              defaultMethodDisplayOptions,
