@@ -11,7 +11,7 @@ using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : XUnitEndpointHostTestBase
+public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : EndpointHostTestBase
 {
    public override async Task InitializeAsync()
    {

@@ -11,7 +11,7 @@ using FluentAssertions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class EndpointHostTest_Tests : XUnitEndpointHostTestBase
+public class EndpointHostTest_Tests : EndpointHostTestBase
 {
    [PCT]  public async Task If_command_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {

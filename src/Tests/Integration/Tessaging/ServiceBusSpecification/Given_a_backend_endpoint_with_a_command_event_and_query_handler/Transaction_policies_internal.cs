@@ -9,7 +9,7 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Transaction_policies_internal : XUnitEndpointHostTestBase
+public class Transaction_policies_internal : EndpointHostTestBase
 {
    [PCT] public async Task Calling_PostRemoteAsync_within_a_transaction_with_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
       await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create()))))

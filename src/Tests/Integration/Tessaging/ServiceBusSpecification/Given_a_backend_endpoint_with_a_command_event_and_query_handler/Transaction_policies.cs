@@ -8,7 +8,7 @@ using FluentAssertions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Transaction_policies : XUnitEndpointHostTestBase
+public class Transaction_policies : EndpointHostTestBase
 {
    [PCT] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
    {

@@ -1,9 +1,0 @@
-using System.Threading.Tasks;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
-using Xunit;
-
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
-
-public abstract class XUnitEndpointHostTestBase : EndpointHostTestBase
-{
-}

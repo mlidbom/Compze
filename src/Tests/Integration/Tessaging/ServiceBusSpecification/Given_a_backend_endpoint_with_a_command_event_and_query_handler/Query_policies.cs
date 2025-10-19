@@ -8,7 +8,7 @@ using Compze.Utilities.Threading.Testing;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Query_policies : XUnitEndpointHostTestBase
+public class Query_policies : EndpointHostTestBase
 {
    [PCT] public async Task The_same_query_can_be_reused_in_parallel_without_issues()
    {

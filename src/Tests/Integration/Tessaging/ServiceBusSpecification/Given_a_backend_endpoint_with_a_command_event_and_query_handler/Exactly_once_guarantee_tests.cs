@@ -11,7 +11,7 @@ using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Exactly_once_guarantee_tests : XUnitEndpointHostTestBase
+public class Exactly_once_guarantee_tests : EndpointHostTestBase
 {
    [PCT] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceCommand_command_never_reaches_command_handler()
    {
