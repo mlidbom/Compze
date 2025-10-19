@@ -84,7 +84,7 @@ partial class Outbox : IOutbox
 
    void HandleDeliveryTaskResults(Task completedSendTask, EndpointId receiverId, Guid messageId)
    {
-      _exceptionReporter.RunAndReportAnyExceptions(() =>
+      _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
       {
          if(!_running)
             return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this message after restart.

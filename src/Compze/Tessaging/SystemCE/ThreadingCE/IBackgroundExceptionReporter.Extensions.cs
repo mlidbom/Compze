@@ -4,7 +4,7 @@ namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 public static class IBackgroundExceptionReporterExtensions
 {
-   public static void RunAndReportAnyExceptions(this IBackgroundExceptionReporter @this, Action action)
+   public static void RunSwallowingAndReportingAnyExceptions(this IBackgroundExceptionReporter @this, Action action)
    {
       try
       {
