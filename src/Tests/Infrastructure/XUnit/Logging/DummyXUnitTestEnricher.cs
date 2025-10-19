@@ -18,6 +18,8 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
          propertyFactory.CreateProperty("XUnit",
                                         new Dictionary<string, object>
                                         {
+                                           ["Container"] = (testCase as PluggableComponentsTestCase)?.Components.DiContainer.ToString() ?? "",
+                                           ["SqlLayer"] = (testCase as PluggableComponentsTestCase)?.Components.SqlLayer.ToString() ?? "",
                                            ["TestClass"] = testCase.TestMethod.TestClass.Class.ToRuntimeType().GetFullNameCompilable(),
                                            ["TestName"] = testCase.DisplayName,
                                         },
