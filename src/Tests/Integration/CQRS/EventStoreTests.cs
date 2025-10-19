@@ -1,16 +1,17 @@
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using FluentAssertions;
 using System;
 using System.Linq;
 using System.Transactions;
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 namespace Compze.Tests.Integration.CQRS;
 
@@ -27,12 +28,12 @@ class SomeEvent : AggregateEvent, ISomeEvent
    }
 }
 
-public class EventStoreTests : UniversalTestBase, IDisposable
+public class EventStoreTests : UniversalTestBase
 {
-   IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
+   readonly IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
    IEventStore EventStore => _serviceLocator.EventStore();
 
-   public void Dispose() => _serviceLocator.Dispose();
+   protected override void DisposeInternal() => _serviceLocator.Dispose();
 
    [PCT]
    public void StreamEventsSinceReturnsWholeEventLogWhenFromEventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
@@ -161,12 +162,12 @@ public class EventStoreTests : UniversalTestBase, IDisposable
    [PCT]
    public void ShouldCacheEventsBetweenInstancesTransaction()
    {
-      _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
+      using var serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
 
       var user = new User();
-      using(_serviceLocator.BeginScope())
+      using(serviceLocator.BeginScope())
       {
-         var eventStore = _serviceLocator.EventStore();
+         var eventStore = serviceLocator.EventStore();
 
          user.Register("email@email.se", "password", Guid.NewGuid());
 
@@ -178,9 +179,9 @@ public class EventStoreTests : UniversalTestBase, IDisposable
          });
       }
 
-      var firstRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
+      var firstRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
-      var secondRead = _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
+      var secondRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.EventStore().GetAggregateHistory(user.Id).Single());
 
       firstRead.Should().BeSameAs(secondRead);
    }

@@ -26,7 +26,7 @@ using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public class Experiment_with_unifying_events_and_commands_test : UniversalTestBase, IAsyncLifetime
+public class Experiment_with_unifying_events_and_commands_test : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
 
@@ -63,7 +63,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
-   public async Task InitializeAsync()
+   protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync();
 
@@ -71,8 +71,8 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
 
       _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<IEventStoreUpdater>().Save(UserRegistrarAggregate.Create()));
    }
-   
-   public async Task DisposeAsync() => await _host.DisposeAsync();
+
+   protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {

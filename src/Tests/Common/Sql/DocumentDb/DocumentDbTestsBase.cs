@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Compze.Sql.DocumentDb.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
@@ -15,8 +15,7 @@ public abstract class DocumentDbTestsBase : UniversalTestBase, IAsyncLifetime
 {
    protected IServiceLocator ServiceLocator { get; } = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
 
-   public async Task InitializeAsync() => await Task.CompletedTask;
-   public async Task DisposeAsync() => await ServiceLocator.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await ServiceLocator.DisposeAsync();
 
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
 

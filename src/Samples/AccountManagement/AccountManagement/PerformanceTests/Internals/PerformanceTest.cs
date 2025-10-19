@@ -26,13 +26,13 @@ using Compze.Wiring.Testing.Sql;
 namespace AccountManagement;
 
 [Performance]
-public class PerformanceTest : UniversalTestBase, IAsyncLifetime
+public class PerformanceTest : UniversalTestBase
 {
    ITestingEndpointHost? _host;
    IEndpoint? _clientEndpoint;
    AccountScenarioApi? _scenarioApi;
 
-   public async Task InitializeAsync()
+   protected override async Task InitializeAsyncInternal()
    {
       _host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithRegisteredServiceLocator());
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
@@ -43,7 +43,7 @@ public class PerformanceTest : UniversalTestBase, IAsyncLifetime
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
 
-   public async Task DisposeAsync()
+   protected override async Task DisposeAsyncInternal()
    {
       await _host!.DisposeAsync().caf();
       if(_clientEndpoint != null) await _clientEndpoint.DisposeAsync();

@@ -10,9 +10,9 @@ public class _031_After_a_user_changes_their_password : UserStoryTest
 {
    ChangePasswordScenario? _changePasswordScenario;
 
-   public override async Task InitializeAsync()
+   protected override async Task InitializeAsyncInternal()
    {
-      await base.InitializeAsync();
+      await base.InitializeAsyncInternal();
       _changePasswordScenario = Scenario.ChangePassword();
       _changePasswordScenario.Execute();
    }

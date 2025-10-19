@@ -34,7 +34,7 @@ using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Integration.CQRS;
 
-public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
+public class EventStoreUpdaterTest : UniversalTestBase
 {
    class EventSpy
    {
@@ -56,9 +56,7 @@ public class EventStoreUpdaterTest : UniversalTestBase, IAsyncLifetime
                      .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
    }
 
-   public Task InitializeAsync() => Task.CompletedTask;
-
-   public Task DisposeAsync() => _serviceLocator.DisposeAsync().AsTask();
+   protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync().AsTask();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IEventStoreUpdater> useSession)
       => _serviceLocator.ExecuteTransactionInIsolatedScope(() => useSession(_serviceLocator.Resolve<IEventStoreUpdater>()));

@@ -34,10 +34,7 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
       {
          readonly ThreadGateTestFixture _fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough();
 
-         public void Dispose()
-         {
-            _fixture.Dispose();
-         }
+         protected override void DisposeInternal() => _fixture.Dispose();
 
          [XF] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(0);
          [XF] public void PassedThrough_is_0() => _fixture.Gate.Passed.Should().Be(0);
@@ -53,10 +50,7 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
       public After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_once() =>
          _fixture.Gate.AwaitLetOneThreadPassThrough();
 
-      public void Dispose()
-      {
-         _fixture.Dispose();
-      }
+      protected override void DisposeInternal() => _fixture.Dispose();
 
       [XF] public void _10_milliseconds_later_one_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(1);
       [XF] public void PassedThrough_is_1() => _fixture.Gate.Passed.Should().Be(1);
@@ -71,10 +65,7 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
       public After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times() =>
          1.Through(5).ForEach(_ => _fixture.Gate.AwaitLetOneThreadPassThrough());
 
-      public void Dispose()
-      {
-         _fixture.Dispose();
-      }
+      protected override void DisposeInternal() => _fixture.Dispose();
 
       [XF] public void _10_milliseconds_later_five_threads_have_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(5);
       [XF] public void PassedThrough_is_5() => _fixture.Gate.Passed.Should().Be(5);

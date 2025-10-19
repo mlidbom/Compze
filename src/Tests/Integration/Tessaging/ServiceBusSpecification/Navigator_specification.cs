@@ -19,7 +19,7 @@ using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
-public class Navigator_specification : UniversalTestBase, IAsyncLifetime
+public class Navigator_specification : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
    readonly IEndpoint _clientEndpoint;
@@ -51,9 +51,9 @@ public class Navigator_specification : UniversalTestBase, IAsyncLifetime
       _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
-   public async Task InitializeAsync() => await _host.StartAsync();
+   protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
 
-   public async Task DisposeAsync() => await _host.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
    [PCT]  public void Can_get_command_result()
    {

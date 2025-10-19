@@ -40,7 +40,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
          });
    }
 
-   public async Task InitializeAsync()
+   protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync();
 
@@ -48,7 +48,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
       _timeSource = serviceLocator.Resolve<IUtcTimeTimeSource>();
    }
 
-   public async Task DisposeAsync() => await _host.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
    [PCT]  public void Messages_whose_due_time_has_passed_are_delivered()
    {

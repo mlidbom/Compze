@@ -41,9 +41,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
    }
 
-   public async Task InitializeAsync() => await _host.StartAsync();
-
-   public async Task DisposeAsync() => await Task.CompletedTask;
+   protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
 
    [PCT]
    public async Task Should_throw_aggregate_exception_on_dispose_when_background_task_throws()

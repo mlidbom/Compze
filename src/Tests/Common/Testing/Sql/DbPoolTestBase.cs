@@ -19,7 +19,7 @@ namespace Compze.Tests.Common.Testing.Sql;
 public abstract class DbPoolTestBase : UniversalTestBase, IDisposable
 {
    protected readonly DbPoolBase Pool = CreatePool();
-   public void Dispose() => Pool.Dispose();
+   protected override void DisposeInternal() => Pool.Dispose();
 
    protected static DbPoolBase CreatePool() =>
       TestEnv.SqlLayer switch

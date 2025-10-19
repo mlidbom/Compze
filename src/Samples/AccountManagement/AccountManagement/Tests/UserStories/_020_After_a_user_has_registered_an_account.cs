@@ -10,9 +10,9 @@ public class _020_After_a_user_has_registered_an_account : UserStoryTest
 {
    RegisterAccountScenario? _registerAccountScenario;
 
-   public override async Task InitializeAsync()
+   protected override async Task InitializeAsyncInternal()
    {
-      await base.InitializeAsync();
+      await base.InitializeAsyncInternal();
       _registerAccountScenario = Scenario.Register;
       var result = _registerAccountScenario.Execute().Result;
       result.Status.Should().Be(RegistrationAttemptStatus.Successful);

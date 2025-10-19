@@ -11,7 +11,7 @@ using Xunit;
 
 namespace AccountManagement.UserStories;
 
-public abstract class UserStoryTest : UniversalTestBase, IAsyncLifetime
+public abstract class UserStoryTest : UniversalTestBase
 {
    protected ITestingEndpointHost Host { get; set; }
    readonly IEndpoint _clientEndpoint;
@@ -24,9 +24,9 @@ public abstract class UserStoryTest : UniversalTestBase, IAsyncLifetime
       _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
    }
 
-   public virtual async Task InitializeAsync() => await Host.StartAsync().caf();
+   protected override async Task InitializeAsyncInternal() => await Host.StartAsync().caf();
 
-   public async Task DisposeAsync()
+   protected override async Task DisposeAsyncInternal()
    {
       await Host.DisposeAsync().caf();
       await _clientEndpoint.DisposeAsync();

@@ -11,9 +11,9 @@ public class _041_After_a_user_changes_their_email : UserStoryTest
    ChangeAccountEmailScenario? _changeEmailScenario;
    RegisterAccountScenario? _registerAccountScenario;
 
-   public override async Task InitializeAsync()
+   protected override async Task InitializeAsyncInternal()
    {
-      await base.InitializeAsync();
+      await base.InitializeAsyncInternal();
       _registerAccountScenario = Scenario.Register;
       var (_, account) = _registerAccountScenario.Execute();
       _changeEmailScenario = Scenario.ChangeEmail(account!);

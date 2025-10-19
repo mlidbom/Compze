@@ -24,7 +24,7 @@ using Xunit;
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 
 [LongRunning]
-public class EventMigrationPerformanceTest : EventMigrationTestBase, IAsyncLifetime
+public class EventMigrationPerformanceTest : EventMigrationTestBase
 {
    readonly List<AggregateEvent> _history;
    readonly TestAggregate _aggregate;
@@ -49,9 +49,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase, IAsyncLifet
       _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<IEventStore>().SaveSingleAggregateEvents(_history));
    }
 
-   public async Task InitializeAsync() => await Task.CompletedTask;
-
-   public async Task DisposeAsync()
+   protected override async Task DisposeAsyncInternal()
    {
       if(_container != null)
          await _container.DisposeAsync();
