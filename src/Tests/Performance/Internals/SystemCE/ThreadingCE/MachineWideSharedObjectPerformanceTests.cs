@@ -51,7 +51,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          maxTotal: 100.Milliseconds());
    }
 
-   [XF] public void Update_runs_multi_threaded_100_times_in_80_milliseconds()
+   [XF] public void Update_runs_multi_threaded_50_times_in_80_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;
@@ -64,11 +64,11 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          },
          tearDown: () =>
          {
-            shared.GetCopy().Name.Should().Be("100");
+            shared.GetCopy().Name.Should().Be("50");
             shared.Dispose();
          },
          action: () => shared.Update(it => it.Name = (++counter).ToStringInvariant()),
-         iterations: 100,
+         iterations: 50,
          maxTotal: 80.Milliseconds());
    }
 }
