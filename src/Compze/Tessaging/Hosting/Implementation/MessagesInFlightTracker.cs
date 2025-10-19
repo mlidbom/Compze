@@ -1,16 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.Threading.ResourceAccess;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-class MessagesInFlightTracker : IMessagesInFlightTracker
+class MessagesInFlightTracker(ITypeMapper typeMapper) : IMessagesInFlightTracker
 {
-   readonly IThreadShared<NonThreadSafeImplementation> _implementation = ThreadShared.WithDefaultTimeout(new NonThreadSafeImplementation());
+   readonly IThreadShared<NonThreadSafeImplementation> _implementation = ThreadShared.WithDefaultTimeout(new NonThreadSafeImplementation(typeMapper));
 
    public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(implementation => implementation.GetExceptions());
 
@@ -29,8 +32,9 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
       public Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
-   class NonThreadSafeImplementation
+   class NonThreadSafeImplementation(ITypeMapper typeMapper)
    {
+      readonly ITypeMapper _typeMapper = typeMapper;
       internal readonly Dictionary<Guid, InFlightMessage> TrackedMessages = [];
 
       readonly List<Exception> _busExceptions = [];
@@ -45,7 +49,8 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
 
       public void DoneWith(TransportMessage.InComing message, EndpointId handlingEndpointId, Exception? exception)
       {
-         if(TrackedMessages.Count == 0)
+         var messageType = _typeMapper.GetType(message.MessageTypeId);
+         if(messageType == typeof(MessageTypesInternal.EndpointInformationQuery))
             return; //this is an initial endpoint information request though which the endpoint IDs we use to track messages is first established.
          if(exception != null)
          {

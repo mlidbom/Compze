@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
@@ -15,7 +16,8 @@ namespace Compze.Tessaging.Hosting;
 public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
    readonly List<Exception> _expectedExceptions = [];
-   public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => MessagesInFlightTracker = new MessagesInFlightTracker();
+   public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
+      MessagesInFlightTracker = new MessagesInFlightTracker(TypeMapper.Instance);
 
    public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
                                                                    .Select(it => it.Address!)
