@@ -5,6 +5,10 @@ namespace Compze.Utilities.Threading.TasksCE;
 
 static class TaskCEExceptionHandling
 {
+   /// <summary>
+   /// Ensures that if this task fails, the thrown exception is an aggregate exception
+   /// That way catching code does not need to first figure out whether the exception is an aggregate exception or not
+   /// </summary>
    public static async Task WithAggregateExceptions(this Task task)
    {
       try
@@ -17,5 +21,9 @@ static class TaskCEExceptionHandling
       }
    }
 
+   /// <summary>
+   /// Ensures that if this task fails, the thrown exception is an aggregate exception
+   /// That way catching code does not need to first figure out whether the exception is an aggregate exception or not
+   /// </summary>
    public static async Task WithAggregateExceptions(this ValueTask valueTask) => await valueTask.AsTask().WithAggregateExceptions().caf();
 }
