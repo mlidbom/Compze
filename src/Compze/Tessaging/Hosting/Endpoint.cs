@@ -132,7 +132,8 @@ class Endpoint : IEndpoint
 
    public async ValueTask DisposeAsync()
    {
-      State.Is(!_isListening).Is(!_isSending);
+      await StopSendingComponentsAsync().caf();
+      await StopListeningComponentsAsync().caf();
       if(_serverComponents != null)
       {
          // Check for any exceptions collected on background threads before disposing
