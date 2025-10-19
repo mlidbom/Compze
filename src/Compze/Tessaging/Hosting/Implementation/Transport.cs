@@ -52,7 +52,7 @@ partial class Transport : ITransport, IDisposable
       AssertRunning();
       var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _httpApiClient);
 
-      await clientConnection.Init().caf();
+      await clientConnection.InitAsync().caf();
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 

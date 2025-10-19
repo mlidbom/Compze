@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.Threading.ResourceAccess;
@@ -14,54 +15,54 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
    public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(implementation => implementation.GetExceptions());
 
    //performance: Do we care about queries here? Could we exclude them and lessen the contention a lot?
-   public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) => _implementation.Update(implementation => implementation.SendingMessageOnTransport(transportMessage));
+   public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage, EndpointId remoteEndpointId) =>
+      _implementation.Update(implementation => implementation.SendingMessageOnTransport(transportMessage, remoteEndpointId));
 
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) =>
-      _implementation.Await(timeoutOverride ?? 5.Seconds(), implementation => implementation.InFlightMessages.Count == 0);
+      _implementation.Await(timeoutOverride ?? 5.Seconds(), implementation => implementation.NoMessagesInFlight());
 
-   public void DoneWith(Guid messageId, Exception? exception) =>
-      _implementation.Update(implementation => implementation.DoneWith(messageId, exception));
+   public void DoneWith(Guid messageId, EndpointId handlingEndpointId, Exception? exception) =>
+      _implementation.Update(implementation => implementation.DoneWith(messageId, handlingEndpointId, exception));
 
    class InFlightMessage
    {
-      public int RemainingReceivers { get; set; }
+      public Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
    class NonThreadSafeImplementation
    {
-      internal readonly Dictionary<Guid, InFlightMessage> InFlightMessages = [];
+      internal readonly Dictionary<Guid, InFlightMessage> TrackedMessages = [];
 
       readonly List<Exception> _busExceptions = [];
 
       public IReadOnlyList<Exception> GetExceptions() => _busExceptions.ToList();
 
-      public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage)
+      public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage, EndpointId remoteEndpointId)
       {
-         var inFlightMessage = InFlightMessages.GetOrAdd(transportMessage.Id, () => new InFlightMessage());
-         inFlightMessage.RemainingReceivers++;
+         var inFlightMessage = TrackedMessages.GetOrAdd(transportMessage.Id, () => new InFlightMessage());
+         inFlightMessage.EndpointDeliveryStatus[remoteEndpointId] = false;
       }
 
-      public void DoneWith(Guid messageId, Exception? exception)
+      public void DoneWith(Guid messageId, EndpointId handlingEndpointId, Exception? exception)
       {
+         if(TrackedMessages.Count == 0) return; //this is an initial endpoint information request though which the endpoint IDs we use to track messages is first established.
          if(exception != null)
          {
             _busExceptions.Add(exception);
          }
 
-         var inFlightMessage = InFlightMessages[messageId];
-         inFlightMessage.RemainingReceivers--;
-         if(inFlightMessage.RemainingReceivers == 0)
-         {
-            InFlightMessages.Remove(messageId);
-         }
+         var inFlightMessage = TrackedMessages[messageId];
+         inFlightMessage.EndpointDeliveryStatus[handlingEndpointId] = true;
       }
+
+      public bool NoMessagesInFlight() => TrackedMessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
    }
 }
 
 class NullOpMessagesInFlightTracker : IMessagesInFlightTracker
 {
    public IReadOnlyList<Exception> GetExceptions() => [];
-   public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage) { }
-   public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) { }
-   public void DoneWith(Guid message, Exception? exception) { }
+   public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage, EndpointId remoteEndpointId) {}
+   public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) {}
+   public void DoneWith(Guid messageId, EndpointId handlingEndpointId, Exception? exception) {}
 }

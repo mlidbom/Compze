@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -16,13 +17,13 @@ partial class Inbox
    partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all message type specific responsibilities into the message class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(IMessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry messageHandlerRegistry)
+      partial class Coordinator(IMessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry messageHandlerRegistry, EndpointId endpointId)
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly IMessageStorage _messageStorage = messageStorage;
          readonly IServiceLocator _serviceLocator = serviceLocator;
          readonly IMessageHandlerRegistry _messageHandlerRegistry = messageHandlerRegistry;
-         readonly IThreadShared<NonThreadsafeImplementation> _implementation = ThreadShared.WithDefaultTimeout(new NonThreadsafeImplementation(globalStateTracker));
+         readonly IThreadShared<NonThreadsafeImplementation> _implementation = ThreadShared.WithDefaultTimeout(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
          internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<IMessageDispatchingRule> dispatchingRules)
          {
@@ -42,10 +43,11 @@ partial class Inbox
 
          void Failed(HandlerExecutionTask queuedMessageInformation, Exception exception) => _implementation.Update(implementation => implementation.Failed(queuedMessageInformation, exception));
 
-         class NonThreadsafeImplementation(IMessagesInFlightTracker globalStateTracker) : IExecutingMessagesSnapshot
+         class NonThreadsafeImplementation(IMessagesInFlightTracker globalStateTracker, EndpointId endpointId) : IExecutingMessagesSnapshot
          {
             const int MaxConcurrentlyExecutingHandlers = 20;
             readonly IMessagesInFlightTracker _globalStateTracker = globalStateTracker;
+            readonly EndpointId _endpointId = endpointId;
 
 
             //performance: Split waiting messages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional query
@@ -135,7 +137,7 @@ partial class Inbox
                      throw new ArgumentOutOfRangeException();
                }
 
-               _globalStateTracker.DoneWith(doneExecuting.MessageId, exception);
+               _globalStateTracker.DoneWith(doneExecuting.MessageId, _endpointId, exception);
             }
 
             int _executingMessages;

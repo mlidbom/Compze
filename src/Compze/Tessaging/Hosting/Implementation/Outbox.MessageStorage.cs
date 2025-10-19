@@ -51,7 +51,7 @@ partial class Outbox
 
          if(result == IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
          {
-            this.Log().Warning($"Message {messageId} to endpoint {receiverId.GuidValue} was already marked as received.");
+            this.Log().Info($"Message {messageId} to endpoint {receiverId.GuidValue} was already marked as received.");
          }
       }
 

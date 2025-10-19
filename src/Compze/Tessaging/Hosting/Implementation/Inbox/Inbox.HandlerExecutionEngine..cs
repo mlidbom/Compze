@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -16,7 +17,8 @@ partial class Inbox
       IMessageHandlerRegistry handlerRegistry,
       IServiceLocator serviceLocator,
       IMessageStorage storage,
-      ITaskRunner taskRunner)
+      ITaskRunner taskRunner,
+      EndpointId endpointId)
    {
       Thread? _awaitDispatchableMessageThread;
 
@@ -26,7 +28,7 @@ partial class Inbox
          new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
-      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry);
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);
 
       internal Task<object?> Enqueue(TransportMessage.InComing transportMessage) => _coordinator.EnqueueMessageTask(transportMessage);
 

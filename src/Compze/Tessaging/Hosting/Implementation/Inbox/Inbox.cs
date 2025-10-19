@@ -24,8 +24,8 @@ static class InboxRegistrar
                   .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxMessageStorage(sqlLayer)),
          Singleton.For<Inbox.HandlerExecutionEngine>()
-                  .CreatedBy((IMessagesInFlightTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner)
-                                => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner)),
+                  .CreatedBy((IMessagesInFlightTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
+                                => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
                   .CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransport transport)
                                 => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, transport))
