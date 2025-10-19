@@ -86,6 +86,8 @@ partial class Outbox : IOutbox
    {
       _exceptionReporter.RunAndReportAnyExceptions(() =>
       {
+         if(!_running)
+            return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this message after restart.
          if(completedSendTask.IsFaulted)
          {
             _storage.RecordDeliveryFailure(messageId, receiverId, completedSendTask.Exception);
@@ -96,18 +98,26 @@ partial class Outbox : IOutbox
       });
    }
 
+   bool _running = false;
+
    public async Task StopAsync()
    {
+      Assert.State.Is(_running);
+      _running = false;
       _retryPoller.Stop();
       await Task.CompletedTask.caf();
    }
 
    public async Task StartAsync()
    {
+      Assert.State.Is(!_running);
+
       if(!_configuration.IsPureClientEndpoint)
       {
          await _storage.StartAsync().caf();
          _retryPoller.Start();
       }
+
+      _running = true;
    }
 }
