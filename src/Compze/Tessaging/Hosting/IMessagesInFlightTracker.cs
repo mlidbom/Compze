@@ -11,5 +11,5 @@ interface IMessagesInFlightTracker
 
     void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage, EndpointId remoteEndpointId);
     void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride);
-    void DoneWith(Guid messageId, EndpointId handlingEndpointId, Exception? exception);
+    void DoneWith(TransportMessage.InComing message, EndpointId handlingEndpointId, Exception? exception);
 }

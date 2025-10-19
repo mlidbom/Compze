@@ -137,7 +137,7 @@ partial class Inbox
                      throw new ArgumentOutOfRangeException();
                }
 
-               _globalStateTracker.DoneWith(doneExecuting.MessageId, _endpointId, exception);
+               _globalStateTracker.DoneWith(doneExecuting.TransportMessage, _endpointId, exception);
             }
 
             int _executingMessages;

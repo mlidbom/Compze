@@ -21,8 +21,8 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) =>
       _implementation.Await(timeoutOverride ?? 5.Seconds(), implementation => implementation.NoMessagesInFlight());
 
-   public void DoneWith(Guid messageId, EndpointId handlingEndpointId, Exception? exception) =>
-      _implementation.Update(implementation => implementation.DoneWith(messageId, handlingEndpointId, exception));
+   public void DoneWith(TransportMessage.InComing message, EndpointId handlingEndpointId, Exception? exception) =>
+      _implementation.Update(implementation => implementation.DoneWith(message, handlingEndpointId, exception));
 
    class InFlightMessage
    {
@@ -43,15 +43,16 @@ class MessagesInFlightTracker : IMessagesInFlightTracker
          inFlightMessage.EndpointDeliveryStatus[remoteEndpointId] = false;
       }
 
-      public void DoneWith(Guid messageId, EndpointId handlingEndpointId, Exception? exception)
+      public void DoneWith(TransportMessage.InComing message, EndpointId handlingEndpointId, Exception? exception)
       {
-         if(TrackedMessages.Count == 0) return; //this is an initial endpoint information request though which the endpoint IDs we use to track messages is first established.
+         if(TrackedMessages.Count == 0)
+            return; //this is an initial endpoint information request though which the endpoint IDs we use to track messages is first established.
          if(exception != null)
          {
             _busExceptions.Add(exception);
          }
 
-         var inFlightMessage = TrackedMessages[messageId];
+         var inFlightMessage = TrackedMessages[message.MessageId];
          inFlightMessage.EndpointDeliveryStatus[handlingEndpointId] = true;
       }
 
@@ -64,5 +65,5 @@ class NullOpMessagesInFlightTracker : IMessagesInFlightTracker
    public IReadOnlyList<Exception> GetExceptions() => [];
    public void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage, EndpointId remoteEndpointId) {}
    public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) {}
-   public void DoneWith(Guid messageId, EndpointId handlingEndpointId, Exception? exception) {}
+   public void DoneWith(TransportMessage.InComing message, EndpointId handlingEndpointId, Exception? exception) {}
 }
