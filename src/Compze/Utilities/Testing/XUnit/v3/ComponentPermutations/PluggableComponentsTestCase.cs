@@ -23,7 +23,7 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
              testMethodArguments: [permutationString]) // Pass as string or test discovery in dotnet test breaks
    {}
 
-   public ValueTask<RunSummary> Run(
+   public async ValueTask<RunSummary> Run(
       ExplicitOption explicitOption,
       IMessageBus messageBus,
       object?[] constructorArguments,
@@ -45,12 +45,14 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
          timeout: Timeout,
          testMethodArguments: []);
 
-      return XunitRunnerHelper.RunXunitTestCase(
-         testCaseWithoutArgs,
-         messageBus,
-         cancellationTokenSource,
-         aggregator,
-         explicitOption,
-         constructorArguments);
+      return await TestContext.RunTestInContextAsync(
+                this,
+                async () => await XunitRunnerHelper.RunXunitTestCase(
+                               testCaseWithoutArgs,
+                               messageBus,
+                               cancellationTokenSource,
+                               aggregator,
+                               explicitOption,
+                               constructorArguments));
    }
 }
