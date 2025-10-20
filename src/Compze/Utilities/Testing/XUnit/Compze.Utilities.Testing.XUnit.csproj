@@ -5,6 +5,12 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+
+	<ItemGroup>
+      <PackageReference Include="xunit" Version="2.9.3" />
+      <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
+	</ItemGroup>
+
   <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
@@ -12,5 +18,8 @@
     <EmbeddedResource Remove="Tests\**" />
     <None Remove="Tests\**" />
     <Content Remove="Tests\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
   </ItemGroup>
 </Project>
