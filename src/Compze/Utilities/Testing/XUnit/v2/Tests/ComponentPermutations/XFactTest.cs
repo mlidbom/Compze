@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.v2.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit.Abstractions;
 
 namespace Compze.Utilities.Testing.XUnit.v2.Tests.ComponentPermutations;

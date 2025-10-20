@@ -4,7 +4,7 @@ using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.v3.BDD;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
 /// <summary>

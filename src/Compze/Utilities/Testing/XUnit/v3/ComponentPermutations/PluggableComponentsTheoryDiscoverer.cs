@@ -1,9 +1,8 @@
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 #pragma warning disable CA1812
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer

@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.v3.BDD;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 
 public class XFactTestCase : XunitTestCase
 {

@@ -11,6 +11,7 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Common\Compze.Common.csproj" />
+      <ProjectReference Include="..\Wiring\Compze.Wiring.csproj" />
       <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
       <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
@@ -20,6 +21,7 @@
       <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
       <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
       <ProjectReference Include="..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+      <ProjectReference Include="..\Wiring\Testing\Compze.Wiring.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
@@ -28,11 +30,6 @@
    </ItemGroup>
    <ItemGroup>
       <Folder Include="Sql\DocumentDb\" />
-   </ItemGroup>
-   <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Http">
-         <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
-      </Reference>
    </ItemGroup>
    <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->

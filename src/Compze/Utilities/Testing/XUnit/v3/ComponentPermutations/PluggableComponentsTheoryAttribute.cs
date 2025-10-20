@@ -4,7 +4,7 @@ using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
 // ReSharper disable GrammarMistakeInComment

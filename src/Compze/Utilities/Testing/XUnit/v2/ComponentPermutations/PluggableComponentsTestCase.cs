@@ -1,7 +1,7 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Utilities.Testing.XUnit.v2.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 class PluggableComponentsTestCase : XunitTestCase
 {

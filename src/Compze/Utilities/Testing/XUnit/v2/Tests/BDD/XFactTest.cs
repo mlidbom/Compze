@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.v2.BDD;
+using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Utilities.Testing.XUnit.v2.Tests.BDD;
 

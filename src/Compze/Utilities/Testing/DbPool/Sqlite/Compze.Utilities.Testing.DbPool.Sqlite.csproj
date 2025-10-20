@@ -12,5 +12,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
+    <ProjectReference Include="..\..\..\..\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
   </ItemGroup>
   </Project>

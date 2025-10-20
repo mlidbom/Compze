@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit;
 using Xunit.v3;
 

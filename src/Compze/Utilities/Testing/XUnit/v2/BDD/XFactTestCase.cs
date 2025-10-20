@@ -1,7 +1,7 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Utilities.Testing.XUnit.v2.BDD;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 
 public class XFactTestCase : XunitTestCase
 {

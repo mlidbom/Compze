@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 class PluggableComponentsTestCase : XunitTestCase
 {

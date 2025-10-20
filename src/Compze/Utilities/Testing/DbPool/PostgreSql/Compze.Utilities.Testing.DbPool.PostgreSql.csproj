@@ -12,6 +12,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
+        <ProjectReference Include="..\..\..\..\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
         <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj" />
     </ItemGroup>
     </Project>
