@@ -1,5 +1,8 @@
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit;
+using Xunit.Sdk;
 using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
@@ -14,32 +17,49 @@ namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// Use TestEnv to access the component and the information.
 /// </summary>
-[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
+[XunitTestCaseDiscoverer(typeof(TheoryDiscoverer))] // Use standard TheoryDiscoverer!
 public class PluggableComponentsTheoryAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1) :
-   TheoryAttribute(sourceFilePath, sourceLineNumber)
+   TheoryAttribute(sourceFilePath, sourceLineNumber),
+   IDataAttribute
 {
-   static PluggableComponentsTheoryAttribute()
-   {
-      var expectedTypeName = typeof(PluggableComponentsTheoryDiscoverer).FullName;
-      var expectedAssembly = typeof(PluggableComponentsTheoryDiscoverer).Assembly.GetName().Name;
+   public string[] Exclude { get; init; } = [];
 
-      if(expectedTypeName != "Compze.Utilities.Testing.XUnit.v3.ComponentPermutations.PluggableComponentsTheoryDiscoverer")
-         throw new Exception($"""
-                              PluggableComponentsTheoryDiscoverer type name validation failed
-                              Expected: Compze.Utilities.Testing.XUnit.v3.ComponentPermutations.PluggableComponentsTheoryDiscoverer
-                              Was: {expectedTypeName}
-                              """);
-      if(expectedAssembly != "Compze.Utilities.Testing.XUnit.v3")
-         throw new Exception($"""
-                              PluggableComponentsTheoryDiscoverer assembly name validation failed
-                              Expected: Compze.Utilities.Testing.XUnit.v3
-                              Was: {expectedAssembly}
-                              """);
+   // Skip tests without data instead of failing (for inherited tests in derived classes)
+   public new bool SkipTestWithoutData { get; set; } = true;
+
+   // IDataAttribute implementation - we supply our own data!
+   bool? IDataAttribute.Explicit => Explicit;
+   string? IDataAttribute.Label => null;
+   string? IDataAttribute.Skip => Skip;
+   Type? IDataAttribute.SkipType => SkipType;
+   string? IDataAttribute.SkipUnless => SkipUnless;
+   string? IDataAttribute.SkipWhen => SkipWhen;
+   string? IDataAttribute.TestDisplayName => DisplayName;
+   int? IDataAttribute.Timeout => Timeout > 0 ? Timeout : null;
+   string[]? IDataAttribute.Traits => null;
+
+   public ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
+   {
+      if(testMethod.DeclaringType != testMethod.ReflectedType) //Only run for the class that declares the test method.
+      {
+         return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
+            [
+               new TheoryDataRow("skipped") { Skip = "Only runs in declaring class" }
+            ]);
+      }
+
+      var permutations = PluggableComponentsReader
+                        .Permutations
+                        .Exclude(Exclude)
+                        .Select(permutation => new TheoryDataRow(permutation.ToString()) as ITheoryDataRow)
+                        .ToArray();
+
+      return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
    }
 
-   public string[] Exclude { get; init; } = [];
+   public bool SupportsDiscoveryEnumeration() => true; // Yes, we can enumerate at discovery time
 }
 
 /// <summary>
