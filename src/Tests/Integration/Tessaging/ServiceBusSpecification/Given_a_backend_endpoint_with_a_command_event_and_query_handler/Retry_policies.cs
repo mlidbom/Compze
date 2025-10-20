@@ -13,9 +13,9 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_bac
 
 public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : EndpointHostTestBase
 {
-   public override async Task InitializeAsync()
+   protected override async Task InitializeAsyncInternal()
    {
-      await base.InitializeAsync();
+      await base.InitializeAsyncInternal();
       const string exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
 

@@ -31,11 +31,11 @@ public class Failure_tests : EndpointHostTestBase
       exception.Should().NotBeNull();
    }
 
-   public override async Task DisposeAsync()
+   protected override async Task DisposeAsyncInternal()
    {
       var exception = await FluentActions.Invoking(async () => await Host.DisposeAsync()).Should().ThrowAsync<Exception>();
       exception.Which.Should().NotBeNull();
-      await base.DisposeAsync();
+      await base.DisposeAsyncInternal();
    }
 
    readonly IntentionalException _thrownException = new();
