@@ -37,4 +37,9 @@
     <None Remove="Internals\**" />
     <Content Remove="Internals\**" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Compze.Tests.Unit.uniqueid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
