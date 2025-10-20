@@ -8,12 +8,16 @@ public class ComponentPermutationsTest(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [PCT] public void RunsWithEachComponentCombination(string _) =>
-      _testOutputHelper.WriteLine(((IXunitTest)TestContext.Current.Test!).TestMethodArguments[0]?.ToString() ?? "null");
+   [PCT] public void RunsWithEachComponentCombination()
+   {
+      var context = TestContext.Current;
+   }
 
    public class Inner(ITestOutputHelper testOutputHelper) : ComponentPermutationsTest(testOutputHelper)
    {
-      [PCT] public void AlsoRunsWithEachComponentCombination(string _) =>
-         _testOutputHelper.WriteLine(((IXunitTest)TestContext.Current.Test!).TestMethodArguments[0]?.ToString() ?? "null");
+      [PCT] public void AlsoRunsWithEachComponentCombination()
+      {
+         var context = TestContext.Current;
+      }
    }
 }
