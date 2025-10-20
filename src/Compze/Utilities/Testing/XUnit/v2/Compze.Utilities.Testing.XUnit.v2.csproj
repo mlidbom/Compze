@@ -22,6 +22,6 @@
 		<Content Remove="Tests\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+		<ProjectReference Include="..\..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
 </Project>

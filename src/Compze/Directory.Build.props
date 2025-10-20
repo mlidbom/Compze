@@ -66,8 +66,10 @@
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.Sqlite" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.Tests" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.v2" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.v2.Tests" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.v3" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.v3.Tests" />
       <InternalsVisibleTo Include="Compze.Utilities.Threading.Testing" />
       <InternalsVisibleTo Include="Compze.Wiring" />
    </ItemGroup>

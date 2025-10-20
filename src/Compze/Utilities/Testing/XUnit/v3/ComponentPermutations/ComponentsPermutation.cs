@@ -1,4 +1,4 @@
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 
 class ComponentsPermutation
 {

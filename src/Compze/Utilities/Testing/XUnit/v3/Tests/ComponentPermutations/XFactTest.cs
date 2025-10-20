@@ -1,7 +1,7 @@
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 using Xunit.Abstractions;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.v3.Tests.ComponentPermutations;
 
 public class ComponentPermutationsTest(ITestOutputHelper testOutputHelper)
 {

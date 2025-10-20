@@ -1,24 +1,24 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.v3.BDD;
 
-class PluggableComponentsTestCase : XunitTestCase
+public class XFactTestCase : XunitTestCase
 {
    [Obsolete("Called by deserializer")]
-   public PluggableComponentsTestCase() {}
+   public XFactTestCase() {}
 
-   public PluggableComponentsTestCase(
+   public XFactTestCase(
       IMessageSink diagnosticMessageSink,
       TestMethodDisplay defaultMethodDisplay,
       TestMethodDisplayOptions defaultMethodDisplayOptions,
       ITestMethod testMethod,
-      string permutationString)
+      object[]? testMethodArguments = null)
       : base(diagnosticMessageSink,
              defaultMethodDisplay,
              defaultMethodDisplayOptions,
              testMethod,
-             [permutationString]) // Pass as string or test discovery in dotnet test breaks
+             testMethodArguments)
    {
    }
 
@@ -29,8 +29,7 @@ class PluggableComponentsTestCase : XunitTestCase
                                                    CancellationTokenSource cancellationTokenSource)
    {
       return await TestContext.RunTestInContextAsync(
-                this,
-                //Manually override this rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
-                async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, TestMethodArguments, messageBus, aggregator, cancellationTokenSource).RunAsync());
+         this,
+         () => base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
    }
 }
