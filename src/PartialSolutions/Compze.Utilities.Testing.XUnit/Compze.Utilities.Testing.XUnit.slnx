@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+  </Configurations>
+  <Folder Name="/Compze/" />
+  <Folder Name="/Compze/Utilities/">
+    <Project Path="../../Compze/Utilities/Contracts/Compze.Utilities.Contracts.csproj" />
+    <Project Path="../../Compze/Utilities/Functional/Compze.Utilities.Functional.csproj" />
+    <Project Path="../../Compze/Utilities/SystemExtensions/Compze.Utilities.SystemExtensions.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Utilities/Testing/" />
+  <Folder Name="/Compze/Utilities/Threading/">
+    <Project Path="../../Compze/Utilities/Threading/Compze.Utilities.Threading.csproj" />
+    <Project Path="../../Compze/Utilities/Threading/Testing/Compze.Utilities.Threading.Testing.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Utilities/Testing/XUnit/" />
+  <Project Path="../../Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
+  <Project Path="../../Compze/Utilities/Testing/XUnit/Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
+</Solution>

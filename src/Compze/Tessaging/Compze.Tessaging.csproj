@@ -11,7 +11,6 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Common\Compze.Common.csproj" />
-      <ProjectReference Include="..\Wiring\Compze.Wiring.csproj" />
       <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
       <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
@@ -21,7 +20,6 @@
       <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
       <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
       <ProjectReference Include="..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-      <ProjectReference Include="..\Wiring\Testing\Compze.Wiring.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />

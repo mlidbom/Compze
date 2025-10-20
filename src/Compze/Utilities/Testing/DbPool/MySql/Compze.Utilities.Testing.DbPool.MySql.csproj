@@ -12,7 +12,6 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.csproj" />
-        <ProjectReference Include="..\..\..\..\Sql\MySql\Compze.Sql.MySql.csproj" />
         <ProjectReference Include="..\..\..\Threading\Compze.Utilities.Threading.csproj" />
     </ItemGroup>
     </Project>
