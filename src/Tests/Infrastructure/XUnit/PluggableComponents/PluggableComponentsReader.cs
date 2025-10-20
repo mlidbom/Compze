@@ -22,5 +22,5 @@ static class PluggableComponentsReader
       return ComponentsPermutationsList.FromFileContent(File.ReadAllLines(filePath));
    });
 
-   public static ComponentsPermutationsList Combinations => CombinationsLazy.Value;
+   public static ComponentsPermutationsList Permutations => CombinationsLazy.Value;
 }
