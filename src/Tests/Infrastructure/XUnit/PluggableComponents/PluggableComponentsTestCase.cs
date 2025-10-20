@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -9,10 +8,6 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
 class PluggableComponentsTestCase : XunitTestCase
 {
-   Tessaging.Hosting.Testing.PluggableComponents? _combination = null;
-
-   public Tessaging.Hosting.Testing.PluggableComponents Components => _combination!.Value;
-
    [Obsolete("Called by deserializer")]
    public PluggableComponentsTestCase() {}
 
@@ -28,8 +23,6 @@ class PluggableComponentsTestCase : XunitTestCase
              testMethod,
              [combination.ToString()]) // Pass as string or test discovery in dotnet test breaks
    {
-      _combination = combination;
-      DisplayName = $"{testMethod.Method.Name}({combination})";
    }
 
    public override async Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink,
@@ -42,17 +35,5 @@ class PluggableComponentsTestCase : XunitTestCase
                 this,
                 //Manually override this rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
                 async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync());
-   }
-
-   public override void Serialize(IXunitSerializationInfo data)
-   {
-      base.Serialize(data);
-      data.AddValue(nameof(_combination), _combination.ToString());
-   }
-
-   public override void Deserialize(IXunitSerializationInfo data)
-   {
-      base.Deserialize(data);
-      _combination = Tessaging.Hosting.Testing.PluggableComponents.FromString(data.GetValue<string>(nameof(_combination)).NotNull());
    }
 }
