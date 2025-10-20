@@ -1,11 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 
 public class XFactTestCase : XunitTestCase
 {
@@ -34,6 +30,6 @@ public class XFactTestCase : XunitTestCase
    {
       return await TestContext.RunTestInContextAsync(
          this,
-         () => base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
+         async () => await base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
    }
 }

@@ -1,7 +1,7 @@
 using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 

@@ -1,6 +1,6 @@
 using AccountManagement.Domain.Passwords;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
 using static FluentAssertions.FluentActions;

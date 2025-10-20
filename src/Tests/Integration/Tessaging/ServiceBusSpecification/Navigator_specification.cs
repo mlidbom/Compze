@@ -11,7 +11,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using FluentAssertions;
 
 // ReSharper disable MemberCanBeMadeStatic.Local

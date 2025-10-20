@@ -1,9 +1,9 @@
 using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

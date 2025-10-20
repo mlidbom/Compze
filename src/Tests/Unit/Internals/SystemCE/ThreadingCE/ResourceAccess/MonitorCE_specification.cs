@@ -3,12 +3,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NCrunch.Framework;
 using Xunit;
 using static FluentAssertions.FluentActions;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.ResourceAccess;
 using Compze.Utilities.Threading.TasksCE;
 

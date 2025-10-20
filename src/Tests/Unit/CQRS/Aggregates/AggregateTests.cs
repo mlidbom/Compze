@@ -5,8 +5,8 @@ using Compze.Tessaging.Teventive;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates;
 

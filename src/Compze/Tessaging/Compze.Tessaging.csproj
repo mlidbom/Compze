@@ -31,11 +31,6 @@
    <ItemGroup>
       <Folder Include="Sql\DocumentDb\" />
    </ItemGroup>
-   <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Http">
-         <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.9\ref\net9.0\Microsoft.Extensions.Http.dll</HintPath>
-      </Reference>
-   </ItemGroup>
    <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
    <ItemGroup>

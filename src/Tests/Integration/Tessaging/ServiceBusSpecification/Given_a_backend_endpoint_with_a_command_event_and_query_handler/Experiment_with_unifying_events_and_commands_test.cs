@@ -14,9 +14,9 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using FluentAssertions;
 
 // ReSharper disable MemberCanBeInternal for testing

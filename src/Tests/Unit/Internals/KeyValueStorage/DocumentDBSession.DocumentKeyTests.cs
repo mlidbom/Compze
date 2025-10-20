@@ -1,7 +1,7 @@
 using Compze.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.KeyValueStorage;
 

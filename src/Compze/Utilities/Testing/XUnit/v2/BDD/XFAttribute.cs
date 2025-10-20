@@ -1,12 +1,9 @@
-using Compze.Utilities.SystemCE.ReflectionCE;
 using Xunit;
 using Xunit.Sdk;
-using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
-//XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 /// <summary>
 /// eXclusive Fact attribute.
 /// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
@@ -15,23 +12,23 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 [XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
 public class XFactAttribute : FactAttribute
 {
-   const string XFactDiscovererFullTypeName = "Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
-   const string XFactDiscovererAssembly = "Compze.Tests.Infrastructure";
+   const string XFactDiscovererFullTypeName = $"Compze.Utilities.Testing.XUnit.BDD.{nameof(XFactDiscoverer)}";
+   const string XFactDiscovererAssembly = "Compze.Utilities.Testing.XUnit.v2";
 
    static XFactAttribute()
    {
-      Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable(),
-                   () =>
-                      $"""
-                       Expected: {typeof(XFactDiscoverer).GetFullNameCompilable()}
-                       Found   : {XFactDiscovererFullTypeName}
-                       """);
-      Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name,
-                   () =>
-                      $"""
-                       Expected: {typeof(XFactDiscoverer).Assembly.GetName().Name}
-                       Found   : {XFactDiscovererAssembly}
-                       """);
+      if(XFactDiscovererFullTypeName != typeof(XFactDiscoverer).FullName)
+         throw new Exception($"""
+                              {nameof(XFactDiscovererFullTypeName)} does not indicate the correct type
+                              Should be: {typeof(XFactDiscoverer).FullName}
+                              Was   : {XFactDiscovererFullTypeName}
+                              """);
+      if(XFactDiscovererAssembly != typeof(XFactDiscoverer).Assembly.GetName().Name)
+         throw new Exception($"""
+                              {nameof(XFactDiscovererAssembly)} does not indicate the correct assembly
+                              Should be: {typeof(XFactDiscoverer).Assembly.GetName().Name}
+                              Was   : {XFactDiscovererAssembly}
+                              """);
    }
 }
 

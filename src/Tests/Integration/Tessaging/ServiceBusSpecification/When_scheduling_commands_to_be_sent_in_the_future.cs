@@ -9,7 +9,7 @@ using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;

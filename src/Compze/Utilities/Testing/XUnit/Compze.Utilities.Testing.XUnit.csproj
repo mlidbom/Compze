@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsTestProject>false</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+	</ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="v2\**" />
+    <EmbeddedResource Remove="v2\**" />
+    <None Remove="v2\**" />
+    <Content Remove="v2\**" />
+    <Compile Remove="v2\Tests\**" />
+    <EmbeddedResource Remove="v2\Tests\**" />
+    <None Remove="v2\Tests\**" />
+    <Content Remove="v2\Tests\**" />
+    <Compile Remove="v3\**" />
+    <EmbeddedResource Remove="v3\**" />
+    <None Remove="v3\**" />
+    <Content Remove="v3\**" />
+    <Compile Remove="v3\Tests\**" />
+    <EmbeddedResource Remove="v3\Tests\**" />
+    <None Remove="v3\Tests\**" />
+    <Content Remove="v3\Tests\**" />
+  </ItemGroup>
+</Project>

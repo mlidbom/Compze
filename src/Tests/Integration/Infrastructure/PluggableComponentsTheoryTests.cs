@@ -1,7 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Compze.Wiring.Testing;
 using Compze.Wiring.Testing.Sql;
 using FluentAssertions;

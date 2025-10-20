@@ -1,7 +1,7 @@
 using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Teventive.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
 // ReSharper disable InconsistentNaming

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using AccountManagement.API;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
 

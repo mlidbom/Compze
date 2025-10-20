@@ -6,10 +6,10 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using JetBrains.Annotations;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable ImplicitlyCapturedClosure

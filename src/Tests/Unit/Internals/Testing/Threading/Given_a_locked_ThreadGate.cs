@@ -3,9 +3,9 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using Xunit;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.ResourceAccess;
 using static FluentAssertions.FluentActions;
 

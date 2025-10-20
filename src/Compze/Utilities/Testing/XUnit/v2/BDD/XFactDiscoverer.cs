@@ -1,12 +1,10 @@
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
-[UsedImplicitly] class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
+class XFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
 {
    readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 

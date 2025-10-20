@@ -1,8 +1,9 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit.Logging;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+
 using System;
 using System.Runtime.CompilerServices;
+using Compze.Utilities.Testing.XUnit;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
@@ -13,11 +14,6 @@ public static class XUnitInfrastructureModuleInitializer
    {
       TestFixtureHelper.SetupSerilog(new XUnitTestSerilogEnricher());
 
-      TestEnv.XunitDiscoverer = () =>
-      {
-         if(TestContext.CurrentTestCase == null) throw new Exception("No test context has been set");
-         if(typeof(PluggableComponentsTestCase) != TestContext.CurrentTestCase.GetType()) throw new Exception("The current test is not a pluggable components tes");
-         return ((PluggableComponentsTestCase)TestContext.CurrentTestCase!).Components;
-      };
+      TestEnv.XunitDiscoverer = () => TestContext.CurrentTestCase.ExtractPluggableComponents();
    }
 }

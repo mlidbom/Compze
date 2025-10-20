@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 

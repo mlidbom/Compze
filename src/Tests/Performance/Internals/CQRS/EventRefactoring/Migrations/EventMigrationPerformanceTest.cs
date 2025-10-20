@@ -11,12 +11,12 @@ using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
