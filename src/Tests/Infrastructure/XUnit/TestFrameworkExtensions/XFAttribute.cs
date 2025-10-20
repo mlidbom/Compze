@@ -1,7 +1,6 @@
-using Compze.Utilities.SystemCE.ReflectionCE;
+using System;
 using Xunit;
 using Xunit.Sdk;
-using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 #pragma warning disable CA1813 //avoid unsealed attributes
@@ -20,18 +19,18 @@ public class XFactAttribute : FactAttribute
 
    static XFactAttribute()
    {
-      Invariant.Is(XFactDiscovererFullTypeName == typeof(XFactDiscoverer).GetFullNameCompilable(),
-                   () =>
-                      $"""
-                       Expected: {typeof(XFactDiscoverer).GetFullNameCompilable()}
-                       Found   : {XFactDiscovererFullTypeName}
-                       """);
-      Invariant.Is(XFactDiscovererAssembly == typeof(XFactDiscoverer).Assembly.GetName().Name,
-                   () =>
-                      $"""
-                       Expected: {typeof(XFactDiscoverer).Assembly.GetName().Name}
-                       Found   : {XFactDiscovererAssembly}
-                       """);
+      if(XFactDiscovererFullTypeName != typeof(XFactDiscoverer).FullName)
+         throw new Exception($"""
+                              {nameof(XFactDiscovererFullTypeName)} does not indicate the correct type
+                              Should be: {typeof(XFactDiscoverer).FullName}
+                              Was   : {XFactDiscovererFullTypeName}
+                              """);
+      if(XFactDiscovererAssembly != typeof(XFactDiscoverer).Assembly.GetName().Name)
+         throw new Exception($"""
+                              {nameof(XFactDiscovererAssembly)} does not indicate the correct assembly
+                              Should be: {typeof(XFactDiscoverer).Assembly.GetName().Name}
+                              Was   : {XFactDiscovererAssembly}
+                              """);
    }
 }
 
