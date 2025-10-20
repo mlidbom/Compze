@@ -21,6 +21,9 @@
 	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.v3.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="Compze.Utilities.Testing.XUnit.v3.Tests.uniqueid">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="TestUsingPluggableComponentCombinations">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
