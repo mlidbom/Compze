@@ -35,7 +35,7 @@ public class PluggableComponentsTheoryAttribute : FactAttribute
                               """);
    }
 
-   public SqlLayer[] Exclude { get; init; } = [];
+   public string[] Exclude { get; init; } = [];
 }
 
 /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Tessaging.Hosting.Testing;
@@ -26,8 +27,8 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       if(declaringType != currentType) //We only run these tests for the classes that declares them. Just like XFact
          return [];
 
-      var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<SqlLayer[]>(nameof(PCTAttribute.Exclude));
-      var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
+      var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<string[]>(nameof(PCTAttribute.Exclude));
+      var excludedSqlLayers = excludedSqlLayersAttribute?.Select(Enum.Parse<SqlLayer>).ToList() ?? [];
 
       var combinations = PluggableComponentsReader.Combinations
                                                   .Where(combo => !excludedSqlLayers.Contains(combo.SqlLayer))
