@@ -3,16 +3,16 @@ using Xunit;
 
 namespace Compze.Utilities.Testing.XUnit.v3.Tests.ComponentPermutations;
 
-public class ComponentPermutationsTest(ITestOutputHelper testOutputHelper)
+public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [PCT] public void RunsWithEachComponentCombination() =>
+   [PCT] public void ThisIsTheCase() =>
       _testOutputHelper.WriteLine(((PluggableComponentsTestCase)TestContext.CurrentTestCase!).TestMethodArguments.ToString()!);
 
-   public class Inner(ITestOutputHelper testOutputHelper) : ComponentPermutationsTest(testOutputHelper)
+   public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [PCT] public void AlsoRunsWithEachComponentCombination() =>
+      [PCT] public void ThisIsAlsoTheCase() =>
          _testOutputHelper.WriteLine(((PluggableComponentsTestCase)TestContext.CurrentTestCase!).TestMethodArguments.ToString()!);
    }
 }
