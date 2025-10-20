@@ -1,5 +1,6 @@
+using System.Runtime.CompilerServices;
 using Xunit;
-using Xunit.Sdk;
+using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.v3.BDD;
 #pragma warning disable CA1813 //avoid unsealed attributes
@@ -9,25 +10,28 @@ namespace Compze.Utilities.Testing.XUnit.v3.BDD;
 /// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
 /// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
-[XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
-public class XFactAttribute : FactAttribute
+[XunitTestCaseDiscoverer(typeof(XFactDiscoverer))]
+public class XFactAttribute(
+   [CallerFilePath] string? sourceFilePath = null,
+   [CallerLineNumber] int sourceLineNumber = -1) :
+      FactAttribute(sourceFilePath, sourceLineNumber)
 {
-   const string XFactDiscovererFullTypeName = $"Compze.Utilities.Testing.XUnit.v3.BDD.{nameof(XFactDiscoverer)}";
-   const string XFactDiscovererAssembly = "Compze.Utilities.Testing.XUnit.v3";
-
    static XFactAttribute()
    {
-      if(XFactDiscovererFullTypeName != typeof(XFactDiscoverer).FullName)
+      var expectedTypeName = typeof(XFactDiscoverer).FullName;
+      var expectedAssembly = typeof(XFactDiscoverer).Assembly.GetName().Name;
+      
+      if(expectedTypeName != "Compze.Utilities.Testing.XUnit.v3.BDD.XFactDiscoverer")
          throw new Exception($"""
-                              {nameof(XFactDiscovererFullTypeName)} does not indicate the correct type
-                              Should be: {typeof(XFactDiscoverer).FullName}
-                              Was   : {XFactDiscovererFullTypeName}
+                              XFactDiscoverer type name validation failed
+                              Expected: Compze.Utilities.Testing.XUnit.v3.BDD.XFactDiscoverer
+                              Was: {expectedTypeName}
                               """);
-      if(XFactDiscovererAssembly != typeof(XFactDiscoverer).Assembly.GetName().Name)
+      if(expectedAssembly != "Compze.Utilities.Testing.XUnit.v3")
          throw new Exception($"""
-                              {nameof(XFactDiscovererAssembly)} does not indicate the correct assembly
-                              Should be: {typeof(XFactDiscoverer).Assembly.GetName().Name}
-                              Was   : {XFactDiscovererAssembly}
+                              XFactDiscoverer assembly name validation failed
+                              Expected: Compze.Utilities.Testing.XUnit.v3
+                              Was: {expectedAssembly}
                               """);
    }
 }
@@ -38,6 +42,8 @@ public class XFactAttribute : FactAttribute
 /// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
 /// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
-public sealed class XFAttribute : XFactAttribute {}
+public sealed class XFAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1) 
+   : XFactAttribute(sourceFilePath, sourceLineNumber) {}
 
 #pragma warning restore CA1813 //avoid unsealed attributes
+

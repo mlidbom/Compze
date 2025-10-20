@@ -1,5 +1,6 @@
+using System.Runtime.CompilerServices;
 using Xunit;
-using Xunit.Sdk;
+using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 #pragma warning disable CA1813 //avoid unsealed attributes
@@ -11,25 +12,28 @@ namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// Use TestEnv to access the component and the information.
 /// </summary>
-[XunitTestCaseDiscoverer(PluggableComponentsTheoryAttributeFullTypeName, PluggableComponentsDiscovererAssembly)]
-public class PluggableComponentsTheoryAttribute : FactAttribute
+[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
+public class PluggableComponentsTheoryAttribute(
+   [CallerFilePath] string? sourceFilePath = null,
+   [CallerLineNumber] int sourceLineNumber = -1) :
+      FactAttribute(sourceFilePath, sourceLineNumber)
 {
-   const string PluggableComponentsTheoryAttributeFullTypeName = $"Compze.Utilities.Testing.XUnit.v3.ComponentPermutations.{nameof(PluggableComponentsTheoryDiscoverer)}";
-   const string PluggableComponentsDiscovererAssembly = "Compze.Utilities.Testing.XUnit.v3";
-
    static PluggableComponentsTheoryAttribute()
    {
-      if(PluggableComponentsTheoryAttributeFullTypeName != typeof(PluggableComponentsTheoryDiscoverer).FullName)
+      var expectedTypeName = typeof(PluggableComponentsTheoryDiscoverer).FullName;
+      var expectedAssembly = typeof(PluggableComponentsTheoryDiscoverer).Assembly.GetName().Name;
+      
+      if(expectedTypeName != "Compze.Utilities.Testing.XUnit.v3.ComponentPermutations.PluggableComponentsTheoryDiscoverer")
          throw new Exception($"""
-                              {PluggableComponentsTheoryAttributeFullTypeName} is not the actual type name.
-                              Should be: {typeof(PluggableComponentsTheoryDiscoverer).FullName}
-                              Was   : {PluggableComponentsTheoryAttributeFullTypeName}
+                              PluggableComponentsTheoryDiscoverer type name validation failed
+                              Expected: Compze.Utilities.Testing.XUnit.v3.ComponentPermutations.PluggableComponentsTheoryDiscoverer
+                              Was: {expectedTypeName}
                               """);
-      if(PluggableComponentsDiscovererAssembly != typeof(PCTAttribute).Assembly.GetName().Name)
+      if(expectedAssembly != "Compze.Utilities.Testing.XUnit.v3")
          throw new Exception($"""
-                              {PluggableComponentsDiscovererAssembly} is not the actual assembly name.
-                              Should be: {typeof(PCTAttribute).Assembly.GetName().Name}
-                              Was   : {PluggableComponentsDiscovererAssembly}
+                              PluggableComponentsTheoryDiscoverer assembly name validation failed
+                              Expected: Compze.Utilities.Testing.XUnit.v3
+                              Was: {expectedAssembly}
                               """);
    }
 
@@ -43,5 +47,6 @@ public class PluggableComponentsTheoryAttribute : FactAttribute
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// Use TestEnv to access the component and the information.
 /// </summary>
-public sealed class PCTAttribute : PluggableComponentsTheoryAttribute {}
+public sealed class PCTAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1) 
+   : PluggableComponentsTheoryAttribute(sourceFilePath, sourceLineNumber) {}
 #pragma warning restore CA1813 //avoid unsealed attributes

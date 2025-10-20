@@ -1,5 +1,4 @@
-using Xunit.Abstractions;
-using Xunit.Sdk;
+using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.v3.BDD;
 
@@ -9,27 +8,16 @@ public class XFactTestCase : XunitTestCase
    public XFactTestCase() {}
 
    public XFactTestCase(
-      IMessageSink diagnosticMessageSink,
-      TestMethodDisplay defaultMethodDisplay,
-      TestMethodDisplayOptions defaultMethodDisplayOptions,
-      ITestMethod testMethod,
-      object[]? testMethodArguments = null)
-      : base(diagnosticMessageSink,
-             defaultMethodDisplay,
-             defaultMethodDisplayOptions,
-             testMethod,
-             testMethodArguments)
+      IXunitTestMethod testMethod,
+      string testCaseDisplayName,
+      string uniqueID,
+      bool @explicit,
+      Dictionary<string, HashSet<string>> traits)
+      : base(testMethod,
+             testCaseDisplayName,
+             uniqueID,
+             @explicit,
+             traits: traits)
    {
-   }
-
-   public override async Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink,
-                                                   IMessageBus messageBus,
-                                                   object[] constructorArguments,
-                                                   ExceptionAggregator aggregator,
-                                                   CancellationTokenSource cancellationTokenSource)
-   {
-      return await TestContext.RunTestInContextAsync(
-         this,
-         () => base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
    }
 }

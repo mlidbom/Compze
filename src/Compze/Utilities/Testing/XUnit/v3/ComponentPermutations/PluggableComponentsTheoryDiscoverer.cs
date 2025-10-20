@@ -1,5 +1,8 @@
-using Xunit.Abstractions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit.Internal;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 
@@ -7,34 +10,39 @@ namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
 {
 #pragma warning restore CA1812
-   readonly IMessageSink _diagnosticMessageSink;
 
-   public PluggableComponentsTheoryDiscoverer(IMessageSink diagnosticMessageSink) => _diagnosticMessageSink = diagnosticMessageSink;
-
-   public IEnumerable<IXunitTestCase> Discover(
+   public ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
-      ITestMethod testMethod,
-      IAttributeInfo factAttribute)
+      IXunitTestMethod testMethod,
+      IFactAttribute factAttribute)
    {
-      var declaringType = testMethod.Method.ToRuntimeMethod().DeclaringType;
-      var currentType = testMethod.TestClass.Class.ToRuntimeType();
+      var declaringType = testMethod.Method.DeclaringType;
+      var currentType = testMethod.TestClass.Class;
 
       if(declaringType != currentType) //We only run these tests for the classes that declares them. Just like XFact
-         return [];
+         return new(Array.Empty<IXunitTestCase>());
 
-      var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<string[]>(nameof(PCTAttribute.Exclude));
-      var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
+      // In v3, factAttribute is the actual attribute instance
+      var pctAttribute = factAttribute as PluggableComponentsTheoryAttribute;
+      var excludedSqlLayers = pctAttribute?.Exclude ?? [];
 
-      return PluggableComponentsReader
+      var testCases = PluggableComponentsReader
             .Permutations
             .Exclude(excludedSqlLayers)
             .Select(permutation =>
-                       new PluggableComponentsTestCase(
-                          diagnosticMessageSink: _diagnosticMessageSink,
-                          defaultMethodDisplay: discoveryOptions.MethodDisplayOrDefault(),
-                          defaultMethodDisplayOptions: discoveryOptions.MethodDisplayOptionsOrDefault(),
-                          testMethod: testMethod,
-                          permutationString: permutation.ToString()))
+            {
+               var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
+               
+               return new PluggableComponentsTestCase(
+                  testMethod: details.ResolvedTestMethod,
+                  testCaseDisplayName: details.TestCaseDisplayName,
+                  uniqueID: details.UniqueID,
+                  @explicit: details.Explicit,
+                  traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
+                  permutationString: permutation.ToString());
+            })
             .ToArray();
+
+      return new(testCases);
    }
 }
