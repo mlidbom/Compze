@@ -3,14 +3,14 @@ using Xunit.Abstractions;
 
 namespace Compze.Utilities.Testing.XUnit.v2.Tests.ComponentPermutations;
 
-public class ComponentPermutationsTest(ITestOutputHelper testOutputHelper)
+public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
    [PCT] public void RunsWithEachComponentCombination() =>
       _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString());
 
-   public class Inner(ITestOutputHelper testOutputHelper) : ComponentPermutationsTest(testOutputHelper)
+   public class Inner(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
       [PCT] public void AlsoRunsWithEachComponentCombination() =>
          _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString());
