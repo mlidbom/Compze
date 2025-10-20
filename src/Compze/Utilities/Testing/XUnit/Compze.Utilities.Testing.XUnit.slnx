@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Compze/" />
+  <Folder Name="/Compze/Utilities/">
+    <Project Path="../../Contracts/Compze.Utilities.Contracts.csproj" />
+    <Project Path="../../Functional/Compze.Utilities.Functional.csproj" />
+    <Project Path="../../SystemExtensions/Compze.Utilities.SystemExtensions.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Utilities/Threading/">
+    <Project Path="../../Threading/Compze.Utilities.Threading.csproj" />
+    <Project Path="../../Threading/Testing/Compze.Utilities.Threading.Testing.csproj" />
+  </Folder>
+  <Project Path="Compze.Utilities.Testing.XUnit.csproj" />
+  <Project Path="Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
+</Solution>
