@@ -7,6 +7,6 @@ public class ComponentPermutationsTest(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [PCT] public void RunsWithEachComponentCombination() =>
+   [PCT] public void RunsWithEachComponentCombination(string _) =>
       _testOutputHelper.WriteLine(TestContext.CurrentTestCase!.TestMethodArguments[0].ToString());
 }
