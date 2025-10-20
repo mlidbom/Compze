@@ -13,17 +13,18 @@ public static class PluggableComponentsReader
 {
    const string TestUsingPluggableComponentCombinations = "TestUsingPluggableComponentCombinations";
 
-   static readonly LazyCE<IReadOnlyList<string>> CombinationsLazy = new(() =>
+   static readonly LazyCE<IReadOnlyList<string[]>> CombinationsLazy = new(() =>
    {
       var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestUsingPluggableComponentCombinations);
 
       if(!File.Exists(filePath)) throw new Exception($"{filePath} is missing");
 
       var components = File.ReadAllLines(filePath)
-                 .Select(it => it.Trim())
-                 .Where(line => !string.IsNullOrEmpty(line))
-                 .Where(line => !line.StartsWith('#'))
-                 .ToList();
+                           .Select(it => it.Trim())
+                           .Where(line => !string.IsNullOrEmpty(line))
+                           .Where(line => !line.StartsWith('#'))
+                           .Select(it => it.Split(":"))
+                           .ToList();
       if(components.Count == 0)
          throw new Exception("Found no components");
 
@@ -34,6 +35,5 @@ public static class PluggableComponentsReader
       return components;
    });
 
-   public static IReadOnlyList<string> Combinations => CombinationsLazy.Value;
-
+   public static IReadOnlyList<string[]> Combinations => CombinationsLazy.Value;
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Tessaging.Hosting.Testing;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -40,7 +39,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                                    defaultMethodDisplay: discoveryOptions.MethodDisplayOrDefault(),
                                    defaultMethodDisplayOptions: discoveryOptions.MethodDisplayOptionsOrDefault(),
                                    testMethod: testMethod,
-                                   combination: combination))
+                                   combination: string.Join(":", combination)))
                      .ToArray();
 
       return testCases;
