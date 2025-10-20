@@ -6,7 +6,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTestCase
 {
    // ReSharper disable once UnusedMember.Global
-   [Obsolete("Called by deserializer", error:true)]
+   [Obsolete("Called by deserializer", error: true)]
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
@@ -62,7 +62,7 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
          timeout: Timeout,
          testMethodArguments: []);
 
-      return await ComponentContext.RunTestInContextAsync(
+      return await ComponentsPermutation.RunInContextAsync(
                 //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
                 //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.
                 //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of

@@ -33,7 +33,7 @@ class PluggableComponentsTestCase : XunitTestCase
    {
       return await TestContext.RunTestInContextAsync(
                 this,
-                async () => await ComponentContext.RunTestInContextAsync(
+                async () => await ComponentsPermutation.RunInContextAsync(
                                //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
                                //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.
                                //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of

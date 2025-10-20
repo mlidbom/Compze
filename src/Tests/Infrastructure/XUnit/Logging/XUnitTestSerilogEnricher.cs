@@ -3,6 +3,7 @@ using Serilog.Events;
 using System.Collections.Generic;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.XUnit;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 namespace Compze.Tests.Infrastructure.XUnit.Logging;
 
@@ -14,7 +15,7 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
       if(TestContext.CurrentTestCase == null) return;
       var testCase = TestContext.CurrentTestCase;
 
-      var pluggableComponents = ComponentContext.CurrentPermutation?.TryExtractPluggableComponents();
+      var pluggableComponents = ComponentsPermutation.Current?.TryExtractPluggableComponents();
 
       logEvent.AddOrUpdateProperty(
          propertyFactory.CreateProperty("XUnit",
