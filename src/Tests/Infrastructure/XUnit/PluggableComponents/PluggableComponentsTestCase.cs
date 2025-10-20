@@ -16,12 +16,12 @@ class PluggableComponentsTestCase : XunitTestCase
       TestMethodDisplay defaultMethodDisplay,
       TestMethodDisplayOptions defaultMethodDisplayOptions,
       ITestMethod testMethod,
-      Tessaging.Hosting.Testing.PluggableComponents combination)
+      string combination)
       : base(diagnosticMessageSink,
              defaultMethodDisplay,
              defaultMethodDisplayOptions,
              testMethod,
-             [combination.ToString()]) // Pass as string or test discovery in dotnet test breaks
+             [combination]) // Pass as string or test discovery in dotnet test breaks
    {
    }
 

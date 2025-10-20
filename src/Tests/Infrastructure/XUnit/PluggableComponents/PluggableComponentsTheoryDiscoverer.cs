@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Wiring.Testing.Sql;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -28,10 +27,11 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
          return [];
 
       var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<string[]>(nameof(PCTAttribute.Exclude));
-      var excludedSqlLayers = excludedSqlLayersAttribute?.Select(Enum.Parse<SqlLayer>).ToList() ?? [];
+      var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
 
       var combinations = PluggableComponentsReader.Combinations
-                                                  .Where(combo => !excludedSqlLayers.Contains(combo.SqlLayer))
+                                                  .Select(it => it.ToString())
+                                                  .Where(it => !excludedSqlLayers.Any(it.Contains))
                                                   .ToList();
 
       var testCases = combinations
