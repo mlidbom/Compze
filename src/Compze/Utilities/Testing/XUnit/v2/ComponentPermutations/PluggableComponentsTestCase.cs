@@ -5,7 +5,8 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 class PluggableComponentsTestCase : XunitTestCase
 {
-   [Obsolete("Called by deserializer")]
+   // ReSharper disable once UnusedMember.Global
+   [Obsolete("Called by deserializer", error:true)]
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
@@ -19,8 +20,10 @@ class PluggableComponentsTestCase : XunitTestCase
              defaultMethodDisplayOptions,
              testMethod,
              [permutationString]) // Pass as string or test discovery in dotnet test breaks
-   {
-   }
+   {}
+
+   protected override string GetDisplayName(IAttributeInfo factAttribute, string displayName) =>
+      base.GetDisplayName(factAttribute, displayName).Replace("???:", ""); //the ???: is Xunit being confused because we have no arguments.
 
    public override async Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink,
                                                    IMessageBus messageBus,

@@ -5,7 +5,8 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTestCase
 {
-   [Obsolete("Called by deserializer")]
+   // ReSharper disable once UnusedMember.Global
+   [Obsolete("Called by deserializer", error:true)]
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
@@ -23,10 +24,10 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
       int? sourceLineNumber,
       int? timeout,
       ComponentsPermutation permutation)
-      : base(testMethod,
-             testCaseDisplayName,
-             uniqueID,
-             @explicit,
+      : base(testMethod: testMethod,
+             testCaseDisplayName: testCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments.
+             uniqueID: uniqueID,
+             @explicit: @explicit,
              skipExceptions: skipExceptions,
              skipReason: skipReason,
              skipType: skipType,
