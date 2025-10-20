@@ -30,7 +30,6 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
 
       var combinations = PluggableComponentsReader.Combinations
-                                                  .Select(it => it.ToString())
                                                   .Where(it => !excludedSqlLayers.Any(it.Contains))
                                                   .ToList();
 
