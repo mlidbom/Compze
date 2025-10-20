@@ -23,7 +23,7 @@ class PluggableComponentsTestCase : XunitTestCase
    {}
 
    protected override string GetDisplayName(IAttributeInfo factAttribute, string displayName) =>
-      base.GetDisplayName(factAttribute, displayName).Replace("???:", ""); //the ???: is Xunit being confused because we have no arguments.
+      base.GetDisplayName(factAttribute, displayName).Replace("???:", ""); //the ???: is Xunit being confused because we have no arguments declare on the test methods
 
    public override async Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink,
                                                    IMessageBus messageBus,
@@ -39,7 +39,7 @@ class PluggableComponentsTestCase : XunitTestCase
                                //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
                                //"Activate Endless Churn Mode" in NCrunch
                                ComponentsPermutation.Parse((string)TestMethodArguments![0]!),
-                               //Manually override this rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
+                               //Pass an empty arguments array since our test methods do not take arguments.
                                async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync()));
    }
 }

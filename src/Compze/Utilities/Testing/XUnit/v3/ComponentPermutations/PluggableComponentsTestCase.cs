@@ -25,7 +25,7 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
       int? timeout,
       ComponentsPermutation permutation)
       : base(testMethod: testMethod,
-             testCaseDisplayName: testCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments.
+             testCaseDisplayName: testCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments declare on the test methods.
              uniqueID: uniqueID,
              @explicit: @explicit,
              skipExceptions: skipExceptions,
@@ -47,8 +47,7 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
       ExceptionAggregator aggregator,
       CancellationTokenSource cancellationTokenSource)
    {
-      //Manually override testMethodArguments to [] rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
-      // Create a new test case with empty test method arguments
+      // Create a new test case with empty test method arguments to execute our test methods that do not take arguments
       var testCaseWithoutArgs = new XunitTestCase(
          TestMethod,
          TestCaseDisplayName,
