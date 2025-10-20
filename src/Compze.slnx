@@ -96,9 +96,7 @@
   <Folder Name="/Compze/Utilities/SystemExtensions/">
     <Project Path="Compze/Utilities/SystemExtensions/Compze.Utilities.SystemExtensions.csproj" />
   </Folder>
-  <Folder Name="/Compze/Utilities/Testing/">
-    <Project Path="Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
-  </Folder>
+  <Folder Name="/Compze/Utilities/Testing/" />
   <Folder Name="/Compze/Utilities/Testing/DbPool/">
     <Project Path="Compze/Utilities/Testing/DbPool/Compze.Utilities.Testing.DbPool.csproj" />
     <Project Path="Compze/Utilities/Testing/DbPool/MicrosoftSql/Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
@@ -159,6 +157,7 @@
   <Project Path="../DevScripts/Scripts.csproj" />
   <Project Path="msbuild/Build.csproj" />
   <Folder Name="/Compze/Utilities/Testing/XUnit/">
+    <Project Path="Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
     <Project Path="Compze/Utilities/Testing/XUnit/Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
   </Folder>
 </Solution>

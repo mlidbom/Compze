@@ -9,4 +9,9 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="BDD\" />
+	</ItemGroup>
+
 </Project>
