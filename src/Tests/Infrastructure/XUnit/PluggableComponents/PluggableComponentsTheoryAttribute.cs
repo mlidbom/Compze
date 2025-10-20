@@ -1,8 +1,7 @@
-using Compze.Utilities.SystemCE.ReflectionCE;
+using System;
 using Compze.Wiring.Testing.Sql;
 using Xunit;
 using Xunit.Sdk;
-using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 #pragma warning disable CA1813 //avoid unsealed attributes
@@ -22,18 +21,18 @@ public class PluggableComponentsTheoryAttribute : FactAttribute
 
    static PluggableComponentsTheoryAttribute()
    {
-      Invariant.Is(PluggableComponentsTheoryAttributeFullTypeName == typeof(PluggableComponentsTheoryDiscoverer).GetFullNameCompilable(),
-                   () =>
-                      $"""
-                       Expected: {typeof(PluggableComponentsTheoryDiscoverer).GetFullNameCompilable()}
-                       Found   : {PluggableComponentsTheoryAttributeFullTypeName}
-                       """);
-      Invariant.Is(PluggableComponentsDiscovererAssembly == typeof(PCTAttribute).Assembly.GetName().Name,
-                   () =>
-                      $"""
-                       Expected: {typeof(PCTAttribute).Assembly.GetName().Name}
-                       Found   : {PluggableComponentsDiscovererAssembly}
-                       """);
+      if(PluggableComponentsTheoryAttributeFullTypeName != typeof(PluggableComponentsTheoryDiscoverer).FullName)
+         throw new Exception($"""
+                              {PluggableComponentsTheoryAttributeFullTypeName} is not the actual type name.
+                              Should be: {typeof(PluggableComponentsTheoryDiscoverer).FullName}
+                              Was   : {PluggableComponentsTheoryAttributeFullTypeName}
+                              """);
+      if(PluggableComponentsDiscovererAssembly != typeof(PCTAttribute).Assembly.GetName().Name)
+         throw new Exception($"""
+                              {PluggableComponentsDiscovererAssembly} is not the actual assembly name.
+                              Should be: {typeof(PCTAttribute).Assembly.GetName().Name}
+                              Was   : {PluggableComponentsDiscovererAssembly}
+                              """);
    }
 
    public SqlLayer[] ExcludeSqlLayers { get; init; } = [];
