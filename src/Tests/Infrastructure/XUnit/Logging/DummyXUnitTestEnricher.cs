@@ -1,7 +1,6 @@
 using Serilog.Core;
 using Serilog.Events;
 using System.Collections.Generic;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Infrastructure.XUnit.Logging;
@@ -14,12 +13,14 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
       if(TestContext.CurrentTestCase == null) return;
       var testCase = TestContext.CurrentTestCase;
 
+      var pluggableComponents = testCase.TryExtractPluggableComponents();
+
       logEvent.AddOrUpdateProperty(
          propertyFactory.CreateProperty("XUnit",
                                         new Dictionary<string, object>
                                         {
-                                           ["Container"] = (testCase as PluggableComponentsTestCase)?.Components.DiContainer.ToString() ?? "",
-                                           ["SqlLayer"] = (testCase as PluggableComponentsTestCase)?.Components.SqlLayer.ToString() ?? "",
+                                           ["Container"] = pluggableComponents?.DiContainer.ToString() ?? "",
+                                           ["SqlLayer"] = pluggableComponents?.SqlLayer.ToString() ?? "",
                                            ["TestClass"] = testCase.TestMethod.TestClass.Class.ToRuntimeType().GetFullNameCompilable(),
                                            ["TestName"] = testCase.DisplayName,
                                         },
