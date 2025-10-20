@@ -7,12 +7,12 @@ public class ComponentPermutationsTest(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [PCT] public void RunsWithEachComponentCombination(string _) =>
+   [PCT] public void RunsWithEachComponentCombination() =>
       _testOutputHelper.WriteLine(TestContext.CurrentTestCase!.TestMethodArguments[0].ToString());
 
    public class Inner(ITestOutputHelper testOutputHelper) : ComponentPermutationsTest(testOutputHelper)
    {
-      [PCT] public void AlsoRunsWithEachComponentCombination(string _) =>
+      [PCT] public void AlsoRunsWithEachComponentCombination() =>
          _testOutputHelper.WriteLine(TestContext.CurrentTestCase!.TestMethodArguments[0].ToString());
    }
 }
