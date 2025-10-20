@@ -408,7 +408,7 @@ public class EventStoreUpdaterTest : UniversalTestBase
    }
 
    //Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite
-   [PCT(ExcludeSqlLayers = [SqlLayer.Sqlite, SqlLayer.SqliteMemory])]
+   [PCT(Exclude = [SqlLayer.Sqlite, SqlLayer.SqliteMemory])]
    public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel()
    {
       var user = new User();
@@ -594,7 +594,7 @@ public class EventStoreUpdaterTest : UniversalTestBase
    }
 
     //We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...
-    [PCT(ExcludeSqlLayers = [SqlLayer.Sqlite, SqlLayer.SqliteMemory])]
+    [PCT(Exclude = [SqlLayer.Sqlite, SqlLayer.SqliteMemory])]
    public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed()
    {
 
