@@ -5,7 +5,6 @@ using Xunit.Sdk;
 namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
-//XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 /// <summary>
 /// eXclusive Fact attribute.
 /// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.

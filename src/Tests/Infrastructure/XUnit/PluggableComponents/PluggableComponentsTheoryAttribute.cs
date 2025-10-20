@@ -8,7 +8,6 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
 // ReSharper disable GrammarMistakeInComment
-//XUnit.v3 version ready to go once v3 is stable in NCrunch is at git commit: deb6be8d66ec03db2a55f84ff28feab220ae50b1
 /// <summary>
 /// Pluggable Components Theory Attribute
 /// Use this attribute instead of [XFact] for tests that should run with all pluggable component combinations.
