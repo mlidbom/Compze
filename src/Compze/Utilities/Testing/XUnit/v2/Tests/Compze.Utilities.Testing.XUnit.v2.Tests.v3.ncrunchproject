@@ -1,0 +1,24 @@
+﻿<ProjectConfiguration>
+  <Settings>
+    <IgnoredTests>
+      <FixtureTestSelector>
+        <FixtureName>Compze.Utilities.Testing.XUnit.v2.Tests.BDD.AfterSomethingHappened</FixtureName>
+      </FixtureTestSelector>
+      <NamedTestSelector>
+        <TestName>Compze.Utilities.Testing.XUnit.v2.Tests.BDD.AfterSomethingHappened.ThisIsTrue</TestName>
+      </NamedTestSelector>
+      <FixtureTestSelector>
+        <FixtureName>Compze.Utilities.Testing.XUnit.v2.Tests.BDD.AfterSomethingHappened+AndThenThisHappened</FixtureName>
+      </FixtureTestSelector>
+      <FixtureTestSelector>
+        <FixtureName>Compze.Utilities.Testing.XUnit.v2.Tests.BDD.AfterSomethingHappened+AndThenThisHappened+AndThenSomethingElseHappened</FixtureName>
+      </FixtureTestSelector>
+      <FixtureTestSelector>
+        <FixtureName>Compze.Utilities.Testing.XUnit.v2.Tests.ComponentPermutations.WhenSomethingHappens+Inner</FixtureName>
+      </FixtureTestSelector>
+      <FixtureTestSelector>
+        <FixtureName>Compze.Utilities.Testing.XUnit.v2.Tests.ComponentPermutations.WhenSomethingHappens</FixtureName>
+      </FixtureTestSelector>
+    </IgnoredTests>
+  </Settings>
+</ProjectConfiguration>

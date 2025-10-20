@@ -1,11 +1,8 @@
-using System.Threading;
 using Xunit;
 
+// ReSharper disable ClassNeverInstantiated.Global
 
-// ReSharper disable once CheckNamespace
-namespace AccountManagement;
-
-#pragma warning disable CA1308 // Normalize strings to uppercase
+namespace Compze.Utilities.Testing.XUnit.NCrunchErrorReproductions;
 
 static class TestData
 {
@@ -24,5 +21,14 @@ static class TestData
             { "test@.test.com", "Contains \"@.\"" },
             { "test.@test.com", "Contains \".@\"" }
          };
+   }
+}
+
+public class TheoriesCrashInNcrunchChurnMode
+{
+   public class An_InvalidEmailException_containing_the_email_is_thrown_if_email
+   {
+      [Theory, MemberData(nameof(TestData.Emails.InvalidEmailsTestData), MemberType = typeof(TestData.Emails))]
+      public void _(string? invalidEmail, string _) {}
    }
 }
