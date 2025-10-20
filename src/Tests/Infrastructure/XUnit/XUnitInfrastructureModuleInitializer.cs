@@ -14,6 +14,6 @@ public static class XUnitInfrastructureModuleInitializer
    {
       TestFixtureHelper.SetupSerilog(new XUnitTestSerilogEnricher());
 
-      TestEnv.XunitDiscoverer = () => TestContext.CurrentTestCase.ExtractPluggableComponents();
+      TestEnv.XunitDiscoverer = () => ComponentContext.CurrentPermutation.ToPluggableComponents();
    }
 }

@@ -26,10 +26,6 @@ public class XFactTestCase : XunitTestCase
                                                    IMessageBus messageBus,
                                                    object[] constructorArguments,
                                                    ExceptionAggregator aggregator,
-                                                   CancellationTokenSource cancellationTokenSource)
-   {
-      return await TestContext.RunTestInContextAsync(
-         this,
-         async () => await base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
-   }
+                                                   CancellationTokenSource cancellationTokenSource) =>
+      await base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
 }

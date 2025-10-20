@@ -6,7 +6,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 class PluggableComponentsTestCase : XunitTestCase
 {
    // ReSharper disable once UnusedMember.Global
-   [Obsolete("Called by deserializer", error:true)]
+   [Obsolete("Called by deserializer", error: true)]
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
@@ -33,7 +33,13 @@ class PluggableComponentsTestCase : XunitTestCase
    {
       return await TestContext.RunTestInContextAsync(
                 this,
-                //Manually override this rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
-                async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync());
+                async () => await ComponentContext.RunTestInContextAsync(
+                               //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
+                               //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.
+                               //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
+                               //"Activate Endless Churn Mode" in NCrunch
+                               ComponentsPermutation.Parse((string)TestMethodArguments![0]!),
+                               //Manually override this rather than passing [] to the base class as the testMethodArguments constructor argument, because otherwise discovery breaks in NCrunch and Resharper test runners.
+                               async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync()));
    }
 }

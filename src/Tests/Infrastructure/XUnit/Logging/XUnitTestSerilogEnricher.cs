@@ -14,7 +14,7 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
       if(TestContext.CurrentTestCase == null) return;
       var testCase = TestContext.CurrentTestCase;
 
-      var pluggableComponents = testCase.TryExtractPluggableComponents();
+      var pluggableComponents = ComponentContext.CurrentPermutation?.TryExtractPluggableComponents();
 
       logEvent.AddOrUpdateProperty(
          propertyFactory.CreateProperty("XUnit",
