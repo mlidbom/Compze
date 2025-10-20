@@ -12,10 +12,6 @@ public class TheoriesOccasionallyCrashInNcrunchEvenWhenIsolated : UniversalTestB
       [Theory, MemberData(nameof(TestData.Emails.InvalidEmailsTestData), MemberType = typeof(TestData.Emails))]
       public void _(string? invalidEmail, string _)
       {
-
-         if(!string.IsNullOrEmpty(invalidEmail))
-         {
-         }
       }
    }
 }
