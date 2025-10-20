@@ -39,7 +39,15 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                             testCaseDisplayName: testCaseDetails.TestCaseDisplayName,
                             uniqueID: testCaseDetails.UniqueID,
                             @explicit: testCaseDetails.Explicit,
+                            skipExceptions: testCaseDetails.SkipExceptions,
+                            skipReason: testCaseDetails.SkipReason,
+                            skipType: testCaseDetails.SkipType,
+                            skipUnless: testCaseDetails.SkipUnless,
+                            skipWhen: testCaseDetails.SkipWhen,
                             traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
+                            sourceFilePath: testCaseDetails.SourceFilePath,
+                            sourceLineNumber: testCaseDetails.SourceLineNumber,
+                            timeout: testCaseDetails.Timeout,
                             permutation: permutation);
                       })
                      .ToArray();
