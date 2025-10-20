@@ -20,25 +20,6 @@ public class PluggableComponentsTheoryAttribute(
    [CallerLineNumber] int sourceLineNumber = -1) :
    FactAttribute(sourceFilePath, sourceLineNumber)
 {
-   static PluggableComponentsTheoryAttribute()
-   {
-      var expectedTypeName = typeof(PluggableComponentsTheoryDiscoverer).FullName;
-      var expectedAssembly = typeof(PluggableComponentsTheoryDiscoverer).Assembly.GetName().Name;
-
-      if(expectedTypeName != "Compze.Utilities.Testing.XUnit.v3.ComponentPermutations.PluggableComponentsTheoryDiscoverer")
-         throw new Exception($"""
-                              PluggableComponentsTheoryDiscoverer type name validation failed
-                              Expected: Compze.Utilities.Testing.XUnit.v3.ComponentPermutations.PluggableComponentsTheoryDiscoverer
-                              Was: {expectedTypeName}
-                              """);
-      if(expectedAssembly != "Compze.Utilities.Testing.XUnit.v3")
-         throw new Exception($"""
-                              PluggableComponentsTheoryDiscoverer assembly name validation failed
-                              Expected: Compze.Utilities.Testing.XUnit.v3
-                              Was: {expectedAssembly}
-                              """);
-   }
-
    public string[] Exclude { get; init; } = [];
 }
 

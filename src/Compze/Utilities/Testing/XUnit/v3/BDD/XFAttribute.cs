@@ -17,26 +17,7 @@ public class XFactAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1) :
    FactAttribute(sourceFilePath, sourceLineNumber)
-{
-   static XFactAttribute()
-   {
-      var expectedTypeName = typeof(XFactDiscoverer).FullName;
-      var expectedAssembly = typeof(XFactDiscoverer).Assembly.GetName().Name;
-
-      if(expectedTypeName != "Compze.Utilities.Testing.XUnit.v3.BDD.XFactDiscoverer")
-         throw new Exception($"""
-                              XFactDiscoverer type name validation failed
-                              Expected: Compze.Utilities.Testing.XUnit.v3.BDD.XFactDiscoverer
-                              Was: {expectedTypeName}
-                              """);
-      if(expectedAssembly != "Compze.Utilities.Testing.XUnit.v3")
-         throw new Exception($"""
-                              XFactDiscoverer assembly name validation failed
-                              Expected: Compze.Utilities.Testing.XUnit.v3
-                              Was: {expectedAssembly}
-                              """);
-   }
-}
+{}
 
 /// <summary>
 /// Short alias for <see cref="XFactAttribute"/>
