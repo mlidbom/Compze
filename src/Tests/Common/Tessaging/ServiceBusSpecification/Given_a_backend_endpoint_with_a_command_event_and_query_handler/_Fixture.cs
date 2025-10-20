@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tests.Infrastructure;
 using Xunit;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -25,7 +26,7 @@ using Xunit;
 
 namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
 
-public abstract class EndpointHostTestBase : IAsyncLifetime
+public abstract class EndpointHostTestBase : UniversalTestBase
 {
    static readonly TimeSpan _timeout = 10.Seconds();
    public ITestingEndpointHost Host = null!;
@@ -65,9 +66,9 @@ public abstract class EndpointHostTestBase : IAsyncLifetime
       ];
    }
 
-   public virtual async Task InitializeAsync() => await StartHostAsync();
+   protected override async Task InitializeAsyncInternal() => await StartHostAsync();
 
-   public virtual async Task DisposeAsync()
+   protected override async Task DisposeAsyncInternal()
    {
       OpenGates();
       await Host.DisposeAsync();
