@@ -1,15 +1,19 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 
-class ComponentsPermutationsList
+class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
 {
-   IReadOnlyList<ComponentsPermutation> Permutations;
+   internal readonly IReadOnlyList<ComponentsPermutation> Permutations;
    public ComponentsPermutationsList(IReadOnlyList<ComponentsPermutation> permutations) => Permutations = permutations;
 
-   internal static ComponentsPermutationsList ReadFileContent(string[] rows)
+   internal ComponentsPermutationsList Exclude(string[] excluded) =>
+      new(Permutations.Where(it => !excluded.Any(it.Components.Contains)).ToList());
+
+   internal static ComponentsPermutationsList FromFileContent(string[] rows)
    {
       var components = rows
                       .Select(it => it.Trim())
@@ -26,6 +30,9 @@ class ComponentsPermutationsList
 
       return new ComponentsPermutationsList(components.Select(ComponentsPermutation.FromArray).ToList());
    }
+
+   public IEnumerator<ComponentsPermutation> GetEnumerator() => Permutations.GetEnumerator();
+   IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
 
 class ComponentsPermutation
@@ -34,7 +41,7 @@ class ComponentsPermutation
 
    public override string ToString() => string.Join(Separator, Components);
 
-   readonly IReadOnlyList<string> Components;
+   internal readonly IReadOnlyList<string> Components;
    ComponentsPermutation(IReadOnlyList<string> components) => Components = components;
 
    internal static ComponentsPermutation FromArray(string[] value) =>

@@ -27,9 +27,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<string[]>(nameof(PCTAttribute.Exclude));
       var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
 
-      var combinations = PluggableComponentsReader.Combinations
-                                                  .Where(it => !excludedSqlLayers.Any(it.Contains))
-                                                  .ToList();
+      var combinations = PluggableComponentsReader.Combinations.Exclude(excludedSqlLayers);
 
       var testCases = combinations
                      .Select(combination =>
