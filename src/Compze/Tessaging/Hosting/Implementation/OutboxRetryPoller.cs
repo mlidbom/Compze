@@ -37,9 +37,6 @@ class OutboxRetryPoller : IDisposable
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
-   readonly CancellationTokenSource _cancellationTokenSource = new();
-   Thread? _pollerThread;
-
    //Todo: implement a sane way of handling retries, something like an exponential backoff
    static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
    static readonly TimeSpan MessageAgeThatIsConsideredFailed = TimeSpan.FromSeconds(5);
@@ -59,6 +56,9 @@ class OutboxRetryPoller : IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
+
+   readonly CancellationTokenSource _cancellationTokenSource = new();
+   Thread? _pollerThread;
    bool _running = false;
    public void Start()
    {
@@ -75,6 +75,7 @@ class OutboxRetryPoller : IDisposable
          this.Log().Info("Stopping OutboxRetryPoller...");
          _cancellationTokenSource.Cancel();
          _pollerThread?.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
+         _cancellationTokenSource.Dispose();
       }
    }
 
