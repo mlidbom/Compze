@@ -14,13 +14,13 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
       string uniqueID,
       bool @explicit,
       Dictionary<string, HashSet<string>> traits,
-      string permutationString)
+      ComponentsPermutation permutation)
       : base(testMethod,
              testCaseDisplayName,
              uniqueID,
              @explicit,
              traits: traits,
-             testMethodArguments: [permutationString]) // Pass as string or test discovery in dotnet test breaks
+             testMethodArguments: [permutation.ToString()]) // Pass as string or test discovery in dotnet test breaks
    {}
 
    public async ValueTask<RunSummary> Run(
@@ -45,8 +45,12 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
          timeout: Timeout,
          testMethodArguments: []);
 
-      return await TestContext.RunTestInContextAsync(
-                this,
+      return await ComponentContext.RunTestInContextAsync(
+                //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
+                //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.
+                //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
+                //"Activate Endless Churn Mode" in NCrunch
+                ComponentsPermutation.Parse((string)TestMethodArguments![0]!),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                testCaseWithoutArgs,
                                messageBus,

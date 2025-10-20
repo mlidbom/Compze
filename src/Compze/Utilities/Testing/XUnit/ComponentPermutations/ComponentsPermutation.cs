@@ -1,6 +1,6 @@
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-class ComponentsPermutation
+public class ComponentsPermutation
 {
    internal const string Separator = ":";
 

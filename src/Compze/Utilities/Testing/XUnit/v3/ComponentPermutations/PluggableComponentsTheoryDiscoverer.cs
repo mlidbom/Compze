@@ -40,7 +40,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                             uniqueID: testCaseDetails.UniqueID,
                             @explicit: testCaseDetails.Explicit,
                             traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
-                            permutationString: permutation.ToString());
+                            permutation: permutation);
                       })
                      .ToArray();
 
