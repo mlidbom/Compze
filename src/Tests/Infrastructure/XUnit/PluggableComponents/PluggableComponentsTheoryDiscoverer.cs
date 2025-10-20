@@ -27,18 +27,16 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       var excludedSqlLayersAttribute = factAttribute.GetNamedArgument<string[]>(nameof(PCTAttribute.Exclude));
       var excludedSqlLayers = excludedSqlLayersAttribute ?? [];
 
-      var permutations = PluggableComponentsReader.Permutations.Exclude(excludedSqlLayers);
-
-      var testCases = permutations
-                     .Select(permutation =>
-                                new PluggableComponentsTestCase(
-                                   diagnosticMessageSink: _diagnosticMessageSink,
-                                   defaultMethodDisplay: discoveryOptions.MethodDisplayOrDefault(),
-                                   defaultMethodDisplayOptions: discoveryOptions.MethodDisplayOptionsOrDefault(),
-                                   testMethod: testMethod,
-                                   permutationString: permutation.ToString()))
-                     .ToArray();
-
-      return testCases;
+      return PluggableComponentsReader
+            .Permutations
+            .Exclude(excludedSqlLayers)
+            .Select(permutation =>
+                       new PluggableComponentsTestCase(
+                          diagnosticMessageSink: _diagnosticMessageSink,
+                          defaultMethodDisplay: discoveryOptions.MethodDisplayOrDefault(),
+                          defaultMethodDisplayOptions: discoveryOptions.MethodDisplayOptionsOrDefault(),
+                          testMethod: testMethod,
+                          permutationString: permutation.ToString()))
+            .ToArray();
    }
 }

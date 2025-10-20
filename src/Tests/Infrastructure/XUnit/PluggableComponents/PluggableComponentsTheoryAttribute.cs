@@ -1,5 +1,4 @@
 using System;
-using Compze.Wiring.Testing.Sql;
 using Xunit;
 using Xunit.Sdk;
 
