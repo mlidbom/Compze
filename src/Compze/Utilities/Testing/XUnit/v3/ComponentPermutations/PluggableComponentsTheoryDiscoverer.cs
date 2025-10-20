@@ -30,13 +30,16 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                      .Exclude(excludedSqlLayers)
                      .Select(permutation =>
                       {
-                         var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
+                         var testCaseDetails = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions,
+                                                                                          testMethod,
+                                                                                          factAttribute,
+                                                                                          testMethodArguments: [permutation.ToString()]);
 
                          return new PluggableComponentsTestCase(
-                            testMethod: details.ResolvedTestMethod,
-                            testCaseDisplayName: details.TestCaseDisplayName,
-                            uniqueID: details.UniqueID,
-                            @explicit: details.Explicit,
+                            testMethod: testCaseDetails.ResolvedTestMethod,
+                            testCaseDisplayName: testCaseDetails.TestCaseDisplayName,
+                            uniqueID: testCaseDetails.UniqueID,
+                            @explicit: testCaseDetails.Explicit,
                             traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
                             permutationString: permutation.ToString());
                       })
