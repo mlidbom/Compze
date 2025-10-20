@@ -23,7 +23,7 @@ public static class PluggableComponentsReader
                            .Select(it => it.Trim())
                            .Where(line => !string.IsNullOrEmpty(line))
                            .Where(line => !line.StartsWith('#'))
-                           .Select(it => it.Split(":"))
+                           .Select(it => it.Split(ComponentsPermutation.Separator))
                            .ToList();
       if(components.Count == 0)
          throw new Exception("Found no components");

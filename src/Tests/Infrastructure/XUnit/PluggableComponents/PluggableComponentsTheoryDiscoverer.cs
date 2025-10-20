@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit.Abstractions;
@@ -39,7 +38,7 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                                    defaultMethodDisplay: discoveryOptions.MethodDisplayOrDefault(),
                                    defaultMethodDisplayOptions: discoveryOptions.MethodDisplayOptionsOrDefault(),
                                    testMethod: testMethod,
-                                   combination: string.Join(":", combination)))
+                                   combination: string.Join(ComponentsPermutation.Separator, combination)))
                      .ToArray();
 
       return testCases;
