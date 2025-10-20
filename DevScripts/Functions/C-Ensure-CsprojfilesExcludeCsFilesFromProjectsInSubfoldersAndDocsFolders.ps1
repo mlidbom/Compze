@@ -60,7 +60,7 @@ function C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolder
         }
         
         $comment = @"
-  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
 "@
         
