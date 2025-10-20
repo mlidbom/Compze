@@ -14,19 +14,14 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       IXunitTestMethod testMethod,
       IFactAttribute factAttribute)
    {
-      var declaringType = testMethod.Method.DeclaringType;
-      var currentType = testMethod.TestClass.Class;
-
-      if(declaringType != currentType) //We only run these tests for the classes that declares them. Just like XFact
+      if(testMethod.Method.DeclaringType != testMethod.TestClass.Class) //We only run these tests for the classes that declares them. Just like XFact
          return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
-      // In v3, factAttribute is the actual attribute instance
-      var pctAttribute = factAttribute as PluggableComponentsTheoryAttribute;
-      var excludedSqlLayers = pctAttribute?.Exclude ?? [];
+      var attribute = ((PluggableComponentsTheoryAttribute)factAttribute);
 
       var testCases = PluggableComponentsReader
                      .Permutations
-                     .Exclude(excludedSqlLayers)
+                     .Exclude(attribute.Exclude)
                      .Select(permutation =>
                       {
                          var testCaseDetails = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions,
