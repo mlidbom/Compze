@@ -1,5 +1,6 @@
 using Compze.Utilities.Testing.XUnit.v2.ComponentPermutations;
 using Xunit.Abstractions;
+#pragma warning disable xUnit1003 //we may be using a theory attribute, but it does not require manually passing data
 
 namespace Compze.Utilities.Testing.XUnit.v2.Tests.ComponentPermutations;
 

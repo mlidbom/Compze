@@ -18,7 +18,7 @@ namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
 public class PluggableComponentsTheoryAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1) :
-   FactAttribute(sourceFilePath, sourceLineNumber)
+   TheoryAttribute(sourceFilePath, sourceLineNumber)
 {
    static PluggableComponentsTheoryAttribute()
    {

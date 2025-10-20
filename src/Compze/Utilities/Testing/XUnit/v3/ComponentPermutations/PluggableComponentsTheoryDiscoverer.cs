@@ -1,4 +1,5 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Xunit;
 using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -21,27 +22,33 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
       if(declaringType != currentType) //We only run these tests for the classes that declares them. Just like XFact
          return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
-      // In v3, factAttribute is the actual attribute instance
-      var pctAttribute = factAttribute as PluggableComponentsTheoryAttribute;
-      var excludedSqlLayers = pctAttribute?.Exclude ?? [];
+      var pctAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
 
       var testCases = PluggableComponentsReader
                      .Permutations
-                     .Exclude(excludedSqlLayers)
+                     .Exclude(pctAttribute.Exclude)
                      .Select(permutation =>
                       {
-                         var testCaseDetails = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions,
-                                                                                          testMethod,
-                                                                                          factAttribute,
-                                                                                          testMethodArguments: [permutation.ToString()]);
+                         var permutationString = permutation.ToString();
+                         var theoryDataRow = new TheoryDataRow(permutationString);
+                         var testMethodArguments = new object?[] { permutationString };
+
+                         var testCaseDetails = TestIntrospectionHelper.GetTestCaseDetailsForTheoryDataRow(
+                            discoveryOptions,
+                            testMethod,
+                            pctAttribute,
+                            theoryDataRow,
+                            testMethodArguments);
+
+                         var traits = TestIntrospectionHelper.GetTraits(testMethod, theoryDataRow);
 
                          return new PluggableComponentsTestCase(
                             testMethod: testCaseDetails.ResolvedTestMethod,
                             testCaseDisplayName: testCaseDetails.TestCaseDisplayName,
                             uniqueID: testCaseDetails.UniqueID,
                             @explicit: testCaseDetails.Explicit,
-                            traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
-                            permutationString: permutation.ToString());
+                            traits: traits,
+                            permutationString: permutationString);
                       })
                      .ToArray();
 
