@@ -1,8 +1,7 @@
-using System;
 using Xunit;
 using Xunit.Sdk;
 
-namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
 /// <summary>
@@ -13,7 +12,7 @@ namespace Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 [XunitTestCaseDiscoverer(XFactDiscovererFullTypeName, XFactDiscovererAssembly)]
 public class XFactAttribute : FactAttribute
 {
-   const string XFactDiscovererFullTypeName = "Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions.XFactDiscoverer";
+   const string XFactDiscovererFullTypeName = $"Compze.Utilities.Testing.XUnit.BDD.{nameof(XFactDiscoverer)}";
    const string XFactDiscovererAssembly = "Compze.Utilities.Testing.XUnit";
 
    static XFactAttribute()

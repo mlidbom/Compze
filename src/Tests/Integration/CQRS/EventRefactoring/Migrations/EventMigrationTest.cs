@@ -9,10 +9,10 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using FluentAssertions;
 
 // ReSharper disable AccessToDisposedClosure

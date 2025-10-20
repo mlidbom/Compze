@@ -1,5 +1,5 @@
 using System;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Unit.Internals.Contracts;
 

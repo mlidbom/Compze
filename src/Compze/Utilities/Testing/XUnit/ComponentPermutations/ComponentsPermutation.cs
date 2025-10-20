@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 class ComponentsPermutation
 {

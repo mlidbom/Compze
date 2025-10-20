@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.CollectionsCE.GenericCE;

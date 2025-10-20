@@ -1,10 +1,10 @@
 using System;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
 // ReSharper disable InconsistentNaming

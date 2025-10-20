@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 #pragma warning disable CA1812
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer

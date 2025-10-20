@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;

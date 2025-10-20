@@ -2,7 +2,7 @@ using System;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 

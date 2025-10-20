@@ -4,10 +4,10 @@ using Compze.Serialization;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.Serialization;
 

@@ -1,8 +1,8 @@
 using System;
 using Compze.Common.Configuration;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
 

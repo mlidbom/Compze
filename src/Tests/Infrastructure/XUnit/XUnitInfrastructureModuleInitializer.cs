@@ -3,6 +3,7 @@ using Compze.Tests.Infrastructure.XUnit.Logging;
 
 using System;
 using System.Runtime.CompilerServices;
+using Compze.Utilities.Testing.XUnit;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 

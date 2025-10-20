@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using FluentAssertions;
 
 namespace AccountManagement.UserStories;

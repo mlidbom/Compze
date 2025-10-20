@@ -5,10 +5,10 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using CreatesItsOwnResultQuery = Compze.Tessaging.Abstractions.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;

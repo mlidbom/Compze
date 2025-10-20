@@ -1,7 +1,7 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Tests.Unit.UI.Commands.UserCommands;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using JetBrains.Annotations;
 

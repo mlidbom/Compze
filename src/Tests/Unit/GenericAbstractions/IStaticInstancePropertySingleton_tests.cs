@@ -1,7 +1,7 @@
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using JetBrains.Annotations;
 

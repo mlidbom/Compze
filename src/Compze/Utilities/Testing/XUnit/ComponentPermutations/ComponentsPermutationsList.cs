@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
 {

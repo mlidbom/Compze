@@ -1,7 +1,7 @@
 using System;
 using Compze.Abstractions;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit.TestFrameworkExtensions;
+using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
 namespace Compze.Tests.Unit.DDD;

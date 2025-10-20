@@ -1,8 +1,7 @@
-using System;
 using Xunit;
 using Xunit.Sdk;
 
-namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
 // ReSharper disable GrammarMistakeInComment
@@ -15,7 +14,7 @@ namespace Compze.Tests.Infrastructure.XUnit.PluggableComponents;
 [XunitTestCaseDiscoverer(PluggableComponentsTheoryAttributeFullTypeName, PluggableComponentsDiscovererAssembly)]
 public class PluggableComponentsTheoryAttribute : FactAttribute
 {
-   const string PluggableComponentsTheoryAttributeFullTypeName = "Compze.Tests.Infrastructure.XUnit.PluggableComponents.PluggableComponentsTheoryDiscoverer";
+   const string PluggableComponentsTheoryAttributeFullTypeName = $"Compze.Utilities.Testing.XUnit.ComponentPermutations.{nameof(PluggableComponentsTheoryDiscoverer)}";
    const string PluggableComponentsDiscovererAssembly = "Compze.Utilities.Testing.XUnit";
 
    static PluggableComponentsTheoryAttribute()
