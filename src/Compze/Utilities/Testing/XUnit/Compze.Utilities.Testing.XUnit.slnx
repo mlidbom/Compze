@@ -17,4 +17,5 @@
     <Project Path="v3/Compze.Utilities.Testing.XUnit.v3.csproj" />
     <Project Path="v3/Tests/Compze.Utilities.Testing.XUnit.v3.Tests.csproj" />
   </Folder>
+  <Project Path="Compze.Utilities.Testing.XUnit.csproj" />
 </Solution>

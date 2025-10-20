@@ -1,3 +1,4 @@
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 

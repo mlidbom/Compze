@@ -1,6 +1,6 @@
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Utilities.Testing.XUnit.v2.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 /// <summary>
 /// Reads pluggable component combinations from configuration file in the assembly directory.
