@@ -24,6 +24,18 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
       ExceptionAggregator aggregator,
       CancellationTokenSource cancellationTokenSource)
    {
+      // If there are no arguments or the test is skipped, just run it directly without setting up permutation context
+      if(TestMethodArguments is null || TestMethodArguments.Length == 0 || !string.IsNullOrEmpty(SkipReason))
+      {
+         return await XunitRunnerHelper.RunXunitTestCase(
+                   new ArgumentDiscardingTestCase(this),
+                   messageBus,
+                   cancellationTokenSource,
+                   aggregator,
+                   explicitOption,
+                   constructorArguments);
+      }
+
       return await ComponentsPermutation.RunInContextAsync(
                 //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
                 //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.

@@ -19,19 +19,17 @@ internal class ExclusionsCollection
    public static ExclusionsCollection Parse(string[] exclusionSpecs)
    {
       var exclusions = exclusionSpecs.Select(ComponentExclusion.Parse).ToList();
-      
+
       // Validate that all excluded components actually exist
       var validComponents = PluggableComponentsReader.Components;
       var invalidComponents = exclusions
-         .Select(e => e.ComponentName)
-         .Where(name => !validComponents.Contains(name))
-         .ToList();
+                             .Select(e => e.ComponentName)
+                             .Where(name => !validComponents.Contains(name))
+                             .ToList();
 
       if(invalidComponents.Count > 0)
       {
-         throw new ArgumentException(
-            $"The following excluded components do not exist in the configuration: {string.Join(", ", invalidComponents)}. " +
-            $"Valid components are: {string.Join(", ", validComponents)}");
+         throw new ArgumentException($"\"{invalidComponents.First()}\" is not an existing component. Please fix the valued you passed to {nameof(PluggableComponentsTheoryAttribute.Skipped)}");
       }
 
       return new ExclusionsCollection(exclusions);
@@ -54,6 +52,6 @@ internal class ExclusionsCollection
    /// <summary>
    /// Checks if any exclusion matches the given permutation.
    /// </summary>
-   public bool Matches(ComponentsPermutation permutation) => 
+   public bool Matches(ComponentsPermutation permutation) =>
       FindMatchingExclusion(permutation) != null;
 }

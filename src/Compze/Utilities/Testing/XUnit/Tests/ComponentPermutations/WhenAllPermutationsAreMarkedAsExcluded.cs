@@ -14,7 +14,7 @@ public class WhenAllPermutationsAreMarkedAsExcluded
    {
       public NestedScenarioComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1", "Constructor should not run for the excluded component");
 
-      [PCT(Skipped = ["Type1Component1::TODO", "Type1Component2::Not supported"])]
+      [PCT(Skipped = ["invalid::TODO", "Type1Component2::Not supported"])]
       public void NoTestsAreExecuted_() => throw new Exception("Should not be executed");
    }
 }

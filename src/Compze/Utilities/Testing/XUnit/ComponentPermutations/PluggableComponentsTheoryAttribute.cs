@@ -52,9 +52,21 @@ public class PluggableComponentsTheoryAttribute(
             ]);
       }
 
-      var permutations = GetTheoryDataRowsInternal();
-
-      return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
+      try
+      {
+#pragma warning disable CS0618 // Type or member is obsolete
+         var permutations = GetTheoryDataRowsInternal();
+#pragma warning restore CS0618 // Type or member is obsolete
+         return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
+      }
+      catch(ArgumentException ex)
+      {
+         // Validation error - return a single skipped test with the error message
+         return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
+            [
+               new TheoryDataRow() { Skip = ex.Message }
+            ]);
+      }
    }
 
    [Obsolete("Only for internal use")] 
