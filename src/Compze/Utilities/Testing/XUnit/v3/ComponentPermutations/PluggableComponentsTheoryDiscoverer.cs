@@ -25,23 +25,29 @@ class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
-      var testCases = baseCases.OfType<XunitTestCase>()
-                               .Select(testCase => new PluggableComponentsTestCase(
-                                          testMethod: testCase.TestMethod,
-                                          testCaseDisplayName: testCase.TestCaseDisplayName,
-                                          uniqueID: testCase.UniqueID,
-                                          @explicit: testCase.Explicit,
-                                          skipExceptions: testCase.SkipExceptions,
-                                          skipReason: testCase.SkipReason,
-                                          skipType: testCase.SkipType,
-                                          skipUnless: testCase.SkipUnless,
-                                          skipWhen: testCase.SkipWhen,
-                                          traits: testCase.Traits,
-                                          sourceFilePath: testCase.SourceFilePath,
-                                          sourceLineNumber: testCase.SourceLineNumber,
-                                          timeout: testCase.Timeout,
-                                          testMethodArguments: testCase.TestMethodArguments))
-                               .ToArray();
+      var testCases = baseCases.Select(testCase =>
+                      {
+                         // This ensures ExecutionErrorTestCase and other special cases are preserved
+                         if(testCase is not XunitTestCase xunitTestCase)
+                            return testCase;
+
+                         return new PluggableComponentsTestCase(
+                            testMethod: xunitTestCase.TestMethod,
+                            testCaseDisplayName: xunitTestCase.TestCaseDisplayName,
+                            uniqueID: xunitTestCase.UniqueID,
+                            @explicit: xunitTestCase.Explicit,
+                            skipExceptions: xunitTestCase.SkipExceptions,
+                            skipReason: xunitTestCase.SkipReason,
+                            skipType: xunitTestCase.SkipType,
+                            skipUnless: xunitTestCase.SkipUnless,
+                            skipWhen: xunitTestCase.SkipWhen,
+                            traits: xunitTestCase.Traits,
+                            sourceFilePath: xunitTestCase.SourceFilePath,
+                            sourceLineNumber: xunitTestCase.SourceLineNumber,
+                            timeout: xunitTestCase.Timeout,
+                            testMethodArguments: xunitTestCase.TestMethodArguments);
+                      })
+                     .ToArray();
 
       return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases);
    }
