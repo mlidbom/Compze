@@ -34,18 +34,7 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
       CancellationTokenSource cancellationTokenSource)
    {
       // Create a new test case with empty test method arguments to execute our test methods that do not take arguments
-      var testCaseWithoutArgs = new XunitTestCase(
-         TestMethod,
-         TestCaseDisplayName,
-         UniqueID,
-         Explicit,
-         skipReason: SkipReason,
-         skipType: SkipType,
-         skipUnless: SkipUnless,
-         skipWhen: SkipWhen,
-         traits: Traits,
-         timeout: Timeout,
-         testMethodArguments: []);
+      var testCaseWithoutArgs = new ArgumentDiscardingTestCase(this);
 
       return await ComponentsPermutation.RunInContextAsync(
                 //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
@@ -53,12 +42,11 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
                 //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
                 //"Activate Endless Churn Mode" in NCrunch
                 ComponentsPermutation.Parse((string)TestMethodArguments![0]!),
-                async () => await XunitRunnerHelper.RunXunitTestCase(
-                               testCaseWithoutArgs,
-                               messageBus,
-                               cancellationTokenSource,
-                               aggregator,
-                               explicitOption,
-                               constructorArguments));
+                async () => await XunitRunnerHelper.RunXunitTestCase(testCaseWithoutArgs,
+                                                                     messageBus,
+                                                                     cancellationTokenSource,
+                                                                     aggregator,
+                                                                     explicitOption,
+                                                                     constructorArguments));
    }
 }
