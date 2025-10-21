@@ -25,9 +25,4 @@
       </PackageReference>
       <PackageReference Include="xunit.v3" Version="3.1.0" />
    </ItemGroup>
-   <ItemGroup>
-      <None Update="Compze.Tests.Unit.Internals.uniqueid">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-   </ItemGroup>
 </Project>
