@@ -16,7 +16,7 @@
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />      
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\v3\Compze.Utilities.Testing.XUnit.v3.csproj" />
+    <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>

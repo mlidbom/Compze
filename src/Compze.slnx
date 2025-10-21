@@ -142,10 +142,7 @@
     <File Path="TestUsingPluggableComponentCombinations.example" />
   </Folder>
   <Folder Name="/_Tests/">
-    <Project Path="Compze/Utilities/Testing/XUnit/v2/Tests/Compze.Utilities.Testing.XUnit.v2.Tests.csproj">
-      <BuildType Solution="docs|*" Project="Release" />
-    </Project>
-    <Project Path="Compze/Utilities/Testing/XUnit/v3/Tests/Compze.Utilities.Testing.XUnit.v3.Tests.csproj">
+    <Project Path="Compze/Utilities/Testing/XUnit/Tests/Compze.Utilities.Testing.XUnit.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
     <Project Path="Tests/Common/Compze.Tests.Common.csproj" />
@@ -164,11 +161,5 @@
   <Project Path="msbuild/Build.csproj" />
   <Folder Name="/Compze/Utilities/Testing/XUnit/">
     <Project Path="Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
-    <Project Path="Compze/Utilities/Testing/XUnit/v2/Compze.Utilities.Testing.XUnit.v2.csproj">
-      <BuildType Solution="docs|*" Project="Release" />
-    </Project>
-    <Project Path="Compze/Utilities/Testing/XUnit/v3/Compze.Utilities.Testing.XUnit.v3.csproj">
-      <BuildType Solution="docs|*" Project="Release" />
-    </Project>
   </Folder>
 </Solution>
