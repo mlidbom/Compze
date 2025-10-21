@@ -1,13 +1,12 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
 // ReSharper disable GrammarMistakeInComment

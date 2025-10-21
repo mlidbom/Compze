@@ -12,7 +12,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// Use TestEnv to access the component and the information.
 /// </summary>
 [XunitTestCaseDiscoverer(PluggableComponentsTheoryAttributeFullTypeName, PluggableComponentsDiscovererAssembly)]
-public class PluggableComponentsTheoryAttribute : TheoryAttribute
+public class PluggableComponentsTheoryAttribute : FactAttribute
 {
    const string PluggableComponentsTheoryAttributeFullTypeName = $"Compze.Utilities.Testing.XUnit.ComponentPermutations.{nameof(PluggableComponentsTheoryDiscoverer)}";
    const string PluggableComponentsDiscovererAssembly = "Compze.Utilities.Testing.XUnit.v2";

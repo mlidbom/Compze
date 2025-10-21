@@ -1,10 +1,8 @@
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit;
-using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.v3.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 #pragma warning disable CA1812
 class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
@@ -40,15 +38,21 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                             theoryDataRow,
                             testMethodArguments);
 
-                         var traits = TestIntrospectionHelper.GetTraits(testMethod, theoryDataRow);
-
                          return new PluggableComponentsTestCase(
                             testMethod: testCaseDetails.ResolvedTestMethod,
                             testCaseDisplayName: testCaseDetails.TestCaseDisplayName,
                             uniqueID: testCaseDetails.UniqueID,
                             @explicit: testCaseDetails.Explicit,
-                            traits: traits,
-                            permutationString: permutationString);
+                            skipExceptions: testCaseDetails.SkipExceptions,
+                            skipReason: testCaseDetails.SkipReason,
+                            skipType: testCaseDetails.SkipType,
+                            skipUnless: testCaseDetails.SkipUnless,
+                            skipWhen: testCaseDetails.SkipWhen,
+                            traits: TestIntrospectionHelper.GetTraits(testMethod, theoryDataRow),
+                            sourceFilePath: testCaseDetails.SourceFilePath,
+                            sourceLineNumber: testCaseDetails.SourceLineNumber,
+                            timeout: testCaseDetails.Timeout,
+                            permutation: permutation);
                       })
                      .ToArray();
 
