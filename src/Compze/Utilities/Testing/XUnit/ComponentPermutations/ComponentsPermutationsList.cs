@@ -8,7 +8,7 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
    public ComponentsPermutationsList(IReadOnlyList<ComponentsPermutation> permutations) => Permutations = permutations;
 
    internal ComponentsPermutationsList Exclude(string[] excluded) =>
-      new(Permutations.Where(it => !it.IsExcludedBy(excluded)).ToList());
+      new(Permutations.Where(it => !it.IsExcludedBy(excluded).IsExcluded).ToList());
 
 
 

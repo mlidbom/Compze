@@ -11,7 +11,21 @@ public class ComponentsPermutation
    public readonly IReadOnlyList<string> Components;
    ComponentsPermutation(IReadOnlyList<string> components) => Components = components;
 
-   internal bool IsExcludedBy(string[] exclusions) => exclusions.Any(Components.Contains);
+   internal (bool IsExcluded, string? Reason) IsExcludedBy(string[] exclusions)
+   {
+      // Check each exclusion spec (can be "Component" or "Component::Reason")
+      foreach(var exclusionSpec in exclusions)
+      {
+         var parts = exclusionSpec.Split("::", 2);
+         var component = parts[0];
+         var reason = parts.Length > 1 ? parts[1] : null;
+
+         if(Components.Contains(component))
+            return (true, reason);
+      }
+
+      return (false, null);
+   }
 
    internal static ComponentsPermutation FromArray(string[] value) =>
       new(value);
