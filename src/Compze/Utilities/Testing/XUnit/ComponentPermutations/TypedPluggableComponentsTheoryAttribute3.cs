@@ -27,42 +27,6 @@ public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComp
       [CallerLineNumber] int sourceLineNumber = -1)
       : base(sourceFilePath, sourceLineNumber)
    {
-      if(skippedComponents == null || skipReasons == null)
-      {
-         Skipped = [];
-         return;
-      }
-
-      if(skippedComponents.Length != skipReasons.Length)
-         throw new ArgumentException("Number of components must match number of reasons");
-
-      var skipped = new List<string>();
-      
-      for(int i = 0; i < skippedComponents.Length; i++)
-      {
-         var component = skippedComponents[i];
-         
-         // Validate that the component is one of our expected enum types
-         if(component is TComponent1 comp1)
-         {
-            skipped.Add(ComponentSkipSpecification.Skip(comp1, skipReasons[i]));
-         }
-         else if(component is TComponent2 comp2)
-         {
-            skipped.Add(ComponentSkipSpecification.Skip(comp2, skipReasons[i]));
-         }
-         else if(component is TComponent3 comp3)
-         {
-            skipped.Add(ComponentSkipSpecification.Skip(comp3, skipReasons[i]));
-         }
-         else
-         {
-            throw new ArgumentException(
-               $"Component at index {i} must be of type {typeof(TComponent1).Name}, {typeof(TComponent2).Name}, or {typeof(TComponent3).Name}, " +
-               $"but was {component?.GetType().Name ?? "null"}");
-         }
-      }
-
-      Skipped = [..skipped];
+      InitializeTypedSkipped([typeof(TComponent1), typeof(TComponent2), typeof(TComponent3)], skippedComponents, skipReasons);
    }
 }

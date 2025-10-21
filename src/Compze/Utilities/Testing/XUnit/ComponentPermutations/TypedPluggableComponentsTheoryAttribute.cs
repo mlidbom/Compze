@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
@@ -9,6 +10,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// </summary>
 /// <typeparam name="TComponent1">First component dimension enum type</typeparam>
 /// <typeparam name="TComponent2">Second component dimension enum type</typeparam>
+[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComponent2> : PluggableComponentsTheoryAttribute
    where TComponent1 : Enum
    where TComponent2 : Enum
@@ -25,38 +27,6 @@ public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComp
       [CallerLineNumber] int sourceLineNumber = -1)
       : base(sourceFilePath, sourceLineNumber)
    {
-      if(skippedComponents == null || skipReasons == null)
-      {
-         Skipped = [];
-         return;
-      }
-
-      if(skippedComponents.Length != skipReasons.Length)
-         throw new ArgumentException("Number of components must match number of reasons");
-
-      var skipped = new List<string>();
-      
-      for(int i = 0; i < skippedComponents.Length; i++)
-      {
-         var component = skippedComponents[i];
-         
-         // Validate that the component is one of our expected enum types
-         if(component is TComponent1 comp1)
-         {
-            skipped.Add(ComponentSkipSpecification.Skip(comp1, skipReasons[i]));
-         }
-         else if(component is TComponent2 comp2)
-         {
-            skipped.Add(ComponentSkipSpecification.Skip(comp2, skipReasons[i]));
-         }
-         else
-         {
-            throw new ArgumentException(
-               $"Component at index {i} must be of type {typeof(TComponent1).Name} or {typeof(TComponent2).Name}, " +
-               $"but was {component?.GetType().Name ?? "null"}");
-         }
-      }
-
-      Skipped = [..skipped];
+      InitializeTypedSkipped([typeof(TComponent1), typeof(TComponent2)], skippedComponents, skipReasons);
    }
 }

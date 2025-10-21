@@ -5,10 +5,8 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-#pragma warning disable CA1812
-class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
+public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 {
-#pragma warning restore CA1812
 
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,

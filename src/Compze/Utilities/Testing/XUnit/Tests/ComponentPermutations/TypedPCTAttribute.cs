@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
@@ -13,6 +14,7 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 ///    skipReasons: ["Not implemented yet", "Deprecated"])]
 /// public void MyTest() { }
 /// </example>
+[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public sealed class TypedPCTAttribute(
    object[]? skippedComponents = null,
    string[]? skipReasons = null,

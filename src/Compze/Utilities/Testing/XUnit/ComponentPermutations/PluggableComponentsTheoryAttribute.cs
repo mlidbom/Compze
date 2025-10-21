@@ -23,12 +23,73 @@ public class PluggableComponentsTheoryAttribute(
    TheoryAttribute(sourceFilePath, sourceLineNumber),
    IDataAttribute
 {
+   string[] _skipped = [];
+
+   /// <summary>
+   /// For type-safe derived classes: validates and converts enum components to skip specifications.
+   /// </summary>
+   /// <param name="componentEnumTypes">Array of enum types that are valid for this attribute</param>
+   /// <param name="skippedComponents">Array of enum values to skip</param>
+   /// <param name="skipReasons">Corresponding reasons for skipping</param>
+   protected void InitializeTypedSkipped(Type[] componentEnumTypes, object[]? skippedComponents, string[]? skipReasons)
+   {
+      if(skippedComponents == null || skipReasons == null)
+      {
+         _skipped = [];
+         return;
+      }
+
+      if(skippedComponents.Length != skipReasons.Length)
+         throw new ArgumentException("Number of components must match number of reasons");
+
+      // Validate all types are enums
+      foreach(var type in componentEnumTypes)
+      {
+         if(!type.IsEnum)
+            throw new ArgumentException($"Type {type.Name} must be an enum type");
+      }
+
+      var skipped = new List<string>();
+
+      for(int i = 0; i < skippedComponents.Length; i++)
+      {
+         var component = skippedComponents[i];
+         if(component == null)
+            throw new ArgumentException($"Component at index {i} cannot be null");
+
+         var componentType = component.GetType();
+         
+         // Check if this component is one of our expected enum types
+         if(!componentEnumTypes.Contains(componentType))
+         {
+            var expectedTypes = string.Join(", ", componentEnumTypes.Select(t => t.Name));
+            throw new ArgumentException(
+               $"Component at index {i} must be of type {expectedTypes}, " +
+               $"but was {componentType.Name}");
+         }
+
+         // Use reflection to call ComponentSkipSpecification.Skip<T>(component, reason)
+         var skipMethod = typeof(ComponentSkipSpecification)
+            .GetMethod(nameof(ComponentSkipSpecification.Skip), BindingFlags.Public | BindingFlags.Static)!
+            .MakeGenericMethod(componentType);
+
+         var skipSpec = (string)skipMethod.Invoke(null, [component, skipReasons[i]])!;
+         skipped.Add(skipSpec);
+      }
+
+      _skipped = [..skipped];
+   }
+
    /// <summary>
    /// Components to exclude from test execution.
    /// Format: "ComponentName::Reason" (reason is mandatory)
    /// Example: ["Type1Component1::Not implemented yet"]
    /// </summary>
-   public string[] Skipped { get; init; } = [];
+   public string[] Skipped
+   {
+      get => _skipped;
+      init => _skipped = value;
+   }
 
    ExclusionsCollection SkippedComponents => ExclusionsCollection.Parse(Skipped);
 
