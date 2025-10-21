@@ -5,27 +5,50 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
 {
    internal readonly IReadOnlyList<ComponentsPermutation> Permutations;
-   public ComponentsPermutationsList(IReadOnlyList<ComponentsPermutation> permutations) => Permutations = permutations;
+   internal readonly IReadOnlySet<string> AllComponents;
 
-   internal ComponentsPermutationsList Exclude(string[] excluded) =>
-      new(Permutations.Where(it => !excluded.Any(it.Components.Contains)).ToList());
+   ComponentsPermutationsList(IReadOnlyList<ComponentsPermutation> permutations, IReadOnlySet<string> allComponents)
+   {
+      Permutations = permutations;
+      AllComponents = allComponents;
+   }
+
+   internal ComponentsPermutationsList Exclude(ExclusionsCollection exclusions) =>
+      new(Permutations.Where(permutation => !exclusions.Matches(permutation)).ToList(), AllComponents);
 
    internal static ComponentsPermutationsList FromFileContent(string[] rows)
    {
-      var components = rows
-                      .Select(it => it.Trim())
-                      .Where(line => !string.IsNullOrEmpty(line))
-                      .Where(line => !line.StartsWith('#'))
-                      .Select(it => it.Split(ComponentsPermutation.Separator))
-                      .ToList();
-      if(components.Count == 0)
-         throw new Exception("Found no components");
+      var lines = rows
+                 .Select(it => it.Trim())
+                 .Where(line => !string.IsNullOrEmpty(line))
+                 .Where(line => !line.StartsWith("//")) // Comments
+                 .ToList();
 
-      var componentDimensions = components[0].Length;
-      if(components.Any(it => it.Length != componentDimensions))
+      var activeLines = lines
+                       .Where(line => !line.StartsWith('#')) // Ignored/excluded permutations
+                       .Select(it => it.Split(ComponentsPermutation.Separator))
+                       .ToList();
+
+      var allLines = lines
+                    .Select(line => line.TrimStart('#')) // Remove # prefix if present
+                    .Select(it => it.Split(ComponentsPermutation.Separator))
+                    .ToList();
+
+      if(activeLines.Count == 0)
+         throw new Exception("Found no active components");
+
+      var componentDimensions = activeLines[0].Length;
+      if(activeLines.Any(it => it.Length != componentDimensions))
          throw new Exception("Different lines in the file have different number of components");
 
-      return new ComponentsPermutationsList(components.Select(ComponentsPermutation.FromArray).ToList());
+      // Collect all unique components from all lines (active and ignored)
+      var allComponents = allLines
+                         .SelectMany(components => components)
+                         .ToHashSet();
+
+      return new ComponentsPermutationsList(
+         activeLines.Select(ComponentsPermutation.FromArray).ToList(),
+         allComponents);
    }
 
    public IEnumerator<ComponentsPermutation> GetEnumerator() => Permutations.GetEnumerator();

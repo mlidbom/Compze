@@ -1,3 +1,4 @@
+using Xunit;
 using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -5,36 +6,32 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 #pragma warning disable CA1812
-class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
+class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 {
 #pragma warning restore CA1812
 
-   public async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
+   public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
       IXunitTestMethod testMethod,
       IFactAttribute factAttribute)
    {
-      if(testMethod.Method.DeclaringType != testMethod.TestClass.Class) //We only run these tests for the classes that declares them. Just like XFact
+      if(testMethod.Method.DeclaringType != testMethod.TestClass.Class)
          return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
-      var attribute = ((PluggableComponentsTheoryAttribute)factAttribute);
+      var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
-      var testCases = PluggableComponentsReader
-                     .Permutations
-                     .Exclude(attribute.Exclude)
-                     .Select(permutation =>
-                      {
-                         var testCaseDetails = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions,
-                                                                                          testMethod,
-                                                                                          factAttribute,
-                                                                                          testMethodArguments: [permutation.ToString()]);
+      var testCases = baseCases.Select(testCaseInterface =>
+                                {
+                                   // This ensures ExecutionErrorTestCase and other special cases are preserved
+                                   if(testCaseInterface is not XunitTestCase xunitTestCase)
+                                      return testCaseInterface;
 
-                         return new PluggableComponentsTestCase(
-                            new TestCaseDetails(testCaseDetails),
-                            traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
-                            permutation: permutation);
-                      })
-                     .ToArray();
+                                   return new PluggableComponentsTestCase(
+                                      xunitTestCase,
+                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
+                                   );
+                                })
+                               .ToArray();
 
       return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases);
    }

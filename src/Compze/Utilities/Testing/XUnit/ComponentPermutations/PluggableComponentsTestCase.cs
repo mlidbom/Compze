@@ -11,13 +11,10 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
-      TestCaseDetails details,
-      Dictionary<string, HashSet<string>> traits,
-      ComponentsPermutation permutation)
-      : base(details,
-             testCaseDisplayName: details.TestCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments declare on the test methods.
-             traits: traits,
-             testMethodArguments: [permutation.ToString()]) // Pass as string or test discovery in dotnet test breaks
+      XunitTestCase testCase,
+      Dictionary<string, HashSet<string>> traits)
+      : base(testCase,
+             testCaseDisplayName: testCase.TestCaseDisplayName.Replace("???: ", "")) //the ???: is Xunit being confused because we have no arguments declare on the test methods.) // Pass as string or test discovery in dotnet test breaks
    {}
 
    public async ValueTask<RunSummary> Run(
@@ -27,6 +24,18 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
       ExceptionAggregator aggregator,
       CancellationTokenSource cancellationTokenSource)
    {
+      // If there are no arguments or the test is skipped, just run it directly without setting up permutation context
+      if(TestMethodArguments is null || TestMethodArguments.Length == 0 || !string.IsNullOrEmpty(SkipReason))
+      {
+         return await XunitRunnerHelper.RunXunitTestCase(
+                   new ArgumentDiscardingTestCase(this),
+                   messageBus,
+                   cancellationTokenSource,
+                   aggregator,
+                   explicitOption,
+                   constructorArguments);
+      }
+
       return await ComponentsPermutation.RunInContextAsync(
                 //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
                 //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.

@@ -1,7 +1,7 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit;
 
-namespace Compze.Utilities.Testing.XUnit.v3.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
 public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 {

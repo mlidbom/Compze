@@ -1,8 +1,13 @@
-#ignored line
-
+// Test configuration file for pluggable component permutations
+// Lines starting with "//" are comments
+// Lines starting with "#" are ignored/excluded permutations
 
 Type1Component1:Type2Component1
 Type1Component1:Type2Component2
 
 Type1Component2:Type2Component1
 Type1Component2:Type2Component2
+
+#Type1Component3:Type2Component3
+#Type1Component3:Type2Component3
+
