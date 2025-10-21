@@ -18,6 +18,7 @@
       <ProjectReference Include="..\..\..\Utilities\Testing\DbPool\MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Testing\DbPool\Sqlite\Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
+      <ProjectReference Include="..\..\..\Wiring\Compze.Wiring.csproj" />
       <ProjectReference Include="..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="..\Sql\MicrosoftSql\Compze.Tessaging.Hosting.Sql.MicrosoftSql.csproj" />
       <ProjectReference Include="..\Sql\MySql\Compze.Tessaging.Hosting.Sql.MySql.csproj" />
@@ -36,6 +37,7 @@
       <ProjectReference Include="..\..\Teventive\EventStore\Sqlite\Compze.Tessaging.Teventive.EventStore.Sqlite.csproj" />
       <ProjectReference Include="..\..\Sql\Sqlite\Compze.Tessaging.Sql.Sqlite.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+      <ProjectReference Include="..\..\..\Wiring\Testing\Compze.Wiring.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.1" />

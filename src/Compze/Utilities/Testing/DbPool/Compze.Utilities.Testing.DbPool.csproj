@@ -10,6 +10,7 @@
       <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="..\..\Logging\Compze.Utilities.Logging.csproj" />
       <ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
       <ProjectReference Include="..\..\Threading\Compze.Utilities.Threading.csproj" />

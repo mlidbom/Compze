@@ -1,50 +1,22 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Xunit.Sdk;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
 static class TestCasePluggableComponentsExtractor
 {
-   public static Tessaging.Hosting.Testing.PluggableComponents ExtractPluggableComponents(this XunitTestCase? testCase) =>
-      testCase.TryExtractPluggableComponents(throwOnFailure: true)!.Value;
+   public static Tessaging.Hosting.Testing.PluggableComponents ToPluggableComponents(this ComponentsPermutation? permutation) =>
+      permutation.TryExtractPluggableComponents(throwOnFailure: true)!.Value;
 
-   public static Tessaging.Hosting.Testing.PluggableComponents? TryExtractPluggableComponents(this XunitTestCase? testCase,
+   public static Tessaging.Hosting.Testing.PluggableComponents? TryExtractPluggableComponents(this ComponentsPermutation? permutation,
                                                                                               bool throwOnFailure = false)
    {
-      if(testCase == null) throw new Exception("No test context has been set");
+      if(permutation == null) throw new Exception("No component context has been set");
 
-      var arguments = testCase.TestMethodArguments;
-      if(arguments.Length != 1)
-      {
-         if(throwOnFailure)
-            throw new Exception(
-               $"""
-                The current test does not appear to be a pluggable components test, 
-                the arguments array should have a single entry that is a string,
-                but it had {arguments.Length} entries
-                """);
-
-         return null;
-      }
-
-      if(arguments[0].GetType() != typeof(string))
-      {
-         if(throwOnFailure)
-            throw new Exception(
-               $"""
-                The current test does not appear to be a pluggable components test, 
-                the arguments array should have a single entry that is a string,
-                but the type was {arguments[0].GetType().FullName}
-                """);
-         return null;
-      }
-
-      var argument = (string)arguments[0];
       try
       {
-         return Tessaging.Hosting.Testing.PluggableComponents.FromString(argument);
+         return Tessaging.Hosting.Testing.PluggableComponents.FromString(permutation.Components.Join(":"));
       }
       catch(Exception ex)
       {
@@ -52,7 +24,7 @@ static class TestCasePluggableComponentsExtractor
             throw new Exception(
                $"""
                 The current test does not appear to be a pluggable components test, 
-                could not parse pluggable components from the string {argument}
+                could not parse pluggable components from the string {permutation.Components.Join(":")}
                 """,
                ex);
          return null;

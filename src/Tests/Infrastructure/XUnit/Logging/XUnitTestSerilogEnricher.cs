@@ -1,8 +1,8 @@
 using Serilog.Core;
 using Serilog.Events;
 using System.Collections.Generic;
-using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.Testing.XUnit;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Xunit;
 
 namespace Compze.Tests.Infrastructure.XUnit.Logging;
 
@@ -11,10 +11,10 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
 {
    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
    {
-      if(TestContext.CurrentTestCase == null) return;
-      var testCase = TestContext.CurrentTestCase;
+      if(TestContext.Current.TestCase == null) return;
+      var testCase = TestContext.Current.TestCase;
 
-      var pluggableComponents = testCase.TryExtractPluggableComponents();
+      var pluggableComponents = ComponentsPermutation.Current?.TryExtractPluggableComponents();
 
       logEvent.AddOrUpdateProperty(
          propertyFactory.CreateProperty("XUnit",
@@ -22,8 +22,8 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
                                         {
                                            ["Container"] = pluggableComponents?.DiContainer.ToString() ?? "",
                                            ["SqlLayer"] = pluggableComponents?.SqlLayer.ToString() ?? "",
-                                           ["TestClass"] = testCase.TestMethod.TestClass.Class.ToRuntimeType().GetFullNameCompilable(),
-                                           ["TestName"] = testCase.DisplayName,
+                                           ["TestClass"] = testCase.TestClass?.TestClassName ?? "missing",
+                                           ["TestName"] = testCase.TestCaseDisplayName,
                                         },
                                         destructureObjects: true));
    }

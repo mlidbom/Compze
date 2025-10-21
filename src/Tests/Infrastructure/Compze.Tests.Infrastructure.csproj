@@ -15,14 +15,20 @@
     <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+    <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />      
+    <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\v3\Compze.Utilities.Testing.XUnit.v3.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="FluentAssertions" Version="8.7.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+    <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Compze.Tests.Infrastructure.uniqueid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

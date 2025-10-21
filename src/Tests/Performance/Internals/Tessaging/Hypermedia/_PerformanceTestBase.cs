@@ -7,13 +7,13 @@ using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Typermedia.Abstractions;
-using Xunit;
+using Compze.Tests.Infrastructure;
 
 //ncrunch: no coverage start
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 
-public abstract class PerformanceTestBase : IAsyncLifetime
+public abstract class PerformanceTestBase : UniversalTestBase
 {
    protected ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
@@ -40,9 +40,9 @@ public abstract class PerformanceTestBase : IAsyncLifetime
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
-   public async Task InitializeAsync() => await Host.StartAsync();
+   protected override async Task InitializeAsyncInternal() => await Host.StartAsync();
 
-   public async Task DisposeAsync() => await Host.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await Host.DisposeAsync();
 
    protected internal class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
    protected internal class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult>;

@@ -1,6 +1,6 @@
 using Xunit.Sdk;
 
-namespace Compze.Utilities.Testing.XUnit.v2;
+namespace Compze.Utilities.Testing.XUnit;
 
 
 public static class TestContext

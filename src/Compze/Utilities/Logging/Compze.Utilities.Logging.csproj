@@ -9,6 +9,7 @@
 		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
 	</PropertyGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
 		<ProjectReference Include="..\Threading\Compze.Utilities.Threading.csproj" />
 	</ItemGroup>
 	<!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.

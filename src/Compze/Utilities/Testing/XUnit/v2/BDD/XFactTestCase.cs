@@ -1,7 +1,7 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Compze.Utilities.Testing.XUnit.v2.BDD;
+namespace Compze.Utilities.Testing.XUnit.BDD;
 
 public class XFactTestCase : XunitTestCase
 {
@@ -26,10 +26,6 @@ public class XFactTestCase : XunitTestCase
                                                    IMessageBus messageBus,
                                                    object[] constructorArguments,
                                                    ExceptionAggregator aggregator,
-                                                   CancellationTokenSource cancellationTokenSource)
-   {
-      return await TestContext.RunTestInContextAsync(
-         this,
-         () => base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource));
-   }
+                                                   CancellationTokenSource cancellationTokenSource) =>
+      await base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
 }

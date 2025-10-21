@@ -25,7 +25,13 @@
       <InternalsVisibleTo Include="Compze.Tests.Integration" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReference Include="xunit" Version="2.9.3" />
-      <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+      <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
+   </ItemGroup>
+   <ItemGroup>
+      <None Update="Compze.Tests.Common.uniqueid">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
    </ItemGroup>
 </Project>

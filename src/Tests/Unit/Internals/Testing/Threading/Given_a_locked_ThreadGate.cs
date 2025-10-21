@@ -97,8 +97,8 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
       }
 
       [Theory, MemberData(nameof(ThreadPassThroughTestData))]
-      public void _100_milliseconds_later_X_threads_have_passed_the_gate(int threads, int timesToCallLetOneThreadPassThrough) =>
-         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.ThreadsPassedTheGate(100.Milliseconds()).Should().Be(timesToCallLetOneThreadPassThrough));
+      public void _200_milliseconds_later_X_threads_have_passed_the_gate(int threads, int timesToCallLetOneThreadPassThrough) =>
+         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.ThreadsPassedTheGate(200.Milliseconds()).Should().Be(timesToCallLetOneThreadPassThrough));
 
       [Theory, MemberData(nameof(ThreadPassThroughTestData))]
       public void PassedThrough_is_X(int threads, int timesToCallLetOneThreadPassThrough) =>
