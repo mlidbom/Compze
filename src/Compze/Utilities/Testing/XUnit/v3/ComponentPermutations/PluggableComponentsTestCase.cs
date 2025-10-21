@@ -27,20 +27,6 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
       ExceptionAggregator aggregator,
       CancellationTokenSource cancellationTokenSource)
    {
-      // Create a new test case with empty test method arguments to execute our test methods that do not take arguments
-      var testCaseWithoutArgs = new XunitTestCase(
-         TestMethod,
-         TestCaseDisplayName,
-         UniqueID,
-         Explicit,
-         skipReason: SkipReason,
-         skipType: SkipType,
-         skipUnless: SkipUnless,
-         skipWhen: SkipWhen,
-         traits: Traits,
-         timeout: Timeout,
-         testMethodArguments: []);
-
       return await ComponentsPermutation.RunInContextAsync(
                 //We may get called on a serialized instance, so saving this in a field is trickier than you might think.
                 //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.
@@ -49,7 +35,7 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
                 //It is lazy because run is called even for ignored tests etc. So we cannot assume that we have arguments.
                 new LazyCE<ComponentsPermutation>(() => ComponentsPermutation.Parse((string)TestMethodArguments![0]!)),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
-                               testCaseWithoutArgs,
+                               new ArgumentDiscardingTestCase(this),
                                messageBus,
                                cancellationTokenSource,
                                aggregator,
