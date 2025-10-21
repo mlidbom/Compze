@@ -26,14 +26,17 @@ class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
       var testCases = baseCases.Select(testCase =>
-                      {
-                         // This ensures ExecutionErrorTestCase and other special cases are preserved
-                         if(testCase is not XunitTestCase xunitTestCase)
-                            return testCase;
+                                {
+                                   // This ensures ExecutionErrorTestCase and other special cases are preserved
+                                   if(testCase is not XunitTestCase xunitTestCase)
+                                      return testCase;
 
-                         return new PluggableComponentsTestCase(xunitTestCase);
-                      })
-                     .ToArray();
+                                   return new PluggableComponentsTestCase(
+                                      xunitTestCase,
+                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
+                                   );
+                                })
+                               .ToArray();
 
       return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases);
    }
