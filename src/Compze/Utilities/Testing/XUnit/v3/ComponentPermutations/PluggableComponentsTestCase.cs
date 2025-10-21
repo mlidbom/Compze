@@ -23,7 +23,7 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
       string? sourceFilePath,
       int? sourceLineNumber,
       int? timeout,
-      ComponentsPermutation permutation)
+      object?[]? testMethodArguments)
       : base(testMethod: testMethod,
              testCaseDisplayName: testCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments declare on the test methods.
              uniqueID: uniqueID,
@@ -37,7 +37,7 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
              sourceFilePath: sourceFilePath,
              sourceLineNumber: sourceLineNumber,
              timeout: timeout,
-             testMethodArguments: [permutation.ToString()]) // Pass as string or test discovery in dotnet test breaks
+             testMethodArguments: testMethodArguments) // Pass as string or test discovery in dotnet test breaks
    {}
 
    public async ValueTask<RunSummary> Run(
