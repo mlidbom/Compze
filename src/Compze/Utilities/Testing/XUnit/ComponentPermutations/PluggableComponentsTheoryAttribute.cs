@@ -28,7 +28,7 @@ public class PluggableComponentsTheoryAttribute(
    /// Format: "ComponentName::Reason" (reason is mandatory)
    /// Example: ["Type1Component1::Not implemented yet"]
    /// </summary>
-   public string[] Exclude { get; init; } = [];
+   public string[] Skipped { get; init; } = [];
 
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
@@ -54,10 +54,10 @@ public class PluggableComponentsTheoryAttribute(
                         .Permutations
                         .Select(ITheoryDataRow (permutation) =>
                                 {
-                                   var (isExcluded, reason) = permutation.IsExcludedBy(Exclude);
+                                   var (isExcluded, reason) = permutation.IsExcludedBy(Skipped);
                                    return new TheoryDataRow(permutation.ToString())
                                    {
-                                      Skip = isExcluded ? $"{permutation} is excluded: {reason}" : null
+                                      Skip = isExcluded ? reason : null
                                    };
                                 })
                         .ToArray();

@@ -7,14 +7,14 @@ public class WhenAComponentIsMarkedAsExcluded
 {
    public WhenAComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1", "Constructor should not run for the excluded component");
 
-   [PCT(Exclude = ["Type1Component1::Testing exclusion functionality"])]
+   [PCT(Skipped = ["Type1Component1::TODO"])]
    public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
 
    public class NestedScenarioComponentIsMarkedAsExcluded
    {
       public NestedScenarioComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1", "Constructor should not run for the excluded component");
 
-      [PCT(Exclude = ["Type1Component1::Nested exclusion test"])]
+      [PCT(Skipped = ["Type1Component1::Unsupported"])]
       public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
    }
 }
