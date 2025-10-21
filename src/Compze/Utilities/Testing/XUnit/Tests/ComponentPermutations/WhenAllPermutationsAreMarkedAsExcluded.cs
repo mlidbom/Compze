@@ -1,7 +1,7 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using FluentAssertions;
 
-namespace Compze.Utilities.Testing.XUnit.v3.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
 public class WhenAllPermutationsAreMarkedAsExcluded
 {
