@@ -23,6 +23,11 @@ public class PluggableComponentsTheoryAttribute(
    TheoryAttribute(sourceFilePath, sourceLineNumber),
    IDataAttribute
 {
+   /// <summary>
+   /// Components to exclude from test execution.
+   /// Format: "ComponentName" or "ComponentName::Reason"
+   /// Examples: ["Type1Component1"] or ["Type1Component1::Not implemented yet"]
+   /// </summary>
    public string[] Exclude { get; init; } = [];
 
    bool? IDataAttribute.Explicit => Explicit;
