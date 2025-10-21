@@ -27,9 +27,9 @@ public abstract class UniversalTestBase : IDisposable, IAsyncLifetime
 #pragma warning restore CS0162 // Unreachable code detected
    }
 
-   public async Task InitializeAsync() => await InitializeAsyncInternal();
+   public async ValueTask InitializeAsync() => await InitializeAsyncInternal();
 
-   public async Task DisposeAsync()
+   public async ValueTask DisposeAsync()
    {
       Dispose();
       await DisposeAsyncInternal();

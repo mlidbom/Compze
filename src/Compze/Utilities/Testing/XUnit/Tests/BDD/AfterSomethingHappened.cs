@@ -1,6 +1,6 @@
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Utilities.Testing.XUnit.v3.Tests.BDD;
+namespace Compze.Utilities.Testing.XUnit.Tests.BDD;
 
 public class AfterSomethingHappened
 {

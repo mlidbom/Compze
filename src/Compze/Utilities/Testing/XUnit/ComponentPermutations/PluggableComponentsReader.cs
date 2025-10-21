@@ -19,4 +19,10 @@ static class PluggableComponentsReader
    });
 
    public static ComponentsPermutationsList Permutations => CombinationsLazy.Value;
+
+   /// <summary>
+   /// Gets all unique component names from all permutations (including ignored ones).
+   /// This is used for validation to ensure excluded components actually exist.
+   /// </summary>
+   public static IReadOnlySet<string> Components => Permutations.AllComponents;
 }

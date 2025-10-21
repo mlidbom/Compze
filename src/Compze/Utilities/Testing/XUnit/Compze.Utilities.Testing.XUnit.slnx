@@ -9,13 +9,6 @@
     <Project Path="../../Threading/Compze.Utilities.Threading.csproj" />
     <Project Path="../../Threading/Testing/Compze.Utilities.Threading.Testing.csproj" />
   </Folder>
-  <Folder Name="/v2/">
-    <Project Path="v2/Compze.Utilities.Testing.XUnit.v2.csproj" />
-    <Project Path="v2/Tests/Compze.Utilities.Testing.XUnit.v2.Tests.csproj" />
-  </Folder>
-  <Folder Name="/v3/">
-    <Project Path="v3/Compze.Utilities.Testing.XUnit.v3.csproj" />
-    <Project Path="v3/Tests/Compze.Utilities.Testing.XUnit.v3.Tests.csproj" />
-  </Folder>
   <Project Path="Compze.Utilities.Testing.XUnit.csproj" />
+  <Project Path="Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
 </Solution>

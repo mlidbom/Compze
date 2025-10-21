@@ -18,12 +18,9 @@
 		<PackageReference Include="xunit.v3" Version="3.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.v3.csproj" />
+	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="Compze.Utilities.Testing.XUnit.v3.Tests.uniqueid">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	  <None Update="TestUsingPluggableComponentCombinations">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
