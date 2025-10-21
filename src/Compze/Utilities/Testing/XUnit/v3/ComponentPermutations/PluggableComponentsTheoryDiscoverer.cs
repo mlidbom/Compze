@@ -31,21 +31,7 @@ class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
                          if(testCase is not XunitTestCase xunitTestCase)
                             return testCase;
 
-                         return new PluggableComponentsTestCase(
-                            testMethod: xunitTestCase.TestMethod,
-                            testCaseDisplayName: xunitTestCase.TestCaseDisplayName,
-                            uniqueID: xunitTestCase.UniqueID,
-                            @explicit: xunitTestCase.Explicit,
-                            skipExceptions: xunitTestCase.SkipExceptions,
-                            skipReason: xunitTestCase.SkipReason,
-                            skipType: xunitTestCase.SkipType,
-                            skipUnless: xunitTestCase.SkipUnless,
-                            skipWhen: xunitTestCase.SkipWhen,
-                            traits: xunitTestCase.Traits,
-                            sourceFilePath: xunitTestCase.SourceFilePath,
-                            sourceLineNumber: xunitTestCase.SourceLineNumber,
-                            timeout: xunitTestCase.Timeout,
-                            testMethodArguments: xunitTestCase.TestMethodArguments);
+                         return new PluggableComponentsTestCase(xunitTestCase);
                       })
                      .ToArray();
 

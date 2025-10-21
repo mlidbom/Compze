@@ -9,35 +9,21 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
    [Obsolete("Called by deserializer", error: true)]
    public PluggableComponentsTestCase() {}
 
-   public PluggableComponentsTestCase(
-      IXunitTestMethod testMethod,
-      string testCaseDisplayName,
-      string uniqueID,
-      bool @explicit,
-      Type[]? skipExceptions,
-      string? skipReason,
-      Type? skipType,
-      string? skipUnless,
-      string? skipWhen,
-      Dictionary<string, HashSet<string>> traits,
-      string? sourceFilePath,
-      int? sourceLineNumber,
-      int? timeout,
-      object?[]? testMethodArguments)
-      : base(testMethod: testMethod,
-             testCaseDisplayName: testCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments declare on the test methods.
-             uniqueID: uniqueID,
-             @explicit: @explicit,
-             skipExceptions: skipExceptions,
-             skipReason: skipReason,
-             skipType: skipType,
-             skipUnless: skipUnless,
-             skipWhen: skipWhen,
-             traits: traits,
-             sourceFilePath: sourceFilePath,
-             sourceLineNumber: sourceLineNumber,
-             timeout: timeout,
-             testMethodArguments: testMethodArguments) // Pass as string or test discovery in dotnet test breaks
+   public PluggableComponentsTestCase(XunitTestCase testCase)
+      : base(testMethod: testCase.TestMethod,
+             testCaseDisplayName: testCase.TestCaseDisplayName,
+             uniqueID: testCase.UniqueID,
+             @explicit: testCase.Explicit,
+             skipExceptions: testCase.SkipExceptions,
+             skipReason: testCase.SkipReason,
+             skipType: testCase.SkipType,
+             skipUnless: testCase.SkipUnless,
+             skipWhen: testCase.SkipWhen,
+             traits: testCase.Traits,
+             sourceFilePath: testCase.SourceFilePath,
+             sourceLineNumber: testCase.SourceLineNumber,
+             timeout: testCase.Timeout,
+             testMethodArguments: testCase.TestMethodArguments) // Pass as string or test discovery in dotnet test breaks
    {}
 
    public async ValueTask<RunSummary> Run(
