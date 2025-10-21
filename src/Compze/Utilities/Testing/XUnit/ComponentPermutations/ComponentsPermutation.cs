@@ -1,3 +1,5 @@
+using Compze.Utilities.SystemCE;
+
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 public class ComponentsPermutation
@@ -15,11 +17,11 @@ public class ComponentsPermutation
    internal static ComponentsPermutation Parse(string value) =>
       new(value.Split(Separator));
 
-   public static ComponentsPermutation? Current => CurrentInternal.Value;
-   static readonly AsyncLocal<ComponentsPermutation?> CurrentInternal = new();
+   public static ComponentsPermutation? Current => CurrentInternal.Value?.Value;
+   static readonly AsyncLocal<LazyCE<ComponentsPermutation>> CurrentInternal = new();
 
    internal static async Task<TReturn> RunInContextAsync<TReturn>(
-      ComponentsPermutation permutation,
+      LazyCE<ComponentsPermutation> permutation,
       Func<Task<TReturn>> executeTest)
    {
       CurrentInternal.Value = permutation;

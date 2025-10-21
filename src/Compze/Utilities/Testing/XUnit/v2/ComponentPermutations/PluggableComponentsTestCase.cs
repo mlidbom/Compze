@@ -1,3 +1,4 @@
+using Compze.Utilities.SystemCE;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -38,7 +39,8 @@ class PluggableComponentsTestCase : XunitTestCase
                                //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.
                                //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
                                //"Activate Endless Churn Mode" in NCrunch
-                               ComponentsPermutation.Parse((string)TestMethodArguments![0]!),
+                               //It is lazy because run is called even for ignored tests etc. So we cannot assume that we have arguments.
+                               new LazyCE<ComponentsPermutation>(() => ComponentsPermutation.Parse((string)TestMethodArguments![0]!)),
                                //Pass an empty arguments array since our test methods do not take arguments.
                                async () => await new XunitTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, [], messageBus, aggregator, cancellationTokenSource).RunAsync()));
    }
