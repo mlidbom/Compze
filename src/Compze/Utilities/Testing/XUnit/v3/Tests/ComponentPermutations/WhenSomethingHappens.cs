@@ -8,11 +8,11 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
    [PCT] public void ThisIsTheCase(string ignored) =>
-      _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
+      _testOutputHelper.WriteLine(ignored);
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
       [PCT] public void ThisIsAlsoTheCase(string ignored) =>
-         _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
+         _testOutputHelper.WriteLine(ignored);
    }
 }
