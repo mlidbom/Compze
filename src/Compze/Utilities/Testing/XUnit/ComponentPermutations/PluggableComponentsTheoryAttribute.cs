@@ -67,7 +67,7 @@ public class PluggableComponentsTheoryAttribute(
                 var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
                 return new TheoryDataRow(permutation.ToString())
                        {
-                          Skip = exclusion?.Reason
+                          Skip = exclusion != null ? $"{exclusion.ComponentName}: {exclusion.Reason}" : null
                        };
              })
             .ToArray();
