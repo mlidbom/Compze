@@ -4,5 +4,7 @@ namespace Compze.Utilities.Testing.XUnit.v2.Tests.ComponentPermutations;
 
 public class WhenATestIsMarkedAsSkip
 {
-   [PCT(Skip = "test skipping")] public void ItIsNotExecuted() => throw new Exception("This should have been skipped");
+   public WhenATestIsMarkedAsSkip() => throw new Exception("Constructor should not be called for ignored tests");
+
+   [PCT(Skip = "test skipping")] public void ItIsNotExecuted() => throw new Exception("Ignored test methods should not be executed");
 }
