@@ -30,19 +30,8 @@ class PluggableComponentsTheoryDiscoverer : IXunitTestCaseDiscoverer
                                                                                           testMethodArguments: [permutation.ToString()]);
 
                          return new PluggableComponentsTestCase(
-                            testMethod: testCaseDetails.ResolvedTestMethod,
-                            testCaseDisplayName: testCaseDetails.TestCaseDisplayName,
-                            uniqueID: testCaseDetails.UniqueID,
-                            @explicit: testCaseDetails.Explicit,
-                            skipExceptions: testCaseDetails.SkipExceptions,
-                            skipReason: testCaseDetails.SkipReason,
-                            skipType: testCaseDetails.SkipType,
-                            skipUnless: testCaseDetails.SkipUnless,
-                            skipWhen: testCaseDetails.SkipWhen,
+                            new TestCaseDetails(testCaseDetails),
                             traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
-                            sourceFilePath: testCaseDetails.SourceFilePath,
-                            sourceLineNumber: testCaseDetails.SourceLineNumber,
-                            timeout: testCaseDetails.Timeout,
                             permutation: permutation);
                       })
                      .ToArray();

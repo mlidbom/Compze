@@ -1,42 +1,22 @@
+using Compze.Utilities.SystemCE;
 using Xunit.Sdk;
 using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTestCase
+public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
 {
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]
    public PluggableComponentsTestCase() {}
 
    public PluggableComponentsTestCase(
-      IXunitTestMethod testMethod,
-      string testCaseDisplayName,
-      string uniqueID,
-      bool @explicit,
-      Type[]? skipExceptions,
-      string? skipReason,
-      Type? skipType,
-      string? skipUnless,
-      string? skipWhen,
+      TestCaseDetails details,
       Dictionary<string, HashSet<string>> traits,
-      string? sourceFilePath,
-      int? sourceLineNumber,
-      int? timeout,
       ComponentsPermutation permutation)
-      : base(testMethod: testMethod,
-             testCaseDisplayName: testCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments declare on the test methods.
-             uniqueID: uniqueID,
-             @explicit: @explicit,
-             skipExceptions: skipExceptions,
-             skipReason: skipReason,
-             skipType: skipType,
-             skipUnless: skipUnless,
-             skipWhen: skipWhen,
+      : base(details,
+             testCaseDisplayName: details.TestCaseDisplayName.Replace("???: ", ""), //the ???: is Xunit being confused because we have no arguments declare on the test methods.
              traits: traits,
-             sourceFilePath: sourceFilePath,
-             sourceLineNumber: sourceLineNumber,
-             timeout: timeout,
              testMethodArguments: [permutation.ToString()]) // Pass as string or test discovery in dotnet test breaks
    {}
 
@@ -66,7 +46,8 @@ public class PluggableComponentsTestCase : XunitTestCase, ISelfExecutingXunitTes
                 //Keeping in mind the environmental constraints under which some test runners run, like NCrunch, this is actually a good idea.
                 //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
                 //"Activate Endless Churn Mode" in NCrunch
-                ComponentsPermutation.Parse((string)TestMethodArguments![0]!),
+                //It is lazy because run is called even for ignored tests etc. So we cannot assume that we have arguments.
+                new LazyCE<ComponentsPermutation>(() => ComponentsPermutation.Parse((string)TestMethodArguments![0]!)),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                testCaseWithoutArgs,
                                messageBus,
