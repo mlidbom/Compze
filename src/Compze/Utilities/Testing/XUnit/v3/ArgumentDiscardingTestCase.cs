@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit;
 
 public class ArgumentDiscardingTestCase : ConstructorArgumentForwardingTestCase
 {
