@@ -18,7 +18,7 @@ public class ComponentsPermutation
       new(value.Split(Separator));
 
    public static ComponentsPermutation? Current => CurrentInternal.Value?.Value;
-   static readonly AsyncLocal<LazyCE<ComponentsPermutation>> CurrentInternal = new();
+   static readonly AsyncLocal<LazyCE<ComponentsPermutation>?> CurrentInternal = new();
 
    internal static async Task<TReturn> RunInContextAsync<TReturn>(
       LazyCE<ComponentsPermutation> permutation,
