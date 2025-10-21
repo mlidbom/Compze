@@ -18,11 +18,6 @@ class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
       if(testMethod.Method.DeclaringType != testMethod.TestClass.Class)
          return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
-      var pctAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
-
-      if(!pctAttribute.GetPermutations().Any())
-         return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
-
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
       var testCases = baseCases.Select(testCaseInterface =>

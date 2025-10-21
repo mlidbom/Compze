@@ -11,6 +11,8 @@ public class ComponentsPermutation
    public readonly IReadOnlyList<string> Components;
    ComponentsPermutation(IReadOnlyList<string> components) => Components = components;
 
+   internal bool IsExcludedBy(string[] exclusions) => exclusions.Any(Components.Contains);
+
    internal static ComponentsPermutation FromArray(string[] value) =>
       new(value);
 

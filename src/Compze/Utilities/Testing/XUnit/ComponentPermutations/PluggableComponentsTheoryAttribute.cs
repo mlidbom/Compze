@@ -45,18 +45,19 @@ public class PluggableComponentsTheoryAttribute(
             ]);
       }
 
-      var permutations = GetPermutations()
-                        .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()))
+      var permutations = PluggableComponentsReader
+                        .Permutations
+                        .Select(ITheoryDataRow (permutation) =>
+                                   new TheoryDataRow(permutation.ToString())
+                                   {
+                                      Skip = permutation.IsExcludedBy(Exclude) ? $"{permutation} is excluded" : null
+                                   })
                         .ToArray();
 
       return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
    }
 
    public bool SupportsDiscoveryEnumeration() => true; // Yes, we can enumerate at discovery time
-
-   internal ComponentsPermutationsList GetPermutations() => PluggableComponentsReader
-                                                           .Permutations
-                                                           .Exclude(Exclude);
 }
 
 /// <summary>
