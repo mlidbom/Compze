@@ -45,9 +45,7 @@ public class PluggableComponentsTheoryAttribute(
             ]);
       }
 
-      var permutations = PluggableComponentsReader
-                        .Permutations
-                        .Exclude(Exclude)
+      var permutations = GetPermutations()
                         .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()))
                         .ToArray();
 
@@ -55,6 +53,10 @@ public class PluggableComponentsTheoryAttribute(
    }
 
    public bool SupportsDiscoveryEnumeration() => true; // Yes, we can enumerate at discovery time
+
+   internal ComponentsPermutationsList GetPermutations() => PluggableComponentsReader
+                                                           .Permutations
+                                                           .Exclude(Exclude);
 }
 
 /// <summary>

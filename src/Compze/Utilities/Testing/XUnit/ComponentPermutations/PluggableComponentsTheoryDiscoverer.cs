@@ -20,13 +20,16 @@ class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 
       var pctAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
 
+      if(!pctAttribute.GetPermutations().Any())
+         return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
+
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
-      var testCases = baseCases.Select(testCase =>
+      var testCases = baseCases.Select(testCaseInterface =>
                                 {
                                    // This ensures ExecutionErrorTestCase and other special cases are preserved
-                                   if(testCase is not XunitTestCase xunitTestCase)
-                                      return testCase;
+                                   if(testCaseInterface is not XunitTestCase xunitTestCase)
+                                      return testCaseInterface;
 
                                    return new PluggableComponentsTestCase(
                                       xunitTestCase,
