@@ -30,7 +30,7 @@ public class PluggableComponentsTheoryAttribute(
    /// </summary>
    public string[] Skipped { get; init; } = [];
 
-   internal ExclusionsCollection SkippedComponents => ExclusionsCollection.Parse(Skipped);
+   ExclusionsCollection SkippedComponents => ExclusionsCollection.Parse(Skipped);
 
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
@@ -52,19 +52,25 @@ public class PluggableComponentsTheoryAttribute(
             ]);
       }
 
-      var permutations = PluggableComponentsReader
-                        .Permutations
-                        .Select(ITheoryDataRow (permutation) =>
-                                {
-                                   var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
-                                   return new TheoryDataRow(permutation.ToString())
-                                   {
-                                      Skip = exclusion?.Reason
-                                   };
-                                })
-                        .ToArray();
+      var permutations = GetTheoryDataRowsInternal();
 
       return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
+   }
+
+   [Obsolete("Only for internal use")] 
+   public ITheoryDataRow[] GetTheoryDataRowsInternal()
+   {
+      return PluggableComponentsReader
+            .Permutations
+            .Select(ITheoryDataRow (permutation) =>
+             {
+                var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
+                return new TheoryDataRow(permutation.ToString())
+                       {
+                          Skip = exclusion?.Reason
+                       };
+             })
+            .ToArray();
    }
 
    public bool SupportsDiscoveryEnumeration() => true; // Yes, we can enumerate at discovery time
