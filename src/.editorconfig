@@ -4,6 +4,8 @@ root = true
 charset = utf-8
 #options: 
 
+
+dotnet_diagnostic.xUnit1006.severity = none # We have theory attributes that do not pass arguments to the test methods
 dotnet_diagnostic.CA1063.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
 dotnet_diagnostic.CA1816.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
 
