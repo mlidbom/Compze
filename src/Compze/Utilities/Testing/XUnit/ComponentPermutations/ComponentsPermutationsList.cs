@@ -21,7 +21,8 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
       var lines = rows
                  .Select(it => it.Trim())
                  .Where(line => !string.IsNullOrEmpty(line))
-                 .Where(line => !line.StartsWith("//")); // Comments
+                 .Where(line => !line.StartsWith("//")) // Comments
+                 .ToList();
 
       var activeLines = lines
                        .Where(line => !line.StartsWith('#')) // Ignored/excluded permutations
