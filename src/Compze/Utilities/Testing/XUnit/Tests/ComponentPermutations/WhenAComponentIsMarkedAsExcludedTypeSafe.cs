@@ -17,19 +17,25 @@ public class WhenAComponentIsMarkedAsExcludedTypeSafe
    /// Type-safe version: no string literals, compile-time checking, IntelliSense support
    /// </summary>
    [TypedPCT(
-      skippedComponents1: [Type1Component.Type1Component1],
-      skipReasons1: ["TODO"])]
+      skippedComponents: [Type1Component.Type1Component1],
+      skipReasons: ["TODO"])]
    public void TestIsNotExecutedForThatComponent_TypeSafe() => 
       ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
 
    /// <summary>
-   /// You can skip multiple components with reasons
+   /// You can skip multiple components from any dimension with a single array - much cleaner!
    /// </summary>
    [TypedPCT(
-      skippedComponents1: [Type1Component.Type1Component1, Type1Component.Type1Component3],
-      skipReasons1: ["Not implemented yet", "Deprecated"],
-      skippedComponents2: [Type2Component.Type2Component3],
-      skipReasons2: ["Unsupported configuration"]
+      skippedComponents: [
+         Type1Component.Type1Component1, 
+         Type1Component.Type1Component3,
+         Type2Component.Type2Component3
+      ],
+      skipReasons: [
+         "Not implemented yet", 
+         "Deprecated",
+         "Unsupported configuration"
+      ]
    )]
    public void TestWithMultipleExclusions() => 
       ComponentsPermutation.Current!.Components[0].Should().BeOneOf("Type1Component2");
@@ -41,8 +47,8 @@ public class WhenAComponentIsMarkedAsExcludedTypeSafe
             "Constructor should not run for the excluded component");
 
       [TypedPCT(
-         skippedComponents1: [Type1Component.Type1Component1],
-         skipReasons1: ["Unsupported"])]
+         skippedComponents: [Type1Component.Type1Component1],
+         skipReasons: ["Unsupported"])]
       public void TestIsNotExecutedForThatComponent_TypeSafe() => 
          ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
    }

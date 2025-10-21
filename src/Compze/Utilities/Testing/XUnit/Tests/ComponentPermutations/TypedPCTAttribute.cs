@@ -9,18 +9,16 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 /// </summary>
 /// <example>
 /// [TypedPCT(
-///    skippedComponents1: [Type1Component.Type1Component1],
-///    skipReasons1: ["Not implemented yet"])]
+///    skippedComponents: [Type1Component.Type1Component1, Type2Component.Type2Component3],
+///    skipReasons: ["Not implemented yet", "Deprecated"])]
 /// public void MyTest() { }
 /// </example>
 public sealed class TypedPCTAttribute(
-   object[]? skippedComponents1 = null,
-   string[]? skipReasons1 = null,
-   object[]? skippedComponents2 = null,
-   string[]? skipReasons2 = null,
+   object[]? skippedComponents = null,
+   string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : TypedPluggableComponentsTheoryAttribute<Type1Component, Type2Component>(
-      skippedComponents1, skipReasons1, skippedComponents2, skipReasons2, sourceFilePath, sourceLineNumber)
+      skippedComponents, skipReasons, sourceFilePath, sourceLineNumber)
 {
 }

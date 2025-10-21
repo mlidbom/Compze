@@ -46,18 +46,25 @@ ComponentSkipSpecification.Skip(Type1Component.Type1Component1, "TODO")
 ### Simple Skip
 ```csharp
 [TypedPCT(
-   skippedComponents1: [Type1Component.Type1Component1],
-   skipReasons1: ["TODO"])]
+   skippedComponents: [Type1Component.Type1Component1],
+   skipReasons: ["TODO"])]
 public void MyTest() { }
 ```
 
 ### Multiple Skips Across Dimensions
+Mix and match components from any dimension in a single array - much cleaner!
 ```csharp
 [TypedPCT(
-   skippedComponents1: [Type1Component.Type1Component1, Type1Component.Type1Component3],
-   skipReasons1: ["Not implemented yet", "Deprecated"],
-   skippedComponents2: [Type2Component.Type2Component3],
-   skipReasons2: ["Unsupported configuration"])]
+   skippedComponents: [
+      Type1Component.Type1Component1, 
+      Type1Component.Type1Component3,
+      Type2Component.Type2Component3
+   ],
+   skipReasons: [
+      "Not implemented yet", 
+      "Deprecated",
+      "Unsupported configuration"
+   ])]
 public void MyTest() { }
 ```
 
@@ -88,16 +95,20 @@ Therefore, we use:
 This would be ideal but doesn't work with attributes:
 ```csharp
 // ❌ This doesn't work in C# attributes
-[TypedPCT(Skipped1 = [(Type1Component.Type1Component1, "TODO")])]
+[TypedPCT(Skipped = [(Type1Component.Type1Component1, "TODO")])]
 ```
 
 Instead we use parallel arrays:
 ```csharp
-// ✅ This works
+// ✅ This works - and you can mix components from any dimension!
 [TypedPCT(
-   skippedComponents1: [Type1Component.Type1Component1],
-   skipReasons1: ["TODO"])]
+   skippedComponents: [Type1Component.Type1Component1, Type2Component.Type2Component3],
+   skipReasons: ["TODO", "Unsupported"])]
 ```
+
+### Why Single Arrays Instead of Per-Dimension Arrays?
+
+Since we're already using untyped `object[]` for attribute compatibility, there's no benefit to having separate arrays per dimension. A single pair of arrays is much cleaner and allows mixing components from different dimensions naturally.
 
 ## Testing
 
@@ -110,8 +121,13 @@ All tests pass successfully:
 
 ## Future Enhancements
 
-### Option 1: Support More Dimensions
-Create overloads or use reflection to support 3, 4, or more component dimensions.
+### Option 1: Support More Dimensions ✅ DONE
+Already created base classes for 2, 3, and 4 dimensions:
+- `TypedPluggableComponentsTheoryAttribute<T1, T2>`
+- `TypedPluggableComponentsTheoryAttribute<T1, T2, T3>`
+- `TypedPluggableComponentsTheoryAttribute<T1, T2, T3, T4>`
+
+Can easily extend to more if needed.
 
 ### Option 2: Attribute Metadata
 Add custom attributes to enum values for better documentation:
