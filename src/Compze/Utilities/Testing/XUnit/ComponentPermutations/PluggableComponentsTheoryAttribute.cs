@@ -48,7 +48,7 @@ public class PluggableComponentsTheoryAttribute(
       var permutations = PluggableComponentsReader
                         .Permutations
                         .Exclude(Exclude)
-                        .Select(permutation => new TheoryDataRow(permutation.ToString()) as ITheoryDataRow)
+                        .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()))
                         .ToArray();
 
       return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
