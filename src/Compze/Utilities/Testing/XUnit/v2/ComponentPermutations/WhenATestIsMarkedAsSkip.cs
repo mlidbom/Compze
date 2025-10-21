@@ -1,6 +1,4 @@
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
-
-namespace Compze.Utilities.Testing.XUnit.v3.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 public class WhenATestIsMarkedAsSkip
 {
