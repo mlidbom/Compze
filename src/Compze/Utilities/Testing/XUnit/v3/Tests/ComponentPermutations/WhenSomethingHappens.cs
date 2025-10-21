@@ -7,12 +7,12 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [PCT] public void ThisIsTheCase(string ignored) =>
-      _testOutputHelper.WriteLine(ignored);
+   [PCT] public void ThisIsTheCase() =>
+      _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [PCT] public void ThisIsAlsoTheCase(string ignored) =>
-         _testOutputHelper.WriteLine(ignored);
+      [PCT] public void ThisIsAlsoTheCase() =>
+         _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
    }
 }

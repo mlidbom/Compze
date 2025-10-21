@@ -16,7 +16,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// Use TestEnv to access the component and the information.
 /// </summary>
-[XunitTestCaseDiscoverer(typeof(TheoryDiscoverer))] // Use standard TheoryDiscoverer!
+[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))] // Use standard TheoryDiscoverer!
 public class PluggableComponentsTheoryAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1) :
