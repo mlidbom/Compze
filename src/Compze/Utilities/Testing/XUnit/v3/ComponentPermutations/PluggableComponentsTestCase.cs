@@ -10,8 +10,9 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
    [Obsolete("Called by deserializer", error: true)]
    public PluggableComponentsTestCase() {}
 
-   public PluggableComponentsTestCase(XunitTestCase testCase,
-                                      Dictionary<string, HashSet<string>> traits)
+   public PluggableComponentsTestCase(
+      XunitTestCase testCase,
+      Dictionary<string, HashSet<string>> traits)
       : base(testCase,
              testCaseDisplayName: testCase.TestCaseDisplayName.Replace("???: ", "")) //the ???: is Xunit being confused because we have no arguments declare on the test methods.) // Pass as string or test discovery in dotnet test breaks
    {}

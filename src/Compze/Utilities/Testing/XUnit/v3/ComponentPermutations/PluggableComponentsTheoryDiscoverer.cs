@@ -15,10 +15,7 @@ class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
       IXunitTestMethod testMethod,
       IFactAttribute factAttribute)
    {
-      var declaringType = testMethod.Method.DeclaringType;
-      var currentType = testMethod.TestClass.Class;
-
-      if(declaringType != currentType) //We only run these tests for the classes that declares them. Just like XFact
+      if(testMethod.Method.DeclaringType != testMethod.TestClass.Class)
          return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
       var pctAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
