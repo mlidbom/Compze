@@ -10,24 +10,17 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
 	</ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
+   </ItemGroup>
+
+  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="v2\**" />
-    <EmbeddedResource Remove="v2\**" />
-    <None Remove="v2\**" />
-    <Content Remove="v2\**" />
-    <Compile Remove="v2\Tests\**" />
-    <EmbeddedResource Remove="v2\Tests\**" />
-    <None Remove="v2\Tests\**" />
-    <Content Remove="v2\Tests\**" />
-    <Compile Remove="v3\**" />
-    <EmbeddedResource Remove="v3\**" />
-    <None Remove="v3\**" />
-    <Content Remove="v3\**" />
-    <Compile Remove="v3\Tests\**" />
-    <EmbeddedResource Remove="v3\Tests\**" />
-    <None Remove="v3\Tests\**" />
-    <Content Remove="v3\Tests\**" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
+    <Content Remove="Tests\**" />
   </ItemGroup>
 </Project>
