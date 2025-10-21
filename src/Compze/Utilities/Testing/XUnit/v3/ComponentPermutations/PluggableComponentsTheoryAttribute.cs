@@ -25,10 +25,6 @@ public class PluggableComponentsTheoryAttribute(
 {
    public string[] Exclude { get; init; } = [];
 
-   // Skip tests without data instead of failing (for inherited tests in derived classes)
-   public new bool SkipTestWithoutData { get; set; } = true;
-
-   // IDataAttribute implementation - we supply our own data!
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
    string? IDataAttribute.Skip => Skip;

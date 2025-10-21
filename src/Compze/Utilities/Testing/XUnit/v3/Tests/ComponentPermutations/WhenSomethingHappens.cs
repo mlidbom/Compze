@@ -10,6 +10,9 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    [PCT] public void ThisIsTheCase() =>
       _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
 
+   [PCT(Exclude = ["Type1Component1"])] public void ExcludedComponentType1Component1DoesNotExecute() =>
+      _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
+
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
       [PCT] public void ThisIsAlsoTheCase() =>
