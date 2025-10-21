@@ -27,9 +27,4 @@
     <ProjectReference Include="..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
     <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="Compze.Tests.ScratchPad.uniqueid">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

@@ -25,9 +25,4 @@
       </PackageReference>
       <PackageReference Include="xunit.v3" Version="3.1.0" />
    </ItemGroup>
-   <ItemGroup>
-      <None Update="AccountManagement.Tests.uniqueid">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-   </ItemGroup>
 </Project>
