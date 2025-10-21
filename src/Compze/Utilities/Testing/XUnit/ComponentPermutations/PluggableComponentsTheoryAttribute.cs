@@ -25,8 +25,8 @@ public class PluggableComponentsTheoryAttribute(
 {
    /// <summary>
    /// Components to exclude from test execution.
-   /// Format: "ComponentName" or "ComponentName::Reason"
-   /// Examples: ["Type1Component1"] or ["Type1Component1::Not implemented yet"]
+   /// Format: "ComponentName::Reason" (reason is mandatory)
+   /// Example: ["Type1Component1::Not implemented yet"]
    /// </summary>
    public string[] Exclude { get; init; } = [];
 
@@ -57,11 +57,7 @@ public class PluggableComponentsTheoryAttribute(
                                    var (isExcluded, reason) = permutation.IsExcludedBy(Exclude);
                                    return new TheoryDataRow(permutation.ToString())
                                    {
-                                      Skip = isExcluded
-                                                ? reason != null
-                                                   ? $"{permutation} is excluded: {reason}"
-                                                   : $"{permutation} is excluded"
-                                                : null
+                                      Skip = isExcluded ? $"{permutation} is excluded: {reason}" : null
                                    };
                                 })
                         .ToArray();

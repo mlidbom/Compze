@@ -1,17 +1,17 @@
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 /// <summary>
-/// Represents an exclusion of a component, optionally with a reason.
-/// Format: "ComponentName" or "ComponentName::Reason"
+/// Represents an exclusion of a component with a reason.
+/// Format: "ComponentName::Reason"
 /// </summary>
 internal class ComponentExclusion
 {
    const string Separator = "::";
 
    public string ComponentName { get; }
-   public string? Reason { get; }
+   public string Reason { get; }
 
-   ComponentExclusion(string componentName, string? reason)
+   ComponentExclusion(string componentName, string reason)
    {
       ComponentName = componentName;
       Reason = reason;
@@ -19,17 +19,19 @@ internal class ComponentExclusion
 
    /// <summary>
    /// Parses an exclusion specification string.
-   /// Supports two formats:
-   /// - "ComponentName" - excludes the component without a specific reason
-   /// - "ComponentName::Reason" - excludes the component with a specified reason
+   /// Format: "ComponentName::Reason"
+   /// The reason is mandatory to provide context for why the component is excluded.
    /// </summary>
    public static ComponentExclusion Parse(string exclusionSpec)
    {
       var parts = exclusionSpec.Split(Separator, 2);
-      var componentName = parts[0];
-      var reason = parts.Length > 1 ? parts[1] : null;
+      
+      if(parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]) || string.IsNullOrWhiteSpace(parts[1]))
+         throw new ArgumentException(
+            $"Exclusion spec must be in format 'ComponentName::Reason'. Got: '{exclusionSpec}'",
+            nameof(exclusionSpec));
 
-      return new ComponentExclusion(componentName, reason);
+      return new ComponentExclusion(parts[0], parts[1]);
    }
 
    /// <summary>

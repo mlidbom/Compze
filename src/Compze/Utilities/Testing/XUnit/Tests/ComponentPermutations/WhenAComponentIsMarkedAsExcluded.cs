@@ -7,20 +7,14 @@ public class WhenAComponentIsMarkedAsExcluded
 {
    public WhenAComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1", "Constructor should not run for the excluded component");
 
-   [PCT(Exclude = ["Type1Component1"])] public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
+   [PCT(Exclude = ["Type1Component1::Testing exclusion functionality"])]
+   public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
 
    public class NestedScenarioComponentIsMarkedAsExcluded
    {
       public NestedScenarioComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1", "Constructor should not run for the excluded component");
 
-      [PCT(Exclude = ["Type1Component1"])] public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
-   }
-
-   public class NestedScenarioWithExclusionReason
-   {
-      public NestedScenarioWithExclusionReason() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1", "Constructor should not run for the excluded component");
-
-      [PCT(Exclude = ["Type1Component1::Temporarily disabled due to bug #123"])]
-      public void TestIsNotExecutedForThatComponent_WithReason() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
+      [PCT(Exclude = ["Type1Component1::Nested exclusion test"])]
+      public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
    }
 }
