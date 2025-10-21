@@ -30,6 +30,8 @@ public class PluggableComponentsTheoryAttribute(
    /// </summary>
    public string[] Skipped { get; init; } = [];
 
+   internal ExclusionsCollection SkippedComponents => ExclusionsCollection.Parse(Skipped);
+
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
    string? IDataAttribute.Skip => Skip;
@@ -54,10 +56,10 @@ public class PluggableComponentsTheoryAttribute(
                         .Permutations
                         .Select(ITheoryDataRow (permutation) =>
                                 {
-                                   var (isExcluded, reason) = permutation.IsExcludedBy(Skipped);
+                                   var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
                                    return new TheoryDataRow(permutation.ToString())
                                    {
-                                      Skip = isExcluded ? reason : null
+                                      Skip = exclusion?.Reason
                                    };
                                 })
                         .ToArray();

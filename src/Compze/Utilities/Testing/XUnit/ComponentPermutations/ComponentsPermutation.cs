@@ -11,18 +11,6 @@ public class ComponentsPermutation
    public readonly IReadOnlyList<string> Components;
    ComponentsPermutation(IReadOnlyList<string> components) => Components = components;
 
-   internal (bool IsExcluded, string? Reason) IsExcludedBy(string[] exclusionSpecs)
-   {
-      foreach(var exclusionSpec in exclusionSpecs)
-      {
-         var exclusion = ComponentExclusion.Parse(exclusionSpec);
-         if(exclusion.Matches(this))
-            return (true, exclusion.Reason);
-      }
-
-      return (false, null);
-   }
-
    internal static ComponentsPermutation FromArray(string[] value) =>
       new(value);
 
