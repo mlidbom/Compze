@@ -2,7 +2,7 @@ using Xunit;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace Compze.Utilities.Testing.XUnit.NCrunchErrorReproductions;
+namespace Compze.Utilities.Testing.XUnit.v3.Tests.NCrunchErrorReproductions;
 
 static class TestData
 {
