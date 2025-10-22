@@ -56,12 +56,11 @@ class ConfigFileLine
 
    Enum ComponentValue(int componentTypeIndex, string componentName) => (Enum)Enum.Parse(_componentTypes[componentTypeIndex], componentName);
 
-   static IReadOnlyList<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues)
-   {
-      var cartesianProduct = wildCardComponentValues.Select(it => it.Values).ToList().GenerateCartesianProduct();
-
-      return cartesianProduct.Select(permutation => new WildCardComponentsPermutation(permutation)).ToList();
-   }
+   static IReadOnlyList<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues) =>
+      wildCardComponentValues.Select(it => it.Values)
+                             .CartesianProduct()
+                             .Select(it => new WildCardComponentsPermutation(it))
+                             .ToList();
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
    {
