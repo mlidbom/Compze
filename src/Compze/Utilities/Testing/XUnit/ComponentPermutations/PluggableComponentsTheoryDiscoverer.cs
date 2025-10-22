@@ -19,7 +19,6 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 
 
       var pctAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
-      var componentEnumTypes = pctAttribute.ComponentEnumTypes;
 
       var testCases = baseCases.Select(testCaseInterface =>
                                 {
@@ -28,7 +27,8 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
                                       return testCaseInterface;
 
                                    return new PluggableComponentsTestCase(
-                                      xunitTestCase,
+                                      testCase: xunitTestCase,
+                                      useTestMethodArguments: pctAttribute.UseTestMethodArgument,
                                       traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
                                    );
                                 })

@@ -21,7 +21,10 @@
 	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="TestUsingPluggableComponentCombinations">
+	  <None Update="TestUsingArgumentPassingTwoComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="TestUsingNoArgumentPassingTwoComponentsPCTAttribute">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

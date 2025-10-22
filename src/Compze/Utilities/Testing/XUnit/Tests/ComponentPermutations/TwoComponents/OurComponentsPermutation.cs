@@ -1,6 +1,6 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents;
 
 static class OurComponentsPermutation
 {

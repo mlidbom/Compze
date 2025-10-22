@@ -8,19 +8,21 @@ public abstract class PluggableComponentsTheoryAttribute<TComponent1, TComponent
    where TComponent1 : Enum
    where TComponent2 : Enum
 {
-   protected PluggableComponentsTheoryAttribute(
-      string configurationFileName,
-      object[]? skippedComponents = null,
-      string[]? skipReasons = null,
-      [CallerFilePath] string? sourceFilePath = null,
-      [CallerLineNumber] int sourceLineNumber = -1)
-      : base(configurationFileName,
+   protected PluggableComponentsTheoryAttribute(string configurationFileName,
+                                                object[]? skipped,
+                                                string[]? skipReasons,
+                                                bool useTestMethodArgument,
+                                                string? sourceFilePath,
+                                                int sourceLineNumber)
+      : base(configurationFileName: configurationFileName,
+             componentEnumTypes:
              [
                 typeof(TComponent1),
                 typeof(TComponent2)
              ],
-             skippedComponents,
-             skipReasons,
-             sourceFilePath,
-             sourceLineNumber) {}
+             skipped: skipped,
+             skipReasons: skipReasons,
+             useTestMethodArgument: useTestMethodArgument,
+             sourceFilePath: sourceFilePath,
+             sourceLineNumber: sourceLineNumber) {}
 }

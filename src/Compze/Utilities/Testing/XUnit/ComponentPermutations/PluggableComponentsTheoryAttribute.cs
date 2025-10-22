@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE.LinqCE;
 using Xunit;
 using Xunit.Sdk;
@@ -10,40 +9,31 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
-// ReSharper disable GrammarMistakeInComment
-/// <summary>
-/// Pluggable Components Theory Attribute
-/// Use this attribute instead of [XFact] for tests that should run with all pluggable component combinations.
-/// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
-/// Use TestEnv to access the component and the information.
-/// </summary>
 [XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public abstract class PluggableComponentsTheoryAttribute :
    TheoryAttribute,
    IDataAttribute
 {
+   public bool UseTestMethodArgument { get; }
    readonly IReadOnlyList<Enum> _skippedComponents;
    readonly string[] _skipReasons;
    readonly Type[] _componentEnumTypes;
    readonly string _configurationFileName;
 
-   /// <summary>
-   /// Pluggable Components Theory Attribute
-   /// Use this attribute instead of [XFact] for tests that should run with all pluggable component combinations.
-   /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
-   /// Use TestEnv to access the component and the information.
-   /// </summary>
    protected PluggableComponentsTheoryAttribute(string configurationFileName,
                                                 Type[] componentEnumTypes,
-                                                object[]? skippedComponents,
+                                                object[]? skipped,
                                                 string[]? skipReasons,
-                                                [CallerFilePath] string? sourceFilePath = null,
-                                                [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
+                                                bool useTestMethodArgument,
+                                                string? sourceFilePath,
+                                                int sourceLineNumber) : base(sourceFilePath, sourceLineNumber)
    {
       if(componentEnumTypes.Length == 0)
       {
          throw new ArgumentException($"{nameof(componentEnumTypes)} may not be empty");
       }
+
+      UseTestMethodArgument = useTestMethodArgument;
 
       foreach(var type in componentEnumTypes)
       {
@@ -51,15 +41,15 @@ public abstract class PluggableComponentsTheoryAttribute :
             throw new ArgumentException($"Type {type.Name} must be an enum type");
       }
 
-      skippedComponents?.Where(it => !componentEnumTypes.Contains(it.GetType()))
+      skipped?.Where(it => !componentEnumTypes.Contains(it.GetType()))
                         .ForEach(it => throw new ArgumentException($"{it} is not one of: {string.Join(", ", componentEnumTypes.Select(componentType => componentType.FullName))}"));
 
-      if(skippedComponents?.Length != skipReasons?.Length)
+      if(skipped?.Length != skipReasons?.Length)
          throw new ArgumentException("Number of skipped components must match number of skip reasons");
 
       _configurationFileName = configurationFileName ?? throw new ArgumentNullException(nameof(configurationFileName));
       _componentEnumTypes = componentEnumTypes;
-      _skippedComponents = skippedComponents?.Cast<Enum>().ToList() ?? [];
+      _skippedComponents = skipped?.Cast<Enum>().ToList() ?? [];
       _skipReasons = skipReasons ?? [];
    }
 

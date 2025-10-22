@@ -1,9 +1,7 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-// ReSharper disable ExplicitCallerInfoArgument
-
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents.ArgumentPassing;
 
 /// <summary>
 /// Type-safe version of PCT attribute for tests.
@@ -15,14 +13,15 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 ///    skipReasons: ["Not implemented yet", "Deprecated"])]
 /// public void MyTest() { }
 /// </example>
-public sealed class OurPCTAttribute(
+public sealed class ArgumentPassingTwoComponentsPCTAttribute(
    object[]? skipped = null,
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : PluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
-      "TestUsingPluggableComponentCombinations",
-      skipped,
-      skipReasons,
-      sourceFilePath,
-      sourceLineNumber);
+      configurationFileName: "TestUsingArgumentPassingTwoComponentsPCTAttribute",
+      skipped: skipped,
+      skipReasons: skipReasons,
+      useTestMethodArgument: true,
+      sourceFilePath: sourceFilePath,
+      sourceLineNumber: sourceLineNumber);
