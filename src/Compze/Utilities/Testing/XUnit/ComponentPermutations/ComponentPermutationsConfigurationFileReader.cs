@@ -66,26 +66,6 @@ static class ComponentPermutationsConfigurationFileReader
       if(activeLines.Count == 0)
          return new List<ComponentsPermutation>([]);
 
-      // Validate all lines have the correct number of components
-      var invalidLines = activeLines
-         .Select((line, index) => new { line, index, lineNumber = index + 1 })
-         .Where(x => x.line.Length != componentTypes.Length)
-         .ToList();
-
-      if(invalidLines.Any())
-      {
-         var expectedCount = componentTypes.Length;
-         var expectedTypes = string.Join(", ", componentTypes.Select(t => t.Name));
-         var errors = string.Join(Environment.NewLine, 
-            invalidLines.Select(x => 
-               $"  Line {x.lineNumber}: Found {x.line.Length} components [{string.Join(":", x.line)}], expected {expectedCount}"));
-         
-         throw new InvalidOperationException(
-            $"Configuration file has component count mismatches.{Environment.NewLine}" +
-            $"Expected {expectedCount} component types: {expectedTypes}{Environment.NewLine}" +
-            $"Invalid lines:{Environment.NewLine}{errors}");
-      }
-
       // Expand wildcards and create permutations
       var expandedPermutations = activeLines
          .SelectMany(line => ExpandWildcards(line, componentTypes))
