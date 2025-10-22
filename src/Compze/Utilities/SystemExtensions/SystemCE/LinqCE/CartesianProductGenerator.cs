@@ -17,9 +17,9 @@ static class CartesianProductGenerator
 
       return lists.Skip(1)
                   .Aggregate(seedListOfLists,
-                             (accumulator, current) =>
+                             (accumulator, currentList) =>
                                 accumulator.SelectMany(existingCombination =>
-                                                          current.Select(newValue => existingCombination
+                                                          currentList.Select(newValue => existingCombination
                                                                                     .Concat([newValue])
                                                                                     .ToReadOnlyList()))
                                            .ToList())
