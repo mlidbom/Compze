@@ -69,36 +69,9 @@ class ConfigFileLine
 
    static IReadOnlyList<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues)
    {
-      if(wildCardComponentValues.Count == 0)
-      {
-         return [new WildCardComponentsPermutation([])];
-      }
-
-      var allValuesForEachWildcard = wildCardComponentValues.Select(wc => wc.Values).ToList();
-      var cartesianProduct = GenerateCartesianProduct(allValuesForEachWildcard);
+      var cartesianProduct = wildCardComponentValues.Select(it => it.Values).ToList().GenerateCartesianProduct();
 
       return cartesianProduct.Select(permutation => new WildCardComponentsPermutation(permutation)).ToList();
-   }
-
-   static IReadOnlyList<IReadOnlyList<T>> GenerateCartesianProduct<T>(IReadOnlyList<IReadOnlyList<T>> lists)
-   {
-      if(lists.Count == 0)
-      {
-         return [[]];
-      }
-
-      // Start with all values from the first list as single-element combinations
-      IEnumerable<IReadOnlyList<T>> combinations = lists[0].Select(v => new List<T> { v } as IReadOnlyList<T>);
-
-      // For each remaining list, combine it with all existing combinations
-      for(int i = 1; i < lists.Count; i++)
-      {
-         var currentList = lists[i];
-         combinations = combinations.SelectMany(existingCombination =>
-                                                   currentList.Select(newValue => existingCombination.Concat([newValue]).ToList() as IReadOnlyList<T>));
-      }
-
-      return combinations.ToList();
    }
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
