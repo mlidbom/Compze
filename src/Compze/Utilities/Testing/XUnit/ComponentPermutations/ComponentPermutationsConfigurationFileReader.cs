@@ -14,8 +14,20 @@ static class ComponentPermutationsConfigurationFileReader
          fileName => ReadFile(componentEnumTypes, fileName));
    }
 
-   static IReadOnlyList<ComponentsPermutation> ReadFile(Type[] componentEnumTypes, string fileName) =>
-      ParseFileContent(ReadFileLines(fileName), componentEnumTypes);
+   const string Comment = "//";
+   const char SkipPermutation = '#';
+
+   static IReadOnlyList<ComponentsPermutation> ReadFile(Type[] componentTypes, string fileName) =>
+      ReadFileLines(fileName)
+        .Select(it => it.Trim())
+        .Where(it => !it.IsNullEmptyOrWhiteSpace())
+        .Where(it => !it.StartsWith(Comment))
+        .Where(it => !it.StartsWith(SkipPermutation))
+        .Select(it => new ComponentPermutationsConfigurationFileLine(componentTypes, it))
+        .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
+        .OrderBy(it => it.ToString())
+        .DistinctBy(it => it.ToString())
+        .ToList();
 
    static string[] ReadFileLines(string fileName)
    {
@@ -23,23 +35,5 @@ static class ComponentPermutationsConfigurationFileReader
       if(!File.Exists(filePath)) throw new Exception($"File does not exist: {filePath}");
       var fileContent = File.ReadAllLines(filePath);
       return fileContent;
-   }
-
-   const string Comment = "//";
-   const char SkipPermutation = '#';
-
-   static IReadOnlyList<ComponentsPermutation> ParseFileContent(IReadOnlyList<string> fileLines, Type[] componentTypes)
-   {
-      return new List<ComponentsPermutation>(
-         fileLines
-           .Select(it => it.Trim())
-           .Where(it => !it.IsNullEmptyOrWhiteSpace())
-           .Where(it => !it.StartsWith(Comment))
-           .Where(it => !it.StartsWith(SkipPermutation))
-           .Select(it => new ComponentPermutationsConfigurationFileLine(componentTypes, it))
-           .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
-           .OrderBy(it => it.ToString())
-           .DistinctBy(it => it.ToString())
-           .ToList());
    }
 }
