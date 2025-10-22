@@ -25,6 +25,7 @@ public abstract class PluggableComponentsTheoryAttribute :
    readonly IReadOnlyList<Enum> _skippedComponents;
    readonly string[] _skipReasons;
    readonly Type[] _componentEnumTypes;
+   readonly string _configurationFileName;
 
    /// <summary>
    /// Pluggable Components Theory Attribute
@@ -32,7 +33,8 @@ public abstract class PluggableComponentsTheoryAttribute :
    /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
    /// Use TestEnv to access the component and the information.
    /// </summary>
-   protected PluggableComponentsTheoryAttribute(Type[] componentEnumTypes,
+   protected PluggableComponentsTheoryAttribute(string configurationFileName,
+                                                Type[] componentEnumTypes,
                                                 object[]? skippedComponents,
                                                 string[]? skipReasons,
                                                 [CallerFilePath] string? sourceFilePath = null,
@@ -55,12 +57,14 @@ public abstract class PluggableComponentsTheoryAttribute :
       if(skippedComponents?.Length != skipReasons?.Length)
          throw new ArgumentException("Number of skipped components must match number of skip reasons");
 
+      _configurationFileName = configurationFileName ?? throw new ArgumentNullException(nameof(configurationFileName));
       _componentEnumTypes = componentEnumTypes;
       _skippedComponents = skippedComponents?.Cast<Enum>().ToList() ?? [];
       _skipReasons = skipReasons ?? [];
    }
 
    internal Type[] ComponentEnumTypes => _componentEnumTypes;
+   internal string ConfigurationFileName => _configurationFileName;
 
    SkippedComponentsCollection SkippedComponents => SkippedComponentsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
 
@@ -86,7 +90,7 @@ public abstract class PluggableComponentsTheoryAttribute :
 
       try
       {
-         var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes)
+         var permutations = PluggableComponentsReader.GetPermutations(_configurationFileName, _componentEnumTypes)
                                                      .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()) // Pass permutation string as argument
                                                                                              {
                                                                                                 Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()

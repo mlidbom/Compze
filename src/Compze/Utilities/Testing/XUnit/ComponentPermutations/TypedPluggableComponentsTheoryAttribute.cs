@@ -9,11 +9,13 @@ public abstract class PluggableComponentsTheoryAttribute<TComponent1, TComponent
    where TComponent2 : Enum
 {
    protected PluggableComponentsTheoryAttribute(
+      string configurationFileName,
       object[]? skippedComponents = null,
       string[]? skipReasons = null,
       [CallerFilePath] string? sourceFilePath = null,
       [CallerLineNumber] int sourceLineNumber = -1)
-      : base([
+      : base(configurationFileName,
+             [
                 typeof(TComponent1),
                 typeof(TComponent2)
              ],

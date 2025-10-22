@@ -21,6 +21,7 @@ public sealed class OurPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : PluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
+      "TestUsingPluggableComponentCombinations",
       skipped,
       skipReasons,
       sourceFilePath,
