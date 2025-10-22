@@ -71,8 +71,8 @@ class ConfigFileLine
 
    class WildCardComponentsPermutation(IReadOnlyList<Enum> components)
    {
-      public IReadOnlyList<Enum> Components { get; } = components;
+      readonly IReadOnlyList<Enum> _components = components;
 
-      public Enum ComponentForComponentType(Type componentType) => Components.Single(it => it.GetType() == componentType);
+      public Enum ComponentForComponentType(Type componentType) => _components.Single(it => it.GetType() == componentType);
    }
 }
