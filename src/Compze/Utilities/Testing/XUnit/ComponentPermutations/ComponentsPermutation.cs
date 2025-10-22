@@ -7,6 +7,8 @@ public class ComponentsPermutation
    internal const string Separator = ":";
 
    public override string ToString() => string.Join(Separator, Components.Select(it => it.ToString()));
+   internal static ComponentsPermutation Parse(string value, Type[] componentEnumTypes) =>
+      FromComponentNamesArray(value.Split(Separator), componentEnumTypes);
 
    /// <summary>Components as enum values. Always strongly typed.</summary>
    public readonly IReadOnlyList<Enum> Components;
@@ -38,9 +40,6 @@ public class ComponentsPermutation
          throw new ArgumentException($"Invalid component value '{componentName}' for enum type {enumType}", ex);
       }
    }
-
-   internal static ComponentsPermutation Parse(string value, Type[] componentEnumTypes) =>
-      FromComponentNamesArray(value.Split(Separator), componentEnumTypes);
 
    public static ComponentsPermutation? Current => CurrentInternal.Value?.Value;
    static readonly AsyncLocal<LazyCE<ComponentsPermutation>?> CurrentInternal = new();
