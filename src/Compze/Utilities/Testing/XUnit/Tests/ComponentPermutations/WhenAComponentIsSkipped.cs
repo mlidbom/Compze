@@ -5,16 +5,16 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
 public class WhenAComponentIsSkipped
 {
-   public WhenAComponentIsSkipped() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft", "Constructor should not run for the excluded component");
+   public WhenAComponentIsSkipped() => ComponentsPermutation.Current!.Components[0].Should().NotBe(Serializer.Microsoft, "Constructor should not run for the excluded component");
 
    [OurPCT(skipped: [Serializer.Microsoft], skipReasons: ["TODO"])]
-   public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft");
+   public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe(Serializer.Microsoft);
 
    public class NestedScenarioComponentIsMarkedAsExcluded
    {
-      public NestedScenarioComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft", "Constructor should not run for the excluded component");
+      public NestedScenarioComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe(Serializer.Microsoft, "Constructor should not run for the excluded component");
 
       [OurPCT(skipped: [Serializer.Microsoft], skipReasons: ["Unsupported"])]
-      public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft");
+      public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe(Serializer.Microsoft);
    }
 }
