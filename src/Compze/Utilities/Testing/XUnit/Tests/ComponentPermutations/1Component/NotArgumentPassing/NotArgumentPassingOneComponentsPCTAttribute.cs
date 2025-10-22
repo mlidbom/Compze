@@ -1,15 +1,16 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents.NotArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._1Component.NotArgumentPassing;
 
-public sealed class NotArgumentPassingTwoComponentsPCTAttribute(
+public sealed class NotArgumentPassingOneComponentsPCTAttribute(
    object[]? skipped = null,
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
-      configurationFileName: "TestUsingNotArgumentPassingTwoComponentsPCTAttribute",
+   : PluggableComponentsTheoryAttribute<Serializer>(
+      configurationFileName: "TestUsingNotArgumentPassingOneComponentsPCTAttribute",
       skipped: skipped,
       skipReasons: skipReasons,
       useTestMethodArgument: false,

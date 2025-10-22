@@ -1,8 +1,9 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit;
+
 #pragma warning disable xUnit1026
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents.ArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components.ArgumentPassing;
 
 public class WhenSomethingHappens
 {

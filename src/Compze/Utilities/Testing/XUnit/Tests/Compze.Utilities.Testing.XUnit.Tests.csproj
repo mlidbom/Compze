@@ -34,4 +34,7 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="ComponentPermutations\3Components\" />
+	</ItemGroup>
 </Project>

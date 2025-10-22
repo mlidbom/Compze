@@ -1,8 +1,8 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
-using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
 using Xunit;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.OneComponent.NotArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._1Component.NotArgumentPassing;
 
 public class WhenSomethingHappens
 {

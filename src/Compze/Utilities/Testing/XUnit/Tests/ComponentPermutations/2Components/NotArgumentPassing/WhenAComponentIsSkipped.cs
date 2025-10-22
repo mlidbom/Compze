@@ -1,7 +1,7 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using FluentAssertions;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents.NotArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components.NotArgumentPassing;
 
 public class WhenAComponentIsSkipped
 {

@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents.ArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components.ArgumentPassing;
 
 public sealed class ArgumentPassingTwoComponentsPCTAttribute(
    object[]? skipped = null,
