@@ -7,7 +7,7 @@ public class WhenAllPermutationsAreMarkedAsExcluded
    public WhenAllPermutationsAreMarkedAsExcluded() => throw new Exception("Should not be executed");
 
    [TypedPCT(
-      skippedComponents: [Type1Component.Type1Component1, Type1Component.Type1Component2],
+      skippedComponents: [ComponentType1.Component1, ComponentType1.Component2],
       skipReasons: ["TODO", "Not supported"])]
    public void NoTestsAreExecuted() => throw new Exception("Should not be executed");
 

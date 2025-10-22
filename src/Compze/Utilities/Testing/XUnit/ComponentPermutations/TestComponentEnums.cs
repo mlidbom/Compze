@@ -4,20 +4,20 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// Type 1 component dimension for pluggable components testing.
 /// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
 /// </summary>
-public enum Type1Component
+public enum ComponentType1
 {
-   Type1Component1,
-   Type1Component2,
-   Type1Component3
+   Component1,
+   Component2,
+   Component3
 }
 
 /// <summary>
 /// Type 2 component dimension for pluggable components testing.
 /// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
 /// </summary>
-public enum Type2Component
+public enum ComponentType2
 {
-   Type2Component1,
-   Type2Component2,
-   Type2Component3
+   Component1,
+   Component2,
+   Component3
 }
