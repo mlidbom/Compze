@@ -7,10 +7,7 @@ internal class ExclusionsCollection
 {
    readonly IReadOnlyList<ComponentExclusion> _exclusions;
 
-   ExclusionsCollection(IReadOnlyList<ComponentExclusion> exclusions)
-   {
-      _exclusions = exclusions;
-   }
+   ExclusionsCollection(IReadOnlyList<ComponentExclusion> exclusions) => _exclusions = exclusions;
 
    /// <summary>
    /// Parses exclusion specifications into a collection.
