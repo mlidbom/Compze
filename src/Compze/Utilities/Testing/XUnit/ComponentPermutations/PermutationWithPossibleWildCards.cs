@@ -52,15 +52,11 @@ class ConfigFileLine
          if(componentNameOrWildcard != Wildcard)
          {
             concreteComponents[componentIndex] = (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard);
+         } else
+         {
+            var componentType = _wildCardComponents.Single(it => it.Index == componentIndex).ComponentType;
+            concreteComponents[componentIndex] = replacementValues.Components.Single(it => it.GetType() == componentType);
          }
-      }
-
-      // Then replace wildcards with the actual enum values
-      for(var currentWildcardPosition = 0; currentWildcardPosition < _wildCardComponents.Count; currentWildcardPosition++)
-      {
-         var positionInLine = _wildCardComponents[currentWildcardPosition].Index;
-         var replacementValue = replacementValues.Components[currentWildcardPosition];
-         concreteComponents[positionInLine] = replacementValue;
       }
 
       return ComponentsPermutation.FromComponentEnumValues(concreteComponents);
