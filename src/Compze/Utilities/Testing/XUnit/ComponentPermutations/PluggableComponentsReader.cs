@@ -21,27 +21,4 @@ static class PluggableComponentsReader
    /// </summary>
    public static ComponentsPermutationsList GetPermutations(Type[] componentEnumTypes) =>
       ComponentsPermutationsList.FromFileContent(FileContentLazy.Value, componentEnumTypes);
-
-   /// <summary>
-   /// Gets all unique component names from all permutations (including ignored ones).
-   /// This is used for validation to ensure excluded components actually exist.
-   /// Uses TypedPCT component types to parse the file.
-   /// </summary>
-   public static IReadOnlySet<string> Components
-   {
-      get
-      {
-         // Read file content and extract component names without parsing as enums
-         var lines = FileContentLazy.Value
-                    .Select(it => it.Trim())
-                    .Where(line => !string.IsNullOrEmpty(line))
-                    .Where(line => !line.StartsWith("//")) // Comments
-                    .Select(line => line.TrimStart('#')) // Remove # prefix if present
-                    .Select(it => it.Split(ComponentsPermutation.Separator))
-                    .SelectMany(components => components)
-                    .ToHashSet();
-         
-         return lines;
-      }
-   }
 }

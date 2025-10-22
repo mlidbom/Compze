@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMember.Global
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
 /// <summary>

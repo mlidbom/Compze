@@ -13,9 +13,6 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
       AllComponents = allComponents;
    }
 
-   internal ComponentsPermutationsList Exclude(ExclusionsCollection exclusions) =>
-      new(Permutations.Where(permutation => !exclusions.Excludes(permutation)).ToList(), AllComponents);
-
    internal static ComponentsPermutationsList FromFileContent(string[] rows, Type[] componentEnumTypes)
    {
       var lines = rows

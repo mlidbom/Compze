@@ -5,6 +5,7 @@ namespace Compze.Utilities.Testing.XUnit.BDD;
 public class XFactTestCase : XunitTestCase
 {
    [Obsolete("Called by deserializer")]
+   // ReSharper disable once UnusedMember.Global
    public XFactTestCase() {}
 
    public XFactTestCase(
