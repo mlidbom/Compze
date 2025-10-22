@@ -49,14 +49,10 @@ class ConfigFileLine
       for(var componentIndex = 0; componentIndex < _componentNamesOrWildCards.Count; componentIndex++)
       {
          var componentNameOrWildcard = _componentNamesOrWildCards[componentIndex];
-         if(componentNameOrWildcard != Wildcard)
-         {
-            concreteComponents[componentIndex] = (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard);
-         } else
-         {
-            var componentType = _wildCardComponents.Single(it => it.Index == componentIndex).ComponentType;
-            concreteComponents[componentIndex] = replacementValues.Components.Single(it => it.GetType() == componentType);
-         }
+
+         concreteComponents[componentIndex] = componentNameOrWildcard == Wildcard
+                                                 ? replacementValues.Components.Single(it => it.GetType() == _componentTypes[componentIndex])
+                                                 : (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard);
       }
 
       return ComponentsPermutation.FromComponentEnumValues(concreteComponents);
