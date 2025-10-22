@@ -21,6 +21,6 @@ internal class ExclusionsCollection
       _exclusions.FirstOrDefault(exclusion => exclusion.Excludes(permutation));
 
    /// <summary>Checks if any exclusion matches the given permutation.</summary>
-   public bool Matches(ComponentsPermutation permutation) =>
+   public bool Excludes(ComponentsPermutation permutation) =>
       FindMatchingExclusion(permutation) != null;
 }
