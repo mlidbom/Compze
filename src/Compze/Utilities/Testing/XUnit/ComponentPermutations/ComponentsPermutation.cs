@@ -4,23 +4,19 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 public class ComponentsPermutation
 {
-   internal const string Separator = ":";
+   public static ComponentsPermutation? Current => CurrentInternal.Value?.Value;
+
+   public readonly IReadOnlyList<Enum> Components;
 
    public override string ToString() => string.Join(Separator, Components.Select(it => it.ToString()));
+
    internal static ComponentsPermutation Parse(string value, Type[] componentEnumTypes) =>
       FromComponentNamesArray(value.Split(Separator), componentEnumTypes);
 
-   /// <summary>Components as enum values. Always strongly typed.</summary>
-   public readonly IReadOnlyList<Enum> Components;
+   internal const string Separator = ":";
 
    ComponentsPermutation(IReadOnlyList<Enum> components) => Components = components;
 
-   /// <summary>
-   /// Creates a ComponentsPermutation from string array, parsing components as enums.
-   /// </summary>
-   /// <param name="componentNames">Component names as strings from the file</param>
-   /// <param name="componentEnumTypes">Enum types for each component position.
-   /// </param>
    internal static ComponentsPermutation FromComponentNamesArray(string[] componentNames, Type[] componentEnumTypes)
    {
       if(componentNames.Length != componentEnumTypes.Length)
@@ -41,7 +37,6 @@ public class ComponentsPermutation
       }
    }
 
-   public static ComponentsPermutation? Current => CurrentInternal.Value?.Value;
    static readonly AsyncLocal<LazyCE<ComponentsPermutation>?> CurrentInternal = new();
 
    internal static async Task<TReturn> RunInContextAsync<TReturn>(
