@@ -10,7 +10,7 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
 
    ComponentsPermutationsList(IReadOnlyList<ComponentsPermutation> permutations) => Permutations = permutations;
 
-   internal static ComponentsPermutationsList FromFileContent(string[] rows, Type[] componentEnumTypes)
+   internal static ComponentsPermutationsList FromFileContent(string[] rows, Type[] componentTypes)
    {
       var lines = rows
                  .Select(it => it.Trim())
@@ -36,7 +36,7 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
          throw new Exception("Different lines in the file have different number of components");
 
       return new ComponentsPermutationsList(
-         activeLines.Select(arr => ComponentsPermutation.FromComponentNamesArray(arr, componentEnumTypes))
+         activeLines.Select(arr => ComponentsPermutation.FromComponentNamesArray(arr, componentTypes))
                     .ToList());
    }
 
