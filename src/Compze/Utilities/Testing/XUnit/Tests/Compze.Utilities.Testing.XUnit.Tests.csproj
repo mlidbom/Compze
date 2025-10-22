@@ -42,5 +42,8 @@
       <None Update="TestUsingArgumentPassingFiveComponentsPCTAttribute">
          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="TestUsingWildcards">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
 	</ItemGroup>
 </Project>
