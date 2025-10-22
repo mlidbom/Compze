@@ -69,7 +69,7 @@ static class ComponentPermutationsConfigurationFileReader
       // Expand wildcards and create permutations
       var expandedPermutations = activeLines
                                 .Select(lineArray => new PermutationWithPossibleWildCards(componentTypes, lineArray))
-                                .SelectMany(line => ExpandLineWildcards(line, componentTypes))
+                                .SelectMany(line => line.ExpandWildcardsIntoConcretePermutations())
                                 .ToList();
 
       return new List<ComponentsPermutation>(
@@ -92,46 +92,74 @@ static class ComponentPermutationsConfigurationFileReader
            .Where(it => it.value == Wildcard)
            .Select(it => new WildcardComponent(_componentTypes[it.index], it.index))
            .ToList();
+
+      public IEnumerable<ComponentsPermutation> ExpandWildcardsIntoConcretePermutations()
+      {
+         var wildcardComponents = WildCardComponents;
+
+         if(wildcardComponents.Count == 0)
+         {
+            var enumValues = ComponentNamesOrWildCards
+                                 .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
+                                 .ToList();
+            yield return ComponentsPermutation.FromComponentEnumValues(enumValues);
+            yield break;
+         }
+
+         var enumValuesForWildCardComponents = wildcardComponents
+                                              .Select(it => it.AllComponents)
+                                              .ToList();
+
+         var expandedPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
+
+         foreach(var permutation in expandedPermutations)
+         {
+            yield return CloneLineToCreateConcretePermutation(wildcardComponents, permutation, _componentTypes);
+         }
+      }
+
+      ComponentsPermutation CloneLineToCreateConcretePermutation(
+         IReadOnlyList<WildcardComponent> wildcardComponents,
+         WildCardComponentsPermutation replacementValues,
+         IReadOnlyList<Type> componentTypes)
+      {
+         var concretePermutationEnumValues = new Enum[ComponentNamesOrWildCards.Count];
+
+         // First, convert all non-wildcard values to enums
+         for(int i = 0; i < ComponentNamesOrWildCards.Count; i++)
+         {
+            var componentNameOrWildcard = ComponentNamesOrWildCards[i];
+            if(componentNameOrWildcard != Wildcard)
+            {
+               concretePermutationEnumValues[i] = (Enum)Enum.Parse(componentTypes[i], componentNameOrWildcard);
+            }
+         }
+
+         // Then replace wildcards with the actual enum values
+         for(int currentWildcardPosition = 0; currentWildcardPosition < wildcardComponents.Count; currentWildcardPosition++)
+         {
+            var positionInLine = wildcardComponents[currentWildcardPosition].Index;
+            var replacementValue = replacementValues.Components[currentWildcardPosition];
+            concretePermutationEnumValues[positionInLine] = replacementValue;
+         }
+
+         return ComponentsPermutation.FromComponentEnumValues(concretePermutationEnumValues);
+      }
    }
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
    {
-      public WildCardComponentValues AllComponentValues => new(ComponentType, Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList());
+      public WildCardComponentValues AllComponents => new(ComponentType, Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList());
    }
 
    readonly record struct WildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
    readonly record struct WildCardComponentsPermutation(IReadOnlyList<Enum> Components);
 
-   static IEnumerable<ComponentsPermutation> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
-   {
-      var wildcardComponents = line.WildCardComponents;
-
-      if(wildcardComponents.Count == 0)
-      {
-         var enumValues = line.ComponentNamesOrWildCards
-                              .Zip(componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
-                              .ToList();
-         yield return ComponentsPermutation.FromComponentEnumValues(enumValues);
-         yield break;
-      }
-
-      var enumValuesForWildCardComponents = wildcardComponents
-                                           .Select(it => it.AllComponentValues)
-                                           .ToList();
-
-      var expandedPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
-
-      foreach(var permutation in expandedPermutations)
-      {
-         yield return CloneLineToCreateConcretePermutation(line, wildcardComponents, permutation, componentTypes);
-      }
-   }
-
    static ComponentsPermutation CloneLineToCreateConcretePermutation(
       PermutationWithPossibleWildCards originalLine,
       IReadOnlyList<WildcardComponent> wildcardComponents,
       WildCardComponentsPermutation replacementValues,
-      Type[] componentTypes)
+      IReadOnlyList<Type> componentTypes)
    {
       var concretePermutationEnumValues = new Enum[originalLine.ComponentNamesOrWildCards.Count];
 
