@@ -83,14 +83,14 @@ static class ComponentPermutationsConfigurationFileReader
 
    class PermutationWithPossibleWildCards(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> componentNamesOrWildCards)
    {
-      internal readonly IReadOnlyList<Type> ComponentTypes = componentTypes;
+      readonly IReadOnlyList<Type> _componentTypes = componentTypes;
       internal readonly IReadOnlyList<string> ComponentNamesOrWildCards = componentNamesOrWildCards;
 
       public IReadOnlyList<WildcardComponent> WildCardComponents =>
          ComponentNamesOrWildCards
            .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
            .Where(it => it.value == Wildcard)
-           .Select(it => new WildcardComponent(ComponentTypes[it.index], it.index))
+           .Select(it => new WildcardComponent(_componentTypes[it.index], it.index))
            .ToList();
    }
 
