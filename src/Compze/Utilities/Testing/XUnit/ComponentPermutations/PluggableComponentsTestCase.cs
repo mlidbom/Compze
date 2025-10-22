@@ -23,8 +23,13 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
       // Store component types in static dictionary using unique key
       if(componentEnumTypes != null && componentEnumTypes.Length > 0)
       {
+         // Use fully qualified name as key
          var key = $"{TestMethod.TestClass.Class.Name}.{TestMethod.Method.Name}";
          ComponentEnumTypesByTestMethod[key] = componentEnumTypes;
+         
+         // Also store by simpler key for lookup
+         var simpleKey = TestMethod.Method.Name;
+         ComponentEnumTypesByTestMethod[simpleKey] = componentEnumTypes;
       }
    }
 
@@ -56,9 +61,32 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
                 new LazyCE<ComponentsPermutation>(() => {
                    var argString = (string)TestMethodArguments![0]!;
                    
-                   // Retrieve component types from static storage
-                   var key = $"{TestMethod.TestClass.Class.Name}.{TestMethod.Method.Name}";
-                   ComponentEnumTypesByTestMethod.TryGetValue(key, out var componentEnumTypes);
+                   // Try to get component types from:
+                   // 1. TypedPCTAttribute static property (for known typed attributes)
+                   // 2. Static dictionary (fallback)
+                   // 3. null (for untyped PCT)
+                   Type[]? componentEnumTypes = null;
+                   
+                   // Check if we can use TypedPCTAttribute's static types
+                   // This works because TypedPCTAttribute is always the same for all tests using it
+                   if(TestMethod.Method.Name != null)
+                   {
+                      // If the test uses TypedPCT, use its static ComponentTypes
+                      componentEnumTypes = TypedPCTAttribute.ComponentTypes;
+                   }
+                   
+                   // Fallback: try static dictionary
+                   if(componentEnumTypes == null || componentEnumTypes.Length == 0)
+                   {
+                      var fullKey = $"{TestMethod.TestClass.Class.Name}.{TestMethod.Method.Name}";
+                      if(!ComponentEnumTypesByTestMethod.TryGetValue(fullKey, out componentEnumTypes))
+                      {
+                         if(TestMethod.Method.Name != null)
+                         {
+                            ComponentEnumTypesByTestMethod.TryGetValue(TestMethod.Method.Name, out componentEnumTypes);
+                         }
+                      }
+                   }
                    
                    return ComponentsPermutation.Parse(argString, componentEnumTypes);
                 }),

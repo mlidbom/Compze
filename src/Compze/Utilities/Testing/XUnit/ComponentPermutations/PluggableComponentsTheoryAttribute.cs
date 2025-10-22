@@ -35,7 +35,7 @@ public class PluggableComponentsTheoryAttribute(
    /// <summary>
    /// For type-safe derived classes: validates and converts enum components to skip specifications.
    /// </summary>
-   /// <param name="skippedComponents">Array of enum values to skip</param>
+   /// <param name="skippedComponents">Array of enum values to skip (object[] due to attribute limitations, but must contain Enum values)</param>
    /// <param name="skipReasons">Corresponding reasons for skipping</param>
    protected void InitializeTypedSkipped(object[]? skippedComponents, string[]? skipReasons)
    {
@@ -57,11 +57,15 @@ public class PluggableComponentsTheoryAttribute(
 
       for(int i = 0; i < skippedComponents.Length; i++)
       {
-         var component = skippedComponents[i];
-         if(component == null)
+         var componentObj = skippedComponents[i];
+         if(componentObj == null)
             throw new ArgumentException($"Component at index {i} cannot be null");
 
-         var componentType = component.GetType();
+         // Cast to Enum - we know it must be an enum
+         if(componentObj is not Enum componentEnum)
+            throw new ArgumentException($"Component at index {i} must be an Enum, but was {componentObj.GetType().Name}");
+
+         var componentType = componentEnum.GetType();
          
          // Check if this component is one of our expected enum types
          if(!_componentEnumTypes.Contains(componentType))
@@ -74,7 +78,7 @@ public class PluggableComponentsTheoryAttribute(
 
          // ComponentSkipSpecification.Skip is a generic method, can't call it dynamically easily
          // Just format the string directly: "EnumValue::Reason"
-         var skipSpec = $"{component}::{skipReasons[i]}";
+         var skipSpec = $"{componentEnum}::{skipReasons[i]}";
          skipped.Add(skipSpec);
       }
 

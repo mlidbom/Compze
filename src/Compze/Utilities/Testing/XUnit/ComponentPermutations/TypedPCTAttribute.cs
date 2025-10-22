@@ -24,4 +24,8 @@ public sealed class TypedPCTAttribute(
    : TypedPluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
       skippedComponents, skipReasons, sourceFilePath, sourceLineNumber)
 {
+   /// <summary>
+   /// The component enum types for TypedPCT. Public so test case can access it without serialization issues.
+   /// </summary>
+   public static readonly Type[] ComponentTypes = [typeof(Serializer), typeof(SqlLayer)];
 }

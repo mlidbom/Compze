@@ -8,8 +8,22 @@ public class ComponentsPermutation
 
    public override string ToString() => string.Join(Separator, ComponentStrings);
 
+   /// <summary>
+   /// Components as Enum values when types are provided, otherwise as strings.
+   /// Cast to Enum or string as appropriate based on your context.
+   /// </summary>
    public readonly IReadOnlyList<object> Components;
+   
+   /// <summary>
+   /// Components as strings for display and matching purposes.
+   /// </summary>
    public readonly IReadOnlyList<string> ComponentStrings;
+
+   /// <summary>
+   /// Components cast as Enum values. Use this when you know the components are typed.
+   /// Will throw if components are strings (when using untyped PCT).
+   /// </summary>
+   public IReadOnlyList<Enum> ComponentEnums => Components.Cast<Enum>().ToList();
    
    ComponentsPermutation(IReadOnlyList<object> components, IReadOnlyList<string> componentStrings)
    {
@@ -21,14 +35,14 @@ public class ComponentsPermutation
    {
       if(componentEnumTypes == null || componentEnumTypes.Length == 0)
       {
-         // No type information - store as strings
+         // No type information - store as strings (for backward compatibility with untyped PCT)
          return new(value, value);
       }
 
       if(value.Length != componentEnumTypes.Length)
          throw new ArgumentException($"Component count ({value.Length}) does not match type count ({componentEnumTypes.Length})");
 
-      var components = new object[value.Length];
+      var componentEnums = new Enum[value.Length];
       for(int i = 0; i < value.Length; i++)
       {
          if(!componentEnumTypes[i].IsEnum)
@@ -36,7 +50,7 @@ public class ComponentsPermutation
 
          try
          {
-            components[i] = Enum.Parse(componentEnumTypes[i], value[i]);
+            componentEnums[i] = (Enum)Enum.Parse(componentEnumTypes[i], value[i]);
          }
          catch(ArgumentException ex)
          {
@@ -44,7 +58,8 @@ public class ComponentsPermutation
          }
       }
 
-      return new(components, value);
+      // Cast to object[] for storage since Components must hold both strings (untyped) and Enums (typed)
+      return new(componentEnums.Cast<object>().ToArray(), value);
    }
 
    internal static ComponentsPermutation Parse(string value, Type[]? componentEnumTypes = null) =>

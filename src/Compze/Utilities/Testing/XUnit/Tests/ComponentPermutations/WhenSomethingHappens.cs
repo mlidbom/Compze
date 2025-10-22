@@ -10,9 +10,12 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    [TypedPCT] public void ThisIsTheCase()
    {
       var current = ComponentsPermutation.Current!;
-      _testOutputHelper.WriteLine($"String: {current}");
-      _testOutputHelper.WriteLine($"Component[0] Type: {current.Components[0].GetType().Name} Value: {current.Components[0]}");
-      _testOutputHelper.WriteLine($"Component[1] Type: {current.Components[1].GetType().Name} Value: {current.Components[1]}");
+      
+      // Access as strongly-typed enums
+      var serializer = (Serializer)current.ComponentEnums[0];
+      var sqlLayer = (SqlLayer)current.ComponentEnums[1];
+      
+      _testOutputHelper.WriteLine($"Serializer: {serializer}, SqlLayer: {sqlLayer}");
    }
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
