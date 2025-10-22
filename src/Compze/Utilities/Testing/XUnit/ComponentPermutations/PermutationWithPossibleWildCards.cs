@@ -44,27 +44,26 @@ class ConfigFileLine
 
    ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation replacementValues)
    {
-      var concretePermutationEnumValues = new Enum[_componentNamesOrWildCards.Count];
+      var concreteComponents = new Enum[_componentNamesOrWildCards.Count];
 
-      // First, convert all non-wildcard values to enums
-      for(int i = 0; i < _componentNamesOrWildCards.Count; i++)
+      for(var componentIndex = 0; componentIndex < _componentNamesOrWildCards.Count; componentIndex++)
       {
-         var componentNameOrWildcard = _componentNamesOrWildCards[i];
+         var componentNameOrWildcard = _componentNamesOrWildCards[componentIndex];
          if(componentNameOrWildcard != Wildcard)
          {
-            concretePermutationEnumValues[i] = (Enum)Enum.Parse(_componentTypes[i], componentNameOrWildcard);
+            concreteComponents[componentIndex] = (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard);
          }
       }
 
       // Then replace wildcards with the actual enum values
-      for(int currentWildcardPosition = 0; currentWildcardPosition < _wildCardComponents.Count; currentWildcardPosition++)
+      for(var currentWildcardPosition = 0; currentWildcardPosition < _wildCardComponents.Count; currentWildcardPosition++)
       {
          var positionInLine = _wildCardComponents[currentWildcardPosition].Index;
          var replacementValue = replacementValues.Components[currentWildcardPosition];
-         concretePermutationEnumValues[positionInLine] = replacementValue;
+         concreteComponents[positionInLine] = replacementValue;
       }
 
-      return ComponentsPermutation.FromComponentEnumValues(concretePermutationEnumValues);
+      return ComponentsPermutation.FromComponentEnumValues(concreteComponents);
    }
 
    static IReadOnlyList<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues)
