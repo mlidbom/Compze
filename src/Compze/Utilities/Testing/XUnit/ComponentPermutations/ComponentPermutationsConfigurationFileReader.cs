@@ -68,7 +68,7 @@ static class ComponentPermutationsConfigurationFileReader
 
       // Expand wildcards and create permutations
       var expandedPermutations = activeLines
-                                .Select(lineArray => new PermutationWithPossibleWildCards(lineArray))
+                                .Select(lineArray => new PermutationWithPossibleWildCards(componentTypes, lineArray))
                                 .SelectMany(line => ExpandLineWildcards(line, componentTypes))
                                 .ToList();
 
@@ -81,7 +81,18 @@ static class ComponentPermutationsConfigurationFileReader
 
    const string Wildcard = "*";
 
-   readonly record struct PermutationWithPossibleWildCards(IReadOnlyList<string> ComponentNamesOrWildCards);
+   class PermutationWithPossibleWildCards(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> componentNamesOrWildCards)
+   {
+      internal readonly IReadOnlyList<Type> ComponentTypes = componentTypes;
+      internal readonly IReadOnlyList<string> ComponentNamesOrWildCards = componentNamesOrWildCards;
+
+      public IReadOnlyList<WildcardComponent> WildCardComponents =>
+         ComponentNamesOrWildCards
+           .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
+           .Where(it => it.value == Wildcard)
+           .Select(it => new WildcardComponent(ComponentTypes[it.index], it.index))
+           .ToList();
+   }
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
    {
@@ -93,7 +104,7 @@ static class ComponentPermutationsConfigurationFileReader
 
    static IEnumerable<ComponentsPermutation> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
    {
-      var wildcardComponents = FindWildcardComponents(line, componentTypes);
+      var wildcardComponents = line.WildCardComponents;
 
       if(wildcardComponents.Count == 0)
       {
@@ -112,15 +123,6 @@ static class ComponentPermutationsConfigurationFileReader
       {
          yield return CloneLineToCreateConcretePermutation(line, wildcardComponents, permutation, componentTypes);
       }
-   }
-
-   static IReadOnlyList<WildcardComponent> FindWildcardComponents(PermutationWithPossibleWildCards wildCardPermutation, Type[] componentTypes)
-   {
-      return wildCardPermutation.ComponentNamesOrWildCards
-                                .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
-                                .Where(it => it.value == Wildcard)
-                                .Select(it => new WildcardComponent(componentTypes[it.index], it.index))
-                                .ToList();
    }
 
    static IReadOnlyList<ExpandedWildCardComponentValues> GetEnumValuesForWildcardComponents(IReadOnlyList<WildcardComponent> wildcardComponents)
