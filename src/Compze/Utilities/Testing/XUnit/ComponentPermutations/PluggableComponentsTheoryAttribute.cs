@@ -64,7 +64,6 @@ public abstract class PluggableComponentsTheoryAttribute :
    }
 
    internal Type[] ComponentEnumTypes => _componentEnumTypes;
-   internal string ConfigurationFileName => _configurationFileName;
 
    SkippedComponentsCollection SkippedComponents => SkippedComponentsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
 
@@ -90,12 +89,13 @@ public abstract class PluggableComponentsTheoryAttribute :
 
       try
       {
-         var permutations = ComponentPermutationsConfigurationFileReader.GetPermutations(_configurationFileName, _componentEnumTypes)
-                                                     .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()) // Pass permutation string as argument
-                                                                                             {
-                                                                                                Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()
-                                                                                             })
-                                                     .ToArray();
+         var permutations = ComponentPermutationsConfigurationFileReader
+                           .GetPermutations(_configurationFileName, _componentEnumTypes)
+                           .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()) // Pass permutation string as argument
+                                                                   {
+                                                                      Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()
+                                                                   })
+                           .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
       }
       catch(ArgumentException ex)
@@ -108,6 +108,6 @@ public abstract class PluggableComponentsTheoryAttribute :
       }
    }
 
-   public bool SupportsDiscoveryEnumeration() => true; // Yes, we can enumerate at discovery time
+   public bool SupportsDiscoveryEnumeration() => true;
 }
 #pragma warning restore CA1813 //avoid unsealed attributes
