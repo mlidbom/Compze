@@ -68,11 +68,12 @@ static class ComponentPermutationsConfigurationFileReader
 
       // Expand wildcards and create permutations
       var expandedPermutations = activeLines
+                                .Select(lineArray => new ComponentLine(lineArray))
                                 .SelectMany(line => ExpandLineWildcards(line, componentTypes))
                                 .ToList();
 
       return new List<ComponentsPermutation>(
-         expandedPermutations.Select(it => ComponentsPermutation.FromComponentNamesList(it, componentTypes))
+         expandedPermutations.Select(it => ComponentsPermutation.FromComponentNamesList(it.ComponentNamesOrWildCards, componentTypes))
                              .OrderBy(it => it.ToString())
                              .DistinctBy(it => it.ToString())
                              .ToList());
@@ -80,60 +81,90 @@ static class ComponentPermutationsConfigurationFileReader
 
    const string Wildcard = "*";
 
-   static IEnumerable<IReadOnlyList<string>> ExpandLineWildcards(IReadOnlyList<string> componentValues, Type[] componentTypes)
-   {
-      var wildcardComponentIndexes = componentValues
-                                    .Select((value, index) => new { value, index })
-                                    .Where(x => x.value == Wildcard)
-                                    .Select(x => x.index)
-                                    .ToList();
+   readonly record struct ComponentLine(IReadOnlyList<string> ComponentNamesOrWildCards);
+   readonly record struct WildcardPosition(int Index);
+   readonly record struct EnumValuesNames(Type EnumType, IReadOnlyList<string> Names);
+   readonly record struct EnumValueNamesToReplaceWildcards(IReadOnlyList<string> EnumValueNames);
 
-      if(wildcardComponentIndexes.Count == 0)
+   static IEnumerable<ComponentLine> ExpandLineWildcards(ComponentLine line, Type[] componentTypes)
+   {
+      var wildcardPositions = FindWildcardPositions(line);
+
+      if(wildcardPositions.Count == 0)
       {
-         yield return componentValues;
+         yield return line;
          yield break;
       }
 
-      var wildCardComponentsExpandedIntoAllValuesInTheEnums = wildcardComponentIndexes
-                                                            .Select(pos => Enum.GetNames(componentTypes[pos]).ToReadOnlyList())
-                                                            .ToList();
+      var allPossibleValuesForEachWildcardPosition = GetAllEnumValuesForWildcardPositions(wildcardPositions, componentTypes);
 
-      // Generate all combinations using cross product
-      foreach(var combination in CrossProduct(wildCardComponentsExpandedIntoAllValuesInTheEnums))
+      var allCombinationsOfWildcardValues = GenerateAllCombinations(allPossibleValuesForEachWildcardPosition);
+
+      foreach(var wildcardValueCombination in allCombinationsOfWildcardValues)
       {
-         var permutation = componentValues.ToList();
-         for(int i = 0; i < wildcardComponentIndexes.Count; i++)
-         {
-            permutation[wildcardComponentIndexes[i]] = combination[i];
-         }
-
-         yield return permutation;
+         var expandedLine = ReplaceWildcardsWithValues(line, wildcardPositions, wildcardValueCombination);
+         yield return expandedLine;
       }
    }
 
-   static IEnumerable<IReadOnlyList<string>> CrossProduct(IReadOnlyList<IReadOnlyList<string>> lists)
+   static IReadOnlyList<WildcardPosition> FindWildcardPositions(ComponentLine line)
    {
-      if(lists.Count == 0)
+      return line.ComponentNamesOrWildCards
+                 .Select((value, index) => new { value, index })
+                 .Where(x => x.value == Wildcard)
+                 .Select(x => new WildcardPosition(x.index))
+                 .ToList();
+   }
+
+   static IReadOnlyList<EnumValuesNames> GetAllEnumValuesForWildcardPositions(
+      IReadOnlyList<WildcardPosition> wildcardPositions,
+      Type[] componentTypes)
+   {
+      return wildcardPositions
+            .Select(wildcardPosition => new EnumValuesNames(componentTypes[wildcardPosition.Index], Enum.GetNames(componentTypes[wildcardPosition.Index]).ToReadOnlyList()))
+            .ToList();
+   }
+
+   static ComponentLine ReplaceWildcardsWithValues(
+      ComponentLine originalLine,
+      IReadOnlyList<WildcardPosition> wildcardPositions,
+      EnumValueNamesToReplaceWildcards replacementValues)
+   {
+      var result = originalLine.ComponentNamesOrWildCards.ToList();
+
+      for(int i = 0; i < wildcardPositions.Count; i++)
       {
-         yield return new List<string>();
+         var positionInLine = wildcardPositions[i].Index;
+         var replacementValue = replacementValues.EnumValueNames[i];
+         result[positionInLine] = replacementValue;
+      }
+
+      return new ComponentLine(result);
+   }
+
+   static IEnumerable<EnumValueNamesToReplaceWildcards> GenerateAllCombinations(IReadOnlyList<EnumValuesNames> listsOfPossibleValues)
+   {
+      if(listsOfPossibleValues.Count == 0)
+      {
+         yield return new EnumValueNamesToReplaceWildcards([]);
          yield break;
       }
 
-      var firstList = lists[0];
-      var remainingLists = lists.Skip(1).ToList();
+      var firstListOfPossibleValues = listsOfPossibleValues[0];
+      var remainingListsOfPossibleValues = listsOfPossibleValues.Skip(1).ToList();
 
-      foreach(var item in firstList)
+      foreach(var enumValueName in firstListOfPossibleValues.Names)
       {
-         if(remainingLists.Count == 0)
+         if(remainingListsOfPossibleValues.Count == 0)
          {
-            yield return [item];
+            yield return new EnumValueNamesToReplaceWildcards([enumValueName]);
          } else
          {
-            foreach(var combination in CrossProduct(remainingLists))
+            foreach(var combinationOfRemainingValues in GenerateAllCombinations(remainingListsOfPossibleValues))
             {
-               var result = new List<string> { item };
-               result.AddRange(combination);
-               yield return result;
+               var completeCombination = new List<string> { enumValueName };
+               completeCombination.AddRange(combinationOfRemainingValues.EnumValueNames);
+               yield return new EnumValueNamesToReplaceWildcards(completeCombination);
             }
          }
       }
