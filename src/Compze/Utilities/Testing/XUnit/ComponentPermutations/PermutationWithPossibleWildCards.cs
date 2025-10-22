@@ -47,7 +47,7 @@ class ConfigFileLine
       var concreteComponents = _componentNamesOrWildCards
                               .Select((componentNameOrWildcard, componentIndex) =>
                                          componentNameOrWildcard == Wildcard
-                                            ? wildCardReplacementValues.ValueFor(_componentTypes[componentIndex])
+                                            ? wildCardReplacementValues.ComponentForComponentType(_componentTypes[componentIndex])
                                             : (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard))
                               .ToList();
 
@@ -72,6 +72,6 @@ class ConfigFileLine
    {
       public IReadOnlyList<Enum> Components { get; } = components;
 
-      public Enum ValueFor(Type componentType) => Components.Single(it => it.GetType() == componentType);
+      public Enum ComponentForComponentType(Type componentType) => Components.Single(it => it.GetType() == componentType);
    }
 }
