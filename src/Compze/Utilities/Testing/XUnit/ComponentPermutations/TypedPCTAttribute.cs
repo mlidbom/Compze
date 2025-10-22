@@ -30,14 +30,8 @@ public sealed class TypedPCTAttribute(
       sourceFilePath,
       sourceLineNumber)
 {
-   /// <summary>
-   /// The component enum types for TypedPCT. Public so test case can access it without serialization issues.
-   /// </summary>
+   /// <summary>The component enum types for TypedPCT. Public so test case can access it without serialization issues.</summary>
    public static readonly Type[] ComponentTypes;
 
-   static TypedPCTAttribute()
-   {
-      // Initialize in static constructor to ensure it's loaded early
-      ComponentTypes = [typeof(Serializer), typeof(SqlLayer)];
-   }
+   static TypedPCTAttribute() => ComponentTypes = [typeof(Serializer), typeof(SqlLayer)];
 }

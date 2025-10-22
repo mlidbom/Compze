@@ -18,12 +18,9 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
-      // Get component enum types from the attribute if it's a PluggableComponentsTheoryAttribute
-      Type[]? componentEnumTypes = null;
-      if(factAttribute is PluggableComponentsTheoryAttribute pctAttribute)
-      {
-         componentEnumTypes = pctAttribute.ComponentEnumTypes;
-      }
+
+      var pctAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
+      var componentEnumTypes = pctAttribute.ComponentEnumTypes;
 
       var testCases = baseCases.Select(testCaseInterface =>
                                 {

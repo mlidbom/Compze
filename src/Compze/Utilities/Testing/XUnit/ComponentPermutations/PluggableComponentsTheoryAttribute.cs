@@ -16,7 +16,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
 /// Use TestEnv to access the component and the information.
 /// </summary>
-[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))] // Use standard TheoryDiscoverer!
+[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public class PluggableComponentsTheoryAttribute :
    TheoryAttribute,
    IDataAttribute
@@ -43,7 +43,7 @@ public class PluggableComponentsTheoryAttribute :
    /// <summary>
    /// Gets the component enum types for this attribute, if any.
    /// </summary>
-   public Type[] ComponentEnumTypes => _componentEnumTypes;
+   internal Type[] ComponentEnumTypes => _componentEnumTypes;
 
    /// <summary>
    /// For type-safe derived classes: validates and converts enum components to skip specifications.
@@ -153,19 +153,13 @@ public class PluggableComponentsTheoryAttribute :
    [Obsolete("Only for internal use")]
    public ITheoryDataRow[] GetTheoryDataRowsInternal()
    {
-      // DEBUG: What type is this?
-      var thisType = GetType();
 
-      // Always use TypedPCT component types - it's the only supported attribute now
-      var componentTypes = TypedPCTAttribute.ComponentTypes;
-
-      if(componentTypes == null || componentTypes.Length == 0)
+      if(_componentEnumTypes == null || _componentEnumTypes.Length == 0)
       {
          throw new InvalidOperationException("TypedPCTAttribute.ComponentTypes is null or empty!");
       }
 
-      // Read permutations from file with type information - components are parsed as enums
-      var permutations = PluggableComponentsReader.GetPermutations(componentTypes);
+      var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes);
 
       return permutations
             .Select(ITheoryDataRow (permutation) =>
