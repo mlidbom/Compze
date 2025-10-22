@@ -32,11 +32,12 @@ class ConfigFileLine
          ];
       }
 
-      var enumValuesForWildCardComponents = _wildCardComponents
-                                           .Select(it => it.AllComponents)
-                                           .ToList();
-
-      var wildCardComponentsPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
+      var wildCardComponentsPermutations = _wildCardComponents
+                                          .Select(it => it.AllComponents)
+                                          .Select(it => it.Values)
+                                          .CartesianProduct()
+                                          .Select(it => new WildCardComponentsPermutation(it))
+                                          .ToList();
 
       return wildCardComponentsPermutations.Select(CreateConcretePermutation).ToList();
    }
@@ -54,12 +55,6 @@ class ConfigFileLine
    }
 
    Enum ComponentValue(int componentTypeIndex, string componentName) => (Enum)Enum.Parse(_componentTypes[componentTypeIndex], componentName);
-
-   static IReadOnlyList<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues) =>
-      wildCardComponentValues.Select(it => it.Values)
-                             .CartesianProduct()
-                             .Select(it => new WildCardComponentsPermutation(it))
-                             .ToList();
 
    readonly record struct WildcardComponent(Type ComponentType)
    {
