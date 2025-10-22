@@ -47,7 +47,7 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
                          .ToHashSet();
 
       return new ComponentsPermutationsList(
-         activeLines.Select(ComponentsPermutation.FromArray).ToList(),
+         activeLines.Select(arr => ComponentsPermutation.FromArray(arr)).ToList(),
          allComponents);
    }
 

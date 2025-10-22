@@ -18,6 +18,13 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
+      // Get component enum types from the attribute if it's a PluggableComponentsTheoryAttribute
+      Type[]? componentEnumTypes = null;
+      if(factAttribute is PluggableComponentsTheoryAttribute pctAttribute)
+      {
+         componentEnumTypes = pctAttribute.ComponentEnumTypes;
+      }
+
       var testCases = baseCases.Select(testCaseInterface =>
                                 {
                                    // This ensures ExecutionErrorTestCase and other special cases are preserved
@@ -26,7 +33,8 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 
                                    return new PluggableComponentsTestCase(
                                       xunitTestCase,
-                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
+                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
+                                      componentEnumTypes: componentEnumTypes
                                    );
                                 })
                                .ToArray();

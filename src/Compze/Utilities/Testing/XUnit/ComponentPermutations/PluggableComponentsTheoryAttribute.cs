@@ -18,20 +18,26 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))] // Use standard TheoryDiscoverer!
 public class PluggableComponentsTheoryAttribute(
+   Type[]? componentEnumTypes = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1) :
    TheoryAttribute(sourceFilePath, sourceLineNumber),
    IDataAttribute
 {
    string[] _skipped = [];
+   readonly Type[] _componentEnumTypes = componentEnumTypes ?? [];
+
+   /// <summary>
+   /// Gets the component enum types for this attribute, if any.
+   /// </summary>
+   public Type[] ComponentEnumTypes => _componentEnumTypes;
 
    /// <summary>
    /// For type-safe derived classes: validates and converts enum components to skip specifications.
    /// </summary>
-   /// <param name="componentEnumTypes">Array of enum types that are valid for this attribute</param>
    /// <param name="skippedComponents">Array of enum values to skip</param>
    /// <param name="skipReasons">Corresponding reasons for skipping</param>
-   protected void InitializeTypedSkipped(Type[] componentEnumTypes, object[]? skippedComponents, string[]? skipReasons)
+   protected void InitializeTypedSkipped(object[]? skippedComponents, string[]? skipReasons)
    {
       // If no components to skip, do nothing
       if(skippedComponents == null || skipReasons == null || skippedComponents.Length == 0)
@@ -41,7 +47,7 @@ public class PluggableComponentsTheoryAttribute(
          throw new ArgumentException("Number of components must match number of reasons");
 
       // Validate all types are enums
-      foreach(var type in componentEnumTypes)
+      foreach(var type in _componentEnumTypes)
       {
          if(!type.IsEnum)
             throw new ArgumentException($"Type {type.Name} must be an enum type");
@@ -58,9 +64,9 @@ public class PluggableComponentsTheoryAttribute(
          var componentType = component.GetType();
          
          // Check if this component is one of our expected enum types
-         if(!componentEnumTypes.Contains(componentType))
+         if(!_componentEnumTypes.Contains(componentType))
          {
-            var expectedTypes = string.Join(", ", componentEnumTypes.Select(t => t.Name));
+            var expectedTypes = string.Join(", ", _componentEnumTypes.Select(t => t.Name));
             throw new ArgumentException(
                $"Component at index {i} must be of type {expectedTypes}, " +
                $"but was {componentType.Name}");
@@ -128,8 +134,15 @@ public class PluggableComponentsTheoryAttribute(
    [Obsolete("Only for internal use")] 
    public ITheoryDataRow[] GetTheoryDataRowsInternal()
    {
-      return PluggableComponentsReader
-            .Permutations
+      // Read the raw permutations from the file
+      var rawPermutations = PluggableComponentsReader.Permutations;
+
+      // If we have component types, re-parse permutations with type information
+      var permutations = _componentEnumTypes.Length > 0
+         ? rawPermutations.Select(p => ComponentsPermutation.Parse(p.ToString(), _componentEnumTypes)).ToList()
+         : rawPermutations.Permutations.ToList();
+
+      return permutations
             .Select(ITheoryDataRow (permutation) =>
              {
                 var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
@@ -152,5 +165,5 @@ public class PluggableComponentsTheoryAttribute(
 /// Use TestEnv to access the component and the information.
 /// </summary>
 public sealed class PCTAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute(sourceFilePath, sourceLineNumber) {}
+   : PluggableComponentsTheoryAttribute(null, sourceFilePath, sourceLineNumber) {}
 #pragma warning restore CA1813 //avoid unsealed attributes

@@ -38,5 +38,5 @@ internal class ComponentExclusion
    /// Determines if this exclusion matches the given permutation.
    /// </summary>
    public bool Matches(ComponentsPermutation permutation) =>
-      permutation.Components.Contains(ComponentName);
+      permutation.ComponentStrings.Contains(ComponentName);
 }

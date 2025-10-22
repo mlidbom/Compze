@@ -25,8 +25,8 @@ public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComp
       string[]? skipReasons = null,
       [CallerFilePath] string? sourceFilePath = null,
       [CallerLineNumber] int sourceLineNumber = -1)
-      : base(sourceFilePath, sourceLineNumber)
+      : base([typeof(TComponent1), typeof(TComponent2)], sourceFilePath, sourceLineNumber)
    {
-      InitializeTypedSkipped([typeof(TComponent1), typeof(TComponent2)], skippedComponents, skipReasons);
+      InitializeTypedSkipped(skippedComponents, skipReasons);
    }
 }
