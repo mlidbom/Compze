@@ -18,19 +18,20 @@ static class PluggableComponentsReader
 
    /// <summary>
    /// Gets permutations parsed with the provided component types.
-   /// When types are provided, components are parsed as enums. Otherwise as strings.
+   /// Component types must be provided - components are always parsed as enums.
    /// </summary>
-   public static ComponentsPermutationsList GetPermutations(Type[]? componentEnumTypes = null) =>
-      ComponentsPermutationsList.FromFileContent(FileContentLazy.Value, componentEnumTypes);
-
-   /// <summary>
-   /// Legacy property for backward compatibility - returns untyped string-based permutations.
-   /// </summary>
-   public static ComponentsPermutationsList Permutations => GetPermutations(null);
+   public static ComponentsPermutationsList GetPermutations(Type[] componentEnumTypes)
+   {
+      if(componentEnumTypes == null || componentEnumTypes.Length == 0)
+         throw new ArgumentException("Component enum types must be provided", nameof(componentEnumTypes));
+      
+      return ComponentsPermutationsList.FromFileContent(FileContentLazy.Value, componentEnumTypes);
+   }
 
    /// <summary>
    /// Gets all unique component names from all permutations (including ignored ones).
    /// This is used for validation to ensure excluded components actually exist.
    /// </summary>
-   public static IReadOnlySet<string> Components => Permutations.AllComponents;
+   public static IReadOnlySet<string> Components => 
+      ComponentsPermutationsList.FromFileContent(FileContentLazy.Value, null).AllComponents;
 }

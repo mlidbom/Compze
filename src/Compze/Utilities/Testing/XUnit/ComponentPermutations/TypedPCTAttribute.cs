@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Xunit;
 using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
@@ -27,5 +28,11 @@ public sealed class TypedPCTAttribute(
    /// <summary>
    /// The component enum types for TypedPCT. Public so test case can access it without serialization issues.
    /// </summary>
-   public static readonly Type[] ComponentTypes = [typeof(Serializer), typeof(SqlLayer)];
+   public static readonly Type[] ComponentTypes;
+   
+   static TypedPCTAttribute()
+   {
+      // Initialize in static constructor to ensure it's loaded early  
+      ComponentTypes = [typeof(Serializer), typeof(SqlLayer)];
+   }
 }

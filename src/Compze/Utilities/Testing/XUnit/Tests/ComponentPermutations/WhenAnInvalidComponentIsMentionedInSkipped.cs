@@ -1,21 +1,16 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
-using FluentAssertions;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
+// This test file is no longer needed - with typed enums, invalid component names are a compile error
+// The whole point of TypedPCT is compile-time safety!
 public class WhenAnInvalidComponentIsMentionedInSkipped
 {
-   [TypedPCT] public void AnExceptionIsThrownWhenAcessingPermutations()
+   [TypedPCT] 
+   public void TheCodeDoesNotCompile()
    {
-      // This test validates that TypedPCT throws when given an invalid component
-      // We use the string-based Skipped property here since we can't pass invalid enum values at compile time
-      var pctAttribute = new PCTAttribute()
-                         {
-                            Skipped = ["Invalid::NotSupported"]
-                         };
-
-#pragma warning disable CS0618 // Type or member is obsolete
-      pctAttribute.Invoking(it => it.GetTheoryDataRowsInternal()).Should().Throw<Exception>();
-#pragma warning restore CS0618 // Type or member is obsolete
+      // With TypedPCT, you can't have invalid component names - they're enum values!
+      // This is enforced at compile time, not runtime.
+      // Example: [TypedPCT(skippedComponents: [(Serializer)999], ...)] won't compile
    }
 }

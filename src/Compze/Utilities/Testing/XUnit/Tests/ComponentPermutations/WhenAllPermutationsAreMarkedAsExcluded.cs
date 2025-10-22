@@ -10,10 +10,4 @@ public class WhenAllPermutationsAreMarkedAsExcluded
       skippedComponents: [Serializer.Microsoft, Serializer.Newtonsoft],
       skipReasons: ["TODO", "Not supported"])]
    public void NoTestsAreExecuted() => throw new Exception("Should not be executed");
-
-   public class NestedScenarioComponentIsMarkedAsExcluded
-   {
-      [PCT(Skipped = ["invalid::TODO"])]
-      public void NoTestsAreExecuted_() => throw new Exception("Should not be executed");
-   }
 }

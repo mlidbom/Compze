@@ -11,11 +11,12 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    {
       var current = ComponentsPermutation.Current!;
       
-      // Access as strongly-typed enums
-      var serializer = (Serializer)current.ComponentEnums[0];
-      var sqlLayer = (SqlLayer)current.ComponentEnums[1];
+      // Components are strongly-typed enums - cast directly
+      var serializer = (Serializer)current.Components[0];
+      var sqlLayer = (SqlLayer)current.Components[1];
       
-      _testOutputHelper.WriteLine($"Serializer: {serializer}, SqlLayer: {sqlLayer}");
+      _testOutputHelper.WriteLine($"✅ Serializer enum: {serializer}, SqlLayer enum: {sqlLayer}");
+      _testOutputHelper.WriteLine($"✅ Component types: {current.Components[0].GetType().Name}, {current.Components[1].GetType().Name}");
    }
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)

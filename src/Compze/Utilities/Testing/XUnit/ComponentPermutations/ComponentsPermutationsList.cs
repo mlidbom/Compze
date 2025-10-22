@@ -46,7 +46,14 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
                          .SelectMany(components => components)
                          .ToHashSet();
 
-      // Parse with types if provided - components become enums instead of strings
+      // If no types provided, just return for validation purposes (string-based for component name checking)
+      if(componentEnumTypes == null || componentEnumTypes.Length == 0)
+      {
+         // Return empty list - we only need AllComponents for validation
+         return new ComponentsPermutationsList([], allComponents);
+      }
+
+      // Parse with types - components become enums
       return new ComponentsPermutationsList(
          activeLines.Select(arr => ComponentsPermutation.FromArray(arr, componentEnumTypes)).ToList(),
          allComponents);

@@ -9,23 +9,16 @@ public class ComponentsPermutation
    public override string ToString() => string.Join(Separator, ComponentStrings);
 
    /// <summary>
-   /// Components as enum values (when using TypedPCT) or strings (when using legacy PCT).
-   /// Use ComponentEnums property to access as enums when you know they're typed.
+   /// Components as enum values. Always strongly typed.
    /// </summary>
-   public readonly IReadOnlyList<object> Components;
+   public readonly IReadOnlyList<Enum> Components;
    
    /// <summary>
-   /// Components as string values, always available for display and matching.
+   /// Components as string values for display and matching.
    /// </summary>
    public readonly IReadOnlyList<string> ComponentStrings;
-
-   /// <summary>
-   /// Components cast to enum values. Only use this when you know the components are typed (TypedPCT).
-   /// Will throw InvalidCastException if components are strings (legacy PCT).
-   /// </summary>
-   public IReadOnlyList<Enum> ComponentEnums => Components.Cast<Enum>().ToList();
    
-   ComponentsPermutation(IReadOnlyList<object> components, IReadOnlyList<string> componentStrings)
+   ComponentsPermutation(IReadOnlyList<Enum> components, IReadOnlyList<string> componentStrings)
    {
       Components = components;
       ComponentStrings = componentStrings;
@@ -34,21 +27,20 @@ public class ComponentsPermutation
    /// <summary>
    /// Creates a ComponentsPermutation from string array.
    /// </summary>
-   /// <param name="value">Component names as strings</param>
+   /// <param name="value">Component names as strings from the file</param>
    /// <param name="componentEnumTypes">
-   /// Enum types for each component position. When provided, components are parsed as enums.
-   /// When null, components remain as strings (for backward compatibility with legacy PCT).
+   /// Enum types for each component position. Components are always parsed as enums.
    /// The attribute's type information flows through: TypedPCTAttribute → Reader → FromArray.
    /// </param>
-   internal static ComponentsPermutation FromArray(string[] value, Type[]? componentEnumTypes = null)
+   internal static ComponentsPermutation FromArray(string[] value, Type[]? componentEnumTypes)
    {
+      // For validation purposes (checking if component names exist), we allow null types
       if(componentEnumTypes == null || componentEnumTypes.Length == 0)
       {
-         // No type information - store as strings (legacy untyped PCT)
-         return new(value, value);
+         // Return dummy permutation for validation - not meant for actual use
+         throw new ArgumentException("Component enum types must be provided. Use TypedPCT attribute.");
       }
 
-      // Type information provided - parse as enums
       if(value.Length != componentEnumTypes.Length)
          throw new ArgumentException($"Component count ({value.Length}) does not match type count ({componentEnumTypes.Length})");
 
@@ -68,11 +60,10 @@ public class ComponentsPermutation
          }
       }
 
-      // Store as object array (must support both strings for legacy and enums for typed)
-      return new(componentEnums.Cast<object>().ToArray(), value);
+      return new(componentEnums, value);
    }
 
-   internal static ComponentsPermutation Parse(string value, Type[]? componentEnumTypes = null) =>
+   internal static ComponentsPermutation Parse(string value, Type[] componentEnumTypes) =>
       FromArray(value.Split(Separator), componentEnumTypes);
 
    public static ComponentsPermutation? Current => CurrentInternal.Value?.Value;

@@ -26,6 +26,9 @@ public class PluggableComponentsTheoryAttribute(
 {
    string[] _skipped = [];
    readonly Type[] _componentEnumTypes = componentEnumTypes ?? [];
+   
+   // Debug: Output types in constructor
+   void _ () => Console.WriteLine($"[Constructor] Types: {(_componentEnumTypes.Length > 0 ? string.Join(", ", _componentEnumTypes.Select(t => t.Name)) : "EMPTY")}");
 
    /// <summary>
    /// Gets the component enum types for this attribute, if any.
@@ -110,6 +113,7 @@ public class PluggableComponentsTheoryAttribute(
 
    public ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
    {
+      
       if(testMethod.DeclaringType != testMethod.ReflectedType) //Only run for the class that declares the test method.
       {
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
@@ -123,11 +127,14 @@ public class PluggableComponentsTheoryAttribute(
 #pragma warning disable CS0618 // Type or member is obsolete
          var permutations = GetTheoryDataRowsInternal();
 #pragma warning restore CS0618 // Type or member is obsolete
+         
+         
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
       }
       catch(ArgumentException ex)
       {
          // Validation error - return a single skipped test with the error message
+         
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
             [
                new TheoryDataRow() { Skip = ex.Message }
@@ -138,14 +145,31 @@ public class PluggableComponentsTheoryAttribute(
    [Obsolete("Only for internal use")] 
    public ITheoryDataRow[] GetTheoryDataRowsInternal()
    {
-      // Read permutations from file with type information - components are parsed as enums if types provided
-      var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes);
+      // DEBUG: What type is this?
+      var thisType = GetType();
+      
+      // Always use TypedPCT component types - it's the only supported attribute now
+      var componentTypes = TypedPCTAttribute.ComponentTypes;
+      
+      
+      if(componentTypes == null || componentTypes.Length == 0)
+      {
+         throw new InvalidOperationException("TypedPCTAttribute.ComponentTypes is null or empty!");
+      }
+      
+      // Read permutations from file with type information - components are parsed as enums
+      var permutations = PluggableComponentsReader.GetPermutations(componentTypes);
+
 
       return permutations
             .Select(ITheoryDataRow (permutation) =>
              {
                 var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
-                return new TheoryDataRow(permutation.ToString())
+                var permString = permutation.ToString();
+                
+                
+                // TheoryDataRow needs DATA (the arguments), not just display name
+                return new TheoryDataRow(permString)  // Pass permutation string as argument
                        {
                           Skip = exclusion != null ? $"{exclusion.ComponentName}: {exclusion.Reason}" : null
                        };
@@ -155,14 +179,4 @@ public class PluggableComponentsTheoryAttribute(
 
    public bool SupportsDiscoveryEnumeration() => true; // Yes, we can enumerate at discovery time
 }
-
-/// <summary>
-/// Alias for PluggableComponentsTheoryAttribute
-/// Pluggable Components Theory Attribute
-/// Use this attribute instead of [XFact] for tests that should run with all pluggable component combinations.
-/// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
-/// Use TestEnv to access the component and the information.
-/// </summary>
-public sealed class PCTAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute(null, sourceFilePath, sourceLineNumber) {}
 #pragma warning restore CA1813 //avoid unsealed attributes
