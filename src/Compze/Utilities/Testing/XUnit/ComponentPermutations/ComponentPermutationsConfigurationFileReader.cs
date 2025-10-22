@@ -83,7 +83,12 @@ static class ComponentPermutationsConfigurationFileReader
 
    readonly record struct PermutationWithPossibleWildCards(IReadOnlyList<string> ComponentNamesOrWildCards);
    readonly record struct ConcretePermutationNoWildcards(IReadOnlyList<string> ComponentNames);
-   readonly record struct WildcardComponent(Type ComponentType, int Index);
+
+   readonly record struct WildcardComponent(Type ComponentType, int Index)
+   {
+      public IReadOnlyList<Enum> Values => Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList();
+   }
+
    readonly record struct ExpandedWildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
    readonly record struct WildCardComponentsPermutation(IReadOnlyList<string> ComponentNames);
 
@@ -121,7 +126,7 @@ static class ComponentPermutationsConfigurationFileReader
       Type[] componentTypes)
    {
       return wildcardComponent
-            .Select(it => new ExpandedWildCardComponentValues(it.ComponentType, Enum.GetValues(it.ComponentType).Cast<Enum>().ToReadOnlyList()))
+            .Select(it => new ExpandedWildCardComponentValues(it.ComponentType, it.Values))
             .ToList();
    }
 
