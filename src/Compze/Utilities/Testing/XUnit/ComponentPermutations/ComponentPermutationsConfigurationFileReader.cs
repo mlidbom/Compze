@@ -96,13 +96,13 @@ static class ComponentPermutationsConfigurationFileReader
          yield break;
       }
 
-      var allPossibleValuesForEachWildcardPosition = GetAllEnumValuesForWildcardPositions(wildcardPositions, componentTypes);
+      var enumValuesForWildCardComponents = GetAllEnumValuesForWildcardPositions(wildcardPositions, componentTypes);
 
-      var allCombinationsOfWildcardValues = GenerateAllCombinations(allPossibleValuesForEachWildcardPosition);
+      var expandedPermutations = ExpandWildCardsIntoConcretePermutations(enumValuesForWildCardComponents);
 
-      foreach(var wildcardValueCombination in allCombinationsOfWildcardValues)
+      foreach(var permutation in expandedPermutations)
       {
-         var expandedLine = ReplaceWildcardsWithValues(line, wildcardPositions, wildcardValueCombination);
+         var expandedLine = ReplaceWildcardsWithValues(line, wildcardPositions, permutation);
          yield return expandedLine;
       }
    }
@@ -142,7 +142,7 @@ static class ComponentPermutationsConfigurationFileReader
       return new PermutationWithPossibleWildCards(result);
    }
 
-   static IEnumerable<ConcretePermutationNoWildCards> GenerateAllCombinations(IReadOnlyList<EnumValues> listsOfPossibleValues)
+   static IEnumerable<ConcretePermutationNoWildCards> ExpandWildCardsIntoConcretePermutations(IReadOnlyList<EnumValues> listsOfPossibleValues)
    {
       if(listsOfPossibleValues.Count == 0)
       {
@@ -160,7 +160,7 @@ static class ComponentPermutationsConfigurationFileReader
             yield return new ConcretePermutationNoWildCards([enumValue.ToString()]);
          } else
          {
-            foreach(var combinationOfRemainingValues in GenerateAllCombinations(remainingListsOfPossibleValues))
+            foreach(var combinationOfRemainingValues in ExpandWildCardsIntoConcretePermutations(remainingListsOfPossibleValues))
             {
                var completeCombination = new List<string> { enumValue.ToString() };
                completeCombination.AddRange(combinationOfRemainingValues.EnumValueNames);
