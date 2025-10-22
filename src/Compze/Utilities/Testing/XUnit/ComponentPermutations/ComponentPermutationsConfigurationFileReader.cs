@@ -83,10 +83,10 @@ static class ComponentPermutationsConfigurationFileReader
    class PermutationWithPossibleWildCards(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> componentNamesOrWildCards)
    {
       readonly IReadOnlyList<Type> _componentTypes = componentTypes;
-      internal readonly IReadOnlyList<string> ComponentNamesOrWildCards = componentNamesOrWildCards;
+      readonly IReadOnlyList<string> _componentNamesOrWildCards = componentNamesOrWildCards;
 
-      public IReadOnlyList<WildcardComponent> WildCardComponents =>
-         ComponentNamesOrWildCards
+      IReadOnlyList<WildcardComponent> WildCardComponents =>
+         _componentNamesOrWildCards
            .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
            .Where(it => it.value == Wildcard)
            .Select(it => new WildcardComponent(_componentTypes[it.index], it.index))
@@ -98,7 +98,7 @@ static class ComponentPermutationsConfigurationFileReader
 
          if(wildcardComponents.Count == 0)
          {
-            var enumValues = ComponentNamesOrWildCards
+            var enumValues = _componentNamesOrWildCards
                             .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
                             .ToList();
             yield return ComponentsPermutation.FromComponentEnumValues(enumValues);
@@ -122,12 +122,12 @@ static class ComponentPermutationsConfigurationFileReader
          WildCardComponentsPermutation replacementValues,
          IReadOnlyList<Type> componentTypes)
       {
-         var concretePermutationEnumValues = new Enum[ComponentNamesOrWildCards.Count];
+         var concretePermutationEnumValues = new Enum[_componentNamesOrWildCards.Count];
 
          // First, convert all non-wildcard values to enums
-         for(int i = 0; i < ComponentNamesOrWildCards.Count; i++)
+         for(int i = 0; i < _componentNamesOrWildCards.Count; i++)
          {
-            var componentNameOrWildcard = ComponentNamesOrWildCards[i];
+            var componentNameOrWildcard = _componentNamesOrWildCards[i];
             if(componentNameOrWildcard != Wildcard)
             {
                concretePermutationEnumValues[i] = (Enum)Enum.Parse(componentTypes[i], componentNameOrWildcard);
@@ -172,13 +172,12 @@ static class ComponentPermutationsConfigurationFileReader
             }
          }
       }
-   }
+      readonly record struct WildcardComponent(Type ComponentType, int Index)
+      {
+         public WildCardComponentValues AllComponents => new(ComponentType, Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList());
+      }
 
-   readonly record struct WildcardComponent(Type ComponentType, int Index)
-   {
-      public WildCardComponentValues AllComponents => new(ComponentType, Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList());
+      readonly record struct WildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
+      readonly record struct WildCardComponentsPermutation(IReadOnlyList<Enum> Components);
    }
-
-   readonly record struct WildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
-   readonly record struct WildCardComponentsPermutation(IReadOnlyList<Enum> Components);
 }
