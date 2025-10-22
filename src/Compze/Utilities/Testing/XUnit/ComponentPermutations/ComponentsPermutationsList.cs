@@ -41,7 +41,7 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
          throw new ArgumentException("Component enum types must be provided. Use TypedPCT attribute.", nameof(componentEnumTypes));
 
       return new ComponentsPermutationsList(
-         activeLines.Select(arr => ComponentsPermutation.FromArray(arr, componentEnumTypes)).ToList());
+         activeLines.Select(arr => ComponentsPermutation.FromComponentNamesArray(arr, componentEnumTypes)).ToList());
    }
 
    public IEnumerator<ComponentsPermutation> GetEnumerator() => Permutations.GetEnumerator();
