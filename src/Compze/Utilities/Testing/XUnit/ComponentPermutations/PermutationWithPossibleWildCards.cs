@@ -38,15 +38,12 @@ class ConfigFileLine
 
          foreach(var permutation in wildCardComponentsPermutations)
          {
-            yield return CloneLineToCreateConcretePermutation(_wildCardComponents, permutation, _componentTypes);
+            yield return CreateConcretePermutation(permutation);
          }
       }
    }
 
-   ComponentsPermutation CloneLineToCreateConcretePermutation(
-      IReadOnlyList<WildcardComponent> wildcardComponents,
-      WildCardComponentsPermutation replacementValues,
-      IReadOnlyList<Type> componentTypes)
+   ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation replacementValues)
    {
       var concretePermutationEnumValues = new Enum[_componentNamesOrWildCards.Count];
 
@@ -56,14 +53,14 @@ class ConfigFileLine
          var componentNameOrWildcard = _componentNamesOrWildCards[i];
          if(componentNameOrWildcard != Wildcard)
          {
-            concretePermutationEnumValues[i] = (Enum)Enum.Parse(componentTypes[i], componentNameOrWildcard);
+            concretePermutationEnumValues[i] = (Enum)Enum.Parse(_componentTypes[i], componentNameOrWildcard);
          }
       }
 
       // Then replace wildcards with the actual enum values
-      for(int currentWildcardPosition = 0; currentWildcardPosition < wildcardComponents.Count; currentWildcardPosition++)
+      for(int currentWildcardPosition = 0; currentWildcardPosition < _wildCardComponents.Count; currentWildcardPosition++)
       {
-         var positionInLine = wildcardComponents[currentWildcardPosition].Index;
+         var positionInLine = _wildCardComponents[currentWildcardPosition].Index;
          var replacementValue = replacementValues.Components[currentWildcardPosition];
          concretePermutationEnumValues[positionInLine] = replacementValue;
       }
