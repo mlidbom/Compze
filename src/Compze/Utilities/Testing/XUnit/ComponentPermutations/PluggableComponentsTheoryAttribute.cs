@@ -86,7 +86,12 @@ public class PluggableComponentsTheoryAttribute :
 
       try
       {
-         var permutations = GetTheoryDataRowsInternal();
+         var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes)
+                                                     .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()) // Pass permutation string as argument
+                                                                                             {
+                                                                                                Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()
+                                                                                             })
+                                                     .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
       }
       catch(ArgumentException ex)
@@ -97,18 +102,6 @@ public class PluggableComponentsTheoryAttribute :
                new TheoryDataRow() { Skip = ex.Message }
             ]);
       }
-   }
-
-   public ITheoryDataRow[] GetTheoryDataRowsInternal()
-   {
-      var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes);
-
-      return permutations
-            .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()) // Pass permutation string as argument
-                                                    {
-                                                       Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()
-                                                    })
-            .ToArray();
    }
 
    public bool SupportsDiscoveryEnumeration() => true; // Yes, we can enumerate at discovery time
