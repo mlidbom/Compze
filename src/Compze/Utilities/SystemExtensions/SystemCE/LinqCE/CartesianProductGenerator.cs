@@ -13,17 +13,13 @@ static class CartesianProductGenerator
          return [[]];
       }
 
-      // Start with all values from the first list as single-element combinations
-      IEnumerable<IReadOnlyList<T>> combinations = lists[0].Select(v => new List<T> { v } as IReadOnlyList<T>);
+      var seedListOfLists = lists[0].Select(it => new List<T> { it }.ToReadOnlyList()).ToList();
 
-      // For each remaining list, combine it with all existing combinations
-      for(int i = 1; i < lists.Count; i++)
-      {
-         var currentList = lists[i];
-         combinations = combinations.SelectMany(existingCombination =>
-                                                   currentList.Select(newValue => existingCombination.Concat([newValue]).ToList() as IReadOnlyList<T>));
-      }
-
-      return combinations.ToList();
+      return lists.Skip(1)
+                  .Aggregate(seedListOfLists,
+                             (current, currentList) =>
+                                current.SelectMany(existingCombination =>
+                                                      currentList.Select(newValue => existingCombination.Concat([newValue]).ToReadOnlyList())).ToList())
+                  .ToList();
    }
 }
