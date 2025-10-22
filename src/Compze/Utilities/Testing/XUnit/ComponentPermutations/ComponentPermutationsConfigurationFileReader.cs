@@ -83,7 +83,7 @@ static class ComponentPermutationsConfigurationFileReader
 
    readonly record struct ComponentLine(IReadOnlyList<string> ComponentNamesOrWildCards);
    readonly record struct WildcardPosition(int Index);
-   readonly record struct EnumValuesNames(Type EnumType, IReadOnlyList<string> Names);
+   readonly record struct EnumValuesNames(Type EnumType, IReadOnlyList<Enum> Names);
    readonly record struct EnumValueNamesToReplaceWildcards(IReadOnlyList<string> EnumValueNames);
 
    static IEnumerable<ComponentLine> ExpandLineWildcards(ComponentLine line, Type[] componentTypes)
@@ -121,7 +121,7 @@ static class ComponentPermutationsConfigurationFileReader
       Type[] componentTypes)
    {
       return wildcardPositions
-            .Select(wildcardPosition => new EnumValuesNames(componentTypes[wildcardPosition.Index], Enum.GetNames(componentTypes[wildcardPosition.Index]).ToReadOnlyList()))
+            .Select(wildcardPosition => new EnumValuesNames(componentTypes[wildcardPosition.Index], Enum.GetValues(componentTypes[wildcardPosition.Index]).Cast<Enum>().ToReadOnlyList()))
             .ToList();
    }
 
@@ -157,12 +157,12 @@ static class ComponentPermutationsConfigurationFileReader
       {
          if(remainingListsOfPossibleValues.Count == 0)
          {
-            yield return new EnumValueNamesToReplaceWildcards([enumValueName]);
+            yield return new EnumValueNamesToReplaceWildcards([enumValueName.ToString()]);
          } else
          {
             foreach(var combinationOfRemainingValues in GenerateAllCombinations(remainingListsOfPossibleValues))
             {
-               var completeCombination = new List<string> { enumValueName };
+               var completeCombination = new List<string> { enumValueName.ToString() };
                completeCombination.AddRange(combinationOfRemainingValues.EnumValueNames);
                yield return new EnumValueNamesToReplaceWildcards(completeCombination);
             }
