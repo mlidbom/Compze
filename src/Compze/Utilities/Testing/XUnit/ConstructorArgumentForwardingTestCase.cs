@@ -13,6 +13,44 @@ public class ConstructorArgumentForwardingTestCase : XunitTestCase
    [Obsolete("Called by deserializer", error: true)]
    public ConstructorArgumentForwardingTestCase() {}
 
+
+
+      ///<summary>
+   /// Passes along every value in the <paramref name="details"/>
+   /// unless a non-null value is provided for one of the optional arguments,
+   /// if it is, that value is used for that argument
+   /// </summary>
+   public ConstructorArgumentForwardingTestCase(TestCaseDetails details,
+                                                object?[]? testMethodArguments = null,
+                                                Dictionary<string, HashSet<string>>? traits = null,
+                                                IXunitTestMethod? testMethod = null,
+                                                string? testCaseDisplayName = null,
+                                                string? uniqueID = null,
+                                                bool? @explicit = null,
+                                                Type[]? skipExceptions = null,
+                                                string? skipReason = null,
+                                                Type? skipType = null,
+                                                string? skipUnless = null,
+                                                string? skipWhen = null,
+                                                string? sourceFilePath = null,
+                                                int? sourceLineNumber = null,
+                                                int? timeout = null)
+      : base(testMethodArguments: testMethodArguments,
+             traits: traits,
+             testMethod: details.ResolvedTestMethod,
+             testCaseDisplayName: testCaseDisplayName ?? details.TestCaseDisplayName,
+             uniqueID: uniqueID ?? details.UniqueID,
+             @explicit: @explicit ?? details.Explicit,
+             skipExceptions: skipExceptions ?? details.SkipExceptions,
+             skipReason: skipReason ?? details.SkipReason,
+             skipType: skipType ?? details.SkipType,
+             skipUnless: skipUnless ?? details.SkipUnless,
+             skipWhen: skipWhen ?? details.SkipWhen,
+             sourceFilePath: sourceFilePath ?? details.SourceFilePath,
+             sourceLineNumber: sourceLineNumber ?? details.SourceLineNumber,
+             timeout: timeout ?? details.Timeout)
+   {}
+
    ///<summary>
    /// Passes along every value in the <paramref name="testCase"/>
    /// unless a non-null value is provided for one of the optional arguments,
@@ -46,5 +84,6 @@ public class ConstructorArgumentForwardingTestCase : XunitTestCase
              sourceFilePath: sourceFilePath ?? testCase.SourceFilePath,
              sourceLineNumber: sourceLineNumber ?? testCase.SourceLineNumber,
              timeout: timeout ?? testCase.Timeout,
-             testMethodArguments: testMethodArguments ?? testCase.TestMethodArguments) {}
+             testMethodArguments: testMethodArguments ?? testCase.TestMethodArguments)
+   {}
 }
