@@ -4,19 +4,19 @@ using Compze.Utilities.SystemCE;
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 /// <summary>Reads pluggable component combinations from configuration file in the assembly directory.</summary>
-static class PluggableComponentsReader
+static class ComponentPermutationsConfigurationFileReader
 {
-   static readonly ConcurrentDictionary<string, ComponentsPermutationsList> PermutationsCache = new();
+   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentsPermutation>> PermutationsCache = new();
 
    /// <summary>Gets permutations parsed with the provided component types as enums from the specified configuration file.</summary>
-   public static ComponentsPermutationsList GetPermutations(string configurationFileName, Type[] componentEnumTypes)
+   public static IReadOnlyList<ComponentsPermutation> GetPermutations(string configurationFileName, Type[] componentEnumTypes)
    {
       return PermutationsCache.GetOrAdd(
          configurationFileName,
          fileName => ReadFile(componentEnumTypes, fileName));
    }
 
-   static ComponentsPermutationsList ReadFile(Type[] componentEnumTypes, string fileName) =>
+   static IReadOnlyList<ComponentsPermutation> ReadFile(Type[] componentEnumTypes, string fileName) =>
       ParseFileContent(ReadFileLines(fileName), componentEnumTypes);
 
    static string[] ReadFileLines(string fileName)
@@ -30,7 +30,7 @@ static class PluggableComponentsReader
    const string Comment = "//";
    const char SkipPermutation = '#';
 
-   static ComponentsPermutationsList ParseFileContent(IReadOnlyList<string> fileLines, Type[] componentTypes)
+   static IReadOnlyList<ComponentsPermutation> ParseFileContent(IReadOnlyList<string> fileLines, Type[] componentTypes)
    {
       var lines = fileLines
                  .Select(it => it.Trim())
@@ -49,13 +49,13 @@ static class PluggableComponentsReader
                     .ToList();
 
       if(activeLines.Count == 0)
-         return new ComponentsPermutationsList([]);
+         return new List<ComponentsPermutation>([]);
 
       var componentDimensions = activeLines[0].Length;
       if(activeLines.Any(it => it.Length != componentDimensions))
          throw new Exception("Different lines in the file have different numbers of components");
 
-      return new ComponentsPermutationsList(
+      return new List<ComponentsPermutation>(
          activeLines.Select(arr => ComponentsPermutation.FromComponentNamesArray(arr, componentTypes))
                     .ToList());
    }
