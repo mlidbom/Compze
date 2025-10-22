@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
@@ -43,7 +44,6 @@ static class ComponentPermutationsConfigurationFileReader
 
    const string Comment = "//";
    const char SkipPermutation = '#';
-   const string Wildcard = "*";
 
    static IReadOnlyList<ComponentsPermutation> ParseFileContent(IReadOnlyList<string> fileLines, Type[] componentTypes)
    {
@@ -68,52 +68,54 @@ static class ComponentPermutationsConfigurationFileReader
 
       // Expand wildcards and create permutations
       var expandedPermutations = activeLines
-         .SelectMany(line => ExpandWildcards(line, componentTypes))
-         .ToList();
+                                .SelectMany(line => ExpandLineWildcards(line, componentTypes))
+                                .ToList();
 
       return new List<ComponentsPermutation>(
          expandedPermutations.Select(arr => ComponentsPermutation.FromComponentNamesArray(arr, componentTypes))
+                             .OrderBy(it => it.ToString())
+                             .DistinctBy(it => it.ToString())
                              .ToList());
    }
 
-   static IEnumerable<string[]> ExpandWildcards(string[] componentValues, Type[] componentTypes)
-   {
-      // Find all positions with wildcards
-      var wildcardPositions = componentValues
-         .Select((value, index) => new { value, index })
-         .Where(x => x.value == Wildcard)
-         .Select(x => x.index)
-         .ToList();
+   const string Wildcard = "*";
 
-      if(wildcardPositions.Count == 0)
+   static IEnumerable<string[]> ExpandLineWildcards(string[] componentValues, Type[] componentTypes)
+   {
+      var wildcardComponentIndexes = componentValues
+                                    .Select((value, index) => new { value, index })
+                                    .Where(x => x.value == Wildcard)
+                                    .Select(x => x.index)
+                                    .ToList();
+
+      if(wildcardComponentIndexes.Count == 0)
       {
-         // No wildcards, return as-is
          yield return componentValues;
          yield break;
       }
 
-      // Get all possible values for each wildcard position
-      var wildcardOptions = wildcardPositions
-         .Select(pos => Enum.GetNames(componentTypes[pos]))
-         .ToList();
+      var wildCardComponentsExpandedIntoAllValuesInTheEnums = wildcardComponentIndexes
+                                                            .Select(pos => Enum.GetNames(componentTypes[pos]).ToReadOnlyList())
+                                                            .ToList();
 
       // Generate all combinations using cross product
-      foreach(var combination in CrossProduct(wildcardOptions))
+      foreach(var combination in CrossProduct(wildCardComponentsExpandedIntoAllValuesInTheEnums))
       {
          var result = (string[])componentValues.Clone();
-         for(int i = 0; i < wildcardPositions.Count; i++)
+         for(int i = 0; i < wildcardComponentIndexes.Count; i++)
          {
-            result[wildcardPositions[i]] = combination[i];
+            result[wildcardComponentIndexes[i]] = combination[i];
          }
+
          yield return result;
       }
    }
 
-   static IEnumerable<List<T>> CrossProduct<T>(List<T[]> lists)
+   static IEnumerable<IReadOnlyList<string>> CrossProduct(IReadOnlyList<IReadOnlyList<string>> lists)
    {
       if(lists.Count == 0)
       {
-         yield return new List<T>();
+         yield return new List<string>();
          yield break;
       }
 
@@ -124,13 +126,12 @@ static class ComponentPermutationsConfigurationFileReader
       {
          if(remainingLists.Count == 0)
          {
-            yield return new List<T> { item };
-         }
-         else
+            yield return [item];
+         } else
          {
             foreach(var combination in CrossProduct(remainingLists))
             {
-               var result = new List<T> { item };
+               var result = new List<string> { item };
                result.AddRange(combination);
                yield return result;
             }
