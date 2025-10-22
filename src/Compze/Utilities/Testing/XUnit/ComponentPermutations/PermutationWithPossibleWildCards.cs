@@ -7,19 +7,18 @@ class ConfigFileLine
    const string Wildcard = "*";
    readonly IReadOnlyList<Type> _componentTypes;
    readonly IReadOnlyList<string> _componentNamesOrWildCards;
+   readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
 
    public ConfigFileLine(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> componentNamesOrWildCards)
    {
       _componentTypes = componentTypes;
       _componentNamesOrWildCards = componentNamesOrWildCards;
       _wildCardComponents = _componentNamesOrWildCards
-                           .Select((componentName, componentIndex) => new {  componentName, componentIndex,  componentType = _componentTypes[componentIndex] })
+                           .Select((componentName, componentIndex) => new { componentName, componentIndex, componentType = _componentTypes[componentIndex] })
                            .Where(it => it.componentName == Wildcard)
                            .Select(it => new WildcardComponent(it.componentType))
                            .ToList();
    }
-
-   readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
 
    public IReadOnlyList<ComponentsPermutation> ExpandWildcardsIntoConcretePermutations()
    {
