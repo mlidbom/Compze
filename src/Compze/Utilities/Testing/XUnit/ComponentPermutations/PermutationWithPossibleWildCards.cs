@@ -14,28 +14,26 @@ class ConfigFileLine
       _componentTypes = componentTypes;
       _componentNamesOrWildCards = componentNamesOrWildCards;
       _wildCardComponents = _componentNamesOrWildCards
-                           .Zip(_componentTypes, (componentName, componentType) => new { componentName, componentType })
-                           .Where(it => it.componentName == Wildcard)
-                           .Select(it => new WildcardComponent(it.componentType))
+                           .Zip(_componentTypes, resultSelector: (componentName, componentType) => new { componentName, componentType })
+                           .Where(predicate: it => it.componentName == Wildcard)
+                           .Select(selector: it => new WildcardComponent(it.componentType))
                            .ToList();
    }
 
    public IReadOnlyList<ComponentsPermutation> ExpandWildcardsIntoConcretePermutations()
    {
       if(!_wildCardComponents.Any())
-      {
          return
          [
             ComponentsPermutation.FromComponentEnumValues(_componentNamesOrWildCards
-                                                         .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
+                                                         .Zip(_componentTypes, resultSelector: (name, type) => (Enum)Enum.Parse(type, name))
                                                          .ToList())
          ];
-      }
 
       return _wildCardComponents
-            .Select(it => it.AllComponents)
+            .Select(selector: it => it.AllComponents)
             .CartesianProduct()
-            .Select(it => new WildCardComponentsPermutation(it))
+            .Select(selector: it => new WildCardComponentsPermutation(it))
             .Select(CreateConcretePermutation)
             .ToList();
    }
@@ -43,7 +41,7 @@ class ConfigFileLine
    ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation wildCardReplacementValues)
    {
       var concreteComponents = _componentNamesOrWildCards
-                              .Select((componentNameOrWildcard, componentIndex) =>
+                              .Select(selector: (componentNameOrWildcard, componentIndex) =>
                                          componentNameOrWildcard == Wildcard
                                             ? wildCardReplacementValues.ComponentForComponentType(_componentTypes[componentIndex])
                                             : ComponentValue(componentIndex, componentNameOrWildcard))
@@ -59,11 +57,9 @@ class ConfigFileLine
       public IReadOnlyList<Enum> AllComponents => Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList();
    }
 
-   readonly record struct WildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
-
    class WildCardComponentsPermutation(IReadOnlyList<Enum> components)
    {
       readonly IReadOnlyList<Enum> _components = components;
-      public Enum ComponentForComponentType(Type componentType) => _components.Single(it => it.GetType() == componentType);
+      public Enum ComponentForComponentType(Type componentType) => _components.Single(predicate: it => it.GetType() == componentType);
    }
 }
