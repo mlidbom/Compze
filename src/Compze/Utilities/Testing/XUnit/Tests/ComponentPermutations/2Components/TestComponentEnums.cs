@@ -21,3 +21,9 @@ public enum SqlLayer
    Postgre,
    MySql
 }
+
+public enum DIContainer
+{
+   Microsoft,
+   SimpleInjector
+}
