@@ -23,7 +23,7 @@ class ConfigFileLine
 
    public IEnumerable<ComponentsPermutation> ExpandWildcardsIntoConcretePermutations()
    {
-      if(_wildCardComponents.Count == 0)
+      if(!_wildCardComponents.Any())
       {
          yield return ComponentsPermutation.FromComponentEnumValues(_componentNamesOrWildCards
                                                                    .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
@@ -73,24 +73,24 @@ class ConfigFileLine
       if(wildCardComponentValues.Count == 0)
       {
          yield return new WildCardComponentsPermutation([]);
-         yield break;
-      }
-
-      var firstComponentTypeValues = wildCardComponentValues[0];
-      var otherComponentTypeValues = wildCardComponentValues.Skip(1).ToList();
-
-      foreach(var enumValue in firstComponentTypeValues.Values)
+      } else
       {
-         if(otherComponentTypeValues.Count == 0)
+         var firstComponentTypeValues = wildCardComponentValues[0];
+         var otherComponentTypeValues = wildCardComponentValues.Skip(1).ToList();
+
+         foreach(var enumValue in firstComponentTypeValues.Values)
          {
-            yield return new WildCardComponentsPermutation([enumValue]);
-         } else
-         {
-            foreach(var wildCardComponentsPermutation in ExpandWildCardsIntoPermutationsOfTheWildCardComponents(otherComponentTypeValues))
+            if(otherComponentTypeValues.Count == 0)
             {
-               var completeCombination = new List<Enum> { enumValue };
-               completeCombination.AddRange(wildCardComponentsPermutation.Components);
-               yield return new WildCardComponentsPermutation(completeCombination);
+               yield return new WildCardComponentsPermutation([enumValue]);
+            } else
+            {
+               foreach(var wildCardComponentsPermutation in ExpandWildCardsIntoPermutationsOfTheWildCardComponents(otherComponentTypeValues))
+               {
+                  var completeCombination = new List<Enum> { enumValue };
+                  completeCombination.AddRange(wildCardComponentsPermutation.Components);
+                  yield return new WildCardComponentsPermutation(completeCombination);
+               }
             }
          }
       }
