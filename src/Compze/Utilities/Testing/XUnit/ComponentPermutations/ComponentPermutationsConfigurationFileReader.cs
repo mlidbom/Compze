@@ -96,7 +96,7 @@ static class ComponentPermutationsConfigurationFileReader
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
    {
-      public IReadOnlyList<Enum> Components => Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList();
+      public ExpandedWildCardComponentValues AllComponentValues => new ExpandedWildCardComponentValues(ComponentType, Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList());
    }
 
    readonly record struct ExpandedWildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
@@ -115,7 +115,9 @@ static class ComponentPermutationsConfigurationFileReader
          yield break;
       }
 
-      var enumValuesForWildCardComponents = GetEnumValuesForWildcardComponents(wildcardComponents);
+      var enumValuesForWildCardComponents = wildcardComponents
+                                           .Select(it => it.AllComponentValues)
+                                           .ToList();
 
       var expandedPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
 
@@ -123,13 +125,6 @@ static class ComponentPermutationsConfigurationFileReader
       {
          yield return CloneLineToCreateConcretePermutation(line, wildcardComponents, permutation, componentTypes);
       }
-   }
-
-   static IReadOnlyList<ExpandedWildCardComponentValues> GetEnumValuesForWildcardComponents(IReadOnlyList<WildcardComponent> wildcardComponents)
-   {
-      return wildcardComponents
-            .Select(it => new ExpandedWildCardComponentValues(it.ComponentType, it.Components))
-            .ToList();
    }
 
    static ComponentsPermutation CloneLineToCreateConcretePermutation(
