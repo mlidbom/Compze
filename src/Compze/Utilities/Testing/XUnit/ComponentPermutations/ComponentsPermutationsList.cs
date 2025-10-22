@@ -14,17 +14,17 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
    {
       var lines = rows
                  .Select(it => it.Trim())
-                 .Where(line => !string.IsNullOrEmpty(line))
-                 .Where(line => !line.StartsWith(Comment))
+                 .Where(it => !string.IsNullOrEmpty(it))
+                 .Where(it => !it.StartsWith(Comment))
                  .ToList();
 
       var activeLines = lines
-                       .Where(line => !line.StartsWith(ComponentExclusion))
+                       .Where(it => !it.StartsWith(ComponentExclusion))
                        .Select(it => it.Split(ComponentsPermutation.Separator))
                        .ToList();
 
       var allLines = lines
-                    .Select(line => line.TrimStart(ComponentExclusion))
+                    .Select(it => it.TrimStart(ComponentExclusion))
                     .Select(it => it.Split(ComponentsPermutation.Separator))
                     .ToList();
 
