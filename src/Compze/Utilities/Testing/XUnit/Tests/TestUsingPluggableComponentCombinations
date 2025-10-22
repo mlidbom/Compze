@@ -2,10 +2,10 @@
 // Lines starting with "//" are comments
 // Lines starting with "#" are ignored/excluded permutations
 
-Microsoft:Microsoft
+Microsoft:MsSql
 Microsoft:Postgre
 
-Newtonsoft:Microsoft
+Newtonsoft:MsSql
 Newtonsoft:Postgre
 
 #Newtonsoft:MySql

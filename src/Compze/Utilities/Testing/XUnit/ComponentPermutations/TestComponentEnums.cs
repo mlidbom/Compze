@@ -16,7 +16,7 @@ public enum Serializer
 /// </summary>
 public enum SqlLayer
 {
-   Microsoft,
+   MsSql,
    Postgre,
    MySql
 }
