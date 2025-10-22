@@ -138,13 +138,8 @@ public class PluggableComponentsTheoryAttribute(
    [Obsolete("Only for internal use")] 
    public ITheoryDataRow[] GetTheoryDataRowsInternal()
    {
-      // Read the raw permutations from the file
-      var rawPermutations = PluggableComponentsReader.Permutations;
-
-      // If we have component types, re-parse permutations with type information
-      var permutations = _componentEnumTypes.Length > 0
-         ? rawPermutations.Select(p => ComponentsPermutation.Parse(p.ToString(), _componentEnumTypes)).ToList()
-         : rawPermutations.Permutations.ToList();
+      // Read permutations from file with type information - components are parsed as enums if types provided
+      var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes);
 
       return permutations
             .Select(ITheoryDataRow (permutation) =>

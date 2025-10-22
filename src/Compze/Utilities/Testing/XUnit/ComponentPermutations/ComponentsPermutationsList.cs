@@ -16,7 +16,7 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
    internal ComponentsPermutationsList Exclude(ExclusionsCollection exclusions) =>
       new(Permutations.Where(permutation => !exclusions.Matches(permutation)).ToList(), AllComponents);
 
-   internal static ComponentsPermutationsList FromFileContent(string[] rows)
+   internal static ComponentsPermutationsList FromFileContent(string[] rows, Type[]? componentEnumTypes = null)
    {
       var lines = rows
                  .Select(it => it.Trim())
@@ -46,8 +46,9 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
                          .SelectMany(components => components)
                          .ToHashSet();
 
+      // Parse with types if provided - components become enums instead of strings
       return new ComponentsPermutationsList(
-         activeLines.Select(arr => ComponentsPermutation.FromArray(arr)).ToList(),
+         activeLines.Select(arr => ComponentsPermutation.FromArray(arr, componentEnumTypes)).ToList(),
          allComponents);
    }
 

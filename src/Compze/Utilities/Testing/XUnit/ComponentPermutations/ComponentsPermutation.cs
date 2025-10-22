@@ -9,19 +9,19 @@ public class ComponentsPermutation
    public override string ToString() => string.Join(Separator, ComponentStrings);
 
    /// <summary>
-   /// Components as Enum values when types are provided, otherwise as strings.
-   /// Cast to Enum or string as appropriate based on your context.
+   /// Components as enum values (when using TypedPCT) or strings (when using legacy PCT).
+   /// Use ComponentEnums property to access as enums when you know they're typed.
    /// </summary>
    public readonly IReadOnlyList<object> Components;
    
    /// <summary>
-   /// Components as strings for display and matching purposes.
+   /// Components as string values, always available for display and matching.
    /// </summary>
    public readonly IReadOnlyList<string> ComponentStrings;
 
    /// <summary>
-   /// Components cast as Enum values. Use this when you know the components are typed.
-   /// Will throw if components are strings (when using untyped PCT).
+   /// Components cast to enum values. Only use this when you know the components are typed (TypedPCT).
+   /// Will throw InvalidCastException if components are strings (legacy PCT).
    /// </summary>
    public IReadOnlyList<Enum> ComponentEnums => Components.Cast<Enum>().ToList();
    
@@ -31,14 +31,24 @@ public class ComponentsPermutation
       ComponentStrings = componentStrings;
    }
 
+   /// <summary>
+   /// Creates a ComponentsPermutation from string array.
+   /// </summary>
+   /// <param name="value">Component names as strings</param>
+   /// <param name="componentEnumTypes">
+   /// Enum types for each component position. When provided, components are parsed as enums.
+   /// When null, components remain as strings (for backward compatibility with legacy PCT).
+   /// The attribute's type information flows through: TypedPCTAttribute → Reader → FromArray.
+   /// </param>
    internal static ComponentsPermutation FromArray(string[] value, Type[]? componentEnumTypes = null)
    {
       if(componentEnumTypes == null || componentEnumTypes.Length == 0)
       {
-         // No type information - store as strings (for backward compatibility with untyped PCT)
+         // No type information - store as strings (legacy untyped PCT)
          return new(value, value);
       }
 
+      // Type information provided - parse as enums
       if(value.Length != componentEnumTypes.Length)
          throw new ArgumentException($"Component count ({value.Length}) does not match type count ({componentEnumTypes.Length})");
 
@@ -58,7 +68,7 @@ public class ComponentsPermutation
          }
       }
 
-      // Cast to object[] for storage since Components must hold both strings (untyped) and Enums (typed)
+      // Store as object array (must support both strings for legacy and enums for typed)
       return new(componentEnums.Cast<object>().ToArray(), value);
    }
 
