@@ -83,7 +83,7 @@ static class ComponentPermutationsConfigurationFileReader
 
    readonly record struct PermutationWithPossibleWildCards(IReadOnlyList<string> ComponentNamesOrWildCards);
    readonly record struct ConcretePermutationNoWildcards(IReadOnlyList<string> ComponentNames);
-   readonly record struct WildcardComponentType(Type ComponentType, int Index);
+   readonly record struct WildcardComponent(Type ComponentType, int Index);
    readonly record struct ExpandedWildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
    readonly record struct WildCardComponentsPermutation(IReadOnlyList<string> ComponentNames);
 
@@ -107,27 +107,27 @@ static class ComponentPermutationsConfigurationFileReader
       }
    }
 
-   static IReadOnlyList<WildcardComponentType> FindWildcardComponentTypes(PermutationWithPossibleWildCards wildCardPermutation, Type[] componentTypes)
+   static IReadOnlyList<WildcardComponent> FindWildcardComponentTypes(PermutationWithPossibleWildCards wildCardPermutation, Type[] componentTypes)
    {
       return wildCardPermutation.ComponentNamesOrWildCards
                                 .Select((value, index) => new { value, index })
                                 .Where(x => x.value == Wildcard)
-                                .Select(x => new WildcardComponentType(componentTypes[x.index], x.index))
+                                .Select(x => new WildcardComponent(componentTypes[x.index], x.index))
                                 .ToList();
    }
 
    static IReadOnlyList<ExpandedWildCardComponentValues> GetEnumValuesForWildcardComponents(
-      IReadOnlyList<WildcardComponentType> wildcardPositions,
+      IReadOnlyList<WildcardComponent> wildcardComponent,
       Type[] componentTypes)
    {
-      return wildcardPositions
-            .Select(wildcardPosition => new ExpandedWildCardComponentValues(componentTypes[wildcardPosition.Index], Enum.GetValues(componentTypes[wildcardPosition.Index]).Cast<Enum>().ToReadOnlyList()))
+      return wildcardComponent
+            .Select(it => new ExpandedWildCardComponentValues(it.ComponentType, Enum.GetValues(it.ComponentType).Cast<Enum>().ToReadOnlyList()))
             .ToList();
    }
 
    static ConcretePermutationNoWildcards CloneLineToCreateConcretePermutation(
       PermutationWithPossibleWildCards originalLine,
-      IReadOnlyList<WildcardComponentType> wildcardPositions,
+      IReadOnlyList<WildcardComponent> wildcardPositions,
       WildCardComponentsPermutation replacementValues)
    {
       var concretePermutation = originalLine.ComponentNamesOrWildCards.ToList();
