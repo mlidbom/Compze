@@ -22,15 +22,9 @@ public class ComponentsPermutation
    internal static ComponentsPermutation FromComponentNamesArray(string[] componentNames, Type[] componentEnumTypes)
    {
       if(componentNames.Length != componentEnumTypes.Length)
-         throw new ArgumentException($"Component count ({componentNames.Length}) does not match type count ({componentEnumTypes.Length})");
+         throw new ArgumentException($"Component name count ({componentNames.Length}) does not match type count ({componentEnumTypes.Length})");
 
-      for(int i = 0; i < componentNames.Length; i++)
-      {
-         if(!componentEnumTypes[i].IsEnum)
-            throw new ArgumentException($"Type {componentEnumTypes[i].Name} must be an enum type");
-      }
-
-      return new(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
+      return new ComponentsPermutation(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
    }
 
    static Enum NameToEnum(string componentName, Type enumType)
