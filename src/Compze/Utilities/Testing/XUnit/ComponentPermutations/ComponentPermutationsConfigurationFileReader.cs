@@ -93,9 +93,9 @@ static class ComponentPermutationsConfigurationFileReader
 
    static IEnumerable<ComponentsPermutation> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
    {
-      var wildcardPositions = FindWildcardComponentTypes(line, componentTypes);
+      var wildcardComponents = FindWildcardComponents(line, componentTypes);
 
-      if(wildcardPositions.Count == 0)
+      if(wildcardComponents.Count == 0)
       {
          var enumValues = line.ComponentNamesOrWildCards
                               .Zip(componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
@@ -104,17 +104,17 @@ static class ComponentPermutationsConfigurationFileReader
          yield break;
       }
 
-      var enumValuesForWildCardComponents = GetEnumValuesForWildcardComponents(wildcardPositions, componentTypes);
+      var enumValuesForWildCardComponents = GetEnumValuesForWildcardComponents(wildcardComponents);
 
       var expandedPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
 
       foreach(var permutation in expandedPermutations)
       {
-         yield return CloneLineToCreateConcretePermutation(line, wildcardPositions, permutation, componentTypes);
+         yield return CloneLineToCreateConcretePermutation(line, wildcardComponents, permutation, componentTypes);
       }
    }
 
-   static IReadOnlyList<WildcardComponent> FindWildcardComponentTypes(PermutationWithPossibleWildCards wildCardPermutation, Type[] componentTypes)
+   static IReadOnlyList<WildcardComponent> FindWildcardComponents(PermutationWithPossibleWildCards wildCardPermutation, Type[] componentTypes)
    {
       return wildCardPermutation.ComponentNamesOrWildCards
                                 .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
@@ -123,11 +123,9 @@ static class ComponentPermutationsConfigurationFileReader
                                 .ToList();
    }
 
-   static IReadOnlyList<ExpandedWildCardComponentValues> GetEnumValuesForWildcardComponents(
-      IReadOnlyList<WildcardComponent> wildcardComponent,
-      Type[] componentTypes)
+   static IReadOnlyList<ExpandedWildCardComponentValues> GetEnumValuesForWildcardComponents(IReadOnlyList<WildcardComponent> wildcardComponents)
    {
-      return wildcardComponent
+      return wildcardComponents
             .Select(it => new ExpandedWildCardComponentValues(it.ComponentType, it.Components))
             .ToList();
    }
