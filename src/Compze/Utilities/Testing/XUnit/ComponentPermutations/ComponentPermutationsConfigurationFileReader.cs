@@ -72,7 +72,7 @@ static class ComponentPermutationsConfigurationFileReader
                                 .ToList();
 
       return new List<ComponentsPermutation>(
-         expandedPermutations.Select(arr => ComponentsPermutation.FromComponentNamesArray(arr, componentTypes))
+         expandedPermutations.Select(it => ComponentsPermutation.FromComponentNamesList(it, componentTypes))
                              .OrderBy(it => it.ToString())
                              .DistinctBy(it => it.ToString())
                              .ToList());
@@ -80,7 +80,7 @@ static class ComponentPermutationsConfigurationFileReader
 
    const string Wildcard = "*";
 
-   static IEnumerable<string[]> ExpandLineWildcards(string[] componentValues, Type[] componentTypes)
+   static IEnumerable<IReadOnlyList<string>> ExpandLineWildcards(string[] componentValues, Type[] componentTypes)
    {
       var wildcardComponentIndexes = componentValues
                                     .Select((value, index) => new { value, index })

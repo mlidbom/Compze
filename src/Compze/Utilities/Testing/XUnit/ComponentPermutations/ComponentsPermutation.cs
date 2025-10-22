@@ -34,13 +34,13 @@ public class ComponentsPermutation : IXunitSerializable
                           .Select(it => Type.GetType(it, throwOnError: true)!)
                           .ToArray();
 
-      var permutation = FromComponentNamesArray(componentNames, componentTypes);
+      var permutation = FromComponentNamesList(componentNames, componentTypes);
       Components = permutation.Components;
    }
 
-   internal static ComponentsPermutation FromComponentNamesArray(string[] componentNames, Type[] componentEnumTypes)
+   internal static ComponentsPermutation FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
    {
-      if(componentNames.Length != componentEnumTypes.Length)
+      if(componentNames.Count != componentEnumTypes.Length)
          throw new ArgumentException($"Components: [{string.Join(", ", componentNames)}] do not match specified component types [{string.Join(", ", componentEnumTypes.Select(it=>it.Name))}]");
 
       return new ComponentsPermutation(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
