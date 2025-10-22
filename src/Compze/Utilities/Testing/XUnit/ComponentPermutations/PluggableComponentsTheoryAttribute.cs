@@ -26,9 +26,9 @@ public class PluggableComponentsTheoryAttribute(
 {
    string[] _skipped = [];
    readonly Type[] _componentEnumTypes = componentEnumTypes ?? [];
-   
+
    // Debug: Output types in constructor
-   void _ () => Console.WriteLine($"[Constructor] Types: {(_componentEnumTypes.Length > 0 ? string.Join(", ", _componentEnumTypes.Select(t => t.Name)) : "EMPTY")}");
+   void _() => Console.WriteLine($"[Constructor] Types: {(_componentEnumTypes.Length > 0 ? string.Join(", ", _componentEnumTypes.Select(t => t.Name)) : "EMPTY")}");
 
    /// <summary>
    /// Gets the component enum types for this attribute, if any.
@@ -69,7 +69,7 @@ public class PluggableComponentsTheoryAttribute(
             throw new ArgumentException($"Component at index {i} must be an Enum, but was {componentObj.GetType().Name}");
 
          var componentType = componentEnum.GetType();
-         
+
          // Check if this component is one of our expected enum types
          if(!_componentEnumTypes.Contains(componentType))
          {
@@ -113,7 +113,6 @@ public class PluggableComponentsTheoryAttribute(
 
    public ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
    {
-      
       if(testMethod.DeclaringType != testMethod.ReflectedType) //Only run for the class that declares the test method.
       {
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
@@ -127,14 +126,13 @@ public class PluggableComponentsTheoryAttribute(
 #pragma warning disable CS0618 // Type or member is obsolete
          var permutations = GetTheoryDataRowsInternal();
 #pragma warning restore CS0618 // Type or member is obsolete
-         
-         
+
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
       }
       catch(ArgumentException ex)
       {
          // Validation error - return a single skipped test with the error message
-         
+
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
             [
                new TheoryDataRow() { Skip = ex.Message }
@@ -142,34 +140,31 @@ public class PluggableComponentsTheoryAttribute(
       }
    }
 
-   [Obsolete("Only for internal use")] 
+   [Obsolete("Only for internal use")]
    public ITheoryDataRow[] GetTheoryDataRowsInternal()
    {
       // DEBUG: What type is this?
       var thisType = GetType();
-      
+
       // Always use TypedPCT component types - it's the only supported attribute now
       var componentTypes = TypedPCTAttribute.ComponentTypes;
-      
-      
+
       if(componentTypes == null || componentTypes.Length == 0)
       {
          throw new InvalidOperationException("TypedPCTAttribute.ComponentTypes is null or empty!");
       }
-      
+
       // Read permutations from file with type information - components are parsed as enums
       var permutations = PluggableComponentsReader.GetPermutations(componentTypes);
-
 
       return permutations
             .Select(ITheoryDataRow (permutation) =>
              {
                 var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
                 var permString = permutation.ToString();
-                
-                
+
                 // TheoryDataRow needs DATA (the arguments), not just display name
-                return new TheoryDataRow(permString)  // Pass permutation string as argument
+                return new TheoryDataRow(permString) // Pass permutation string as argument
                        {
                           Skip = exclusion != null ? $"{exclusion.ComponentName}: {exclusion.Reason}" : null
                        };
