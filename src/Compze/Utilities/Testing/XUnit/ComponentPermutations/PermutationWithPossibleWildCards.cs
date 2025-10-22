@@ -2,24 +2,27 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-class ConfigFileLine(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> componentNamesOrWildCards)
+class ConfigFileLine
 {
    const string Wildcard = "*";
-   readonly IReadOnlyList<Type> _componentTypes = componentTypes;
-   readonly IReadOnlyList<string> _componentNamesOrWildCards = componentNamesOrWildCards;
+   readonly IReadOnlyList<Type> _componentTypes;
+   readonly IReadOnlyList<string> _componentNamesOrWildCards;
+   public ConfigFileLine(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> componentNamesOrWildCards)
+   {
+      _componentTypes = componentTypes;
+      _componentNamesOrWildCards = componentNamesOrWildCards;
+      _wildCardComponents = _componentNamesOrWildCards
+                          .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
+                          .Where(it => it.value == Wildcard)
+                          .Select(it => new WildcardComponent(_componentTypes[it.index], it.index))
+                          .ToList();
+   }
 
-   IReadOnlyList<WildcardComponent> WildCardComponents =>
-      _componentNamesOrWildCards
-        .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
-        .Where(it => it.value == Wildcard)
-        .Select(it => new WildcardComponent(_componentTypes[it.index], it.index))
-        .ToList();
+   readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
 
    public IEnumerable<ComponentsPermutation> ExpandWildcardsIntoConcretePermutations()
    {
-      var wildcardComponents = WildCardComponents;
-
-      if(wildcardComponents.Count == 0)
+      if(_wildCardComponents.Count == 0)
       {
          var enumValues = _componentNamesOrWildCards
                          .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
@@ -28,7 +31,7 @@ class ConfigFileLine(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> c
          yield break;
       }
 
-      var enumValuesForWildCardComponents = wildcardComponents
+      var enumValuesForWildCardComponents = _wildCardComponents
                                            .Select(it => it.AllComponents)
                                            .ToList();
 
@@ -36,7 +39,7 @@ class ConfigFileLine(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> c
 
       foreach(var permutation in wildCardComponentsPermutations)
       {
-         yield return CloneLineToCreateConcretePermutation(wildcardComponents, permutation, _componentTypes);
+         yield return CloneLineToCreateConcretePermutation(_wildCardComponents, permutation, _componentTypes);
       }
    }
 
