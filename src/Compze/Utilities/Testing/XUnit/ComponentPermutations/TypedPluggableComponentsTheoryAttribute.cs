@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Xunit.v3;
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
