@@ -73,7 +73,7 @@ static class ComponentPermutationsConfigurationFileReader
                                 .ToList();
 
       return new List<ComponentsPermutation>(
-         expandedPermutations.Select(it => ComponentsPermutation.FromComponentEnumValues(it.ComponentEnumValues))
+         expandedPermutations.Select(it => ComponentsPermutation.FromComponentEnumValues(it.Components))
                              .OrderBy(it => it.ToString())
                              .DistinctBy(it => it.ToString())
                              .ToList());
@@ -82,7 +82,6 @@ static class ComponentPermutationsConfigurationFileReader
    const string Wildcard = "*";
 
    readonly record struct PermutationWithPossibleWildCards(IReadOnlyList<string> ComponentNamesOrWildCards);
-   readonly record struct ConcretePermutationNoWildcards(IReadOnlyList<Enum> ComponentEnumValues);
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
    {
@@ -92,7 +91,7 @@ static class ComponentPermutationsConfigurationFileReader
    readonly record struct ExpandedWildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
    readonly record struct WildCardComponentsPermutation(IReadOnlyList<Enum> Components);
 
-   static IEnumerable<ConcretePermutationNoWildcards> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
+   static IEnumerable<ComponentsPermutation> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
    {
       var wildcardPositions = FindWildcardComponentTypes(line, componentTypes);
 
@@ -101,7 +100,7 @@ static class ComponentPermutationsConfigurationFileReader
          var enumValues = line.ComponentNamesOrWildCards
                               .Zip(componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
                               .ToList();
-         yield return new ConcretePermutationNoWildcards(enumValues);
+         yield return ComponentsPermutation.FromComponentEnumValues(enumValues);
          yield break;
       }
 
@@ -133,7 +132,7 @@ static class ComponentPermutationsConfigurationFileReader
             .ToList();
    }
 
-   static ConcretePermutationNoWildcards CloneLineToCreateConcretePermutation(
+   static ComponentsPermutation CloneLineToCreateConcretePermutation(
       PermutationWithPossibleWildCards originalLine,
       IReadOnlyList<WildcardComponent> wildcardComponents,
       WildCardComponentsPermutation replacementValues,
@@ -159,7 +158,7 @@ static class ComponentPermutationsConfigurationFileReader
          concretePermutationEnumValues[positionInLine] = replacementValue;
       }
 
-      return new ConcretePermutationNoWildcards(concretePermutationEnumValues);
+      return ComponentsPermutation.FromComponentEnumValues(concretePermutationEnumValues);
    }
 
    static IEnumerable<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<ExpandedWildCardComponentValues> wildCardComponentValues)
