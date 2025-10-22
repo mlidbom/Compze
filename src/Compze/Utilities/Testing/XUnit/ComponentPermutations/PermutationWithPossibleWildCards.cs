@@ -74,18 +74,31 @@ class ConfigFileLine
          return [new WildCardComponentsPermutation([])];
       }
 
-      // Start with all values from the first wildcard component as single-element permutations
-      IEnumerable<IReadOnlyList<Enum>> permutations = wildCardComponentValues[0].Values.Select(v => new List<Enum> { v });
+      var allValuesForEachWildcard = wildCardComponentValues.Select(wc => wc.Values).ToList();
+      var cartesianProduct = GenerateCartesianProduct(allValuesForEachWildcard);
+      
+      return cartesianProduct.Select(permutation => new WildCardComponentsPermutation(permutation)).ToList();
+   }
 
-      // For each remaining wildcard component, combine it with all existing permutations
-      for(int i = 1; i < wildCardComponentValues.Count; i++)
+   static IReadOnlyList<IReadOnlyList<T>> GenerateCartesianProduct<T>(IReadOnlyList<IReadOnlyList<T>> lists)
+   {
+      if(lists.Count == 0)
       {
-         var currentWildcardValues = wildCardComponentValues[i].Values;
-         permutations = permutations.SelectMany(existingPermutation =>
-                                                   currentWildcardValues.Select(newValue => existingPermutation.Concat([newValue]).ToList()));
+         return [[]];
       }
 
-      return permutations.Select(permutation => new WildCardComponentsPermutation(permutation)).ToList();
+      // Start with all values from the first list as single-element combinations
+      IEnumerable<IReadOnlyList<T>> combinations = lists[0].Select(v => new List<T> { v } as IReadOnlyList<T>);
+
+      // For each remaining list, combine it with all existing combinations
+      for(int i = 1; i < lists.Count; i++)
+      {
+         var currentList = lists[i];
+         combinations = combinations.SelectMany(existingCombination =>
+                                                   currentList.Select(newValue => existingCombination.Concat([newValue]).ToList() as IReadOnlyList<T>));
+      }
+
+      return combinations.ToList();
    }
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
