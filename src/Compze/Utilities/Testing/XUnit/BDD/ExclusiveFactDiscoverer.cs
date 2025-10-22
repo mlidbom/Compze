@@ -5,7 +5,7 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
-class XFactDiscoverer : IXunitTestCaseDiscoverer
+class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
 {
    public async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
@@ -20,7 +20,7 @@ class XFactDiscoverer : IXunitTestCaseDiscoverer
 
       var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
 
-      var testCase = new XFactTestCase(
+      var testCase = new ExclusiveFactTestCase(
          details: new TestCaseDetails(details),
          traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
       );

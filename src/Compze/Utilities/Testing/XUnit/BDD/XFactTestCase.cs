@@ -2,13 +2,13 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.BDD;
 
-public class XFactTestCase : ConstructorArgumentForwardingTestCase
+public class ExclusiveFactTestCase : ConstructorArgumentForwardingTestCase
 {
    [Obsolete("Called by deserializer")]
    // ReSharper disable once UnusedMember.Global
-   public XFactTestCase() {}
+   public ExclusiveFactTestCase() {}
 
-   public XFactTestCase(
+   public ExclusiveFactTestCase(
       TestCaseDetails details,
       Dictionary<string, HashSet<string>> traits)
       : base(details,
