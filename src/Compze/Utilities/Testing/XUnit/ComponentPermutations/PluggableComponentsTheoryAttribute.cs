@@ -76,7 +76,7 @@ public class PluggableComponentsTheoryAttribute :
    }
 
 
-   ExclusionsCollection SkippedComponents => ExclusionsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
+   SkippedComponentsCollection SkippedComponents => SkippedComponentsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
 
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
@@ -109,7 +109,6 @@ public class PluggableComponentsTheoryAttribute :
       catch(ArgumentException ex)
       {
          // Validation error - return a single skipped test with the error message
-
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
             [
                new TheoryDataRow() { Skip = ex.Message }
@@ -128,17 +127,10 @@ public class PluggableComponentsTheoryAttribute :
       var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes);
 
       return permutations
-            .Select(ITheoryDataRow (permutation) =>
-             {
-                var exclusion = SkippedComponents.FindMatchingExclusion(permutation);
-                var permString = permutation.ToString();
-
-                // TheoryDataRow needs DATA (the arguments), not just display name
-                return new TheoryDataRow(permString) // Pass permutation string as argument
-                       {
-                          Skip = exclusion != null ? $"{exclusion.Component}: {exclusion.Reason}" : null
-                       };
-             })
+            .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()) // Pass permutation string as argument
+                                                    {
+                                                       Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()
+                                                    })
             .ToArray();
    }
 
