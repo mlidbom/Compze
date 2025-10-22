@@ -4,30 +4,25 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
 {
-   internal readonly IReadOnlyList<ComponentsPermutation> Permutations;
-   internal readonly IReadOnlySet<string> AllComponents;
+   readonly IReadOnlyList<ComponentsPermutation> Permutations;
 
-   ComponentsPermutationsList(IReadOnlyList<ComponentsPermutation> permutations, IReadOnlySet<string> allComponents)
-   {
-      Permutations = permutations;
-      AllComponents = allComponents;
-   }
+   ComponentsPermutationsList(IReadOnlyList<ComponentsPermutation> permutations) => Permutations = permutations;
 
    internal static ComponentsPermutationsList FromFileContent(string[] rows, Type[] componentEnumTypes)
    {
       var lines = rows
                  .Select(it => it.Trim())
                  .Where(line => !string.IsNullOrEmpty(line))
-                 .Where(line => !line.StartsWith("//")) // Comments
+                 .Where(line => !line.StartsWith("//"))
                  .ToList();
 
       var activeLines = lines
-                       .Where(line => !line.StartsWith('#')) // Ignored/excluded permutations
+                       .Where(line => !line.StartsWith('#'))
                        .Select(it => it.Split(ComponentsPermutation.Separator))
                        .ToList();
 
       var allLines = lines
-                    .Select(line => line.TrimStart('#')) // Remove # prefix if present
+                    .Select(line => line.TrimStart('#'))
                     .Select(it => it.Split(ComponentsPermutation.Separator))
                     .ToList();
 
@@ -38,19 +33,15 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
       if(activeLines.Any(it => it.Length != componentDimensions))
          throw new Exception("Different lines in the file have different number of components");
 
-      // Collect all unique components from all lines (active and ignored)
       var allComponents = allLines
                          .SelectMany(components => components)
                          .ToHashSet();
 
-      // Component types must always be provided - we only support typed enums now
       if(componentEnumTypes == null || componentEnumTypes.Length == 0)
          throw new ArgumentException("Component enum types must be provided. Use TypedPCT attribute.", nameof(componentEnumTypes));
 
-      // Parse with types - components are always enums
       return new ComponentsPermutationsList(
-         activeLines.Select(arr => ComponentsPermutation.FromArray(arr, componentEnumTypes)).ToList(),
-         allComponents);
+         activeLines.Select(arr => ComponentsPermutation.FromArray(arr, componentEnumTypes)).ToList());
    }
 
    public IEnumerator<ComponentsPermutation> GetEnumerator() => Permutations.GetEnumerator();
