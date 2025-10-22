@@ -2,14 +2,14 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-class ConfigFileLine
+class ComponentPermutationsConfigurationFileLine
 {
    const string Wildcard = "*";
    readonly IReadOnlyList<Type> _componentTypes;
    readonly IReadOnlyList<string> _componentNamesOrWildCards;
    readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
 
-   public ConfigFileLine(IReadOnlyList<Type> componentTypes, string line)
+   public ComponentPermutationsConfigurationFileLine(IReadOnlyList<Type> componentTypes, string line)
    {
       _componentTypes = componentTypes;
       _componentNamesOrWildCards = line.Split(ComponentsPermutation.Separator);

@@ -36,7 +36,7 @@ static class ComponentPermutationsConfigurationFileReader
            .Where(it => !it.IsNullEmptyOrWhiteSpace())
            .Where(it => !it.StartsWith(Comment))
            .Where(it => !it.StartsWith(SkipPermutation))
-           .Select(it => new ConfigFileLine(componentTypes, it))
+           .Select(it => new ComponentPermutationsConfigurationFileLine(componentTypes, it))
            .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
            .OrderBy(it => it.ToString())
            .DistinctBy(it => it.ToString())
