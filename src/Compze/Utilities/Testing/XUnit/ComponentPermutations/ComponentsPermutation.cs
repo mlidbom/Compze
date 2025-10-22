@@ -1,21 +1,42 @@
+using System.ComponentModel;
 using Compze.Utilities.SystemCE;
+using Xunit.Sdk;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-public class ComponentsPermutation
+public class ComponentsPermutation : IXunitSerializable
 {
-   public static ComponentsPermutation? Current => CurrentInternal.Value?.Value;
+   public static ComponentsPermutation Current => TryGetCurrent() ?? throw new Exception("Found no current permutation");
 
-   public readonly IReadOnlyList<Enum> Components;
+   public static ComponentsPermutation? TryGetCurrent() => CurrentInternal.Value?.Value;
+
+   public IReadOnlyList<Enum> Components { get; private set; }
 
    public override string ToString() => string.Join(Separator, Components.Select(it => it.ToString()));
 
-   internal static ComponentsPermutation FromString(string value, Type[] componentEnumTypes) =>
-      FromComponentNamesArray(value.Split(Separator), componentEnumTypes);
-
    internal const string Separator = ":";
 
+   [Obsolete("Called by xUnit deserializer", error: true)]
+   public ComponentsPermutation() => Components = [];
+
    ComponentsPermutation(IReadOnlyList<Enum> components) => Components = components;
+
+   public void Serialize(IXunitSerializationInfo info)
+   {
+      info.AddValue("ComponentNames", Components.Select(it => it.ToString()).ToArray());
+      info.AddValue("ComponentTypes", Components.Select(it => it.GetType().AssemblyQualifiedName!).ToArray());
+   }
+
+   public void Deserialize(IXunitSerializationInfo info)
+   {
+      var componentNames = info.GetValue<string[]>("ComponentNames") ?? throw new InvalidEnumArgumentException("Components string is null");
+      var componentTypes = (info.GetValue<string[]>("ComponentTypes") ?? throw new InvalidEnumArgumentException("ComponentTypes is null"))
+                          .Select(it => Type.GetType(it, throwOnError: true)!)
+                          .ToArray();
+
+      var permutation = FromComponentNamesArray(componentNames, componentTypes);
+      Components = permutation.Components;
+   }
 
    internal static ComponentsPermutation FromComponentNamesArray(string[] componentNames, Type[] componentEnumTypes)
    {

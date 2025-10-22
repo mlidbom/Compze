@@ -29,8 +29,7 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
 
                                    return new PluggableComponentsTestCase(
                                       xunitTestCase,
-                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase),
-                                      componentEnumTypes: componentEnumTypes
+                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
                                    );
                                 })
                                .ToArray();

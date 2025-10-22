@@ -91,7 +91,7 @@ public abstract class PluggableComponentsTheoryAttribute :
       {
          var permutations = ComponentPermutationsConfigurationFileReader
                            .GetPermutations(_configurationFileName, _componentEnumTypes)
-                           .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation.ToString()) // Pass permutation string as argument
+                           .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation) // Pass permutation object as argument
                                                                    {
                                                                       Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()
                                                                    })
