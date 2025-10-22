@@ -36,5 +36,11 @@
 	  <None Update="TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+      <None Update="TestUsingArgumentPassingFourComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestUsingArgumentPassingFiveComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
 	</ItemGroup>
 </Project>

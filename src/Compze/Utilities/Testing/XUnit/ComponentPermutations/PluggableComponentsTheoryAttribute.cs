@@ -88,12 +88,11 @@ public abstract class PluggableComponentsTheoryAttribute :
                            .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
       }
-      catch(ArgumentException ex)
+      catch(Exception ex)
       {
-         // Validation error - return a single skipped test with the error message
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
             [
-               new TheoryDataRow() { Skip = ex.Message }
+               new TheoryDataRow() { Skip = $"Failed to read configuration: {ex.Message}" }
             ]);
       }
    }

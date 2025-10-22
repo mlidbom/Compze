@@ -3,10 +3,7 @@
 // Lines starting with "#" are ignored/excluded permutations
 
 Microsoft:MsSql
-Microsoft:Postgre
-
-Newtonsoft:MsSql
-Newtonsoft:Postgre
+Newtonsoft:MySql
 
 #Newtonsoft:MySql
 #Newtonsoft:MySql

@@ -1,0 +1,12 @@
+// Test configuration file for pluggable component permutations
+// Lines starting with "//" are comments
+// Lines starting with "#" are ignored/excluded permutations
+
+Microsoft:MsSql:Microsoft:InMemory:InProcess
+Microsoft:Postgre:Microsoft:InMemory:InProcess
+
+#Newtonsoft:MsSql:Microsoft:InMemory:InProcess
+#Newtonsoft:Postgre:Microsoft:InMemory:InProcess
+
+#Newtonsoft:MySql:Microsoft:InMemory:InProcess
+#Newtonsoft:MySql:Microsoft:InMemory:InProcess

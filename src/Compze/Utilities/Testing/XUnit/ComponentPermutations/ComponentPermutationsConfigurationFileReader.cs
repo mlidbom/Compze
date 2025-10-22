@@ -21,7 +21,7 @@ static class ComponentPermutationsConfigurationFileReader
    static string[] ReadFileLines(string fileName)
    {
       var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-      if(!File.Exists(filePath)) throw new Exception($"{filePath} is missing");
+      if(!File.Exists(filePath)) throw new Exception($"File does not exist: {filePath}");
       var fileContent = File.ReadAllLines(filePath);
       return fileContent;
    }

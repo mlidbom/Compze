@@ -27,3 +27,15 @@ public enum DIContainer
    Microsoft,
    SimpleInjector
 }
+
+public enum EventStore
+{
+   InMemory,
+   SqlServer
+}
+
+public enum MessageBus
+{
+   InProcess,
+   RabbitMQ
+}

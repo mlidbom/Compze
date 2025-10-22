@@ -41,7 +41,7 @@ public class ComponentsPermutation : IXunitSerializable
    internal static ComponentsPermutation FromComponentNamesArray(string[] componentNames, Type[] componentEnumTypes)
    {
       if(componentNames.Length != componentEnumTypes.Length)
-         throw new ArgumentException($"Components: [{string.Join(", ", componentNames)}] do not specified component types [{string.Join(", ", componentEnumTypes.Select(it=>it.Name))}]");
+         throw new ArgumentException($"Components: [{string.Join(", ", componentNames)}] do not match specified component types [{string.Join(", ", componentEnumTypes.Select(it=>it.Name))}]");
 
       return new ComponentsPermutation(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
    }
