@@ -80,7 +80,7 @@ static class ComponentPermutationsConfigurationFileReader
 
    const string Wildcard = "*";
 
-   static IEnumerable<IReadOnlyList<string>> ExpandLineWildcards(string[] componentValues, Type[] componentTypes)
+   static IEnumerable<IReadOnlyList<string>> ExpandLineWildcards(IReadOnlyList<string> componentValues, Type[] componentTypes)
    {
       var wildcardComponentIndexes = componentValues
                                     .Select((value, index) => new { value, index })
@@ -101,13 +101,13 @@ static class ComponentPermutationsConfigurationFileReader
       // Generate all combinations using cross product
       foreach(var combination in CrossProduct(wildCardComponentsExpandedIntoAllValuesInTheEnums))
       {
-         var result = (string[])componentValues.Clone();
+         var permutation = componentValues.ToList();
          for(int i = 0; i < wildcardComponentIndexes.Count; i++)
          {
-            result[wildcardComponentIndexes[i]] = combination[i];
+            permutation[wildcardComponentIndexes[i]] = combination[i];
          }
 
-         yield return result;
+         yield return permutation;
       }
    }
 
