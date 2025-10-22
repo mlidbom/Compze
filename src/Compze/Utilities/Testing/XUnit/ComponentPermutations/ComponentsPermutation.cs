@@ -8,9 +8,7 @@ public class ComponentsPermutation
 
    public override string ToString() => string.Join(Separator, ComponentStrings);
 
-   /// <summary>
-   /// Components as enum values. Always strongly typed.
-   /// </summary>
+   /// <summary>Components as enum values. Always strongly typed.</summary>
    public readonly IReadOnlyList<Enum> Components;
    
    /// <summary>
@@ -27,33 +25,31 @@ public class ComponentsPermutation
    /// <summary>
    /// Creates a ComponentsPermutation from string array, parsing components as enums.
    /// </summary>
-   /// <param name="value">Component names as strings from the file</param>
-   /// <param name="componentEnumTypes">
-   /// Enum types for each component position. Must always be provided.
-   /// The attribute's type information flows through: TypedPCTAttribute → Reader → FromArray.
+   /// <param name="componentStringValues">Component names as strings from the file</param>
+   /// <param name="componentEnumTypes">Enum types for each component position, from <see cref="TypedPCTAttribute"/>>.
    /// </param>
-   internal static ComponentsPermutation FromArray(string[] value, Type[] componentEnumTypes)
+   internal static ComponentsPermutation FromArray(string[] componentStringValues, Type[] componentEnumTypes)
    {
-      if(value.Length != componentEnumTypes.Length)
-         throw new ArgumentException($"Component count ({value.Length}) does not match type count ({componentEnumTypes.Length})");
+      if(componentStringValues.Length != componentEnumTypes.Length)
+         throw new ArgumentException($"Component count ({componentStringValues.Length}) does not match type count ({componentEnumTypes.Length})");
 
-      var componentEnums = new Enum[value.Length];
-      for(int i = 0; i < value.Length; i++)
+      var componentEnums = new Enum[componentStringValues.Length];
+      for(int i = 0; i < componentStringValues.Length; i++)
       {
          if(!componentEnumTypes[i].IsEnum)
             throw new ArgumentException($"Type {componentEnumTypes[i].Name} must be an enum type");
 
          try
          {
-            componentEnums[i] = (Enum)Enum.Parse(componentEnumTypes[i], value[i]);
+            componentEnums[i] = (Enum)Enum.Parse(componentEnumTypes[i], componentStringValues[i]);
          }
          catch(ArgumentException ex)
          {
-            throw new ArgumentException($"Invalid component value '{value[i]}' for type {componentEnumTypes[i].Name}", ex);
+            throw new ArgumentException($"Invalid component value '{componentStringValues[i]}' for type {componentEnumTypes[i].Name}", ex);
          }
       }
 
-      return new(componentEnums, value);
+      return new(componentEnums, componentStringValues);
    }
 
    internal static ComponentsPermutation Parse(string value, Type[] componentEnumTypes) =>
