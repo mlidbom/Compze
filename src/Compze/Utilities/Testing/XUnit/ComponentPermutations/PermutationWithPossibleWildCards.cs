@@ -48,11 +48,13 @@ class ConfigFileLine
                               .Select((componentNameOrWildcard, componentIndex) =>
                                          componentNameOrWildcard == Wildcard
                                             ? wildCardReplacementValues.ComponentForComponentType(_componentTypes[componentIndex])
-                                            : (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard))
+                                            : ComponentValue(componentIndex, componentNameOrWildcard))
                               .ToList();
 
       return ComponentsPermutation.FromComponentEnumValues(concreteComponents);
    }
+
+   Enum ComponentValue(int componentTypeIndex, string componentName) => (Enum)Enum.Parse(_componentTypes[componentTypeIndex], componentName);
 
    static IReadOnlyList<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues)
    {
