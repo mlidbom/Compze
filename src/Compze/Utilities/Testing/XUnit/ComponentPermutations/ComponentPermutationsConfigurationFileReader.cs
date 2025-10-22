@@ -84,7 +84,7 @@ static class ComponentPermutationsConfigurationFileReader
    readonly record struct PermutationWithPossibleWildCards(IReadOnlyList<string> ComponentNamesOrWildCards);
    readonly record struct ConcretePermutationNoWildcards(IReadOnlyList<string> ComponentNames);
    readonly record struct WildcardPosition(int Index);
-   readonly record struct EnumValues(Type EnumType, IReadOnlyList<Enum> Values);
+   readonly record struct ExpandedWildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
    readonly record struct WildCardComponentsPermutation(IReadOnlyList<string> ComponentNames);
 
    static IEnumerable<ConcretePermutationNoWildcards> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
@@ -116,12 +116,12 @@ static class ComponentPermutationsConfigurationFileReader
                                 .ToList();
    }
 
-   static IReadOnlyList<EnumValues> GetEnumValuesForWildcardComponents(
+   static IReadOnlyList<ExpandedWildCardComponentValues> GetEnumValuesForWildcardComponents(
       IReadOnlyList<WildcardPosition> wildcardPositions,
       Type[] componentTypes)
    {
       return wildcardPositions
-            .Select(wildcardPosition => new EnumValues(componentTypes[wildcardPosition.Index], Enum.GetValues(componentTypes[wildcardPosition.Index]).Cast<Enum>().ToReadOnlyList()))
+            .Select(wildcardPosition => new ExpandedWildCardComponentValues(componentTypes[wildcardPosition.Index], Enum.GetValues(componentTypes[wildcardPosition.Index]).Cast<Enum>().ToReadOnlyList()))
             .ToList();
    }
 
@@ -142,25 +142,25 @@ static class ComponentPermutationsConfigurationFileReader
       return new ConcretePermutationNoWildcards(concretePermutation);
    }
 
-   static IEnumerable<WildCardComponentsPermutation> ExpandWildCardsIntoConcretePermutations(IReadOnlyList<EnumValues> componentValuesList)
+   static IEnumerable<WildCardComponentsPermutation> ExpandWildCardsIntoConcretePermutations(IReadOnlyList<ExpandedWildCardComponentValues> wildCardComponentValues)
    {
-      if(componentValuesList.Count == 0)
+      if(wildCardComponentValues.Count == 0)
       {
          yield return new WildCardComponentsPermutation([]);
          yield break;
       }
 
-      var firstListOfPossibleValues = componentValuesList[0];
-      var remainingListsOfPossibleValues = componentValuesList.Skip(1).ToList();
+      var firstComponentTypeValues = wildCardComponentValues[0];
+      var otherComponentTypeValues = wildCardComponentValues.Skip(1).ToList();
 
-      foreach(var enumValue in firstListOfPossibleValues.Values)
+      foreach(var enumValue in firstComponentTypeValues.Values)
       {
-         if(remainingListsOfPossibleValues.Count == 0)
+         if(otherComponentTypeValues.Count == 0)
          {
             yield return new WildCardComponentsPermutation([enumValue.ToString()]);
          } else
          {
-            foreach(var combinationOfRemainingValues in ExpandWildCardsIntoConcretePermutations(remainingListsOfPossibleValues))
+            foreach(var combinationOfRemainingValues in ExpandWildCardsIntoConcretePermutations(otherComponentTypeValues))
             {
                var completeCombination = new List<string> { enumValue.ToString() };
                completeCombination.AddRange(combinationOfRemainingValues.ComponentNames);
