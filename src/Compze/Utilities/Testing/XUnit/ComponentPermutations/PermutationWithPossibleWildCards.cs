@@ -14,9 +14,9 @@ class ConfigFileLine
       _componentTypes = componentTypes;
       _componentNamesOrWildCards = componentNamesOrWildCards;
       _wildCardComponents = _componentNamesOrWildCards
-                           .Zip(_componentTypes, resultSelector: (componentName, componentType) => new { componentName, componentType })
-                           .Where(predicate: it => it.componentName == Wildcard)
-                           .Select(selector: it => new WildcardComponent(it.componentType))
+                           .Zip(_componentTypes, (componentName, componentType) => new { componentName, componentType })
+                           .Where(it => it.componentName == Wildcard)
+                           .Select(it => new WildcardComponent(it.componentType))
                            .ToList();
    }
 
@@ -26,14 +26,14 @@ class ConfigFileLine
          return
          [
             ComponentsPermutation.FromComponentEnumValues(_componentNamesOrWildCards
-                                                         .Zip(_componentTypes, resultSelector: (name, type) => (Enum)Enum.Parse(type, name))
+                                                         .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
                                                          .ToList())
          ];
 
       return _wildCardComponents
-            .Select(selector: it => it.AllComponents)
+            .Select(it => it.AllComponents)
             .CartesianProduct()
-            .Select(selector: it => new WildCardComponentsPermutation(it))
+            .Select(it => new WildCardComponentsPermutation(it))
             .Select(CreateConcretePermutation)
             .ToList();
    }
