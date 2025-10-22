@@ -32,14 +32,12 @@ class ConfigFileLine
          ];
       }
 
-      var wildCardComponentsPermutations = _wildCardComponents
-                                          .Select(it => it.AllComponents)
-                                          .Select(it => it.Values)
-                                          .CartesianProduct()
-                                          .Select(it => new WildCardComponentsPermutation(it))
-                                          .ToList();
-
-      return wildCardComponentsPermutations.Select(CreateConcretePermutation).ToList();
+      return _wildCardComponents
+            .Select(it => it.AllComponents)
+            .CartesianProduct()
+            .Select(it => new WildCardComponentsPermutation(it))
+            .Select(CreateConcretePermutation)
+            .ToList();
    }
 
    ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation wildCardReplacementValues)
@@ -58,7 +56,7 @@ class ConfigFileLine
 
    readonly record struct WildcardComponent(Type ComponentType)
    {
-      public WildCardComponentValues AllComponents => new(ComponentType, Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList());
+      public IReadOnlyList<Enum> AllComponents => Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList();
    }
 
    readonly record struct WildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
@@ -66,7 +64,6 @@ class ConfigFileLine
    class WildCardComponentsPermutation(IReadOnlyList<Enum> components)
    {
       readonly IReadOnlyList<Enum> _components = components;
-
       public Enum ComponentForComponentType(Type componentType) => _components.Single(it => it.GetType() == componentType);
    }
 }
