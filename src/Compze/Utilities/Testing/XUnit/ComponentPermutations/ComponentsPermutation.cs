@@ -6,21 +6,13 @@ public class ComponentsPermutation
 {
    internal const string Separator = ":";
 
-   public override string ToString() => string.Join(Separator, ComponentStrings);
+   public override string ToString() => string.Join(Separator, Components.Select(it => it.ToString()));
 
    /// <summary>Components as enum values. Always strongly typed.</summary>
    public readonly IReadOnlyList<Enum> Components;
 
-   /// <summary>
-   /// Components as string values for display and matching.
-   /// </summary>
-   public readonly IReadOnlyList<string> ComponentStrings;
 
-   ComponentsPermutation(IReadOnlyList<Enum> components, IReadOnlyList<string> componentStrings)
-   {
-      Components = components;
-      ComponentStrings = componentStrings;
-   }
+   ComponentsPermutation(IReadOnlyList<Enum> components) => Components = components;
 
    /// <summary>
    /// Creates a ComponentsPermutation from string array, parsing components as enums.
@@ -49,7 +41,7 @@ public class ComponentsPermutation
          }
       }
 
-      return new(componentEnums, componentStringValues);
+      return new(componentEnums);
    }
 
    internal static ComponentsPermutation Parse(string value, Type[] componentEnumTypes) =>
