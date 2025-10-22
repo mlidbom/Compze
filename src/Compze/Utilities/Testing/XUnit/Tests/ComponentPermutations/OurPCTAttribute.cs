@@ -21,7 +21,7 @@ public sealed class OurPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : TypedPluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
-      skipped?.OfType<Enum>().ToList(),
+      skipped,
       skipReasons,
       sourceFilePath,
       sourceLineNumber);

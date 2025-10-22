@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Compze.Utilities.SystemCE.LinqCE;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -32,49 +33,35 @@ public class PluggableComponentsTheoryAttribute :
    /// Use TestEnv to access the component and the information.
    /// </summary>
    public PluggableComponentsTheoryAttribute(Type[] componentEnumTypes,
-                                             IReadOnlyList<Enum>? skippedComponents,
+                                             object[]? skippedComponents,
                                              string[]? skipReasons,
                                              [CallerFilePath] string? sourceFilePath = null,
                                              [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
    {
+      if(componentEnumTypes.Length == 0)
+      {
+         throw new ArgumentException($"{nameof(componentEnumTypes)} may not be empty");
+      }
+
       foreach(var type in componentEnumTypes)
       {
          if(!type.IsEnum)
             throw new ArgumentException($"Type {type.Name} must be an enum type");
       }
 
-      _componentEnumTypes = componentEnumTypes;
-      _skippedComponents = skippedComponents ?? [];
-      _skipReasons = skipReasons ?? [];
+      skippedComponents?.Where(it => !componentEnumTypes.Contains(it.GetType()))
+                        .ForEach(it => throw new ArgumentException($"{it} is not one of: {string.Join(", ", componentEnumTypes.Select(componentType => componentType.FullName))}"));
 
-      ValidateSkippedComponents();
+      if(skipReasons != null || skippedComponents != null)
+         if(skippedComponents?.Length != skipReasons?.Length)
+            throw new ArgumentException("Number of skipped components must match number of skip reasons");
+
+      _componentEnumTypes = componentEnumTypes;
+      _skippedComponents = skippedComponents?.Cast<Enum>().ToList() ?? [];
+      _skipReasons = skipReasons ?? [];
    }
 
    internal Type[] ComponentEnumTypes => _componentEnumTypes;
-
-   void ValidateSkippedComponents()
-   {
-      if(_skippedComponents.Count != _skipReasons.Length)
-         throw new ArgumentException("Number of skipped components must match number of skip reasons");
-
-      for(int i = 0; i < _skippedComponents.Count; i++)
-      {
-         var componentObj = _skippedComponents[i];
-         if(componentObj == null)
-            throw new ArgumentException($"Component at index {i} cannot be null");
-
-         var componentType = componentObj.GetType();
-
-         if(!_componentEnumTypes.Contains(componentType))
-         {
-            var expectedTypes = string.Join(", ", _componentEnumTypes.Select(t => t.Name));
-            throw new ArgumentException(
-               $"Component at index {i} must be of type {expectedTypes}, " +
-               $"but was {componentType.Name}");
-         }
-      }
-   }
-
 
    SkippedComponentsCollection SkippedComponents => SkippedComponentsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
 
@@ -115,11 +102,6 @@ public class PluggableComponentsTheoryAttribute :
 
    public ITheoryDataRow[] GetTheoryDataRowsInternal()
    {
-      if(_componentEnumTypes == null || _componentEnumTypes.Length == 0)
-      {
-         throw new InvalidOperationException("TypedPCTAttribute.ComponentTypes is null or empty!");
-      }
-
       var permutations = PluggableComponentsReader.GetPermutations(_componentEnumTypes);
 
       return permutations

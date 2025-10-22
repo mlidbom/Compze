@@ -23,7 +23,7 @@ public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComp
    /// <param name="sourceFilePath"></param>Passed by the compiler, do not specify manually
    /// <param name="sourceLineNumber"></param>Passed by the compiler, do not specify manually
    protected TypedPluggableComponentsTheoryAttribute(
-      IReadOnlyList<Enum>? skippedComponents = null,
+      object[]? skippedComponents = null,
       string[]? skipReasons = null,
       [CallerFilePath] string? sourceFilePath = null,
       [CallerLineNumber] int sourceLineNumber = -1)
