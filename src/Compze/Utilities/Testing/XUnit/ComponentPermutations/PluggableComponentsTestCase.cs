@@ -37,8 +37,6 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
                 {
                    var argString = (string)TestMethodArguments![0]!;
 
-                   // Get component types - always use TypedPCTAttribute.ComponentTypes
-                   // All tests must use TypedPCT now
                    Type[] componentEnumTypes = TypedPCTAttribute.ComponentTypes;
 
                    var permutation = ComponentsPermutation.Parse(argString, componentEnumTypes);
