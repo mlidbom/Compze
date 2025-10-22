@@ -21,26 +21,22 @@ class ConfigFileLine
 
    readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
 
-   public IEnumerable<ComponentsPermutation> ExpandWildcardsIntoConcretePermutations()
+   public IReadOnlyList<ComponentsPermutation> ExpandWildcardsIntoConcretePermutations()
    {
       if(!_wildCardComponents.Any())
       {
-         yield return ComponentsPermutation.FromComponentEnumValues(_componentNamesOrWildCards
-                                                                   .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
-                                                                   .ToList());
-      } else
-      {
-         var enumValuesForWildCardComponents = _wildCardComponents
-                                              .Select(it => it.AllComponents)
-                                              .ToList();
-
-         var wildCardComponentsPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
-
-         foreach(var permutation in wildCardComponentsPermutations)
-         {
-            yield return CreateConcretePermutation(permutation);
-         }
+         return [ComponentsPermutation.FromComponentEnumValues(_componentNamesOrWildCards
+                                                              .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
+                                                              .ToList())];
       }
+
+      var enumValuesForWildCardComponents = _wildCardComponents
+                                           .Select(it => it.AllComponents)
+                                           .ToList();
+
+      var wildCardComponentsPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
+
+      return wildCardComponentsPermutations.Select(CreateConcretePermutation).ToList();
    }
 
    ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation replacementValues)
@@ -68,32 +64,25 @@ class ConfigFileLine
       return ComponentsPermutation.FromComponentEnumValues(concretePermutationEnumValues);
    }
 
-   static IEnumerable<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues)
+   static IReadOnlyList<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues)
    {
       if(wildCardComponentValues.Count == 0)
       {
-         yield return new WildCardComponentsPermutation([]);
-      } else
-      {
-         var firstComponentTypeValues = wildCardComponentValues[0];
-         var otherComponentTypeValues = wildCardComponentValues.Skip(1).ToList();
-
-         foreach(var enumValue in firstComponentTypeValues.Values)
-         {
-            if(otherComponentTypeValues.Count == 0)
-            {
-               yield return new WildCardComponentsPermutation([enumValue]);
-            } else
-            {
-               foreach(var wildCardComponentsPermutation in ExpandWildCardsIntoPermutationsOfTheWildCardComponents(otherComponentTypeValues))
-               {
-                  var completeCombination = new List<Enum> { enumValue };
-                  completeCombination.AddRange(wildCardComponentsPermutation.Components);
-                  yield return new WildCardComponentsPermutation(completeCombination);
-               }
-            }
-         }
+         return [new WildCardComponentsPermutation([])];
       }
+
+      // Start with all values from the first wildcard component as single-element permutations
+      IEnumerable<IReadOnlyList<Enum>> permutations = wildCardComponentValues[0].Values.Select(v => new List<Enum> { v }.AsReadOnly());
+
+      // For each remaining wildcard component, combine it with all existing permutations
+      for(int i = 1; i < wildCardComponentValues.Count; i++)
+      {
+         var currentWildcardValues = wildCardComponentValues[i].Values;
+         permutations = permutations.SelectMany(existingPermutation => 
+            currentWildcardValues.Select(newValue => existingPermutation.Concat([newValue]).ToList().AsReadOnly()));
+      }
+
+      return permutations.Select(permutation => new WildCardComponentsPermutation(permutation)).ToList();
    }
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
