@@ -7,7 +7,7 @@ static class CartesianProductGenerator
 {
    internal static IReadOnlyList<IReadOnlyList<T>> CartesianProduct<T>(this IEnumerable<IReadOnlyList<T>> enumerable)
    {
-      var lists = enumerable.ToList();
+      var lists = (enumerable as IReadOnlyList<IReadOnlyList<T>>) ?? enumerable.ToList();
       if(lists.Count == 0)
       {
          return [[]];
@@ -19,10 +19,10 @@ static class CartesianProductGenerator
                   .Aggregate(seedListOfLists,
                              (accumulator, current) =>
                                 accumulator.SelectMany(existingCombination =>
-                                                      current.Select(newValue => existingCombination
+                                                          current.Select(newValue => existingCombination
                                                                                     .Concat([newValue])
                                                                                     .ToReadOnlyList()))
-                                       .ToList())
+                                           .ToList())
                   .ToList();
    }
 }
