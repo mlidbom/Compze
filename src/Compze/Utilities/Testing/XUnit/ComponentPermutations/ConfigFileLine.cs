@@ -9,10 +9,10 @@ class ConfigFileLine
    readonly IReadOnlyList<string> _componentNamesOrWildCards;
    readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
 
-   public ConfigFileLine(IReadOnlyList<Type> componentTypes, IReadOnlyList<string> componentNamesOrWildCards)
+   public ConfigFileLine(IReadOnlyList<Type> componentTypes, string line)
    {
       _componentTypes = componentTypes;
-      _componentNamesOrWildCards = componentNamesOrWildCards;
+      _componentNamesOrWildCards = line.Split(ComponentsPermutation.Separator);
       _wildCardComponents = _componentNamesOrWildCards
                            .Zip(_componentTypes, (componentName, componentType) => new { componentName, componentType })
                            .Where(it => it.componentName == Wildcard)
