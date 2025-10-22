@@ -73,7 +73,7 @@ static class ComponentPermutationsConfigurationFileReader
                                 .ToList();
 
       return new List<ComponentsPermutation>(
-         expandedPermutations.Select(it => ComponentsPermutation.FromComponentNamesList(it.ComponentNames, componentTypes))
+         expandedPermutations.Select(it => ComponentsPermutation.FromComponentEnumValues(it.ComponentEnumValues))
                              .OrderBy(it => it.ToString())
                              .DistinctBy(it => it.ToString())
                              .ToList());
@@ -82,7 +82,7 @@ static class ComponentPermutationsConfigurationFileReader
    const string Wildcard = "*";
 
    readonly record struct PermutationWithPossibleWildCards(IReadOnlyList<string> ComponentNamesOrWildCards);
-   readonly record struct ConcretePermutationNoWildcards(IReadOnlyList<string> ComponentNames);
+   readonly record struct ConcretePermutationNoWildcards(IReadOnlyList<Enum> ComponentEnumValues);
 
    readonly record struct WildcardComponent(Type ComponentType, int Index)
    {
@@ -90,7 +90,7 @@ static class ComponentPermutationsConfigurationFileReader
    }
 
    readonly record struct ExpandedWildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
-   readonly record struct WildCardComponentsPermutation(IReadOnlyList<string> ComponentNames);
+   readonly record struct WildCardComponentsPermutation(IReadOnlyList<Enum> ComponentEnumValues);
 
    static IEnumerable<ConcretePermutationNoWildcards> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
    {
@@ -98,17 +98,20 @@ static class ComponentPermutationsConfigurationFileReader
 
       if(wildcardPositions.Count == 0)
       {
-         yield return new ConcretePermutationNoWildcards(line.ComponentNamesOrWildCards);
+         var enumValues = line.ComponentNamesOrWildCards
+                              .Zip(componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
+                              .ToList();
+         yield return new ConcretePermutationNoWildcards(enumValues);
          yield break;
       }
 
       var enumValuesForWildCardComponents = GetEnumValuesForWildcardComponents(wildcardPositions, componentTypes);
 
-      var expandedPermutations = ExpandWildCardsIntoConcretePermutations(enumValuesForWildCardComponents);
+      var expandedPermutations = ExpandWildCardsIntoPermutationsOfTheWildCardComponents(enumValuesForWildCardComponents);
 
       foreach(var permutation in expandedPermutations)
       {
-         yield return CloneLineToCreateConcretePermutation(line, wildcardPositions, permutation);
+         yield return CloneLineToCreateConcretePermutation(line, wildcardPositions, permutation, componentTypes);
       }
    }
 
@@ -133,21 +136,33 @@ static class ComponentPermutationsConfigurationFileReader
    static ConcretePermutationNoWildcards CloneLineToCreateConcretePermutation(
       PermutationWithPossibleWildCards originalLine,
       IReadOnlyList<WildcardComponent> wildcardComponents,
-      WildCardComponentsPermutation replacementValues)
+      WildCardComponentsPermutation replacementValues,
+      Type[] componentTypes)
    {
-      var concretePermutation = originalLine.ComponentNamesOrWildCards.ToList();
+      var concretePermutationEnumValues = new Enum[originalLine.ComponentNamesOrWildCards.Count];
 
+      // First, convert all non-wildcard values to enums
+      for(int i = 0; i < originalLine.ComponentNamesOrWildCards.Count; i++)
+      {
+         var componentNameOrWildcard = originalLine.ComponentNamesOrWildCards[i];
+         if(componentNameOrWildcard != Wildcard)
+         {
+            concretePermutationEnumValues[i] = (Enum)Enum.Parse(componentTypes[i], componentNameOrWildcard);
+         }
+      }
+
+      // Then replace wildcards with the actual enum values
       for(int currentWildcardPosition = 0; currentWildcardPosition < wildcardComponents.Count; currentWildcardPosition++)
       {
          var positionInLine = wildcardComponents[currentWildcardPosition].Index;
-         var replacementValue = replacementValues.ComponentNames[currentWildcardPosition];
-         concretePermutation[positionInLine] = replacementValue;
+         var replacementValue = replacementValues.ComponentEnumValues[currentWildcardPosition];
+         concretePermutationEnumValues[positionInLine] = replacementValue;
       }
 
-      return new ConcretePermutationNoWildcards(concretePermutation);
+      return new ConcretePermutationNoWildcards(concretePermutationEnumValues);
    }
 
-   static IEnumerable<WildCardComponentsPermutation> ExpandWildCardsIntoConcretePermutations(IReadOnlyList<ExpandedWildCardComponentValues> wildCardComponentValues)
+   static IEnumerable<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<ExpandedWildCardComponentValues> wildCardComponentValues)
    {
       if(wildCardComponentValues.Count == 0)
       {
@@ -162,13 +177,13 @@ static class ComponentPermutationsConfigurationFileReader
       {
          if(otherComponentTypeValues.Count == 0)
          {
-            yield return new WildCardComponentsPermutation([enumValue.ToString()]);
+            yield return new WildCardComponentsPermutation([enumValue]);
          } else
          {
-            foreach(var combinationOfRemainingValues in ExpandWildCardsIntoConcretePermutations(otherComponentTypeValues))
+            foreach(var combinationOfRemainingValues in ExpandWildCardsIntoPermutationsOfTheWildCardComponents(otherComponentTypeValues))
             {
-               var completeCombination = new List<string> { enumValue.ToString() };
-               completeCombination.AddRange(combinationOfRemainingValues.ComponentNames);
+               var completeCombination = new List<Enum> { enumValue };
+               completeCombination.AddRange(combinationOfRemainingValues.ComponentEnumValues);
                yield return new WildCardComponentsPermutation(completeCombination);
             }
          }

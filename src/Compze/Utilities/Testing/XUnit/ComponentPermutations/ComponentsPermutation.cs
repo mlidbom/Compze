@@ -38,6 +38,11 @@ public class ComponentsPermutation : IXunitSerializable
       Components = permutation.Components;
    }
 
+   internal static ComponentsPermutation FromComponentEnumValues(IReadOnlyList<Enum> componentEnumValues)
+   {
+      return new ComponentsPermutation(componentEnumValues);
+   }
+
    internal static ComponentsPermutation FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
    {
       if(componentNames.Count != componentEnumTypes.Length)
