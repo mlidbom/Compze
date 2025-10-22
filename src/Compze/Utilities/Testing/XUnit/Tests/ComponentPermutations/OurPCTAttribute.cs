@@ -20,7 +20,7 @@ public sealed class OurPCTAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : TypedPluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
+   : PluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
       skipped,
       skipReasons,
       sourceFilePath,
