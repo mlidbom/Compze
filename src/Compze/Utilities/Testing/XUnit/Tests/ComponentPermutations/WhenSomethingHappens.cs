@@ -7,21 +7,12 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [OurPCT] public void ThisIsTheCase()
-   {
-      var current = ComponentsPermutation.Current!;
-
-      // Components are strongly-typed enums - cast directly
-      var serializer = (Serializer)current.Components[0];
-      var sqlLayer = (SqlLayer)current.Components[1];
-
-      _testOutputHelper.WriteLine($"✅ Serializer enum: {serializer}, SqlLayer enum: {sqlLayer}");
-      _testOutputHelper.WriteLine($"✅ Component types: {current.Components[0].GetType().Name}, {current.Components[1].GetType().Name}");
-   }
+   [OurPCT] public void ThisIsTheCase() =>
+      _testOutputHelper.WriteLine($"Serializer enum: {ComponentsPermutation.Current.Serializer()}, SqlLayer enum: {ComponentsPermutation.Current.SqlLayer()}");
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
       [OurPCT] public void ThisIsAlsoTheCase() =>
-         _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
+         _testOutputHelper.WriteLine($"Serializer enum: {ComponentsPermutation.Current.Serializer()}, SqlLayer enum: {ComponentsPermutation.Current.SqlLayer()}");
    }
 }
