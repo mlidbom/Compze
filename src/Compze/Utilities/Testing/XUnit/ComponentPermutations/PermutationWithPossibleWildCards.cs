@@ -15,7 +15,7 @@ class ConfigFileLine
       _wildCardComponents = _componentNamesOrWildCards
                            .Select((componentName, componentIndex) => new {  componentName, componentIndex,  componentType = _componentTypes[componentIndex] })
                            .Where(it => it.componentName == Wildcard)
-                           .Select(it => new WildcardComponent(it.componentType, it.componentIndex))
+                           .Select(it => new WildcardComponent(it.componentType))
                            .ToList();
    }
 
@@ -62,7 +62,7 @@ class ConfigFileLine
                              .Select(it => new WildCardComponentsPermutation(it))
                              .ToList();
 
-   readonly record struct WildcardComponent(Type ComponentType, int Index)
+   readonly record struct WildcardComponent(Type ComponentType)
    {
       public WildCardComponentValues AllComponents => new(ComponentType, Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList());
    }
