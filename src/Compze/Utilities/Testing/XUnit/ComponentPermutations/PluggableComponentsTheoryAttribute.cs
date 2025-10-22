@@ -33,11 +33,9 @@ public class PluggableComponentsTheoryAttribute(
    /// <param name="skipReasons">Corresponding reasons for skipping</param>
    protected void InitializeTypedSkipped(Type[] componentEnumTypes, object[]? skippedComponents, string[]? skipReasons)
    {
-      if(skippedComponents == null || skipReasons == null)
-      {
-         _skipped = [];
+      // If no components to skip, do nothing
+      if(skippedComponents == null || skipReasons == null || skippedComponents.Length == 0)
          return;
-      }
 
       if(skippedComponents.Length != skipReasons.Length)
          throw new ArgumentException("Number of components must match number of reasons");
@@ -68,12 +66,9 @@ public class PluggableComponentsTheoryAttribute(
                $"but was {componentType.Name}");
          }
 
-         // Use reflection to call ComponentSkipSpecification.Skip<T>(component, reason)
-         var skipMethod = typeof(ComponentSkipSpecification)
-            .GetMethod(nameof(ComponentSkipSpecification.Skip), BindingFlags.Public | BindingFlags.Static)!
-            .MakeGenericMethod(componentType);
-
-         var skipSpec = (string)skipMethod.Invoke(null, [component, skipReasons[i]])!;
+         // ComponentSkipSpecification.Skip is a generic method, can't call it dynamically easily
+         // Just format the string directly: "EnumValue::Reason"
+         var skipSpec = $"{component}::{skipReasons[i]}";
          skipped.Add(skipSpec);
       }
 
