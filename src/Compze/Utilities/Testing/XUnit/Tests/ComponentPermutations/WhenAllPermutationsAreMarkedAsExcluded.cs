@@ -2,9 +2,9 @@ using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
-public class WhenAllPermutationsAreMarkedAsExcluded
+public class WhenAllPermutationsAreSkipped
 {
-   public WhenAllPermutationsAreMarkedAsExcluded() => throw new Exception("Should not be executed");
+   public WhenAllPermutationsAreSkipped() => throw new Exception("Should not be executed");
 
    [TypedPCT(
       skipped: [Serializer.Microsoft, Serializer.Newtonsoft],

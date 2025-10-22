@@ -3,9 +3,9 @@ using FluentAssertions;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
-public class WhenAComponentIsMarkedAsExcluded
+public class WhenAComponentIsSkipped
 {
-   public WhenAComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft", "Constructor should not run for the excluded component");
+   public WhenAComponentIsSkipped() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft", "Constructor should not run for the excluded component");
 
    [TypedPCT(skipped: [Serializer.Microsoft], skipReasons: ["TODO"])]
    public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft");
