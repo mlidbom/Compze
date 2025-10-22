@@ -46,8 +46,8 @@ class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase, ISelf
                 //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
                 //"Activate Endless Churn Mode" in NCrunch
                 //It is lazy because run is called even for ignored tests etc. So we cannot assume that we have arguments.
-                new LazyCE<ComponentsPermutation>(() => ComponentsPermutation.Parse((string)TestMethodArguments![0]!,
-                                                                                    _componentEnumTypes)),
+                new LazyCE<ComponentsPermutation>(() => ComponentsPermutation.FromString((string)TestMethodArguments![0]!,
+                                                                                         _componentEnumTypes)),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                new ArgumentDiscardingTestCase(this),
                                messageBus,

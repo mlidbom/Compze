@@ -10,7 +10,7 @@ public class ComponentsPermutation
 
    public override string ToString() => string.Join(Separator, Components.Select(it => it.ToString()));
 
-   internal static ComponentsPermutation Parse(string value, Type[] componentEnumTypes) =>
+   internal static ComponentsPermutation FromString(string value, Type[] componentEnumTypes) =>
       FromComponentNamesArray(value.Split(Separator), componentEnumTypes);
 
    internal const string Separator = ":";
