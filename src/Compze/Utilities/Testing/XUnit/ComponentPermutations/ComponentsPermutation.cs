@@ -19,7 +19,7 @@ public class ComponentsPermutation : IXunitSerializable
    [Obsolete("Called by xUnit deserializer", error: true)]
    public ComponentsPermutation() => Components = [];
 
-   ComponentsPermutation(IReadOnlyList<Enum> components) => Components = components;
+   ComponentsPermutation(IEnumerable<Enum> components) => Components = components.ToList();
 
    public void Serialize(IXunitSerializationInfo info)
    {
@@ -38,10 +38,7 @@ public class ComponentsPermutation : IXunitSerializable
       Components = permutation.Components;
    }
 
-   internal static ComponentsPermutation FromComponentEnumValues(IReadOnlyList<Enum> componentEnumValues)
-   {
-      return new ComponentsPermutation(componentEnumValues);
-   }
+   internal static ComponentsPermutation FromComponentEnumValues(IEnumerable<Enum> componentEnumValues) => new(componentEnumValues);
 
    internal static ComponentsPermutation FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
    {

@@ -1,3 +1,4 @@
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
@@ -38,17 +39,13 @@ class ComponentPermutationsConfigurationFileLine
             .ToList();
    }
 
-   ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation wildCardReplacementValues)
-   {
-      var concreteComponents = _componentNamesOrWildCards
-                              .Select((componentName, componentIndex) =>
-                                         componentName == Wildcard
-                                            ? wildCardReplacementValues.ComponentForComponentType(_componentTypes[componentIndex])
-                                            : ComponentValue(componentIndex, componentName))
-                              .ToList();
-
-      return ComponentsPermutation.FromComponentEnumValues(concreteComponents);
-   }
+   ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation wildCardReplacementValues) =>
+      _componentNamesOrWildCards
+        .Select((componentName, componentIndex) =>
+                   componentName == Wildcard
+                      ? wildCardReplacementValues.ComponentFor(_componentTypes[componentIndex])
+                      : ComponentValue(componentIndex, componentName))
+        ._(ComponentsPermutation.FromComponentEnumValues);
 
    Enum ComponentValue(int componentTypeIndex, string componentName) => (Enum)Enum.Parse(_componentTypes[componentTypeIndex], componentName);
 
@@ -60,6 +57,6 @@ class ComponentPermutationsConfigurationFileLine
    class WildCardComponentsPermutation(IReadOnlyList<Enum> components)
    {
       readonly IReadOnlyList<Enum> _components = components;
-      public Enum ComponentForComponentType(Type componentType) => _components.Single(predicate: it => it.GetType() == componentType);
+      public Enum ComponentFor(Type componentType) => _components.Single(predicate: it => it.GetType() == componentType);
    }
 }
