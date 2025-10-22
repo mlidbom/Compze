@@ -28,10 +28,4 @@ public sealed class TypedPCTAttribute(
       skippedComponents?.OfType<Enum>().ToList(),
       skipReasons,
       sourceFilePath,
-      sourceLineNumber)
-{
-   /// <summary>The component enum types for TypedPCT. Public so test case can access it without serialization issues.</summary>
-   public static readonly Type[] ComponentTypes;
-
-   static TypedPCTAttribute() => ComponentTypes = [typeof(Serializer), typeof(SqlLayer)];
-}
+      sourceLineNumber);

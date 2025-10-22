@@ -10,12 +10,12 @@ public class ComponentsPermutation
 
    /// <summary>Components as enum values. Always strongly typed.</summary>
    public readonly IReadOnlyList<Enum> Components;
-   
+
    /// <summary>
    /// Components as string values for display and matching.
    /// </summary>
    public readonly IReadOnlyList<string> ComponentStrings;
-   
+
    ComponentsPermutation(IReadOnlyList<Enum> components, IReadOnlyList<string> componentStrings)
    {
       Components = components;
