@@ -4,7 +4,7 @@ public class WhenAllPermutationsAreSkipped
 {
    public WhenAllPermutationsAreSkipped() => throw new Exception("Should not be executed");
 
-   [TypedPCT(
+   [OurPCT(
       skipped: [Serializer.Microsoft, Serializer.Newtonsoft],
       skipReasons: ["TODO", "Not supported"])]
    public void NoTestsAreExecuted() => throw new Exception("Should not be executed");

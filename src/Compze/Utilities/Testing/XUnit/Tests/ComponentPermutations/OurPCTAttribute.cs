@@ -15,7 +15,7 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 ///    skipReasons: ["Not implemented yet", "Deprecated"])]
 /// public void MyTest() { }
 /// </example>
-public sealed class TypedPCTAttribute(
+public sealed class OurPCTAttribute(
    object[]? skipped = null,
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,

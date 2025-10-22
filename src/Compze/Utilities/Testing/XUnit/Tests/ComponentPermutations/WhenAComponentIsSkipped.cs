@@ -7,14 +7,14 @@ public class WhenAComponentIsSkipped
 {
    public WhenAComponentIsSkipped() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft", "Constructor should not run for the excluded component");
 
-   [TypedPCT(skipped: [Serializer.Microsoft], skipReasons: ["TODO"])]
+   [OurPCT(skipped: [Serializer.Microsoft], skipReasons: ["TODO"])]
    public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft");
 
    public class NestedScenarioComponentIsMarkedAsExcluded
    {
       public NestedScenarioComponentIsMarkedAsExcluded() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft", "Constructor should not run for the excluded component");
 
-      [TypedPCT(skipped: [Serializer.Microsoft], skipReasons: ["Unsupported"])]
+      [OurPCT(skipped: [Serializer.Microsoft], skipReasons: ["Unsupported"])]
       public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current!.Components[0].Should().NotBe("Microsoft");
    }
 }

@@ -7,7 +7,7 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [TypedPCT] public void ThisIsTheCase()
+   [OurPCT] public void ThisIsTheCase()
    {
       var current = ComponentsPermutation.Current!;
 
@@ -21,7 +21,7 @@ public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [TypedPCT] public void ThisIsAlsoTheCase() =>
+      [OurPCT] public void ThisIsAlsoTheCase() =>
          _testOutputHelper.WriteLine(ComponentsPermutation.Current!.ToString()!);
    }
 }
