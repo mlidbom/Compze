@@ -52,9 +52,8 @@ public class PluggableComponentsTheoryAttribute :
       skippedComponents?.Where(it => !componentEnumTypes.Contains(it.GetType()))
                         .ForEach(it => throw new ArgumentException($"{it} is not one of: {string.Join(", ", componentEnumTypes.Select(componentType => componentType.FullName))}"));
 
-      if(skipReasons != null || skippedComponents != null)
-         if(skippedComponents?.Length != skipReasons?.Length)
-            throw new ArgumentException("Number of skipped components must match number of skip reasons");
+      if(skippedComponents?.Length != skipReasons?.Length)
+         throw new ArgumentException("Number of skipped components must match number of skip reasons");
 
       _componentEnumTypes = componentEnumTypes;
       _skippedComponents = skippedComponents?.Cast<Enum>().ToList() ?? [];
