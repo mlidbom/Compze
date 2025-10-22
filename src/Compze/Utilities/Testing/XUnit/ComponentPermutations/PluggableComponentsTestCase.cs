@@ -23,7 +23,7 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
    protected override void Serialize(IXunitSerializationInfo info)
    {
       base.Serialize(info);
-      info.AddValue(nameof(_componentEnumTypes), _componentEnumTypes.Select(it => it.AssemblyQualifiedName).ToArray());
+      info.AddValue(nameof(_componentEnumTypes), _componentEnumTypes.Select(it => it.AssemblyQualifiedName!).ToArray());
    }
 
    protected override void Deserialize(IXunitSerializationInfo info)
