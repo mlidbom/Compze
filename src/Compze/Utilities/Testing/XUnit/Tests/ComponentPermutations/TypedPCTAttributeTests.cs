@@ -9,10 +9,8 @@ public class TypedPCTAttributeTests
    [Fact]
    public void ComponentTypes_Should_Be_Initialized()
    {
-      // Arrange & Act
       var types = TypedPCTAttribute.ComponentTypes;
-      
-      // Assert
+
       types.Should().NotBeNull();
       types.Should().HaveCount(2);
       types[0].Should().Be(typeof(Serializer));
