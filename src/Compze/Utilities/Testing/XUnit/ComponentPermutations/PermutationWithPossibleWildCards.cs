@@ -41,10 +41,10 @@ class ConfigFileLine
    ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation wildCardReplacementValues)
    {
       var concreteComponents = _componentNamesOrWildCards
-                              .Select(selector: (componentNameOrWildcard, componentIndex) =>
-                                         componentNameOrWildcard == Wildcard
+                              .Select((componentName, componentIndex) =>
+                                         componentName == Wildcard
                                             ? wildCardReplacementValues.ComponentForComponentType(_componentTypes[componentIndex])
-                                            : ComponentValue(componentIndex, componentNameOrWildcard))
+                                            : ComponentValue(componentIndex, componentName))
                               .ToList();
 
       return ComponentsPermutation.FromComponentEnumValues(concreteComponents);
