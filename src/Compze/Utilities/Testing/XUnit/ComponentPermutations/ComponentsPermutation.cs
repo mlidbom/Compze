@@ -26,7 +26,7 @@ public class ComponentsPermutation
    /// Creates a ComponentsPermutation from string array, parsing components as enums.
    /// </summary>
    /// <param name="componentStringValues">Component names as strings from the file</param>
-   /// <param name="componentEnumTypes">Enum types for each component position, from <see cref="TypedPCTAttribute"/>>.
+   /// <param name="componentEnumTypes">Enum types for each component position.
    /// </param>
    internal static ComponentsPermutation FromArray(string[] componentStringValues, Type[] componentEnumTypes)
    {

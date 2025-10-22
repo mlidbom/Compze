@@ -16,19 +16,13 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 ///    skipReasons: ["Not implemented yet", "Deprecated"])]
 /// public void MyTest() { }
 /// </example>
-[XunitTestCaseDiscoverer(typeof(TypedPluggableComponentsTheoryDiscoverer))]
 public sealed class TypedPCTAttribute(
-   object[]? skippedComponents = null,
+   object[]? skipped = null,
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : TypedPluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
-      skippedComponents?.OfType<Enum>().ToList(),
+      skipped?.OfType<Enum>().ToList(),
       skipReasons,
       sourceFilePath,
       sourceLineNumber);
-
-
-public class TypedPluggableComponentsTheoryDiscoverer : PluggableComponentsTheoryDiscoverer
-{
-}

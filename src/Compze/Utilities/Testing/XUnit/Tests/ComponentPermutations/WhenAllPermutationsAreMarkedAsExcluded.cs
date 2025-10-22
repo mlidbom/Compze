@@ -7,7 +7,7 @@ public class WhenAllPermutationsAreMarkedAsExcluded
    public WhenAllPermutationsAreMarkedAsExcluded() => throw new Exception("Should not be executed");
 
    [TypedPCT(
-      skippedComponents: [Serializer.Microsoft, Serializer.Newtonsoft],
+      skipped: [Serializer.Microsoft, Serializer.Newtonsoft],
       skipReasons: ["TODO", "Not supported"])]
    public void NoTestsAreExecuted() => throw new Exception("Should not be executed");
 }
