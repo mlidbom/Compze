@@ -68,7 +68,7 @@ static class ComponentPermutationsConfigurationFileReader
 
       // Expand wildcards and create permutations
       var expandedPermutations = activeLines
-                                .Select(lineArray => new PermutationWithPossibleWildCards(componentTypes, lineArray))
+                                .Select(componentsOrWildCards => new PermutationWithPossibleWildCards(componentTypes, componentsOrWildCards))
                                 .SelectMany(line => line.ExpandWildcardsIntoConcretePermutations())
                                 .ToList();
 
