@@ -100,10 +100,7 @@ public class PluggableComponentsTheoryAttribute :
 
       try
       {
-#pragma warning disable CS0618 // Type or member is obsolete
          var permutations = GetTheoryDataRowsInternal();
-#pragma warning restore CS0618 // Type or member is obsolete
-
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);
       }
       catch(ArgumentException ex)
@@ -116,7 +113,6 @@ public class PluggableComponentsTheoryAttribute :
       }
    }
 
-   [Obsolete("Only for internal use")]
    public ITheoryDataRow[] GetTheoryDataRowsInternal()
    {
       if(_componentEnumTypes == null || _componentEnumTypes.Length == 0)
