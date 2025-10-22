@@ -7,44 +7,36 @@ namespace Compze.Utilities.Testing.XUnit.Tests;
 public class CartesianProductTests
 {
    [Fact]
-   public void EmptyInput_ReturnsListWithEmptyList()
-   {
-      var emptyLists = new List<IReadOnlyList<string>>();
-
-      var result = emptyLists.CartesianProduct();
-
-      result.Should().HaveCount(1);
-      result[0].Should().BeEmpty();
-   }
+   public void EmptyInput_ReturnsListWithEmptyList() =>
+      new List<IReadOnlyList<string>>()
+        .CartesianProduct().Should().BeEquivalentTo(
+           new List<IReadOnlyList<string>>
+           {
+              new List<string>()
+           });
 
    [Fact]
-   public void SingleListWithOneItem_ReturnsThatItemAlone()
-   {
-      var lists = new List<IReadOnlyList<string>>
-                  {
-                     new List<string> { "A" }
-                  };
-
-      var result = lists.CartesianProduct();
-
-      result.Should().HaveCount(1);
-      result[0].Should().Equal("A");
-   }
+   public void SingleListWithOneItem_ReturnsThatItemAlone() =>
+      new List<IReadOnlyList<string>>
+      {
+         new List<string> { "A" }
+      }.CartesianProduct().Should().BeEquivalentTo(
+         new List<IReadOnlyList<string>>
+         {
+            new List<string> { "A" }
+         });
 
    [Fact]
-   public void SingleListWithTwoItems_ReturnsTwoSingleItemCombinations()
-   {
-      var lists = new List<IReadOnlyList<string>>
-                  {
-                     new List<string> { "A", "B" }
-                  };
-
-      var result = lists.CartesianProduct();
-
-      result.Should().HaveCount(2);
-      result[0].Should().Equal("A");
-      result[1].Should().Equal("B");
-   }
+   public void SingleListWithTwoItems_ReturnsTwoSingleItemCombinations() =>
+      new List<IReadOnlyList<string>>
+      {
+         new List<string> { "A", "B" }
+      }.CartesianProduct().Should().BeEquivalentTo(
+         new List<IReadOnlyList<string>>
+         {
+            new List<string> { "A" },
+            new List<string> { "B" }
+         });
 
    [Fact]
    public void TwoListsWithTwoItemsEach_ReturnsFourCombinations() =>
