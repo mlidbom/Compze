@@ -40,13 +40,13 @@ public class PluggableComponentsTheoryAttribute(
    /// </summary>
    /// <param name="skippedComponents">Array of enum values to skip (object[] due to attribute limitations, but must contain Enum values)</param>
    /// <param name="skipReasons">Corresponding reasons for skipping</param>
-   protected void InitializeTypedSkipped(object[]? skippedComponents, string[]? skipReasons)
+   protected void InitializeTypedSkipped(IReadOnlyList<Enum>? skippedComponents, string[]? skipReasons)
    {
       // If no components to skip, do nothing
-      if(skippedComponents == null || skipReasons == null || skippedComponents.Length == 0)
+      if(skippedComponents == null || skipReasons == null || skippedComponents.Count == 0)
          return;
 
-      if(skippedComponents.Length != skipReasons.Length)
+      if(skippedComponents.Count != skipReasons.Length)
          throw new ArgumentException("Number of components must match number of reasons");
 
       // Validate all types are enums
@@ -58,7 +58,7 @@ public class PluggableComponentsTheoryAttribute(
 
       var skipped = new List<string>();
 
-      for(int i = 0; i < skippedComponents.Length; i++)
+      for(int i = 0; i < skippedComponents.Count; i++)
       {
          var componentObj = skippedComponents[i];
          if(componentObj == null)

@@ -22,7 +22,7 @@ public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComp
    /// <param name="skippedComponents">Array of enum values to skip (can be any of TComponent1 or TComponent2)</param>
    /// <param name="skipReasons">Corresponding reasons for skipping (must match length of skippedComponents)</param>
    protected TypedPluggableComponentsTheoryAttribute(
-      object[]? skippedComponents = null,
+      IReadOnlyList<Enum>? skippedComponents = null,
       string[]? skipReasons = null,
       [CallerFilePath] string? sourceFilePath = null,
       [CallerLineNumber] int sourceLineNumber = -1)

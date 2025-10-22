@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Xunit;
 using Xunit.v3;
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
@@ -23,7 +24,7 @@ public sealed class TypedPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : TypedPluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
-      skippedComponents, skipReasons, sourceFilePath, sourceLineNumber)
+      skippedComponents?.OfType<Enum>().ToList(), skipReasons, sourceFilePath, sourceLineNumber)
 {
    /// <summary>
    /// The component enum types for TypedPCT. Public so test case can access it without serialization issues.
