@@ -83,13 +83,13 @@ static class ComponentPermutationsConfigurationFileReader
 
    readonly record struct PermutationWithPossibleWildCards(IReadOnlyList<string> ComponentNamesOrWildCards);
    readonly record struct ConcretePermutationNoWildcards(IReadOnlyList<string> ComponentNames);
-   readonly record struct WildcardPosition(int Index);
+   readonly record struct WildcardComponentType(Type ComponentType, int Index);
    readonly record struct ExpandedWildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
    readonly record struct WildCardComponentsPermutation(IReadOnlyList<string> ComponentNames);
 
    static IEnumerable<ConcretePermutationNoWildcards> ExpandLineWildcards(PermutationWithPossibleWildCards line, Type[] componentTypes)
    {
-      var wildcardPositions = FindWildcardPositions(line);
+      var wildcardPositions = FindWildcardComponentTypes(line, componentTypes);
 
       if(wildcardPositions.Count == 0)
       {
@@ -107,17 +107,17 @@ static class ComponentPermutationsConfigurationFileReader
       }
    }
 
-   static IReadOnlyList<WildcardPosition> FindWildcardPositions(PermutationWithPossibleWildCards wildCardPermutation)
+   static IReadOnlyList<WildcardComponentType> FindWildcardComponentTypes(PermutationWithPossibleWildCards wildCardPermutation, Type[] componentTypes)
    {
       return wildCardPermutation.ComponentNamesOrWildCards
                                 .Select((value, index) => new { value, index })
                                 .Where(x => x.value == Wildcard)
-                                .Select(x => new WildcardPosition(x.index))
+                                .Select(x => new WildcardComponentType(componentTypes[x.index], x.index))
                                 .ToList();
    }
 
    static IReadOnlyList<ExpandedWildCardComponentValues> GetEnumValuesForWildcardComponents(
-      IReadOnlyList<WildcardPosition> wildcardPositions,
+      IReadOnlyList<WildcardComponentType> wildcardPositions,
       Type[] componentTypes)
    {
       return wildcardPositions
@@ -127,7 +127,7 @@ static class ComponentPermutationsConfigurationFileReader
 
    static ConcretePermutationNoWildcards CloneLineToCreateConcretePermutation(
       PermutationWithPossibleWildCards originalLine,
-      IReadOnlyList<WildcardPosition> wildcardPositions,
+      IReadOnlyList<WildcardComponentType> wildcardPositions,
       WildCardComponentsPermutation replacementValues)
    {
       var concretePermutation = originalLine.ComponentNamesOrWildCards.ToList();
