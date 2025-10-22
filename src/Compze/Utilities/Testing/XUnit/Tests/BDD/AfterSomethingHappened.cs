@@ -12,7 +12,7 @@ public class AfterSomethingHappened
 
       public class AndThenSomethingElseHappened : AndThenThisHappened
       {
-         [XF] public void EvenThisIsTrue() => Console.WriteLine(nameof(EvenThisIsTrue));
+         [XF] public void NumberOfRoadsToWalkDownIs42() => Console.WriteLine(nameof(NumberOfRoadsToWalkDownIs42));
       }
    }
 }

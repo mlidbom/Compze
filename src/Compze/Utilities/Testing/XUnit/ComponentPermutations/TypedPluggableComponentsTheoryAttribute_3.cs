@@ -1,10 +1,10 @@
-using System.Runtime.CompilerServices;
+using Compze.Utilities.Functional;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-public abstract class PluggableComponentsTheoryAttribute<TComponent1, TComponent2> : PluggableComponentsTheoryAttribute
+public abstract class PluggableComponentsTheoryAttribute<TComponent1, TComponent2, TComponent3> : PluggableComponentsTheoryAttribute
    where TComponent1 : Enum
    where TComponent2 : Enum
 {
@@ -15,11 +15,7 @@ public abstract class PluggableComponentsTheoryAttribute<TComponent1, TComponent
                                                 string? sourceFilePath,
                                                 int sourceLineNumber)
       : base(configurationFileName: configurationFileName,
-             componentEnumTypes:
-             [
-                typeof(TComponent1),
-                typeof(TComponent2)
-             ],
+             componentEnumTypes:EnumerableCE.OfTypes<TComponent1, TComponent2, TComponent3>().ToArray(),
              skipped: skipped,
              skipReasons: skipReasons,
              useTestMethodArgument: useTestMethodArgument,

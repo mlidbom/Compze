@@ -21,7 +21,13 @@
 	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="TestUsingNotArgumentPassingOneComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="TestUsingArgumentPassingTwoComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="TestUsingArgumentPassingOneComponentsPCTAttribute">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
@@ -29,7 +35,6 @@
 	  </None>
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="ComponentPermutations\OneComponent\ArgumentPassing\" />
-	  <Folder Include="ComponentPermutations\OneComponent\NotArgumentPassing\" />
+	  <Folder Include="ComponentPermutations\TwoComponents\ArgumentPassing\" />
 	</ItemGroup>
 </Project>

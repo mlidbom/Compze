@@ -10,9 +10,9 @@ public class WhenAComponentIsSkipped
    [NotArgumentPassingTwoComponentsPCT(skipped: [Serializer.Microsoft], skipReasons: ["TODO"])]
    public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current.Serializer().Should().NotBe(Serializer.Microsoft);
 
-   public class NestedScenarioComponentIsMarkedAsExcluded
+   public class InANestedScenario
    {
-      public NestedScenarioComponentIsMarkedAsExcluded() => ComponentsPermutation.Current.Serializer().Should().NotBe(Serializer.Microsoft, "Constructor should not run for the excluded component");
+      public InANestedScenario() => ComponentsPermutation.Current.Serializer().Should().NotBe(Serializer.Microsoft, "Constructor should not run for the excluded component");
 
       [NotArgumentPassingTwoComponentsPCT(skipped: [Serializer.Microsoft], skipReasons: ["Unsupported"])]
       public void TestIsNotExecutedForThatComponent() => ComponentsPermutation.Current.Serializer().Should().NotBe(Serializer.Microsoft);

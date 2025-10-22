@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
@@ -50,10 +49,6 @@ static class ComponentPermutationsConfigurationFileReader
 
       if(activeLines.Count == 0)
          return new List<ComponentsPermutation>([]);
-
-      var componentDimensions = activeLines[0].Length;
-      if(activeLines.Any(it => it.Length != componentDimensions))
-         throw new Exception("Different lines in the file have different numbers of components");
 
       return new List<ComponentsPermutation>(
          activeLines.Select(arr => ComponentsPermutation.FromComponentNamesArray(arr, componentTypes))
