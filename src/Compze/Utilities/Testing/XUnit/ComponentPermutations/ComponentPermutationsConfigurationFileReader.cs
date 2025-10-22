@@ -155,35 +155,6 @@ static class ComponentPermutationsConfigurationFileReader
    readonly record struct WildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
    readonly record struct WildCardComponentsPermutation(IReadOnlyList<Enum> Components);
 
-   static ComponentsPermutation CloneLineToCreateConcretePermutation(
-      PermutationWithPossibleWildCards originalLine,
-      IReadOnlyList<WildcardComponent> wildcardComponents,
-      WildCardComponentsPermutation replacementValues,
-      IReadOnlyList<Type> componentTypes)
-   {
-      var concretePermutationEnumValues = new Enum[originalLine.ComponentNamesOrWildCards.Count];
-
-      // First, convert all non-wildcard values to enums
-      for(int i = 0; i < originalLine.ComponentNamesOrWildCards.Count; i++)
-      {
-         var componentNameOrWildcard = originalLine.ComponentNamesOrWildCards[i];
-         if(componentNameOrWildcard != Wildcard)
-         {
-            concretePermutationEnumValues[i] = (Enum)Enum.Parse(componentTypes[i], componentNameOrWildcard);
-         }
-      }
-
-      // Then replace wildcards with the actual enum values
-      for(int currentWildcardPosition = 0; currentWildcardPosition < wildcardComponents.Count; currentWildcardPosition++)
-      {
-         var positionInLine = wildcardComponents[currentWildcardPosition].Index;
-         var replacementValue = replacementValues.Components[currentWildcardPosition];
-         concretePermutationEnumValues[positionInLine] = replacementValue;
-      }
-
-      return ComponentsPermutation.FromComponentEnumValues(concretePermutationEnumValues);
-   }
-
    static IEnumerable<WildCardComponentsPermutation> ExpandWildCardsIntoPermutationsOfTheWildCardComponents(IReadOnlyList<WildCardComponentValues> wildCardComponentValues)
    {
       if(wildCardComponentValues.Count == 0)
