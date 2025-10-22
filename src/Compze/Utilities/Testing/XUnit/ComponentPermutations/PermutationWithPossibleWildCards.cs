@@ -76,7 +76,7 @@ class ConfigFileLine
 
       var allValuesForEachWildcard = wildCardComponentValues.Select(wc => wc.Values).ToList();
       var cartesianProduct = GenerateCartesianProduct(allValuesForEachWildcard);
-      
+
       return cartesianProduct.Select(permutation => new WildCardComponentsPermutation(permutation)).ToList();
    }
 
