@@ -12,7 +12,6 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// </summary>
 /// <typeparam name="TComponent1">First component dimension enum type</typeparam>
 /// <typeparam name="TComponent2">Second component dimension enum type</typeparam>
-[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
 public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComponent2> : PluggableComponentsTheoryAttribute
    where TComponent1 : Enum
    where TComponent2 : Enum

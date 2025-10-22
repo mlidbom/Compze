@@ -9,7 +9,6 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// <summary>
 /// Type-safe version of PCT attribute for tests.
 /// Uses Serializer and SqlLayer enums instead of strings.
-/// NOTE: This is in the main library (not Tests project) because XUnit test discovery
 /// requires the discoverer attribute and the concrete attribute class to be in the same assembly.
 /// </summary>
 /// <example>
@@ -18,7 +17,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 ///    skipReasons: ["Not implemented yet", "Deprecated"])]
 /// public void MyTest() { }
 /// </example>
-[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
+[XunitTestCaseDiscoverer(typeof(TypedPluggableComponentsTheoryDiscoverer))]
 public sealed class TypedPCTAttribute(
    object[]? skippedComponents = null,
    string[]? skipReasons = null,
@@ -29,3 +28,9 @@ public sealed class TypedPCTAttribute(
       skipReasons,
       sourceFilePath,
       sourceLineNumber);
+
+
+class TypedPluggableComponentsTheoryDiscoverer : PluggableComponentsTheoryDiscoverer
+{
+
+}
