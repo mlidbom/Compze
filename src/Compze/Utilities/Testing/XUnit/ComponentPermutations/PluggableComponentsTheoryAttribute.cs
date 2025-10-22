@@ -17,15 +17,28 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// Use TestEnv to access the component and the information.
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))] // Use standard TheoryDiscoverer!
-public class PluggableComponentsTheoryAttribute(
-   Type[]? componentEnumTypes = null,
-   [CallerFilePath] string? sourceFilePath = null,
-   [CallerLineNumber] int sourceLineNumber = -1) :
-   TheoryAttribute(sourceFilePath, sourceLineNumber),
+public class PluggableComponentsTheoryAttribute :
+   TheoryAttribute,
    IDataAttribute
 {
    string[] _skipped = [];
-   readonly Type[] _componentEnumTypes = componentEnumTypes ?? [];
+   readonly Type[] _componentEnumTypes;
+
+   /// <summary>
+   /// Pluggable Components Theory Attribute
+   /// Use this attribute instead of [XFact] for tests that should run with all pluggable component combinations.
+   /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
+   /// Use TestEnv to access the component and the information.
+   /// </summary>
+   public PluggableComponentsTheoryAttribute(Type[] componentEnumTypes,
+                                             IReadOnlyList<Enum>? skippedComponents,
+                                             string[]? skipReasons,
+                                             [CallerFilePath] string? sourceFilePath = null,
+                                             [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
+   {
+      _componentEnumTypes = componentEnumTypes;
+      InitializeTypedSkipped(skippedComponents, skipReasons);
+   }
 
    /// <summary>
    /// Gets the component enum types for this attribute, if any.
@@ -37,7 +50,7 @@ public class PluggableComponentsTheoryAttribute(
    /// </summary>
    /// <param name="skippedComponents">Array of enum values to skip (object[] due to attribute limitations, but must contain Enum values)</param>
    /// <param name="skipReasons">Corresponding reasons for skipping</param>
-   protected void InitializeTypedSkipped(IReadOnlyList<Enum>? skippedComponents, string[]? skipReasons)
+   void InitializeTypedSkipped(IReadOnlyList<Enum>? skippedComponents, string[]? skipReasons)
    {
       // If no components to skip, do nothing
       if(skippedComponents == null || skipReasons == null || skippedComponents.Count == 0)
