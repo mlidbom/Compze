@@ -42,18 +42,14 @@ class ConfigFileLine
       return wildCardComponentsPermutations.Select(CreateConcretePermutation).ToList();
    }
 
-   ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation replacementValues)
+   ComponentsPermutation CreateConcretePermutation(WildCardComponentsPermutation wildCardReplacementValues)
    {
-      var concreteComponents = new Enum[_componentNamesOrWildCards.Count];
-
-      for(var componentIndex = 0; componentIndex < _componentNamesOrWildCards.Count; componentIndex++)
-      {
-         var componentNameOrWildcard = _componentNamesOrWildCards[componentIndex];
-
-         concreteComponents[componentIndex] = componentNameOrWildcard == Wildcard
-                                                 ? replacementValues.Components.Single(it => it.GetType() == _componentTypes[componentIndex])
-                                                 : (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard);
-      }
+      var concreteComponents = _componentNamesOrWildCards
+                              .Select((componentNameOrWildcard, componentIndex) =>
+                                         componentNameOrWildcard == Wildcard
+                                            ? wildCardReplacementValues.ValueFor(_componentTypes[componentIndex])
+                                            : (Enum)Enum.Parse(_componentTypes[componentIndex], componentNameOrWildcard))
+                              .ToList();
 
       return ComponentsPermutation.FromComponentEnumValues(concreteComponents);
    }
@@ -71,5 +67,11 @@ class ConfigFileLine
    }
 
    readonly record struct WildCardComponentValues(Type EnumType, IReadOnlyList<Enum> Values);
-   readonly record struct WildCardComponentsPermutation(IReadOnlyList<Enum> Components);
+
+   class WildCardComponentsPermutation(IReadOnlyList<Enum> components)
+   {
+      public IReadOnlyList<Enum> Components { get; } = components;
+
+      public Enum ValueFor(Type componentType) => Components.Single(it => it.GetType() == componentType);
+   }
 }
