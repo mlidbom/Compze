@@ -18,7 +18,7 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 /// Use TestEnv to access the component and the information.
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
-public class PluggableComponentsTheoryAttribute :
+public abstract class PluggableComponentsTheoryAttribute :
    TheoryAttribute,
    IDataAttribute
 {
@@ -32,11 +32,11 @@ public class PluggableComponentsTheoryAttribute :
    /// Automatically discovers combinations and injects a PluggableComponentTestContext into TestEnv.
    /// Use TestEnv to access the component and the information.
    /// </summary>
-   public PluggableComponentsTheoryAttribute(Type[] componentEnumTypes,
-                                             object[]? skippedComponents,
-                                             string[]? skipReasons,
-                                             [CallerFilePath] string? sourceFilePath = null,
-                                             [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
+   protected PluggableComponentsTheoryAttribute(Type[] componentEnumTypes,
+                                                object[]? skippedComponents,
+                                                string[]? skipReasons,
+                                                [CallerFilePath] string? sourceFilePath = null,
+                                                [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
    {
       if(componentEnumTypes.Length == 0)
       {
