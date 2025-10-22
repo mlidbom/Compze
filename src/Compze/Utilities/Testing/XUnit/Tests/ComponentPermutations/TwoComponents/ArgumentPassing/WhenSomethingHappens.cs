@@ -1,8 +1,8 @@
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
-using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents;
 using Xunit;
+#pragma warning disable xUnit1026
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.OneComponent.ArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.TwoComponents.ArgumentPassing;
 
 public class WhenSomethingHappens
 {
@@ -14,14 +14,14 @@ public class WhenSomethingHappens
    }
 
 
-   [ArgumentPassingOneComponentsPCT] public void ComponentsPermutationCurrentIsAvailableInConstructor(ComponentsPermutation permutation) {}
+   [ArgumentPassingTwoComponentsPCT] public void ComponentsPermutationCurrentIsAvailableInConstructor(ComponentsPermutation permutation) {}
 
-   [ArgumentPassingOneComponentsPCT] public void ThisIsTheCase(ComponentsPermutation permutation) =>
+   [ArgumentPassingTwoComponentsPCT] public void ThisIsTheCase(ComponentsPermutation permutation) =>
       _testOutputHelper.WriteLine($"Serializer enum: {permutation.Serializer()}");
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [ArgumentPassingOneComponentsPCT] public void ThisIsAlsoTheCase(ComponentsPermutation permutation) =>
+      [ArgumentPassingTwoComponentsPCT] public void ThisIsAlsoTheCase(ComponentsPermutation permutation) =>
          _testOutputHelper.WriteLine($"Serializer enum: {permutation.Serializer()}");
    }
 }

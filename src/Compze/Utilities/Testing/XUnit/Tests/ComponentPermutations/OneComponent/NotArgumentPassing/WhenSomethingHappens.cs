@@ -4,9 +4,17 @@ using Xunit;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations.OneComponent.NotArgumentPassing;
 
-public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
+public class WhenSomethingHappens
 {
-   readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
+   readonly ITestOutputHelper _testOutputHelper;
+
+   public WhenSomethingHappens(ITestOutputHelper testOutputHelper)
+   {
+      _testOutputHelper = testOutputHelper;
+      _testOutputHelper.WriteLine($"Serializer enum: {ComponentsPermutation.Current.Serializer()}");
+   }
+
+   [NotArgumentPassingOneComponentsPCT] public void ComponentsPermutationCurrentIsAvailableInConstructor() {}
 
    [NotArgumentPassingOneComponentsPCT] public void ThisIsTheCase() =>
       _testOutputHelper.WriteLine($"Serializer enum: {ComponentsPermutation.Current.Serializer()}");

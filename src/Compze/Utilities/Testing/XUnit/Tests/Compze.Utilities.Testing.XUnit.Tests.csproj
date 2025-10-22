@@ -34,7 +34,4 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="ComponentPermutations\TwoComponents\ArgumentPassing\" />
-	</ItemGroup>
 </Project>
