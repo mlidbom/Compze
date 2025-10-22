@@ -73,8 +73,7 @@ static class ComponentPermutationsConfigurationFileReader
                                 .ToList();
 
       return new List<ComponentsPermutation>(
-         expandedPermutations.Select(it => ComponentsPermutation.FromComponentEnumValues(it.Components))
-                             .OrderBy(it => it.ToString())
+         expandedPermutations.OrderBy(it => it.ToString())
                              .DistinctBy(it => it.ToString())
                              .ToList());
    }
@@ -100,8 +99,8 @@ static class ComponentPermutationsConfigurationFileReader
          if(wildcardComponents.Count == 0)
          {
             var enumValues = ComponentNamesOrWildCards
-                                 .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
-                                 .ToList();
+                            .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
+                            .ToList();
             yield return ComponentsPermutation.FromComponentEnumValues(enumValues);
             yield break;
          }
