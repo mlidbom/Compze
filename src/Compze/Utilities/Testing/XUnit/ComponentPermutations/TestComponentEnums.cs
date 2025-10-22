@@ -1,23 +1,22 @@
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 /// <summary>
-/// Type 1 component dimension for pluggable components testing.
+/// Serializer component dimension for pluggable components testing.
 /// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
 /// </summary>
-public enum ComponentType1
+public enum Serializer
 {
-   Component1,
-   Component2,
-   Component3
+   Microsoft,
+   Newtonsoft
 }
 
 /// <summary>
-/// Type 2 component dimension for pluggable components testing.
+/// SQL layer component dimension for pluggable components testing.
 /// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
 /// </summary>
-public enum ComponentType2
+public enum SqlLayer
 {
-   Component1,
-   Component2,
-   Component3
+   Microsoft,
+   Postgre,
+   MySql
 }
