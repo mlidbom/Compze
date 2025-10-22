@@ -5,8 +5,10 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
 public class WhenAnInvalidComponentIsMentionedInSkipped
 {
-   [PCT] public void AnExceptionIsThrownWhenAcessingPermutations()
+   [TypedPCT] public void AnExceptionIsThrownWhenAcessingPermutations()
    {
+      // This test validates that TypedPCT throws when given an invalid component
+      // We use the string-based Skipped property here since we can't pass invalid enum values at compile time
       var pctAttribute = new PCTAttribute()
                          {
                             Skipped = ["Invalid::NotSupported"]

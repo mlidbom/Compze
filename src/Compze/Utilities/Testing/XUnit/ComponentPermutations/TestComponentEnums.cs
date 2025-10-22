@@ -1,4 +1,4 @@
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 /// <summary>
 /// Type 1 component dimension for pluggable components testing.

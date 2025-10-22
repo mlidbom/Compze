@@ -23,7 +23,8 @@ public class WhenAComponentIsMarkedAsExcludedTypeSafe
       ComponentsPermutation.Current!.Components[0].Should().NotBe("Type1Component1");
 
    /// <summary>
-   /// You can skip multiple components from any dimension with a single array - much cleaner!
+   /// You can skip multiple components from any dimension with reasons.
+   /// Much cleaner than having separate arrays per dimension!
    /// </summary>
    [TypedPCT(
       skippedComponents: [

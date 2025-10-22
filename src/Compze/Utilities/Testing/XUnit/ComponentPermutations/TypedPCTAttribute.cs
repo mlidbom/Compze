@@ -1,12 +1,13 @@
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 /// <summary>
-/// Type-safe version of PCT attribute specifically for these tests.
+/// Type-safe version of PCT attribute for tests.
 /// Uses Type1Component and Type2Component enums instead of strings.
+/// NOTE: This is in the main library (not Tests project) because XUnit test discovery
+/// requires the discoverer attribute and the concrete attribute class to be in the same assembly.
 /// </summary>
 /// <example>
 /// [TypedPCT(
