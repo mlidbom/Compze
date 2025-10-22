@@ -1,15 +1,14 @@
 using System.Runtime.CompilerServices;
-using Xunit;
+using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
 /// <summary>
 /// Type-safe version of PCT attribute for tests.
 /// Uses Serializer and SqlLayer enums instead of strings.
-/// requires the discoverer attribute and the concrete attribute class to be in the same assembly.
 /// </summary>
 /// <example>
 /// [TypedPCT(
@@ -30,7 +29,6 @@ public sealed class TypedPCTAttribute(
       sourceLineNumber);
 
 
-class TypedPluggableComponentsTheoryDiscoverer : PluggableComponentsTheoryDiscoverer
+public class TypedPluggableComponentsTheoryDiscoverer : PluggableComponentsTheoryDiscoverer
 {
-
 }

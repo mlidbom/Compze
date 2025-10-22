@@ -1,4 +1,4 @@
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations;
 
 /// <summary>
 /// Serializer component dimension for pluggable components testing.
