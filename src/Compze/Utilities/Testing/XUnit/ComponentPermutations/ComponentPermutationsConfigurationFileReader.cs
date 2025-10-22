@@ -117,9 +117,9 @@ static class ComponentPermutationsConfigurationFileReader
    static IReadOnlyList<WildcardComponent> FindWildcardComponentTypes(PermutationWithPossibleWildCards wildCardPermutation, Type[] componentTypes)
    {
       return wildCardPermutation.ComponentNamesOrWildCards
-                                .Select((value, index) => new { value, index })
-                                .Where(x => x.value == Wildcard)
-                                .Select(x => new WildcardComponent(componentTypes[x.index], x.index))
+                                .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
+                                .Where(it => it.value == Wildcard)
+                                .Select(it => new WildcardComponent(componentTypes[it.index], it.index))
                                 .ToList();
    }
 
