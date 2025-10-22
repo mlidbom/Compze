@@ -132,14 +132,14 @@ static class ComponentPermutationsConfigurationFileReader
 
    static ConcretePermutationNoWildcards CloneLineToCreateConcretePermutation(
       PermutationWithPossibleWildCards originalLine,
-      IReadOnlyList<WildcardComponent> wildcardPositions,
+      IReadOnlyList<WildcardComponent> wildcardComponents,
       WildCardComponentsPermutation replacementValues)
    {
       var concretePermutation = originalLine.ComponentNamesOrWildCards.ToList();
 
-      for(int currentWildcardPosition = 0; currentWildcardPosition < wildcardPositions.Count; currentWildcardPosition++)
+      for(int currentWildcardPosition = 0; currentWildcardPosition < wildcardComponents.Count; currentWildcardPosition++)
       {
-         var positionInLine = wildcardPositions[currentWildcardPosition].Index;
+         var positionInLine = wildcardComponents[currentWildcardPosition].Index;
          var replacementValue = replacementValues.ComponentNames[currentWildcardPosition];
          concretePermutation[positionInLine] = replacementValue;
       }
