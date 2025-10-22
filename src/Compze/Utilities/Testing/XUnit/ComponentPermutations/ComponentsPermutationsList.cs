@@ -16,7 +16,7 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
    internal ComponentsPermutationsList Exclude(ExclusionsCollection exclusions) =>
       new(Permutations.Where(permutation => !exclusions.Matches(permutation)).ToList(), AllComponents);
 
-   internal static ComponentsPermutationsList FromFileContent(string[] rows, Type[]? componentEnumTypes = null)
+   internal static ComponentsPermutationsList FromFileContent(string[] rows, Type[] componentEnumTypes)
    {
       var lines = rows
                  .Select(it => it.Trim())
@@ -46,14 +46,11 @@ class ComponentsPermutationsList : IEnumerable<ComponentsPermutation>
                          .SelectMany(components => components)
                          .ToHashSet();
 
-      // If no types provided, just return for validation purposes (string-based for component name checking)
+      // Component types must always be provided - we only support typed enums now
       if(componentEnumTypes == null || componentEnumTypes.Length == 0)
-      {
-         // Return empty list - we only need AllComponents for validation
-         return new ComponentsPermutationsList([], allComponents);
-      }
+         throw new ArgumentException("Component enum types must be provided. Use TypedPCT attribute.", nameof(componentEnumTypes));
 
-      // Parse with types - components become enums
+      // Parse with types - components are always enums
       return new ComponentsPermutationsList(
          activeLines.Select(arr => ComponentsPermutation.FromArray(arr, componentEnumTypes)).ToList(),
          allComponents);

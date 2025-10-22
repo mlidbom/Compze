@@ -25,22 +25,15 @@ public class ComponentsPermutation
    }
 
    /// <summary>
-   /// Creates a ComponentsPermutation from string array.
+   /// Creates a ComponentsPermutation from string array, parsing components as enums.
    /// </summary>
    /// <param name="value">Component names as strings from the file</param>
    /// <param name="componentEnumTypes">
-   /// Enum types for each component position. Components are always parsed as enums.
+   /// Enum types for each component position. Must always be provided.
    /// The attribute's type information flows through: TypedPCTAttribute → Reader → FromArray.
    /// </param>
-   internal static ComponentsPermutation FromArray(string[] value, Type[]? componentEnumTypes)
+   internal static ComponentsPermutation FromArray(string[] value, Type[] componentEnumTypes)
    {
-      // For validation purposes (checking if component names exist), we allow null types
-      if(componentEnumTypes == null || componentEnumTypes.Length == 0)
-      {
-         // Return dummy permutation for validation - not meant for actual use
-         throw new ArgumentException("Component enum types must be provided. Use TypedPCT attribute.");
-      }
-
       if(value.Length != componentEnumTypes.Length)
          throw new ArgumentException($"Component count ({value.Length}) does not match type count ({componentEnumTypes.Length})");
 

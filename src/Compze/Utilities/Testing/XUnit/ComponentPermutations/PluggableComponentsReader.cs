@@ -17,21 +17,31 @@ static class PluggableComponentsReader
    });
 
    /// <summary>
-   /// Gets permutations parsed with the provided component types.
-   /// Component types must be provided - components are always parsed as enums.
+   /// Gets permutations parsed with the provided component types as enums.
    /// </summary>
-   public static ComponentsPermutationsList GetPermutations(Type[] componentEnumTypes)
-   {
-      if(componentEnumTypes == null || componentEnumTypes.Length == 0)
-         throw new ArgumentException("Component enum types must be provided", nameof(componentEnumTypes));
-      
-      return ComponentsPermutationsList.FromFileContent(FileContentLazy.Value, componentEnumTypes);
-   }
+   public static ComponentsPermutationsList GetPermutations(Type[] componentEnumTypes) =>
+      ComponentsPermutationsList.FromFileContent(FileContentLazy.Value, componentEnumTypes);
 
    /// <summary>
    /// Gets all unique component names from all permutations (including ignored ones).
    /// This is used for validation to ensure excluded components actually exist.
+   /// Uses TypedPCT component types to parse the file.
    /// </summary>
-   public static IReadOnlySet<string> Components => 
-      ComponentsPermutationsList.FromFileContent(FileContentLazy.Value, null).AllComponents;
+   public static IReadOnlySet<string> Components
+   {
+      get
+      {
+         // Read file content and extract component names without parsing as enums
+         var lines = FileContentLazy.Value
+                    .Select(it => it.Trim())
+                    .Where(line => !string.IsNullOrEmpty(line))
+                    .Where(line => !line.StartsWith("//")) // Comments
+                    .Select(line => line.TrimStart('#')) // Remove # prefix if present
+                    .Select(it => it.Split(ComponentsPermutation.Separator))
+                    .SelectMany(components => components)
+                    .ToHashSet();
+         
+         return lines;
+      }
+   }
 }
