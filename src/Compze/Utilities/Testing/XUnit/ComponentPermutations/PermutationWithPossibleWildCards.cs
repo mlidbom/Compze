@@ -13,9 +13,9 @@ class ConfigFileLine
       _componentTypes = componentTypes;
       _componentNamesOrWildCards = componentNamesOrWildCards;
       _wildCardComponents = _componentNamesOrWildCards
-                           .Select((componentNameOrWildCard, index) => new { value = componentNameOrWildCard, index })
-                           .Where(it => it.value == Wildcard)
-                           .Select(it => new WildcardComponent(_componentTypes[it.index], it.index))
+                           .Select((componentName, componentIndex) => new {  componentName, componentIndex,  componentType = _componentTypes[componentIndex] })
+                           .Where(it => it.componentName == Wildcard)
+                           .Select(it => new WildcardComponent(it.componentType, it.componentIndex))
                            .ToList();
    }
 
