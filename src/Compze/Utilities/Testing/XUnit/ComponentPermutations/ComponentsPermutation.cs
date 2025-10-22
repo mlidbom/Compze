@@ -30,16 +30,10 @@ public class ComponentsPermutation
             throw new ArgumentException($"Type {componentEnumTypes[i].Name} must be an enum type");
       }
 
-      var componentEnums = new Enum[componentNames.Length];
-      for(int i = 0; i < componentNames.Length; i++)
-      {
-         componentEnums[i] = ToEnum(componentNames[i], componentEnumTypes[i]);
-      }
-
-      return new(componentEnums);
+      return new(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
    }
 
-   static Enum ToEnum(string componentName, Type enumType)
+   static Enum NameToEnum(string componentName, Type enumType)
    {
       try
       {
