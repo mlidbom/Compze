@@ -3,21 +3,8 @@
 // Lines starting with "#" are ignored/excluded permutations
 
 Microsoft:MsSql:Microsoft
-Microsoft:Postgre:Microsoft
-
-Newtonsoft:MsSql:Microsoft
 Newtonsoft:Postgre:Microsoft
 
 #Newtonsoft:MySql:Microsoft
 #Newtonsoft:MySql:Microsoft
-
-
-Microsoft:MsSql:SimpleInjector
-Microsoft:Postgre:SimpleInjector
-
-Newtonsoft:MsSql:SimpleInjector
-Newtonsoft:Postgre:SimpleInjector
-
-#Newtonsoft:MySql:SimpleInjector
-#Newtonsoft:MySql:SimpleInjector
 
