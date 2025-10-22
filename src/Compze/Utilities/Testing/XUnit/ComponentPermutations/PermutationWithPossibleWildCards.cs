@@ -25,9 +25,12 @@ class ConfigFileLine
    {
       if(!_wildCardComponents.Any())
       {
-         return [ComponentsPermutation.FromComponentEnumValues(_componentNamesOrWildCards
-                                                              .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
-                                                              .ToList())];
+         return
+         [
+            ComponentsPermutation.FromComponentEnumValues(_componentNamesOrWildCards
+                                                         .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
+                                                         .ToList())
+         ];
       }
 
       var enumValuesForWildCardComponents = _wildCardComponents
@@ -72,14 +75,14 @@ class ConfigFileLine
       }
 
       // Start with all values from the first wildcard component as single-element permutations
-      IEnumerable<IReadOnlyList<Enum>> permutations = wildCardComponentValues[0].Values.Select(v => new List<Enum> { v }.AsReadOnly());
+      IEnumerable<IReadOnlyList<Enum>> permutations = wildCardComponentValues[0].Values.Select(v => new List<Enum> { v });
 
       // For each remaining wildcard component, combine it with all existing permutations
       for(int i = 1; i < wildCardComponentValues.Count; i++)
       {
          var currentWildcardValues = wildCardComponentValues[i].Values;
-         permutations = permutations.SelectMany(existingPermutation => 
-            currentWildcardValues.Select(newValue => existingPermutation.Concat([newValue]).ToList().AsReadOnly()));
+         permutations = permutations.SelectMany(existingPermutation =>
+                                                   currentWildcardValues.Select(newValue => existingPermutation.Concat([newValue]).ToList()));
       }
 
       return permutations.Select(permutation => new WildCardComponentsPermutation(permutation)).ToList();
