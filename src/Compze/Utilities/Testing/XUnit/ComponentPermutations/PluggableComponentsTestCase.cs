@@ -6,6 +6,8 @@ namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
 {
+   Type[] _componentEnumTypes;
+
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]
    public PluggableComponentsTestCase() {}
@@ -16,8 +18,19 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
       Type[] componentEnumTypes)
       : base(testCase,
              testCaseDisplayName: testCase.TestCaseDisplayName.Replace("???: ", "") //the ???: is Xunit being confused because we have no arguments declare on the test methods.
-      )
+      ) => _componentEnumTypes = componentEnumTypes;
+
+   protected override void Serialize(IXunitSerializationInfo info)
    {
+      base.Serialize(info);
+      info.AddValue(nameof(_componentEnumTypes), _componentEnumTypes.Select(it => it.FullName).ToArray());
+   }
+
+   protected override void Deserialize(IXunitSerializationInfo info)
+   {
+      base.Deserialize(info);
+      var enumTypeString = info.GetValue<string[]>(nameof(_componentEnumTypes)) ?? throw new Exception($"{nameof(_componentEnumTypes)} not found in the serialized data.");
+      _componentEnumTypes = enumTypeString.Select(it => Type.GetType(it)!).ToArray();
    }
 
    public async ValueTask<RunSummary> Run(
@@ -33,16 +46,8 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
                 //If you ever consider changing it, DO make sure to test it thoroughly in every common test runner, including a long session of
                 //"Activate Endless Churn Mode" in NCrunch
                 //It is lazy because run is called even for ignored tests etc. So we cannot assume that we have arguments.
-                new LazyCE<ComponentsPermutation>(() =>
-                {
-                   var argString = (string)TestMethodArguments![0]!;
-
-                   Type[] componentEnumTypes = TypedPCTAttribute.ComponentTypes;
-
-                   var permutation = ComponentsPermutation.Parse(argString, componentEnumTypes);
-
-                   return permutation;
-                }),
+                new LazyCE<ComponentsPermutation>(() => ComponentsPermutation.Parse((string)TestMethodArguments![0]!,
+                                                                                    _componentEnumTypes)),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                new ArgumentDiscardingTestCase(this),
                                messageBus,
