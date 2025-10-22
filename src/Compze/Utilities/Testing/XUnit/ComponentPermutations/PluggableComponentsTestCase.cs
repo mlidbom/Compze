@@ -23,14 +23,14 @@ public class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase
    protected override void Serialize(IXunitSerializationInfo info)
    {
       base.Serialize(info);
-      info.AddValue(nameof(_componentEnumTypes), _componentEnumTypes.Select(it => it.FullName).ToArray());
+      info.AddValue(nameof(_componentEnumTypes), _componentEnumTypes.Select(it => it.AssemblyQualifiedName).ToArray());
    }
 
    protected override void Deserialize(IXunitSerializationInfo info)
    {
       base.Deserialize(info);
       var enumTypeString = info.GetValue<string[]>(nameof(_componentEnumTypes)) ?? throw new Exception($"{nameof(_componentEnumTypes)} not found in the serialized data.");
-      _componentEnumTypes = enumTypeString.Select(it => Type.GetType(it)!).ToArray();
+      _componentEnumTypes = enumTypeString.Select(it => Type.GetType(it, throwOnError: true)!).ToArray();
    }
 
    public async ValueTask<RunSummary> Run(
