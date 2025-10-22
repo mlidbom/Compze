@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Xunit.v3;
+
 // ReSharper disable ExplicitCallerInfoArgument
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
@@ -28,8 +29,6 @@ public abstract class TypedPluggableComponentsTheoryAttribute<TComponent1, TComp
       string[]? skipReasons = null,
       [CallerFilePath] string? sourceFilePath = null,
       [CallerLineNumber] int sourceLineNumber = -1)
-      : base([typeof(TComponent1), typeof(TComponent2)], sourceFilePath, sourceLineNumber)
-   {
+      : base([typeof(TComponent1), typeof(TComponent2)], sourceFilePath, sourceLineNumber) =>
       InitializeTypedSkipped(skippedComponents, skipReasons);
-   }
 }

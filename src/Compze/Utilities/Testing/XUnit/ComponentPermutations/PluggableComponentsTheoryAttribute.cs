@@ -27,9 +27,6 @@ public class PluggableComponentsTheoryAttribute(
    string[] _skipped = [];
    readonly Type[] _componentEnumTypes = componentEnumTypes ?? [];
 
-   // Debug: Output types in constructor
-   void _() => Console.WriteLine($"[Constructor] Types: {(_componentEnumTypes.Length > 0 ? string.Join(", ", _componentEnumTypes.Select(t => t.Name)) : "EMPTY")}");
-
    /// <summary>
    /// Gets the component enum types for this attribute, if any.
    /// </summary>
