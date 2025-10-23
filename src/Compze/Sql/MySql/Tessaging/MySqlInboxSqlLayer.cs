@@ -24,7 +24,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
 
                    INSERT {MessageTable.TableName} 
                                ({MessageTable.MessageId},  {MessageTable.TypeId},  {MessageTable.Body}, {MessageTable.Status}) 
-                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)Inbox.MessageStatus.UnHandled})
+                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)InboxMessageStatus.UnHandled})
                    ON DUPLICATE KEY UPDATE {MessageTable.MessageId} = {MessageTable.MessageId}
 
                    """)
@@ -50,9 +50,9 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                                   $"""
 
                                    UPDATE {MessageTable.TableName} 
-                                       SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Succeeded}
+                                       SET {MessageTable.Status} = {(int)InboxMessageStatus.Succeeded}
                                    WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                                       AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                                       AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
 
                                    """)
                               .AddParameter(MessageTable.MessageId, messageId)
@@ -94,9 +94,9 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                        $"""
 
                         UPDATE {MessageTable.TableName} 
-                            SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Failed}
+                            SET {MessageTable.Status} = {(int)InboxMessageStatus.Failed}
                         WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                            AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                            AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
                         """)
                    .AddParameter(MessageTable.MessageId, messageId)
                    .ExecuteNonQuery());

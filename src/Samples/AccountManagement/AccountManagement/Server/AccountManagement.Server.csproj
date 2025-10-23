@@ -12,7 +12,6 @@
     <ProjectReference Include="..\..\..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-    <ProjectReference Include="..\..\..\..\Compze\Tessaging\Sql\MicrosoftSql\Compze.Tessaging.Sql.MicrosoftSql.csproj" />
     <ProjectReference Include="..\Domain\Events\AccountManagement.Domain.Events.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Tessaging\Compze.Tessaging.csproj" />

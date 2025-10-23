@@ -1,17 +1,17 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
-using Compze.Sql.Sqlite;
+using Compze.Sql.PostgreSql;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
 using MessageTable =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.Sql.Sqlite;
+namespace Compze.Tessaging.Sql.PostgreSql;
 
-partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
 {
-   readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
+   readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
 
    public IServiceBusSqlLayer.SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
    {
@@ -24,13 +24,15 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
 
                    INSERT INTO {MessageTable.TableName} 
                                ({MessageTable.MessageId},  {MessageTable.TypeId},  {MessageTable.Body}, {MessageTable.Status}) 
-                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)Inbox.MessageStatus.UnHandled})
-                   ON CONFLICT ({MessageTable.MessageId}) DO NOTHING
+                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)InboxMessageStatus.UnHandled})
+                   ON CONFLICT ({MessageTable.MessageId}) DO NOTHING;
 
                    """)
-              .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
-              .AddVarcharParameter(MessageTable.TypeId, 36, typeId.ToString())
+              .AddParameter(MessageTable.MessageId, messageId)
+              .AddParameter(MessageTable.TypeId, typeId)
+               //performance: Like with the event store, keep all framework properties out of the JSON and put it into separate columns instead. For events. Reuse a pre-serialized instance from the persisting to the event store.
               .AddMediumTextParameter(MessageTable.Body, serializedMessage)
+              .PrepareStatement()
               .ExecuteNonQuery();
 
             return affectedRows == 0 
@@ -49,12 +51,13 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
                                   $"""
 
                                    UPDATE {MessageTable.TableName} 
-                                       SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Succeeded}
+                                       SET {MessageTable.Status} = {(int)InboxMessageStatus.Succeeded}
                                    WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                                       AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                                       AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled};
 
                                    """)
-                              .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
+                              .AddParameter(MessageTable.MessageId, messageId)
+                              .PrepareStatement()
                               .ExecuteNonQuery();
 
             Assert.Result.Is(affectedRows == 1);
@@ -75,13 +78,14 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
                                 {MessageTable.ExceptionStackTrace} = @{MessageTable.ExceptionStackTrace},
                                 {MessageTable.ExceptionMessage} = @{MessageTable.ExceptionMessage}
                                 
-                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
+                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId};
 
                         """)
-                   .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
+                   .AddParameter(MessageTable.MessageId, messageId)
                    .AddMediumTextParameter(MessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddMediumTextParameter(MessageTable.ExceptionMessage, exceptionMessage)
                    .AddVarcharParameter(MessageTable.ExceptionType, 500, exceptionType)
+                   .PrepareStatement()
                    .ExecuteNonQuery());
    }
 
@@ -93,11 +97,12 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
                        $"""
 
                         UPDATE {MessageTable.TableName} 
-                            SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Failed}
+                            SET {MessageTable.Status} = {(int)InboxMessageStatus.Failed}
                         WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                            AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                            AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled};
                         """)
-                   .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
+                   .AddParameter(MessageTable.MessageId, messageId)
+                   .PrepareStatement()
                    .ExecuteNonQuery());
    }
 

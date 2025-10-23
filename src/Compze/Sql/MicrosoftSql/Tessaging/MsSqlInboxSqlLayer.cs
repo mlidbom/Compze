@@ -27,7 +27,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServ
                                 ON target.{MessageTable.MessageId} = source.{MessageTable.MessageId}
                                 WHEN NOT MATCHED THEN
                                     INSERT ({MessageTable.MessageId}, {MessageTable.TypeId}, {MessageTable.Body}, {MessageTable.Status})
-                                    VALUES (source.{MessageTable.MessageId}, source.{MessageTable.TypeId}, source.{MessageTable.Body}, {(int)Inbox.MessageStatus.UnHandled});
+                                    VALUES (source.{MessageTable.MessageId}, source.{MessageTable.TypeId}, source.{MessageTable.Body}, {(int)InboxMessageStatus.UnHandled});
 
                                 """)
                            .AddParameter(MessageTable.MessageId, messageId)
@@ -51,9 +51,9 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServ
                                $"""
 
                                 UPDATE {MessageTable.TableName} 
-                                    SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Succeeded}
+                                    SET {MessageTable.Status} = {(int)InboxMessageStatus.Succeeded}
                                 WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                                    AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                                    AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
 
                                 """)
                            .AddParameter(MessageTable.MessageId, messageId)
@@ -93,9 +93,9 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServ
                                                          $"""
 
                                                           UPDATE {MessageTable.TableName} 
-                                                              SET {MessageTable.Status} = {(int)Inbox.MessageStatus.Failed}
+                                                              SET {MessageTable.Status} = {(int)InboxMessageStatus.Failed}
                                                           WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                                                              AND {MessageTable.Status} = {(int)Inbox.MessageStatus.UnHandled}
+                                                              AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
                                                           """)
                                                      .AddParameter(MessageTable.MessageId, messageId)
                                                      .ExecuteNonQuery());

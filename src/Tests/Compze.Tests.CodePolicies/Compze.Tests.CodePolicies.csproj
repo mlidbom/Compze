@@ -29,10 +29,6 @@
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\..\Compze\Common\Configuration\Compze.Common.Configuration.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Sql\MicrosoftSql\Compze.Tessaging.Sql.MicrosoftSql.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Sql\MySql\Compze.Tessaging.Sql.MySql.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Sql\PostgreSql\Compze.Tessaging.Sql.PostgreSql.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Sql\Sqlite\Compze.Tessaging.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Compze.Tessaging.Teventive.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />

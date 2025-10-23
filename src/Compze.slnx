@@ -48,12 +48,6 @@
   <Folder Name="/Compze/Tessaging/Hosting/Testing/">
     <Project Path="Compze/Tessaging/Hosting/Testing/Compze.Tessaging.Hosting.Testing.csproj" />
   </Folder>
-  <Folder Name="/Compze/Tessaging/Sql/">
-    <Project Path="Compze/Tessaging/Sql/MicrosoftSql/Compze.Tessaging.Sql.MicrosoftSql.csproj" />
-    <Project Path="Compze/Tessaging/Sql/MySql/Compze.Tessaging.Sql.MySql.csproj" />
-    <Project Path="Compze/Tessaging/Sql/PostgreSql/Compze.Tessaging.Sql.PostgreSql.csproj" />
-    <Project Path="Compze/Tessaging/Sql/Sqlite/Compze.Tessaging.Sql.Sqlite.csproj" />
-  </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/">
     <Project Path="Compze/Tessaging/Teventive/Abstractions/Compze.Tessaging.Teventive.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Teventive/Compze.Tessaging.Teventive.csproj" />
