@@ -1,35 +1,37 @@
 using System;
+using System.Threading.Tasks;
 using Compze.Sql.Common.Abstractions;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool;
-using Compze.Utilities.Testing.DbPool.MicrosoftSql;
-using Compze.Utilities.Testing.DbPool.MySql;
-using Compze.Utilities.Testing.DbPool.PostgreSql;
-using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Common.Testing.Sql;
 
-public abstract class DbPoolTestBase : UniversalTestBase, IDisposable
+public abstract class DbPoolTestBase : UniversalTestBase
 {
-   protected readonly DbPoolBase Pool = CreatePool();
+   protected readonly DbPoolBase Pool;
    protected override void DisposeInternal() => Pool.Dispose();
+   readonly IServiceLocator _serviceLocator;
 
-   protected static DbPoolBase CreatePool() =>
-      TestEnv.SqlLayer switch
-      {
-         SqlLayer.MicrosoftSqlServer => new MsSqlDbPool(),
-         SqlLayer.MySql              => new MySqlDbPool(),
-         SqlLayer.PostgreSql         => new PgSqlDbPool(),
-         SqlLayer.Sqlite             => new SqliteDbPool(),
-         SqlLayer.SqliteMemory       => new SqliteMemoryDbPool(),
-         _                           => throw new ArgumentOutOfRangeException()
-      };
+   protected DbPoolTestBase()
+   {
+      _serviceLocator = CreateServiceLocator();
+      Pool = ResolvePool();
+   }
+
+   protected IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateServiceLocatorForTesting(_ => {});
+
+   protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync();
+
+   protected DbPoolBase ResolvePool() =>
+      _serviceLocator.Resolve<DbPoolBase>();
 
    internal static void UseConnection(string connectionString, DbPoolBase pool, Action<ICompzeDbConnection> func)
    {

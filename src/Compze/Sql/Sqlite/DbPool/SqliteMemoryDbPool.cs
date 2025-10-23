@@ -10,35 +10,26 @@ namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
 static class SqliteMemoryDbPoolRegistrar
 {
-   public static IComponentRegistrar SqliteMemoryDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      SqliteMemoryDbPool.RegisterWith(registrar);
-
-   public static IComponentRegistrar SqliteMemoryDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      registrar.SqliteMemoryDbPoolIfNotAlreadyRegistered();
-
-      return registrar.Register(
-         Singleton.For<ISqliteConnectionPool>()
-                  .CreatedBy((SqliteMemoryDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
-   }
+   public static IComponentRegistrar SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
+      SqliteMemoryDbPoolSqlLayer.RegisterWith(registrar);
 }
 
-class SqliteMemoryDbPool : DbPoolBase
+class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<SqliteMemoryDbPool>())
+      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
          return registrar;
 
-      return registrar.Register(Singleton.For<SqliteMemoryDbPool>()
-                                         .CreatedBy(() => new SqliteMemoryDbPool())
+      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                         .CreatedBy(() => new SqliteMemoryDbPoolSqlLayer())
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
    // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
    readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = IThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());
 
-   protected override string ConnectionStringFor(Database db)
+   public string ConnectionStringFor(DbPoolDatabase db)
    {
       return new SqliteConnectionStringBuilder
              {
@@ -48,21 +39,19 @@ class SqliteMemoryDbPool : DbPoolBase
              }.ConnectionString;
    }
 
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db) => ResetDatabase(db);
-   protected override void ResetDatabase(Database db) => _keepInMemoryDatabaseAliveConnections.Update(cons => cons[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db));
+   public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db) => ResetDatabase(db);
+   public void ResetDatabase(DbPoolDatabase db) => _keepInMemoryDatabaseAliveConnections.Update(cons => cons[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db));
 
-   public override void Dispose()
+   public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases)
    {
-      if(Disposed) return;
       _keepInMemoryDatabaseAliveConnections.Update(cons =>
       {
          cons.Values.ForEach(connection => connection.Dispose());
          cons.Clear();
       });
-      base.Dispose();
    }
 
-   SqliteConnection CreateOpenConnectionThusCreatingANewInMemoryDatabase(Database db)
+   SqliteConnection CreateOpenConnectionThusCreatingANewInMemoryDatabase(DbPoolDatabase db)
    {
       var connectionToNewInMemoryDatabase = new SqliteConnection(ConnectionStringFor(db));
       connectionToNewInMemoryDatabase.Open();

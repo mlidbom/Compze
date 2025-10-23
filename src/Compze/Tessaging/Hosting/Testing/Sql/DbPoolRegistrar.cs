@@ -15,19 +15,19 @@ public static class DbPoolRegistrar
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:
-            register.MsSqlDbPoolIfNotAlreadyRegistered();
+            register.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
             break;
          case SqlLayer.MySql:
-            register.MySqlDbPoolIfNotAlreadyRegistered();
+            register.MySqlDbPoolSqlLayerIfNotAlreadyRegistered();
             break;
          case SqlLayer.PostgreSql:
-            register.PgSqlDbPoolIfNotAlreadyRegistered();
+            register.PgSqlDbPoolSqlLayerIfNotAlreadyRegistered();
             break;
          case SqlLayer.Sqlite:
-            register.SqliteDbPoolIfNotAlreadyRegistered();
+            register.SqliteDbPoolSqlLayerIfNotAlreadyRegistered();
             break;
          case SqlLayer.SqliteMemory:
-            register.SqliteMemoryDbPoolIfNotAlreadyRegistered();
+            register.SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered();
             break;
          default:
             throw new ArgumentOutOfRangeException();

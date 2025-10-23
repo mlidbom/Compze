@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -11,31 +12,19 @@ namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
 static class SqliteDbPoolRegistrar
 {
-   public static IComponentRegistrar SqliteDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      SqliteDbPool.RegisterWith(registrar);
-
-   public static IComponentRegistrar DbPoolAndConnectionPoolForRandomConnectionString(this IComponentRegistrar registrar)
-      => registrar.SqliteDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(Guid.NewGuid().ToString());
-
-   public static IComponentRegistrar SqliteDbPoolAndConnectionPoolForConnectionStringNameIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      registrar.SqliteDbPoolIfNotAlreadyRegistered();
-
-      return registrar.Register(
-         Singleton.For<ISqliteConnectionPool>()
-                  .CreatedBy((SqliteDbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
-   }
+   public static IComponentRegistrar SqliteDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
+      SqliteDbPoolSqlLayer.RegisterWith(registrar);
 }
 
-class SqliteDbPool : DbPoolBase
+class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<SqliteDbPool>())
+      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
          return registrar;
 
-      return registrar.Register(Singleton.For<SqliteDbPool>()
-                                         .CreatedBy(() => new SqliteDbPool())
+      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                         .CreatedBy(() => new SqliteDbPoolSqlLayer())
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
@@ -43,7 +32,7 @@ class SqliteDbPool : DbPoolBase
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
-   internal SqliteDbPool()
+   internal SqliteDbPoolSqlLayer()
    {
       _baseDirectory = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                     ?? Path.Combine(Path.GetTempPath(), "CompzeDbPool", "Sqlite");
@@ -51,7 +40,7 @@ class SqliteDbPool : DbPoolBase
       Directory.CreateDirectory(_baseDirectory);
    }
 
-   protected override string ConnectionStringFor(Database db)
+   public string ConnectionStringFor(DbPoolDatabase db)
    {
       var dbPath = CreateDbPath(db);
       return new SqliteConnectionStringBuilder
@@ -62,9 +51,9 @@ class SqliteDbPool : DbPoolBase
              }.ConnectionString;
    }
 
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db) => ResetDatabase(db);
+   public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db) => ResetDatabase(db);
 
-   protected override void ResetDatabase(Database db)
+   public void ResetDatabase(DbPoolDatabase db)
    {
       using var dbCreatingConnection = new SqliteConnection(ConnectionStringFor(db));
       dbCreatingConnection.Open();
@@ -78,30 +67,27 @@ class SqliteDbPool : DbPoolBase
       }
    }
 
-   string CreateDbPath(Database db) => Path.Combine(_baseDirectory, $"{db.Name}.db");
+   string CreateDbPath(DbPoolDatabase db) => Path.Combine(_baseDirectory, $"{db.Name}.db");
 
-   public override void Dispose()
+   public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases)
    {
-      if(Disposed) return;
-
       // Sqlite sometimes takes a moment to release the files, so we retry in a loop
       const int maxCleanupAttempts = 1000;
       for(var attempt = 1; attempt <= maxCleanupAttempts; attempt++)
       {
          SqliteConnection.ClearAllPools();
-         foreach(var db in _transientCache)
+         foreach(var db in reservedDatabases)
          {
             var dbPath = CreateDbPath(db);
             try
             {
                DeleteDb(dbPath);
-               _transientCache = _transientCache.Where(it => it != db).ToList();
+               reservedDatabases = reservedDatabases.Where(it => it != db).ToList();
             }
             catch
             {
                if(attempt == maxCleanupAttempts)
                {
-                  base.Dispose();
                   throw new Exception($"Failed to clean up database {dbPath}");
                }
 
@@ -109,6 +95,5 @@ class SqliteDbPool : DbPoolBase
             }
          }
       }
-      base.Dispose();
    }
 }

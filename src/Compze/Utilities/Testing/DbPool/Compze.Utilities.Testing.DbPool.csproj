@@ -6,6 +6,7 @@
    <ItemGroup>
       <ProjectReference Include="..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="..\..\..\Serialization\Compze.Serialization.csproj" />
+      <ProjectReference Include="..\..\..\Sql\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\..\Compze.Utilities.csproj" />
    </ItemGroup>
    <ItemGroup>
@@ -13,24 +14,4 @@
       <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="MicrosoftSql\**" />
-    <EmbeddedResource Remove="MicrosoftSql\**" />
-    <None Remove="MicrosoftSql\**" />
-    <Content Remove="MicrosoftSql\**" />
-    <Compile Remove="MySql\**" />
-    <EmbeddedResource Remove="MySql\**" />
-    <None Remove="MySql\**" />
-    <Content Remove="MySql\**" />
-    <Compile Remove="PostgreSql\**" />
-    <EmbeddedResource Remove="PostgreSql\**" />
-    <None Remove="PostgreSql\**" />
-    <Content Remove="PostgreSql\**" />
-    <Compile Remove="Sqlite\**" />
-    <EmbeddedResource Remove="Sqlite\**" />
-    <None Remove="Sqlite\**" />
-    <Content Remove="Sqlite\**" />
-  </ItemGroup>
 </Project>
