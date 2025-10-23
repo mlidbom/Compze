@@ -1,17 +1,20 @@
+using Compze.Utilities.SystemCE;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading.TasksCE;
 using Xunit.Sdk;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 public class ComponentCombination : IXunitSerializable
 {
+#pragma warning disable CA1065 //throwing in a property.
    public static ComponentCombination Current => TryGetCurrent() ?? throw new Exception("Found no current combination");
+#pragma warning restore CA1065
 
    public static ComponentCombination? TryGetCurrent() => CurrentInternal.Value?.Value;
 
@@ -74,7 +77,7 @@ public class ComponentCombination : IXunitSerializable
       CurrentInternal.Value = combination;
       try
       {
-         return await executeTest();
+         return await executeTest().caf();
       }
       finally
       {

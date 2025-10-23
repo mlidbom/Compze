@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading.TasksCE;
 using Xunit.Sdk;
 using Xunit.v3;
 
@@ -16,7 +17,7 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
    static readonly IReadOnlyList<string> HiddenArgumentNames = ["combination", "components", "???"]; //the ???: is Xunit being confused because we have no arguments declare on the test methods.
 
    static string ReplaceArgumentNames(string testMethodName) =>
-      HiddenArgumentNames.Aggregate(testMethodName, (current, hidden) => current.Replace($"{hidden}: ", ""));
+      HiddenArgumentNames.Aggregate(testMethodName, (current, hidden) => current.ReplaceInvariant($"{hidden}: ", ""));
 
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]
@@ -60,6 +61,6 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
                                cancellationTokenSource,
                                aggregator,
                                explicitOption,
-                               constructorArguments));
+                               constructorArguments).caf()).caf();
    }
 }

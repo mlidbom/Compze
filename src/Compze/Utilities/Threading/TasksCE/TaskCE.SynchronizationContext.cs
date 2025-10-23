@@ -39,4 +39,12 @@ public static class ConfigureAwaitCE
     /// named as caf to signal that this is more of a patch for a missing language feature than a traditional extension method and because we just found code with caf plain easier and faster to read.
     ///</summary>
     public static ConfiguredValueTaskAwaitable caf(this ValueTask @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
+
+    ///<summary>
+    /// Abbreviated version of <see cref="ValueTask.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.
+    /// Ensures that awaits do not capture the synchronization context, avoiding deadlocks and improving performance in environments with a synchronization context (e.g., UI threads).
+    /// Must be applied to all awaits in library code to ensure that no deadlocks occur due to a synchronization context.
+    /// named as caf to signal that this is more of a patch for a missing language feature than a traditional extension method and because we just found code with caf plain easier and faster to read.
+    ///</summary>
+    public static ConfiguredValueTaskAwaitable<TResult> caf<TResult>(this ValueTask<TResult> @this) => @this.ConfigureAwait(continueOnCapturedContext: false);
 }

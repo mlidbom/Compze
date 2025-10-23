@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Utilities.Threading.TasksCE;
 using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -16,9 +17,9 @@ class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
       IFactAttribute factAttribute)
    {
       if(testMethod.Method.DeclaringType != testMethod.TestClass.Class)
-         return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
+         return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]).caf();
 
-      var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
+      var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute).caf();
 
       var pctAttribute = (ComponentCombinationsTheoryAttribute)factAttribute;
 
@@ -36,6 +37,6 @@ class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
                                 })
                                .ToArray();
 
-      return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases);
+      return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases).caf();
    }
 }

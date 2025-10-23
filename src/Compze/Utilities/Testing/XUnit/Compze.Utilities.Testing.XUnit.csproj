@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
+		<ProjectReference Include="..\..\Threading\Compze.Utilities.Threading.csproj" />
 	</ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
