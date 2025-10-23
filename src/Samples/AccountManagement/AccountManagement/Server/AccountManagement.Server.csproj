@@ -10,9 +10,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Compze\Sql\DocumentDb\Compze.Sql.DocumentDb.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Sql\DocumentDb\MicrosoftSql\Compze.Sql.DocumentDb.MicrosoftSql.csproj" />
-    <ProjectReference Include="..\..\..\..\Compze\Tessaging\Teventive\EventStore\MicrosoftSql\Compze.Tessaging.Teventive.EventStore.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Tessaging\Sql\MicrosoftSql\Compze.Tessaging.Sql.MicrosoftSql.csproj" />
     <ProjectReference Include="..\Domain\Events\AccountManagement.Domain.Events.csproj" />
     <ProjectReference Include="..\..\..\..\Compze\Utilities\Compze.Utilities.csproj" />

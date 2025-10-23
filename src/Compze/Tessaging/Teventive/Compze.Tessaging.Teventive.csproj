@@ -36,21 +36,5 @@
     <EmbeddedResource Remove="EventStore\Abstractions\**" />
     <None Remove="EventStore\Abstractions\**" />
     <Content Remove="EventStore\Abstractions\**" />
-    <Compile Remove="EventStore\MicrosoftSql\**" />
-    <EmbeddedResource Remove="EventStore\MicrosoftSql\**" />
-    <None Remove="EventStore\MicrosoftSql\**" />
-    <Content Remove="EventStore\MicrosoftSql\**" />
-    <Compile Remove="EventStore\MySql\**" />
-    <EmbeddedResource Remove="EventStore\MySql\**" />
-    <None Remove="EventStore\MySql\**" />
-    <Content Remove="EventStore\MySql\**" />
-    <Compile Remove="EventStore\PostgreSql\**" />
-    <EmbeddedResource Remove="EventStore\PostgreSql\**" />
-    <None Remove="EventStore\PostgreSql\**" />
-    <Content Remove="EventStore\PostgreSql\**" />
-    <Compile Remove="EventStore\Sqlite\**" />
-    <EmbeddedResource Remove="EventStore\Sqlite\**" />
-    <None Remove="EventStore\Sqlite\**" />
-    <Content Remove="EventStore\Sqlite\**" />
   </ItemGroup>
 </Project>

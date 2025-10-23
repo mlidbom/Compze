@@ -65,10 +65,6 @@
   <Folder Name="/Compze/Tessaging/Teventive/EventStore/">
     <Project Path="Compze/Tessaging/Teventive/EventStore/Abstractions/Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.EventStore.csproj" />
-    <Project Path="Compze/Tessaging/Teventive/EventStore/MicrosoftSql/Compze.Tessaging.Teventive.EventStore.MicrosoftSql.csproj" />
-    <Project Path="Compze/Tessaging/Teventive/EventStore/MySql/Compze.Tessaging.Teventive.EventStore.MySql.csproj" />
-    <Project Path="Compze/Tessaging/Teventive/EventStore/PostgreSql/Compze.Tessaging.Teventive.EventStore.PostgreSql.csproj" />
-    <Project Path="Compze/Tessaging/Teventive/EventStore/Sqlite/Compze.Tessaging.Teventive.EventStore.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Typermedia/">
     <Project Path="Compze/Tessaging/Typermedia/Abstractions/Compze.Tessaging.Typermedia.Abstractions.csproj" />
