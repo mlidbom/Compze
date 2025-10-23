@@ -49,12 +49,6 @@
     <Project Path="Compze/Tessaging/Hosting/Abstractions/Compze.Tessaging.Hosting.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
   </Folder>
-  <Folder Name="/Compze/Tessaging/Hosting/Sql/">
-    <Project Path="Compze/Tessaging/Hosting/Sql/MicrosoftSql/Compze.Tessaging.Hosting.Sql.MicrosoftSql.csproj" />
-    <Project Path="Compze/Tessaging/Hosting/Sql/MySql/Compze.Tessaging.Hosting.Sql.MySql.csproj" />
-    <Project Path="Compze/Tessaging/Hosting/Sql/PostgreSql/Compze.Tessaging.Hosting.Sql.PostgreSql.csproj" />
-    <Project Path="Compze/Tessaging/Hosting/Sql/Sqlite/Compze.Tessaging.Hosting.Sql.Sqlite.csproj" />
-  </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/Testing/">
     <Project Path="Compze/Tessaging/Hosting/Testing/Compze.Tessaging.Hosting.Testing.csproj" />
   </Folder>

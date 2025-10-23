@@ -1,7 +1,7 @@
 using System;
 using Compze.Abstractions.Internal.Time;
 using Compze.Common.Refactoring.Naming.Wiring;
-using Compze.Sql.DocumentDb.DependencyInjection;
+using Compze.Sql.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;

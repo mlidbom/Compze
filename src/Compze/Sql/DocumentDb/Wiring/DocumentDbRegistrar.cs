@@ -2,7 +2,7 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.DocumentDb.DependencyInjection;
+namespace Compze.Sql.DocumentDb.Wiring;
 
 public static class DocumentDbRegistrar
 {

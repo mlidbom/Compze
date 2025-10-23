@@ -1,12 +1,43 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.Data.Sqlite;
+using System;
+using System.Threading.Tasks;
+using Compze.Common.Configuration;
 
 namespace Compze.Sql.Sqlite;
+
+public static class SqliteConnectionPoolRegistrar
+{
+   public interface ITestingRegistrar
+   {
+      public IComponentRegistrar Register(string connectionStringName);
+   }
+
+   public static IComponentRegistrar SqliteConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
+   {
+      if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
+      {
+         return testingRegistrar.Register(connectionStringName);
+      } else
+      {
+         registrar.SqliteProductionConnectionPool(connectionStringName);
+      }
+
+      return registrar;
+   }
+
+   static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
+      => registrar.Register(
+         Singleton.For<ISqliteConnectionPool>()
+                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => ISqliteConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
+                  .DelegateToParentServiceLocatorWhenCloning());
+}
+
 
 internal interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>
 {

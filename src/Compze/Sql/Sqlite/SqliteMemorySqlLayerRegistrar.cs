@@ -1,9 +1,9 @@
 using System;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Sql.Sqlite;
+namespace Compze.Sql.Sqlite;
 
-public static class SqliteMemorySqlLayerRegistrar
+public static class SqliteMemoryConnectionPoolRegistrar
 {
    public interface ITestingRegistrar
    {
