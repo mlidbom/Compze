@@ -1,12 +1,10 @@
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
-
 namespace Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 
-public class EventInsertionSpecification(IAggregateEvent @event, int insertedVersion, int effectiveVersion)
+public class EventInsertionSpecification(AggregateEventData @event, int insertedVersion, int effectiveVersion)
 {
-   public EventInsertionSpecification(IAggregateEvent @event) : this(@event, @event.AggregateVersion, @event.AggregateVersion) {}
+   public EventInsertionSpecification(AggregateEventData @event) : this(@event, @event.AggregateVersion, @event.AggregateVersion) {}
 
-   internal IAggregateEvent Event { get; } = @event;
+   internal AggregateEventData Event { get; } = @event;
    internal int InsertedVersion { get; } = insertedVersion;
    internal int EffectiveVersion { get; } = effectiveVersion;
 }

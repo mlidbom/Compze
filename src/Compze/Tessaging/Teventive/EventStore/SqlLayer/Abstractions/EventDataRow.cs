@@ -1,11 +1,10 @@
 using System;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 namespace Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 
 public class EventDataRow
 {
-   public EventDataRow(IAggregateEvent @event, AggregateEventStorageInformation storageInformation, Guid eventType, string eventAsJson)
+   public EventDataRow(AggregateEventData @event, AggregateEventStorageInformation storageInformation, Guid eventType, string eventAsJson)
    {
       EventJson = eventAsJson;
       EventType = eventType;

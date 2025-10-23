@@ -63,7 +63,7 @@ partial class EventStore
                         });
 
                         refactorings.Add(newEvents
-                                        .Select(it => new EventDataRow(@event: it.NewEvent,
+                                        .Select(it => new EventDataRow(@event: it.NewEvent.ToAggregateEventData(),
                                                                           it.StorageInformation,
                                                                           _typeMapper.GetId(it.NewEvent.GetType()).GuidValue,
                                                                           eventAsJson: _serializer.Serialize(it.NewEvent)))

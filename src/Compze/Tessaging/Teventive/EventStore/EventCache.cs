@@ -102,12 +102,12 @@ class EventCache : IDisposable, IEventCache
       {
          if(InsertedVersionToAggregateVersionOffset > 0)
          {
-            return new EventInsertionSpecification(@event: @event,
+            return new EventInsertionSpecification(@event: @event.ToAggregateEventData(),
                                                    insertedVersion: @event.AggregateVersion + InsertedVersionToAggregateVersionOffset,
                                                    effectiveVersion:@event.AggregateVersion);
          } else
          {
-            return new EventInsertionSpecification(@event:@event);
+            return new EventInsertionSpecification(@event:@event.ToAggregateEventData());
          }
       }
    }
