@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 internal class SkipComponentSpecificationsCollection
 {
@@ -21,6 +21,6 @@ internal class SkipComponentSpecificationsCollection
    }
 
    /// <summary>Finds the first skipped component that matches the given combination, if any.</summary>
-   public SkipComponentSpecification? SkippedComponentFor(ComponentsCombination combination) =>
+   public SkipComponentSpecification? SkippedComponentFor(ComponentCombination combination) =>
       _skippedComponents.FirstOrDefault(exclusion => exclusion.Skips(combination));
 }

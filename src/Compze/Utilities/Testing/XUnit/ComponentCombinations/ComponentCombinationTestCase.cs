@@ -7,9 +7,9 @@ using Compze.Utilities.SystemCE;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-class ComponentsCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
+class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
 {
    bool _useTestMethodArguments;
 
@@ -20,9 +20,9 @@ class ComponentsCombinationTestCase : ConstructorArgumentForwardingTestCase, ISe
 
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]
-   public ComponentsCombinationTestCase() {}
+   public ComponentCombinationTestCase() {}
 
-   public ComponentsCombinationTestCase(
+   public ComponentCombinationTestCase(
       XunitTestCase testCase,
       bool useTestMethodArguments,
       Dictionary<string, HashSet<string>> traits)
@@ -31,7 +31,7 @@ class ComponentsCombinationTestCase : ConstructorArgumentForwardingTestCase, ISe
       ) =>
       _useTestMethodArguments = useTestMethodArguments;
 
-   ComponentsCombination combination => (ComponentsCombination)TestMethodArguments![0]!;
+   ComponentCombination combination => (ComponentCombination)TestMethodArguments![0]!;
 
    protected override void Serialize(IXunitSerializationInfo info)
    {
@@ -52,8 +52,8 @@ class ComponentsCombinationTestCase : ConstructorArgumentForwardingTestCase, ISe
       ExceptionAggregator aggregator,
       CancellationTokenSource cancellationTokenSource)
    {
-      return await ComponentsCombination.RunInContextAsync(
-                new LazyCE<ComponentsCombination>(() => combination),
+      return await ComponentCombination.RunInContextAsync(
+                new LazyCE<ComponentCombination>(() => combination),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                _useTestMethodArguments ? this : new ArgumentDiscardingTestCase(this),
                                messageBus,

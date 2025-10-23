@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Xunit.Sdk;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-public class ComponentsCombination : IXunitSerializable
+public class ComponentCombination : IXunitSerializable
 {
-   public static ComponentsCombination Current => TryGetCurrent() ?? throw new Exception("Found no current combination");
+   public static ComponentCombination Current => TryGetCurrent() ?? throw new Exception("Found no current combination");
 
-   public static ComponentsCombination? TryGetCurrent() => CurrentInternal.Value?.Value;
+   public static ComponentCombination? TryGetCurrent() => CurrentInternal.Value?.Value;
 
    public IReadOnlyList<Enum> Components { get; private set; }
 
@@ -22,9 +22,9 @@ public class ComponentsCombination : IXunitSerializable
    internal const string Separator = ":";
 
    [Obsolete("Called by xUnit deserializer", error: true)]
-   public ComponentsCombination() => Components = [];
+   public ComponentCombination() => Components = [];
 
-   ComponentsCombination(IEnumerable<Enum> components) => Components = components.ToList();
+   ComponentCombination(IEnumerable<Enum> components) => Components = components.ToList();
 
    public void Serialize(IXunitSerializationInfo info)
    {
@@ -43,14 +43,14 @@ public class ComponentsCombination : IXunitSerializable
       Components = combination.Components;
    }
 
-   internal static ComponentsCombination FromComponentEnumValues(IEnumerable<Enum> componentEnumValues) => new(componentEnumValues);
+   internal static ComponentCombination FromComponentEnumValues(IEnumerable<Enum> componentEnumValues) => new(componentEnumValues);
 
-   internal static ComponentsCombination FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
+   internal static ComponentCombination FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
    {
       if(componentNames.Count != componentEnumTypes.Length)
          throw new ArgumentException($"Components: [{string.Join(", ", componentNames)}] do not match specified component types [{string.Join(", ", componentEnumTypes.Select(it => it.Name))}]");
 
-      return new ComponentsCombination(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
+      return new ComponentCombination(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
    }
 
    static Enum NameToEnum(string componentName, Type enumType)
@@ -65,10 +65,10 @@ public class ComponentsCombination : IXunitSerializable
       }
    }
 
-   static readonly AsyncLocal<LazyCE<ComponentsCombination>?> CurrentInternal = new();
+   static readonly AsyncLocal<LazyCE<ComponentCombination>?> CurrentInternal = new();
 
    internal static async Task<TReturn> RunInContextAsync<TReturn>(
-      LazyCE<ComponentsCombination> combination,
+      LazyCE<ComponentCombination> combination,
       Func<Task<TReturn>> executeTest)
    {
       CurrentInternal.Value = combination;

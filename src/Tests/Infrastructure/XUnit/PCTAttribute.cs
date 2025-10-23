@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 using Compze.Wiring.Testing;
 using Compze.Wiring.Testing.Sql;
 
@@ -10,7 +10,7 @@ public sealed class PCTAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentsCombinationsTheoryAttribute<SqlLayer, DIContainer>(
+   : ComponentCombinationsTheoryAttribute<SqlLayer, DIContainer>(
       configurationFileName: "TestUsingPluggableComponentCombinations",
       skipped: skipped,
       skipReasons: skipReasons,

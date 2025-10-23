@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components.NotArgumentPassing;
 
@@ -8,7 +8,7 @@ public sealed class NotArgumentPassingTwoComponentsPCTAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentsCombinationsTheoryAttribute<Serializer, SqlLayer>(
+   : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer>(
       configurationFileName: "TestUsingNotArgumentPassingTwoComponentsPCTAttribute",
       skipped: skipped,
       skipReasons: skipReasons,

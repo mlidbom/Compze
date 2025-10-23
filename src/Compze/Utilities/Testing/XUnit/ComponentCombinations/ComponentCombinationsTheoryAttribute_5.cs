@@ -4,13 +4,13 @@ using Compze.Utilities.Functional;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-public abstract class ComponentsCombinationsTheoryAttribute<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5> : ComponentsCombinationsTheoryAttribute
+public abstract class ComponentCombinationsTheoryAttribute<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5> : ComponentCombinationsTheoryAttribute
    where TComponent1 : Enum
    where TComponent2 : Enum
 {
-   protected ComponentsCombinationsTheoryAttribute(string configurationFileName,
+   protected ComponentCombinationsTheoryAttribute(string configurationFileName,
                                                    object[]? skipped,
                                                    string[]? skipReasons,
                                                    bool useTestMethodArgument,

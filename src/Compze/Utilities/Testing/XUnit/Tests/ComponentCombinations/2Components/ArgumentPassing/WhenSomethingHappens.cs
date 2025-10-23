@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 using Xunit;
 
 #pragma warning disable xUnit1026
@@ -11,18 +11,18 @@ public class WhenSomethingHappens
    public WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    {
       _testOutputHelper = testOutputHelper;
-      _testOutputHelper.WriteLine($"Serializer enum: {ComponentsCombination.Current.Serializer()}");
+      _testOutputHelper.WriteLine($"Serializer enum: {ComponentCombination.Current.Serializer()}");
    }
 
 
-   [ArgumentPassingTwoComponentsPCT] public void ComponentsCombinationCurrentIsAvailableInConstructor(ComponentsCombination combination) {}
+   [ArgumentPassingTwoComponentsPCT] public void ComponentCombinationCurrentIsAvailableInConstructor(ComponentCombination combination) {}
 
-   [ArgumentPassingTwoComponentsPCT] public void ThisIsTheCase(ComponentsCombination combination) =>
+   [ArgumentPassingTwoComponentsPCT] public void ThisIsTheCase(ComponentCombination combination) =>
       _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [ArgumentPassingTwoComponentsPCT] public void ThisIsAlsoTheCase(ComponentsCombination combination) =>
+      [ArgumentPassingTwoComponentsPCT] public void ThisIsAlsoTheCase(ComponentCombination combination) =>
          _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
    }
 }

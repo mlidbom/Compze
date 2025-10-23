@@ -6,9 +6,9 @@ using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-class ComponentsCombinationsTheoryDiscoverer : TheoryDiscoverer
+class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
 {
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
@@ -20,7 +20,7 @@ class ComponentsCombinationsTheoryDiscoverer : TheoryDiscoverer
 
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
-      var pctAttribute = (ComponentsCombinationsTheoryAttribute)factAttribute;
+      var pctAttribute = (ComponentCombinationsTheoryAttribute)factAttribute;
 
       var testCases = baseCases.Select(testCaseInterface =>
                                 {
@@ -28,7 +28,7 @@ class ComponentsCombinationsTheoryDiscoverer : TheoryDiscoverer
                                    if(testCaseInterface is not XunitTestCase xunitTestCase)
                                       return testCaseInterface;
 
-                                   return new ComponentsCombinationTestCase(
+                                   return new ComponentCombinationTestCase(
                                       testCase: xunitTestCase,
                                       useTestMethodArguments: pctAttribute.UseTestMethodArgument,
                                       traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)

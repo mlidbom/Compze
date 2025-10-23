@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 using Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components;
 using FluentAssertions;
 
@@ -6,7 +6,7 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._3Component
 
 public class WildcardFeatureDocumentation
 {
-   [WildcardTest] public void WildcardConfigurationGeneratesCorrectPermutations(ComponentsCombination combination)
+   [WildcardTest] public void WildcardConfigurationGeneratesCorrectPermutations(ComponentCombination combination)
    {
       combination.Components.Should().HaveCount(3);
       combination.Components[0].Should().BeOfType<Serializer>();

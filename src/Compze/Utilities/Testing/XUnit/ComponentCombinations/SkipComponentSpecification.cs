@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 /// <summary>Represents a skipped component with a reason.</summary>
 internal class SkipComponentSpecification
@@ -18,7 +18,7 @@ internal class SkipComponentSpecification
          throw new ArgumentException("Reason cannot be empty", nameof(reason));
    }
 
-   public bool Skips(ComponentsCombination combination) =>
+   public bool Skips(ComponentCombination combination) =>
       combination.Components.Any(c => c.Equals(_component));
 
    public override string ToString() => $"{_component}: {_reason}";

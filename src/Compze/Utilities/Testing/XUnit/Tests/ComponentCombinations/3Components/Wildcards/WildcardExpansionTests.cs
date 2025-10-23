@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 using Xunit;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._3Components.Wildcards;
@@ -13,7 +13,7 @@ public class WildcardExpansionTests
    }
 
    [WildcardTest]
-   public void WildcardsExpandCorrectly(ComponentsCombination combination)
+   public void WildcardsExpandCorrectly(ComponentCombination combination)
    {
       _testOutputHelper.WriteLine($"combination: {combination}");
       

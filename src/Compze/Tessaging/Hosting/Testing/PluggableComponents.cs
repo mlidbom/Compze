@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Compze.Utilities.Contracts;
 using Compze.Wiring.Testing;
 using Compze.Wiring.Testing.Sql;
 

@@ -4,19 +4,19 @@ using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-class ComponentsCombinationsConfigurationFileLine
+class ComponentCombinationsConfigurationFileLine
 {
    const string Wildcard = "*";
    readonly IReadOnlyList<Type> _componentTypes;
    readonly IReadOnlyList<string> _componentNamesOrWildCards;
    readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
 
-   public ComponentsCombinationsConfigurationFileLine(IReadOnlyList<Type> componentTypes, string line)
+   public ComponentCombinationsConfigurationFileLine(IReadOnlyList<Type> componentTypes, string line)
    {
       _componentTypes = componentTypes;
-      _componentNamesOrWildCards = line.Split(ComponentsCombination.Separator);
+      _componentNamesOrWildCards = line.Split(ComponentCombination.Separator);
       _wildCardComponents = _componentNamesOrWildCards
                            .Zip(_componentTypes, (componentName, componentType) => new { componentName, componentType })
                            .Where(it => it.componentName == Wildcard)
@@ -24,12 +24,12 @@ class ComponentsCombinationsConfigurationFileLine
                            .ToList();
    }
 
-   public IReadOnlyList<ComponentsCombination> ExpandWildcardsIntoConcretePermutations()
+   public IReadOnlyList<ComponentCombination> ExpandWildcardsIntoConcretePermutations()
    {
       if(!_wildCardComponents.Any())
          return
          [
-            ComponentsCombination.FromComponentEnumValues(_componentNamesOrWildCards
+            ComponentCombination.FromComponentEnumValues(_componentNamesOrWildCards
                                                          .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
                                                          .ToList())
          ];
@@ -37,18 +37,18 @@ class ComponentsCombinationsConfigurationFileLine
       return _wildCardComponents
             .Select(it => it.AllComponents)
             .CartesianProduct()
-            .Select(it => new WildCardComponentsCombination(it))
+            .Select(it => new WildCardComponentCombination(it))
             .Select(CreateConcretePermutation)
             .ToList();
    }
 
-   ComponentsCombination CreateConcretePermutation(WildCardComponentsCombination wildCardReplacementValues) =>
+   ComponentCombination CreateConcretePermutation(WildCardComponentCombination wildCardReplacementValues) =>
       _componentNamesOrWildCards
         .Select((componentName, componentIndex) =>
                    componentName == Wildcard
                       ? wildCardReplacementValues.ComponentFor(_componentTypes[componentIndex])
                       : ComponentValue(componentIndex, componentName))
-        ._(ComponentsCombination.FromComponentEnumValues);
+        ._(ComponentCombination.FromComponentEnumValues);
 
    Enum ComponentValue(int componentTypeIndex, string componentName) => (Enum)Enum.Parse(_componentTypes[componentTypeIndex], componentName);
 
@@ -57,7 +57,7 @@ class ComponentsCombinationsConfigurationFileLine
       public IReadOnlyList<Enum> AllComponents => Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList();
    }
 
-   class WildCardComponentsCombination(IReadOnlyList<Enum> components)
+   class WildCardComponentCombination(IReadOnlyList<Enum> components)
    {
       readonly IReadOnlyList<Enum> _components = components;
       public Enum ComponentFor(Type componentType) => _components.Single(predicate: it => it.GetType() == componentType);

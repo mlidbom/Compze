@@ -5,13 +5,13 @@ using System.IO;
 using System.Linq;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-static class ComponentsCombinationsConfigurationFileReader
+static class ComponentCombinationsConfigurationFileReader
 {
-   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentsCombination>> PermutationsCache = new();
+   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> PermutationsCache = new();
 
-   public static IReadOnlyList<ComponentsCombination> GetPermutations(string configurationFileName, Type[] componentEnumTypes)
+   public static IReadOnlyList<ComponentCombination> GetPermutations(string configurationFileName, Type[] componentEnumTypes)
    {
       return PermutationsCache.GetOrAdd(
          configurationFileName,
@@ -21,13 +21,13 @@ static class ComponentsCombinationsConfigurationFileReader
    const string Comment = "//";
    const char SkipPermutation = '#';
 
-   static IReadOnlyList<ComponentsCombination> ReadFile(Type[] componentTypes, string fileName) =>
+   static IReadOnlyList<ComponentCombination> ReadFile(Type[] componentTypes, string fileName) =>
       ReadFileLines(fileName)
         .Select(it => it.Trim())
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
         .Where(it => !it.StartsWith(Comment))
         .Where(it => !it.StartsWith(SkipPermutation))
-        .Select(it => new ComponentsCombinationsConfigurationFileLine(componentTypes, it))
+        .Select(it => new ComponentCombinationsConfigurationFileLine(componentTypes, it))
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
         .OrderBy(it => it.ToString())
         .DistinctBy(it => it.ToString())

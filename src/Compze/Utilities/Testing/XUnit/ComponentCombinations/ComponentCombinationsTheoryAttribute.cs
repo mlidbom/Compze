@@ -10,11 +10,11 @@ using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
-[XunitTestCaseDiscoverer(typeof(ComponentsCombinationsTheoryDiscoverer))]
-public abstract class ComponentsCombinationsTheoryAttribute :
+[XunitTestCaseDiscoverer(typeof(ComponentCombinationsTheoryDiscoverer))]
+public abstract class ComponentCombinationsTheoryAttribute :
    TheoryAttribute,
    IDataAttribute
 {
@@ -24,7 +24,7 @@ public abstract class ComponentsCombinationsTheoryAttribute :
    readonly Type[] _componentEnumTypes;
    readonly string _configurationFileName;
 
-   protected ComponentsCombinationsTheoryAttribute(string configurationFileName,
+   protected ComponentCombinationsTheoryAttribute(string configurationFileName,
                                                    Type[] componentEnumTypes,
                                                    object[]? skipped,
                                                    string[]? skipReasons,
@@ -83,7 +83,7 @@ public abstract class ComponentsCombinationsTheoryAttribute :
 
       try
       {
-         var combinations = ComponentsCombinationsConfigurationFileReader
+         var combinations = ComponentCombinationsConfigurationFileReader
                            .GetPermutations(_configurationFileName, _componentEnumTypes)
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
