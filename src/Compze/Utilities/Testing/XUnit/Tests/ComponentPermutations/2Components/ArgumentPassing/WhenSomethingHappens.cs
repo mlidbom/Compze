@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 using Xunit;
 
 #pragma warning disable xUnit1026

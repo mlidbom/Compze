@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Xunit.Sdk;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
 public class ComponentsPermutation : IXunitSerializable
 {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
 static class ComponentsPermutationsConfigurationFileReader
 {

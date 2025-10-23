@@ -1,6 +1,6 @@
 using System;
 using Compze.Utilities.Functional;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 

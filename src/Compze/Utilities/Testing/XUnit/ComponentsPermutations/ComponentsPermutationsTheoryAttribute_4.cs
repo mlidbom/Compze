@@ -4,9 +4,9 @@ using Compze.Utilities.Functional;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
-public abstract class ComponentsPermutationsTheoryAttribute<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5> : ComponentsPermutationsTheoryAttribute
+public abstract class ComponentsPermutationsTheoryAttribute<TComponent1, TComponent2, TComponent3, TComponent4> : ComponentsPermutationsTheoryAttribute
    where TComponent1 : Enum
    where TComponent2 : Enum
 {
@@ -17,7 +17,7 @@ public abstract class ComponentsPermutationsTheoryAttribute<TComponent1, TCompon
                                                 string? sourceFilePath,
                                                 int sourceLineNumber)
       : base(configurationFileName: configurationFileName,
-             componentEnumTypes: EnumerableCE.OfTypes<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>().ToArray(),
+             componentEnumTypes:EnumerableCE.OfTypes<TComponent1, TComponent2, TComponent3, TComponent4>().ToArray(),
              skipped: skipped,
              skipReasons: skipReasons,
              useTestMethodArgument: useTestMethodArgument,

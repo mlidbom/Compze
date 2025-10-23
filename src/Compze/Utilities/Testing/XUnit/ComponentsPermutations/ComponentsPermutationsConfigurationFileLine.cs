@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
 class ComponentsPermutationsConfigurationFileLine
 {

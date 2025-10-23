@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components.ArgumentPassing;
 

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
 /// <summary>Represents a skipped component with a reason.</summary>
 internal class SkipComponentSpecification

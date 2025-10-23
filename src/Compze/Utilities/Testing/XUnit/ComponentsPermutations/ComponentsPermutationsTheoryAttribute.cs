@@ -10,7 +10,7 @@ using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
 [XunitTestCaseDiscoverer(typeof(ComponentsPermutationsTheoryDiscoverer))]

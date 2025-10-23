@@ -1,7 +1,7 @@
 using Serilog.Core;
 using Serilog.Events;
 using System.Collections.Generic;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 using Xunit;
 
 namespace Compze.Tests.Infrastructure.XUnit.Logging;

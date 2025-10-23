@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
+namespace Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 
 class ComponentsPermutationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
 {

@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentsPermutations;
 using Compze.Wiring.Testing;
 using Compze.Wiring.Testing.Sql;
 
