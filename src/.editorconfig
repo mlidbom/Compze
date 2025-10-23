@@ -31,12 +31,12 @@ dotnet_diagnostic.IDE0055.severity = none # I don't want visual studio to give t
 dotnet_diagnostic.IDE0058.severity = none # In countless cases it is perfectly valid not to use the return value of an expression
 dotnet_diagnostic.IDE0046.severity = none # Not using the ternary operator in every case it is theoretically possible is not a warning level offense
 
-dotnet_diagnostic.IDE0007.severity = none #I like war, but not using it is valid in many cases. It's not a warning level offence.
+dotnet_diagnostic.IDE0007.severity = none #I like var, but not using it is valid in many cases. It's not a warning level offence.
 dotnet_diagnostic.IDE0011.severity = none # Sometimes braces are not needed for simple if statements. This is not a warning level thing to me.
 
 dotnet_diagnostic.CA1859.severity = none #CA1859: Use concrete types when possible for improved performance || I want the proper types, not whatever makes the code most efficient at the cost of exposing something I SHOULD NOT
-dotnet_diagnostic.CA1860.severity = none #Prefer comparing Count to 0 over using Any() || Well I think Any() is more readable and shorter and unless a profiler tells me I have an issue with this ridiculous nano optimization I don't care.
-dotnet_diagnostic.CA1805.severity = none #I do initialize members to their default values || It makes it clear that I have not forgotten, that this is the indended value.
+dotnet_diagnostic.CA1860.severity = none #Prefer comparing Count to 0 over using Any() || Well we think Any() is more readable and shorter and unless a profiler tells us we have an issue with this nano optimization we don't care.
+dotnet_diagnostic.CA1805.severity = none #We do sometimes initialize members to their default values. It makes it clear that we have not forgotten, that this is the indended value.
 
 #Todo: These should probably be fixed rather than ignored
 dotnet_diagnostic.CA2201.severity = none # Yes, In principle I should create a new specific Exception type for every place where I throw one. In practice it is just too much effort for very little gain. 
