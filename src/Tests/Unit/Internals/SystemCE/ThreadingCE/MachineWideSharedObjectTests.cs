@@ -147,9 +147,9 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
       Thread.Sleep(50.Milliseconds());
 
-      conflictingSections.ForEach(gate => gate.ExitGate.PassedThrough.Count.Should().Be(0));
+      conflictingSections.ForEach(it => it.ExitGate.PassedThrough.Count.Should().Be(0));
       updateGate.Open();
-      conflictingSections.ForEach(gate => gate.ExitGate.AwaitPassedThroughCountEqualTo(1));
+      conflictingSections.ForEach(it => it.ExitGate.AwaitPassedThroughCountEqualTo(1));
 
       await tasks;
       // ReSharper restore AccessToDisposedClosure
