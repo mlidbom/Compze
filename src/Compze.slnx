@@ -131,10 +131,6 @@
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />
   </Folder>
-  <Folder Name="/_Solution Items/Devscripts/">
-    <File Path="../DevScripts/Remove-RedundantInternalsVisibleTo.ps1" />
-    <File Path="../DevScripts/Validate-SolutionStructure.ps1" />
-  </Folder>
   <Folder Name="/_Solution Items/Tests/">
     <File Path="Compze/test-common-appsettings.json" />
     <File Path="TestUsingPluggableComponentCombinations" />
