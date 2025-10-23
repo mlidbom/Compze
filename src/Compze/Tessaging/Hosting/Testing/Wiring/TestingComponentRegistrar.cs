@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Hosting.Sql.MicrosoftSql;
 using Compze.Tessaging.Hosting.Sql.MySql;
 using Compze.Tessaging.Hosting.Sql.PostgreSql;
@@ -26,6 +27,7 @@ class TestingComponentRegistrar : ComponentRegistrar
                               { typeof(PgSqlSqlLayerRegistrar.ITestingRegistrar), new PostgreSqlSqlDbPoolRegistrar(this) },
                               { typeof(SqliteSqlLayerRegistrar.ITestingRegistrar), new SqliteSqlDbPoolRegistrar(this) },
                               { typeof(SqliteMemorySqlLayerRegistrar.ITestingRegistrar), new SqliteMemoryDbPoolRegistrar(this) },
+                              {typeof(TimeSourceRegistrar.ITestingRegistrar), new TestingTimeSourceRegistrar(this)}
                            };
    }
 
@@ -42,6 +44,13 @@ class TestingComponentRegistrar : ComponentRegistrar
    public override IRunMode RunMode => Utilities.DependencyInjection.RunMode.Testing;
 
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();
+}
+
+class TestingTimeSourceRegistrar(IComponentRegistrar registrar) : TimeSourceRegistrar.ITestingRegistrar
+{
+   readonly IComponentRegistrar _registrar = registrar;
+
+   public IComponentRegistrar Register() => _registrar.TestingTimeSource();
 }
 
 class MsSqlDbPoolRegistrar(IComponentRegistrar registrar) : MsSqlSqlLayerRegistrar.ITestingRegistrar

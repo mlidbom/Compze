@@ -38,7 +38,6 @@
       <ProjectReference Include="..\..\Teventive\EventStore\Sqlite\Compze.Tessaging.Teventive.EventStore.Sqlite.csproj" />
       <ProjectReference Include="..\..\Sql\Sqlite\Compze.Tessaging.Sql.Sqlite.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-      <ProjectReference Include="..\..\..\Wiring\Testing\Compze.Wiring.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.1" />
