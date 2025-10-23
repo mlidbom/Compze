@@ -65,7 +65,6 @@ function C-Create-Project {
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 

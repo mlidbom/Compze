@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

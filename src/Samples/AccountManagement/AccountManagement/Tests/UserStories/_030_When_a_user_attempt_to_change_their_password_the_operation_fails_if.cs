@@ -1,6 +1,6 @@
 using System;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
 

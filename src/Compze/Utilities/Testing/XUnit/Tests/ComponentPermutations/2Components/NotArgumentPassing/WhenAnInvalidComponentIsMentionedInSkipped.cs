@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components.NotArgumentPassing;

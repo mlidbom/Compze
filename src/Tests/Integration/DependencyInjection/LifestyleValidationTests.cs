@@ -1,7 +1,7 @@
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 

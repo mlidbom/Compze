@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 internal class SkippedComponentsCollection

@@ -9,7 +9,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.TasksCE;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;

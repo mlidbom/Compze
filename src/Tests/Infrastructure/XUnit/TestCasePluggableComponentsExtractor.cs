@@ -1,5 +1,5 @@
 using System;
-using Compze.Utilities.SystemCE;
+using Compze.Utilities.Functional;
 using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 namespace Compze.Tests.Infrastructure.XUnit;
@@ -16,7 +16,7 @@ static class TestCasePluggableComponentsExtractor
 
       try
       {
-         return Tessaging.Hosting.Testing.PluggableComponents.FromString(permutation.Components.Join(":"));
+         return Tessaging.Hosting.Testing.PluggableComponents.FromEnums(permutation.Components);
       }
       catch(Exception ex)
       {
@@ -24,7 +24,7 @@ static class TestCasePluggableComponentsExtractor
             throw new Exception(
                $"""
                 The current test does not appear to be a pluggable components test, 
-                could not parse pluggable components from the string {permutation.Components.Join(":")}
+                could not parse pluggable components from the string {permutation.Components.select(it => it.ToString())}
                 """,
                ex);
          return null;

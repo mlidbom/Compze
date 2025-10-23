@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Compze.Utilities.Functional;
 
 // ReSharper disable ExplicitCallerInfoArgument
