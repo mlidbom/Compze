@@ -1,6 +1,4 @@
-using Compze.Utilities.SystemCE;
-
-namespace Compze.Utilities;
+namespace Compze.Utilities.SystemCE;
 
 static class CastCE
 {
