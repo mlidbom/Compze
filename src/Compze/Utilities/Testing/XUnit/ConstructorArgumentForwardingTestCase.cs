@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit;
@@ -7,11 +9,11 @@ namespace Compze.Utilities.Testing.XUnit;
 /// classes that get their data from existing test cases do not need to perform all this ceremony
 /// of passing arguments along, losing the actual logic in the noise
 /// </summary>
-public class ConstructorArgumentForwardingTestCase : XunitTestCase
+abstract class ConstructorArgumentForwardingTestCase : XunitTestCase
 {
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]
-   public ConstructorArgumentForwardingTestCase() {}
+   protected ConstructorArgumentForwardingTestCase() {}
 
 
 
@@ -20,21 +22,21 @@ public class ConstructorArgumentForwardingTestCase : XunitTestCase
    /// unless a non-null value is provided for one of the optional arguments,
    /// if it is, that value is used for that argument
    /// </summary>
-   public ConstructorArgumentForwardingTestCase(TestCaseDetails details,
-                                                object?[]? testMethodArguments = null,
-                                                Dictionary<string, HashSet<string>>? traits = null,
-                                                IXunitTestMethod? testMethod = null,
-                                                string? testCaseDisplayName = null,
-                                                string? uniqueID = null,
-                                                bool? @explicit = null,
-                                                Type[]? skipExceptions = null,
-                                                string? skipReason = null,
-                                                Type? skipType = null,
-                                                string? skipUnless = null,
-                                                string? skipWhen = null,
-                                                string? sourceFilePath = null,
-                                                int? sourceLineNumber = null,
-                                                int? timeout = null)
+   protected ConstructorArgumentForwardingTestCase(TestCaseDetails details,
+                                                   object?[]? testMethodArguments = null,
+                                                   Dictionary<string, HashSet<string>>? traits = null,
+                                                   IXunitTestMethod? testMethod = null,
+                                                   string? testCaseDisplayName = null,
+                                                   string? uniqueID = null,
+                                                   bool? @explicit = null,
+                                                   Type[]? skipExceptions = null,
+                                                   string? skipReason = null,
+                                                   Type? skipType = null,
+                                                   string? skipUnless = null,
+                                                   string? skipWhen = null,
+                                                   string? sourceFilePath = null,
+                                                   int? sourceLineNumber = null,
+                                                   int? timeout = null)
       : base(testMethodArguments: testMethodArguments,
              traits: traits,
              testMethod: details.ResolvedTestMethod,
@@ -56,21 +58,21 @@ public class ConstructorArgumentForwardingTestCase : XunitTestCase
    /// unless a non-null value is provided for one of the optional arguments,
    /// if it is, that value is used for that argument
    /// </summary>
-   public ConstructorArgumentForwardingTestCase(XunitTestCase testCase,
-                                                IXunitTestMethod? testMethod = null,
-                                                string? testCaseDisplayName = null,
-                                                string? uniqueID = null,
-                                                bool? @explicit = null,
-                                                Type[]? skipExceptions = null,
-                                                string? skipReason = null,
-                                                Type? skipType = null,
-                                                string? skipUnless = null,
-                                                string? skipWhen = null,
-                                                Dictionary<string, HashSet<string>>? traits = null,
-                                                object?[]? testMethodArguments = null,
-                                                string? sourceFilePath = null,
-                                                int? sourceLineNumber = null,
-                                                int? timeout = null)
+   protected ConstructorArgumentForwardingTestCase(XunitTestCase testCase,
+                                                   IXunitTestMethod? testMethod = null,
+                                                   string? testCaseDisplayName = null,
+                                                   string? uniqueID = null,
+                                                   bool? @explicit = null,
+                                                   Type[]? skipExceptions = null,
+                                                   string? skipReason = null,
+                                                   Type? skipType = null,
+                                                   string? skipUnless = null,
+                                                   string? skipWhen = null,
+                                                   Dictionary<string, HashSet<string>>? traits = null,
+                                                   object?[]? testMethodArguments = null,
+                                                   string? sourceFilePath = null,
+                                                   int? sourceLineNumber = null,
+                                                   int? timeout = null)
       : base(testMethod: testCase.TestMethod,
              testCaseDisplayName: testCaseDisplayName ?? testCase.TestCaseDisplayName,
              uniqueID: uniqueID ?? testCase.UniqueID,

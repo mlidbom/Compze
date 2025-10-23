@@ -71,7 +71,6 @@
       <ProjectReference Include="..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
       <ProjectReference Include="..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
       <ProjectReference Include="..\..\Compze\Wiring\Compze.Wiring.csproj" />
-      <ProjectReference Include="..\..\Compze\Wiring\Testing\Compze.Wiring.Testing.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

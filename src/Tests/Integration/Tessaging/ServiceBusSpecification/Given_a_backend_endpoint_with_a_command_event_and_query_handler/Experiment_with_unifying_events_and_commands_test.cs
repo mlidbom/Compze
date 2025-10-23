@@ -16,7 +16,7 @@ using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
 // ReSharper disable MemberCanBeInternal for testing

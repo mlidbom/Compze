@@ -110,7 +110,6 @@
   </Folder>
   <Folder Name="/Compze/Wiring/">
     <Project Path="Compze/Wiring/Compze.Wiring.csproj" />
-    <Project Path="Compze/Wiring/Testing/Compze.Wiring.Testing.csproj" />
   </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">

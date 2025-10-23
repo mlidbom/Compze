@@ -1,3 +1,4 @@
+using System;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Sql.Sqlite;

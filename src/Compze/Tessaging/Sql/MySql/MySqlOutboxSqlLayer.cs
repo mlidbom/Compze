@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Tessaging.Hosting.Implementation;

@@ -13,7 +13,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
