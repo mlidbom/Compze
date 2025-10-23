@@ -7,21 +7,24 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._4Component
 public class WhenSomethingHappens
 {
    readonly ITestOutputHelper _testOutputHelper;
+
    public WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    {
       _testOutputHelper = testOutputHelper;
-      _testOutputHelper.WriteLine($"Serializer enum: {ComponentCombination.Current.Serializer()}");
+      PrintSerializer(ComponentCombination.Current);
    }
 
-
-   [ArgumentPassingFourComponentsPCT] public void ComponentCombinationCurrentIsAvailableInConstructor(ComponentCombination combination) {}
+   [ArgumentPassingFourComponentsPCT] public void ComponentCombinationCurrentIsAvailableInConstructor(ComponentCombination combination) =>
+      PrintSerializer(combination);
 
    [ArgumentPassingFourComponentsPCT] public void ThisIsTheCase(ComponentCombination combination) =>
-      _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
+      PrintSerializer(combination);
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
       [ArgumentPassingFourComponentsPCT] public void ThisIsAlsoTheCase(ComponentCombination combination) =>
-         _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
+         PrintSerializer(combination);
    }
+
+   void PrintSerializer(ComponentCombination combination) => _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
 }

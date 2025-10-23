@@ -4,9 +4,9 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Component
 
 static class OurComponentCombination
 {
-   public static Serializer Serializer(this ComponentCombination? combination) =>
-      (Serializer)combination!.Components[0];
+   public static Serializer Serializer(this ComponentCombination combination) =>
+      (Serializer)combination.Components[0];
 
-   public static SqlLayer SqlLayer(this ComponentCombination? combination) =>
-      (SqlLayer)combination!.Components[1];
+   public static SqlLayer SqlLayer(this ComponentCombination combination) =>
+      (SqlLayer)combination.Components[1];
 }
