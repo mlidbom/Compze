@@ -4,7 +4,6 @@ using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
 using Compze.Wiring.Testing.Sql;
 using FluentAssertions.Extensions;
 

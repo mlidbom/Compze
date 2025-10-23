@@ -3,7 +3,7 @@ using AccountManagement.API;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace AccountManagement;

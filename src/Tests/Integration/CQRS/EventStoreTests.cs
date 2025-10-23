@@ -10,7 +10,7 @@ using FluentAssertions;
 using System;
 using System.Linq;
 using System.Transactions;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS;
 

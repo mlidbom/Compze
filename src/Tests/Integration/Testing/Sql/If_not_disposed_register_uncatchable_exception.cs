@@ -4,7 +4,7 @@ using Compze.Tests.Unit.Internals;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 using Xunit;
 using static FluentAssertions.FluentActions;

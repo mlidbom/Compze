@@ -1,3 +1,5 @@
+using System;
+
 namespace Compze.Wiring.Testing.Sql;
 
 /// <summary>

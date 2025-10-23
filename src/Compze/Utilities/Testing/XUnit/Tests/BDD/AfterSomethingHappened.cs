@@ -1,3 +1,4 @@
+using System;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.BDD;
@@ -12,7 +13,7 @@ public class AfterSomethingHappened
 
       public class AndThenSomethingElseHappened : AndThenThisHappened
       {
-         [XF] public void EvenThisIsTrue() => Console.WriteLine(nameof(EvenThisIsTrue));
+         [XF] public void NumberOfRoadsToWalkDownIs42() => Console.WriteLine(nameof(NumberOfRoadsToWalkDownIs42));
       }
    }
 }

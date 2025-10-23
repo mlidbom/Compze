@@ -22,7 +22,7 @@ using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
@@ -407,7 +407,7 @@ public class EventStoreUpdaterTest : UniversalTestBase
       });
    }
 
-   [PCT(Skipped =
+   [PCT(skipped:
    [
       $"{nameof(SqlLayer.Sqlite)}::Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite",
       $"{nameof(SqlLayer.SqliteMemory)}::Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite"
@@ -596,7 +596,7 @@ public class EventStoreUpdaterTest : UniversalTestBase
          });
    }
 
-   [PCT(Skipped =
+   [PCT(skipped:
    [
       $"{nameof(SqlLayer.Sqlite)}::We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...",
       $"{nameof(SqlLayer.SqliteMemory)}::We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway..."

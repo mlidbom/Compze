@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 using FluentAssertions;

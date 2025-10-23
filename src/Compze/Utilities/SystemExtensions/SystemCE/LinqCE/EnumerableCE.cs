@@ -94,4 +94,6 @@ public static partial class EnumerableCE
 
       return me.SelectMany(obj => obj);
    }
+
+   internal static IReadOnlyList<T> ToReadOnlyList<T>(this IEnumerable<T> me) => me.ToList();
 }

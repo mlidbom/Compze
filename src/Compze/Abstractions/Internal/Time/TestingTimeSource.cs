@@ -9,25 +9,31 @@ namespace Compze.Abstractions.Internal.Time;
 static class TestingTimeSourceRegistrar
 {
    internal static IComponentRegistrar TestingTimeSource(this IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>()
-                                     .CreatedBy(() => new TestingTimeSource()));
+      => Time.TestingTimeSource.RegisterWith(registrar);
 }
 
 /// <summary> Just statically returns whatever value was assigned.</summary>
 public class TestingTimeSource : IUtcTimeTimeSource
 {
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>()
+                                  .CreatedBy(() => new TestingTimeSource())
+                                  .DelegateToParentServiceLocatorWhenCloning());
+
    DateTime? _freezeAt;
 
-   ///<summary>Returns a timesource that will continually return the time that it was created at as the current time.</summary>
+   TestingTimeSource() {}
+
+   ///<summary>Returns a time source that will continually return the time that it was created at as the current time.</summary>
    internal static TestingTimeSource FollowingSystemClock => new();
 
-   ///<summary>Returns a timesource that will continually return the time that it was created at as the current time.</summary>
+   ///<summary>Returns a time source that will continually return the time that it was created at as the current time.</summary>
    public static TestingTimeSource FrozenUtcNow() => new()
                                                      {
                                                         _freezeAt = DateTime.UtcNow
                                                      };
 
-   ///<summary>Returns a timesource that will forever return <param name="utcTime"> as the current time.</param></summary>
+   ///<summary>Returns a time source that will forever return <param name="utcTime"> as the current time.</param></summary>
    public static TestingTimeSource FrozenAtUtcTime(DateTime utcTime) => new()
                                                                         {
                                                                            _freezeAt = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc)

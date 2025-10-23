@@ -12,7 +12,7 @@ using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Testing.XUnit.ComponentPermutations;
+using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
 
 // ReSharper disable AccessToDisposedClosure
