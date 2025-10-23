@@ -1,3 +1,4 @@
+using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite;
@@ -8,6 +9,6 @@ internal static class SqlExceptions
    internal static class Sqlite
    {
       const int PrimaryKeyViolationSqliteErrorCode = 19; // SQLITE_CONSTRAINT
-      internal static bool IsPrimaryKeyViolation(SqliteException e) => e.SqliteErrorCode == PrimaryKeyViolationSqliteErrorCode && e.Message.Contains("UNIQUE constraint failed");
+      internal static bool IsPrimaryKeyViolation(SqliteException e) => e.SqliteErrorCode == PrimaryKeyViolationSqliteErrorCode && e.Message.ContainsInvariant("UNIQUE constraint failed");
    }
 }

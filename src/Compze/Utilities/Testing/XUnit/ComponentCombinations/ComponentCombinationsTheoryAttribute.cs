@@ -25,12 +25,12 @@ public abstract class ComponentCombinationsTheoryAttribute :
    readonly string _configurationFileName;
 
    protected ComponentCombinationsTheoryAttribute(string configurationFileName,
-                                                   Type[] componentEnumTypes,
-                                                   object[]? skipped,
-                                                   string[]? skipReasons,
-                                                   bool useTestMethodArgument,
-                                                   string? sourceFilePath,
-                                                   int sourceLineNumber) : base(sourceFilePath, sourceLineNumber)
+                                                  Type[] componentEnumTypes,
+                                                  object[]? skipped,
+                                                  string[]? skipReasons,
+                                                  bool useTestMethodArgument,
+                                                  string? sourceFilePath,
+                                                  int sourceLineNumber) : base(sourceFilePath, sourceLineNumber)
    {
       if(componentEnumTypes.Length == 0)
       {
@@ -61,6 +61,7 @@ public abstract class ComponentCombinationsTheoryAttribute :
 
    SkipComponentSpecificationsCollection SkipComponentSpecifications => SkipComponentSpecificationsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
 
+#pragma warning disable CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
    string? IDataAttribute.Skip => Skip;
@@ -70,6 +71,7 @@ public abstract class ComponentCombinationsTheoryAttribute :
    string? IDataAttribute.TestDisplayName => DisplayName;
    int? IDataAttribute.Timeout => Timeout > 0 ? Timeout : null;
    string[]? IDataAttribute.Traits => null;
+#pragma warning restore CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
 
    public ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
    {
