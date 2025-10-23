@@ -38,7 +38,7 @@ class EventCache : IDisposable, IEventCache
       readonly EventCache _parent = eventCache;
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-      readonly IThreadShared<Dictionary<string, Dictionary<Guid, Entry>>> _overlays = ThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<Guid, Entry>>>();
+      readonly IThreadShared<Dictionary<string, Dictionary<Guid, Entry>>> _overlays = IThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<Guid, Entry>>>();
 
       Dictionary<Guid, Entry> CurrentOverlay
       {

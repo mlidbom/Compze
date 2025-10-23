@@ -15,7 +15,7 @@ sealed class DeferredConsoleWriter : IDisposable
       internal bool TestSucceeded;
    }
 
-   readonly IThreadShared<Buffer> _buffer = ThreadShared.WithDefaultTimeout(new Buffer());
+   readonly IThreadShared<Buffer> _buffer = IThreadShared.WithDefaultTimeout(new Buffer());
 
    public static TResult Execute<TResult>([InstantHandle] Func<DeferredConsoleWriter, TResult> action)
    {

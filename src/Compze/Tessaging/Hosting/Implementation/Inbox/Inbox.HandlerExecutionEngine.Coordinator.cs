@@ -23,7 +23,7 @@ partial class Inbox
          readonly IMessageStorage _messageStorage = messageStorage;
          readonly IServiceLocator _serviceLocator = serviceLocator;
          readonly IMessageHandlerRegistry _messageHandlerRegistry = messageHandlerRegistry;
-         readonly IThreadShared<NonThreadsafeImplementation> _implementation = ThreadShared.WithDefaultTimeout(new NonThreadsafeImplementation(globalStateTracker, endpointId));
+         readonly IThreadShared<NonThreadsafeImplementation> _implementation = IThreadShared.WithDefaultTimeout(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
          internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<IMessageDispatchingRule> dispatchingRules)
          {

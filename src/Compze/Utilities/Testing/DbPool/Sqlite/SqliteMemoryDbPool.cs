@@ -36,7 +36,7 @@ class SqliteMemoryDbPool : DbPoolBase
    }
 
    // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
-   readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = ThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());
+   readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = IThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());
 
    protected override string ConnectionStringFor(Database db)
    {

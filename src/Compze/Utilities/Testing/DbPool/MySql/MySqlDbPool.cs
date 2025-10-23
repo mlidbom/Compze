@@ -48,7 +48,7 @@ sealed class MySqlDbPool : DbPoolBase
                                 ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";
 
       _masterConnectionPool = IMySqlConnectionPool.CreateInstance(masterConnectionString);
-      _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new MySqlConnectionStringBuilder(masterConnectionString));
+      _connectionStringBuilder = IThreadShared.WithDefaultTimeout(new MySqlConnectionStringBuilder(masterConnectionString));
    }
 
    protected override string ConnectionStringFor(Database db)

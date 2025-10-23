@@ -54,7 +54,7 @@ sealed class PgSqlDbPool : DbPoolBase
                                 ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";
 
       _masterConnectionPool = IPgSqlConnectionPool.CreateInstance(masterConnectionString);
-      _connectionStringBuilder = ThreadShared.WithDefaultTimeout(new NpgsqlConnectionStringBuilder(masterConnectionString));
+      _connectionStringBuilder = IThreadShared.WithDefaultTimeout(new NpgsqlConnectionStringBuilder(masterConnectionString));
    }
 
    protected override string ConnectionStringFor(Database db)

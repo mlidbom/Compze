@@ -12,7 +12,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
    where TCommand : DbCommand
 {
    static readonly IThreadShared<Dictionary<string, IDbConnectionPool<TConnection, TCommand>>> Pools =
-      ThreadShared.WithDefaultTimeout(new Dictionary<string, IDbConnectionPool<TConnection, TCommand>>());
+      IThreadShared.WithDefaultTimeout(new Dictionary<string, IDbConnectionPool<TConnection, TCommand>>());
 
    internal static IDbConnectionPool<TConnection, TCommand> ForConnectionString(string connectionString, PoolableConnectionFlags flags, Func<string, TConnection> createConnection) =>
       Pools.Update(pools => pools.GetOrAdd(connectionString, constructor: () => Create(connectionString, flags, createConnection)));

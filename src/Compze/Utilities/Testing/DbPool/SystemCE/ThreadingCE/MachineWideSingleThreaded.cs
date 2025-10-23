@@ -12,7 +12,7 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
 class MachineWideSingleThreaded
 {
-   static readonly IThreadShared<Dictionary<string, Mutex>> Cache = ThreadShared.WithDefaultTimeout(new Dictionary<string, Mutex>());
+   static readonly IThreadShared<Dictionary<string, Mutex>> Cache = IThreadShared.WithDefaultTimeout(new Dictionary<string, Mutex>());
 
    readonly Mutex _mutex;
    MachineWideSingleThreaded(string lockId)

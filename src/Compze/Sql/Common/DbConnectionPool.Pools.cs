@@ -81,7 +81,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
    class TransactionAffinityDbConnectionManager(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionManager(connectionString, createConnection)
    {
       readonly IThreadShared<Dictionary<string, Task<TConnection>>> _transactionConnections =
-         ThreadShared.WithDefaultTimeout<Dictionary<string, Task<TConnection>>>();
+         IThreadShared.WithDefaultTimeout<Dictionary<string, Task<TConnection>>>();
 
       public override async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
       {
