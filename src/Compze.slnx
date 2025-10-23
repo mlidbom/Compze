@@ -70,10 +70,6 @@
   <Folder Name="/Compze/Utilities/Testing/" />
   <Folder Name="/Compze/Utilities/Testing/DbPool/">
     <Project Path="Compze/Utilities/Testing/DbPool/Compze.Utilities.Testing.DbPool.csproj" />
-    <Project Path="Compze/Utilities/Testing/DbPool/MicrosoftSql/Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
-    <Project Path="Compze/Utilities/Testing/DbPool/MySql/Compze.Utilities.Testing.DbPool.MySql.csproj" />
-    <Project Path="Compze/Utilities/Testing/DbPool/PostgreSql/Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
-    <Project Path="Compze/Utilities/Testing/DbPool/Sqlite/Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze/Wiring/">
     <Project Path="Compze/Wiring/Compze.Wiring.csproj" />

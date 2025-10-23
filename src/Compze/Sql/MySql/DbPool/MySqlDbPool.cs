@@ -10,29 +10,19 @@ namespace Compze.Utilities.Testing.DbPool.MySql;
 
 static class MySqlDbPoolRegistrar
 {
-   public static IComponentRegistrar MySqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      MySqlDbPool.RegisterWith(registrar);
-
-   public static IComponentRegistrar MySqlDbPoolWithConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      registrar.MySqlDbPoolIfNotAlreadyRegistered();
-
-      return registrar.Register(
-         Singleton.For<IMySqlConnectionPool>()
-                  .CreatedBy((MySqlDbPool pool) => IMySqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName)))
-      );
-   }
+   public static IComponentRegistrar MySqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
+      MySqlDbPoolSqlLayer.RegisterWith(registrar);
 }
 
-sealed class MySqlDbPool : DbPoolBase
+sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<MySqlDbPool>())
+      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
          return registrar;
 
-      return registrar.Register(Singleton.For<MySqlDbPool>()
-                                         .CreatedBy(() => new MySqlDbPool())
+      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                         .CreatedBy(() => new MySqlDbPoolSqlLayer())
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
@@ -42,7 +32,7 @@ sealed class MySqlDbPool : DbPoolBase
 
    readonly IThreadShared<MySqlConnectionStringBuilder> _connectionStringBuilder;
 
-   public MySqlDbPool()
+   public MySqlDbPoolSqlLayer()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                                 ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";
@@ -51,7 +41,7 @@ sealed class MySqlDbPool : DbPoolBase
       _connectionStringBuilder = IThreadShared.WithDefaultTimeout(new MySqlConnectionStringBuilder(masterConnectionString));
    }
 
-   protected override string ConnectionStringFor(Database db)
+   public string ConnectionStringFor(DbPoolDatabase db)
       => _connectionStringBuilder.Update(it => it.mutate(me =>
       {
          me.Database = db.Name;
@@ -60,13 +50,13 @@ sealed class MySqlDbPool : DbPoolBase
          me.ConnectionLifeTime = 10;
       }).ConnectionString);
 
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
+   public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db)
    {
       ResetConnectionPool(db);
       ResetDatabase(db);
    }
 
-   protected override void ResetDatabase(Database db)
+   public void ResetDatabase(DbPoolDatabase db)
    {
       //I experimented with dropping objects like for the other databases, but it was not faster than just dropping and recreating the database.
       _masterConnectionPool.ExecuteNonQuery($"""
@@ -75,7 +65,7 @@ sealed class MySqlDbPool : DbPoolBase
                                              """);
    }
 
-   void ResetConnectionPool(Database db)
+   void ResetConnectionPool(DbPoolDatabase db)
    {
       using var connection = new MySqlConnection(ConnectionStringFor(db));
       MySqlConnection.ClearPool(connection);

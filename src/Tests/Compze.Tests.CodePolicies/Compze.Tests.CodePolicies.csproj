@@ -38,10 +38,6 @@
     <ProjectReference Include="..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\Sqlite\Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
     <ProjectReference Include="..\..\Compze\Wiring\Compze.Wiring.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
   </ItemGroup>

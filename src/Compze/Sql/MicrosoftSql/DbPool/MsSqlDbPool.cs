@@ -9,28 +9,24 @@ namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
 static class MicrosoftSqlDbPoolRegistrar
 {
-   public static IComponentRegistrar MicrosoftSqlDbPoolAndConnectionPoolForConnectionStringName(this IComponentRegistrar registrar, string connectionStringName)
+   public static IComponentRegistrar MicrosoftSqlDbPoolSqlLayerAndConnectionFactory(this IComponentRegistrar registrar, string connectionStringName)
    {
-      registrar.MsSqlDbPoolIfNotAlreadyRegistered();
-
-      return registrar.Register(
-         Singleton.For<IMsSqlConnectionPool>()
-                  .CreatedBy((MsSqlDbPool pool) => IMsSqlConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+      return registrar.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
    }
 
-   public static IComponentRegistrar MsSqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      MsSqlDbPool.RegisterWith(registrar);
+   public static IComponentRegistrar MsSqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
+      MsSqlDbPoolSqlLayer.RegisterWith(registrar);
 }
 
-class MsSqlDbPool : DbPoolBase
+class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<MsSqlDbPool>())
+      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
          return registrar;
 
-      return registrar.Register(Singleton.For<MsSqlDbPool>()
-                                         .CreatedBy(() => new MsSqlDbPool())
+      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                         .CreatedBy(() => new MsSqlDbPoolSqlLayer())
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
@@ -39,7 +35,7 @@ class MsSqlDbPool : DbPoolBase
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
 
-   public MsSqlDbPool()
+   public MsSqlDbPoolSqlLayer()
    {
       _masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                              ?? "Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;";
@@ -47,10 +43,10 @@ class MsSqlDbPool : DbPoolBase
       _masterConnectionPool = IMsSqlConnectionPool.CreateInstance(_masterConnectionString);
    }
 
-   protected override string ConnectionStringFor(Database db)
+   public string ConnectionStringFor(DbPoolDatabase db)
       => new SqlConnectionStringBuilder(_masterConnectionString) { InitialCatalog = db.Name }.ConnectionString;
 
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
+   public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db)
    {
       var databaseName = db.Name;
       var exists = (string?)_masterConnectionPool.ExecuteScalar($"select name from sysdatabases where name = '{databaseName}'") == databaseName;
@@ -70,11 +66,11 @@ class MsSqlDbPool : DbPoolBase
       }
    }
 
-   protected override void ResetDatabase(Database db) =>
+   public void ResetDatabase(DbPoolDatabase db) =>
       IMsSqlConnectionPool.CreateInstance(ConnectionStringFor(db))
                           .UseConnection(action: connection => connection.DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel());
 
-   protected void ResetConnectionPool(Database db)
+   protected void ResetConnectionPool(DbPoolDatabase db)
    {
       using var connection = new SqlConnection(ConnectionStringFor(db));
       SqlConnection.ClearPool(connection);

@@ -13,22 +13,22 @@ public partial class DbPoolBase
    [UsedImplicitly] protected class SharedState
    {
       [JsonProperty]
-      List<Database> _databases = [];
+      List<DbPoolDatabase> _databases = [];
 
-      IEnumerable<Database> UnReserved => _databases.Where(db => !db.IsReserved)
+      IEnumerable<DbPoolDatabase> UnReserved => _databases.Where(db => !db.IsReserved)
                                                      //Reusing recently used databases helps performance in a pretty big way, disk cache, connection pool etc.
                                                     .OrderByDescending(db => db.ReservationExpirationTime);
 
-      IEnumerable<Database> CleanUnReserved => UnReserved.Where(db => db.IsClean);
+      IEnumerable<DbPoolDatabase> CleanUnReserved => UnReserved.Where(db => db.IsClean);
 
-      internal bool TryReserve(string reservationName, Guid poolId, TimeSpan reservationLength, [NotNullWhen(true)] out Database? reserved)
+      internal bool TryReserve(string reservationName, Guid poolId, TimeSpan reservationLength, [NotNullWhen(true)] out DbPoolDatabase? reserved)
       {
          CollectGarbage();
 
          reserved = CleanUnReserved.FirstOrDefault() ?? UnReserved.FirstOrDefault();
          if(reserved == null && _databases.Count < NumberOfDatabases)
          {
-            _databases.Add(new Database(_databases.Count + 1));
+            _databases.Add(new DbPoolDatabase(_databases.Count + 1));
             reserved = CleanUnReserved.FirstOrDefault() ?? UnReserved.FirstOrDefault();
          }
 
@@ -41,6 +41,6 @@ public partial class DbPoolBase
 
       internal void ReleaseReservationsFor(Guid poolId) => DatabasesReservedBy(poolId).ForEach(db => db.Release());
 
-      IReadOnlyList<Database> DatabasesReservedBy(Guid poolId) => _databases.Where(db => db.IsReserved && db.ReservedByPoolId == poolId).ToList();
+      IReadOnlyList<DbPoolDatabase> DatabasesReservedBy(Guid poolId) => _databases.Where(db => db.IsReserved && db.ReservedByPoolId == poolId).ToList();
    }
 }

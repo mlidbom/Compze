@@ -13,32 +13,18 @@ namespace Compze.Utilities.Testing.DbPool.PostgreSql;
 
 static class PgSqlDbPoolRegistrar
 {
-   public static IComponentRegistrar PgSqlDbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
+   public static IComponentRegistrar PgSqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
       PgSqlDbPool.RegisterWith(registrar);
-
-   public static IComponentRegistrar PgSqlNewDbPoolWithConnectionPool(this IComponentRegistrar registrar) =>
-      registrar.PgSqlDbPoolWithConnectionPoolIfNotAlreadyRegistered(Guid.NewGuid().ToString());
-
-   public static IComponentRegistrar PgSqlDbPoolWithConnectionPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      registrar.PgSqlDbPoolIfNotAlreadyRegistered();
-
-      registrar.Register(
-         Singleton.For<IPgSqlConnectionPool>()
-                  .CreatedBy((PgSqlDbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
-
-      return registrar;
-   }
 }
 
-sealed class PgSqlDbPool : DbPoolBase
+sealed class PgSqlDbPool : IDbPoolSqlLayer
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<PgSqlDbPool>())
+      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
          return registrar;
 
-      return registrar.Register(Singleton.For<PgSqlDbPool>()
+      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
                                          .CreatedBy(() => new PgSqlDbPool())
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
@@ -57,7 +43,7 @@ sealed class PgSqlDbPool : DbPoolBase
       _connectionStringBuilder = IThreadShared.WithDefaultTimeout(new NpgsqlConnectionStringBuilder(masterConnectionString));
    }
 
-   protected override string ConnectionStringFor(Database db)
+   public string ConnectionStringFor(DbPoolDatabase db)
       => _connectionStringBuilder.Update(it => it.mutate(me =>
       {
          me.Database = db.Name.ToLowerInvariant();
@@ -66,7 +52,7 @@ sealed class PgSqlDbPool : DbPoolBase
          me.ConnectionIdleLifetime = 10;
       }).ConnectionString);
 
-   protected override void EnsureDatabaseExistsAndIsEmpty(Database db)
+   public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db)
    {
       var databaseName = db.Name.ToLowerInvariant();
       ResetConnectionPool(db);
@@ -80,7 +66,7 @@ sealed class PgSqlDbPool : DbPoolBase
       }
    }
 
-   protected override void ResetDatabase(Database db) =>
+   public void ResetDatabase(DbPoolDatabase db) =>
       IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(command => command.SetCommandText("""
 
                                                                                                                 DO $$
@@ -104,7 +90,7 @@ sealed class PgSqlDbPool : DbPoolBase
                                                                                                 .PrepareStatement()
                                                                                                 .ExecuteNonQuery());
 
-   void ResetConnectionPool(Database db)
+   void ResetConnectionPool(DbPoolDatabase db)
    {
       using var connection = new NpgsqlConnection(ConnectionStringFor(db));
       NpgsqlConnection.ClearPool(connection);

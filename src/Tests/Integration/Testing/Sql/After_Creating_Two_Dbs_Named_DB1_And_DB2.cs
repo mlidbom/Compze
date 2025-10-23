@@ -55,7 +55,7 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
 
    [PCT] public void Using_disposed_pool_throws_Exception()
    {
-      var disposedPool = CreatePool();
+      var disposedPool = ResolvePool();
       disposedPool.Dispose();
       disposedPool.Invoking(action: _ => disposedPool.ConnectionStringFor(Db1))
           .Should().Throw<Exception>()

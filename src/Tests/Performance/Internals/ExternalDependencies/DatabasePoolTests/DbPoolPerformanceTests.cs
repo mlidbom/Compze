@@ -5,19 +5,21 @@ using Compze.Sql.PostgreSql;
 using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.DbPool;
 using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;
 
 public class DbPoolPerformanceTests : DbPoolTestBase
 {
-   static DbPoolPerformanceTests()
+   public DbPoolPerformanceTests()
    {
-      using var pool = CreatePool();//warmup
+      using var pool = ResolvePool();//warmup
       pool.ConnectionStringFor(Guid.NewGuid().ToString());
    }
 
@@ -29,7 +31,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          action:
          () =>
          {
-            using var dbPool = CreatePool();
+            using var serviceLocator = CreateServiceLocator();
+            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(dbName);
          },
@@ -45,7 +48,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          action:
          () =>
          {
-            using var dbPool = CreatePool();
+            using var serviceLocator = CreateServiceLocator();
+            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(dbName);
          },
@@ -59,7 +63,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
-            using var dbPool = CreatePool();
+            using var serviceLocator = CreateServiceLocator();
+            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
@@ -72,7 +77,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       TimeAsserter.Execute(
          action: () =>
          {
-            using var dbPool = CreatePool();
+            using var serviceLocator = CreateServiceLocator();
+            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
@@ -83,12 +89,13 @@ public class DbPoolPerformanceTests : DbPoolTestBase
    [PCT] public void Repeated_fetching_of_same_connection_runs_20_times_in_1_milliseconds()
    {
       var dbName = Guid.NewGuid().ToString();
-      using var manager = CreatePool();
-      manager.SetLogLevel(LogLevel.Warning);
-      manager.ConnectionStringFor(dbName);
+      using var serviceLocator = CreateServiceLocator();
+      using var pool = serviceLocator.Resolve<DbPoolBase>();
+      pool.SetLogLevel(LogLevel.Warning);
+      pool.ConnectionStringFor(dbName);
 
       TimeAsserter.Execute(
-         action: () => manager.ConnectionStringFor(dbName),
+         action: () => pool.ConnectionStringFor(dbName),
          iterations: 20,
          maxTotal: 1.Milliseconds());
    }
@@ -98,8 +105,9 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       var allowedTime = 10.Milliseconds().EnvMultiply(instrumented: 2);
       var iterations = TestEnv.SqlLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300, sqlite: 180, sqliteMemory: 180);
 
-      using var manager = CreatePool();
-      manager.SetLogLevel(LogLevel.Warning);
+      using var serviceLocator = CreateServiceLocator();
+      using var pool = serviceLocator.Resolve<DbPoolBase>();
+      pool.SetLogLevel(LogLevel.Warning);
       var reservationName = Guid.NewGuid().ToString();
 
       Action useConnection;
@@ -107,20 +115,20 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:
-            var msSqlConnectionProvider = IMsSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
+            var msSqlConnectionProvider = IMsSqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
             useConnection = () => msSqlConnectionProvider.UseConnection(_ => {});
             break;
          case SqlLayer.MySql:
-            var mySqlConnectionProvider = IMySqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
+            var mySqlConnectionProvider = IMySqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
             useConnection = () => mySqlConnectionProvider.UseConnection(_ => {});
             break;
          case SqlLayer.PostgreSql:
-            var pgSqlConnectionProvider = IPgSqlConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
+            var pgSqlConnectionProvider = IPgSqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
             useConnection = () => pgSqlConnectionProvider.UseConnection(_ => {});
             break;
          case SqlLayer.Sqlite:
          case SqlLayer.SqliteMemory:
-            var sqliteConnectionProvider = ISqliteConnectionPool.CreateInstance(manager.ConnectionStringFor(reservationName));
+            var sqliteConnectionProvider = ISqliteConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
             useConnection = () => sqliteConnectionProvider.UseConnection(_ => {});
             break;
          default:

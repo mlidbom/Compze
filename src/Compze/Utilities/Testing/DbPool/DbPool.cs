@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -11,27 +8,48 @@ using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Compze.Utilities.DependencyInjection;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public abstract partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBase>
+static class DbPoolRegistrar
 {
+   public static IComponentRegistrar DbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
+      DbPoolBase.RegisterWithIfNotAlreadyRegistered(registrar);
+}
+
+public partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBase>
+{
+   internal static IComponentRegistrar RegisterWithIfNotAlreadyRegistered(IComponentRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<DbPoolBase>())
+         return registrar;
+
+      return registrar.Register(Singleton.For<DbPoolBase>()
+                                         .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPoolBase(sqlLayer))
+                                         .DelegateToParentServiceLocatorWhenCloning());
+   }
+
+   readonly IDbPoolSqlLayer _sqlLayer;
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
    static TimeSpan _reservationLength;
    const int NumberOfDatabases = 30;
 
-   protected DbPoolBase() : base(forceStackTraceAllocation:true)
+   internal DbPoolBase(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: true)
    {
-      _reservationLength = System.Diagnostics.Debugger.IsAttached ? TimeSpanCE.Minutes(10) : TimeSpanCE.Seconds(65);
+      _sqlLayer = sqlLayer;
+      _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
 
-      MachineWideState = MachineWideSharedObject<SharedState>.For(GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), usePersistentFile: true);
+      MachineWideState = MachineWideSharedObject<SharedState>.For(sqlLayer.GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), usePersistentFile: true);
    }
 
-   const string PoolDatabaseNamePrefix = $"Compze_{nameof(DbPoolBase)}_";
-
-   readonly MonitorCE _guard = MonitorCE.WithTimeout(TimeSpanCE.Seconds(30));
+   readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
    readonly Guid _poolId = Guid.NewGuid();
-   protected IReadOnlyList<Database> _transientCache = new List<Database>();
+   protected IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
    static ILogger _log = CompzeLogger.For<DbPoolBase>();
 
@@ -46,24 +64,23 @@ public abstract partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBas
       if(reservedDatabase != null)
       {
          _log.Debug($"Retrieved reserved pool database: {reservedDatabase.Id}");
-         return ConnectionStringFor(reservedDatabase);
+         return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
       var startTime = DateTime.Now;
-      var timeoutAt = startTime + TimeSpanCE.Seconds(45);
+      var timeoutAt = startTime + 45.Seconds();
       while(reservedDatabase == null)
       {
          if(DateTime.Now > timeoutAt) throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
 
-         MachineWideState.Update(
-            machineWide =>
+         MachineWideState.Update(machineWide =>
+         {
+            if(machineWide.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase))
             {
-               if(machineWide.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase))
-               {
-                  _log.Info($"Reserved pool database: {reservedDatabase.Name}");
-                  OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
-               }
-            });
+               _log.Info($"Reserved pool database: {reservedDatabase.Name}");
+               OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
+            }
+         });
 
          if(reservedDatabase == null)
          {
@@ -73,29 +90,23 @@ public abstract partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBas
 
       try
       {
-         TransactionScopeCe.SuppressAmbient(() => ResetDatabase(reservedDatabase));
+         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.ResetDatabase(reservedDatabase));
       }
       catch(Exception exception)
       {
          _log.Error(exception);
-         TransactionScopeCe.SuppressAmbient(() => EnsureDatabaseExistsAndIsEmpty(reservedDatabase));
+         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.EnsureDatabaseExistsAndIsEmpty(reservedDatabase));
       }
 
-      return ConnectionStringFor(reservedDatabase);
+      return _sqlLayer.ConnectionStringFor(reservedDatabase);
    });
-
-   protected abstract void ResetDatabase(Database db);
-
-   protected abstract string ConnectionStringFor(Database db);
 
    public override void Dispose()
    {
       if(Disposed) return;
       base.Dispose();
-
+      _sqlLayer.Dispose(_transientCache);
       MachineWideState.Update(machineWide => machineWide.ReleaseReservationsFor(_poolId));
       MachineWideState.Dispose();
    }
-
-   protected abstract void EnsureDatabaseExistsAndIsEmpty(Database db);
 }
