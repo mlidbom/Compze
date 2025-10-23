@@ -11,13 +11,14 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Compze.Utilities.Functional;
 
 namespace Compze.Common.Refactoring.Naming;
 
 class TypeMapper : ITypeMapper
 {
    TypeMapper(){}
-   internal static ITypeMapper Instance = new TypeMapper();
+   internal static readonly ITypeMapper Instance = new TypeMapper();
    static readonly IThreadShared<MappingState> State = IThreadShared.WithDefaultTimeout<MappingState>();
 
    static TypeMapper()
@@ -90,7 +91,7 @@ class TypeMapper : ITypeMapper
       });
    }
 
-   public void AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Update(state =>
+   public unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Update(state =>
    {
       var missing = typesThatRequireMappings.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
       if(missing.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(missing);

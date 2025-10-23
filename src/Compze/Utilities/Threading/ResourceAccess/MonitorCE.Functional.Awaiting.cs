@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Threading.ResourceAccess;
 
@@ -14,9 +15,9 @@ public partial class MonitorCE
       return _updateLock;
    }
 
-   internal void Await(Func<bool> condition) => Await(InfiniteTimeout, condition);
+   internal unit Await(Func<bool> condition) => Await(InfiniteTimeout, condition);
 
-   internal void Await(TimeSpan conditionTimeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryAwait(conditionTimeout, condition));
+   internal unit Await(TimeSpan conditionTimeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryAwait(conditionTimeout, condition));
 
    internal bool TryAwait(TimeSpan conditionTimeout, Func<bool> condition)
    {

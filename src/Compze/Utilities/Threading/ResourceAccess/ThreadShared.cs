@@ -1,4 +1,5 @@
 using System;
+using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Threading.ResourceAccess;
 
@@ -28,11 +29,11 @@ public interface IThreadShared
       public TResult Update<TResult>(Func<TShared, TResult> update) =>
          _monitor.Update(() => update(_shared));
 
-      public void Update(Action<TShared> update) =>
-         _monitor.Update(() => update(_shared));
+      public unit Update(Action<TShared> update) =>
+         _monitor.Update(() => update.AsUnitFunc()(_shared));
 
-      public void Await(Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared));
-      public void Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(timeout, () => condition(_shared));
+      public unit Await(Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared));
+      public unit Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(timeout, () => condition(_shared));
    }
 }
 
@@ -40,7 +41,7 @@ public interface IThreadShared<out TResource>
 {
    TResult Read<TResult>(Func<TResource, TResult> read);
    TResult Update<TResult>(Func<TResource, TResult> update);
-   void Update(Action<TResource> update);
-   void Await(Func<TResource, bool> condition);
-   void Await(TimeSpan timeout, Func<TResource, bool> condition);
+   unit Update(Action<TResource> update);
+   unit Await(Func<TResource, bool> condition);
+   unit Await(TimeSpan timeout, Func<TResource, bool> condition);
 }

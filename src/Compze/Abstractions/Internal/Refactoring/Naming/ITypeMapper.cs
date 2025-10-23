@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Compze.Utilities.Functional;
 
 namespace Compze.Abstractions.Internal.Refactoring.Naming;
 
@@ -17,5 +18,5 @@ interface ITypeMapper
    Type GetType(TypeId eventTypeId);
    bool TryGetType(TypeId typeId, [NotNullWhen(true)]out Type? type);
    IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type);
-   void AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings);
+   unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings);
 }
