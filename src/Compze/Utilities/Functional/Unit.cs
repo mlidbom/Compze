@@ -1,9 +1,6 @@
 using System;
 
-#pragma warning disable IDE0130
-// ReSharper disable once CheckNamespace
-namespace System;
-#pragma warning restore IDE0130
+namespace Compze.Utilities.Functional;
 
 ///<summary>The functional programming unit concept.
 /// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.
@@ -11,7 +8,7 @@ namespace System;
 /// Simply return unit.Value instead of void from methods with no return value,
 /// or use <see cref="From"/> to avoid that pesky extra line:
 /// <code>
-///   public unit DoSomething() => unit.From(() =>
+///   public unit DoSomething() => unit.From(() => 
 ///   {
 ///      //Do something here
 ///   });
