@@ -25,12 +25,12 @@ public abstract class ComponentsCombinationsTheoryAttribute :
    readonly string _configurationFileName;
 
    protected ComponentsCombinationsTheoryAttribute(string configurationFileName,
-                                                Type[] componentEnumTypes,
-                                                object[]? skipped,
-                                                string[]? skipReasons,
-                                                bool useTestMethodArgument,
-                                                string? sourceFilePath,
-                                                int sourceLineNumber) : base(sourceFilePath, sourceLineNumber)
+                                                   Type[] componentEnumTypes,
+                                                   object[]? skipped,
+                                                   string[]? skipReasons,
+                                                   bool useTestMethodArgument,
+                                                   string? sourceFilePath,
+                                                   int sourceLineNumber) : base(sourceFilePath, sourceLineNumber)
    {
       if(componentEnumTypes.Length == 0)
       {
@@ -46,7 +46,7 @@ public abstract class ComponentsCombinationsTheoryAttribute :
       }
 
       skipped?.Where(it => !componentEnumTypes.Contains(it.GetType()))
-                        .ForEach(it => throw new ArgumentException($"{it} is not one of: {string.Join(", ", componentEnumTypes.Select(componentType => componentType.FullName))}"));
+              .ForEach(it => throw new ArgumentException($"{it} is not one of: {string.Join(", ", componentEnumTypes.Select(componentType => componentType.FullName))}"));
 
       if(skipped?.Length != skipReasons?.Length)
          throw new ArgumentException("Number of skipped components must match number of skip reasons");
