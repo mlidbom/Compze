@@ -48,7 +48,7 @@ public class ComponentsCombination : IXunitSerializable
    internal static ComponentsCombination FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
    {
       if(componentNames.Count != componentEnumTypes.Length)
-         throw new ArgumentException($"Components: [{string.Join(", ", componentNames)}] do not match specified component types [{string.Join(", ", componentEnumTypes.Select(it=>it.Name))}]");
+         throw new ArgumentException($"Components: [{string.Join(", ", componentNames)}] do not match specified component types [{string.Join(", ", componentEnumTypes.Select(it => it.Name))}]");
 
       return new ComponentsCombination(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
    }

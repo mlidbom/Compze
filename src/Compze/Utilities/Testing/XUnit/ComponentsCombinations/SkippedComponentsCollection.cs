@@ -16,8 +16,8 @@ internal class SkipComponentSpecificationsCollection
          throw new ArgumentException("Number of components must match number of reasons");
 
       return new SkipComponentSpecificationsCollection(components
-                                     .Select((component, index) => new SkipComponentSpecification(component, reasons[index]))
-                                     .ToList());
+                                                      .Select((component, index) => new SkipComponentSpecification(component, reasons[index]))
+                                                      .ToList());
    }
 
    /// <summary>Finds the first skipped component that matches the given combination, if any.</summary>

@@ -10,7 +10,6 @@ namespace Compze.Utilities.Testing.XUnit.ComponentsCombinations;
 
 class ComponentsCombinationsTheoryDiscoverer : TheoryDiscoverer
 {
-
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
       IXunitTestMethod testMethod,
@@ -20,7 +19,6 @@ class ComponentsCombinationsTheoryDiscoverer : TheoryDiscoverer
          return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]);
 
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
-
 
       var pctAttribute = (ComponentsCombinationsTheoryAttribute)factAttribute;
 
