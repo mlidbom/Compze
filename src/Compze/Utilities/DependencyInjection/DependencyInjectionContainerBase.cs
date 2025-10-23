@@ -18,8 +18,6 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       _registrar.SetContainer(this);
    }
 
-   public IRunMode RunMode => Register().RunMode;
-
    public abstract void Dispose();
    public abstract ValueTask DisposeAsync();
 

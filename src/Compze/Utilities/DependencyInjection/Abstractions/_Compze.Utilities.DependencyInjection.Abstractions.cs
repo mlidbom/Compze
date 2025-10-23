@@ -21,14 +21,12 @@ public interface IComponentRegistrar
 
    TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class;
 
-   IRunMode RunMode { get; }
    void SetContainer(IDependencyInjectionContainer container);
    IComponentRegistrar Clone();
 }
 
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
-   IRunMode RunMode { get; }
    IComponentRegistrar Register();
    IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
@@ -42,11 +40,6 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
    TComponent[] ResolveAll<TComponent>() where TComponent : class;
    object Resolve(Type serviceType);
    IDisposable BeginScope();
-}
-
-public interface IRunMode
-{
-   bool IsTesting { get; }
 }
 
 enum Lifestyle

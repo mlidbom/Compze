@@ -41,8 +41,6 @@ class TestingComponentRegistrar : ComponentRegistrar
       return null;
    }
 
-   public override IRunMode RunMode => Utilities.DependencyInjection.RunMode.Testing;
-
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();
 }
 

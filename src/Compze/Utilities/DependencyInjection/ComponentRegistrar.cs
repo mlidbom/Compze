@@ -40,6 +40,4 @@ class ComponentRegistrar : IComponentRegistrar
    }
 
    public virtual TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class => null;
-
-   public virtual IRunMode RunMode => DependencyInjection.RunMode.Production;
 }
