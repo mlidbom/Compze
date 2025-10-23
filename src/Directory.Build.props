@@ -12,8 +12,8 @@
 		<NuGetAuditMode>direct</NuGetAuditMode>
 	</PropertyGroup>
 
-	<!-- Matches test projects but excludes non-test support libraries -->
-	<PropertyGroup Condition="($(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)')) OR $(MSBuildProjectName.Contains('Test')) OR $(MSBuildProjectDirectory.Contains('ScratchPad'))) AND !$(MSBuildProjectName.Contains('.Testing'))">
+	<!-- Test projects are those in \Tests\ folder, OR explicitly named *.Tests -->
+	<PropertyGroup Condition="$(MSBuildProjectDirectory.Contains('$(MSBuildDirectorySeparatorChar)Tests$(MSBuildDirectorySeparatorChar)')) OR $(MSBuildProjectName.EndsWith('.Tests'))">
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 	
