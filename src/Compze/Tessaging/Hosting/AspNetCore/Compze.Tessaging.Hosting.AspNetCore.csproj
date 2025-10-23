@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
-  </ItemGroup>
-  </Project>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+   </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
+   </ItemGroup>
+</Project>

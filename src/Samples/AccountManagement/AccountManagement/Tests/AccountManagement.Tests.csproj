@@ -10,7 +10,7 @@
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
       <ProjectReference Include="..\Server\AccountManagement.Server.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.1" />

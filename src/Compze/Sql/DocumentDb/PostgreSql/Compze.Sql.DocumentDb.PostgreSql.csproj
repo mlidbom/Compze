@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-     <ProjectReference Include="..\Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
-	  <ProjectReference Include="..\..\PostgreSql\Compze.Sql.PostgreSql.csproj" />
-    <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
+      <ProjectReference Include="..\..\PostgreSql\Compze.Sql.PostgreSql.csproj" />
+      <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
 </Project>

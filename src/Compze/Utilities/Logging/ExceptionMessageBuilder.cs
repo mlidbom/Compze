@@ -2,13 +2,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using Compze.Serialization;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+
 
 namespace Compze.Utilities.Logging;
 
@@ -73,53 +70,10 @@ static class ExceptionMessageBuilder
           {IndentWith}{LineSeparator}
           {IndentWith}SerializedException:
           {IndentWith}{LineSeparator}
-          {SerializeException(exception).IndentToDepth(IndentWith, 1)}
+          {exception.ToString().IndentToDepth(IndentWith, 1)}
           {IndentWith}{LineSeparator}
           """.IndentToDepth(IndentWith, depth);
 
-   static string SerializeException(Exception exception)
-   {
-      try
-      {
-         return JsonConvert.SerializeObject(exception, Formatting.Indented, ExceptionSerializationSettings);
-      }
-      catch(Exception e)
-      {
-         return $"Serialization Failed with message: {e.Message}";
-      }
-   }
 
-#pragma warning disable CA2326
-#pragma warning disable CA2327 //Todo: see if we can mitigate the security impact without breaking our serialization.
-   static readonly JsonSerializerSettings ExceptionSerializationSettings =
-      new()
-      {
-         TypeNameHandling = TypeNameHandling.All,
-         ContractResolver = IgnoreStackTraces.Instance
-      };
-#pragma warning restore CA2326
-#pragma warning restore CA2327
 
-   class IgnoreStackTraces : IncludeMembersWithPrivateSettersResolver
-   {
-      public new static readonly IgnoreStackTraces Instance = new();
-
-      IgnoreStackTraces()
-      {
-         IgnoreSerializableInterface = true;
-         IgnoreSerializableAttribute = true;
-      }
-
-      protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-      {
-         var property = base.CreateProperty(member, memberSerialization);
-
-         if(property.PropertyName is nameof(Exception.StackTrace) or "StackTraceString")
-         {
-            property.Ignored = true;
-         }
-
-         return property;
-      }
-   }
 }

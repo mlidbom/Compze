@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Utilities\DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\..\Utilities\Contracts\Compze.Utilities.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-    <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Abstractions.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-  </ItemGroup>
-  </Project>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+   </ItemGroup>
+</Project>

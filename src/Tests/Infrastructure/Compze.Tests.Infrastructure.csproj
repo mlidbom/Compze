@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <IsTestProject>false</IsTestProject>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />      
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Threading\Compze.Utilities.Threading.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="FluentAssertions" Version="8.7.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="xunit.v3" Version="3.1.0" />
-    <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <IsTestProject>false</IsTestProject>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="FluentAssertions" Version="8.7.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+      <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
+   </ItemGroup>
 </Project>

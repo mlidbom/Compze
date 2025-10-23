@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+	</ItemGroup>
+  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="DependencyInjection\Microsoft\**" />
+    <EmbeddedResource Remove="DependencyInjection\Microsoft\**" />
+    <None Remove="DependencyInjection\Microsoft\**" />
+    <Content Remove="DependencyInjection\Microsoft\**" />
+    <Compile Remove="DependencyInjection\SimpleInjector\**" />
+    <EmbeddedResource Remove="DependencyInjection\SimpleInjector\**" />
+    <None Remove="DependencyInjection\SimpleInjector\**" />
+    <Content Remove="DependencyInjection\SimpleInjector\**" />
+    <Compile Remove="Logging\Serilog\**" />
+    <EmbeddedResource Remove="Logging\Serilog\**" />
+    <None Remove="Logging\Serilog\**" />
+    <Content Remove="Logging\Serilog\**" />
+    <Compile Remove="Testing\DbPool\**" />
+    <EmbeddedResource Remove="Testing\DbPool\**" />
+    <None Remove="Testing\DbPool\**" />
+    <Content Remove="Testing\DbPool\**" />
+    <Compile Remove="Testing\DbPool\MicrosoftSql\**" />
+    <EmbeddedResource Remove="Testing\DbPool\MicrosoftSql\**" />
+    <None Remove="Testing\DbPool\MicrosoftSql\**" />
+    <Content Remove="Testing\DbPool\MicrosoftSql\**" />
+    <Compile Remove="Testing\DbPool\MySql\**" />
+    <EmbeddedResource Remove="Testing\DbPool\MySql\**" />
+    <None Remove="Testing\DbPool\MySql\**" />
+    <Content Remove="Testing\DbPool\MySql\**" />
+    <Compile Remove="Testing\DbPool\PostgreSql\**" />
+    <EmbeddedResource Remove="Testing\DbPool\PostgreSql\**" />
+    <None Remove="Testing\DbPool\PostgreSql\**" />
+    <Content Remove="Testing\DbPool\PostgreSql\**" />
+    <Compile Remove="Testing\DbPool\Sqlite\**" />
+    <EmbeddedResource Remove="Testing\DbPool\Sqlite\**" />
+    <None Remove="Testing\DbPool\Sqlite\**" />
+    <Content Remove="Testing\DbPool\Sqlite\**" />
+    <Compile Remove="Testing\XUnit\**" />
+    <EmbeddedResource Remove="Testing\XUnit\**" />
+    <None Remove="Testing\XUnit\**" />
+    <Content Remove="Testing\XUnit\**" />
+    <Compile Remove="Testing\XUnit\Tests\**" />
+    <EmbeddedResource Remove="Testing\XUnit\Tests\**" />
+    <None Remove="Testing\XUnit\Tests\**" />
+    <Content Remove="Testing\XUnit\Tests\**" />
+  </ItemGroup>
+</Project>

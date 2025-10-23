@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Compze.Utilities.DependencyInjection.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="SimpleInjector" Version="5.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <PackageReference Include="SimpleInjector" Version="5.5.0" />
+   </ItemGroup>
+   <ItemGroup>
+   </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Compze.Utilities.csproj" />
+   </ItemGroup>
 </Project>

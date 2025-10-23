@@ -62,22 +62,31 @@ function C-Merge-Project {
         return
     }
     
-    # Step 2: Determine the parent project name
-    # Compze.Wiring.Testing -> Compze.Wiring
-    # Compze.Common.Internal -> Compze.Common
+    # Step 2: Determine the parent project name by walking up the hierarchy
+    # Compze.Utilities.Threading.Testing -> try Compze.Utilities.Threading, then Compze.Utilities, etc.
     $projectParts = $Project -split '\.'
     if ($projectParts.Length -lt 2) {
         Write-Error "Cannot determine parent project for: $Project (project name must have at least two parts)"
         return
     }
     
-    $parentProjectName = ($projectParts[0..($projectParts.Length - 2)]) -join '.'
+    $parentProjectName = $null
+    $parentProjectFile = $null
     
-    # Verify parent project exists
-    $parentProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $parentProjectName
+    # Start from the immediate parent and walk up until we find an existing project
+    for ($i = $projectParts.Length - 2; $i -gt 0; $i--) {
+        $candidateParentName = ($projectParts[0..$i]) -join '.'
+        $candidateParentFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $candidateParentName
+        
+        if ($candidateParentFile) {
+            $parentProjectName = $candidateParentName
+            $parentProjectFile = $candidateParentFile
+            break
+        }
+    }
     
     if (-not $parentProjectFile) {
-        Write-Error "Parent project not found: $parentProjectName"
+        Write-Error "No parent project found in hierarchy for: $Project"
         return
     }
     

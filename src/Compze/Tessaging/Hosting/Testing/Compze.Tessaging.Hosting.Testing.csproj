@@ -31,7 +31,7 @@
       <ProjectReference Include="..\..\..\Sql\DocumentDb\Sqlite\Compze.Sql.DocumentDb.Sqlite.csproj" />
       <ProjectReference Include="..\..\Teventive\EventStore\Sqlite\Compze.Tessaging.Teventive.EventStore.Sqlite.csproj" />
       <ProjectReference Include="..\..\Sql\Sqlite\Compze.Tessaging.Sql.Sqlite.csproj" />
-      <ProjectReference Include="..\..\..\Utilities\Threading\Compze.Utilities.Threading.csproj" />
+      <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.1" />
@@ -41,4 +41,4 @@
       <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
       <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
    </ItemGroup>
-   </Project>
+</Project>

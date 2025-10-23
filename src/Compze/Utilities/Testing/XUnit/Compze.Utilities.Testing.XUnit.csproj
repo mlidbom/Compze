@@ -1,20 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<IsTestProject>false</IsTestProject>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
-		<ProjectReference Include="..\..\Threading\Compze.Utilities.Threading.csproj" />
-	</ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <IsTestProject>false</IsTestProject>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Compze.Utilities.csproj" />
+   </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
    </ItemGroup>
-
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>

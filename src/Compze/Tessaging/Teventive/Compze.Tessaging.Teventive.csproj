@@ -21,7 +21,7 @@
     <None Include="_docs\**\*.cs" />
     <Content Include="_docs\**\*.md" />
   </ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to hide them from Solution Explorer.
+  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
