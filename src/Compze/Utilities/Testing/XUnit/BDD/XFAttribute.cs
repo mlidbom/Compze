@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 // ReSharper disable ExplicitCallerInfoArgument
 
 namespace Compze.Utilities.Testing.XUnit.BDD;
-#pragma warning disable CA1813 //avoid unsealed attributes
 
 /// <summary>
 /// Short alias for <see cref="ExclusiveFactAttribute"/>
@@ -15,5 +14,3 @@ public sealed class XFAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ExclusiveFactAttribute(sourceFilePath, sourceLineNumber) {}
-
-#pragma warning restore CA1813 //avoid unsealed attributes

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.LinqCE;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -11,7 +10,6 @@ using Xunit.v3;
 // ReSharper disable ExplicitCallerInfoArgument
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
-#pragma warning disable CA1813 //avoid unsealed attributes
 
 [XunitTestCaseDiscoverer(typeof(ComponentCombinationsTheoryDiscoverer))]
 public abstract class ComponentCombinationsTheoryAttribute :
@@ -118,4 +116,3 @@ public abstract class ComponentCombinationsTheoryAttribute :
 
    public bool SupportsDiscoveryEnumeration() => true;
 }
-#pragma warning restore CA1813 //avoid unsealed attributes

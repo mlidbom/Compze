@@ -39,7 +39,7 @@ abstract class ConstructorArgumentForwardingTestCase : XunitTestCase
                                                    int? timeout = null)
       : base(testMethodArguments: testMethodArguments,
              traits: traits,
-             testMethod: details.ResolvedTestMethod,
+             testMethod: testMethod ?? details.ResolvedTestMethod,
              testCaseDisplayName: testCaseDisplayName ?? details.TestCaseDisplayName,
              uniqueID: uniqueID ?? details.UniqueID,
              @explicit: @explicit ?? details.Explicit,
