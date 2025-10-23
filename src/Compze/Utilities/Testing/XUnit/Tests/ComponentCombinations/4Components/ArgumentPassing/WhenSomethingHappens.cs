@@ -1,10 +1,10 @@
 using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
-using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components;
 using Xunit;
 
 #pragma warning disable xUnit1026
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._4Components.ArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._4Components.ArgumentPassing;
 
 public class WhenSomethingHappens
 {

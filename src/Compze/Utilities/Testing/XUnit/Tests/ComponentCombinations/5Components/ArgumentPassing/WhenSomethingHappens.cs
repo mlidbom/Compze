@@ -1,10 +1,10 @@
 using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
-using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components;
 using Xunit;
 
 #pragma warning disable xUnit1026
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._5Components.ArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._5Components.ArgumentPassing;
 
 public class WhenSomethingHappens
 {
@@ -16,14 +16,14 @@ public class WhenSomethingHappens
    }
 
 
-   [ArgumentPassingFiveComponentsPCTAttribute] public void ComponentsCombinationCurrentIsAvailableInConstructor(ComponentsCombination combination) {}
+   [ArgumentPassingFiveComponentsPCT] public void ComponentsCombinationCurrentIsAvailableInConstructor(ComponentsCombination combination) {}
 
-   [ArgumentPassingFiveComponentsPCTAttribute] public void ThisIsTheCase(ComponentsCombination combination) =>
+   [ArgumentPassingFiveComponentsPCT] public void ThisIsTheCase(ComponentsCombination combination) =>
       _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [ArgumentPassingFiveComponentsPCTAttribute] public void ThisIsAlsoTheCase(ComponentsCombination combination) =>
+      [ArgumentPassingFiveComponentsPCT] public void ThisIsAlsoTheCase(ComponentsCombination combination) =>
          _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
    }
 }

@@ -1,7 +1,7 @@
 using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
 using Xunit;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._3Components.Wildcards;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._3Components.Wildcards;
 
 public class WildcardExpansionTests
 {

@@ -3,7 +3,7 @@ using Xunit;
 
 #pragma warning disable xUnit1026
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components.ArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components.ArgumentPassing;
 
 public class WhenSomethingHappens
 {

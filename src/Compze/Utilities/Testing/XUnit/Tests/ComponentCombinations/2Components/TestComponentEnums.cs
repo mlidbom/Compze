@@ -1,5 +1,5 @@
 // ReSharper disable UnusedMember.Global
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components;
 
 /// <summary>
 /// Serializer component dimension for pluggable components testing.

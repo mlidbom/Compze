@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
-using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._3Components.ArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._3Components.ArgumentPassing;
 
 public sealed class ArgumentPassingThreeComponentsPCTAttribute(
    object[]? skipped = null,

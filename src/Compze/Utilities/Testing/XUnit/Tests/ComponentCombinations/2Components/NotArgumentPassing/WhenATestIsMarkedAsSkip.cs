@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components.NotArgumentPassing;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components.NotArgumentPassing;
 
 public class WhenATestIsMarkedAsSkip
 {

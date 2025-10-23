@@ -1,9 +1,8 @@
 using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components;
 using FluentAssertions;
-using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
-using Xunit;
 
-namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._3Components.Wildcards;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._3Components.Wildcards;
 
 public class WildcardFeatureDocumentation
 {
