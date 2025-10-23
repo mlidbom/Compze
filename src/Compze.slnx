@@ -31,10 +31,6 @@
   <Folder Name="/Compze/Sql/DocumentDb/">
     <Project Path="Compze/Sql/DocumentDb/Abstractions/Compze.Sql.DocumentDb.Abstractions.csproj" />
     <Project Path="Compze/Sql/DocumentDb/Compze.Sql.DocumentDb.csproj" />
-    <Project Path="Compze/Sql/DocumentDb/MicrosoftSql/Compze.Sql.DocumentDb.MicrosoftSql.csproj" />
-    <Project Path="Compze/Sql/DocumentDb/MySql/Compze.Sql.DocumentDb.MySql.csproj" />
-    <Project Path="Compze/Sql/DocumentDb/PostgreSql/Compze.Sql.DocumentDb.PostgreSql.csproj" />
-    <Project Path="Compze/Sql/DocumentDb/Sqlite/Compze.Sql.DocumentDb.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/">
     <Project Path="Compze/Tessaging/Compze.Tessaging.csproj" />

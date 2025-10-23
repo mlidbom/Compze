@@ -15,17 +15,17 @@
     <ProjectReference Include="..\..\..\Utilities\Testing\DbPool\Sqlite\Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\Wiring\Compze.Wiring.csproj" />
     <ProjectReference Include="..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
-    <ProjectReference Include="..\..\..\Sql\DocumentDb\MicrosoftSql\Compze.Sql.DocumentDb.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\Sql\MicrosoftSql\Compze.Tessaging.Sql.MicrosoftSql.csproj" />
-    <ProjectReference Include="..\..\..\Sql\DocumentDb\MySql\Compze.Sql.DocumentDb.MySql.csproj" />
     <ProjectReference Include="..\..\Sql\MySql\Compze.Tessaging.Sql.MySql.csproj" />
-    <ProjectReference Include="..\..\..\Sql\DocumentDb\PostgreSql\Compze.Sql.DocumentDb.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Sql\PostgreSql\Compze.Tessaging.Sql.PostgreSql.csproj" />
-    <ProjectReference Include="..\..\..\Sql\DocumentDb\Sqlite\Compze.Sql.DocumentDb.Sqlite.csproj" />
     <ProjectReference Include="..\..\Sql\Sqlite\Compze.Tessaging.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
+    <ProjectReference Include="..\..\..\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\..\..\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\..\Sql\MySql\Compze.Sql.MySql.csproj" />
+    <ProjectReference Include="..\..\..\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.7.1" />

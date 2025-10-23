@@ -19,21 +19,5 @@
     <EmbeddedResource Remove="Abstractions\**" />
     <None Remove="Abstractions\**" />
     <Content Remove="Abstractions\**" />
-    <Compile Remove="MicrosoftSql\**" />
-    <EmbeddedResource Remove="MicrosoftSql\**" />
-    <None Remove="MicrosoftSql\**" />
-    <Content Remove="MicrosoftSql\**" />
-    <Compile Remove="MySql\**" />
-    <EmbeddedResource Remove="MySql\**" />
-    <None Remove="MySql\**" />
-    <Content Remove="MySql\**" />
-    <Compile Remove="PostgreSql\**" />
-    <EmbeddedResource Remove="PostgreSql\**" />
-    <None Remove="PostgreSql\**" />
-    <Content Remove="PostgreSql\**" />
-    <Compile Remove="Sqlite\**" />
-    <EmbeddedResource Remove="Sqlite\**" />
-    <None Remove="Sqlite\**" />
-    <Content Remove="Sqlite\**" />
   </ItemGroup>
 </Project>
