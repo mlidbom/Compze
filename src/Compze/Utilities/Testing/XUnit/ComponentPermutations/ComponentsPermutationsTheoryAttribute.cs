@@ -13,8 +13,8 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 #pragma warning disable CA1813 //avoid unsealed attributes
 
-[XunitTestCaseDiscoverer(typeof(PluggableComponentsTheoryDiscoverer))]
-public abstract class PluggableComponentsTheoryAttribute :
+[XunitTestCaseDiscoverer(typeof(ComponentsPermutationsTheoryDiscoverer))]
+public abstract class ComponentsPermutationsTheoryAttribute :
    TheoryAttribute,
    IDataAttribute
 {
@@ -24,7 +24,7 @@ public abstract class PluggableComponentsTheoryAttribute :
    readonly Type[] _componentEnumTypes;
    readonly string _configurationFileName;
 
-   protected PluggableComponentsTheoryAttribute(string configurationFileName,
+   protected ComponentsPermutationsTheoryAttribute(string configurationFileName,
                                                 Type[] componentEnumTypes,
                                                 object[]? skipped,
                                                 string[]? skipReasons,
@@ -59,7 +59,7 @@ public abstract class PluggableComponentsTheoryAttribute :
 
    internal Type[] ComponentEnumTypes => _componentEnumTypes;
 
-   SkippedComponentsCollection SkippedComponents => SkippedComponentsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
+   SkipComponentSpecificationsCollection SkipComponentSpecifications => SkipComponentSpecificationsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
 
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
@@ -83,11 +83,11 @@ public abstract class PluggableComponentsTheoryAttribute :
 
       try
       {
-         var permutations = ComponentPermutationsConfigurationFileReader
+         var permutations = ComponentsPermutationsConfigurationFileReader
                            .GetPermutations(_configurationFileName, _componentEnumTypes)
                            .Select(ITheoryDataRow (permutation) => new TheoryDataRow(permutation) // Pass permutation object as argument
                                                                    {
-                                                                      Skip = SkippedComponents.SkippedComponentFor(permutation)?.ToString()
+                                                                      Skip = SkipComponentSpecifications.SkippedComponentFor(permutation)?.ToString()
                                                                    })
                            .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(permutations);

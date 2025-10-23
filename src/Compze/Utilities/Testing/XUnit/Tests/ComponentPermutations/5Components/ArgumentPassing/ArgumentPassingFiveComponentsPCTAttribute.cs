@@ -9,7 +9,7 @@ public sealed class ArgumentPassingFiveComponentsPCTAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute<Serializer, SqlLayer, DIContainer, EventStore, MessageBus>(
+   : ComponentsPermutationsTheoryAttribute<Serializer, SqlLayer, DIContainer, EventStore, MessageBus>(
       configurationFileName: "TestUsingArgumentPassingFiveComponentsPCTAttribute",
       skipped: skipped,
       skipReasons: skipReasons,

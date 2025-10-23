@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-static class ComponentPermutationsConfigurationFileReader
+static class ComponentsPermutationsConfigurationFileReader
 {
    static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentsPermutation>> PermutationsCache = new();
 
@@ -27,7 +27,7 @@ static class ComponentPermutationsConfigurationFileReader
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
         .Where(it => !it.StartsWith(Comment))
         .Where(it => !it.StartsWith(SkipPermutation))
-        .Select(it => new ComponentPermutationsConfigurationFileLine(componentTypes, it))
+        .Select(it => new ComponentsPermutationsConfigurationFileLine(componentTypes, it))
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
         .OrderBy(it => it.ToString())
         .DistinctBy(it => it.ToString())

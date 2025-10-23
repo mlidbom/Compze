@@ -9,7 +9,7 @@ public sealed class ArgumentPassingOneComponentsPCTAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute<Serializer>(
+   : ComponentsPermutationsTheoryAttribute<Serializer>(
       configurationFileName: "TestUsingArgumentPassingOneComponentsPCTAttribute",
       skipped: skipped,
       skipReasons: skipReasons,

@@ -8,7 +8,7 @@ public sealed class ArgumentPassingTwoComponentsPCTAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute<Serializer, SqlLayer>(
+   : ComponentsPermutationsTheoryAttribute<Serializer, SqlLayer>(
       configurationFileName: "TestUsingArgumentPassingTwoComponentsPCTAttribute",
       skipped: skipped,
       skipReasons: skipReasons,

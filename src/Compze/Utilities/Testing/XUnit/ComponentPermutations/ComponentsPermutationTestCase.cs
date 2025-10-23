@@ -9,7 +9,7 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
+class ComponentsPermutationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
 {
    bool _useTestMethodArguments;
 
@@ -20,9 +20,9 @@ class PluggableComponentsTestCase : ConstructorArgumentForwardingTestCase, ISelf
 
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]
-   public PluggableComponentsTestCase() {}
+   public ComponentsPermutationTestCase() {}
 
-   public PluggableComponentsTestCase(
+   public ComponentsPermutationTestCase(
       XunitTestCase testCase,
       bool useTestMethodArguments,
       Dictionary<string, HashSet<string>> traits)

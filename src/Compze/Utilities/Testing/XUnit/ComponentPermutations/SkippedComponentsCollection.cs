@@ -4,23 +4,23 @@ using System.Linq;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-internal class SkippedComponentsCollection
+internal class SkipComponentSpecificationsCollection
 {
-   readonly IReadOnlyList<SkippedComponent> _exclusions;
+   readonly IReadOnlyList<SkipComponentSpecification> _skippedComponents;
 
-   SkippedComponentsCollection(IReadOnlyList<SkippedComponent> exclusions) => _exclusions = exclusions;
+   SkipComponentSpecificationsCollection(IReadOnlyList<SkipComponentSpecification> skippedComponents) => _skippedComponents = skippedComponents;
 
-   public static SkippedComponentsCollection FromComponentsAndReasons(IReadOnlyList<Enum> components, string[] reasons)
+   public static SkipComponentSpecificationsCollection FromComponentsAndReasons(IReadOnlyList<Enum> components, string[] reasons)
    {
       if(components.Count != reasons.Length)
          throw new ArgumentException("Number of components must match number of reasons");
 
-      return new SkippedComponentsCollection(components
-                                     .Select((component, index) => new SkippedComponent(component, reasons[index]))
+      return new SkipComponentSpecificationsCollection(components
+                                     .Select((component, index) => new SkipComponentSpecification(component, reasons[index]))
                                      .ToList());
    }
 
-   /// <summary>Finds the first exclusion that matches the given permutation, if any.</summary>
-   public SkippedComponent? SkippedComponentFor(ComponentsPermutation permutation) =>
-      _exclusions.FirstOrDefault(exclusion => exclusion.Skips(permutation));
+   /// <summary>Finds the first skipped component that matches the given permutation, if any.</summary>
+   public SkipComponentSpecification? SkippedComponentFor(ComponentsPermutation permutation) =>
+      _skippedComponents.FirstOrDefault(exclusion => exclusion.Skips(permutation));
 }

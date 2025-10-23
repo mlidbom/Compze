@@ -8,7 +8,7 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
-public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
+class ComponentsPermutationsTheoryDiscoverer : TheoryDiscoverer
 {
 
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
@@ -22,7 +22,7 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute);
 
 
-      var pctAttribute = (PluggableComponentsTheoryAttribute)factAttribute;
+      var pctAttribute = (ComponentsPermutationsTheoryAttribute)factAttribute;
 
       var testCases = baseCases.Select(testCaseInterface =>
                                 {
@@ -30,7 +30,7 @@ public class PluggableComponentsTheoryDiscoverer : TheoryDiscoverer
                                    if(testCaseInterface is not XunitTestCase xunitTestCase)
                                       return testCaseInterface;
 
-                                   return new PluggableComponentsTestCase(
+                                   return new ComponentsPermutationTestCase(
                                       testCase: xunitTestCase,
                                       useTestMethodArguments: pctAttribute.UseTestMethodArgument,
                                       traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)

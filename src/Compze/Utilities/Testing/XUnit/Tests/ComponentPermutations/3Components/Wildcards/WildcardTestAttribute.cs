@@ -9,7 +9,7 @@ public sealed class WildcardTestAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute<Serializer, SqlLayer, DIContainer>(
+   : ComponentsPermutationsTheoryAttribute<Serializer, SqlLayer, DIContainer>(
       configurationFileName: "TestUsingWildcards",
       skipped: skipped,
       skipReasons: skipReasons,

@@ -4,12 +4,12 @@ using System.Linq;
 namespace Compze.Utilities.Testing.XUnit.ComponentPermutations;
 
 /// <summary>Represents a skipped component with a reason.</summary>
-internal class SkippedComponent
+internal class SkipComponentSpecification
 {
    readonly Enum _component;
    readonly string _reason;
 
-   public SkippedComponent(Enum component, string reason)
+   public SkipComponentSpecification(Enum component, string reason)
    {
       _component = component ?? throw new ArgumentNullException(nameof(component));
       _reason = reason ?? throw new ArgumentNullException(nameof(reason));

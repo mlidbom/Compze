@@ -10,7 +10,7 @@ public sealed class PCTAttribute(
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : PluggableComponentsTheoryAttribute<SqlLayer, DIContainer>(
+   : ComponentsPermutationsTheoryAttribute<SqlLayer, DIContainer>(
       configurationFileName: "TestUsingPluggableComponentCombinations",
       skipped: skipped,
       skipReasons: skipReasons,
