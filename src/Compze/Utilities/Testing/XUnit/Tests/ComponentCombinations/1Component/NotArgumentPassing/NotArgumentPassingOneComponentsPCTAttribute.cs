@@ -1,17 +1,16 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
-using Compze.Wiring.Testing;
-using Compze.Wiring.Testing.Sql;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
 
-namespace Compze.Tests.Infrastructure.XUnit;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._1Component.NotArgumentPassing;
 
-public sealed class PCTAttribute(
+public sealed class NotArgumentPassingOneComponentsPCTAttribute(
    object[]? skipped = null,
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentsCombinationsTheoryAttribute<SqlLayer, DIContainer>(
-      configurationFileName: "TestUsingPluggableComponentCombinations",
+   : ComponentsCombinationsTheoryAttribute<Serializer>(
+      configurationFileName: "TestUsingNotArgumentPassingOneComponentsPCTAttribute",
       skipped: skipped,
       skipReasons: skipReasons,
       useTestMethodArgument: false,

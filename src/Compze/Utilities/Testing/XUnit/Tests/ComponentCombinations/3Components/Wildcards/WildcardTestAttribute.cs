@@ -1,19 +1,18 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
-using Compze.Wiring.Testing;
-using Compze.Wiring.Testing.Sql;
+using Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._2Components;
 
-namespace Compze.Tests.Infrastructure.XUnit;
+namespace Compze.Utilities.Testing.XUnit.Tests.ComponentPermutations._3Components.Wildcards;
 
-public sealed class PCTAttribute(
+public sealed class WildcardTestAttribute(
    object[]? skipped = null,
    string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentsCombinationsTheoryAttribute<SqlLayer, DIContainer>(
-      configurationFileName: "TestUsingPluggableComponentCombinations",
+   : ComponentsCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer>(
+      configurationFileName: "TestUsingWildcards",
       skipped: skipped,
       skipReasons: skipReasons,
-      useTestMethodArgument: false,
+      useTestMethodArgument: true,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);

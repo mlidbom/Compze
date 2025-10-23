@@ -1,15 +1,15 @@
 using System;
 using Compze.Utilities.Functional;
-using Compze.Utilities.Testing.XUnit.ComponentsPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
 static class TestCasePluggableComponentsExtractor
 {
-   public static Tessaging.Hosting.Testing.PluggableComponents ToPluggableComponents(this ComponentsPermutation? permutation) =>
+   public static Tessaging.Hosting.Testing.PluggableComponents ToPluggableComponents(this ComponentsCombination? permutation) =>
       permutation.TryExtractPluggableComponents(throwOnFailure: true)!.Value;
 
-   public static Tessaging.Hosting.Testing.PluggableComponents? TryExtractPluggableComponents(this ComponentsPermutation? permutation,
+   public static Tessaging.Hosting.Testing.PluggableComponents? TryExtractPluggableComponents(this ComponentsCombination? permutation,
                                                                                               bool throwOnFailure = false)
    {
       if(permutation == null) throw new Exception("No component context has been set");

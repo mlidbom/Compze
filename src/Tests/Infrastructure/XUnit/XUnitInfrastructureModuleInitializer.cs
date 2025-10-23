@@ -1,7 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit.Logging;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentsPermutations;
+using Compze.Utilities.Testing.XUnit.ComponentsCombinations;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
@@ -12,6 +12,6 @@ public static class XUnitInfrastructureModuleInitializer
    {
       TestFixtureHelper.SetupSerilog(new XUnitTestSerilogEnricher());
 
-      TestEnv.XunitDiscoverer = () => ComponentsPermutation.Current.ToPluggableComponents();
+      TestEnv.XunitDiscoverer = () => ComponentsCombination.Current.ToPluggableComponents();
    }
 }
