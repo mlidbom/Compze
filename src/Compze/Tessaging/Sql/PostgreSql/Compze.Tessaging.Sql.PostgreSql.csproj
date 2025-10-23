@@ -4,11 +4,6 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup>
-    <NuGetAuditMode>direct</NuGetAuditMode>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Compze.Tessaging.csproj" />

@@ -5,11 +5,6 @@
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
-   <PropertyGroup>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\Compze\Utilities\Threading\Testing\Compze.Utilities.Threading.Testing.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Compze.Tests.Infrastructure.csproj" />

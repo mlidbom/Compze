@@ -6,9 +6,6 @@
    </PropertyGroup>
    <PropertyGroup>
       <RootNamespace>AccountManagement</RootNamespace>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Server\AccountManagement.Server.csproj" />

@@ -6,12 +6,6 @@
       <IsTestProject>false</IsTestProject>
    </PropertyGroup>
 
-   <PropertyGroup>
-      <NuGetAuditMode>direct</NuGetAuditMode>
-      <AnalysisLevel>latest-all</AnalysisLevel>
-      <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-   </PropertyGroup>
-
    <ItemGroup>
       <ProjectReference Include="..\..\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
       <ProjectReference Include="..\Compze.Utilities.Threading.csproj"/>
