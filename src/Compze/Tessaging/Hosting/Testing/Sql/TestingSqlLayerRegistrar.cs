@@ -27,7 +27,6 @@ public static class TestingSqlLayerRegistrar
 
    public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this IComponentRegistrar register, string connectionStringName)
    {
-      register.CurrentTestsDbPoolIfNotAlreadyRegistered();
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:

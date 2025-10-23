@@ -12,6 +12,7 @@ using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
 using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Utilities.Testing.DbPool;
+using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
@@ -40,6 +41,26 @@ class TestingComponentRegistrar : ComponentRegistrar
       }
 
       return null;
+   }
+
+   public IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered()
+   {
+      this.DbPoolIfNotAlreadyRegistered();
+      switch(TestEnv.SqlLayer)
+      {
+         case SqlLayer.MicrosoftSqlServer:
+            return this.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
+         case SqlLayer.MySql:
+            return this.MySqlDbPoolSqlLayerIfNotAlreadyRegistered();
+         case SqlLayer.PostgreSql:
+            return this.PgSqlDbPoolSqlLayerIfNotAlreadyRegistered();
+         case SqlLayer.Sqlite:
+            return this.SqliteDbPoolSqlLayerIfNotAlreadyRegistered();
+         case SqlLayer.SqliteMemory:
+            return  this.SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered();
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
    }
 
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();
