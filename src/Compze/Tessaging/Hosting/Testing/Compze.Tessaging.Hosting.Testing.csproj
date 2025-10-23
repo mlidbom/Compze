@@ -13,7 +13,6 @@
       <ProjectReference Include="..\..\..\Utilities\Testing\DbPool\MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Testing\DbPool\PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Testing\DbPool\Sqlite\Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
-      <ProjectReference Include="..\..\..\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
       <ProjectReference Include="..\..\..\Wiring\Compze.Wiring.csproj" />
       <ProjectReference Include="..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="..\Sql\MicrosoftSql\Compze.Tessaging.Hosting.Sql.MicrosoftSql.csproj" />

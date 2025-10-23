@@ -45,8 +45,4 @@
         <Content Include="Compze\**\_docs\*.yml" />
         <None Include="Compze\**\_docs\**" Exclude="Compze\**\_docs\*.cs;Compze\**\_docs\*.md;Compze\**\_docs\*.yml" />
     </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-      <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-    </ItemGroup>
 </Project>

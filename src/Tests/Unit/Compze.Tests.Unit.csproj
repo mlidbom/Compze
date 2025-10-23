@@ -7,7 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Compze\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Compze.Tessaging.Teventive.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\SystemExtensions\Compze.Utilities.SystemExtensions.csproj" />
   </ItemGroup>

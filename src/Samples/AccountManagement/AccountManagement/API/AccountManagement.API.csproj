@@ -9,9 +9,6 @@
     <RootNamespace>AccountManagement</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="API\RegisterAccountCommandResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -29,5 +26,9 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="AccountManagement.Server" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Compze\Tessaging\Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\..\Compze\Tessaging\Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
   </ItemGroup>
 </Project>
