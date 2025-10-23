@@ -1,5 +1,5 @@
+using Compze.Sql.Common.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 
 namespace Compze.Tessaging.Teventive.EventStore;
 

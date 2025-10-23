@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
+namespace Compze.Sql.Common.EventStore.Abstractions;
 
 public class CreationEventRow(Guid aggregateId, Guid typeId)
 {

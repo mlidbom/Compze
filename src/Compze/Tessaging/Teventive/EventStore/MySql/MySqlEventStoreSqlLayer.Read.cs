@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Sql.Common;
+using Compze.Sql.Common.EventStore.Abstractions;
 using Compze.Sql.MySql.SystemExtensions;
-using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using MySql.Data.MySqlClient;
-using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Event = Compze.Sql.Common.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.MySql;
 

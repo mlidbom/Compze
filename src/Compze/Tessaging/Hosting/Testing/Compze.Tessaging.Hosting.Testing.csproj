@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\..\Wiring\Compze.Wiring.csproj" />
     <ProjectReference Include="..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
     <ProjectReference Include="..\..\..\Sql\DocumentDb\MicrosoftSql\Compze.Sql.DocumentDb.MicrosoftSql.csproj" />
+    <ProjectReference Include="..\..\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\Teventive\EventStore\MicrosoftSql\Compze.Tessaging.Teventive.EventStore.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\Sql\MicrosoftSql\Compze.Tessaging.Sql.MicrosoftSql.csproj" />
     <ProjectReference Include="..\..\..\Sql\DocumentDb\MySql\Compze.Sql.DocumentDb.MySql.csproj" />

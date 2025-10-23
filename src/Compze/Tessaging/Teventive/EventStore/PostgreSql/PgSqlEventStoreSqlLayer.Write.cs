@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Sql.Common;
+using Compze.Sql.Common.EventStore.Abstractions;
 using Compze.Sql.PostgreSql;
-using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
-using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
-using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
-using Lock = Compze.Tessaging.Teventive.EventStore.AggregateLockTableSchemaStrings;
+using ReadOrder = Compze.Sql.Common.EventStore.Abstractions.ReadOrder;
+using Event = Compze.Sql.Common.EventStore.EventTableSchemaStrings;
+using Lock = Compze.Sql.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.PostgreSql;
 

@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Sql.Common;
+using Compze.Sql.Common.EventStore.Abstractions;
 using Compze.Sql.MySql;
 using Compze.Sql.MySql.SystemExtensions;
-using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using MySql.Data.MySqlClient;
-using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
-using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using ReadOrder = Compze.Sql.Common.EventStore.Abstractions.ReadOrder;
+using Event = Compze.Sql.Common.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.MySql;
 

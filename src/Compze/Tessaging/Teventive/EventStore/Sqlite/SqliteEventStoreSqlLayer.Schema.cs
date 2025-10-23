@@ -1,7 +1,7 @@
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
-using Lock = Compze.Tessaging.Teventive.EventStore.AggregateLockTableSchemaStrings;
+using Event = Compze.Sql.Common.EventStore.EventTableSchemaStrings;
+using Lock = Compze.Sql.Common.EventStore.AggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.Sqlite;
 

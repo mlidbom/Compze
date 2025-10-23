@@ -1,6 +1,6 @@
-using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Event = Compze.Sql.Common.EventStore.EventTableSchemaStrings;
 
-namespace Compze.Tessaging.Teventive.EventStore;
+namespace Compze.Sql.Common.EventStore;
 
 public static class EventTableSchemaStrings
 {

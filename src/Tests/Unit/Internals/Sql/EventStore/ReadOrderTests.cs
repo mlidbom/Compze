@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
-using ReadOrder = Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions.ReadOrder;
+using ReadOrder = Compze.Sql.Common.EventStore.Abstractions.ReadOrder;
 using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Sql.EventStore;

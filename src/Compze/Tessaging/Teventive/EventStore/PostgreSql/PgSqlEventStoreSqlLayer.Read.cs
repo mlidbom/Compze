@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Compze.Sql.Common;
+using Compze.Sql.Common.EventStore.Abstractions;
 using Compze.Sql.PostgreSql;
-using Compze.Tessaging.Teventive.EventStore.SqlLayer.Abstractions;
 using Npgsql;
 using NpgsqlTypes;
-using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Event = Compze.Sql.Common.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.PostgreSql;
 

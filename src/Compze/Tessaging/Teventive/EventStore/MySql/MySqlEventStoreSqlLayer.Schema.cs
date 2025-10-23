@@ -1,6 +1,6 @@
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Event = Compze.Tessaging.Teventive.EventStore.EventTableSchemaStrings;
+using Event = Compze.Sql.Common.EventStore.EventTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.EventStore.MySql;
 

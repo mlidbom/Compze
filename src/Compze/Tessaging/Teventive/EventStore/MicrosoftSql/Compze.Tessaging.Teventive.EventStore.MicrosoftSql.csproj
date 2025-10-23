@@ -6,7 +6,6 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging.Teventive.EventStore.csproj" />
       <ProjectReference Include="..\..\..\..\Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
    <ItemGroup>
