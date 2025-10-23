@@ -20,12 +20,10 @@
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
-   <ItemGroup>
-      <Folder Include="Sql\DocumentDb\" />
-   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
+    <Compile Remove="Sql\DocumentDb\**" />
     <Compile Remove="_docs\**\*.cs" />
     <None Include="_docs\**\*.cs" />
     <Content Include="_docs\**\*.md" />
@@ -44,6 +42,7 @@
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
     <EmbeddedResource Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Sql\DocumentDb\**" />
     <None Remove="Abstractions\**" />
     <Content Remove="Abstractions\**" />
     <Compile Remove="Common\**" />
@@ -80,6 +79,7 @@
     <Content Remove="Hosting\Testing\**" />
     <Compile Remove="Sql\MicrosoftSql\**" />
     <EmbeddedResource Remove="Sql\MicrosoftSql\**" />
+    <None Remove="Sql\DocumentDb\**" />
     <None Remove="Sql\MicrosoftSql\**" />
     <Content Remove="Sql\MicrosoftSql\**" />
     <Compile Remove="Sql\MySql\**" />
