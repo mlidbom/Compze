@@ -5,14 +5,12 @@ using Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components;
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._1Component.ArgumentPassing;
 
 public sealed class ArgumentPassingOneComponentPCTAttribute(
-   object[]? skipped = null,
-   string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<Serializer>(
       configurationFileName: "TestUsingArgumentPassingOneComponentsPCTAttribute",
-      skipped: skipped,
-      skipReasons: skipReasons,
-      useTestMethodArgument: true,
+      useTestMethodArgument:true,
       sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber);
+      sourceLineNumber: sourceLineNumber)
+{
+}

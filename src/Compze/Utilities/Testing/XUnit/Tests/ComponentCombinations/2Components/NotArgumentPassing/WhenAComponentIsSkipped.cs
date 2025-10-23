@@ -7,14 +7,14 @@ public class WhenAComponentIsSkipped
 {
    public WhenAComponentIsSkipped() => ComponentCombination.Current.Serializer().Should().NotBe(Serializer.Microsoft, "Constructor should not run for the excluded component");
 
-   [NotArgumentPassingTwoComponentsPCT(skipped: [Serializer.Microsoft], skipReasons: ["TODO"])]
+   [NotArgumentPassingTwoComponentsPCT(Skipped = [Serializer.Microsoft], SkipReasons = ["TODO"])]
    public void TestIsNotExecutedForThatComponent() => ComponentCombination.Current.Serializer().Should().NotBe(Serializer.Microsoft);
 
    public class InANestedScenario
    {
       public InANestedScenario() => ComponentCombination.Current.Serializer().Should().NotBe(Serializer.Microsoft, "Constructor should not run for the excluded component");
 
-      [NotArgumentPassingTwoComponentsPCT(skipped: [Serializer.Microsoft], skipReasons: ["Unsupported"])]
+      [NotArgumentPassingTwoComponentsPCT(Skipped = [Serializer.Microsoft], SkipReasons = ["Unsupported"])]
       public void TestIsNotExecutedForThatComponent() => ComponentCombination.Current.Serializer().Should().NotBe(Serializer.Microsoft);
    }
 }

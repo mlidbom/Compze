@@ -19,47 +19,50 @@ public abstract class ComponentCombinationsTheoryAttribute :
    IDataAttribute
 {
    public bool UseTestMethodArgument { get; }
-   readonly IReadOnlyList<Enum> _skippedComponents;
-   readonly string[] _skipReasons;
+   public object[]? Skipped { get; init; }
+   public string[]? SkipReasons { get; init; }
+
    readonly Type[] _componentEnumTypes;
    readonly string _configurationFileName;
 
    protected ComponentCombinationsTheoryAttribute(string configurationFileName,
                                                   Type[] componentEnumTypes,
-                                                  object[]? skipped,
-                                                  string[]? skipReasons,
                                                   bool useTestMethodArgument,
-                                                  string? sourceFilePath,
-                                                  int sourceLineNumber) : base(sourceFilePath, sourceLineNumber)
+                                                  string? sourceFilePath = null,
+                                                  int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
    {
-      if(componentEnumTypes.Length == 0)
-      {
-         throw new ArgumentException($"{nameof(componentEnumTypes)} may not be empty");
-      }
-
       UseTestMethodArgument = useTestMethodArgument;
-
-      foreach(var type in componentEnumTypes)
-      {
-         if(!type.IsEnum)
-            throw new ArgumentException($"Type {type.Name} must be an enum type");
-      }
-
-      skipped?.Where(it => !componentEnumTypes.Contains(it.GetType()))
-              .ForEach(it => throw new ArgumentException($"{it} is not one of: {string.Join(", ", componentEnumTypes.Select(componentType => componentType.FullName))}"));
-
-      if(skipped?.Length != skipReasons?.Length)
-         throw new ArgumentException("Number of skipped components must match number of skip reasons");
-
-      _configurationFileName = configurationFileName ?? throw new ArgumentNullException(nameof(configurationFileName));
+      _configurationFileName = configurationFileName;
       _componentEnumTypes = componentEnumTypes;
-      _skippedComponents = skipped?.Cast<Enum>().ToList() ?? [];
-      _skipReasons = skipReasons ?? [];
    }
 
-   internal Type[] ComponentEnumTypes => _componentEnumTypes;
+   string? ValidateConfiguration()
+   {
+      if(_componentEnumTypes.Length == 0)
+         return "Component enum types may not be empty";
 
-   SkipComponentSpecificationsCollection SkipComponentSpecifications => SkipComponentSpecificationsCollection.FromComponentsAndReasons(_skippedComponents, _skipReasons);
+      foreach(var type in _componentEnumTypes)
+      {
+         if(!type.IsEnum)
+            return $"Type {type.Name} must be an enum type";
+      }
+
+      if(Skipped != null)
+      {
+         var invalidComponent = Skipped.FirstOrDefault(it => !_componentEnumTypes.Contains(it.GetType()));
+         if(invalidComponent != null)
+            return $"{invalidComponent} is not one of: {string.Join(", ", _componentEnumTypes.Select(componentType => componentType.FullName))}";
+      }
+
+      if(Skipped?.Length != SkipReasons?.Length)
+         return "Number of skipped components must match number of skip reasons";
+
+      return null;
+   }
+
+   IReadOnlyList<Enum> SkippedComponents => Skipped?.Cast<Enum>().ToList() ?? [];
+
+   SkipComponentSpecificationsCollection SkipComponentSpecifications => SkipComponentSpecificationsCollection.FromComponentsAndReasons(SkippedComponents, SkipReasons ?? []);
 
 #pragma warning disable CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
    bool? IDataAttribute.Explicit => Explicit;
@@ -80,6 +83,16 @@ public abstract class ComponentCombinationsTheoryAttribute :
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
             [
                new TheoryDataRow("skipped") { Skip = "Only runs in declaring class" }
+            ]);
+      }
+
+      // Validate configuration first
+      var validationError = ValidateConfiguration();
+      if(validationError != null)
+      {
+         return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
+            [
+               new TheoryDataRow() { Skip = $"Invalid attribute configuration: {validationError}" }
             ]);
       }
 

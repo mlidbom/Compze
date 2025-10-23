@@ -11,15 +11,11 @@ public abstract class ComponentCombinationsTheoryAttribute<TComponent1, TCompone
    where TComponent2 : Enum
 {
    protected ComponentCombinationsTheoryAttribute(string configurationFileName,
-                                                   object[]? skipped,
-                                                   string[]? skipReasons,
-                                                   bool useTestMethodArgument,
-                                                   string? sourceFilePath,
-                                                   int sourceLineNumber)
+                                                  bool useTestMethodArgument,
+                                                  string? sourceFilePath,
+                                                  int sourceLineNumber)
       : base(configurationFileName: configurationFileName,
              componentEnumTypes: EnumerableCE.OfTypes<TComponent1, TComponent2>().ToArray(),
-             skipped: skipped,
-             skipReasons: skipReasons,
              useTestMethodArgument: useTestMethodArgument,
              sourceFilePath: sourceFilePath,
              sourceLineNumber: sourceLineNumber) {}

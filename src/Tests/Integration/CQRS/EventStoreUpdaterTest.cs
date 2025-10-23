@@ -407,11 +407,9 @@ public class EventStoreUpdaterTest : UniversalTestBase
       });
    }
 
-   [PCT(skipped:
-   [
-      $"{nameof(SqlLayer.Sqlite)}::Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite",
-      $"{nameof(SqlLayer.SqliteMemory)}::Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite"
-   ])]
+   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory], 
+        SkipReasons = ["Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite",
+                       "Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite"])]
    public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel()
    {
       var user = new User();
@@ -596,11 +594,9 @@ public class EventStoreUpdaterTest : UniversalTestBase
          });
    }
 
-   [PCT(skipped:
-   [
-      $"{nameof(SqlLayer.Sqlite)}::We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...",
-      $"{nameof(SqlLayer.SqliteMemory)}::We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway..."
-   ])]
+   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory],
+        SkipReasons = ["We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...",
+                       "We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway..."])]
    public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed()
    {
       var user = new User();

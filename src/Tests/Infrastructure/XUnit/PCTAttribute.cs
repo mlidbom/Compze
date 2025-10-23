@@ -6,14 +6,12 @@ using Compze.Wiring.Testing.Sql;
 namespace Compze.Tests.Infrastructure.XUnit;
 
 public sealed class PCTAttribute(
-   object[]? skipped = null,
-   string[]? skipReasons = null,
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<SqlLayer, DIContainer>(
       configurationFileName: "TestUsingPluggableComponentCombinations",
-      skipped: skipped,
-      skipReasons: skipReasons,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber);
+      sourceLineNumber: sourceLineNumber)
+{
+}
