@@ -21,4 +21,8 @@
     <None Remove="Internal\**" />
     <Content Remove="Internal\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tessaging\Teventive\Eventstore\" />
+    <Folder Include="Tessaging\Typermedia\" />
+  </ItemGroup>
 </Project>
