@@ -17,7 +17,7 @@ namespace Compze.Common.Refactoring.Naming;
 
 class TypeMapper : ITypeMapper
 {
-   TypeMapper(){}
+   TypeMapper() {}
    internal static readonly ITypeMapper Instance = new TypeMapper();
    static readonly IThreadShared<MappingState> State = IThreadShared.WithDefaultTimeout<MappingState>();
 
@@ -108,50 +108,39 @@ class TypeMapper : ITypeMapper
       }
    }
 
-   static bool _currentlyLoadingTypes = false;
-   static bool _assembliesWhereLoadedWhileWeWereDetectingTypes = false;
-   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings()
+   static readonly ReentrancyGuard _reentrancyGuard = new();
+
+   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => _reentrancyGuard.ExecuteIfNotReEntering(() =>
    {
-      //In rare situations we may encounter reentrancy here and if so we'd like to avoid a deadlock...
-      if(_currentlyLoadingTypes)
-      {
-         _assembliesWhereLoadedWhileWeWereDetectingTypes = true;
-         return;
-      }
       State.Update(state =>
       {
-         using(ScopedChange.Enter(() => _currentlyLoadingTypes = true, () => _currentlyLoadingTypes = false))
+         var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
+
+         foreach(var assembly in unHandledAssemblies)
          {
-
-            var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
-
-            foreach(var assembly in unHandledAssemblies)
             {
+               if(state.CheckedAssemblies.Contains(assembly))
                {
-                  if(state.CheckedAssemblies.Contains(assembly))
-                  {
-                     continue;
-                  }
+                  continue;
+               }
 
-                  try
-                  {
-                     CheckAssemblyForRequiredMappings(assembly, state);
-                  }
-                  finally
-                  {
-                     state.CheckedAssemblies.Add(assembly);
-                  }
+               try
+               {
+                  CheckAssemblyForRequiredMappings(assembly, state);
+               }
+               finally
+               {
+                  state.CheckedAssemblies.Add(assembly);
                }
             }
          }
 
-         if(_assembliesWhereLoadedWhileWeWereDetectingTypes)
+         if(_reentrancyGuard.GetAndClearReentryWasAttempted())
          {
-            _assembliesWhereLoadedWhileWeWereDetectingTypes = false;
             EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
          }
       });
-   }
+   });
 
    static void CheckAssemblyForRequiredMappings(Assembly assembly, MappingState state)
    {
@@ -186,8 +175,6 @@ class TypeMapper : ITypeMapper
          state.AssemblyMappingUpdateMessages[assembly] = message;
       }
    }
-
-
 
    static string BuildMessageDescribingHowToAddMissingMappings(Assembly assembly)
    {
