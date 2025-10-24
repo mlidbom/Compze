@@ -7,6 +7,18 @@
     <HotSpotsLineExclusionList>
       <Value>DependencyInjection\ComponentRegistrationWithoutInstantiationSpec.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
       <Value>DependencyInjection\InstantiationSpec.cs:Compze\Utilities\Compze.Utilities.csproj-7</Value>
+      <Value>SystemCE\ThreadingCE\TaskRunner.cs:Compze\Tessaging\Compze.Tessaging.csproj-57</Value>
+      <Value>Threading\TasksCE\TaskUnit.cs:Compze\Utilities\Compze.Utilities.csproj-11</Value>
+      <Value>Threading\TasksCE\TaskCEExceptionHandling.cs:Compze\Utilities\Compze.Utilities.csproj-21</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-65</Value>
+      <Value>Hosting\Implementation\Inbox\Inbox.HandlerExecutionEngine..cs:Compze\Tessaging\Compze.Tessaging.csproj-38</Value>
+      <Value>Hosting\Implementation\Inbox\Inbox.HandlerExecutionEngine.Coordinator.cs:Compze\Tessaging\Compze.Tessaging.csproj-30</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-17</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-19</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-23</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-41</Value>
+      <Value>Threading\ResourceAccess\ThreadShared.cs:Compze\Utilities\Compze.Utilities.csproj-34</Value>
+      <Value>MicrosoftDependencyInjectionContainer .cs:Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj-37</Value>
     </HotSpotsLineExclusionList>
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
