@@ -52,7 +52,7 @@ partial class DocumentDbSession
             return;
          }
          IsCommitting = true;
-         using(DisposableCE.Create(() => IsCommitting = false))//Reset IsCommitting to false once we are done committing.
+         using(new Disposable(() => IsCommitting = false))//Reset IsCommitting to false once we are done committing.
          {
             if(ScheduledForAdding)
             {

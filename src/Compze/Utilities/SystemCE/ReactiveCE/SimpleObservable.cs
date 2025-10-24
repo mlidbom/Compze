@@ -23,6 +23,6 @@ class SimpleObservable<TEvent> : IObservable<TEvent>
    public IDisposable Subscribe(IObserver<TEvent> observer)
    {
       _observerCollection.Update(it =>  it.Add(observer));
-      return DisposableCE.Create(() => _observerCollection.Update(it => it.Remove(observer)));
+      return new Disposable(() => _observerCollection.Update(it => it.Remove(observer)));
    }
 }

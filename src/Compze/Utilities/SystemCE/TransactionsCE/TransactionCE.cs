@@ -24,7 +24,7 @@ static class TransactionCE
    {
       var transactionInformationDistributedIdentifierBefore = Transaction.Current?.TransactionInformation.DistributedIdentifier ?? Guid.Empty;
 
-      return DisposableCE.Create(() =>
+      return new Disposable(() =>
       {
          if(Transaction.Current != null && transactionInformationDistributedIdentifierBefore == Guid.Empty && Transaction.Current.TransactionInformation.DistributedIdentifier != Guid.Empty)
          {

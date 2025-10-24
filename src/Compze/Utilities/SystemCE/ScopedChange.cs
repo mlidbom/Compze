@@ -12,6 +12,6 @@ static class ScopedChange
    public static IDisposable Enter(Action onEnter, Action onDispose)
    {
       onEnter();
-      return DisposableCE.Create(onDispose);
+      return new Disposable(onDispose);
    }
 }

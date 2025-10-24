@@ -94,7 +94,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
       _scopeCache.Value = CurrentProvider().CreateAsyncScope();
 
-      return DisposableCE.Create(() =>
+      return new Disposable(() =>
       {
          Assert.State.Is(_scopeCache.Value != null, () => "Attempt to dispose scope from a context that is not within the scope.");
          _scopeCache.Value.Dispose();
