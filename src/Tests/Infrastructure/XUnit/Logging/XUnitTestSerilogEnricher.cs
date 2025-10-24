@@ -11,10 +11,9 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
 {
    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
    {
-      if(TestContext.Current.TestCase == null) return;
       var testCase = TestContext.Current.TestCase;
 
-      var pluggableComponents = ComponentCombination.Current?.TryExtractPluggableComponents();
+      var pluggableComponents = ComponentCombination.TryGetCurrent()?.TryExtractPluggableComponents();
 
       logEvent.AddOrUpdateProperty(
          propertyFactory.CreateProperty("XUnit",
@@ -22,8 +21,8 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
                                         {
                                            ["Container"] = pluggableComponents?.DiContainer.ToString() ?? "",
                                            ["SqlLayer"] = pluggableComponents?.SqlLayer.ToString() ?? "",
-                                           ["TestClass"] = testCase.TestClass?.TestClassName ?? "missing",
-                                           ["TestName"] = testCase.TestMethod?.MethodName ?? testCase.TestCaseDisplayName,
+                                           ["TestClass"] = testCase?.TestClass?.TestClassName ?? "missing",
+                                           ["TestName"] = testCase?.TestMethod?.MethodName ?? testCase?.TestCaseDisplayName ?? "missing",
                                         },
                                         destructureObjects: true));
    }
