@@ -7,7 +7,6 @@
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
     <RdiConfigured>True</RdiConfigured>
-    <RestrictToString>False</RestrictToString>
     <SolutionConfigured>True</SolutionConfigured>
     <XUnit2Enabled>False</XUnit2Enabled>
   </Settings>
