@@ -2,7 +2,6 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Tests.Infrastructure;
 using Xunit;
 

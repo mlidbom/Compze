@@ -5,8 +5,8 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions.Transport;
-using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport.Client;
-using Compze.Tessaging.Hosting.Implementation.Http;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -15,12 +15,12 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Hosting.Implementation;
+namespace Compze.Tessaging.Implementation;
 
 static class TransportRegistrar
 {
    internal static IComponentRegistrar Transport(this IComponentRegistrar registrar)
-      => registrar.Register(Implementation.TransportClient.RegisterWith);
+      => registrar.Register(TransportClient.RegisterWith);
 }
 
 partial class TransportClient : ITransportClient, IDisposable
@@ -50,7 +50,7 @@ partial class TransportClient : ITransportClient, IDisposable
    public async Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _remoteApiTransportClient);
+      var clientConnection = new Outbox.Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _remoteApiTransportClient);
 
       await clientConnection.InitAsync().caf();
 

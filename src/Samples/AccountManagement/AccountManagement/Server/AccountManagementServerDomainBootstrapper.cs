@@ -9,10 +9,10 @@ using Compze.Sql.MicrosoftSql;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Sql.MicrosoftSql;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 
 namespace AccountManagement;
 

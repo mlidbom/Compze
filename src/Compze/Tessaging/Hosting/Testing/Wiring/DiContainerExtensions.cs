@@ -4,6 +4,8 @@ using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Sql.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Testing.Sql;
+using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

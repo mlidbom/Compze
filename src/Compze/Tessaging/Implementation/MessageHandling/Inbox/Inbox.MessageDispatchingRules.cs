@@ -1,0 +1,28 @@
+using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Utilities.SystemCE.LinqCE;
+
+namespace Compze.Tessaging.Implementation.MessageHandling;
+
+partial class Inbox
+{
+   class QueriesExecuteAfterAllCommandsAndEventsAreDone : IMessageDispatchingRule
+   {
+      public bool CanBeDispatched(IExecutingMessagesSnapshot executing, TransportMessage.InComing candidateMessage)
+      {
+         if(candidateMessage.MessageTypeEnum != TransportMessage.TransportMessageType.NonTransactionalQuery) return true;
+
+         return executing.AtMostOnceCommands.None() && executing.ExactlyOnceCommands.None() && executing.ExactlyOnceEvents.None();
+      }
+   }
+
+   class CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint : IMessageDispatchingRule
+   {
+      public bool CanBeDispatched(IExecutingMessagesSnapshot executing, TransportMessage.InComing candidateMessage)
+      {
+         if(candidateMessage.MessageTypeEnum == TransportMessage.TransportMessageType.NonTransactionalQuery) return true;
+
+         return executing.AtMostOnceCommands.None() && executing.ExactlyOnceCommands.None() && executing.ExactlyOnceEvents.None();
+      }
+   }
+}

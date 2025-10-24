@@ -7,7 +7,7 @@ using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Newtonsoft.Json;
 
-namespace Compze.Tessaging.Sql.EventStore;
+namespace Compze.Tessaging.TyperMediaApi.EventStore;
 
 public partial class EventStoreApi
 {

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
+namespace Compze.Tessaging.Implementation.Abstractions;
 
 interface IOutbox
 {

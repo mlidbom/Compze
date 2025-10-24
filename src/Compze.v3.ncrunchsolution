@@ -10,8 +10,6 @@
       <Value>Threading\TasksCE\TaskUnit.cs:Compze\Utilities\Compze.Utilities.csproj-11</Value>
       <Value>Threading\TasksCE\TaskCEExceptionHandling.cs:Compze\Utilities\Compze.Utilities.csproj-21</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-65</Value>
-      <Value>Hosting\Implementation\Inbox\Inbox.HandlerExecutionEngine..cs:Compze\Tessaging\Compze.Tessaging.csproj-38</Value>
-      <Value>Hosting\Implementation\Inbox\Inbox.HandlerExecutionEngine.Coordinator.cs:Compze\Tessaging\Compze.Tessaging.csproj-30</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-17</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-19</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-23</Value>
@@ -22,13 +20,13 @@
       <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-79</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-57</Value>
       <Value>UniversalTestBase.cs:Tests\Infrastructure\Compze.Tests.Infrastructure.csproj-29</Value>
-      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-63</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-65</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional..cs:Compze\Utilities\Compze.Utilities.csproj-20</Value>
       <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-85</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-64</Value>
-      <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-118</Value>
-      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-90</Value>
-      <Value>Hosting\TestingEndpointHostBase.cs:Compze\Tessaging\Compze.Tessaging.csproj-82</Value>
+      <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-121</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-92</Value>
+      <Value>Hosting\TestingEndpointHostBase.cs:Compze\Tessaging\Compze.Tessaging.csproj-83</Value>
       <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_command_event_and_query_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-76</Value>
       <Value>UniversalTestBase.cs:Tests\Infrastructure\Compze.Tests.Infrastructure.csproj-35</Value>
       <Value>Functional\Unit.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>

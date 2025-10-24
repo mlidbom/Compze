@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
-using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

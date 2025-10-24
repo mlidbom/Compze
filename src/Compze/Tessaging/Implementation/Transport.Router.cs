@@ -4,11 +4,12 @@ using System.Linq;
 using Compze.Abstractions.Internal;
 using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport.Client;
+using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
 
-namespace Compze.Tessaging.Hosting.Implementation;
+namespace Compze.Tessaging.Implementation;
 
 partial class TransportClient
 {

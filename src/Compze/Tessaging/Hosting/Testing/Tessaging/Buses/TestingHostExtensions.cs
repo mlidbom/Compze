@@ -1,6 +1,7 @@
 using System;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
+using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
 using FluentAssertions;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;

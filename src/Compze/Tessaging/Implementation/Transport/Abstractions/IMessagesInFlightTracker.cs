@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Abstractions.Transport;
-using Compze.Tessaging.Hosting.Implementation;
 
-namespace Compze.Tessaging.Hosting;
+namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
 interface IMessagesInFlightTracker
 {

@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Compze.Abstractions.Internal.Time;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -8,14 +12,10 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Compze.Utilities.Threading.ResourceAccess;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Hosting.Implementation;
+namespace Compze.Tessaging.Implementation;
 
 static class CommandSchedulerRegistrar
 {

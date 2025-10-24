@@ -2,11 +2,12 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Typermedia.Implementation;
 using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using System;
+using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Utilities.Threading;
 
 namespace Compze.Tessaging.Hosting;

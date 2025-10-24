@@ -5,7 +5,7 @@ using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
-using AccountLink = Compze.Tessaging.Sql.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
+using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
 
 namespace AccountManagement.Domain;
 

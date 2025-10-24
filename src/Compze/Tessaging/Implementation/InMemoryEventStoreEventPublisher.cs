@@ -1,11 +1,11 @@
 using Compze.Tessaging.Common;
-using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
+using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Hosting.Implementation;
+namespace Compze.Tessaging.Implementation;
 
 static class InMemoryEventStoreEventPublisherRegistrar
 {

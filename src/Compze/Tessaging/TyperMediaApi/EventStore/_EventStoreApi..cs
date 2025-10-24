@@ -3,7 +3,7 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Compze.Tessaging.Sql.EventStore;
+namespace Compze.Tessaging.TyperMediaApi.EventStore;
 
 public partial class EventStoreApi
 {
