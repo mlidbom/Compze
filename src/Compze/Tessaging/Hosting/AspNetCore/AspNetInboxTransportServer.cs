@@ -22,7 +22,7 @@ class InternalControllerFeatureProvider : ControllerFeatureProvider
    protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Controller));
 }
 
-class AspNetInboxTransport : IInboxTransport
+class AspNetInboxTransportServer : IInboxTransportServer
 {
    readonly IServiceLocator _serviceLocator;
    WebApplication? _webApplication;
@@ -30,11 +30,11 @@ class AspNetInboxTransport : IInboxTransport
 
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
-         Singleton.For<IInboxTransport>()
+         Singleton.For<IInboxTransportServer>()
                   .CreatedBy((IServiceLocator serviceLocator, CompzeControllerActivator activator)
-                                => new AspNetInboxTransport(serviceLocator, activator)));
+                                => new AspNetInboxTransportServer(serviceLocator, activator)));
 
-   AspNetInboxTransport(IServiceLocator serviceLocator, CompzeControllerActivator controllerActivator)
+   AspNetInboxTransportServer(IServiceLocator serviceLocator, CompzeControllerActivator controllerActivator)
    {
       _controllerActivator = controllerActivator;
       _serviceLocator = serviceLocator;

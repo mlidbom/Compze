@@ -27,29 +27,29 @@ static class InboxRegistrar
                   .CreatedBy((IMessagesInFlightTracker globalStateTracker, IMessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.IMessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
                                 => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
-                  .CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransport transport)
-                                => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, transport))
+                  .CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransportServer transportServer)
+                                => new Inbox(serviceLocator, handlerExecutionEngine, messageStorage, container, transportServer))
       );
 
    readonly HandlerExecutionEngine _handlerExecutionEngine;
 
    readonly IMessageStorage _storage;
-   readonly IInboxTransport _transport;
+   readonly IInboxTransportServer _transportServer;
 
-   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransport transport)
+   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, IMessageStorage messageStorage, IDependencyInjectionContainer container, IInboxTransportServer transportServer)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = messageStorage;
-      _transport = transport;
+      _transportServer = transportServer;
    }
 
-   public EndPointAddress Address => new(aspNetAddress: _transport.Address);
+   public EndPointAddress Address => new(aspNetAddress: _transportServer.Address);
 
    public async Task StartAsync()
    {
       _handlerExecutionEngine.Start();
       var storageStartTask = _storage.StartAsync();
-      await Task.WhenAll(storageStartTask, _transport.StartAsync()).caf();
+      await Task.WhenAll(storageStartTask, _transportServer.StartAsync()).caf();
    }
 
    public async Task<object?> Receive(TransportMessage.InComing message)
@@ -64,12 +64,12 @@ static class InboxRegistrar
       return await _handlerExecutionEngine.Enqueue(message).caf();
    }
 
-   public async Task StopAsync() => await _transport.StopAsync().caf();
+   public async Task StopAsync() => await _transportServer.StopAsync().caf();
 
    public async ValueTask DisposeAsync()
    {
       _handlerExecutionEngine.Stop();
       await StopAsync().caf();
-      await _transport.DisposeAsync().caf();
+      await _transportServer.DisposeAsync().caf();
    }
 }

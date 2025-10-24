@@ -6,7 +6,7 @@ public static class AspNetCoreTransportRegistrar
 {
    public static IComponentRegistrar AspNetCoreTransport(this IComponentRegistrar registrar) =>
       registrar.Register(CompzeControllerActivator.RegisterWith,
-                         AspNetInboxTransport.RegisterWith,
+                         AspNetInboxTransportServer.RegisterWith,
                          RpcController.RegisterWith,
                          TessagingController.RegisterWith);
 }
