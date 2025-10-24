@@ -1,7 +1,5 @@
 using System;
-using Compze.Abstractions;
 using Compze.Abstractions.Public;
-using Newtonsoft.Json;
 
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UnusedTypeParameter
@@ -19,7 +17,7 @@ public static class MessageTypes
          public abstract class StrictlyLocalQuery<TQuery, TResult> : IStrictlyLocalQuery<TQuery, TResult> where TQuery : StrictlyLocalQuery<TQuery, TResult>;
 #pragma warning restore CA1724 //
 
-         [method: JsonConstructor] public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Queries.StrictlyLocalQuery<EntityLink<TResult>, TResult>
+         public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Queries.StrictlyLocalQuery<EntityLink<TResult>, TResult>
             where TResult : IHasPersistentIdentity<Guid>
          {
             public Guid EntityId { get; private set; } = entityId;

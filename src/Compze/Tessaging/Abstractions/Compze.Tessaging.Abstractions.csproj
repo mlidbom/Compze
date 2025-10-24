@@ -6,9 +6,6 @@
       <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
    </PropertyGroup>
    <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-   </ItemGroup>
-   <ItemGroup>
       <ProjectReference Include="..\..\Abstractions\Compze.Abstractions.csproj" />
       <ProjectReference Include="..\..\Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
@@ -18,5 +15,8 @@
     <Compile Remove="_Docs\**\*.cs" />
     <None Include="_Docs\**\*.cs" />
     <Content Include="_Docs\**\*.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
   </ItemGroup>
 </Project>
