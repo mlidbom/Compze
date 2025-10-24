@@ -14,7 +14,7 @@ interface ITaskRunner
 {
    void Run(string taskName, Action task);
    void Run(string taskName, Func<unit> task);
-   Thread RunOnNamedThread(string threadName, ThreadStart start, ThreadPriority priority = ThreadPriority.Normal);
+   Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
 static class TaskRunnerRegistrar
@@ -49,13 +49,13 @@ static class TaskRunnerRegistrar
 
       public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });
 
-      public Thread RunOnNamedThread(string threadName, ThreadStart start, ThreadPriority priority = ThreadPriority.Normal)
+      public Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
       {
          var thread = new Thread(() =>
          {
             try
             {
-               start.Invoke();
+               threadLoop.Invoke();
             }
             catch(Exception exception) when(exception is OperationCanceledException or ThreadInterruptedException or ThreadAbortException)
             {

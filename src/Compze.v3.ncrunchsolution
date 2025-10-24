@@ -4,6 +4,10 @@
     <FrameworkUtilisationTypeForGallio>Disabled</FrameworkUtilisationTypeForGallio>
     <FrameworkUtilisationTypeForMSTest>Disabled</FrameworkUtilisationTypeForMSTest>
     <FrameworkUtilisationTypeForNUnit2>Disabled</FrameworkUtilisationTypeForNUnit2>
+    <HotSpotsLineExclusionList>
+      <Value>DependencyInjection\ComponentRegistrationWithoutInstantiationSpec.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
+      <Value>DependencyInjection\InstantiationSpec.cs:Compze\Utilities\Compze.Utilities.csproj-7</Value>
+    </HotSpotsLineExclusionList>
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
     <RdiConfigured>True</RdiConfigured>
