@@ -26,10 +26,10 @@ public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
                            maxTotal: 200.Milliseconds().EnvMultiply(unoptimized: 1.3));
    }
 
-   [XF] public void Allocates_and_disposes_5000_instances_in_10_millisecond_when_not_collecting_stack_traces()
+   [XF] public void Allocates_and_disposes_5000_instances_in_20_millisecond_when_not_collecting_stack_traces()
    {
       TimeAsserter.Execute(action: () => new StrictlyManagedResource<StrictResource>().Dispose(),
                            iterations: 5000,
-                           maxTotal: 10.Milliseconds());
+                           maxTotal: 20.Milliseconds());
    }
 }

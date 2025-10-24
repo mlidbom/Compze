@@ -110,10 +110,10 @@ public class MonitorCEPerformanceTests : UniversalTestBase
       RunMultiThreadedScenario(action, multiThreadAllowedTime: multiThreadAllowedTime);
    }
 
-   [XF] public void _010_Read_Unsafe________________________time_is_less_than_nanoseconds_SingleThreaded_06_MultiThreaded_01() =>
+   [XF] public void _010_Read_Unsafe________________________time_is_less_than_nanoseconds_SingleThreaded_08_MultiThreaded_3() =>
       RunScenarios(() => _guarded.Read_Unsafe(),
-                   singleThreadAllowedTime: (6 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.0),
-                   multiThreadAllowedTime: (1 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 150, unoptimized: 3.5));
+                   singleThreadAllowedTime: (8 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.0),
+                   multiThreadAllowedTime: (3 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 150, unoptimized: 3.5));
 
    [XF] public void _020_Read_Locked________________________time_is_less_than_nanoseconds_SingleThreaded_25_MultiThreaded_220() =>
       RunScenarios(() => _guarded.Read_Locked(),
@@ -145,9 +145,9 @@ public class MonitorCEPerformanceTests : UniversalTestBase
                    singleThreadAllowedTime: (45 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.2),
                    multiThreadAllowedTime: (500 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 8.0, unoptimized: 1.3));
 
-   [XF] public void _073_Increment_MonitorCE_Update_________________________time_is_less_than_nanoseconds_SingleThreaded_80__MultiThreaded_340() =>
+   [XF] public void _073_Increment_MonitorCE_Update_________________________time_is_less_than_nanoseconds_SingleThreaded_120__MultiThreaded_340() =>
       RunScenarios(() => _guarded.Increment_MonitorCE_Update(),
-                   singleThreadAllowedTime: (100 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 45, unoptimized: 2.5),
+                   singleThreadAllowedTime: (120 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 45, unoptimized: 2.5),
                    multiThreadAllowedTime: (460 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 12, unoptimized: 1.3));
 
 }

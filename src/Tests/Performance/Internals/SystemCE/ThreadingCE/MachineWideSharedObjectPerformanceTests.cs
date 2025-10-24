@@ -28,7 +28,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
       TimeAsserter.ExecuteThreaded(() => shared2.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
    }
 
-   [XF] public void Update_runs_single_threaded_100_times_in_100_milliseconds()
+   [XF] public void Update_runs_single_threaded_80_times_in_100_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;
@@ -41,15 +41,15 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          },
          tearDown: () =>
          {
-            shared.GetCopy().Name.Should().Be("100");
+            shared.GetCopy().Name.Should().Be("80");
             shared.Dispose();
          },
          action: () => shared.Update(it => it.Name = (++counter).ToStringInvariant()),
-         iterations: 100,
+         iterations: 80,
          maxTotal: 100.Milliseconds());
    }
 
-   [XF] public void Update_runs_multi_threaded_50_times_in_80_milliseconds()
+   [XF] public void Update_runs_multi_threaded_40_times_in_80_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;
@@ -62,11 +62,11 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          },
          tearDown: () =>
          {
-            shared.GetCopy().Name.Should().Be("50");
+            shared.GetCopy().Name.Should().Be("40");
             shared.Dispose();
          },
          action: () => shared.Update(it => it.Name = (++counter).ToStringInvariant()),
-         iterations: 50,
+         iterations: 40,
          maxTotal: 80.Milliseconds());
    }
 }

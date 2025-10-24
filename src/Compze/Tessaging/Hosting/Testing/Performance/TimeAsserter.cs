@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 using SyncOrAsyncCE = Compze.Utilities.Threading.SyncOrAsyncCE;
@@ -12,6 +13,8 @@ static class TimeAsserter
 {
    const int MaxTriesLimit = 40;
    const int MaxTriesDefault = 10;
+
+   static ILogger Log => CompzeLogger.For(typeof(TimeAsserter));
 
    public static StopwatchCE.TimedExecutionSummary Execute([InstantHandle] Action action,
                                                            int iterations = 1,
@@ -110,6 +113,7 @@ static class TimeAsserter
                                                                  """);
                var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
                writer.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               Log.Warning($"{description}: Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
                Thread.Sleep(waitTime);
                continue;
             }

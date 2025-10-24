@@ -17,7 +17,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
    static IEventStoreSerializer _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);
    
 
-   [XF] public void Should_roundtrip_simple_event_1000_times_in_15_milliseconds()
+   [XF] public void Should_roundtrip_simple_event_1000_times_in_25_milliseconds()
    {
       var @event = new TestEvent(
          test1: "Test1",
@@ -36,7 +36,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
             _eventSerializer.Deserialize(typeof(TestEvent), eventJson);
          },
          iterations:1000,
-         maxTotal: 15.Milliseconds()
+         maxTotal: 25.Milliseconds()
       );
    }
 

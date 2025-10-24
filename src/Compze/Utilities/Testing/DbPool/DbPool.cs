@@ -37,7 +37,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
    readonly IDbPoolSqlLayer _sqlLayer;
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
    static TimeSpan _reservationLength;
-   const int NumberOfDatabases = 30;
+   const int NumberOfDatabases = 50;
 
    internal DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
    {
