@@ -12,8 +12,6 @@ namespace Compze.Utilities.Functional;
 /// NAMING CONVENTION: All methods use lowercase naming breaking .NET conventions for two critical reasons:
 /// 
 /// 1. VISUAL DISTINCTION: Instantly recognizable as language-like features,
-///    not domain methods - similar to F#'s pipe-forward (|>) operator
-///    and LINQ query keywords (where, select).
 /// 
 /// 2. COLLISION AVOIDANCE: Since these are extensions on ALL types,
 ///    avoiding name conflicts with existing methods is vital.
