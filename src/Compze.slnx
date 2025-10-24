@@ -12,7 +12,6 @@
   </Folder>
   <Folder Name="/Compze/Abstractions/">
     <Project Path="Compze/Abstractions/Compze.Abstractions.csproj" />
-    <Project Path="Compze/Abstractions/Internal/Compze.Abstractions.Internal.csproj" />
   </Folder>
   <Folder Name="/Compze/Common/">
     <Project Path="Compze/Common/Compze.Common.csproj" />

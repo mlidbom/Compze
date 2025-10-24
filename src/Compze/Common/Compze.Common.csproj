@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
       <ProjectReference Include="..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
       <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->

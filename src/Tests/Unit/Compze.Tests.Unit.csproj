@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
@@ -7,9 +6,9 @@
    <ItemGroup>
       <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
       <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\Compze\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Compze.Tessaging.Teventive.csproj" />
       <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\Compze\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
