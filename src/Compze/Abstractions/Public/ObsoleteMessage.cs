@@ -1,4 +1,4 @@
-namespace Compze.Abstractions;
+namespace Compze.Abstractions.Public;
 
 public static class ObsoleteMessage
 {

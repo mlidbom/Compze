@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
+using Compze.Abstractions.Public;
 
 namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;
 

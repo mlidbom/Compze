@@ -1,5 +1,6 @@
 using System;
 using Compze.Abstractions;
+using Compze.Abstractions.Public;
 using Newtonsoft.Json;
 
 // ReSharper disable RedundantNameQualifier

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Abstractions;
+using Compze.Abstractions.Public;
 using JetBrains.Annotations;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 

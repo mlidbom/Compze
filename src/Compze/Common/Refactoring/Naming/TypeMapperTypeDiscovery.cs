@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Abstractions;
+using Compze.Abstractions.Public;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE.ReflectionCE;
 

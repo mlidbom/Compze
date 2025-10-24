@@ -1,4 +1,4 @@
-namespace Compze.Abstractions;
+namespace Compze.Abstractions.Public;
 
 /// <summary>Anything that can be uniquely identified using its id over any number of persist/load cycles.</summary>
 public interface IHasPersistentIdentity<out TKeyType>

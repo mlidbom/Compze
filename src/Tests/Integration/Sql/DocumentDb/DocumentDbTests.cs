@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Abstractions;
+using Compze.Abstractions.Public;
 using Compze.Sql.DocumentDb.Abstractions;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;

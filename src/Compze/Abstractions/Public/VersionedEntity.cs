@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Abstractions;
+namespace Compze.Abstractions.Public;
 
 ///<summary>Base class for persistent entities with versioning information</summary>
 public class VersionedPersistentEntity<T> : PersistentEntity<T> where T : VersionedPersistentEntity<T>
