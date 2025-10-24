@@ -14,6 +14,7 @@ static class TimeAsserter
    const int MaxTriesLimit = 40;
    const int MaxTriesDefault = 10;
 
+   public static bool VerboseMode { get; set; } = false;
    static ILogger Log => CompzeLogger.For(typeof(TimeAsserter));
 
    public static StopwatchCE.TimedExecutionSummary Execute([InstantHandle] Action action,
@@ -113,7 +114,8 @@ static class TimeAsserter
                                                                  """);
                var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
                writer.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
-               Log.Warning($"{description}: Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               if(VerboseMode)
+                  Log.Warning($"{description}: Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
                Thread.Sleep(waitTime);
                continue;
             }

@@ -9,8 +9,6 @@ namespace Compze.Tessaging.Hosting.Testing.Performance;
 
 sealed class DeferredConsoleWriter : IDisposable
 {
-   static readonly bool VerboseMode = true;
-
    class Buffer
    {
       internal readonly StringBuilder Content = new();
@@ -51,7 +49,7 @@ sealed class DeferredConsoleWriter : IDisposable
    {
       _buffer.Update(buffer =>
       {
-         if(!buffer.TestSucceeded || VerboseMode)
+         if(!buffer.TestSucceeded)
          {
             ConsoleCE.WriteLine(buffer.Content.ToString());
          }
