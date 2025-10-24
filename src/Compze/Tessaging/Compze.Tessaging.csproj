@@ -81,4 +81,7 @@
     <None Remove="Typermedia\Abstractions\**" />
     <Content Remove="Typermedia\Abstractions\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Implementation\Transport\Server\" />
+  </ItemGroup>
 </Project>
