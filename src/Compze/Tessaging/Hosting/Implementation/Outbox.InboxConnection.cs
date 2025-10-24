@@ -11,7 +11,7 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 partial class Outbox
 {
-   internal class InboxConnection(IMessagesInFlightTracker messagesInFlightTracker, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient) : IInboxConnection
+   internal class InboxConnection(IMessagesInFlightTracker messagesInFlightTracker, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiClient remoteApiClient) : IInboxConnection
    {
       MessageTypesInternal.EndpointInformation? _endpointInformation = null;
       IRpcClient? _rpcClient;
@@ -20,7 +20,7 @@ partial class Outbox
       readonly EndPointAddress _remoteAddress = remoteAddress;
       readonly ITypeMapper _typeMapper = typeMapper;
       readonly IRemotableMessageSerializer _serializer = serializer;
-      readonly IHttpApiClient _httpApiClient = httpApiClient;
+      readonly IRemoteApiClient _remoteApiClient = remoteApiClient;
 
       public MessageTypesInternal.EndpointInformation EndpointInformation => _endpointInformation!;
 
@@ -33,8 +33,8 @@ partial class Outbox
 
       internal async Task InitAsync()
       {
-         (_rpcClient, _endpointInformation) = await RpcClient.BootstrapConnectionToEndpoint(_httpApiClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker).caf();
-         _messageSender = new MessageSender(_httpApiClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker, _endpointInformation.Id);
+         (_rpcClient, _endpointInformation) = await RpcClient.BootstrapConnectionToEndpoint(_remoteApiClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker).caf();
+         _messageSender = new MessageSender(_remoteApiClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker, _endpointInformation.Id);
       }
 
       public void Dispose() {}

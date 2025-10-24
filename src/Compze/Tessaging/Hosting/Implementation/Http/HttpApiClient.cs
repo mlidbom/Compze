@@ -14,10 +14,10 @@ static class HttpApiClientRegistrar
       => registrar.Register(Http.HttpApiClient.RegisterWith);
 }
 
-class HttpApiClient : IHttpApiClient
+class HttpApiClient : IRemoteApiClient
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IHttpApiClient>()
+      => registrar.Register(Singleton.For<IRemoteApiClient>()
                                      .CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer)));
 
    readonly IHttpClientFactoryCE _clientFactory;

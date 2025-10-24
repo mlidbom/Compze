@@ -8,9 +8,9 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation.Http;
 
-class RpcClient(IHttpApiClient httpClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IMessagesInFlightTracker messagesInFlightTracker, EndpointId remoteEndpointId) : IRpcClient
+class RpcClient(IRemoteApiClient remoteClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IMessagesInFlightTracker messagesInFlightTracker, EndpointId remoteEndpointId) : IRpcClient
 {
-   readonly IHttpApiClient _client = httpClient;
+   readonly IRemoteApiClient _client = remoteClient;
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableMessageSerializer _serializer = serializer;
    readonly IMessagesInFlightTracker _messagesInFlightTracker = messagesInFlightTracker;
@@ -38,11 +38,11 @@ class RpcClient(IHttpApiClient httpClient, EndPointAddress remoteAddress, ITypeM
       return await _client.PostAsync<TResult>(message, query, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.Query}")).caf();
    }
 
-   internal static async Task<(RpcClient, MessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IHttpApiClient httpClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IMessagesInFlightTracker messagesInFlightTracker)
+   internal static async Task<(RpcClient, MessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IRemoteApiClient remoteClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IMessagesInFlightTracker messagesInFlightTracker)
    {
       var endpointInformationQuery = new MessageTypesInternal.EndpointInformationQuery();
       var endpointInformationQueryMessage = TransportMessage.OutGoing.Create(endpointInformationQuery, typeMapper, serializer);
-      var endpointInformation = await httpClient.PostAsync<MessageTypesInternal.EndpointInformation>(endpointInformationQueryMessage, endpointInformationQuery, new Uri($"{remoteAddress.AspNetAddress}{HttpConstants.Routes.Rpc.Query}")).caf();
-      return (new RpcClient(httpClient, remoteAddress, typeMapper, serializer, messagesInFlightTracker, endpointInformation.Id), endpointInformation);
+      var endpointInformation = await remoteClient.PostAsync<MessageTypesInternal.EndpointInformation>(endpointInformationQueryMessage, endpointInformationQuery, new Uri($"{remoteAddress.AspNetAddress}{HttpConstants.Routes.Rpc.Query}")).caf();
+      return (new RpcClient(remoteClient, remoteAddress, typeMapper, serializer, messagesInFlightTracker, endpointInformation.Id), endpointInformation);
    }
 }

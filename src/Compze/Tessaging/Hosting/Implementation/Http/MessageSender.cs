@@ -8,9 +8,9 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Implementation.Http;
 
-class MessageSender(IHttpApiClient httpClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IMessagesInFlightTracker messagesInFlightTracker, EndpointId remoteEndpointId) : IMessageSender
+class MessageSender(IRemoteApiClient remoteClient, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IMessagesInFlightTracker messagesInFlightTracker, EndpointId remoteEndpointId) : IMessageSender
 {
-   readonly IHttpApiClient _client = httpClient;
+   readonly IRemoteApiClient _client = remoteClient;
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableMessageSerializer _serializer = serializer;
    readonly IMessagesInFlightTracker _messagesInFlightTracker = messagesInFlightTracker;

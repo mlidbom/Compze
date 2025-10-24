@@ -26,22 +26,22 @@ static class TransportRegistrar
 partial class Transport : ITransport, IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
-                                                                     => new Transport(messagesInFlightTracker, typeMapper, serializer, httpApiClient)));
+      => registrar.Register(Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiClient remoteApiClient)
+                                                                     => new Transport(messagesInFlightTracker, typeMapper, serializer, remoteApiClient)));
 
-   Transport(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IHttpApiClient httpApiClient)
+   Transport(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiClient remoteApiClient)
    {
       _messagesInFlightTracker = messagesInFlightTracker;
       _typeMapper = typeMapper;
       _serializer = serializer;
-      _httpApiClient = httpApiClient;
+      _remoteApiClient = remoteApiClient;
       _router = new Router(typeMapper);
    }
 
    readonly IMessagesInFlightTracker _messagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableMessageSerializer _serializer;
-   readonly IHttpApiClient _httpApiClient;
+   readonly IRemoteApiClient _remoteApiClient;
 
    bool _running = false;
    readonly Router _router;
@@ -50,7 +50,7 @@ partial class Transport : ITransport, IDisposable
    public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _httpApiClient);
+      var clientConnection = new Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _remoteApiClient);
 
       await clientConnection.InitAsync().caf();
 
