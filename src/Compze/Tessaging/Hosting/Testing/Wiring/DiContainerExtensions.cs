@@ -3,7 +3,6 @@ using Compze.Abstractions.Time.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Sql.DocumentDb.Wiring;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.MessageHandling.Dispatching;

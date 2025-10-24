@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
-using Compze.Tessaging.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 

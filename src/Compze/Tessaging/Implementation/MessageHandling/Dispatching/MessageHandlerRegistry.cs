@@ -7,7 +7,6 @@ using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Tessaging.Implementation.Abstractions;

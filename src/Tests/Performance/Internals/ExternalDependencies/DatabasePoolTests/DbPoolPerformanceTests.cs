@@ -6,7 +6,6 @@ using Compze.Sql.PostgreSql;
 using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;

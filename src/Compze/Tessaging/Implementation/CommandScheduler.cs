@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Time.Public;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;

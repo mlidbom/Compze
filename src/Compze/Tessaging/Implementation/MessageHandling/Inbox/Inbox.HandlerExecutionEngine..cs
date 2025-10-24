@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.MessageHandling.Dispatching;

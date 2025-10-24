@@ -1,5 +1,4 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common.Teventive;
 using FluentAssertions;
 

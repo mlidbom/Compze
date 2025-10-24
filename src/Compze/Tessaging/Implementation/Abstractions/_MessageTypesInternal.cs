@@ -9,7 +9,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Time;
 using Compze.Common.Refactoring.Naming;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 using Newtonsoft.Json;
 

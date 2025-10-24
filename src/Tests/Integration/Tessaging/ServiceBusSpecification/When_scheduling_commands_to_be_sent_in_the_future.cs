@@ -5,7 +5,6 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Time.Public;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Sql;

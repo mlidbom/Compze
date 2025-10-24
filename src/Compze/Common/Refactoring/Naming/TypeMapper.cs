@@ -1,4 +1,3 @@
-using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading.ResourceAccess;

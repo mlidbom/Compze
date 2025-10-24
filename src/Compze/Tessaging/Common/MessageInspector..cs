@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common.Typermedia.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
 

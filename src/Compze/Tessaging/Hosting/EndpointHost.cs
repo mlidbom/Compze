@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Utilities.Contracts;

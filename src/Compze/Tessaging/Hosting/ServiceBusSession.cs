@@ -1,7 +1,5 @@
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Typermedia.Implementation;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;

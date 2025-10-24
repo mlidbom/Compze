@@ -4,7 +4,6 @@ using System.Linq;
 using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
-using Compze.Tessaging.Abstractions;
 using Newtonsoft.Json;
 
 namespace Compze.Tessaging.TyperMediaApi.EventStore;

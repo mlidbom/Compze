@@ -17,7 +17,6 @@ using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Tests.Infrastructure;
-using Xunit;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing

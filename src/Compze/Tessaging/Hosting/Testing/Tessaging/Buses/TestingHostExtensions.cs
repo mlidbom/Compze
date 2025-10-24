@@ -1,6 +1,5 @@
 using System;
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
 using FluentAssertions;
 

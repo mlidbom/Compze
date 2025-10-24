@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;

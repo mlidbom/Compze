@@ -1,7 +1,7 @@
 using System;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Abstractions.Tessaging.Transport.Internal;
+namespace Compze.Abstractions.Tessaging.Hosting.Public;
 
 public record EndpointId
 {

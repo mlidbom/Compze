@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Time;
-using Compze.Serialization;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.MessageHandling;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;

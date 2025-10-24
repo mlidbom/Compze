@@ -1,5 +1,4 @@
 using System;
-using Compze.Abstractions;
 using Compze.Abstractions.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
