@@ -44,7 +44,7 @@ class Endpoint : IEndpoint
    public EndpointId Id => _configuration.Id;
    public IServiceLocator ServiceLocator { get; }
 
-   public EndPointAddress? Address => _serverComponents?.Inbox.Address;
+   public HttpEndPointAddress? Address => _serverComponents?.Inbox.Address;
    readonly IMessagesInFlightTracker _globalStateTracker;
    readonly ITransportClient _transportClient;
    readonly IEndpointRegistry _endpointRegistry;

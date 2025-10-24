@@ -20,7 +20,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
       MessagesInFlightTracker = new MessagesInFlightTracker(TypeMapper.Instance);
 
-   public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
+   public IEnumerable<HttpEndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
                                                                    .Select(it => it.Address!)
                                                                    .ToList();
 

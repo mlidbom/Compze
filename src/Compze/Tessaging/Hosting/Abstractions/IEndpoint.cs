@@ -9,7 +9,7 @@ public interface IEndpoint : IAsyncDisposable
 {
     EndpointId Id { get; }
     IServiceLocator ServiceLocator { get; }
-    EndPointAddress? Address { get; }
+    HttpEndPointAddress? Address { get; }
     bool IsRunning { get; }
     Task StartListeningComponentsAsync();
     Task StartSendingComponentsAsync();
