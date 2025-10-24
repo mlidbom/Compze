@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
+namespace Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
 
 interface IExecutingMessagesSnapshot
 {

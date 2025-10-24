@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading;

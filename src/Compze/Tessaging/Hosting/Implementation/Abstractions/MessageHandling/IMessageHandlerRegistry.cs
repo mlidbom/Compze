@@ -4,7 +4,7 @@ using Compze.Abstractions.Internal;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Teventive.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
+namespace Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
 
 interface IMessageHandlerRegistry
 {

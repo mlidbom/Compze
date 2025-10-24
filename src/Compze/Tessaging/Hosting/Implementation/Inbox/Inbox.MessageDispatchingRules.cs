@@ -1,4 +1,4 @@
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Hosting.Implementation;

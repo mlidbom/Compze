@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
+namespace Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
 
 interface ITransport
 {

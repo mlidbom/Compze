@@ -6,6 +6,7 @@ using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.Threading.TasksCE;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

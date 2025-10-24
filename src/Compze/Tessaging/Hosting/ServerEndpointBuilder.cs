@@ -6,6 +6,8 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Typermedia;
