@@ -5,8 +5,8 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.Threading.TasksCE;
-using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
 using Compze.Tessaging.Hosting.Abstractions.Transport;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport.Client;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 

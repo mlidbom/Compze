@@ -8,7 +8,7 @@ using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions.Transport;
-using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport.Client;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;

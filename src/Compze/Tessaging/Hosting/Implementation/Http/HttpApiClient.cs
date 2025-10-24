@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Serialization;
-using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
+using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport.Client;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
+namespace Compze.Tessaging.Hosting.Implementation.Abstractions.Transport.Client;
 
 interface IRemoteApiClient
 {
