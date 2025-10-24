@@ -11,16 +11,16 @@ namespace Compze.Tessaging.Hosting.Implementation;
 
 partial class Outbox
 {
-   internal class InboxConnection(IMessagesInFlightTracker messagesInFlightTracker, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiClient remoteApiClient) : IInboxConnection
+   internal class InboxConnection(IMessagesInFlightTracker messagesInFlightTracker, EndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient) : IInboxConnection
    {
       MessageTypesInternal.EndpointInformation? _endpointInformation = null;
-      IRpcClient? _rpcClient;
-      IMessageSender? _messageSender;
+      IRemoteApiClient? _rpcClient;
+      IRemoteMessageSender? _messageSender;
       readonly IMessagesInFlightTracker _messagesInFlightTracker = messagesInFlightTracker;
       readonly EndPointAddress _remoteAddress = remoteAddress;
       readonly ITypeMapper _typeMapper = typeMapper;
       readonly IRemotableMessageSerializer _serializer = serializer;
-      readonly IRemoteApiClient _remoteApiClient = remoteApiClient;
+      readonly IRemoteApiTransportClient _remoteApiTransportClient = remoteApiTransportClient;
 
       public MessageTypesInternal.EndpointInformation EndpointInformation => _endpointInformation!;
 
@@ -33,8 +33,8 @@ partial class Outbox
 
       internal async Task InitAsync()
       {
-         (_rpcClient, _endpointInformation) = await RpcClient.BootstrapConnectionToEndpoint(_remoteApiClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker).caf();
-         _messageSender = new MessageSender(_remoteApiClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker, _endpointInformation.Id);
+         (_rpcClient, _endpointInformation) = await RemoteApiClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker).caf();
+         _messageSender = new RemoteMessageSender(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker, _endpointInformation.Id);
       }
 
       public void Dispose() {}

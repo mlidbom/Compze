@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
 
-interface IRemoteApiClient
+interface IRemoteApiTransportClient
 {
    Task<TResult> PostAsync<TResult>(TransportMessage.OutGoing message, object realMessage, Uri requestUri);
    Task<HttpResponseMessage> PostAsync(TransportMessage.OutGoing message, object realMessage, Uri requestUri);

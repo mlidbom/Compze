@@ -12,19 +12,19 @@ namespace Compze.Tessaging.Hosting.Implementation.Http;
 static class HttpApiClientRegistrar
 {
    internal static IComponentRegistrar HttpApiClient(this IComponentRegistrar registrar)
-      => registrar.Register(Http.HttpApiClient.RegisterWith);
+      => registrar.Register(Http.HttpApiTransportClient.RegisterWith);
 }
 
-class HttpApiClient : IRemoteApiClient
+class HttpApiTransportClient : IRemoteApiTransportClient
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IRemoteApiClient>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiClient(factory, serializer)));
+      => registrar.Register(Singleton.For<IRemoteApiTransportClient>()
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiTransportClient(factory, serializer)));
 
    readonly IHttpClientFactoryCE _clientFactory;
    readonly IRemotableMessageSerializer _serializer;
 
-   HttpApiClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer)
+   HttpApiTransportClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer)
    {
       _clientFactory = clientFactory;
       _serializer = serializer;

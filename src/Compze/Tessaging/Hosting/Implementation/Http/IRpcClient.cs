@@ -3,7 +3,7 @@ using Compze.Tessaging.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Implementation.Http;
 
-interface IRpcClient
+interface IRemoteApiClient
 {
    Task<TResult> QueryAsync<TResult>(IRemotableQuery<TResult> query);
    Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command);
