@@ -22,7 +22,7 @@ public class If_not_disposed_ : DbPoolTestBase
                                                                 {
                                                                    unit.From(() =>
                                                                    {
-                                                                      _ = CreateServiceLocator().Resolve<DbPoolBase>();
+                                                                      _ = CreateServiceLocator().Resolve<DbPool>();
                                                                    });
 
                                                                    Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)

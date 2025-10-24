@@ -16,7 +16,7 @@ namespace Compze.Tests.Common.Testing.Sql;
 
 public abstract class DbPoolTestBase : UniversalTestBase
 {
-   protected readonly DbPoolBase Pool;
+   protected readonly DbPool Pool;
    protected override void DisposeInternal() => Pool.Dispose();
    readonly IServiceLocator _serviceLocator;
 
@@ -30,10 +30,10 @@ public abstract class DbPoolTestBase : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync();
 
-   protected DbPoolBase ResolvePool() =>
-      _serviceLocator.Resolve<DbPoolBase>();
+   protected DbPool ResolvePool() =>
+      _serviceLocator.Resolve<DbPool>();
 
-   internal static void UseConnection(string connectionString, DbPoolBase pool, Action<ICompzeDbConnection> func)
+   internal static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
    {
       switch(TestEnv.SqlLayer)
       {

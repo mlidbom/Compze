@@ -32,7 +32,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          () =>
          {
             using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
+            using var dbPool = serviceLocator.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(dbName);
          },
@@ -49,7 +49,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          () =>
          {
             using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
+            using var dbPool = serviceLocator.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(dbName);
          },
@@ -64,7 +64,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          action: () =>
          {
             using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
+            using var dbPool = serviceLocator.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
@@ -78,7 +78,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          action: () =>
          {
             using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPoolBase>();
+            using var dbPool = serviceLocator.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
@@ -90,7 +90,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
    {
       var dbName = Guid.NewGuid().ToString();
       using var serviceLocator = CreateServiceLocator();
-      using var pool = serviceLocator.Resolve<DbPoolBase>();
+      using var pool = serviceLocator.Resolve<DbPool>();
       pool.SetLogLevel(LogLevel.Warning);
       pool.ConnectionStringFor(dbName);
 
@@ -106,7 +106,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       var iterations = TestEnv.SqlLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300, sqlite: 180, sqliteMemory: 180);
 
       using var serviceLocator = CreateServiceLocator();
-      using var pool = serviceLocator.Resolve<DbPoolBase>();
+      using var pool = serviceLocator.Resolve<DbPool>();
       pool.SetLogLevel(LogLevel.Warning);
       var reservationName = Guid.NewGuid().ToString();
 

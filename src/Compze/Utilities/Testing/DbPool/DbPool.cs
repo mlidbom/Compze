@@ -19,18 +19,18 @@ namespace Compze.Utilities.Testing.DbPool;
 static class DbPoolRegistrar
 {
    public static IComponentRegistrar DbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      DbPoolBase.RegisterWithIfNotAlreadyRegistered(registrar);
+      DbPool.RegisterWithIfNotAlreadyRegistered(registrar);
 }
 
-public partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBase>
+public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    internal static IComponentRegistrar RegisterWithIfNotAlreadyRegistered(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<DbPoolBase>())
+      if(registrar.Container().IsRegistered<DbPool>())
          return registrar;
 
-      return registrar.Register(Singleton.For<DbPoolBase>()
-                                         .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPoolBase(sqlLayer))
+      return registrar.Register(Singleton.For<DbPool>()
+                                         .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer))
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
@@ -39,7 +39,7 @@ public partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBase>
    static TimeSpan _reservationLength;
    const int NumberOfDatabases = 30;
 
-   internal DbPoolBase(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: true)
+   internal DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: true)
    {
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
@@ -51,7 +51,7 @@ public partial class DbPoolBase : StrictlyManagedResourceBase<DbPoolBase>
    readonly Guid _poolId = Guid.NewGuid();
    protected IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
-   static ILogger _log = CompzeLogger.For<DbPoolBase>();
+   static ILogger _log = CompzeLogger.For<DbPool>();
 
    public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => _log = _log.WithLogLevel(logLevel));
 

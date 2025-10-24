@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public partial class DbPoolBase
+public partial class DbPool
 {
    [UsedImplicitly] protected class SharedState
    {

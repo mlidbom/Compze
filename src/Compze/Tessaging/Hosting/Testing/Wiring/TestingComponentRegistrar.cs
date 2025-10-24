@@ -80,7 +80,7 @@ class TestingComponentRegistrar : ComponentRegistrar
                                                                                     .MsSqlDbPoolSqlLayerIfNotAlreadyRegistered()
                                                                                     .Register(
                                                                                         Singleton.For<IMsSqlConnectionPool>()
-                                                                                                 .CreatedBy((DbPoolBase dbPool) =>
+                                                                                                 .CreatedBy((DbPool dbPool) =>
                                                                                                                IMsSqlConnectionPool.CreateInstance(() => dbPool.ConnectionStringFor(connectionStringName))));
    }
 
@@ -92,7 +92,7 @@ class TestingComponentRegistrar : ComponentRegistrar
                                                                                     .MySqlDbPoolSqlLayerIfNotAlreadyRegistered()
                                                                                     .Register(
                                                                                         Singleton.For<IMySqlConnectionPool>()
-                                                                                                 .CreatedBy((DbPoolBase dbPool) =>
+                                                                                                 .CreatedBy((DbPool dbPool) =>
                                                                                                                IMySqlConnectionPool.CreateInstance(() => dbPool.ConnectionStringFor(connectionStringName))));
    }
 
@@ -104,7 +104,7 @@ class TestingComponentRegistrar : ComponentRegistrar
                                                                                     .PgSqlDbPoolSqlLayerIfNotAlreadyRegistered()
                                                                                     .Register(
                                                                                         Singleton.For<IPgSqlConnectionPool>()
-                                                                                                 .CreatedBy((DbPoolBase pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
+                                                                                                 .CreatedBy((DbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
    }
 
    class SqliteSqlDbPoolRegistrar(IComponentRegistrar registrar) : SqliteConnectionPoolRegistrar.ITestingRegistrar
@@ -115,7 +115,7 @@ class TestingComponentRegistrar : ComponentRegistrar
                                                                                     .SqliteDbPoolSqlLayerIfNotAlreadyRegistered()
                                                                                     .Register(
                                                                                         Singleton.For<ISqliteConnectionPool>()
-                                                                                                 .CreatedBy((DbPoolBase pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+                                                                                                 .CreatedBy((DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
 
    class SqliteMemoryDbPoolRegistrar(IComponentRegistrar registrar) : SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar
@@ -126,6 +126,6 @@ class TestingComponentRegistrar : ComponentRegistrar
                                                                                     .SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered()
                                                                                     .Register(
                                                                                         Singleton.For<ISqliteConnectionPool>()
-                                                                                                 .CreatedBy((DbPoolBase pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+                                                                                                 .CreatedBy((DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
 }
