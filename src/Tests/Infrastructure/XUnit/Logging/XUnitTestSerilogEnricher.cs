@@ -23,7 +23,7 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
                                            ["Container"] = pluggableComponents?.DiContainer.ToString() ?? "",
                                            ["SqlLayer"] = pluggableComponents?.SqlLayer.ToString() ?? "",
                                            ["TestClass"] = testCase.TestClass?.TestClassName ?? "missing",
-                                           ["TestName"] = testCase.TestCaseDisplayName,
+                                           ["TestName"] = testCase.TestMethod?.MethodName ?? testCase.TestCaseDisplayName,
                                         },
                                         destructureObjects: true));
    }
