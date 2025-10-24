@@ -20,16 +20,16 @@ namespace Compze.Tessaging.Hosting.Implementation;
 static class TransportRegistrar
 {
    internal static IComponentRegistrar Transport(this IComponentRegistrar registrar)
-      => registrar.Register(Implementation.Transport.RegisterWith);
+      => registrar.Register(Implementation.TransportClient.RegisterWith);
 }
 
-partial class Transport : ITransport, IDisposable
+partial class TransportClient : ITransportClient, IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<ITransport>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
-                                                                     => new Transport(messagesInFlightTracker, typeMapper, serializer, remoteApiTransportClient)));
+      => registrar.Register(Singleton.For<ITransportClient>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
+                                                                     => new TransportClient(messagesInFlightTracker, typeMapper, serializer, remoteApiTransportClient)));
 
-   Transport(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
+   TransportClient(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
    {
       _messagesInFlightTracker = messagesInFlightTracker;
       _typeMapper = typeMapper;

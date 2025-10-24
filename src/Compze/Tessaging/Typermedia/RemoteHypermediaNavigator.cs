@@ -22,17 +22,17 @@ static class RemoteHypermediaNavigatorRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteHypermediaNavigator>()
-                                  .CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)));
+                                  .CreatedBy((ITransportClient transportClient) => new RemoteHypermediaNavigator(transportClient)));
 
-   readonly ITransport _transport;
-   public RemoteHypermediaNavigator(ITransport transport) { _transport = transport; }
+   readonly ITransportClient _transportClient;
+   public RemoteHypermediaNavigator(ITransportClient transportClient) { _transportClient = transportClient; }
 
    public void Post(IAtMostOnceHypermediaCommand command) => PostAsync(command).WaitUnwrappingException();
 
    public Task PostAsync(IAtMostOnceHypermediaCommand command)
    {
       MessageInspector.AssertValidToSendRemote(command);
-      return _transport.PostAsync(command);
+      return _transportClient.PostAsync(command);
    }
 
    public TResult Post<TResult>(IAtMostOnceCommand<TResult> command) => PostAsync(command).ResultUnwrappingException();
@@ -40,7 +40,7 @@ static class RemoteHypermediaNavigatorRegistrar
    public Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command)
    {
       MessageInspector.AssertValidToSendRemote(command);
-      return _transport.PostAsync(command);
+      return _transportClient.PostAsync(command);
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
@@ -52,7 +52,7 @@ static class RemoteHypermediaNavigatorRegistrar
       return await GetAsyncAfterFastPathOptimization(query).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transport.GetAsync(query).caf();
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transportClient.GetAsync(query).caf();
 
    TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableQuery<TResult> query) => GetAsync(query).ResultUnwrappingException();
 }

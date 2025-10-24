@@ -5,7 +5,7 @@ using Compze.Tessaging.Hosting.Abstractions.Transport;
 
 namespace Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
 
-interface ITransport
+interface ITransportClient
 {
     Task ConnectAsync(EndPointAddress remoteEndpointAddress);
     void Start();

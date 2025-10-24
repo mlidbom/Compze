@@ -10,7 +10,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Hosting.Implementation;
 
-partial class Transport
+partial class TransportClient
 {
    class Router(ITypeMapper typeMapper)
    {

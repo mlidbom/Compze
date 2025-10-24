@@ -29,14 +29,14 @@ class Endpoint : IEndpoint
 
    public Endpoint(IServiceLocator serviceLocator,
                    IMessagesInFlightTracker globalStateTracker,
-                   ITransport transport,
+                   ITransportClient transportClient,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
-      _transport = transport;
+      _transportClient = transportClient;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
@@ -46,7 +46,7 @@ class Endpoint : IEndpoint
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
    readonly IMessagesInFlightTracker _globalStateTracker;
-   readonly ITransport _transport;
+   readonly ITransportClient _transportClient;
    readonly IEndpointRegistry _endpointRegistry;
 
    ServerComponents? _serverComponents;
@@ -62,7 +62,7 @@ class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _transport.Start();
+      _transportClient.Start();
 
       //todo: find cleaner way of handling what an endpoint supports
       if(!_configuration.IsPureClientEndpoint)
@@ -78,7 +78,7 @@ class Endpoint : IEndpoint
       State.Is(!_isSending);
       _isSending = true;
       var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
-      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
+      await Task.WhenAll(serverEndpoints.Select(address => _transportClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
@@ -114,7 +114,7 @@ class Endpoint : IEndpoint
             await _serverComponents.Inbox.StopAsync().caf();
          }
 
-         _transport.Stop();
+         _transportClient.Stop();
       }
    }
 

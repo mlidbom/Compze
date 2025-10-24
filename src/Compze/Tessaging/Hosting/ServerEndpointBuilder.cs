@@ -40,7 +40,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<IMessagesInFlightTracker>(),
-                                  serviceLocator.Resolve<ITransport>(),
+                                  serviceLocator.Resolve<ITransportClient>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
       _builtSuccessfully = true;

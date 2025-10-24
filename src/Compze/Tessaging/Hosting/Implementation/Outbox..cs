@@ -28,23 +28,23 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITransport transport, IMessageStorage messageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
-                                                => new Outbox(transport, messageStorage, configuration, exceptionReporter, retryPoller)));
+                                  .CreatedBy((EndpointConfiguration configuration, ITransportClient transportClient, IMessageStorage messageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+                                                => new Outbox(transportClient, messageStorage, configuration, exceptionReporter, retryPoller)));
       registrar.Register(MessageStorage.RegisterWith);
       registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
    readonly IMessageStorage _storage;
    readonly EndpointConfiguration _configuration;
-   readonly ITransport _transport;
+   readonly ITransportClient _transportClient;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(ITransport transport, IMessageStorage messageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+   Outbox(ITransportClient transportClient, IMessageStorage messageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
    {
       _storage = messageStorage;
       _configuration = configuration;
-      _transport = transport;
+      _transportClient = transportClient;
       _exceptionReporter = exceptionReporter;
       _retryPoller = retryPoller;
    }
@@ -52,7 +52,7 @@ partial class Outbox : IOutbox
    public void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connections = _transport.SubscriberConnectionsFor(exactlyOnceEvent)
+      var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceEvent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch events to ourselves synchronously so don't go doing it again here.;
 
@@ -73,7 +73,7 @@ partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceCommand exactlyOnceCommand)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connection = _transport.ConnectionToHandlerFor(exactlyOnceCommand);
+      var connection = _transportClient.ConnectionToHandlerFor(exactlyOnceCommand);
 
       _storage.SaveMessage(exactlyOnceCommand, connection.EndpointInformation.Id);
 
