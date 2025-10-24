@@ -34,7 +34,9 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
          } else
          {
             var firstServiceType = registration.ServiceTypes.First();
-            var primaryDescriptor = new ServiceDescriptor(firstServiceType, _ => registration.InstantiationSpec.RunFactoryMethod(this), lifetime);
+            var primaryDescriptor = new ServiceDescriptor(firstServiceType,
+                                                          _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                          lifetime);
 
             _services.Add(primaryDescriptor);
 

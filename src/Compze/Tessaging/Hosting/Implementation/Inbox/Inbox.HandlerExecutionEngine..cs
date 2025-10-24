@@ -32,7 +32,7 @@ partial class Inbox
 
       internal Task<object?> Enqueue(TransportMessage.InComing transportMessage) => _coordinator.EnqueueMessageTask(transportMessage);
 
-      void AwaitDispatchableMessageThread()
+      void AwaitDispatchableMessageThreadLoop()
       {
          while(true)
          {
@@ -45,8 +45,8 @@ partial class Inbox
       public void Start()
       {
          _awaitDispatchableMessageThread = taskRunner.RunOnNamedThread(
-            nameof(AwaitDispatchableMessageThread),
-            AwaitDispatchableMessageThread,
+            nameof(AwaitDispatchableMessageThreadLoop),
+            AwaitDispatchableMessageThreadLoop,
             ThreadPriority.AboveNormal);
       }
 
