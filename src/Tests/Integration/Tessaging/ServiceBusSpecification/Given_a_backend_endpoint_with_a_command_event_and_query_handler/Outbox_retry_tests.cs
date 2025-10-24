@@ -46,7 +46,7 @@ public class Outbox_retry_tests : EndpointHostTestBase
    }
 
    [PCT]
-   public async Task Outbox_records_detailed_failure_information2()
+   public async Task Outbox_records_failure()
    {
       await BackendEndPoint.StopListeningComponentsAsync();
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
