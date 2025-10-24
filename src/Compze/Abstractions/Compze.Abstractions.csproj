@@ -14,7 +14,6 @@
       </PackageReference>
    </ItemGroup>
   <ItemGroup>
-    <Folder Include="Tessaging\Teventive\Eventstore\" />
     <Folder Include="Tessaging\Typermedia\Public\" />
   </ItemGroup>
 </Project>
