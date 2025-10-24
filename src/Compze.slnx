@@ -57,7 +57,6 @@
     <Project Path="Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
   </Folder>
   <Folder Name="/Compze/Wiring/">
-    <Project Path="Compze/Wiring/Compze.Wiring.csproj" />
   </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
