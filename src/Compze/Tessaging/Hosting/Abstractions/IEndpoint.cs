@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Abstractions;

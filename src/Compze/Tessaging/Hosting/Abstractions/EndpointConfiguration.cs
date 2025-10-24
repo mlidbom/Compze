@@ -1,3 +1,5 @@
+using Compze.Tessaging.Hosting.Abstractions.Transport;
+
 namespace Compze.Tessaging.Hosting.Abstractions;
 
 public class EndpointConfiguration

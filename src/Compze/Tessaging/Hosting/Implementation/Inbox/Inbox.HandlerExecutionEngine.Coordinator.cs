@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;

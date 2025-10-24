@@ -3,6 +3,7 @@ using System.Threading;
 using AccountManagement.Domain.Events;
 using Compze.Sql.DocumentDb;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;

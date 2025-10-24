@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Compze.Tessaging.Hosting.Abstractions;
+namespace Compze.Tessaging.Hosting.Abstractions.Transport;
 
 public interface IInboxTransportServer : IAsyncDisposable
 {

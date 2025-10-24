@@ -11,7 +11,6 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -27,6 +26,7 @@ using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 using Compze.Wiring.Testing.Sql;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 
 // ReSharper disable AccessToDisposedClosure
 

@@ -7,6 +7,8 @@ using Compze.Abstractions.Internal;
 using Compze.Common.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
 using Newtonsoft.Json;
 

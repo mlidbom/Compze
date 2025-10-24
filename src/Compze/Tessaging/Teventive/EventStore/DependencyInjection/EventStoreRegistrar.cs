@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;

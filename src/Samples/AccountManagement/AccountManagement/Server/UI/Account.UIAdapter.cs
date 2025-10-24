@@ -6,6 +6,7 @@ using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 

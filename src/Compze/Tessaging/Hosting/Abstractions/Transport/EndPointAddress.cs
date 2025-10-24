@@ -1,6 +1,6 @@
 using Compze.Utilities.Contracts;
 
-namespace Compze.Tessaging.Hosting.Abstractions;
+namespace Compze.Tessaging.Hosting.Abstractions.Transport;
 
 public record EndPointAddress
 {

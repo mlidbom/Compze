@@ -1,5 +1,5 @@
 using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.Threading.ResourceAccess;

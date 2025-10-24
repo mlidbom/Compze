@@ -7,6 +7,7 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.Implementation.Abstractions.Transport;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
@@ -56,10 +57,10 @@ class OutboxRetryPoller : IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
-
    readonly CancellationTokenSource _cancellationTokenSource = new();
    Thread? _pollerThread;
    bool _running = false;
+
    public void Start()
    {
       Assert.State.Is(!_running);
@@ -172,32 +173,28 @@ class OutboxRetryPoller : IDisposable
       }
    }
 
-   void HandleRetryResult(Task completedSendTask, Guid messageId, Guid endpointId)
+   void HandleRetryResult(Task completedSendTask, Guid messageId, Guid endpointId) => _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
    {
-      _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
+      if(!_running)
+         return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this message after restart.
+      if(completedSendTask.IsFaulted)
       {
-         if(!_running)
-            return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this message after restart.
-         if(completedSendTask.IsFaulted)
+         if(completedSendTask.Exception != null)
          {
-            if(completedSendTask.Exception != null)
-            {
-               this.Log().Warning(completedSendTask.Exception, $"Retry failed for message {messageId} to endpoint {endpointId}");
-            } else
-            {
-               this.Log().Warning($"Retry failed for message {messageId} to endpoint {endpointId} - no exception details available");
-            }
-
-            RecordFailure(messageId, endpointId, completedSendTask.Exception);
+            this.Log().Warning(completedSendTask.Exception, $"Retry failed for message {messageId} to endpoint {endpointId}");
          } else
          {
-            this.Log().Info($"Successfully delivered message {messageId} to endpoint {endpointId}");
-            _messageStorage.MarkAsReceived(messageId, new EndpointId(endpointId));
+            this.Log().Warning($"Retry failed for message {messageId} to endpoint {endpointId} - no exception details available");
          }
-      });
-   }
+
+         RecordFailure(messageId, endpointId, completedSendTask.Exception);
+      } else
+      {
+         this.Log().Info($"Successfully delivered message {messageId} to endpoint {endpointId}");
+         _messageStorage.MarkAsReceived(messageId, new EndpointId(endpointId));
+      }
+   });
 
    void RecordFailure(Guid messageId, Guid endpointId, Exception? exception) =>
       _messageStorage.RecordDeliveryFailure(messageId, new EndpointId(endpointId), exception);
-
 }

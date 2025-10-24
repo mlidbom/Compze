@@ -12,6 +12,7 @@ using FluentAssertions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;

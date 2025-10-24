@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Common.Configuration;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Implementation;

@@ -7,6 +7,7 @@ using Compze.Sql.DocumentDb.MicrosoftSql.Wiring;
 using Compze.Sql.DocumentDb.Wiring;
 using Compze.Sql.MicrosoftSql;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Sql.EventStore;
 using Compze.Tessaging.Sql.MicrosoftSql;

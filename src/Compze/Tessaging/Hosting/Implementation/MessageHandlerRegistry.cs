@@ -7,7 +7,7 @@ using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Teventive;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
 using Compze.Tessaging.Teventive.Abstractions;
 using Compze.Utilities.DependencyInjection;

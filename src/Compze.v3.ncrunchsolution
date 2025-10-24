@@ -7,7 +7,6 @@
     <HotSpotsLineExclusionList>
       <Value>DependencyInjection\ComponentRegistrationWithoutInstantiationSpec.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
       <Value>DependencyInjection\InstantiationSpec.cs:Compze\Utilities\Compze.Utilities.csproj-7</Value>
-      <Value>SystemCE\ThreadingCE\TaskRunner.cs:Compze\Tessaging\Compze.Tessaging.csproj-57</Value>
       <Value>Threading\TasksCE\TaskUnit.cs:Compze\Utilities\Compze.Utilities.csproj-11</Value>
       <Value>Threading\TasksCE\TaskCEExceptionHandling.cs:Compze\Utilities\Compze.Utilities.csproj-21</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-65</Value>
@@ -18,20 +17,19 @@
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-23</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-41</Value>
       <Value>Threading\ResourceAccess\ThreadShared.cs:Compze\Utilities\Compze.Utilities.csproj-34</Value>
-      <Value>MicrosoftDependencyInjectionContainer .cs:Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj-37</Value>
       <Value>Sql\DocumentDb\DocumentDbTestsBase.cs:Tests\Common\Compze.Tests.Common.csproj-22</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-55</Value>
       <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-79</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-57</Value>
       <Value>UniversalTestBase.cs:Tests\Infrastructure\Compze.Tests.Infrastructure.csproj-29</Value>
-      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-62</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-63</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional..cs:Compze\Utilities\Compze.Utilities.csproj-20</Value>
       <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-85</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-64</Value>
-      <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-117</Value>
-      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-89</Value>
-      <Value>Hosting\TestingEndpointHostBase.cs:Compze\Tessaging\Compze.Tessaging.csproj-81</Value>
-      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_command_event_and_query_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-75</Value>
+      <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-118</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-90</Value>
+      <Value>Hosting\TestingEndpointHostBase.cs:Compze\Tessaging\Compze.Tessaging.csproj-82</Value>
+      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_command_event_and_query_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-76</Value>
       <Value>UniversalTestBase.cs:Tests\Infrastructure\Compze.Tests.Infrastructure.csproj-35</Value>
       <Value>Functional\Unit.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>
       <Value>SystemCE\LinqCE\EnumerableCE.ForEach.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>

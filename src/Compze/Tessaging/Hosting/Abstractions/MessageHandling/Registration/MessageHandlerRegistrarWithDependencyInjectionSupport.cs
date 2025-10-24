@@ -1,7 +1,7 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Tessaging.Hosting.Abstractions;
+namespace Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 
 public class MessageHandlerRegistrarWithDependencyInjectionSupport
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Newtonsoft.Json;
 

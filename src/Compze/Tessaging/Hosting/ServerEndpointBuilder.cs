@@ -4,6 +4,7 @@ using Compze.Common.Refactoring.Naming;
 using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Tessaging.Hosting.Implementation.Abstractions.MessageHandling;
