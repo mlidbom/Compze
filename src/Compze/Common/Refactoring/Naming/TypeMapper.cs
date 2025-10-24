@@ -1,5 +1,3 @@
-using Compze.Abstractions.Internal;
-using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Tessaging.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -11,6 +9,9 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Time;
 using Compze.Utilities.Functional;
 
 namespace Compze.Common.Refactoring.Naming;

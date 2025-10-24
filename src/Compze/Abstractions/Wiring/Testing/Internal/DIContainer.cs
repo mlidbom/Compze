@@ -1,4 +1,4 @@
-namespace Compze.Wiring.Testing;
+namespace Compze.Abstractions.Wiring.Testing.Internal;
 
 public enum DIContainer
 {

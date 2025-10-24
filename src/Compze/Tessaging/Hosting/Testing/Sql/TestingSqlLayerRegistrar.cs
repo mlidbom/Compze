@@ -1,4 +1,5 @@
 using System;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Sql.DocumentDb.MicrosoftSql.Wiring;
 using Compze.Sql.DocumentDb.MySql.Wiring;
 using Compze.Sql.DocumentDb.PostgreSql.Wiring;
@@ -16,7 +17,6 @@ using Compze.Tessaging.Teventive.EventStore.MySql;
 using Compze.Tessaging.Teventive.EventStore.PostgreSql;
 using Compze.Tessaging.Teventive.EventStore.Sqlite;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tessaging.Hosting.Testing.Sql;
 

@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Abstractions.Transport;
+using Compze.Abstractions.Tessaging.Transport.Internal;
 
 namespace Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 

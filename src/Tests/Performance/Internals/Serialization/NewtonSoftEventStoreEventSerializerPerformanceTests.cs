@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Testing;

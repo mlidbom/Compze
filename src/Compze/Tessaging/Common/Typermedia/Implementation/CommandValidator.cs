@@ -2,6 +2,7 @@ using Compze.Tessaging.Abstractions;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Tessaging.Common.Typermedia.Implementation;
 

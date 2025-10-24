@@ -1,6 +1,5 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -10,6 +9,7 @@ using FluentAssertions;
 using System;
 using System.Linq;
 using System.Transactions;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS;

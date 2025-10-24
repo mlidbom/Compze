@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Common.Configuration;
-using Compze.Tessaging.Hosting.Abstractions.Transport;
 using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Routing;

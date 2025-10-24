@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;

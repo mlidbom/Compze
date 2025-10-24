@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
+namespace Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 
 public interface IEventStoreReader
 {

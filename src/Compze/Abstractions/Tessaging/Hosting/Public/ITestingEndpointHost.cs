@@ -1,8 +1,8 @@
-using Compze.Tessaging.Hosting.Abstractions.Transport;
 using System;
 using System.Threading.Tasks;
+using Compze.Abstractions.Tessaging.Transport.Internal;
 
-namespace Compze.Tessaging.Hosting.Abstractions;
+namespace Compze.Abstractions.Tessaging.Hosting.Public;
 
 public interface ITestingEndpointHost : IEndpointHost
 {

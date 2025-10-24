@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 

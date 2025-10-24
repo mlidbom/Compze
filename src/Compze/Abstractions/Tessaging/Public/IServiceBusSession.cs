@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Abstractions.Tessaging.Public;
 
 ///<summary>Dispatches messages between processes.</summary>
 public interface IServiceBusSession

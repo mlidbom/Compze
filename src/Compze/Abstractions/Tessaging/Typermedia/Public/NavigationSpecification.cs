@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Abstractions;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Typermedia.Abstractions;
+namespace Compze.Abstractions.Tessaging.Typermedia.Public;
 
 public abstract class NavigationSpecification
 {

@@ -1,5 +1,5 @@
 using System;
 
-namespace Compze.Tessaging.Teventive.EventStore.Abstractions;
+namespace Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 
 class InvalidHistoryException(Guid aggregateId) : Exception($"AggregateId: {aggregateId}");

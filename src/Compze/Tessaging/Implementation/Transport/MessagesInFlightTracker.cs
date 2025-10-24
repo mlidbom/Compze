@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Tessaging.Hosting.Abstractions.Transport;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Utilities.SystemCE;

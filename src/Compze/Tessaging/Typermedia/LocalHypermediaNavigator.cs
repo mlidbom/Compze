@@ -1,7 +1,8 @@
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
-using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading;

@@ -1,8 +1,8 @@
 using System;
-using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
+using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Abstractions;
+namespace Compze.Abstractions.Tessaging.Hosting.Public;
 
 //Todo, we should have a testing version of this that can register the current test's sql layer etc.
 public interface IEndpointBuilder : IDisposable

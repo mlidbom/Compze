@@ -4,16 +4,16 @@
                 ChildCanDependOnParentImplicitly="true">
 
 	<!--Todo: For now, allow anything. We'll get strict later-->
-	<Allowed From="*" To="*" />
+	<!--<Allowed From="*" To="*" />-->
 
 	<AllowedAssembly From="*" To="Compze.Utilities.*" />
 	<AllowedAssembly From="*" To="JetBrains.Annotations.*" />
 
-	<Allowed From="*" To="Compze.Utilities.Contracts" />
+	<Allowed From="*" To="Compze.Utilities.*" />
 	<Allowed From="*" To="System.*" />
 
-	<!-- Prevent Public from depending on Internal and Private abstractions -->
+	<!-- Prevent Public from depending on Internal and Private abstractions --><!--
 	<Disallowed From="*.Abstractions.*.Public" To="*.Abstractions.*.Internal" />
 	<Disallowed From="*.Abstractions.*.Public" To="*.Abstractions.*.Private" />
-	<Disallowed From="*.Abstractions.*.Internal" To="*.Abstractions.*.Private" />
+	<Disallowed From="*.Abstractions.*.Internal" To="*.Abstractions.*.Private" />-->
 </NsDepCopConfig>

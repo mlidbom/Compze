@@ -1,3 +1,4 @@
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Abstractions;
 using JetBrains.Annotations;
 

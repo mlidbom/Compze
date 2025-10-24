@@ -1,5 +1,5 @@
 using System;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

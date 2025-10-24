@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Newtonsoft.Json;
 
 namespace Compze.Tessaging.TyperMediaApi.EventStore;

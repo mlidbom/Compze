@@ -1,6 +1,6 @@
+using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Serialization;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.DocumentDb.Wiring;

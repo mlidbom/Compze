@@ -4,9 +4,9 @@ using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using CommunityToolkit.Diagnostics;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Tessaging.Typermedia.Public;
+using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
-using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.Domain;

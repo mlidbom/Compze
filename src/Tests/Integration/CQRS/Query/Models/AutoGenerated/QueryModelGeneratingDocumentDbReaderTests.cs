@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive;
-using Compze.Tessaging.Teventive.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;
 using Compze.Tests.Infrastructure;

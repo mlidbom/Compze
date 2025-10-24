@@ -1,6 +1,5 @@
 using System;
-using Compze.Wiring.Testing;
-using Compze.Wiring.Testing.Sql;
+using Compze.Abstractions.Wiring.Testing.Internal;
 
 namespace Compze.Tessaging.Hosting.Testing;
 

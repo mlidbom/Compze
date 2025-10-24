@@ -1,8 +1,8 @@
 using System;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 
-namespace Compze.Serialization;
+namespace Compze.Abstractions.Serialization.Internal;
 
 interface IJsonSerializer
 {

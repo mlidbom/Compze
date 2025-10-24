@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 

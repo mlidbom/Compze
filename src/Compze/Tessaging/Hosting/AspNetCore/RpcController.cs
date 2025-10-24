@@ -1,4 +1,3 @@
-using Compze.Abstractions.Internal.Refactoring.Naming;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.DependencyInjection;
@@ -9,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Tessaging.Implementation.MessageHandling;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Http;

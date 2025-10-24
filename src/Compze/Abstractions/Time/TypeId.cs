@@ -3,7 +3,7 @@ using Compze.Utilities.Contracts;
 
 // ReSharper disable ImpureMethodCallOnReadonlyValueField
 
-namespace Compze.Abstractions.Internal;
+namespace Compze.Abstractions.Time;
 
 class TypeId
 {

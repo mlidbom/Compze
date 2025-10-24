@@ -27,7 +27,7 @@
       <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-121</Value>
       <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-92</Value>
       <Value>Hosting\TestingEndpointHostBase.cs:Compze\Tessaging\Compze.Tessaging.csproj-83</Value>
-      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_command_event_and_query_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-76</Value>
+      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_command_event_and_query_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-77</Value>
       <Value>UniversalTestBase.cs:Tests\Infrastructure\Compze.Tests.Infrastructure.csproj-35</Value>
       <Value>Functional\Unit.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>
       <Value>SystemCE\LinqCE\EnumerableCE.ForEach.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>

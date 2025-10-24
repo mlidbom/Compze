@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Abstractions;
 using JetBrains.Annotations;
 

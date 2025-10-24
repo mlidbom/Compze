@@ -1,8 +1,8 @@
 using System;
 using Compze.Abstractions;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 
 namespace Compze.Tessaging.Teventive;
 

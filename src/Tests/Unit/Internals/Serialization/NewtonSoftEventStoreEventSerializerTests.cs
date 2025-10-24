@@ -1,7 +1,8 @@
 using System;
+using Compze.Abstractions.Serialization.Internal;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;

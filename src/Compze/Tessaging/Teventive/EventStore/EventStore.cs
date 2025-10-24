@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Abstractions.Internal;
-using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Time;
 using Compze.Serialization;
 using Compze.Sql.Common.EventStore.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;

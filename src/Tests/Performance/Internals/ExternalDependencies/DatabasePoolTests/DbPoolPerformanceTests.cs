@@ -1,4 +1,5 @@
 using System;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Sql.PostgreSql;
@@ -11,7 +12,6 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Testing.DbPool;
-using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Performance.Internals.ExternalDependencies.DatabasePoolTests;
 

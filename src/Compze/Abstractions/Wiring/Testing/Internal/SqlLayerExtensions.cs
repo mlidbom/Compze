@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Wiring.Testing.Sql;
+namespace Compze.Abstractions.Wiring.Testing.Internal;
 
 /// <summary>
 /// Extension methods for SqlLayer to provide convenient access to layer-specific values in tests.

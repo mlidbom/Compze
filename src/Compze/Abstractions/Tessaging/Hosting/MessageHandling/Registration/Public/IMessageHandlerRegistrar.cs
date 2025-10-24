@@ -1,7 +1,7 @@
 using System;
-using Compze.Tessaging.Abstractions;
+using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
+namespace Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 
 public interface IMessageHandlerRegistrar
 {

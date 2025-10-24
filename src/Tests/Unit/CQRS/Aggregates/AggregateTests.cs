@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Time.Testing.Public;
 using Compze.Tessaging.Teventive;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;

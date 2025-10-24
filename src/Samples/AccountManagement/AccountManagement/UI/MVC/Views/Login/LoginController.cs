@@ -1,5 +1,5 @@
 using AccountManagement.API;
-using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 

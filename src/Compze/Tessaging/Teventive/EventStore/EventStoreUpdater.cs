@@ -1,5 +1,3 @@
-using Compze.Abstractions.Internal.Time;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -9,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Time.Public;
 using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 

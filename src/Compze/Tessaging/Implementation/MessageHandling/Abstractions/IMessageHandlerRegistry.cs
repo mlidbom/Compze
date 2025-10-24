@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Internal;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Time;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Teventive.Abstractions;
 
 namespace Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 

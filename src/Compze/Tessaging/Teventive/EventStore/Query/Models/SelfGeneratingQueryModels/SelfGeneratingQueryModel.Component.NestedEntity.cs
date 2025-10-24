@@ -1,5 +1,5 @@
-using Compze.Tessaging.Teventive.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 

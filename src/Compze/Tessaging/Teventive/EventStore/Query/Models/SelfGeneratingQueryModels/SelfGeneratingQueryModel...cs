@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions;
 using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Tessaging.Common.Teventive;
-using Compze.Tessaging.Teventive.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 

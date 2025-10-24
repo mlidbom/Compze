@@ -6,6 +6,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using System;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Utilities.Threading;

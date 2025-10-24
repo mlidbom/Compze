@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions.Transport;
+using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;

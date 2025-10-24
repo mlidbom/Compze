@@ -1,15 +1,16 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
-using CreatesItsOwnResultQuery = Compze.Tessaging.Abstractions.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
+using CreatesItsOwnResultQuery = Compze.Abstractions.Tessaging.Public.MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyQueryResult>;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

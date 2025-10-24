@@ -1,8 +1,8 @@
 using AccountManagement.API;
+using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;

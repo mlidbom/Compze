@@ -1,5 +1,5 @@
 using System.Reflection;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

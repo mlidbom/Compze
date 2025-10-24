@@ -2,7 +2,7 @@ using System;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Abstractions.Internal.Time;
+namespace Compze.Abstractions.Time.Public;
 
 static class TimeSourceRegistrar
 {

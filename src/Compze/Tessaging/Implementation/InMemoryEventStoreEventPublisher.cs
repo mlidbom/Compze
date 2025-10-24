@@ -1,6 +1,6 @@
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;

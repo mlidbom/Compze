@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
+using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -18,7 +19,6 @@ using FluentAssertions.Extensions;
 
 
 using Compze.Utilities.Threading.TasksCE;
-using Compze.Wiring.Testing.Sql;
 
 namespace AccountManagement;
 

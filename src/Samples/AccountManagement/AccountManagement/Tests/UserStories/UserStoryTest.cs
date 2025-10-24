@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using AccountManagement.API;
 using AccountManagement.UserStories.Scenarios;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;

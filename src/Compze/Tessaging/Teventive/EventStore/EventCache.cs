@@ -1,4 +1,3 @@
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Compze.Sql.Common.EventStore.Abstractions;
 using Compze.Utilities.Threading.ResourceAccess;
 

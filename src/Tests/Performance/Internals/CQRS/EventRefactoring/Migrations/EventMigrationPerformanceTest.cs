@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Time.Testing.Public;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.EventRefactoring.Migrations.Events;
@@ -16,7 +17,6 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 

@@ -1,8 +1,7 @@
 using System;
-using Compze.Abstractions;
 using Compze.Abstractions.Public;
 
-namespace Compze.Tessaging.Teventive.Abstractions;
+namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
 public interface ISingleAggregateQueryModel : IHasPersistentIdentity<Guid>
 {

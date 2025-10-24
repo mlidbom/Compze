@@ -1,5 +1,6 @@
 using System;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Sql.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting.Implementation;
@@ -12,8 +13,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.Logging;
-using Compze.Wiring;
-using Compze.Wiring.Testing;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

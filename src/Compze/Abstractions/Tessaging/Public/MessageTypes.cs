@@ -5,7 +5,7 @@ using Compze.Abstractions.Public;
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Abstractions.Tessaging.Public;
 
 public static class MessageTypes
 {

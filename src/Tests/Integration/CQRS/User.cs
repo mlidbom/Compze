@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Integration.CQRS;

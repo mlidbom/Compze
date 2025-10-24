@@ -1,15 +1,16 @@
 using System;
 using System.Globalization;
+using Compze.Abstractions.Time.Public;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Abstractions.Internal.Time;
+namespace Compze.Abstractions.Time.Testing.Public;
 
 static class TestingTimeSourceRegistrar
 {
    internal static IComponentRegistrar TestingTimeSource(this IComponentRegistrar registrar)
-      => Time.TestingTimeSource.RegisterWith(registrar);
+      => Public.TestingTimeSource.RegisterWith(registrar);
 }
 
 /// <summary> Just statically returns whatever value was assigned.</summary>

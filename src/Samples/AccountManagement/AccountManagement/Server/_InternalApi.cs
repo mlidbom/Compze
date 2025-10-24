@@ -2,6 +2,7 @@ using System;
 using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Functional;

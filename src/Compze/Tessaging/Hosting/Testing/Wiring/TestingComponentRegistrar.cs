@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Internal.Time;
+using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Time.Testing.Public;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Sql.PostgreSql;
@@ -12,7 +14,6 @@ using Compze.Utilities.Testing.DbPool.MySql;
 using Compze.Utilities.Testing.DbPool.PostgreSql;
 using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Utilities.Testing.DbPool;
-using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

@@ -1,5 +1,5 @@
+using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
 using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tests.Infrastructure;

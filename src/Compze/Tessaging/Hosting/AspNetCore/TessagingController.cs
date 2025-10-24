@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.Refactoring.Naming;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Serialization;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Tessaging.Implementation.MessageHandling;

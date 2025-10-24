@@ -1,9 +1,8 @@
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Wiring.Testing;
-using Compze.Wiring.Testing.Sql;
 using FluentAssertions;
 
 namespace Compze.Tests.Integration.Infrastructure;

@@ -5,11 +5,11 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Events;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
+using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions.MessageHandling.Registration;
 using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
-using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 
 namespace AccountManagement.UI.QueryModels;
