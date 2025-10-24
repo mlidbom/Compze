@@ -39,7 +39,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
    static TimeSpan _reservationLength;
    const int NumberOfDatabases = 30;
 
-   internal DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: true)
+   internal DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
    {
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
