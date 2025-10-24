@@ -12,7 +12,9 @@ class ReentrancyGuard
 
    public unit ExecuteIfNotReEntering(Func<unit> action)
    {
-      if(_isExecuting) return unit.Value;
+      if(_isExecuting)
+         return unit.Value;
+
       using(ScopedChange.Enter(() => _isExecuting = true, () => _isExecuting = false))
       {
          return action();
