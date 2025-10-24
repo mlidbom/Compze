@@ -25,12 +25,19 @@ function Get-InternalsVisibleTo {
         return @()
     }
     
-    [xml]$xml = Get-Content $CsprojPath
+    # Load XML content as string to avoid file locking issues
+    $xmlContent = Get-Content $CsprojPath -Raw
+    [xml]$xml = $xmlContent
     $internalsVisibleTo = $xml.SelectNodes("//InternalsVisibleTo[@Include]")
     
-    if ($internalsVisibleTo) {
-        return $internalsVisibleTo | ForEach-Object { $_.GetAttribute("Include") }
+    $results = if ($internalsVisibleTo) {
+        $internalsVisibleTo | ForEach-Object { $_.GetAttribute("Include") }
+    } else {
+        @()
     }
     
-    return @()
+    # Explicitly clear the XML object to release any file handles
+    $xml = $null
+    
+    return $results
 }

@@ -25,8 +25,14 @@ function Save-XmlWithThreeSpacesIndentation {
         [string]$Path
     )
     
-    # Save the XML document
-    $Xml.Save($Path)
+    # Save the XML document with explicit writer disposal
+    $writer = [System.IO.StreamWriter]::new($Path, $false, [System.Text.Encoding]::UTF8)
+    try {
+        $Xml.Save($writer)
+    }
+    finally {
+        $writer.Dispose()
+    }
     
     # Read the content
     $content = Get-Content $Path -Raw
