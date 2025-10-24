@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-      <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
-   </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-      <ProjectReference Include="..\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
-      <ProjectReference Include="..\..\Utilities\Compze.Utilities.csproj" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Utilities\Compze.Utilities.csproj" />
+  </ItemGroup>
 </Project>

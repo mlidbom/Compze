@@ -47,7 +47,6 @@
     <Project Path="Compze/Tessaging/Hosting/Testing/Compze.Tessaging.Hosting.Testing.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/">
-    <Project Path="Compze/Tessaging/Teventive/Abstractions/Compze.Tessaging.Teventive.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Teventive/Compze.Tessaging.Teventive.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/EventStore/">
@@ -55,7 +54,6 @@
     <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.EventStore.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Typermedia/">
-    <Project Path="Compze/Tessaging/Typermedia/Abstractions/Compze.Tessaging.Typermedia.Abstractions.csproj" />
   </Folder>
   <Folder Name="/Compze/Utilities/">
     <Project Path="Compze/Utilities/DependencyInjection/Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />

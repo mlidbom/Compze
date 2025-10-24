@@ -30,10 +30,8 @@
     <ProjectReference Include="..\..\Compze\Common\Configuration\Compze.Common.Configuration.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Compze.Tessaging.Teventive.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
     <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
     <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />

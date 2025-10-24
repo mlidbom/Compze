@@ -12,7 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
     <ProjectReference Include="..\Common\Compze.Tessaging.Common.csproj" />
-    <ProjectReference Include="Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
@@ -24,10 +23,6 @@
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <EmbeddedResource Remove="Abstractions\**" />
-    <None Remove="Abstractions\**" />
-    <Content Remove="Abstractions\**" />
     <Compile Remove="EventStore\**" />
     <EmbeddedResource Remove="EventStore\**" />
     <None Remove="EventStore\**" />

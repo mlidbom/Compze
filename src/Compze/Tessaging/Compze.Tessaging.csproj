@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-   </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Common\Compze.Common.csproj" />
-      <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
-      <ProjectReference Include="..\Serialization\Compze.Serialization.csproj" />
-      <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />
-      <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-      <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
-      <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
-      <ProjectReference Include="Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
-      <ProjectReference Include="Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
-      <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
-      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Compze.Common.csproj" />
+    <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
+    <ProjectReference Include="..\Serialization\Compze.Serialization.csproj" />
+    <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />
+    <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
+    <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
+    <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
+    <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Implementation\Transport\Server\" />
+  </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
@@ -64,10 +65,6 @@
     <EmbeddedResource Remove="Teventive\**" />
     <None Remove="Teventive\**" />
     <Content Remove="Teventive\**" />
-    <Compile Remove="Teventive\Abstractions\**" />
-    <EmbeddedResource Remove="Teventive\Abstractions\**" />
-    <None Remove="Teventive\Abstractions\**" />
-    <Content Remove="Teventive\Abstractions\**" />
     <Compile Remove="Teventive\EventStore\**" />
     <EmbeddedResource Remove="Teventive\EventStore\**" />
     <None Remove="Teventive\EventStore\**" />
@@ -76,12 +73,5 @@
     <EmbeddedResource Remove="Teventive\EventStore\Abstractions\**" />
     <None Remove="Teventive\EventStore\Abstractions\**" />
     <Content Remove="Teventive\EventStore\Abstractions\**" />
-    <Compile Remove="Typermedia\Abstractions\**" />
-    <EmbeddedResource Remove="Typermedia\Abstractions\**" />
-    <None Remove="Typermedia\Abstractions\**" />
-    <Content Remove="Typermedia\Abstractions\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Implementation\Transport\Server\" />
   </ItemGroup>
 </Project>

@@ -19,8 +19,4 @@
     <None Include="_Docs\**\*.cs" />
     <Content Include="_Docs\**\*.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Teventive\Abstractions\" />
-    <Folder Include="Typermedia\Abstractions\" />
-  </ItemGroup>
 </Project>
