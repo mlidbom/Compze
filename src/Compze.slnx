@@ -50,7 +50,6 @@
     <Project Path="Compze/Tessaging/Teventive/Compze.Tessaging.Teventive.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/EventStore/">
-    <Project Path="Compze/Tessaging/Teventive/EventStore/Abstractions/Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.EventStore.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Typermedia/">

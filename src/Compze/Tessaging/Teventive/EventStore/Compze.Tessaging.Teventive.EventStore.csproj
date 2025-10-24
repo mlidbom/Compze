@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\Sql\Common\Compze.Sql.Common.csproj" />
-    <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\Compze.Tessaging.Teventive.csproj" />
-    <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
-  </ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <EmbeddedResource Remove="Abstractions\**" />
-    <None Remove="Abstractions\**" />
-    <Content Remove="Abstractions\**" />
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\..\Sql\Common\Compze.Sql.Common.csproj" />
+      <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.Tessaging.Teventive.csproj" />
+      <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Abstractions.csproj" />
+   </ItemGroup>
 </Project>

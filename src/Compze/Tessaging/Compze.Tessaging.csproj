@@ -69,9 +69,5 @@
     <EmbeddedResource Remove="Teventive\EventStore\**" />
     <None Remove="Teventive\EventStore\**" />
     <Content Remove="Teventive\EventStore\**" />
-    <Compile Remove="Teventive\EventStore\Abstractions\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\Abstractions\**" />
-    <None Remove="Teventive\EventStore\Abstractions\**" />
-    <Content Remove="Teventive\EventStore\Abstractions\**" />
   </ItemGroup>
 </Project>

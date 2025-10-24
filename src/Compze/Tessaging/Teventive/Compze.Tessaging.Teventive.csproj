@@ -27,9 +27,5 @@
     <EmbeddedResource Remove="EventStore\**" />
     <None Remove="EventStore\**" />
     <Content Remove="EventStore\**" />
-    <Compile Remove="EventStore\Abstractions\**" />
-    <EmbeddedResource Remove="EventStore\Abstractions\**" />
-    <None Remove="EventStore\Abstractions\**" />
-    <Content Remove="EventStore\Abstractions\**" />
   </ItemGroup>
 </Project>
