@@ -7,5 +7,5 @@ namespace Compze.Tests.Infrastructure.XUnit;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class PerformanceAttribute : Attribute, ITraitAttribute
 {
-   public IReadOnlyCollection<KeyValuePair<string, string>> GetTraits() => [new KeyValuePair<string, string>("Category", "Performance")];
+   public IReadOnlyCollection<KeyValuePair<string, string>> GetTraits() => [new("Category", "Performance")];
 }
