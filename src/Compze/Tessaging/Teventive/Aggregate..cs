@@ -61,7 +61,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
     {
         Assert.State.Is(!_applyingEvents, () => "You cannot raise events from within event appliers");
 
-        using(ScopedChange.Enter(onEnter: () => _reentrancyLevel++, onDispose: () => _reentrancyLevel--))
+        using(ScopedChange.Enter(() => _reentrancyLevel++, () => _reentrancyLevel--))
         {
 #pragma warning disable CS0618 // Type or member is obsolete
             ((IMutableAggregateEvent)theEvent).SetAggregateVersionInternal(Version + 1);
@@ -100,7 +100,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
 
     void ApplyEvent(TAggregateEvent theEvent)
     {
-        using(ScopedChange.Enter(onEnter: () => _applyingEvents = true, onDispose: () => _applyingEvents = false))
+        using(ScopedChange.Enter(() => _applyingEvents = true, () => _applyingEvents = false))
         {
             if(theEvent is IAggregateCreatedEvent)
             {

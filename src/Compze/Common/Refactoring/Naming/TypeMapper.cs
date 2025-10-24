@@ -120,7 +120,7 @@ class TypeMapper : ITypeMapper
       }
       State.Update(state =>
       {
-         using(ScopedChange.Enter(onEnter: () => _currentlyLoadingTypes = true, onDispose: () => _currentlyLoadingTypes = false))
+         using(ScopedChange.Enter(() => _currentlyLoadingTypes = true, () => _currentlyLoadingTypes = false))
          {
 
             var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
