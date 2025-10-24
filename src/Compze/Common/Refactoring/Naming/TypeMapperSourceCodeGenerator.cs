@@ -108,22 +108,13 @@ static class TypeMapperSourceCodeGenerator
 
    static string? SearchDirectoryTreeForProjectFile(string rootDirectory, string projectFileName)
    {
-      try
-      {
-         // Check current directory first
-         var projectFilePath = Path.Combine(rootDirectory, projectFileName);
-         if(File.Exists(projectFilePath)) return projectFilePath;
+      var projectFilePath = Path.Combine(rootDirectory, projectFileName);
+      if(File.Exists(projectFilePath)) return projectFilePath;
 
-         // Search subdirectories
-         foreach(var directory in Directory.GetDirectories(rootDirectory))
-         {
-            var foundFile = SearchDirectoryTreeForProjectFile(directory, projectFileName);
-            if(foundFile != null) return foundFile;
-         }
-      }
-      catch
+      foreach(var directory in Directory.GetDirectories(rootDirectory))
       {
-         // Ignore access denied or other filesystem errors during search
+         var foundFile = SearchDirectoryTreeForProjectFile(directory, projectFileName);
+         if(foundFile != null) return foundFile;
       }
 
       return null;

@@ -43,6 +43,7 @@ class RpcController : ControllerBase
       }
       catch(Exception exception)
       {
+         //todo: eliminate all this code duplication
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
