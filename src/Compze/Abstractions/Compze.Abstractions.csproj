@@ -22,7 +22,6 @@
     <Content Remove="Internal\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Tessaging\Public\" />
     <Folder Include="Tessaging\Teventive\Eventstore\" />
     <Folder Include="Tessaging\Teventive\Public\" />
     <Folder Include="Tessaging\Typermedia\Public\" />
