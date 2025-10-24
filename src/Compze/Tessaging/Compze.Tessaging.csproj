@@ -1,27 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Compze.Common.csproj" />
-    <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
-    <ProjectReference Include="..\Serialization\Compze.Serialization.csproj" />
-    <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />
-    <ProjectReference Include="Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-    <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
-    <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
-    <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Implementation\Transport\Server\" />
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Common\Compze.Common.csproj" />
+      <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
+      <ProjectReference Include="..\Serialization\Compze.Serialization.csproj" />
+      <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />
+      <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
+      <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
+      <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+   </ItemGroup>
+   <ItemGroup>
+      <Folder Include="Implementation\Transport\Server\" />
+   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
@@ -49,10 +47,6 @@
     <EmbeddedResource Remove="Common\**" />
     <None Remove="Common\**" />
     <Content Remove="Common\**" />
-    <Compile Remove="Hosting\Abstractions\**" />
-    <EmbeddedResource Remove="Hosting\Abstractions\**" />
-    <None Remove="Hosting\Abstractions\**" />
-    <Content Remove="Hosting\Abstractions\**" />
     <Compile Remove="Hosting\AspNetCore\**" />
     <EmbeddedResource Remove="Hosting\AspNetCore\**" />
     <None Remove="Hosting\AspNetCore\**" />

@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Tessaging\Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-    <ProjectReference Include="Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
-    <ProjectReference Include="..\Common\Compze.Sql.Common.csproj" />
-    <ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
+      <ProjectReference Include="..\Common\Compze.Sql.Common.csproj" />
+      <ProjectReference Include="..\..\Serialization\Compze.Serialization.csproj" />
+      <ProjectReference Include="..\..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
+   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
