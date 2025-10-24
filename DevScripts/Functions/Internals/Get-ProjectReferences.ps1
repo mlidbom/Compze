@@ -25,19 +25,12 @@ function Get-ProjectReferences {
         return @()
     }
     
-    # Load XML content as string to avoid file locking issues
-    $xmlContent = Get-Content $CsprojPath -Raw
-    [xml]$xml = $xmlContent
+    [xml]$xml = Get-Content $CsprojPath
     $projectReferences = $xml.SelectNodes("//ProjectReference[@Include]")
     
-    $results = if ($projectReferences) {
-        $projectReferences | ForEach-Object { $_.GetAttribute("Include") }
-    } else {
-        @()
+    if ($projectReferences) {
+        return $projectReferences | ForEach-Object { $_.GetAttribute("Include") }
     }
     
-    # Explicitly clear the XML object to release any file handles
-    $xml = $null
-    
-    return $results
+    return @()
 }
