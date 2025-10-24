@@ -153,7 +153,7 @@ class TypeMapper : ITypeMapper
       if(assemblyTypeMapperTypes.Count > 1)
          throw new Exception($"""
                               Found multiple type mappers for assembly:{assembly.FullName}
-                              {assemblyTypeMapperTypes.Select(it => it.FullName).Join(Environment.NewLine).Indent()}
+                              {assemblyTypeMapperTypes.Select(it => it.FullName!).Join(Environment.NewLine).Indent()}
                               """);
 
       var assemblyTypeMapperType = assemblyTypeMapperTypes.SingleOrDefault();
