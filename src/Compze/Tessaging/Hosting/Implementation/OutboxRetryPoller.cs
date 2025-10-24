@@ -85,6 +85,8 @@ class OutboxRetryPoller : IDisposable
    {
       this.Log().Info("OutboxRetryPoller started");
 
+      RetryUndeliveredMessages(TimeSpan.Zero);
+
       while(!_cancellationTokenSource.Token.IsCancellationRequested)
       {
          try
@@ -110,9 +112,9 @@ class OutboxRetryPoller : IDisposable
       this.Log().Info("OutboxRetryPoller stopped");
    }
 
-   void RetryUndeliveredMessages()
+   void RetryUndeliveredMessages(TimeSpan? minimumAge = null)
    {
-      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(MessageAgeThatIsConsideredFailed);
+      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(minimumAge ?? MessageAgeThatIsConsideredFailed);
       if(undeliveredMessages.Count == 0)
          return;
 

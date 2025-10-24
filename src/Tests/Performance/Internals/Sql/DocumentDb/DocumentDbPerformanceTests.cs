@@ -9,7 +9,7 @@ using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Performance.Internals.Sql.DocumentDb;
 
-[Performance, LongRunning]
+[LongRunning]
 public class DocumentDbPerformanceTests : DocumentDbTestsBase
 {
    [PCT] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()

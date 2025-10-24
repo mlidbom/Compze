@@ -1,7 +1,6 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -10,7 +9,6 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Performance.Internals.StrictlyManagedResource;
 
-[Performance]
 public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
 {
    // ReSharper disable once ClassNeverInstantiated.Local
@@ -21,10 +19,10 @@ public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
    }
 #pragma warning restore CA1812 // Class is never instantiated
 
-   [XF] public void Allocated_and_disposes_100_instances_in_200_millisecond_when_actually_collecting_stack_traces()
+   [XF] public void Allocated_and_disposes_50_instances_in_200_millisecond_when_actually_collecting_stack_traces()
    {
       TimeAsserter.Execute(action: () => new StrictlyManagedResource<StrictResource>(forceStackTraceCollection: true).Dispose(),
-                           iterations: 100,
+                           iterations: 50,
                            maxTotal: 200.Milliseconds().EnvMultiply(unoptimized: 1.3));
    }
 

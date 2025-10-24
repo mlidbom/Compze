@@ -2,7 +2,6 @@ using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Utilities.Threading.ResourceAccess;
@@ -15,7 +14,6 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE.ResourceAccess;
 
-[Performance]
 public class MonitorCEPerformanceTests : UniversalTestBase
 {
    readonly MyLong _guarded;

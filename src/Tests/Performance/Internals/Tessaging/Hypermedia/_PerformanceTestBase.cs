@@ -9,8 +9,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
 
-//ncrunch: no coverage start
-
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 
 public abstract class PerformanceTestBase : UniversalTestBase

@@ -22,7 +22,6 @@ using Compze.Wiring.Testing.Sql;
 
 namespace AccountManagement;
 
-[Performance]
 public class PerformanceTest : UniversalTestBase
 {
    ITestingEndpointHost? _host;

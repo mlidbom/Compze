@@ -1,7 +1,6 @@
 using System;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -9,7 +8,6 @@ using FluentAssertions;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
-[Performance]
 public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    [XF] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()

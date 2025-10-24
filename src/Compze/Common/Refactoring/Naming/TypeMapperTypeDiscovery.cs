@@ -75,7 +75,8 @@ static class TypeMapperTypeDiscovery
 
    static bool IsAssemblyWeShouldExamine(Assembly assembly)
    {
-      if(assembly.IsDynamic || assembly.FullName == null) return false;
+      if(assembly.IsDynamic || assembly.FullName == null) 
+         return false;
 
       const string compzeAssemblyNamesStart = "Compze.";
 

@@ -1,19 +1,5 @@
 ﻿<ProjectConfiguration>
   <Settings>
     <HiddenComponentWarnings />
-    <IgnoredTests>
-      <NamedTestSelector>
-        <TestName>AccountManagement.PerformanceTest.Multithreaded_logs_in_XX_times_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_(SqliteMemory:Microsoft)</TestName>
-      </NamedTestSelector>
-      <NamedTestSelector>
-        <TestName>AccountManagement.PerformanceTest.SingleThreaded_creates_XX_accounts_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_(SqliteMemory:Microsoft)</TestName>
-      </NamedTestSelector>
-      <NamedTestSelector>
-        <TestName>AccountManagement.PerformanceTest.Multithreaded_creates_XX_accounts_in_20_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_(SqliteMemory:Microsoft)</TestName>
-      </NamedTestSelector>
-      <NamedTestSelector>
-        <TestName>AccountManagement.PerformanceTest.Multithreaded_fetches_XX_account_resources_in_20_milliseconds_db2_memory__msSql__mySql__oracle_pgSql_(SqliteMemory:Microsoft)</TestName>
-      </NamedTestSelector>
-    </IgnoredTests>
   </Settings>
 </ProjectConfiguration>

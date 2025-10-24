@@ -2,7 +2,6 @@ using System;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -13,7 +12,6 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ReflectionCE;
 
-[Performance]
 public class Activator_default_constructor_Generic_argument_performance_tests : UniversalTestBase
 {
    [UsedImplicitly] class Simple;

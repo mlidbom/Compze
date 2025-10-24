@@ -5,7 +5,6 @@ using Compze.Serialization;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -13,7 +12,6 @@ using Newtonsoft.Json;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
-[Performance]
 public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTestBase
 {
    static IEventStoreSerializer _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);

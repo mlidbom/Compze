@@ -8,7 +8,6 @@ using Assert = Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tests.Performance.Internals.Contracts;
 
-[Performance]
 public class NotNullOrDefaultPerformanceTests : UniversalTestBase
 {
    [XF] public void Should_run_10_000_tests_in_2_Millisecond()
