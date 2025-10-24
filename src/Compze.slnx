@@ -18,7 +18,7 @@
     <Project Path="Compze/Common/Configuration/Compze.Common.Configuration.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
-    <Project Path="Compze/Serialization/Compze.Serialization.csproj" />
+    <Project Path="Compze/Serialization/Compze.Serialization.Newtonsoft.csproj" />
   </Folder>
   <Folder Name="/Compze/Sql/">
     <Project Path="Compze/Sql/Common/Compze.Sql.Common.csproj" />

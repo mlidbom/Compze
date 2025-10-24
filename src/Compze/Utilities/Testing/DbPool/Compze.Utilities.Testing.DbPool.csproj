@@ -5,7 +5,7 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
-      <ProjectReference Include="..\..\..\Serialization\Compze.Serialization.csproj" />
+      <ProjectReference Include="..\..\..\Serialization\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\..\..\Sql\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\..\Compze.Utilities.csproj" />
    </ItemGroup>
