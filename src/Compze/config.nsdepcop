@@ -3,6 +3,9 @@
 <NsDepCopConfig IsEnabled="true"
                 ChildCanDependOnParentImplicitly="true">
 
+	<!--Todo: For now, allow anything. We'll get strict later-->
+   <AllowedAssembly From="*" To="*" />
+	
    <AllowedAssembly From="*" To="Compze.Utilities.*" />
    <AllowedAssembly From="*" To="JetBrains.Annotations.*" />
 
