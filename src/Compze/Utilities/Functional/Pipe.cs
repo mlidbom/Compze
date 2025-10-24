@@ -31,9 +31,6 @@ public static class Pipe
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
    public static unit then<TValue>(this TValue _, Action action) => Functional.unit.From(action);
 
-   ///<summary>Get unit.Value from any value in order to easily return unit anywhere.</summary>
-   public static unit unit<T>(this T _) => Functional.unit.Value;
-   
    ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
    public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
 
@@ -48,11 +45,10 @@ public static class Pipe
    public static T assert<T>(this T it, Predicate<T> predicate, Func<T, string> messageFactory) =>
       it.assert(predicate, () => new Exception(messageFactory(it)));
 
-
    ///<summary>Throws <paramref name="exceptionFactory"/>() if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
    public static T assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)
    {
-      if (!predicate(it)) throw exceptionFactory();
+      if(!predicate(it)) throw exceptionFactory();
       return it;
    }
 
