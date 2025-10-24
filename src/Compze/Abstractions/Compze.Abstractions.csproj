@@ -13,4 +13,11 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
+  <!-- Exclude _docs files from compilation but keep them visible.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Tessaging\_docs\**\*.cs" />
+    <None Include="Tessaging\_docs\**\*.cs" />
+    <Content Include="Tessaging\_docs\**\*.md" />
+  </ItemGroup>
 </Project>

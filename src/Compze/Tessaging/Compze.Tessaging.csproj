@@ -26,9 +26,9 @@
     <Compile Remove="_docs\**\*.cs" />
     <None Include="_docs\**\*.cs" />
     <Content Include="_docs\**\*.md" />
-    <Compile Remove="Abstractions\_Docs\**\*.cs" />
-    <None Include="Abstractions\_Docs\**\*.cs" />
-    <Content Include="Abstractions\_Docs\**\*.md" />
+    <Compile Remove="Abstractions\_docs\**\*.cs" />
+    <None Include="Abstractions\_docs\**\*.cs" />
+    <Content Include="Abstractions\_docs\**\*.md" />
     <Compile Remove="Teventive\_docs\**\*.cs" />
     <None Include="Teventive\_docs\**\*.cs" />
     <Content Include="Teventive\_docs\**\*.md" />
