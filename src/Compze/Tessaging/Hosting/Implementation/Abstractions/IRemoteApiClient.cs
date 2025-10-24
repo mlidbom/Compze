@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Compze.Tessaging.Hosting.Implementation.Http;
+namespace Compze.Tessaging.Hosting.Implementation.Abstractions;
 
 interface IRemoteApiClient
 {
