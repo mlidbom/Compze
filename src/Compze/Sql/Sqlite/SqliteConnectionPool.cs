@@ -34,8 +34,7 @@ public static class SqliteConnectionPoolRegistrar
    static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
       => registrar.Register(
          Singleton.For<ISqliteConnectionPool>()
-                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => ISqliteConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
-                  .DelegateToParentServiceLocatorWhenCloning());
+                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => ISqliteConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName))));
 }
 
 

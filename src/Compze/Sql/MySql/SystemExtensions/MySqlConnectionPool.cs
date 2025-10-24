@@ -35,8 +35,7 @@ public static class MySqlConnectionPoolRegistrar
    {
       return registrar.Register(
          Singleton.For<IMySqlConnectionPool>()
-                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMySqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
-                  .DelegateToParentServiceLocatorWhenCloning());
+                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMySqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName))));
    }
 }
 

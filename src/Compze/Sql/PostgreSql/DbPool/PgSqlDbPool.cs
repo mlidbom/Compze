@@ -14,10 +14,10 @@ namespace Compze.Utilities.Testing.DbPool.PostgreSql;
 static class PgSqlDbPoolRegistrar
 {
    public static IComponentRegistrar PgSqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      PgSqlDbPool.RegisterWith(registrar);
+      PgSqlDbPoolSqlLayer.RegisterWith(registrar);
 }
 
-sealed class PgSqlDbPool : IDbPoolSqlLayer
+sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
@@ -25,7 +25,7 @@ sealed class PgSqlDbPool : IDbPoolSqlLayer
          return registrar;
 
       return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                         .CreatedBy(() => new PgSqlDbPool())
+                                         .CreatedBy(() => new PgSqlDbPoolSqlLayer())
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
@@ -34,7 +34,7 @@ sealed class PgSqlDbPool : IDbPoolSqlLayer
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
    readonly IThreadShared<NpgsqlConnectionStringBuilder> _connectionStringBuilder;
 
-   public PgSqlDbPool()
+   public PgSqlDbPoolSqlLayer()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                                 ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";

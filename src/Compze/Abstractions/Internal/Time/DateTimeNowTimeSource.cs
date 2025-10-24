@@ -28,8 +28,7 @@ public class DateTimeNowTimeSource : IUtcTimeTimeSource
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar register)
       => register.Register(Singleton.For<IUtcTimeTimeSource>()
-                                    .CreatedBy(() => new DateTimeNowTimeSource())
-                                    .DelegateToParentServiceLocatorWhenCloning());
+                                    .CreatedBy(() => new DateTimeNowTimeSource()));
    ///<summary>Returns an instance.</summary>
    public static readonly DateTimeNowTimeSource Instance = new();
 

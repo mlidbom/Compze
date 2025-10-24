@@ -27,8 +27,7 @@ public static class MsSqlSqlConnectionPoolRegistrar
       {
          return registrar.Register(
             Singleton.For<IMsSqlConnectionPool>()
-                     .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMsSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
-                     .DelegateToParentServiceLocatorWhenCloning());
+                     .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMsSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName))));
       }
    }
 }

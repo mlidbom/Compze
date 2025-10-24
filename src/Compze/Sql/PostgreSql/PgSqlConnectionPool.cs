@@ -34,8 +34,7 @@ public static class PgSqlConnectionPoolRegistrar
    public static IComponentRegistrar PgSqlProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName) =>
       registrar.Register(
          Singleton.For<IPgSqlConnectionPool>()
-                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IPgSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName)))
-                  .DelegateToParentServiceLocatorWhenCloning());
+                  .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IPgSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName))));
 }
 
 interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>
