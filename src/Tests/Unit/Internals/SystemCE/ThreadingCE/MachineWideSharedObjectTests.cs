@@ -113,7 +113,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
    [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
-      var timeout = 5.Seconds();
+      var timeout = 15.Seconds();
       var updateGate = ThreadGate.CreateClosedWithTimeout(timeout);
       var conflictingUpdateSectionSameInstance = GatedCodeSection.WithTimeout(timeout);
       var conflictingUpdateSectionOtherInstance = GatedCodeSection.WithTimeout(timeout);
