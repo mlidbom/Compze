@@ -6,9 +6,6 @@
 
    <Allowed From="Compze.*" To="Compze.Abstractions.*.Public" />
 	
-	<AllowedAssembly From="*" To="Compze.Utilities.*" />
-	<AllowedAssembly From="*" To="JetBrains.Annotations.*" />
-
 	<Allowed From="*" To="Compze.Utilities.*" />
 	<Allowed From="*" To="System.*" />
 
