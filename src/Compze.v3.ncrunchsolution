@@ -9,6 +9,7 @@
     <RdiConfigured>True</RdiConfigured>
     <SolutionConfigured>True</SolutionConfigured>
     <XUnit2Enabled>False</XUnit2Enabled>
+    <XUnit3Enabled>False</XUnit3Enabled>
   </Settings>
   <EngineModes>
     <EngineMode>
