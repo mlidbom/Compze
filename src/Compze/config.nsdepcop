@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<NsDepCopConfig IsEnabled="true"
+                ChildCanDependOnParentImplicitly="true">
+
+   <AllowedAssembly From="*" To="Compze.Utilities.*" />
+   <AllowedAssembly From="*" To="JetBrains.Annotations.*" />
+
+   <Allowed From="*" To="Compze.Utilities.Contracts" />
+   <Allowed From="*" To="System.*" />
+   
+	<!-- Prevent Public from depending on Internal and Private abstractions -->
+   <Disallowed From="*.Abstractions.*.Public" To="*.Abstractions.*.Internal" />
+   <Disallowed From="*.Abstractions.*.Public" To="*.Abstractions.*.Private" />
+   <Disallowed From="*.Abstractions.*.Internal" To="*.Abstractions.*.Private" />
+</NsDepCopConfig>

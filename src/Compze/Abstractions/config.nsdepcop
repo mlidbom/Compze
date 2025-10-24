@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<NsDepCopConfig IsEnabled="true"
+                InheritanceDepth="1"
+                ChildCanDependOnParentImplicitly="true">
+   <!-- Prevent Public from depending on Internal -->
+   <Disallowed From="Compze.Abstractions.*.Public" To="Compze.Abstractions.*.Internal" />
+
+   <Allowed From="Compze.Abstractions.Tessaging.Public" To="Compze.Abstractions.*" />
+   <Allowed From="Compze.Abstractions.Tessaging.Internal" To="Compze.Abstractions.*" />
+
+   <!-- Prevent circular dependencies between modules -->
+   <Disallowed From="Compze.Abstractions.Tessaging.*" To="Compze.Abstractions.Persistence.*" />
+   <Disallowed From="Compze.Abstractions.Persistence.*" To="Compze.Abstractions.Tessaging.*" />
+</NsDepCopConfig>
