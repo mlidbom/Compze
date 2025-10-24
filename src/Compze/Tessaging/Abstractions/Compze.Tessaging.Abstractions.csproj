@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
+	   <RootNamespace>Compze.Tessaging</RootNamespace>
       <Nullable>enable</Nullable>
       <!--todo: get this into all our csproj files when we start publishing, to guarantee semantic versioning <PackageValidationBaselineVersion>1.0.0.0</PackageValidationBaselineVersion>-->
    </PropertyGroup>
@@ -17,5 +18,9 @@
     <Compile Remove="_Docs\**\*.cs" />
     <None Include="_Docs\**\*.cs" />
     <Content Include="_Docs\**\*.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Teventive\Abstractions\" />
+    <Folder Include="Typermedia\Abstractions\" />
   </ItemGroup>
 </Project>
