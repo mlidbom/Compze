@@ -43,36 +43,24 @@ partial class DocumentDbSession
          IsInBackingStore = true;
       }
 
-      bool IsCommitting { get; set; }
-      public void CommitChangesToBackingStore()
+      readonly ReentrancyGuard _reentrancyGuard = new();
+
+      public void CommitChangesToBackingStore() => _reentrancyGuard.ExecuteIfNotReEntering(() =>
       {
-         //Avoid reentrancy issues.
-         if(IsCommitting)
+         if(ScheduledForAdding)
          {
-            return;
-         }
-         IsCommitting = true;
-         using(new Disposable(() => IsCommitting = false))//Reset IsCommitting to false once we are done committing.
+            IsInBackingStore = true;
+            _backingStore.Add(Key.Id, Document, _persistentValues);
+         } else if(ScheduledForRemoval)
          {
-            if(ScheduledForAdding)
-            {
-               IsInBackingStore = true;
-               _backingStore.Add(Key.Id, Document, _persistentValues);
-            }
-            else if(ScheduledForRemoval)
-            {
-               var docType = Document!.GetType();
-               Document = null;
-               IsInBackingStore = false;
-               _backingStore.Remove(Key.Id, docType);
-
-            }
-            else if(ScheduledForUpdate)
-            {
-               _backingStore.Update([new KeyValuePair<string, object>(Key.Id, Document!)], _persistentValues);
-            }
+            var docType = Document!.GetType();
+            Document = null;
+            IsInBackingStore = false;
+            _backingStore.Remove(Key.Id, docType);
+         } else if(ScheduledForUpdate)
+         {
+            _backingStore.Update([new KeyValuePair<string, object>(Key.Id, Document!)], _persistentValues);
          }
-      }
+      });
    }
-
 }
