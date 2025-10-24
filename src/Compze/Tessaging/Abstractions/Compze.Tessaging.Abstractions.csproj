@@ -20,4 +20,7 @@
     <None Include="_Docs\**\*.cs" />
     <Content Include="_Docs\**\*.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Hosting\Abstractions\" />
+  </ItemGroup>
 </Project>
