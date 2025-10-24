@@ -32,7 +32,6 @@
     <Project Path="Compze/Sql/DocumentDb/Compze.Sql.DocumentDb.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/">
-    <Project Path="Compze/Tessaging/Abstractions/Compze.Tessaging.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Common/">
@@ -49,8 +48,6 @@
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/EventStore/">
     <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.EventStore.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Typermedia/">
   </Folder>
   <Folder Name="/Compze/Utilities/">
     <Project Path="Compze/Utilities/DependencyInjection/Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />

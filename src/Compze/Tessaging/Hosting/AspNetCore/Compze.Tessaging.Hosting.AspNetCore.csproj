@@ -9,7 +9,7 @@
    <ItemGroup>
       <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
-      <ProjectReference Include="..\..\Abstractions\Compze.Tessaging.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />

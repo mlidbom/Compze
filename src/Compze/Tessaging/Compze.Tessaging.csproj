@@ -8,9 +8,9 @@
       <ProjectReference Include="..\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="..\Serialization\Compze.Serialization.csproj" />
       <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />
-      <ProjectReference Include="Abstractions\Compze.Tessaging.Abstractions.csproj" />
       <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
       <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
@@ -26,9 +26,6 @@
     <Compile Remove="_docs\**\*.cs" />
     <None Include="_docs\**\*.cs" />
     <Content Include="_docs\**\*.md" />
-    <Compile Remove="Abstractions\_docs\**\*.cs" />
-    <None Include="Abstractions\_docs\**\*.cs" />
-    <Content Include="Abstractions\_docs\**\*.md" />
     <Compile Remove="Teventive\_docs\**\*.cs" />
     <None Include="Teventive\_docs\**\*.cs" />
     <Content Include="Teventive\_docs\**\*.md" />
@@ -39,10 +36,6 @@
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <EmbeddedResource Remove="Abstractions\**" />
-    <None Remove="Abstractions\**" />
-    <Content Remove="Abstractions\**" />
     <Compile Remove="Common\**" />
     <EmbeddedResource Remove="Common\**" />
     <None Remove="Common\**" />

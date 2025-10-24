@@ -4,7 +4,6 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
       <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
