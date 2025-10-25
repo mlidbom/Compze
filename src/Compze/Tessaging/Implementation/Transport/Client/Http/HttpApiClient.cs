@@ -41,7 +41,7 @@ class HttpApiClient(
       await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.TommandNoResult}")).caf();
    }
 
-   public async Task<TResult> TueryAsync<TResult>(IRemotableTuery<TResult> tuery)
+   public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
       var tessage = TransportTessage.OutGoing.Create(tuery, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);

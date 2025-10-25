@@ -31,7 +31,7 @@ partial class Outbox
 
       public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> tommand) => await _rpcClient!.PostAsync(tommand).caf();
       public async Task PostAsync(IAtMostOnceHypermediaTommand tommand) => await _rpcClient!.PostAsync(tommand).caf();
-      public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery) => await _rpcClient!.TueryAsync(tuery).caf();
+      public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery) => await _rpcClient!.GetAsync(tuery).caf();
 
       internal async Task InitAsync()
       {

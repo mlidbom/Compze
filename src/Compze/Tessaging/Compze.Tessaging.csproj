@@ -17,12 +17,10 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-   <ItemGroup>
-      <Folder Include="Implementation\Transport\Server\" />
-   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
+    <Compile Remove="Implementation\Transport\Server\**" />
     <Compile Remove="Typermedia\_docs\**\*.cs" />
     <None Include="Typermedia\_docs\**\*.cs" />
     <Content Include="Typermedia\_docs\**\*.md" />
@@ -32,6 +30,7 @@
   <ItemGroup>
     <Compile Remove="Hosting\AspNetCore\**" />
     <EmbeddedResource Remove="Hosting\AspNetCore\**" />
+    <EmbeddedResource Remove="Implementation\Transport\Server\**" />
     <None Remove="Hosting\AspNetCore\**" />
     <Content Remove="Hosting\AspNetCore\**" />
     <Compile Remove="Hosting\Testing\**" />
@@ -40,6 +39,7 @@
     <Content Remove="Hosting\Testing\**" />
     <Compile Remove="Teventive\TeventStore\**" />
     <EmbeddedResource Remove="Teventive\TeventStore\**" />
+    <None Remove="Implementation\Transport\Server\**" />
     <None Remove="Teventive\TeventStore\**" />
     <Content Remove="Teventive\TeventStore\**" />
   </ItemGroup>
