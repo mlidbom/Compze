@@ -6,17 +6,17 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
-   where TAggregateTevent : class, IAggregateTevent
+public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
+   where TTaggregateTevent : class, ITaggregateTevent
 {
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
    public abstract class Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter> : Component<TEntity, TEntityTevent>
       where TEntityId : struct
-      where TEntityTevent : class, TAggregateTevent
+      where TEntityTevent : class, TTaggregateTevent
       where TEntityCreatedTevent : TEntityTevent
       where TEntity : Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>
-      where TTeventEntityIdGetter : IGetAggregateEntityTeventEntityId<TEntityTevent, TEntityId>
+      where TTeventEntityIdGetter : IGetTaggregateEntityTeventEntityId<TEntityTevent, TEntityId>
    {
       static readonly TTeventEntityIdGetter IdGetter = Constructor.For<TTeventEntityIdGetter>.DefaultConstructor.Instance();
 

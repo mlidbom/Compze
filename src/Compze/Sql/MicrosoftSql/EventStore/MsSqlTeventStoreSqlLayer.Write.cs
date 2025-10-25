@@ -17,7 +17,7 @@ namespace Compze.Tessaging.Teventive.TeventStore.MicrosoftSql;
 
 partial class MsSqlTeventStoreSqlLayer
 {
-   public void InsertSingleAggregateTevents(IReadOnlyList<TeventDataRow> tevents)
+   public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {
       _connectionManager.UseConnection(connection =>
       {
@@ -30,8 +30,8 @@ partial class MsSqlTeventStoreSqlLayer
                                         $"""
 
                                          INSERT {Tevent.TableName} With(READCOMMITTED, ROWLOCK) --We are inserting append-only data so using READCOMMITTED to lessen the risk of lock problems should be perfectly safe.
-                                         (       {Tevent.AggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrder},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
-                                         VALUES(@{Tevent.AggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrder}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType})
+                                         (       {Tevent.TaggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrder},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
+                                         VALUES(@{Tevent.TaggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrder}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType})
 
 
                                          IF(@{Tevent.ReadOrder} = 0)
@@ -42,7 +42,7 @@ partial class MsSqlTeventStoreSqlLayer
                                          END
 
                                          """)
-                                    .AddParameter(Tevent.AggregateId, SqlDbType.UniqueIdentifier, data.AggregateId)
+                                    .AddParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier, data.TaggregateId)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
                                     .AddParameter(Tevent.TeventId, data.TeventId)
@@ -109,14 +109,14 @@ partial class MsSqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteAggregate(Guid aggregateId)
+   public void DeleteTaggregate(Guid taggregateId)
    {
       _connectionManager.UseCommand(
          command =>
          {
             command.CommandText +=
-               $"DELETE {Tevent.TableName} With(ROWLOCK) WHERE {Tevent.AggregateId} = @{Tevent.AggregateId}";
-            command.Parameters.Add(new SqlParameter(Tevent.AggregateId, SqlDbType.UniqueIdentifier) {Value = aggregateId});
+               $"DELETE {Tevent.TableName} With(ROWLOCK) WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}";
+            command.Parameters.Add(new SqlParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier) {Value = taggregateId});
             command.ExecuteNonQuery();
          });
    }

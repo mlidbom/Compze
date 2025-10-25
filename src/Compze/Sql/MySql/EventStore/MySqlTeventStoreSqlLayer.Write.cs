@@ -17,7 +17,7 @@ namespace Compze.Tessaging.Teventive.TeventStore.MySql;
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the sql layer.
 partial class MySqlTeventStoreSqlLayer
 {
-   public void InsertSingleAggregateTevents(IReadOnlyList<TeventDataRow> tevents)
+   public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {
       _connectionManager.UseConnection(connection =>
       {
@@ -30,8 +30,8 @@ partial class MySqlTeventStoreSqlLayer
                                         $"""
 
                                          INSERT {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-                                         (       {Tevent.AggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrder},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
-                                         VALUES(@{Tevent.AggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrder}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
+                                         (       {Tevent.TaggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrder},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
+                                         VALUES(@{Tevent.TaggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrder}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
 
                                          UPDATE {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
                                          SET {Tevent.ReadOrder} = cast({Tevent.InsertionOrder} as {Tevent.ReadOrderType})
@@ -39,7 +39,7 @@ partial class MySqlTeventStoreSqlLayer
                                          AND @{Tevent.ReadOrder} = '0.0000000000000000000';
 
                                          """)
-                                    .AddParameter(Tevent.AggregateId, data.AggregateId)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
                                     .AddParameter(Tevent.TeventId, data.TeventId)
@@ -106,14 +106,14 @@ partial class MySqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteAggregate(Guid aggregateId)
+   public void DeleteTaggregate(Guid taggregateId)
    {
       _connectionManager.UseCommand(
          command =>
          {
             command.CommandText +=
-               $"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.AggregateId} = @{Tevent.AggregateId};";
-            command.Parameters.Add(new MySqlParameter(Tevent.AggregateId, MySqlDbType.Guid) { Value = aggregateId });
+               $"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};";
+            command.Parameters.Add(new MySqlParameter(Tevent.TaggregateId, MySqlDbType.Guid) { Value = taggregateId });
             command.ExecuteNonQuery();
          });
    }

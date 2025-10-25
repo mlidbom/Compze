@@ -33,7 +33,7 @@ static class Policy
    {
       public static ITessageHandlerPolicy ThisHandler;
       public static ITessageHandlerPolicy CurrentTessage;
-      public static ITessageHandlerPolicy AggregateRelatedToTessage;
+      public static ITessageHandlerPolicy TaggregateRelatedToTessage;
       public static ITessageHandlerPolicy TessageProcessing => null;
       public static ITessageHandlerPolicy TommandProcessing => null;
       public static ITessageHandlerPolicy TeventProcessing => null;
@@ -48,14 +48,14 @@ static class Policy
 
    public static class Updates<T>
    {
-      public static ITessageHandlerPolicy WithCurrentTessageAggregateId() => null;
+      public static ITessageHandlerPolicy WithCurrentTessageTaggregateId() => null;
       public static ITessageHandlerPolicy WithId(ITessageDataExtractor extractEmailFromEmailUpdatedTevent) => null;
    }
 
    public static class RequiresUpToDate<T>
    {
       public static ITessageHandlerPolicy All => null;
-      public static ITessageHandlerPolicy WithCurrentTessageAggregateId => null;
+      public static ITessageHandlerPolicy WithCurrentTessageTaggregateId => null;
    }
 
    public static class OnCascadedTessage

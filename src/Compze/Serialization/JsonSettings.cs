@@ -19,7 +19,7 @@ static class JsonSettings
       {
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         ContractResolver = IgnoreAggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql.Instance
+         ContractResolver = IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql.Instance
       };
 
 }

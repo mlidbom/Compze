@@ -9,7 +9,7 @@ public class PolicyBased
 
    interface ITransactionPolicy { } // String TransactionToParticipateIn(MessagingApi.ITessage queuedTessageInformation)
 
-   class OneOperationOnAnAggregateAtATime: IThreadingPolicy { }
+   class OneOperationOnAnTaggregateAtATime: IThreadingPolicy { }
    class OneHandlerAtATimePerTessage : IThreadingPolicy {}
    class OneTessageAtATime : IThreadingPolicy { }
    class MultipleTessagesAtATime : IThreadingPolicy { }
@@ -35,7 +35,7 @@ public class PolicyBased
    }
 
 
-   enum TessageThreadingPolicy { Serialized, Parallel, SerializeAggregateAccess }
+   enum TessageThreadingPolicy { Serialized, Parallel, SerializeTaggregateAccess }
    enum HandlerInvokation { InRegistrationOrder, InParallel }
    enum TransactionBoundary { Tessage, Handler }
    enum HandlerFailurePolicy { ContinueWithOtherHandlers, StopInvokingHandlers }
@@ -50,7 +50,7 @@ public class PolicyBased
 
          new TessageHandler(
             new OneHandlerAtATimePerTessage(),      //Only one handler at a time can handle a specific queuedTessageInformation.
-            new OneOperationOnAnAggregateAtATime()) //Only one handler at a time can handle a queuedTessageInformation about a certain aggregate.
+            new OneOperationOnAnTaggregateAtATime()) //Only one handler at a time can handle a queuedTessageInformation about a certain taggregate.
       );
 
       var policiesAsEnums =
@@ -58,7 +58,7 @@ public class PolicyBased
                       new HandlerGroup(
                          "Tommand handlers",
                          TessageThreadingPolicy.Parallel,                 //Tommands should be handled in parallel or we essentially single thread our entire endpoint/service.
-                         TessageThreadingPolicy.SerializeAggregateAccess, //It is useless to try to execute more than one modification of the same aggregate at a time, so let's not waste resources trying.
+                         TessageThreadingPolicy.SerializeTaggregateAccess, //It is useless to try to execute more than one modification of the same taggregate at a time, so let's not waste resources trying.
 
 
                          HandlerInvokation.InRegistrationOrder,           //Meaningless since there can only be one tommand handler.
@@ -78,7 +78,7 @@ public class PolicyBased
                       ),
                       new HandlerGroup(
                          HandlerInvokation.InParallel,
-                         new TessageHandler(TessageThreadingPolicy.Parallel, "Slow tevent handler that often receives batches of tevents from one aggregate. We have verified that handling tessages in parallel is safe and it is necessary for latency reasons.")
+                         new TessageHandler(TessageThreadingPolicy.Parallel, "Slow tevent handler that often receives batches of tevents from one taggregate. We have verified that handling tessages in parallel is safe and it is necessary for latency reasons.")
                       )
          );
    }

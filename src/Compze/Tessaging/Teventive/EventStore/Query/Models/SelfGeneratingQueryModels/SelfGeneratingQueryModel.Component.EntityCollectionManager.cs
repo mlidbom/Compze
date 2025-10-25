@@ -4,21 +4,21 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
-   where TAggregateTevent : class, IAggregateTevent
+public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
+   where TTaggregateTevent : class, ITaggregateTevent
 {
    public abstract partial class Component<TComponent, TComponentTevent>
-      where TComponentTevent : class, TAggregateTevent
+      where TComponentTevent : class, TTaggregateTevent
       where TComponent : Component<TComponent, TComponentTevent>
    {
       public class QueryModelEntityCollectionManager<TParent, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
          : IQueryModelEntityCollectionManager<TEntity, TEntityId>
          where TEntityId : notnull
-         where TEntityTevent : class, TAggregateTevent
+         where TEntityTevent : class, TTaggregateTevent
          where TEntityCreatedTevent : TEntityTevent
          where TEntity : Component<TEntity, TEntityTevent>
-         where TEntityTeventIdGetterSetter : IGetAggregateEntityTeventEntityId<TEntityTevent, TEntityId>
+         where TEntityTeventIdGetterSetter : IGetTaggregateEntityTeventEntityId<TEntityTevent, TEntityId>
       {
          protected static readonly TEntityTeventIdGetterSetter IdGetter = Constructor.For<TEntityTeventIdGetterSetter>.DefaultConstructor.Instance();
 

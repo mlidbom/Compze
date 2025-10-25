@@ -15,7 +15,7 @@ public class PuttingItAllTogether
       );
 
       var defaultTommandHandlerPolicies = new CompositePolicy(
-         Policy.LockExclusively.AggregateRelatedToTessage
+         Policy.LockExclusively.TaggregateRelatedToTessage
       );
 
       var pauseAllOtherHandlers = new CompositePolicy(
@@ -50,7 +50,7 @@ public class PuttingItAllTogether
             "2E8642CA-6C60-4B91-A92E-54AD3753E7F2",
             @tevent => { },
             defaultTeventHandlerPolicies,
-            Policy.Updates<AccountReadModel>.WithCurrentTessageAggregateId()),
+            Policy.Updates<AccountReadModel>.WithCurrentTessageTaggregateId()),
 
          TeventHandler.For<AccountCreatedTevent>(
             "A5A1DF35-982C-4962-A7DA-C98AC88633C0",

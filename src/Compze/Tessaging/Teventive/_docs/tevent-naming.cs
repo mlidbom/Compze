@@ -45,7 +45,7 @@ namespace Website.paradigms.semantic_tevents
       #region nested-tevents
       partial class UserTevent
       {
-         internal interface IUserTevent : IAggregateTevent;
+         internal interface IUserTevent : ITaggregateTevent;
 
          internal static partial class Profile
          {
@@ -63,7 +63,7 @@ namespace Website.paradigms.semantic_tevents
       #endregion
 
       #region nested-tevents2
-      interface IUserTevent : IAggregateTevent
+      interface IUserTevent : ITaggregateTevent
       {
          internal interface IProfile : IUserTevent
          {

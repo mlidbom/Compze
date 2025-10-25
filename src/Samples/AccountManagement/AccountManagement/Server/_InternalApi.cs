@@ -21,11 +21,11 @@ static class InternalApi
    {
       internal TryGetByEmailTuery TryGetByEmail(Email email) => new(email);
 
-      internal TeventStoreApi.TueryApi.AggregateLink<Account> GetForUpdate(Guid id) => TeventStore.Queries.GetForUpdate<Account>(id);
+      internal TeventStoreApi.TueryApi.TaggregateLink<Account> GetForUpdate(Guid id) => TeventStore.Queries.GetForUpdate<Account>(id);
 
-      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => TeventStore.Queries.GetReadOnlyCopy<Account>(id);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregate<Account> GetReadOnlyCopy(Guid id) => TeventStore.Queries.GetReadOnlyCopy<Account>(id);
 
-      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => TeventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => TeventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
       internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Option<Account>>
       {
@@ -41,6 +41,6 @@ static class InternalApi
 
    internal class Tommand
    {
-      internal TeventStoreApi.TommandApi.SaveAggregate<Account> Save(Account account) => TeventStore.Tommands.Save(account);
+      internal TeventStoreApi.TommandApi.SaveTaggregate<Account> Save(Account account) => TeventStore.Tommands.Save(account);
    }
 }

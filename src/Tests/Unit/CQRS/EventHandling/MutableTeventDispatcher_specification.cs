@@ -82,7 +82,7 @@ public static class MutableTeventDispatcher_specification
          }
       }
 
-      interface IUserTevent : IAggregateTevent;
+      interface IUserTevent : ITaggregateTevent;
       interface IUserCreatedTevent : IUserTevent;
       interface IUserRegistered : IUserCreatedTevent;
       interface IUserSkillsTevent : IUserTevent;
@@ -90,12 +90,12 @@ public static class MutableTeventDispatcher_specification
       interface IUserSkillsRemoved : IUserSkillsTevent;
       interface IIgnoredUserTevent : IUserTevent;
 
-      class UnHandledUserTevent : AggregateTevent, IUserTevent;
+      class UnHandledUserTevent : TaggregateTevent, IUserTevent;
 
-      class IgnoredUserTevent : AggregateTevent, IIgnoredUserTevent;
+      class IgnoredUserTevent : TaggregateTevent, IIgnoredUserTevent;
 
-      class UserCreatedTevent : AggregateTevent, IUserCreatedTevent;
+      class UserCreatedTevent : TaggregateTevent, IUserCreatedTevent;
 
-      class UserRegistered : AggregateTevent, IUserRegistered;
+      class UserRegistered : TaggregateTevent, IUserRegistered;
    }
 }

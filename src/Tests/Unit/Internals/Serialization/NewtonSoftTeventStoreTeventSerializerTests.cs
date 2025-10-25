@@ -18,7 +18,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : UniversalTestBase
 {
    readonly ITeventStoreSerializer _teventSerializer = new TeventStoreSerializer(TypeMapper.Instance);
 
-   public class TestTevent : AggregateTevent
+   public class TestTevent : TaggregateTevent
    {
       [JsonConstructor]public TestTevent(string test1, string test2)
       {
@@ -29,16 +29,16 @@ public class NewtonSoftTeventStoreTeventSerializerTests : UniversalTestBase
       public TestTevent(
          string test1,
          string test2,
-         int aggregateVersion,
-         Guid aggregateId,
-         DateTime utcTimeStamp):base(aggregateId)
+         int taggregateVersion,
+         Guid taggregateId,
+         DateTime utcTimeStamp):base(taggregateId)
       {
          Test1 = test1;
          Test2 = test2;
 
 #pragma warning disable CS0618 // Type or member is obsolete
-         ((IMutableAggregateTevent)this).SetAggregateVersionInternal(aggregateVersion);
-         ((IMutableAggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
+         ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(taggregateVersion);
+         ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -50,18 +50,18 @@ public class NewtonSoftTeventStoreTeventSerializerTests : UniversalTestBase
 
 
    [XF]
-   public void IgnoresAllIAggregateTeventProperties()
+   public void IgnoresAllITaggregateTeventProperties()
    {
       var teventWithAllValuesSet = new TestTevent(
          test1: "Test1",
          test2: "Test2",
-         aggregateId:  Guid.NewGuid(),
-         aggregateVersion:  2,
+         taggregateId:  Guid.NewGuid(),
+         taggregateVersion:  2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
       var teventWithOnlySubclassValues = new TestTevent("Test1", "Test2");
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableAggregateTevent)teventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
+      ((IMutableTaggregateTevent)teventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
 #pragma warning restore CS0618 // Type or member is obsolete
 
       var teventWithAllValuesJson = _teventSerializer.Serialize(teventWithAllValuesSet);
@@ -79,7 +79,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : UniversalTestBase
       roundTripped.Should().BeEquivalentTo(teventWithOnlySubclassValues,
                                            config => config
                                                     .PreferringRuntimeMemberTypes()
-                                                    .ComparingByMembers<AggregateTevent>()
+                                                    .ComparingByMembers<TaggregateTevent>()
                                                     .Excluding(@tevent => @tevent.UtcTimeStamp)//Timestamp is defaulted in the constructor used by serialization.
                                                     .Excluding(@tevent => @tevent.TessageId)
       );

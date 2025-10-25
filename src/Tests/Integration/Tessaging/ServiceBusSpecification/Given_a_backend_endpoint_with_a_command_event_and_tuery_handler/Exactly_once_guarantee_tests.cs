@@ -30,16 +30,16 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
    [PCT] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceTevent_tevent_never_reaches_remote_handler_but_does_reach_local_handler()
    {
       const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
-      MyCreateAggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
+      MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
-      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateTommand.Create())));
+      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateTaggregateTommand.Create())));
 
       backendException.InnerException!.Message.Should().Contain(exceptionTessage);
       frontEndException.Message.Should().Contain(exceptionTessage);
 
-      MyLocalAggregateTeventHandlerThreadGate.Passed.Should().BeGreaterThanOrEqualTo(1);
+      MyLocalTaggregateTeventHandlerThreadGate.Passed.Should().BeGreaterThanOrEqualTo(1);
 
-      MyRemoteAggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
                                              .Should()
                                              .Be(false, "tevent should not reach handler");
    }

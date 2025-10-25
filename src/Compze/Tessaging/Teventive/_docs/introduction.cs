@@ -7,7 +7,7 @@ using static System.Console;
 namespace Website.paradigms.semantic_tevents
 {
    #region IUserTevent
-   interface IUserTevent : IAggregateTevent;
+   interface IUserTevent : ITaggregateTevent;
    #endregion
 
    namespace Introduction
@@ -18,20 +18,20 @@ namespace Website.paradigms.semantic_tevents
          public interface ITevent;
          #endregion
 
-         #region IAggregateTevent
-         public interface IAggregateTevent : ITevent
+         #region ITaggregateTevent
+         public interface ITaggregateTevent : ITevent
          {
-            Guid AggregateId { get; }
+            Guid TaggregateId { get; }
          }
          #endregion
 
-         #region IAggregateCreatedTevent
-         public interface IAggregateCreatedTevent : IAggregateTevent;
+         #region ITaggregateCreatedTevent
+         public interface ITaggregateCreatedTevent : ITaggregateTevent;
          #endregion
       }
 
       #region UserTevents1
-      interface IUserCreated : IUserTevent, IAggregateCreatedTevent;
+      interface IUserCreated : IUserTevent, ITaggregateCreatedTevent;
       interface IUserRegistered : IUserCreated;
       interface IUserImported : IUserRegistered;
       #endregion
@@ -44,9 +44,9 @@ namespace Website.paradigms.semantic_tevents
 
             #region UserTeventRegistration
             registrar
-              .ForTevent<IUserTevent>(userTevent => WriteLine($"User: {userTevent.AggregateId} something happened"))
-              .ForTevent<IUserRegistered>(userRegistered => WriteLine($"User: {userRegistered.AggregateId} registered"))
-              .ForTevent<IUserImported>(userImported => WriteLine($"User: {userImported.AggregateId} imported"));
+              .ForTevent<IUserTevent>(userTevent => WriteLine($"User: {userTevent.TaggregateId} something happened"))
+              .ForTevent<IUserRegistered>(userRegistered => WriteLine($"User: {userRegistered.TaggregateId} registered"))
+              .ForTevent<IUserImported>(userImported => WriteLine($"User: {userImported.TaggregateId} imported"));
             #endregion
          }
       }

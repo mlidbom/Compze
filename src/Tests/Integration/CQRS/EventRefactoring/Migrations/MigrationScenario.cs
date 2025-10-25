@@ -12,7 +12,7 @@ class MigrationScenario
    public readonly IEnumerable<Type> OriginalHistory;
    public readonly IEnumerable<Type> ExpectedHistory;
    public readonly IReadOnlyList<ITeventMigration> Migrations;
-   public Guid AggregateId { get; }
+   public Guid TaggregateId { get; }
    static int _instances = 1;
 
    public MigrationScenario(IEnumerable<Type> originalHistory, IEnumerable<Type> expectedHistory, params ITeventMigration[] migrations)
@@ -22,12 +22,12 @@ class MigrationScenario
              migrations) {}
 
    MigrationScenario
-   (Guid aggregateId,
+   (Guid taggregateId,
     IEnumerable<Type> originalHistory,
     IEnumerable<Type> expectedHistory,
     params ITeventMigration[] migrations)
    {
-      AggregateId = aggregateId;
+      TaggregateId = taggregateId;
       OriginalHistory = originalHistory;
       ExpectedHistory = expectedHistory;
       Migrations = migrations.ToList();

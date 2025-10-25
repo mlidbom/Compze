@@ -22,7 +22,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
       return $"""
 
               SELECT 
-              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.AggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, {Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart}
+              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.TaggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, {Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart}
               FROM {Tevent.TableName}
               {topClause}
               """;
@@ -32,11 +32,11 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
       teventType: Guid.Parse(teventReader.GetString(0)),
       teventJson: teventReader.GetString(1),
       teventId: Guid.Parse(teventReader.GetString(4)),
-      aggregateVersion: teventReader.GetInt32(3),
-      aggregateId: Guid.Parse(teventReader.GetString(2)),
+      taggregateVersion: teventReader.GetInt32(3),
+      taggregateId: Guid.Parse(teventReader.GetString(2)),
       // DateTime stored as Ticks (INTEGER) for full precision
       utcTimeStamp: new DateTime(teventReader.GetInt64(5), DateTimeKind.Utc),
-      storageInformation: new AggregateTeventStorageInformation
+      storageInformation: new TaggregateTeventStorageInformation
                           {
                              ReadOrder = ReadOrder.FromParts(teventReader.GetInt64(10), teventReader.GetInt64(11)),
                              InsertedVersion = teventReader.GetInt32(9),
@@ -44,25 +44,25 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                              RefactoringInformation = (teventReader.IsDBNull(7) ? (Guid?)null : Guid.Parse(teventReader.GetString(7)), teventReader.IsDBNull(8) ? (int?)null : teventReader.GetInt32(8))switch
                              {
                                 (null, null)              => null,
-                                ({} targetTevent, {} type) => new AggregateTeventRefactoringInformation(targetTevent, (AggregateTeventRefactoringType)type),
+                                ({} targetTevent, {} type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
                                 _                         => throw new Exception("Should not be possible to get here")
                              }
                           }
    );
 
-   public IReadOnlyList<TeventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
 
       return _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
                                           command => command.SetCommandText($"""
 
                                                                              {CreateSelectClause()} 
-                                                                             WHERE {Tevent.AggregateId} = @{Tevent.AggregateId}
+                                                                             WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
                                                                                  AND {Tevent.InsertedVersion} > @CachedVersion
                                                                                  AND {Tevent.EffectiveVersion} > 0
                                                                              ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                              """)
-                                                            .AddVarcharParameter(Tevent.AggregateId, 36, aggregateId.ToString())
+                                                            .AddVarcharParameter(Tevent.TaggregateId, 36, taggregateId.ToString())
                                                             .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                             .ExecuteReaderAndSelect(ReadDataRow)
                                                             .ToList());
@@ -102,17 +102,17 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
       } while(!(fetchedInThisBatch < batchSize));
    }
 
-   public IReadOnlyList<CreationTeventRow> ListAggregateIdsInCreationOrder()
+   public IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder()
    {
       return _connectionManager.UseCommand(suppressTransactionWarning: true,
                                            action: command => command.SetCommandText($"""
 
-                                                                                      SELECT {Tevent.AggregateId}, {Tevent.TeventType} 
+                                                                                      SELECT {Tevent.TaggregateId}, {Tevent.TeventType} 
                                                                                       FROM {Tevent.TableName} 
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                                       """)
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(aggregateId: Guid.Parse(reader.GetString(0)), typeId: Guid.Parse(reader.GetString(1)))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: Guid.Parse(reader.GetString(0)), typeId: Guid.Parse(reader.GetString(1)))));
    }
 }
 

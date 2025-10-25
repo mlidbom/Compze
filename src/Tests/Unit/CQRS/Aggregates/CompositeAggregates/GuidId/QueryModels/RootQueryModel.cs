@@ -1,10 +1,10 @@
 using System;
 using Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Tevents;
+using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
+namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 
-class RootQueryModel : SelfGeneratingQueryModel<RootQueryModel, CompositeAggregateTevent.ICompositeAggregateTevent>
+class RootQueryModel : SelfGeneratingQueryModel<RootQueryModel, CompositeTaggregateTevent.ICompositeTaggregateTevent>
 {
    public string Name { get; private set; } = string.Empty;
    readonly Entity.CollectionManager _entities;
@@ -16,7 +16,7 @@ class RootQueryModel : SelfGeneratingQueryModel<RootQueryModel, CompositeAggrega
       _entities = Entity.CreateSelfManagingCollection(this);
 
       RegisterTeventAppliers()
-        .For<CompositeAggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
+        .For<CompositeTaggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
    public IReadonlyQueryModelEntityCollection<Entity, Guid> Entities => _entities.Entities;

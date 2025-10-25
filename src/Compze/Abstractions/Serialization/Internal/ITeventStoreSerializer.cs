@@ -6,6 +6,6 @@ namespace Compze.Abstractions.Serialization.Internal;
 
 interface ITeventStoreSerializer
 {
-   string Serialize(AggregateTevent tevent);
-   IAggregateTevent Deserialize(Type teventType, string json);
+   string Serialize(TaggregateTevent tevent);
+   ITaggregateTevent Deserialize(Type teventType, string json);
 }

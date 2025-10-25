@@ -32,7 +32,7 @@ class TessageHandlingExamples
 
 class MyTommand {}
 
-interface IMyTevent : IAggregateTevent
+interface IMyTevent : ITaggregateTevent
 {
 
 }

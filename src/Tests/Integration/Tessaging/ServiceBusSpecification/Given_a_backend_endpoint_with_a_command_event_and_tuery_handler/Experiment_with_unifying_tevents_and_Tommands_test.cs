@@ -57,7 +57,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
                    .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                    .ForTommandWithResult((UserRegistrarTommand.RegisterUserTommand tommand, ITeventStoreUpdater store) =>
                     {
-                       store.Save(UserAggregate.Register(tommand));
+                       store.Save(UserTaggregate.Register(tommand));
                        return new RegisterUserResult(tommand.UserId);
                     });
          });
@@ -71,14 +71,14 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
       _userDomainServiceLocator = _userManagementDomainEndpoint.ServiceLocator;
 
-      _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<ITeventStoreUpdater>().Save(UserRegistrarAggregate.Create()));
+      _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<ITeventStoreUpdater>().Save(UserRegistrarTaggregate.Create()));
    }
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {
-      var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() => UserRegistrarAggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
+      var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() => UserRegistrarTaggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
 
       var user = _clientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() => RemoteNavigator.Get(registrationResult.UserLink));
 
@@ -88,16 +88,16 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public static class UserTevent
    {
-      public interface IRoot : IAggregateTevent;
+      public interface IRoot : ITaggregateTevent;
 
-      public interface IUserRegistered : IRoot, IAggregateCreatedTevent;
+      public interface IUserRegistered : IRoot, ITaggregateCreatedTevent;
 
       public static class Implementation
       {
-         public class Root : AggregateTevent, IRoot
+         public class Root : TaggregateTevent, IRoot
          {
             protected Root() {}
-            protected Root(Guid aggregateId) : base(aggregateId) {}
+            protected Root(Guid taggregateId) : base(taggregateId) {}
          }
 
          public class UserRegisteredTevent(Guid userId) : Root(userId), IUserRegistered;
@@ -118,47 +118,47 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public static class UserRegistrarTevent
    {
-      public interface IRoot : IAggregateTevent;
+      public interface IRoot : ITaggregateTevent;
 
       public static class Implementation
       {
-         public class Root : AggregateTevent, IRoot
+         public class Root : TaggregateTevent, IRoot
          {
             protected Root() {}
-            protected Root(Guid aggregateId) : base(aggregateId) {}
+            protected Root(Guid taggregateId) : base(taggregateId) {}
          }
 
-         public class Created() : Root(UserRegistrarAggregate.SingleId), IAggregateCreatedTevent;
+         public class Created() : Root(UserRegistrarTaggregate.SingleId), ITaggregateCreatedTevent;
       }
    }
 
-   public class UserRegistrarAggregate : Aggregate<UserRegistrarAggregate, UserRegistrarTevent.IRoot, UserRegistrarTevent.Implementation.Root>
+   public class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, UserRegistrarTevent.IRoot, UserRegistrarTevent.Implementation.Root>
    {
       internal static Guid SingleId = Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED");
 
-      internal static UserRegistrarAggregate Create()
+      internal static UserRegistrarTaggregate Create()
       {
-         var registrar = new UserRegistrarAggregate();
+         var registrar = new UserRegistrarTaggregate();
          registrar.Publish(new UserRegistrarTevent.Implementation.Created());
          return registrar;
       }
 
-      UserRegistrarAggregate() : base(DateTimeNowTimeSource.Instance)
+      UserRegistrarTaggregate() : base(DateTimeNowTimeSource.Instance)
          => RegisterTeventAppliers()
            .IgnoreUnhandled<UserRegistrarTevent.IRoot>();
 
       internal static RegisterUserResult RegisterUser(IRemoteHypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTommand.Create().PostOn(navigator);
    }
 
-   public class UserAggregate : Aggregate<UserAggregate, UserTevent.IRoot, UserTevent.Implementation.Root>
+   public class UserTaggregate : Taggregate<UserTaggregate, UserTevent.IRoot, UserTevent.Implementation.Root>
    {
-      UserAggregate() : base(DateTimeNowTimeSource.Instance)
+      UserTaggregate() : base(DateTimeNowTimeSource.Instance)
          => RegisterTeventAppliers()
            .IgnoreUnhandled<UserTevent.IRoot>();
 
-      internal static UserAggregate Register(UserRegistrarTommand.RegisterUserTommand tommand)
+      internal static UserTaggregate Register(UserRegistrarTommand.RegisterUserTommand tommand)
       {
-         var registered = new UserAggregate();
+         var registered = new UserTaggregate();
          registered.Publish(new UserTevent.Implementation.UserRegisteredTevent(tommand.UserId));
          return registered;
       }
@@ -169,9 +169,9 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public Guid UserId { get; private set; } = userId;
    }
 
-   public class UserResource(IEnumerable<IAggregateTevent> history)
+   public class UserResource(IEnumerable<ITaggregateTevent> history)
    {
-      public IEnumerable<IAggregateTevent> History { get; } = history;
+      public IEnumerable<ITaggregateTevent> History { get; } = history;
    }
 
    public class RegisterUserResult(Guid userId)

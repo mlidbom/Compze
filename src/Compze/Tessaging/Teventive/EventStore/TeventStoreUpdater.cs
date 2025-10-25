@@ -21,7 +21,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
    readonly ITeventStore _store;
-   readonly IAggregateTypeValidator _aggregateTypeValidator;
+   readonly ITaggregateTypeValidator _taggregateTypeValidator;
    readonly IDictionary<Guid, ITeventStored> _idMap = new Dictionary<Guid, ITeventStored>();
    readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
@@ -30,55 +30,55 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()
-               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator) =>
-                             new TeventStoreUpdater(teventPublisher, teventStore, timeSource, aggregateTypeValidator)));
+               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, IUtcTimeTimeSource timeSource, ITaggregateTypeValidator taggregateTypeValidator) =>
+                             new TeventStoreUpdater(teventPublisher, teventStore, timeSource, taggregateTypeValidator)));
 
-   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, IUtcTimeTimeSource timeSource, IAggregateTypeValidator aggregateTypeValidator)
+   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, IUtcTimeTimeSource timeSource, ITaggregateTypeValidator taggregateTypeValidator)
    {
       Argument.NotNull(teventStoreTeventPublisher).NotNull(store).NotNull(timeSource);
 
       _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(this), new SingleTransactionUsageGuard(this));
       _teventStoreTeventPublisher = teventStoreTeventPublisher;
       _store = store;
-      _aggregateTypeValidator = aggregateTypeValidator;
+      _taggregateTypeValidator = taggregateTypeValidator;
       TimeSource = timeSource;
    }
 
-   public TAggregate Get<TAggregate>(Guid aggregateId) where TAggregate : class, ITeventStored
+   public TTaggregate Get<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITeventStored
    {
-      _aggregateTypeValidator.AssertIsValid<TAggregate>();
+      _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
-      if(!DoTryGet(aggregateId, out TAggregate? result))
+      if(!DoTryGet(taggregateId, out TTaggregate? result))
       {
-         throw new AggregateNotFoundException(aggregateId);
+         throw new TaggregateNotFoundException(taggregateId);
       }
 
       return result;
    }
 
-   public bool TryGet<TAggregate>(Guid aggregateId, [MaybeNullWhen(false)] out TAggregate aggregate) where TAggregate : class, ITeventStored
+   public bool TryGet<TTaggregate>(Guid taggregateId, [MaybeNullWhen(false)] out TTaggregate taggregate) where TTaggregate : class, ITeventStored
    {
-      _aggregateTypeValidator.AssertIsValid<TAggregate>();
+      _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
-      return DoTryGet(aggregateId, out aggregate);
+      return DoTryGet(taggregateId, out taggregate);
    }
 
-   public TAggregate GetReadonlyCopy<TAggregate>(Guid aggregateId) where TAggregate : class, ITeventStored => LoadSpecificVersionInternal<TAggregate>(aggregateId, int.MaxValue, verifyVersion: false);
+   public TTaggregate GetReadonlyCopy<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITeventStored => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
 
-   public TAggregate GetReadonlyCopyOfVersion<TAggregate>(Guid aggregateId, int version) where TAggregate : class, ITeventStored => LoadSpecificVersionInternal<TAggregate>(aggregateId, version);
+   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(Guid taggregateId, int version) where TTaggregate : class, ITeventStored => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-   TAggregate LoadSpecificVersionInternal<TAggregate>(Guid aggregateId, int version, bool verifyVersion = true) where TAggregate : ITeventStored
+   TTaggregate LoadSpecificVersionInternal<TTaggregate>(Guid taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITeventStored
    {
-      _aggregateTypeValidator.AssertIsValid<TAggregate>();
+      _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       Argument.IsGreaterThan(version, 0);
 
       _usageGuard.EnsureAccessValid();
 
-      var history = GetHistory(aggregateId);
+      var history = GetHistory(taggregateId);
       if(history.None())
       {
-         throw new AggregateNotFoundException(aggregateId);
+         throw new TaggregateNotFoundException(taggregateId);
       }
 
       if(verifyVersion && history.Count < version - 1)
@@ -86,54 +86,54 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
          throw new Exception($"Requested version: {version} not found. Current version: {history.Count}");
       }
 
-      var aggregate = CreateInstance<TAggregate>();
-      aggregate.LoadFromHistory(history.Where(e => e.AggregateVersion <= version));
-      return aggregate;
+      var taggregate = CreateInstance<TTaggregate>();
+      taggregate.LoadFromHistory(history.Where(e => e.TaggregateVersion <= version));
+      return taggregate;
    }
 
-   public void Save<TAggregate>(TAggregate aggregate) where TAggregate : class, ITeventStored
+   public void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITeventStored
    {
-      _aggregateTypeValidator.AssertIsValid<TAggregate>();
+      _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
 
-      aggregate.Commit(tevents =>
+      taggregate.Commit(tevents =>
       {
-         if(aggregate.Version > 0 && tevents.None() || tevents.Any() && tevents.Min(e => e.AggregateVersion) > 1)
+         if(taggregate.Version > 0 && tevents.None() || tevents.Any() && tevents.Min(e => e.TaggregateVersion) > 1)
          {
-            throw new AttemptToSaveAlreadyPersistedAggregateException(aggregate);
+            throw new AttemptToSaveAlreadyPersistedAggregateException(taggregate);
          }
 
-         if(aggregate.Version == 0 && tevents.None())
+         if(taggregate.Version == 0 && tevents.None())
          {
-            throw new AttemptToSaveEmptyAggregateException(aggregate);
+            throw new AttemptToSaveEmptyAggregateException(taggregate);
          }
 
-         _store.SaveSingleAggregateTevents(tevents);
+         _store.SaveSingleTaggregateTevents(tevents);
 
          tevents.ForEach(_teventStoreTeventPublisher.Publish);
       });
 
-      _idMap.Add(aggregate.Id, aggregate);
+      _idMap.Add(taggregate.Id, taggregate);
 
-      _disposableResources.Add(aggregate.TeventStream.Subscribe(OnAggregateTevent));
+      _disposableResources.Add(taggregate.TeventStream.Subscribe(OnTaggregateTevent));
    }
 
-   void OnAggregateTevent(IAggregateTevent tevent)
+   void OnTaggregateTevent(ITaggregateTevent tevent)
    {
       _usageGuard.EnsureAccessValid();
-      if(!_idMap.ContainsKey(tevent.AggregateId))
+      if(!_idMap.ContainsKey(tevent.TaggregateId))
       {
-         throw new Exception($"Got tevent from aggregate that is not tracked! Id: {tevent.AggregateId}");
+         throw new Exception($"Got tevent from taggregate that is not tracked! Id: {tevent.TaggregateId}");
       }
 
-      _store.SaveSingleAggregateTevents([tevent]);
+      _store.SaveSingleTaggregateTevents([tevent]);
       _teventStoreTeventPublisher.Publish(tevent);
    }
 
-   public void Delete(Guid aggregateId)
+   public void Delete(Guid taggregateId)
    {
-      _store.DeleteAggregate(aggregateId);
-      _idMap.Remove(aggregateId);
+      _store.DeleteTaggregate(taggregateId);
+      _idMap.Remove(taggregateId);
    }
 
    public void Dispose()
@@ -146,40 +146,40 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    public override string ToString() => $"{_id}: {GetType().FullName}";
    readonly Guid _id = Guid.NewGuid();
 
-   public IReadOnlyList<IAggregateTevent> GetHistory(Guid aggregateId) => GetHistoryInternal(aggregateId, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent> GetHistory(Guid taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
 
-   IReadOnlyList<IAggregateTevent> GetHistoryInternal(Guid aggregateId, bool takeWriteLock) =>
+   IReadOnlyList<ITaggregateTevent> GetHistoryInternal(Guid taggregateId, bool takeWriteLock) =>
       takeWriteLock
-         ? _store.GetAggregateHistoryForUpdate(aggregateId)
-         : _store.GetAggregateHistory(aggregateId);
+         ? _store.GetTaggregateHistoryForUpdate(taggregateId)
+         : _store.GetTaggregateHistory(taggregateId);
 
-   bool DoTryGet<TAggregate>(Guid aggregateId, [NotNullWhen(true)] out TAggregate? aggregate) where TAggregate : class, ITeventStored
+   bool DoTryGet<TTaggregate>(Guid taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITeventStored
    {
-      if(_idMap.TryGetValue(aggregateId, out var teventStored))
+      if(_idMap.TryGetValue(taggregateId, out var teventStored))
       {
-         aggregate = (TAggregate)teventStored;
+         taggregate = (TTaggregate)teventStored;
          return true;
       }
 
-      var history = GetHistoryInternal(aggregateId, takeWriteLock: true).ToList();
+      var history = GetHistoryInternal(taggregateId, takeWriteLock: true).ToList();
       if(history.Any())
       {
-         aggregate = CreateInstance<TAggregate>();
-         aggregate.LoadFromHistory(history);
-         _idMap.Add(aggregateId, aggregate);
-         _disposableResources.Add(aggregate.TeventStream.Subscribe(OnAggregateTevent));
+         taggregate = CreateInstance<TTaggregate>();
+         taggregate.LoadFromHistory(history);
+         _idMap.Add(taggregateId, taggregate);
+         _disposableResources.Add(taggregate.TeventStream.Subscribe(OnTaggregateTevent));
          return true;
       } else
       {
-         aggregate = null;
+         taggregate = null;
          return false;
       }
    }
 
-   TAggregate CreateInstance<TAggregate>() where TAggregate : ITeventStored
+   TTaggregate CreateInstance<TTaggregate>() where TTaggregate : ITeventStored
    {
-      var aggregate = Constructor.For<TAggregate>.DefaultConstructor.Instance();
-      aggregate.SetTimeSource(TimeSource);
-      return aggregate;
+      var taggregate = Constructor.For<TTaggregate>.DefaultConstructor.Instance();
+      taggregate.SetTimeSource(TimeSource);
+      return taggregate;
    }
 }

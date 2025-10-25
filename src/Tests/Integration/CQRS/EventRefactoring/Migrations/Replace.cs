@@ -20,17 +20,17 @@ class Replace<TTevent> : TeventMigration<IRootTevent>
 
    Replace(IEnumerable<Type> replaceWith) : base(Guid.Parse("9B51F7BC-D9B3-43C7-A183-76CA5E662091"), "Replace", "Long description of Replace") => _migratorSingleton = new Migrator(replaceWith);
 
-   public override ISingleAggregateInstanceHandlingTeventMigrator CreateSingleAggregateInstanceHandlingMigrator() => _migratorSingleton;
+   public override ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator() => _migratorSingleton;
 
-   class Migrator(IEnumerable<Type> replaceWith) : ISingleAggregateInstanceHandlingTeventMigrator
+   class Migrator(IEnumerable<Type> replaceWith) : ISingleTaggregateInstanceHandlingTeventMigrator
    {
       readonly IEnumerable<Type> _replaceWith = replaceWith;
 
-      public void MigrateTevent(IAggregateTevent tevent, ITeventModifier modifier)
+      public void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier)
       {
          if (tevent.GetType() == typeof(TTevent))
          {
-            modifier.Replace(_replaceWith.Select(Constructor.CreateInstance).Cast<AggregateTevent>().ToArray());
+            modifier.Replace(_replaceWith.Select(Constructor.CreateInstance).Cast<TaggregateTevent>().ToArray());
          }
       }
    }

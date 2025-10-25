@@ -5,13 +5,13 @@ using Compze.Abstractions.Tessaging.Teventive.Public;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
+namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
 static partial class RootTevent
 {
-   public interface IRoot : IAggregateTevent;
+   public interface IRoot : ITaggregateTevent;
 
-   interface Created : IAggregateCreatedTevent, PropertyUpdated.Name;
+   interface Created : ITaggregateCreatedTevent, PropertyUpdated.Name;
 
    public static class PropertyUpdated
    {
@@ -23,10 +23,10 @@ static partial class RootTevent
 
    internal static class Implementation
    {
-      public abstract class Root : AggregateTevent, IRoot
+      public abstract class Root : TaggregateTevent, IRoot
       {
          protected Root() { }
-         protected Root(Guid aggregateId) : base(aggregateId) { }
+         protected Root(Guid taggregateId) : base(taggregateId) { }
       }
 
       public class Created(Guid id, string name) : Root(id), RootTevent.Created

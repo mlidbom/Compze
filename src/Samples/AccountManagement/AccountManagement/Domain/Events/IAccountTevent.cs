@@ -9,12 +9,12 @@ namespace AccountManagement.Domain.Tevents;
 
 public static partial class AccountTevent
 {
-   public interface Root : IAggregateTevent;
+   public interface Root : ITaggregateTevent;
 
-   public interface Created : Root, IAggregateCreatedTevent;
+   public interface Created : Root, ITaggregateCreatedTevent;
       //Used in multiple places by the infrastructure and clients. Things WILL BREAK without this.
-   //Aggregate: Sets the ID when such an tevent is raised.
-   //Creates a viewmodel automatically when received by an SingleAggregateQueryModelUpdater
+   //Taggregate: Sets the ID when such an tevent is raised.
+   //Creates a viewmodel automatically when received by an SingleTaggregateQueryModelUpdater
 
    public interface UserRegistered :
       Created,

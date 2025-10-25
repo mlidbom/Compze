@@ -20,18 +20,18 @@ partial class TeventStore
       Assert.State.Is(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
       Log.Info("Starting to persist migrations");
 
-      long migratedAggregates = 0;
-      long updatedAggregates = 0;
+      long migratedTaggregates = 0;
+      long updatedTaggregates = 0;
       long newTeventCount = 0;
       var logInterval = 1.Minutes();
       var lastLogTime = DateTime.Now;
 
       const int recoverableErrorRetriesToMake = 5;
-      var exceptions = new List<(Guid AggregateId,Exception Exception)>();
+      var exceptions = new List<(Guid TaggregateId,Exception Exception)>();
 
-      var aggregateIdsInCreationOrder = StreamAggregateIdsInCreationOrder().ToList();
+      var taggregateIdsInCreationOrder = StreamTaggregateIdsInCreationOrder().ToList();
 
-      foreach (var aggregateId in aggregateIdsInCreationOrder)
+      foreach (var taggregateId in taggregateIdsInCreationOrder)
       {
          try
          {
@@ -44,15 +44,15 @@ partial class TeventStore
                   //performance: Look at ways to avoid taking a lock for a long time as we do now. This might be a problem in production.
                   using var transaction = new TransactionScope(TransactionScopeOption.Required, scopeTimeout: 10.Minutes());
 
-                  var original = GetAggregateTeventsFromSqlLayer(aggregateId: aggregateId, takeWriteLock: true);
+                  var original = GetTaggregateTeventsFromSqlLayer(taggregateId: taggregateId, takeWriteLock: true);
 
                   var highestSeenVersion = original.Max(@tevent => @tevent.StorageInformation.InsertedVersion) + 1;
 
-                  var updatedAggregatesBeforeMigrationOfThisAggregate = updatedAggregates;
+                  var updatedTaggregatesBeforeMigrationOfThisTaggregate = updatedTaggregates;
 
                   var refactorings = new List<List<TeventDataRow>>();
 
-                  var inMemoryMigratedHistory = SingleAggregateInstanceTeventStreamMutator.MutateCompleteAggregateHistory(
+                  var inMemoryMigratedHistory = SingleTaggregateInstanceTeventStreamMutator.MutateCompleteTaggregateHistory(
                      _migrationFactories,
                      original.Select(it => it.Tevent).ToArray(),
                      newTevents =>
@@ -64,13 +64,13 @@ partial class TeventStore
                         });
 
                         refactorings.Add(newTevents
-                                        .Select(it => new TeventDataRow(@tevent: it.NewTevent.ToAggregateTeventData(),
+                                        .Select(it => new TeventDataRow(@tevent: it.NewTevent.ToTaggregateTeventData(),
                                                                           it.StorageInformation,
                                                                           _typeMapper.GetId(it.NewTevent.GetType()).GuidValue,
                                                                           teventAsJson: _serializer.Serialize(it.NewTevent)))
                                         .ToList());
 
-                        updatedAggregates = updatedAggregatesBeforeMigrationOfThisAggregate + 1;
+                        updatedTaggregates = updatedTaggregatesBeforeMigrationOfThisTaggregate + 1;
                         newTeventCount += newTevents.Count;
                      });
 
@@ -80,53 +80,53 @@ partial class TeventStore
 
                      FixManualVersions(original, inMemoryMigratedHistory, refactorings);
 
-                     var loadedAggregateHistory = GetAggregateHistoryInternal(aggregateId, takeWriteLock:false);
-                     AggregateHistoryValidator.ValidateHistory(aggregateId, loadedAggregateHistory);
-                     AssertHistoriesAreIdentical(inMemoryMigratedHistory, loadedAggregateHistory);
+                     var loadedTaggregateHistory = GetTaggregateHistoryInternal(taggregateId, takeWriteLock:false);
+                     TaggregateHistoryValidator.ValidateHistory(taggregateId, loadedTaggregateHistory);
+                     AssertHistoriesAreIdentical(inMemoryMigratedHistory, loadedTaggregateHistory);
                   }
 
-                  migratedAggregates++;
+                  migratedTaggregates++;
                   succeeded = true;
                   transaction.Complete();
                }
                catch(Exception e) when(IsRecoverableSqlException(e) && ++retries <= recoverableErrorRetriesToMake)
                {
-                  Log.Warning(e, $"Failed to persist migrations for aggregate: {aggregateId}. Exception appears to be recoverable so running retry {retries} out of {recoverableErrorRetriesToMake}");
+                  Log.Warning(e, $"Failed to persist migrations for taggregate: {taggregateId}. Exception appears to be recoverable so running retry {retries} out of {recoverableErrorRetriesToMake}");
                }
             }
          }
          catch(Exception exception)
          {
-            Log.Error(exception, $"Failed to persist migrations for aggregate: {aggregateId}");
-            exceptions.Add((aggregateId, exception));
+            Log.Error(exception, $"Failed to persist migrations for taggregate: {taggregateId}");
+            exceptions.Add((taggregateId, exception));
          }
 
          if(logInterval < DateTime.Now - lastLogTime)
          {
             lastLogTime = DateTime.Now;
             // ReSharper disable once AccessToModifiedClosure
-            int PercentDone() => (int)(double)migratedAggregates / aggregateIdsInCreationOrder.Count * 100;
+            int PercentDone() => (int)(double)migratedTaggregates / taggregateIdsInCreationOrder.Count * 100;
 
-            Log.Info($"{PercentDone()}% done. Inspected: {migratedAggregates} / {aggregateIdsInCreationOrder.Count}, Updated: {updatedAggregates}, New Tevents: {newTeventCount}");
+            Log.Info($"{PercentDone()}% done. Inspected: {migratedTaggregates} / {taggregateIdsInCreationOrder.Count}, Updated: {updatedTaggregates}, New Tevents: {newTeventCount}");
          }
       }
 
       Log.Info("Done persisting migrations.");
-      Log.Info($"Inspected: {migratedAggregates} , Updated: {updatedAggregates}, New Tevents: {newTeventCount}");
+      Log.Info($"Inspected: {migratedTaggregates} , Updated: {updatedTaggregates}, New Tevents: {newTeventCount}");
       if(exceptions.Any())
       {
          throw new AggregateException($"""
 
                                        Failed to persist {exceptions.Count} migrations. 
 
-                                       AggregateIds: 
-                                       {exceptions.Select(it => it.AggregateId.ToString()).Join($",{Environment.NewLine}")}
+                                       TaggregateIds: 
+                                       {exceptions.Select(it => it.TaggregateId.ToString()).Join($",{Environment.NewLine}")}
                                        """, exceptions.Select(it => it.Exception));
       }
 
    }
 
-   void FixManualVersions(AggregateTeventWithRefactoringInformation[] originalHistory, AggregateTevent[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
+   void FixManualVersions(TaggregateTeventWithRefactoringInformation[] originalHistory, TaggregateTevent[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
       var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@tevent => @tevent.TessageId == it.Tevent.TessageId)).ToList();
@@ -135,26 +135,26 @@ partial class TeventStore
       var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@tevent => @tevent.TessageId == it.TeventId));
       versionUpdates.AddRange(replacedOrRemoved2.Select(it => new VersionSpecification(it.TeventId, -it.StorageInformation.EffectiveVersion)));
 
-      //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every tevent in every refactored aggregate if only a few, or none, have actually changed.
+      //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every tevent in every refactored taggregate if only a few, or none, have actually changed.
       versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.TessageId, index + 1)));
 
       _sqlLayer.UpdateEffectiveVersions(versionUpdates);
    }
 
-   void AssertHistoriesAreIdentical(AggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<IAggregateTevent> loadedAggregateHistory)
+   void AssertHistoriesAreIdentical(TaggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent> loadedTaggregateHistory)
    {
-      Assert.Result.Is(inMemoryMigratedHistory.Length == loadedAggregateHistory.Count);
+      Assert.Result.Is(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];
-         var loaded = loadedAggregateHistory[index];
+         var loaded = loadedTaggregateHistory[index];
          Assert.Result
-               .Is(inMemory.AggregateId == loaded.AggregateId)
+               .Is(inMemory.TaggregateId == loaded.TaggregateId)
                .Is(inMemory.TessageId == loaded.TessageId)
-               .Is(inMemory.AggregateVersion == loaded.AggregateVersion)
+               .Is(inMemory.TaggregateVersion == loaded.TaggregateVersion)
                .Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp)
                .Is(inMemory.GetType() == loaded.GetType())
-               .Is(_serializer.Serialize(inMemory) == _serializer.Serialize((AggregateTevent)loaded));
+               .Is(_serializer.Serialize(inMemory) == _serializer.Serialize((TaggregateTevent)loaded));
       }
    }
 
@@ -164,13 +164,13 @@ partial class TeventStore
 
       switch(refactoring.RefactoringType)
       {
-         case AggregateTeventRefactoringType.Replace:
+         case TaggregateTeventRefactoringType.Replace:
             ReplaceTevent(refactoring.TargetTevent, tevents.ToArray());
             break;
-         case AggregateTeventRefactoringType.InsertBefore:
+         case TaggregateTeventRefactoringType.InsertBefore:
             InsertBeforeTevent(refactoring.TargetTevent, tevents.ToArray());
             break;
-         case AggregateTeventRefactoringType.InsertAfter:
+         case TaggregateTeventRefactoringType.InsertAfter:
             InsertAfterTevent(refactoring.TargetTevent, tevents.ToArray());
             break;
          default:
@@ -186,7 +186,7 @@ partial class TeventStore
                           rangeStart: teventToInsertAfter.EffectiveReadOrder,
                           rangeEnd: teventToInsertAfter.NextTeventReadOrder);
 
-      _sqlLayer.InsertSingleAggregateTevents(insertAfterGroup);
+      _sqlLayer.InsertSingleTaggregateTevents(insertAfterGroup);
    }
 
    void InsertBeforeTevent(Guid teventId, TeventDataRow[] insertBefore)
@@ -197,7 +197,7 @@ partial class TeventStore
                           rangeStart: teventToInsertBefore.PreviousTeventReadOrder,
                           rangeEnd: teventToInsertBefore.EffectiveReadOrder);
 
-      _sqlLayer.InsertSingleAggregateTevents(insertBefore);
+      _sqlLayer.InsertSingleTaggregateTevents(insertBefore);
    }
 
    void ReplaceTevent(Guid teventId, TeventDataRow[] replacementTevents)
@@ -213,7 +213,7 @@ partial class TeventStore
                           rangeStart: neighborHood.EffectiveReadOrder,
                           rangeEnd: neighborHood.NextTeventReadOrder);
 
-      _sqlLayer.InsertSingleAggregateTevents(replacementTevents);
+      _sqlLayer.InsertSingleTaggregateTevents(replacementTevents);
    }
 
    static void SetManualReadOrders(TeventDataRow[] newTevents, ReadOrder rangeStart, ReadOrder rangeEnd)

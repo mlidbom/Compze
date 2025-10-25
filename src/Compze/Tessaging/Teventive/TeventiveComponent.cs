@@ -11,13 +11,13 @@ public abstract class TeventiveComponent<TParent,
                                         TComponentTeventImplementation>
     : ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
-    where TParentTevent : class, IAggregateTevent
-    where TParentTeventImplementation : AggregateTevent, TParentTevent
+    where TParentTevent : class, ITaggregateTevent
+    where TParentTeventImplementation : TaggregateTevent, TParentTevent
     where TComponentTevent : class, TParentTevent
     where TComponentTeventImplementation : TParentTeventImplementation, TComponentTevent
     where TComponent : TeventiveComponent<TParent, TParentTevent, TParentTeventImplementation, TComponent, TComponentTevent, TComponentTeventImplementation>
 {
-    static TeventiveComponent() => AggregateTypeValidator<TComponent, TComponentTeventImplementation, TComponentTevent>.AssertStaticStructureIsValid();
+    static TeventiveComponent() => TaggregateTypeValidator<TComponent, TComponentTeventImplementation, TComponentTevent>.AssertStaticStructureIsValid();
 
     readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersTeventDispatcher = IMutableTeventDispatcher<TComponentTevent>.New();
 
@@ -86,9 +86,9 @@ public abstract class TeventiveComponent<TParent,
         where TEntityTeventImplementation : TComponentTeventImplementation, TEntityTevent
         where TEntityCreatedTevent : TEntityTevent
         where TEntity : Entity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-        where TEntityTeventIdGetterSetter : IGetSetAggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
+        where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
     {
-        protected Entity(TComponent aggregate) : base(aggregate) {}
+        protected Entity(TComponent taggregate) : base(taggregate) {}
     }
 
     public abstract class RemovableEntity<TEntity,
@@ -115,8 +115,8 @@ public abstract class TeventiveComponent<TParent,
         where TEntityCreatedTevent : TEntityTevent
         where TEntityRemovedTevent : TEntityTevent
         where TEntity : RemovableEntity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
-        where TEntityTeventIdGetterSetter : IGetSetAggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
+        where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
     {
-        protected RemovableEntity(TComponent aggregate) : base(aggregate) {}
+        protected RemovableEntity(TComponent taggregate) : base(taggregate) {}
     }
 }

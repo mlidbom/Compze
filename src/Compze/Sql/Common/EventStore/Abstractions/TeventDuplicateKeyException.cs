@@ -4,7 +4,7 @@ namespace Compze.Sql.Common.TeventStore.Abstractions;
 
 public class TeventDuplicateKeyException(Exception sqlException) : Exception("""
                                                                             A duplicate key exception occurred while persisting new tevents. 
-                                                                            This is most likely caused by multiple transactions updating the same aggregate and the sql provider implementation, or database engine, failing to lock appropriately.
+                                                                            This is most likely caused by multiple transactions updating the same taggregate and the sql provider implementation, or database engine, failing to lock appropriately.
                                                                             """,
                                                                             sqlException)
 {

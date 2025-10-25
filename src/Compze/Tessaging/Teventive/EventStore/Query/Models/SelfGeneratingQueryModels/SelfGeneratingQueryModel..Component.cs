@@ -3,12 +3,12 @@ using Compze.Abstractions.Tessaging.Teventive.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TAggregateTevent>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel,  TAggregateTevent>
-   where TAggregateTevent : class, IAggregateTevent
+public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregateTevent>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel,  TTaggregateTevent>
+   where TTaggregateTevent : class, ITaggregateTevent
 {
    public abstract partial class Component<TComponent, TComponentTevent>
-      where TComponentTevent : class, TAggregateTevent
+      where TComponentTevent : class, TTaggregateTevent
       where TComponent : Component<TComponent, TComponentTevent>
    {
       readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersTeventDispatcher = IMutableTeventDispatcher<TComponentTevent>.New();

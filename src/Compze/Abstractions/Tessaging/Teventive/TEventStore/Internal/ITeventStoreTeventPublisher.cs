@@ -4,5 +4,5 @@ namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Internal;
 
 interface ITeventStoreTeventPublisher
 {
-   void Publish(IAggregateTevent aTevent);
+   void Publish(ITaggregateTevent aTevent);
 }

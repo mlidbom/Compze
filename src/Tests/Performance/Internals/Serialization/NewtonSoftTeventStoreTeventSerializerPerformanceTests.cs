@@ -23,8 +23,8 @@ public class NewtonSoftTeventStoreTeventSerializerPerformanceTests : UniversalTe
       var @tevent = new TestTevent(
          test1: "Test1",
          test2: "Test2",
-         aggregateId: Guid.NewGuid(),
-         aggregateVersion: 2,
+         taggregateId: Guid.NewGuid(),
+         taggregateVersion: 2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
       //Warmup
@@ -49,8 +49,8 @@ public class NewtonSoftTeventStoreTeventSerializerPerformanceTests : UniversalTe
       var tevents = 1.Through(iterations).Select( _ =>  new TestTevent(
                                                     test1: "Test1",
                                                     test2: "Test2",
-                                                    aggregateId: Guid.NewGuid(),
-                                                    aggregateVersion: 2,
+                                                    taggregateId: Guid.NewGuid(),
+                                                    taggregateVersion: 2,
                                                     utcTimeStamp: DateTime.Now + 1.Minutes())).ToList();
 
       var settings = TeventStoreSerializer.JsonSettings;

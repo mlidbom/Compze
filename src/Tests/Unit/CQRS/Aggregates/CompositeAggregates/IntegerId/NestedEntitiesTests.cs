@@ -1,6 +1,6 @@
 using System;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
+using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
@@ -12,7 +12,7 @@ using FluentAssertions;
 
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId;
+namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId;
 
 public class NestedEntitiesTests : UniversalTestBase
 {

@@ -77,7 +77,7 @@ public class Example
 
             wrappedTeventTypeParameter.SetInterfaceConstraints(requiredTeventInterface);
 
-            var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IWrapperTevent<IAggregateTevent>.Tevent), wrappedTeventTypeParameter);
+            var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IWrapperTevent<ITaggregateTevent>.Tevent), wrappedTeventTypeParameter);
 
             wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 

@@ -34,9 +34,9 @@ public class Transaction_policies : EndpointHostTestBase
 
    [PCT] public void Tevent_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
-      var transaction = MyRemoteAggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+      var transaction = MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                                .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);

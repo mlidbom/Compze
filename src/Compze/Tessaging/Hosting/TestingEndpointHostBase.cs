@@ -70,9 +70,9 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
          {
             await base.DisposeAsync(disposing).caf();
          }
-         catch(AggregateException aggregateException)
+         catch(AggregateException taggregateException)
          {
-            unHandledExceptions.AddRange(aggregateException.Flatten().InnerExceptions);
+            unHandledExceptions.AddRange(taggregateException.Flatten().InnerExceptions);
          }
 
          if(unHandledExceptions.Any())

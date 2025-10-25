@@ -17,20 +17,20 @@ public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : Endpo
    {
       await base.InitializeAsyncInternal();
       const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
-      MyCreateAggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
+      MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
-      Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(action: () => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateTommand.Create())));
+      Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(action: () => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateTaggregateTommand.Create())));
       await Task.CompletedTask;
    }
 
    [PCT] public void ExactlyOnce_Tevent_raised_in_handler_does_not_reach_remote_handler()
    {
-      MyRemoteAggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, 1.Seconds())
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, 1.Seconds())
                                              .Should()
                                              .Be(expected: false, because: "tevent should not reach handler");
    }
 
-   [PCT] public void Tommand_handler_is_tried_5_times() => MyCreateAggregateTommandHandlerThreadGate.Passed.Should().Be(expected: 5);
+   [PCT] public void Tommand_handler_is_tried_5_times() => MyCreateTaggregateTommandHandlerThreadGate.Passed.Should().Be(expected: 5);
 
-   [PCT] public void ExactlyOnce_Tevent_raised_in_handler_reaches_local_handler_5_times() => MyLocalAggregateTeventHandlerThreadGate.Passed.Should().Be(expected: 5);
+   [PCT] public void ExactlyOnce_Tevent_raised_in_handler_reaches_local_handler_5_times() => MyLocalTaggregateTeventHandlerThreadGate.Passed.Should().Be(expected: 5);
 }

@@ -1,10 +1,10 @@
 namespace Compze.Sql.Common.TeventStore.Abstractions;
 
-public class TeventInsertionSpecification(AggregateTeventData @tevent, int insertedVersion, int effectiveVersion)
+public class TeventInsertionSpecification(TaggregateTeventData @tevent, int insertedVersion, int effectiveVersion)
 {
-   public TeventInsertionSpecification(AggregateTeventData @tevent) : this(@tevent, @tevent.AggregateVersion, @tevent.AggregateVersion) {}
+   public TeventInsertionSpecification(TaggregateTeventData @tevent) : this(@tevent, @tevent.TaggregateVersion, @tevent.TaggregateVersion) {}
 
-   internal AggregateTeventData Tevent { get; } = @tevent;
+   internal TaggregateTeventData Tevent { get; } = @tevent;
    internal int InsertedVersion { get; } = insertedVersion;
    internal int EffectiveVersion { get; } = effectiveVersion;
 }

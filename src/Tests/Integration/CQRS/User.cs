@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Integration.CQRS;
 
-class User : Aggregate<User, IUserTevent, UserTevent>
+class User : Taggregate<User, IUserTevent, UserTevent>
 {
    public string Email { get; private set; } = "";
    public string Password { get; private set; } = "";
@@ -29,11 +29,11 @@ class User : Aggregate<User, IUserTevent, UserTevent>
 
    public void Register(string email, string password, Guid id) => Publish(new UserRegistered(id, email, password));
 
-   public static User Register(ITeventStoreUpdater aggregates, string email, string password, Guid id)
+   public static User Register(ITeventStoreUpdater taggregates, string email, string password, Guid id)
    {
       var user = new User();
       user.Register(email, password, id);
-      aggregates.Save(user);
+      taggregates.Save(user);
       return user;
    }
 
@@ -42,12 +42,12 @@ class User : Aggregate<User, IUserTevent, UserTevent>
    public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
 }
 
-interface IUserTevent : IAggregateTevent;
+interface IUserTevent : ITaggregateTevent;
 
-abstract class UserTevent : AggregateTevent, IUserTevent
+abstract class UserTevent : TaggregateTevent, IUserTevent
 {
    protected UserTevent() {}
-   protected UserTevent(Guid aggregateId) : base(aggregateId) {}
+   protected UserTevent(Guid taggregateId) : base(taggregateId) {}
 }
 
 interface IUserChangedEmail : IUserTevent
@@ -69,7 +69,7 @@ class UserChangedPassword(string password) : UserTevent, IUserChangedPassword
    public string Password { get; private set; } = password;
 }
 
-interface IUserRegistered : IUserTevent, IAggregateCreatedTevent
+interface IUserRegistered : IUserTevent, ITaggregateCreatedTevent
 {
    string Email { get; }
    string Password { get; }
@@ -82,13 +82,13 @@ class UserRegistered(Guid userId, string email, string password) : UserTevent(us
 }
 
 #pragma warning disable CA1812
-interface IMigratedBeforeUserRegisteredTevent : IUserTevent, IAggregateCreatedTevent;
+interface IMigratedBeforeUserRegisteredTevent : IUserTevent, ITaggregateCreatedTevent;
 [UsedImplicitly] class MigratedBeforeUserRegisteredTevent : UserTevent, IMigratedBeforeUserRegisteredTevent;
 
-interface IMigratedAfterUserChangedEmailTevent : IUserTevent, IAggregateCreatedTevent;
+interface IMigratedAfterUserChangedEmailTevent : IUserTevent, ITaggregateCreatedTevent;
 [UsedImplicitly] class MigratedAfterUserChangedEmailTevent : UserTevent, IMigratedAfterUserChangedEmailTevent;
 
-interface IMigratedReplaceUserChangedPasswordTevent : IUserTevent, IAggregateCreatedTevent;
+interface IMigratedReplaceUserChangedPasswordTevent : IUserTevent, ITaggregateCreatedTevent;
 [UsedImplicitly] class MigratedReplaceUserChangedPasswordTevent : UserTevent, IMigratedReplaceUserChangedPasswordTevent;
 
 #pragma warning restore CA1812

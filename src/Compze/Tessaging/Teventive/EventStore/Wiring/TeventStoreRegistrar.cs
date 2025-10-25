@@ -41,7 +41,7 @@ public static class TeventStoreRegistrar
 
       Teventive.TeventStore.TeventStore.RegisterWith(registrar, migrations);
 
-      return registrar.Register(AggregateTypeValidator.RegisterWith,
+      return registrar.Register(TaggregateTypeValidator.RegisterWith,
                                 TeventStoreSerializer.RegisterWith,
                                 TeventCache.RegisterWith,
                                 TeventStoreUpdater.RegisterWith);
@@ -53,11 +53,11 @@ public class TeventStoreRegistrationBuilder
    readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
    internal TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
 
-   public TeventStoreRegistrationBuilder HandleAggregate<TAggregate, TTevent>()
-      where TAggregate : class, ITeventStored<TTevent>
-      where TTevent : IAggregateTevent
+   public TeventStoreRegistrationBuilder HandleTaggregate<TTaggregate, TTevent>()
+      where TTaggregate : class, ITeventStored<TTevent>
+      where TTevent : ITaggregateTevent
    {
-      TeventStoreApi.RegisterHandlersForAggregate<TAggregate, TTevent>(_handlerRegistrar);
+      TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>(_handlerRegistrar);
       return this;
    }
 }

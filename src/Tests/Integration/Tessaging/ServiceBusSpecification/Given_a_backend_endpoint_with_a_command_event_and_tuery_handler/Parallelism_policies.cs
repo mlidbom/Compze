@@ -38,11 +38,11 @@ public class Parallelism_policies : EndpointHostTestBase
 
    [PCT] public void Two_tevent_handlers_cannot_execute_in_parallel()
    {
-      MyRemoteAggregateTeventHandlerThreadGate.Close();
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
+      MyRemoteTaggregateTeventHandlerThreadGate.Close();
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
-      MyRemoteAggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
+      MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 
@@ -63,11 +63,11 @@ public class Parallelism_policies : EndpointHostTestBase
 
       ClientEndpoint.ExecuteClientRequest(session =>
       {
-         session.PostAsync(MyCreateAggregateTommand.Create());
-         session.PostAsync(MyCreateAggregateTommand.Create());
+         session.PostAsync(MyCreateTaggregateTommand.Create());
+         session.PostAsync(MyCreateTaggregateTommand.Create());
       });
 
-      MyCreateAggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
+      MyCreateTaggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                                .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 }

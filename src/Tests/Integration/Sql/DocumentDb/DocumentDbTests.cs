@@ -112,7 +112,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
 
     [PCT]
-    public void CanSaveAndLoadAggregateForUpdate()
+    public void CanSaveAndLoadTaggregateForUpdate()
     {
         var user = new User
         {
@@ -467,7 +467,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void TracksAndUpdatesLoadedAggregates()
+    public void TracksAndUpdatesLoadedTaggregates()
     {
         var user = new User();
 
@@ -487,7 +487,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void ThrowsWhenAttemptingToSaveExistingAggregate()
+    public void ThrowsWhenAttemptingToSaveExistingTaggregate()
     {
         var user = new User();
 

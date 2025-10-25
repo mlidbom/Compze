@@ -14,15 +14,15 @@ using JetBrains.Annotations;
 // ReSharper disable MemberCanBeInternal
 #pragma warning disable CA1806 // Do not ignore method results
 
-namespace Compze.Tests.Unit.CQRS.Aggregates;
+namespace Compze.Tests.Unit.CQRS.Taggregates;
 
 public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {
    public static class RootTevent
    {
-      public interface IRoot : IAggregateTevent { string Public1 { get; set; } }
+      public interface IRoot : ITaggregateTevent { string Public1 { get; set; } }
 
-      public class Root : AggregateTevent, IRoot { public string Public1 { get; set; } = string.Empty; }
+      public class Root : TaggregateTevent, IRoot { public string Public1 { get; set; } = string.Empty; }
 
       [AllowPublicSetters]
       public class Ignored : Root { public string IgnoredMember { get; set; } = string.Empty; }
@@ -35,7 +35,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
          public static class NestedComponent
          {
             public interface IRoot : Component.IRoot{ string           Public3 { get; set; }  }
-#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
             internal class Root : Component.Root, IRoot { public string Public3 { get; set; } = string.Empty; }
 #pragma warning restore CA1812
          }
@@ -45,8 +45,8 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       {
          public interface IRoot : RootTevent.IRoot{ string            Public4 { get; set; }  }
          internal class Root : RootTevent.Root, IRoot { public string Public4 { get; set; } = string.Empty;
-#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
-            [UsedImplicitly] public class GetterSetter : IGetSetAggregateEntityTeventEntityId<Guid, Root, IRoot>
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
+            [UsedImplicitly] public class GetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Root, IRoot>
 #pragma warning restore CA1812
             {
                public Guid GetId(IRoot @tevent) => throw new Exception();
@@ -62,7 +62,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
             public static class NestedComponent
             {
                public interface IRoot : Component.IRoot{ string            Public3 { get; set; }  }
-#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
                internal class Root : Component.Root, IRoot { public string Public3 { get; set; } = string.Empty;}
 #pragma warning restore CA1812
             }
@@ -71,7 +71,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    }
 
-   class Root(IUtcTimeTimeSource timeSource) : Aggregate<Root, RootTevent.IRoot, RootTevent.Root>(timeSource)
+   class Root(IUtcTimeTimeSource timeSource) : Taggregate<Root, RootTevent.IRoot, RootTevent.Root>(timeSource)
    {
       public class AggComponent(Root parent): Root.Component<AggComponent, RootTevent.Component.Root, RootTevent.Component.IRoot>(parent)
       {
@@ -83,7 +83,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
          }
       }
 
-      public class AggEntity(Root aggregate) : Root.Entity<AggEntity, Guid, RootTevent.Entity.Root, RootTevent.Entity.IRoot, RootTevent.Entity.IRoot, RootTevent.Entity.Root.GetterSetter>(aggregate)
+      public class AggEntity(Root taggregate) : Root.Entity<AggEntity, Guid, RootTevent.Entity.Root, RootTevent.Entity.IRoot, RootTevent.Entity.IRoot, RootTevent.Entity.Root.GetterSetter>(taggregate)
       {
          public string Public { get; set; }  = string.Empty;
 
@@ -95,7 +95,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
    }
 
 
-   [XF]public void Trying_to_create_instance_of_aggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
+   [XF]public void Trying_to_create_instance_of_taggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
    {
       FluentActions.Invoking(() => new Root(null!))
                    .Should().Throw<Exception>()

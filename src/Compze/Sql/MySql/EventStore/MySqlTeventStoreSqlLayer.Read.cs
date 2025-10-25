@@ -26,7 +26,7 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
       return $"""
 
               SELECT {topClause} 
-              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.AggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, cast({Tevent.ReadOrder} as char(39))
+              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.TaggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, cast({Tevent.ReadOrder} as char(39))
               FROM {Tevent.TableName} {lockHint} 
               """;
    }
@@ -37,11 +37,11 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
          teventType: teventReader.GetGuid(0),
          teventJson: teventReader.GetString(1),
          teventId: teventReader.GetGuid(4),
-         aggregateVersion: teventReader.GetInt32(3),
-         aggregateId: teventReader.GetGuid(2),
+         taggregateVersion: teventReader.GetInt32(3),
+         taggregateId: teventReader.GetGuid(2),
          //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
          utcTimeStamp: DateTime.SpecifyKind(teventReader.GetDateTime(5), DateTimeKind.Utc),
-         storageInformation: new AggregateTeventStorageInformation
+         storageInformation: new TaggregateTeventStorageInformation
                              {
                                 ReadOrder = ReadOrder.Parse(teventReader.GetString(10)),
                                 InsertedVersion = teventReader.GetInt32(9),
@@ -50,7 +50,7 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
                                 {
                                    (null, null) => null,
                                    // ReSharper disable PatternAlwaysOfType
-                                   (Guid targetTevent, sbyte type) => new AggregateTeventRefactoringInformation(targetTevent, (AggregateTeventRefactoringType)type),
+                                   (Guid targetTevent, sbyte type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
                                    // ReSharper restore PatternAlwaysOfType
                                    _ => throw new Exception("Should not be possible to get here")
                                 }
@@ -58,18 +58,18 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
       );
    }
 
-   public IReadOnlyList<TeventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
       _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
                                     command => command.SetCommandText($"""
 
                                                                        {CreateSelectClause()} 
-                                                                       WHERE {Tevent.AggregateId} = @{Tevent.AggregateId}
+                                                                       WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
                                                                            AND {Tevent.InsertedVersion} >= @CachedVersion
                                                                            AND {Tevent.EffectiveVersion} > 0
                                                                        ORDER BY {Tevent.ReadOrder} ASC
                                                                        {CreateLockHint(takeWriteLock)}
                                                                        """)
-                                                      .AddParameter(Tevent.AggregateId, aggregateId)
+                                                      .AddParameter(Tevent.TaggregateId, taggregateId)
                                                       .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                       .ExecuteReaderAndSelect(ReadDataRow)
                                                       .SkipWhile(row => row.StorageInformation.InsertedVersion <= startAfterInsertedVersion)
@@ -112,16 +112,16 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
       } while(!(fetchedInThisBatch < batchSize));
    }
 
-   public IReadOnlyList<CreationTeventRow> ListAggregateIdsInCreationOrder()
+   public IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder()
    {
       return _connectionManager.UseCommand(suppressTransactionWarning: true,
                                            action: command => command.SetCommandText($"""
 
-                                                                                      SELECT {Tevent.AggregateId}, {Tevent.TeventType} 
+                                                                                      SELECT {Tevent.TaggregateId}, {Tevent.TeventType} 
                                                                                       FROM {Tevent.TableName} 
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(aggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
    }
 }

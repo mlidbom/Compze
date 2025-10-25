@@ -19,23 +19,23 @@ public abstract class TeventiveEntity<TParent,
                                      TEntityTeventIdGetterSetter>
     : TeventiveComponent<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityTevent, TEntityTeventImplementation>
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
-    where TParentTevent : class, IAggregateTevent
+    where TParentTevent : class, ITaggregateTevent
     where TEntityId : struct
     where TEntityTevent : class, TParentTevent
-    where TParentTeventImplementation : AggregateTevent, TParentTevent
+    where TParentTeventImplementation : TaggregateTevent, TParentTevent
     where TEntityTeventImplementation : TParentTeventImplementation, TEntityTevent
     where TEntityCreatedTevent : TEntityTevent
     where TEntity : TeventiveEntity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-    where TEntityTeventIdGetterSetter : IGetSetAggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
+    where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
 {
-    static TeventiveEntity() => AggregateTypeValidator<TEntity, TEntityTeventImplementation, TEntityTevent>.AssertStaticStructureIsValid();
+    static TeventiveEntity() => TaggregateTypeValidator<TEntity, TEntityTeventImplementation, TEntityTevent>.AssertStaticStructureIsValid();
 
     static readonly TEntityTeventIdGetterSetter IdGetterSetter = Constructor.For<TEntityTeventIdGetterSetter>.DefaultConstructor.Instance();
 
     TEntityId _id;
     public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
-    protected TeventiveEntity(TParent aggregate) : base(aggregate, false)
+    protected TeventiveEntity(TParent taggregate) : base(taggregate, false)
     {
         RegisterTeventAppliers()
            .For<TEntityCreatedTevent>(e => _id = IdGetterSetter.GetId(e));

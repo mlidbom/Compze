@@ -26,7 +26,7 @@ static class InMemoryTeventStoreTeventPublisherRegistrar
 
    public InMemoryTeventStoreTeventPublisher(ITessageHandlerRegistry handlerRegistry) => _handlerRegistry = handlerRegistry;
 
-   void ITeventStoreTeventPublisher.Publish(IAggregateTevent tevent)
+   void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent)
    {
       TessageInspector.AssertValidToSendRemote(tevent);
       _handlerRegistry.CreateTeventDispatcher().Dispatch(tevent);

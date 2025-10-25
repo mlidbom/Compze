@@ -6,13 +6,13 @@ namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 
 public interface ITeventStoreReader
 {
-   IReadOnlyList<IAggregateTevent> GetHistory(Guid aggregateId);
+   IReadOnlyList<ITaggregateTevent> GetHistory(Guid taggregateId);
    /// <summary>
-   /// Loads a specific version of the aggregate.
+   /// Loads a specific version of the taggregate.
    /// This instance is NOT tracked for changes.
    /// No changes to this entity vill be persisted.
    /// </summary>
-   TAggregate GetReadonlyCopyOfVersion<TAggregate>(Guid aggregateId, int version) where TAggregate : class, ITeventStored;
+   TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(Guid taggregateId, int version) where TTaggregate : class, ITeventStored;
 
-   TAggregate GetReadonlyCopy<TAggregate>(Guid aggregateId) where TAggregate : class, ITeventStored;
+   TTaggregate GetReadonlyCopy<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITeventStored;
 }

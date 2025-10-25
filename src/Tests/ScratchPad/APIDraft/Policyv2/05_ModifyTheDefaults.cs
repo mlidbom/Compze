@@ -15,7 +15,7 @@ public class ModifyTheDefaults
       );
 
       var defaultTommandHandlerPolicies = new CompositePolicy(
-         Policy.LockExclusively.AggregateRelatedToTessage
+         Policy.LockExclusively.TaggregateRelatedToTessage
       );
 
       var endpoint = new Endpoint(

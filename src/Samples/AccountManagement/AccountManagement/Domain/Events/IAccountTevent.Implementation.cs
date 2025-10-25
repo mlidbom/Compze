@@ -17,10 +17,10 @@ public static partial class AccountTevent
    public static class Implementation
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
-      public abstract class Root : AggregateTevent, AccountTevent.Root
+      public abstract class Root : TaggregateTevent, AccountTevent.Root
       {
          protected Root() {}
-         protected Root(Guid aggregateId) : base(aggregateId) {}
+         protected Root(Guid taggregateId) : base(taggregateId) {}
       }
 
       public class UserRegistered : Root, AccountTevent.UserRegistered

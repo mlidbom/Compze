@@ -15,7 +15,7 @@ namespace Compze.Tessaging.Teventive.TeventStore.Sqlite;
 
 partial class SqliteTeventStoreSqlLayer
 {
-   public void InsertSingleAggregateTevents(IReadOnlyList<TeventDataRow> tevents)
+   public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {
       _connectionManager.UseConnection(connection =>
       {
@@ -28,8 +28,8 @@ partial class SqliteTeventStoreSqlLayer
                                         $"""
 
                                          INSERT INTO {Tevent.TableName}
-                                         (       {Tevent.AggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrderIntegerPart},  {Tevent.ReadOrderFractionPart},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
-                                         VALUES(@{Tevent.AggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrderIntegerPart}, @{Tevent.ReadOrderFractionPart}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
+                                         (       {Tevent.TaggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrderIntegerPart},  {Tevent.ReadOrderFractionPart},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
+                                         VALUES(@{Tevent.TaggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrderIntegerPart}, @{Tevent.ReadOrderFractionPart}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
 
 
                                          {(data.StorageInformation.ReadOrder != null ? "" : $"""
@@ -42,7 +42,7 @@ partial class SqliteTeventStoreSqlLayer
                                                                                              """)}
 
                                          """)
-                                    .AddVarcharParameter(Tevent.AggregateId, 36, data.AggregateId.ToString())
+                                    .AddVarcharParameter(Tevent.TaggregateId, 36, data.TaggregateId.ToString())
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddVarcharParameter(Tevent.TeventType, 36, data.TeventType.ToString())
                                     .AddVarcharParameter(Tevent.TeventId, 36, data.TeventId.ToString())
@@ -117,13 +117,13 @@ partial class SqliteTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteAggregate(Guid aggregateId)
+   public void DeleteTaggregate(Guid taggregateId)
    {
       _connectionManager.UseCommand(
          command =>
          {
-            command.SetCommandText($"DELETE FROM {Tevent.TableName} WHERE {Tevent.AggregateId} = @{Tevent.AggregateId};")
-                   .AddVarcharParameter(Tevent.AggregateId, 36, aggregateId.ToString())
+            command.SetCommandText($"DELETE FROM {Tevent.TableName} WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
+                   .AddVarcharParameter(Tevent.TaggregateId, 36, taggregateId.ToString())
                    .ExecuteNonQuery();
          });
    }

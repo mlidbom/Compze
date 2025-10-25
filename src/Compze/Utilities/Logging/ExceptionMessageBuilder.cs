@@ -24,9 +24,9 @@ static class ExceptionTessageBuilder
                                                           {IndentWith}MESSAGE: {message} 
                                                           """);
 
-      if(exception is AggregateException aggregateException)
+      if(exception is AggregateException taggregateException)
       {
-         builder.AppendLine(BuildAggregateExceptionTessage(aggregateException, depth: StartDepth));
+         builder.AppendLine(BuildAggregateExceptionTessage(taggregateException, depth: StartDepth));
       } else
       {
          builder.Append(BuildRegularExceptionTessage(exception, depth: StartDepth));
@@ -35,23 +35,23 @@ static class ExceptionTessageBuilder
       return builder.ToString();
    }
 
-   static string BuildAggregateExceptionTessage(AggregateException aggregateException, int depth)
+   static string BuildAggregateExceptionTessage(AggregateException taggregateException, int depth)
    {
       return $"""
-              {LineSeparator} Aggregate exception
+              {LineSeparator} Taggregate exception
               StackTrace:
               {LineSeparator}
-              {aggregateException.StackTrace}
+              {taggregateException.StackTrace}
               {LineSeparator}
-              {BuildInnerExceptionsTessages(aggregateException.InnerExceptions, depth)}
+              {BuildInnerExceptionsTessages(taggregateException.InnerExceptions, depth)}
               """.IndentToDepth(IndentWith, depth);
    }
 
    static string BuildInnerExceptionsTessages(ReadOnlyCollection<Exception> exceptions, int depth) =>
       exceptions.Select((exception, index) => $"""
                                                {LineSeparator} Inner Exception {index + 1}
-                                               {(exception is AggregateException aggregateException ?
-                                                    BuildAggregateExceptionTessage(aggregateException, 1) :
+                                               {(exception is AggregateException taggregateException ?
+                                                    BuildAggregateExceptionTessage(taggregateException, 1) :
                                                     BuildRegularExceptionTessage(exception, depth + 1))}
                                                """)
                 .Select(it => it.IndentToDepth("   ", depth))

@@ -83,8 +83,8 @@ class TeventStoreSerializer : ITeventStoreSerializer
 
    internal TeventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
 
-   public string Serialize(AggregateTevent tevent) => _serializer.Serialize(tevent);
-   public IAggregateTevent Deserialize(Type teventType, string json) => (IAggregateTevent)_serializer.Deserialize(teventType, json);
+   public string Serialize(TaggregateTevent tevent) => _serializer.Serialize(tevent);
+   public ITaggregateTevent Deserialize(Type teventType, string json) => (ITaggregateTevent)_serializer.Deserialize(teventType, json);
 }
 
 class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer

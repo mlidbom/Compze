@@ -31,8 +31,8 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
 
    [PCT]  public async Task If_tevent_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
-      MyRemoteAggregateTeventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
+      MyRemoteTaggregateTeventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 

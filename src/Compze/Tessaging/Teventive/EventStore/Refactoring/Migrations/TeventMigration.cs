@@ -6,12 +6,12 @@ using Compze.Utilities.Contracts;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 
-public abstract class TeventMigration<TMigratedAggregateTeventHierarchyRootInterface> : ITeventMigration
-   where TMigratedAggregateTeventHierarchyRootInterface : IAggregateTevent
+public abstract class TeventMigration<TMigratedTaggregateTeventHierarchyRootInterface> : ITeventMigration
+   where TMigratedTaggregateTeventHierarchyRootInterface : ITaggregateTevent
 {
    protected TeventMigration(Guid id, string name, string description)
    {
-      Assert.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Is(typeof(TMigratedAggregateTeventHierarchyRootInterface).IsInterface);
+      Assert.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Is(typeof(TMigratedTaggregateTeventHierarchyRootInterface).IsInterface);
 
       Id = id;
       Name = name;
@@ -23,6 +23,6 @@ public abstract class TeventMigration<TMigratedAggregateTeventHierarchyRootInter
    public string Name { get; }
    public string Description { get; }
    public bool Done { get; }
-   public Type MigratedAggregateTeventHierarchyRootInterface => typeof(TMigratedAggregateTeventHierarchyRootInterface);
-   public abstract ISingleAggregateInstanceHandlingTeventMigrator CreateSingleAggregateInstanceHandlingMigrator();
+   public Type MigratedTaggregateTeventHierarchyRootInterface => typeof(TMigratedTaggregateTeventHierarchyRootInterface);
+   public abstract ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator();
 }

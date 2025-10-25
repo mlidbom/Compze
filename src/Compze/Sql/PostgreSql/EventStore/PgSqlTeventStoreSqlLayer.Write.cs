@@ -11,14 +11,14 @@ using Npgsql;
 using NpgsqlTypes;
 using ReadOrder = Compze.Sql.Common.TeventStore.Abstractions.ReadOrder;
 using Tevent = Compze.Sql.Common.TeventStore.TeventTableSchemaStrings;
-using Lock = Compze.Sql.Common.TeventStore.AggregateLockTableSchemaStrings;
+using Lock = Compze.Sql.Common.TeventStore.TaggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.TeventStore.PostgreSql;
 
 //Performance: explore PgSql alternatives to commented out MSSql hints throughout the sql layer.
 partial class PgSqlTeventStoreSqlLayer
 {
-   public void InsertSingleAggregateTevents(IReadOnlyList<TeventDataRow> tevents)
+   public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {
       _connectionManager.UseConnection(connection =>
       {
@@ -30,11 +30,11 @@ partial class PgSqlTeventStoreSqlLayer
                   command => command.SetCommandText(
                                         $"""
 
-                                         {(data.AggregateVersion > 1 ? "" : $"insert into {Lock.TableName}({Lock.AggregateId}) values(@{Lock.AggregateId});")}
+                                         {(data.TaggregateVersion > 1 ? "" : $"insert into {Lock.TableName}({Lock.TaggregateId}) values(@{Lock.TaggregateId});")}
 
                                          INSERT INTO {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-                                         (       {Tevent.AggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},       {Tevent.ReadOrder},                            {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
-                                         VALUES(@{Tevent.AggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, cast(@{Tevent.ReadOrder} as {Tevent.ReadOrderType}), @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
+                                         (       {Tevent.TaggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},       {Tevent.ReadOrder},                            {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
+                                         VALUES(@{Tevent.TaggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, cast(@{Tevent.ReadOrder} as {Tevent.ReadOrderType}), @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
 
                                          {(data.StorageInformation.ReadOrder != null ? "" : $"""
 
@@ -46,7 +46,7 @@ partial class PgSqlTeventStoreSqlLayer
 
 
                                          """)
-                                    .AddParameter(Tevent.AggregateId, data.AggregateId)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
                                     .AddParameter(Tevent.TeventId, data.TeventId)
@@ -114,13 +114,13 @@ partial class PgSqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteAggregate(Guid aggregateId)
+   public void DeleteTaggregate(Guid taggregateId)
    {
       _connectionManager.UseCommand(
          command =>
          {
-            command.SetCommandText($"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.AggregateId} = @{Tevent.AggregateId};")
-                   .AddParameter(Tevent.AggregateId, aggregateId)
+            command.SetCommandText($"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
+                   .AddParameter(Tevent.TaggregateId, taggregateId)
                    .PrepareStatement()
                    .ExecuteNonQuery();
          });

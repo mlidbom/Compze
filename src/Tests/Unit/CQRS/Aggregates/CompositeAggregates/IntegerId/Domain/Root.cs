@@ -3,9 +3,9 @@ using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
+namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
-class Root : Aggregate<Root, RootTevent.IRoot, RootTevent.Implementation.Root>
+class Root : Taggregate<Root, RootTevent.IRoot, RootTevent.Implementation.Root>
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;
@@ -46,7 +46,7 @@ class Component : Root.Component<Component, RootTevent.Component.Implementation.
    public void Rename(string name) => Publish(new RootTevent.Component.Implementation.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootTevent.Component.Entity.Implementation.Created(++_instances, name));
 
-#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
    [UsedImplicitly]public class Entity : RemovableEntity<Entity,
 #pragma warning restore CA1812
       int,
@@ -68,7 +68,7 @@ class Component : Root.Component<Component, RootTevent.Component.Implementation.
    }
 }
 
-#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
 [UsedImplicitly]class RemovableEntity : Root.RemovableEntity<RemovableEntity,
 #pragma warning restore CA1812
    int,
@@ -93,7 +93,7 @@ class Component : Root.Component<Component, RootTevent.Component.Implementation.
    public void Rename(string name) => Publish(new RootTevent.Entity.Implementation.Renamed(name));
    public void Remove() => Publish(new RootTevent.Entity.Implementation.Removed());
 
-#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
    public class RemovableNestedEntity : RemovableEntity<RemovableNestedEntity,
 #pragma warning restore CA1812
       int,

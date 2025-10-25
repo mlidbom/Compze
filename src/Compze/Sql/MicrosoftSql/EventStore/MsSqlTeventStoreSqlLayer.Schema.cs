@@ -20,7 +20,7 @@ partial class MsSqlTeventStoreSqlLayer
                                                                                CREATE TABLE {Tevent.TableName}
                                                                                (
                                                                                    {Tevent.InsertionOrder}       bigint IDENTITY(1,1)               NOT NULL,
-                                                                                   {Tevent.AggregateId}          uniqueidentifier                   NOT NULL,  
+                                                                                   {Tevent.TaggregateId}          uniqueidentifier                   NOT NULL,  
                                                                                    {Tevent.UtcTimeStamp}         datetime2                          NOT NULL,   
                                                                                    {Tevent.TeventType}            uniqueidentifier                   NOT NULL,    
                                                                                    {Tevent.Tevent}                nvarchar(max)                      NOT NULL,
@@ -34,7 +34,7 @@ partial class MsSqlTeventStoreSqlLayer
                                                                            
                                                                                    CONSTRAINT PK_{Tevent.TableName} PRIMARY KEY CLUSTERED 
                                                                                    (
-                                                                                       {Tevent.AggregateId} ASC,
+                                                                                       {Tevent.TaggregateId} ASC,
                                                                                        {Tevent.InsertedVersion} ASC
                                                                                    )WITH (ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = OFF),
                                                                            

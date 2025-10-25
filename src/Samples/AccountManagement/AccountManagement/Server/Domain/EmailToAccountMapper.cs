@@ -4,7 +4,7 @@ using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Sql.DocumentDb;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
-using AccountLink = Compze.Tessaging.TyperMediaApi.TeventStore.TeventStoreApi.TueryApi.AggregateLink<AccountManagement.Domain.Account>;
+using AccountLink = Compze.Tessaging.TyperMediaApi.TeventStore.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;
 
 namespace AccountManagement.Domain;
 
@@ -15,14 +15,14 @@ namespace AccountManagement.Domain;
    internal static void UpdateMappingWhenEmailChanges(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
       (AccountTevent.PropertyUpdated.Email emailUpdated, IInProcessHypermediaNavigator navigator) =>
       {
-         if(emailUpdated.AggregateVersion > 1)
+         if(emailUpdated.TaggregateVersion > 1)
          {
-            var previousAccountVersion = navigator.Execute(InternalApi.Queries.GetReadOnlyCopyOfVersion(emailUpdated.AggregateId, emailUpdated.AggregateVersion - 1));
+            var previousAccountVersion = navigator.Execute(InternalApi.Queries.GetReadOnlyCopyOfVersion(emailUpdated.TaggregateId, emailUpdated.TaggregateVersion - 1));
             navigator.Execute(DocumentDb.Tommands.Delete<AccountLink>(previousAccountVersion.Email.StringValue));
          }
 
          var newEmail = emailUpdated.Email;
-         navigator.Execute(DocumentDb.Tommands.Save(newEmail.StringValue, InternalApi.Queries.GetForUpdate(emailUpdated.AggregateId)));
+         navigator.Execute(DocumentDb.Tommands.Save(newEmail.StringValue, InternalApi.Queries.GetForUpdate(emailUpdated.TaggregateId)));
       });
 
    internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(

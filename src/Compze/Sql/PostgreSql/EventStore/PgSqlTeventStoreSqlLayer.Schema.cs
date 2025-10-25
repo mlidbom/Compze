@@ -1,7 +1,7 @@
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Tevent = Compze.Sql.Common.TeventStore.TeventTableSchemaStrings;
-using Lock = Compze.Sql.Common.TeventStore.AggregateLockTableSchemaStrings;
+using Lock = Compze.Sql.Common.TeventStore.TaggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.TeventStore.PostgreSql;
 
@@ -22,7 +22,7 @@ partial class PgSqlTeventStoreSqlLayer
                                                                                          CREATE TABLE IF NOT EXISTS {Tevent.TableName}
                                                                                          (
                                                                                              {Tevent.InsertionOrder}          bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-                                                                                             {Tevent.AggregateId}             {PgSqlGuidType}                     NOT NULL,  
+                                                                                             {Tevent.TaggregateId}             {PgSqlGuidType}                     NOT NULL,  
                                                                                              {Tevent.UtcTimeStamp}            timestamp with time zone            NOT NULL,   
                                                                                              {Tevent.TeventType}               {PgSqlGuidType}                     NOT NULL,    
                                                                                              {Tevent.Tevent}                   TEXT                                NOT NULL,
@@ -34,7 +34,7 @@ partial class PgSqlTeventStoreSqlLayer
                                                                                              {Tevent.TargetTevent}             {PgSqlGuidType}                     NULL,
                                                                                              {Tevent.RefactoringType}         smallint                            NULL,
                                                                                      
-                                                                                             PRIMARY KEY ({Tevent.AggregateId}, {Tevent.InsertedVersion}),
+                                                                                             PRIMARY KEY ({Tevent.TaggregateId}, {Tevent.InsertedVersion}),
                                                                                      
                                                                                      
                                                                                      
@@ -55,8 +55,8 @@ partial class PgSqlTeventStoreSqlLayer
                                                                                      
                                                                                          CREATE TABLE IF NOT EXISTS {Lock.TableName}
                                                                                          (
-                                                                                             {Lock.AggregateId} {PgSqlGuidType} NOT NULL,
-                                                                                             PRIMARY KEY ( {Lock.AggregateId} )
+                                                                                             {Lock.TaggregateId} {PgSqlGuidType} NOT NULL,
+                                                                                             PRIMARY KEY ( {Lock.TaggregateId} )
                                                                                          );
 
 

@@ -15,15 +15,15 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS;
 
-interface ISomeTevent : IAggregateTevent;
+interface ISomeTevent : ITaggregateTevent;
 
-class SomeTevent : AggregateTevent, ISomeTevent
+class SomeTevent : TaggregateTevent, ISomeTevent
 {
-   public SomeTevent(Guid aggregateId, int version) : base(aggregateId)
+   public SomeTevent(Guid taggregateId, int version) : base(taggregateId)
    {
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableAggregateTevent)this).SetAggregateVersionInternal(version);
-      ((IMutableAggregateTevent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
+      ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(version);
+      ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
 #pragma warning restore CS0618 // Type or member is obsolete
    }
 }
@@ -38,9 +38,9 @@ public class TeventStoreTests : UniversalTestBase
    [PCT]
    public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
-      var aggregateId = Guid.NewGuid();
-      TransactionScopeCe.Execute(() => TeventStore.SaveSingleAggregateTevents(1.Through(10)
-                                                                             .Select(i => new SomeTevent(aggregateId, i)).ToList()));
+      var taggregateId = Guid.NewGuid();
+      TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(1.Through(10)
+                                                                             .Select(i => new SomeTevent(taggregateId, i)).ToList()));
       var stream = TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
 
       stream.Should()
@@ -52,10 +52,10 @@ public class TeventStoreTests : UniversalTestBase
    {
       const int batchSize = 100;
       const int moreTeventsThanTheBatchSizeForStreamingTevents = batchSize + 10;
-      var aggregateId = Guid.NewGuid();
+      var taggregateId = Guid.NewGuid();
 
-      TransactionScopeCe.Execute(() => TeventStore.SaveSingleAggregateTevents(1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
-                                                                             .Select(i => new SomeTevent(aggregateId, i)).ToList()));
+      TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
+                                                                             .Select(i => new SomeTevent(taggregateId, i)).ToList()));
 
       var stream = TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
                              .ToList();
@@ -63,79 +63,79 @@ public class TeventStoreTests : UniversalTestBase
       var currentTeventNumber = 0;
       stream.Should()
             .HaveCount(moreTeventsThanTheBatchSizeForStreamingTevents);
-      foreach(var aggregateTevent in stream)
+      foreach(var taggregateTevent in stream)
       {
-         aggregateTevent.AggregateVersion.Should()
+         taggregateTevent.TaggregateVersion.Should()
                        .Be(++currentTeventNumber, "Incorrect tevent version detected");
       }
    });
 
    [PCT]
-   public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedAggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedTaggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
-      var aggregatesWithTevents = 1.Through(10)
+      var taggregatesWithTevents = 1.Through(10)
                                   .ToDictionary(i => i,
                                                 _ =>
                                                 {
-                                                   var aggregateId = Guid.NewGuid();
+                                                   var taggregateId = Guid.NewGuid();
                                                    return 1.Through(10)
-                                                           .Select(j => new SomeTevent(aggregateId, j))
+                                                           .Select(j => new SomeTevent(taggregateId, j))
                                                            .ToList();
                                                 });
 
-      TransactionScopeCe.Execute(() => aggregatesWithTevents.ForEach(it => TeventStore.SaveSingleAggregateTevents(it.Value)));
-      var toRemove = aggregatesWithTevents[2][0]
-        .AggregateId;
-      aggregatesWithTevents.Remove(2);
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
+      var toRemove = taggregatesWithTevents[2][0]
+        .TaggregateId;
+      taggregatesWithTevents.Remove(2);
 
-      TransactionScopeCe.Execute(() => TeventStore.DeleteAggregate(toRemove));
+      TransactionScopeCe.Execute(() => TeventStore.DeleteTaggregate(toRemove));
 
-      aggregatesWithTevents.Select(kvp => TeventStore.GetAggregateHistory(kvp.Value[0].AggregateId))
+      taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(kvp.Value[0].TaggregateId))
                           .ForEach(stream => stream.Should().HaveCount(10));
 
-      TeventStore.GetAggregateHistory(toRemove)
+      TeventStore.GetTaggregateHistory(toRemove)
                 .Should()
                 .BeEmpty();
    });
 
    [PCT]
-   public void GetListOfAggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void GetListOfTaggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
-      var aggregatesWithTevents = 1.Through(10)
+      var taggregatesWithTevents = 1.Through(10)
                                   .ToDictionary(i => i,
                                                 _ =>
                                                 {
-                                                   var aggregateId = Guid.NewGuid();
+                                                   var taggregateId = Guid.NewGuid();
                                                    return 1.Through(10)
-                                                           .Select(j => new SomeTevent(aggregateId, j))
+                                                           .Select(j => new SomeTevent(taggregateId, j))
                                                            .ToList();
                                                 });
 
-      TransactionScopeCe.Execute(() => aggregatesWithTevents.ForEach(it => TeventStore.SaveSingleAggregateTevents(it.Value)));
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
 
-      var allAggregateIds = TeventStore.StreamAggregateIdsInCreationOrder()
+      var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder()
                                       .ToList();
-      allAggregateIds.Should().HaveCount(aggregatesWithTevents.Count);
+      allTaggregateIds.Should().HaveCount(taggregatesWithTevents.Count);
    });
 
-   //Todo: This does not check that only aggregates of the correct type are returned since there are only tevents of type SomeTevent in the store..
+   //Todo: This does not check that only taggregates of the correct type are returned since there are only tevents of type SomeTevent in the store..
    [PCT]
-   public void GetListOfAggregateIdsUsingTeventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void GetListOfTaggregateIdsUsingTeventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
-      var aggregatesWithTevents = 1.Through(10)
+      var taggregatesWithTevents = 1.Through(10)
                                   .ToDictionary(i => i,
                                                 _ =>
                                                 {
-                                                   var aggregateId = Guid.NewGuid();
+                                                   var taggregateId = Guid.NewGuid();
                                                    return 1.Through(10)
-                                                           .Select(j => new SomeTevent(aggregateId, j))
+                                                           .Select(j => new SomeTevent(taggregateId, j))
                                                            .ToList();
                                                 });
 
-      TransactionScopeCe.Execute(() => aggregatesWithTevents.ForEach(it => TeventStore.SaveSingleAggregateTevents(it.Value)));
-      var allAggregateIds = TeventStore.StreamAggregateIdsInCreationOrder<ISomeTevent>()
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
+      var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder<ISomeTevent>()
                                       .ToList();
-      allAggregateIds.Should().HaveCount(aggregatesWithTevents.Count);
+      allTaggregateIds.Should().HaveCount(taggregatesWithTevents.Count);
    });
 
    [PCT]
@@ -151,12 +151,12 @@ public class TeventStoreTests : UniversalTestBase
 
       using(new TransactionScope())
       {
-         ((ITeventStored)user).Commit(teventStore.SaveSingleAggregateTevents);
-         teventStore.GetAggregateHistory(user.Id);
-         teventStore.GetAggregateHistory(user.Id).Should().NotBeEmpty();
+         ((ITeventStored)user).Commit(teventStore.SaveSingleTaggregateTevents);
+         teventStore.GetTaggregateHistory(user.Id);
+         teventStore.GetTaggregateHistory(user.Id).Should().NotBeEmpty();
       }
 
-      teventStore.GetAggregateHistory(user.Id).Should().BeEmpty();
+      teventStore.GetTaggregateHistory(user.Id).Should().BeEmpty();
    });
 
    [PCT]
@@ -173,15 +173,15 @@ public class TeventStoreTests : UniversalTestBase
 
          TransactionScopeCe.Execute(() =>
          {
-            ((ITeventStored)user).Commit(teventStore.SaveSingleAggregateTevents);
-            teventStore.GetAggregateHistory(user.Id);
-            teventStore.GetAggregateHistory(user.Id).Should().NotBeEmpty();
+            ((ITeventStored)user).Commit(teventStore.SaveSingleTaggregateTevents);
+            teventStore.GetTaggregateHistory(user.Id);
+            teventStore.GetTaggregateHistory(user.Id).Should().NotBeEmpty();
          });
       }
 
-      var firstRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetAggregateHistory(user.Id).Single());
+      var firstRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetTaggregateHistory(user.Id).Single());
 
-      var secondRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetAggregateHistory(user.Id).Single());
+      var secondRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetTaggregateHistory(user.Id).Single());
 
       firstRead.Should().BeSameAs(secondRead);
    }

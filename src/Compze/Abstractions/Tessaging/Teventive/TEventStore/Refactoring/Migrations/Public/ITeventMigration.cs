@@ -14,21 +14,21 @@ public interface ITeventMigration
    bool Done { get; }
    // ReSharper restore UnusedMember.Global
 
-   ///<summary>The tevent interface that is the root of the tevent hierarchy for the aggregate whose tevents this migration modifies</summary>
-   Type MigratedAggregateTeventHierarchyRootInterface { get; }
+   ///<summary>The tevent interface that is the root of the tevent hierarchy for the taggregate whose tevents this migration modifies</summary>
+   Type MigratedTaggregateTeventHierarchyRootInterface { get; }
 
-   ISingleAggregateInstanceHandlingTeventMigrator CreateSingleAggregateInstanceHandlingMigrator();
+   ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator();
 }
 
 ///<summary>
-/// <para>Responsible for migrating the tevents of a single instance of an aggregate.</para>
+/// <para>Responsible for migrating the tevents of a single instance of an taggregate.</para>
 /// </summary>
-public interface ISingleAggregateInstanceHandlingTeventMigrator
+public interface ISingleTaggregateInstanceHandlingTeventMigrator
 {
    ///<summary>
    /// <para>Inspect one tevent and if required mutate the tevent stream by calling methods on the modifier</para>
-   /// <para>Called once for each tevent in the aggregate's history. </para>
-   /// <para>Then it is called once with an instance of <see cref="EndOfAggregateHistoryTeventPlaceHolder"/>. </para>
+   /// <para>Called once for each tevent in the taggregate's history. </para>
+   /// <para>Then it is called once with an instance of <see cref="EndOfTaggregateHistoryTeventPlaceHolder"/>. </para>
    /// </summary>
-   void MigrateTevent(IAggregateTevent tevent, ITeventModifier modifier);
+   void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier);
 }

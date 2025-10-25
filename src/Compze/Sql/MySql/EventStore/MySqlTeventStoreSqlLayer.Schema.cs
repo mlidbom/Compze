@@ -21,7 +21,7 @@ partial class MySqlTeventStoreSqlLayer
                                                                                CREATE TABLE IF NOT EXISTS {Tevent.TableName}
                                                                                (
                                                                                    {Tevent.InsertionOrder}       bigint                     NOT NULL  AUTO_INCREMENT,
-                                                                                   {Tevent.AggregateId}          {MySqlGuidType}            NOT NULL,  
+                                                                                   {Tevent.TaggregateId}          {MySqlGuidType}            NOT NULL,  
                                                                                    {Tevent.UtcTimeStamp}         datetime(6) NOT            NULL,   
                                                                                    {Tevent.TeventType}            {MySqlGuidType}            NOT NULL,    
                                                                                    {Tevent.Tevent}                MEDIUMTEXT                 NOT NULL,
@@ -33,7 +33,7 @@ partial class MySqlTeventStoreSqlLayer
                                                                                    {Tevent.TargetTevent}          {MySqlGuidType}            NULL,
                                                                                    {Tevent.RefactoringType}      tinyint                    NULL,
                                                                            
-                                                                                   PRIMARY KEY ({Tevent.AggregateId}, {Tevent.InsertedVersion}),
+                                                                                   PRIMARY KEY ({Tevent.TaggregateId}, {Tevent.InsertedVersion}),
                                                                            
                                                                            
                                                                            

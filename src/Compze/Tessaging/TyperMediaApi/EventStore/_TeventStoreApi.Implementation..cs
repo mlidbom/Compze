@@ -13,36 +13,36 @@ public partial class TeventStoreApi
 {
    public partial class TueryApi
    {
-      public class AggregateLink<TAggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<AggregateLink<TAggregate>, TAggregate> where TAggregate : class, ITeventStored
+      public class TaggregateLink<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<TaggregateLink<TTaggregate>, TTaggregate> where TTaggregate : class, ITeventStored
       {
-         [JsonConstructor] internal AggregateLink(Guid id) => Id = id;
+         [JsonConstructor] internal TaggregateLink(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (AggregateLink<TAggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TAggregate>(tuery.Id));
+            (TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
       }
 
-      public class GetAggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetAggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : IAggregateTevent
+      public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : ITaggregateTevent
       {
-         [JsonConstructor] internal GetAggregateHistory(Guid id) => Id = id;
+         [JsonConstructor] internal GetTaggregateHistory(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (GetAggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
+            (GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
       }
 
-      public class GetReadonlyCopyOfAggregate<TAggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfAggregate<TAggregate>, TAggregate> where TAggregate : class, ITeventStored
+      public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITeventStored
       {
-         [JsonConstructor] internal GetReadonlyCopyOfAggregate(Guid id) => Id = id;
+         [JsonConstructor] internal GetReadonlyCopyOfTaggregate(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (GetReadonlyCopyOfAggregate<TAggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TAggregate>(tuery.Id));
+            (GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
       }
 
-      public class GetReadonlyCopyOfAggregateVersion<TAggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfAggregateVersion<TAggregate>, TAggregate> where TAggregate : class, ITeventStored
+      public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITeventStored
       {
-         [JsonConstructor] internal GetReadonlyCopyOfAggregateVersion(Guid id, int version)
+         [JsonConstructor] internal GetReadonlyCopyOfTaggregateVersion(Guid id, int version)
          {
             Id = id;
             Version = version;
@@ -52,31 +52,31 @@ public partial class TeventStoreApi
          [JsonProperty] int Version { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (GetReadonlyCopyOfAggregateVersion<TAggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TAggregate>(tuery.Id, tuery.Version));
+            (GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
       }
    }
 
    public partial class TommandApi
    {
-      public class SaveAggregate<TAggregate> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
-         where TAggregate : class, ITeventStored
+      public class SaveTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
+         where TTaggregate : class, ITeventStored
       {
-         [JsonConstructor] internal SaveAggregate(TAggregate entity) => Entity = entity;
-         TAggregate Entity { get; }
+         [JsonConstructor] internal SaveTaggregate(TTaggregate entity) => Entity = entity;
+         TTaggregate Entity { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
-            (SaveAggregate<TAggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
+            (SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
       }
    }
 
-   internal static void RegisterHandlersForAggregate<TAggregate, TTevent>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
-      where TAggregate : class, ITeventStored<TTevent>
-      where TTevent : IAggregateTevent
+   internal static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+      where TTaggregate : class, ITeventStored<TTevent>
+      where TTevent : ITaggregateTevent
    {
-      TommandApi.SaveAggregate<TAggregate>.RegisterHandler(registrar);
-      TueryApi.AggregateLink<TAggregate>.RegisterHandler(registrar);
-      TueryApi.GetReadonlyCopyOfAggregate<TAggregate>.RegisterHandler(registrar);
-      TueryApi.GetReadonlyCopyOfAggregateVersion<TAggregate>.RegisterHandler(registrar);
-      TueryApi.GetAggregateHistory<TTevent>.RegisterHandler(registrar);
+      TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(registrar);
+      TueryApi.TaggregateLink<TTaggregate>.RegisterHandler(registrar);
+      TueryApi.GetReadonlyCopyOfTaggregate<TTaggregate>.RegisterHandler(registrar);
+      TueryApi.GetReadonlyCopyOfTaggregateVersion<TTaggregate>.RegisterHandler(registrar);
+      TueryApi.GetTaggregateHistory<TTevent>.RegisterHandler(registrar);
    }
 }

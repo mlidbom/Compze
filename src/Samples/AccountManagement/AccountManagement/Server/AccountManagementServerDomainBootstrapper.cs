@@ -41,10 +41,10 @@ public class AccountManagementServerDomainBootstrapper
               .MsSqlTessaging();
 
       builder.RegisterTeventStore()
-             .HandleAggregate<Account, AccountTevent.Root>();
+             .HandleTaggregate<Account, AccountTevent.Root>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<TeventStoreApi.TueryApi.AggregateLink<Account>>(builder.RegisterHandlers)
+             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterHandlers)
              .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterHandlers);
    }
 

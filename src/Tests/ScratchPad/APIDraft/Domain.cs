@@ -6,7 +6,7 @@ interface IAccountTevent { }
 
 class SendAccountRegistrationWelcomeEmailTommand { }
 
-class AccountAggregate { }
+class AccountTaggregate { }
 class AccountReadModel { }
 class EmailToAccountLookupModel { }
 

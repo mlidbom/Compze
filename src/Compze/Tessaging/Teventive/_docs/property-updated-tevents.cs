@@ -11,7 +11,7 @@ namespace Website.paradigms.semantic_tevents
    namespace NoCollision
    {
       #region IUserCreated
-      interface IUserRegistered : IUserTevent, IAggregateCreatedTevent;
+      interface IUserRegistered : IUserTevent, ITaggregateCreatedTevent;
       interface IUserChangedEmail : IUserTevent;
       #endregion
    }
@@ -19,7 +19,7 @@ namespace Website.paradigms.semantic_tevents
    namespace NoCollision1
    {
       #region IUserEmailTeventsNaive
-      interface IUserRegistered : IUserTevent, IAggregateCreatedTevent
+      interface IUserRegistered : IUserTevent, ITaggregateCreatedTevent
       {
          Email Email { get; }
       }
@@ -39,7 +39,7 @@ namespace Website.paradigms.semantic_tevents
          Email Email { get; }
       }
 
-      interface IUserRegistered : IUserEmailPropertyUpdated, IAggregateCreatedTevent;
+      interface IUserRegistered : IUserEmailPropertyUpdated, ITaggregateCreatedTevent;
       interface IUserChangedEmail : IUserEmailPropertyUpdated;
       #endregion
 
@@ -51,7 +51,7 @@ namespace Website.paradigms.semantic_tevents
 
             #region EmailPropertyUpdatedListener
             registrar
-              .ForTevent<IUserEmailPropertyUpdated>(emailUpdated => WriteLine($"User: {emailUpdated.AggregateId} Email: {emailUpdated.Email}"));
+              .ForTevent<IUserEmailPropertyUpdated>(emailUpdated => WriteLine($"User: {emailUpdated.TaggregateId} Email: {emailUpdated.Email}"));
             #endregion
          }
       }

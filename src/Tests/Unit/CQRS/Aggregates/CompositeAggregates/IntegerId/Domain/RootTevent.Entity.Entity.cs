@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
+namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
 static partial class RootTevent
 {
@@ -36,8 +36,8 @@ static partial class RootTevent
             {
                public int NestedEntityId { get; protected set; }
 
-#pragma warning disable CA1812 // Used via reflection in aggregate infrastructure
-               [UsedImplicitly] public new class IdGetterSetter : Root, IGetSetAggregateEntityTeventEntityId<int, Root, IRoot>
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
+               [UsedImplicitly] public new class IdGetterSetter : Root, IGetSetTaggregateEntityTeventEntityId<int, Root, IRoot>
 #pragma warning restore CA1812
                {
                   public void SetEntityId(Root @tevent, int id) => @tevent.NestedEntityId = id;

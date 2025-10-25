@@ -15,19 +15,19 @@ public abstract class TeventiveRemovableEntity<TParent,
                                               TEntityTeventIdGetterSetter>
     : TeventiveEntity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
-    where TParentTevent : class, IAggregateTevent
+    where TParentTevent : class, ITaggregateTevent
     where TEntityId : struct
     where TEntityTevent : class, TParentTevent
-    where TParentTeventImplementation : AggregateTevent, TParentTevent
+    where TParentTeventImplementation : TaggregateTevent, TParentTevent
     where TEntityTeventImplementation : TParentTeventImplementation, TEntityTevent
     where TEntityCreatedTevent : TEntityTevent
     where TEntityRemovedTevent : TEntityTevent
     where TEntity : TeventiveRemovableEntity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
-    where TEntityTeventIdGetterSetter : IGetSetAggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
+    where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
 {
-    static TeventiveRemovableEntity() => AggregateTypeValidator<TEntity, TEntityTeventImplementation, TEntityTevent>.AssertStaticStructureIsValid();
+    static TeventiveRemovableEntity() => TaggregateTypeValidator<TEntity, TEntityTeventImplementation, TEntityTevent>.AssertStaticStructureIsValid();
 
-    protected TeventiveRemovableEntity(TParent aggregate) : base(aggregate)
+    protected TeventiveRemovableEntity(TParent taggregate) : base(taggregate)
     {
         RegisterTeventAppliers()
            .IgnoreUnhandled<TEntityRemovedTevent>();

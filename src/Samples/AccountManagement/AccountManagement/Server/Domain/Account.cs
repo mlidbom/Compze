@@ -12,12 +12,12 @@ using Compze.Utilities.Functional;
 namespace AccountManagement.Domain;
 
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
-class Account : Aggregate<Account, AccountTevent.Root, AccountTevent.Implementation.Root>, IAccountResourceData
+class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementation.Root>, IAccountResourceData
 {
-   public Email Email { get; private set; } = null!;       //Never public setters on an aggregate. AssertInvariantsAreMet guarantees not null status.
-   public Password Password { get; private set; } = null!; //Never public setters on an aggregate. AssertInvariantsAreMet guarantees not null status.
+   public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
+   public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
 
-   //No public constructors please. Aggregates are created through domain verbs.
+   //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
    Account() : base(new DateTimeNowTimeSource())
    {

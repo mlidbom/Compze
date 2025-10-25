@@ -27,7 +27,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
       return $"""
 
               SELECT {topClause} 
-              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.AggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, {Tevent.ReadOrder}
+              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.TaggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, {Tevent.ReadOrder}
               FROM {Tevent.TableName} {lockHint} 
               """;
    }
@@ -36,11 +36,11 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
       teventType: teventReader.GetGuid(0),
       teventJson: teventReader.GetString(1),
       teventId: teventReader.GetGuid(4),
-      aggregateVersion: teventReader.GetInt32(3),
-      aggregateId: teventReader.GetGuid(2),
+      taggregateVersion: teventReader.GetInt32(3),
+      taggregateId: teventReader.GetGuid(2),
       //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
       utcTimeStamp: DateTime.SpecifyKind(teventReader.GetDateTime(5), DateTimeKind.Utc),
-      storageInformation: new AggregateTeventStorageInformation
+      storageInformation: new TaggregateTeventStorageInformation
                           {
                              ReadOrder = ReadOrder.FromSqlDecimal(teventReader.GetSqlDecimal(10)),
                              InsertedVersion = teventReader.GetInt32(9),
@@ -49,24 +49,24 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
                              {
                                 (null, null) => null,
                                 // ReSharper disable PatternAlwaysOfType
-                                (Guid targetTevent, byte type) => new AggregateTeventRefactoringInformation(targetTevent, (AggregateTeventRefactoringType)type),
+                                (Guid targetTevent, byte type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
                                 // ReSharper restore PatternAlwaysOfType
                                 _ => throw new Exception("Should not be possible to get here")
                              }
                           }
    );
 
-   public IReadOnlyList<TeventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
       _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
                                     command => command.SetCommandText($"""
 
                                                                        {CreateSelectClause(takeWriteLock)} 
-                                                                       WHERE {Tevent.AggregateId} = @{Tevent.AggregateId}
+                                                                       WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
                                                                            AND {Tevent.InsertedVersion} > @CachedVersion
                                                                            AND {Tevent.EffectiveVersion} > 0
                                                                        ORDER BY {Tevent.ReadOrder} ASC
                                                                        """)
-                                                      .AddParameter(Tevent.AggregateId, aggregateId)
+                                                      .AddParameter(Tevent.TaggregateId, taggregateId)
                                                       .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                       .ExecuteReaderAndSelect(ReadDataRow)
                                                       .ToList());
@@ -103,16 +103,16 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
       } while(!(fetchedInThisBatch < batchSize));
    }
 
-   public IReadOnlyList<CreationTeventRow> ListAggregateIdsInCreationOrder()
+   public IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder()
    {
       return _connectionManager.UseCommand(suppressTransactionWarning: true,
                                            action: command => command.SetCommandText($"""
 
-                                                                                      SELECT {Tevent.AggregateId}, {Tevent.TeventType} 
+                                                                                      SELECT {Tevent.TaggregateId}, {Tevent.TeventType} 
                                                                                       FROM {Tevent.TableName} 
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(aggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
    }
 }

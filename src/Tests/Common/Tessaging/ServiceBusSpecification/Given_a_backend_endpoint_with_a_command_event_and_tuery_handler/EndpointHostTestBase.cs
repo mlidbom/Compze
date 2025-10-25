@@ -33,10 +33,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public ITestingEndpointHost Host = null!;
    public readonly IThreadGate MyExactlyOnceTommandHandlerThreadGate;
    public readonly IThreadGate TommandHandlerWithResultThreadGate;
-   public readonly IThreadGate MyCreateAggregateTommandHandlerThreadGate;
-   public readonly IThreadGate MyUpdateAggregateTommandHandlerThreadGate;
-   public readonly IThreadGate MyRemoteAggregateTeventHandlerThreadGate;
-   public readonly IThreadGate MyLocalAggregateTeventHandlerThreadGate;
+   public readonly IThreadGate MyCreateTaggregateTommandHandlerThreadGate;
+   public readonly IThreadGate MyUpdateTaggregateTommandHandlerThreadGate;
+   public readonly IThreadGate MyRemoteTaggregateTeventHandlerThreadGate;
+   public readonly IThreadGate MyLocalTaggregateTeventHandlerThreadGate;
    public readonly IThreadGate TeventHandlerThreadGate;
    public readonly IThreadGate TueryHandlerThreadGate;
 
@@ -58,10 +58,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       [
          MyExactlyOnceTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyExactlyOnceTommandHandlerThreadGate)),
          TommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TommandHandlerWithResultThreadGate)),
-         MyCreateAggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateTommandHandlerThreadGate)),
-         MyUpdateAggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateTommandHandlerThreadGate)),
-         MyRemoteAggregateTeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateTeventHandlerThreadGate)),
-         MyLocalAggregateTeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateTeventHandlerThreadGate)),
+         MyCreateTaggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateTaggregateTommandHandlerThreadGate)),
+         MyUpdateTaggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateTaggregateTommandHandlerThreadGate)),
+         MyRemoteTaggregateTeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteTaggregateTeventHandlerThreadGate)),
+         MyLocalTaggregateTeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalTaggregateTeventHandlerThreadGate)),
          TeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TeventHandlerThreadGate)),
          TueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TueryHandlerThreadGate))
       ];
@@ -96,22 +96,22 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .CurrentTestsConfiguredSqlLayer("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6");
 
             builder.RegisterTeventStore()
-                   .HandleAggregate<MyAggregate, MyAggregateTevent.IRoot>();
+                   .HandleTaggregate<MyTaggregate, MyTaggregateTevent.IRoot>();
 
             builder.RegisterHandlers
                    .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
-                   .ForTommand((MyCreateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
+                   .ForTommand((MyCreateTaggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
                     {
-                       MyCreateAggregateTommandHandlerThreadGate.AwaitPassThrough();
-                       MyAggregate.Create(tommand.AggregateId, navigator);
+                       MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
+                       MyTaggregate.Create(tommand.TaggregateId, navigator);
                     })
-                   .ForTommand((MyUpdateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
+                   .ForTommand((MyUpdateTaggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
                     {
-                       MyUpdateAggregateTommandHandlerThreadGate.AwaitPassThrough();
-                       navigator.Execute(new TeventStoreApi().Queries.GetForUpdate<MyAggregate>(tommand.AggregateId)).Update();
+                       MyUpdateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
+                       navigator.Execute(new TeventStoreApi().Queries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();
                     })
                    .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
-                   .ForTevent((MyAggregateTevent.IRoot _) => MyLocalAggregateTeventHandlerThreadGate.AwaitPassThrough())
+                   .ForTevent((MyTaggregateTevent.IRoot _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())
                    .ForTuery((MyTuery _) =>
                     {
                        TueryHandlerThreadGate.AwaitPassThrough();
@@ -131,7 +131,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                 builder.Container.Register()
                                                        .AspNetCoreTransport()
                                                        .CurrentTestsConfiguredSqlLayer("E72924D3-5279-44B5-B20D-D682E537672B");
-                                                builder.RegisterHandlers.ForTevent((MyAggregateTevent.IRoot _) => MyRemoteAggregateTeventHandlerThreadGate.AwaitPassThrough());
+                                                builder.RegisterHandlers.ForTevent((MyTaggregateTevent.IRoot _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();

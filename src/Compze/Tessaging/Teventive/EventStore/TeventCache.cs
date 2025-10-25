@@ -65,16 +65,16 @@ class TeventCache : IDisposable, ITeventCache
          }
       }
 
-      internal void Add(Guid aggregateId, Entry entry) => _monitor.Update(
-         () => CurrentOverlay[aggregateId] = entry);
+      internal void Add(Guid taggregateId, Entry entry) => _monitor.Update(
+         () => CurrentOverlay[taggregateId] = entry);
 
-      internal bool TryGet(Guid aggregateId, [NotNullWhen(true)]out Entry? entry)
+      internal bool TryGet(Guid taggregateId, [NotNullWhen(true)]out Entry? entry)
       {
          entry = null;
          if(Transaction.Current == null) return false;
          using(_monitor.TakeReadLock())
          {
-            return CurrentOverlay.TryGetValue(aggregateId, out entry);
+            return CurrentOverlay.TryGetValue(taggregateId, out entry);
          }
       }
    }
@@ -88,27 +88,27 @@ class TeventCache : IDisposable, ITeventCache
          MaxSeenInsertedVersion = 0;
       }
 
-      public IReadOnlyList<AggregateTevent> Tevents { get; private set; }
+      public IReadOnlyList<TaggregateTevent> Tevents { get; private set; }
       public int MaxSeenInsertedVersion { get; private set; }
-      int InsertedVersionToAggregateVersionOffset { get; }
+      int InsertedVersionToTaggregateVersionOffset { get; }
 
-      public Entry(IReadOnlyList<AggregateTevent> tevents, int maxSeenInsertedVersion)
+      public Entry(IReadOnlyList<TaggregateTevent> tevents, int maxSeenInsertedVersion)
       {
          Tevents = tevents;
          MaxSeenInsertedVersion = maxSeenInsertedVersion;
-         InsertedVersionToAggregateVersionOffset = MaxSeenInsertedVersion - tevents[^1].AggregateVersion;
+         InsertedVersionToTaggregateVersionOffset = MaxSeenInsertedVersion - tevents[^1].TaggregateVersion;
       }
 
-      public TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(IAggregateTevent tevent)
+      public TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(ITaggregateTevent tevent)
       {
-         if(InsertedVersionToAggregateVersionOffset > 0)
+         if(InsertedVersionToTaggregateVersionOffset > 0)
          {
-            return new TeventInsertionSpecification(@tevent: tevent.ToAggregateTeventData(),
-                                                   insertedVersion: tevent.AggregateVersion + InsertedVersionToAggregateVersionOffset,
-                                                   effectiveVersion:tevent.AggregateVersion);
+            return new TeventInsertionSpecification(@tevent: tevent.ToTaggregateTeventData(),
+                                                   insertedVersion: tevent.TaggregateVersion + InsertedVersionToTaggregateVersionOffset,
+                                                   effectiveVersion:tevent.TaggregateVersion);
          } else
          {
-            return new TeventInsertionSpecification(@tevent:tevent.ToAggregateTeventData());
+            return new TeventInsertionSpecification(@tevent:tevent.ToTaggregateTeventData());
          }
       }
    }

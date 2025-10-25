@@ -2,8 +2,8 @@ using System;
 
 namespace Compze.Sql.Common.TeventStore.Abstractions;
 
-public class CreationTeventRow(Guid aggregateId, Guid typeId)
+public class CreationTeventRow(Guid taggregateId, Guid typeId)
 {
-   public Guid AggregateId { get; } = aggregateId;
+   public Guid TaggregateId { get; } = taggregateId;
    public Guid TypeId { get; } = typeId;
 }

@@ -1,7 +1,7 @@
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Tevent = Compze.Sql.Common.TeventStore.TeventTableSchemaStrings;
-using Lock = Compze.Sql.Common.TeventStore.AggregateLockTableSchemaStrings;
+using Lock = Compze.Sql.Common.TeventStore.TaggregateLockTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Sqlite;
 
@@ -19,7 +19,7 @@ partial class SqliteTeventStoreSqlLayer
                                                                            CREATE TABLE IF NOT EXISTS {Tevent.TableName}
                                                                            (
                                                                                {Tevent.InsertionOrder}          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                                                               {Tevent.AggregateId}             TEXT                              NOT NULL,  
+                                                                               {Tevent.TaggregateId}             TEXT                              NOT NULL,  
                                                                                {Tevent.UtcTimeStamp}            INTEGER                           NOT NULL,   
                                                                                {Tevent.TeventType}               TEXT                              NOT NULL,    
                                                                                {Tevent.Tevent}                   TEXT                              NOT NULL,
@@ -32,7 +32,7 @@ partial class SqliteTeventStoreSqlLayer
                                                                                {Tevent.TargetTevent}             TEXT                              NULL,
                                                                                {Tevent.RefactoringType}         INTEGER                           NULL,
                                                                        
-                                                                               UNIQUE ({Tevent.AggregateId}, {Tevent.InsertedVersion}),
+                                                                               UNIQUE ({Tevent.TaggregateId}, {Tevent.InsertedVersion}),
                                                                                UNIQUE ({Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart}),
                                                                                FOREIGN KEY ( {Tevent.TargetTevent} ) 
                                                                                    REFERENCES {Tevent.TableName} ({Tevent.TeventId})
@@ -41,13 +41,13 @@ partial class SqliteTeventStoreSqlLayer
                                                                            CREATE INDEX IF NOT EXISTS IX_{Tevent.TableName}_{Tevent.ReadOrderIntegerPart}_{Tevent.ReadOrderFractionPart} ON {Tevent.TableName} 
                                                                                    ({Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart}, {Tevent.EffectiveVersion} );
 
-                                                                           CREATE INDEX IF NOT EXISTS IX_{Tevent.TableName}_{Tevent.AggregateId} ON {Tevent.TableName} 
-                                                                                   ({Tevent.AggregateId}, {Tevent.InsertedVersion}, {Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart});
+                                                                           CREATE INDEX IF NOT EXISTS IX_{Tevent.TableName}_{Tevent.TaggregateId} ON {Tevent.TableName} 
+                                                                                   ({Tevent.TaggregateId}, {Tevent.InsertedVersion}, {Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart});
 
                                                                            CREATE TABLE IF NOT EXISTS {Lock.TableName}
                                                                            (
-                                                                               {Lock.AggregateId} TEXT NOT NULL,
-                                                                               PRIMARY KEY ( {Lock.AggregateId} )
+                                                                               {Lock.TaggregateId} TEXT NOT NULL,
+                                                                               PRIMARY KEY ( {Lock.TaggregateId} )
                                                                            );
 
                                                                            """));

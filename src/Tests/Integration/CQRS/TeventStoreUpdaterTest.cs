@@ -67,14 +67,14 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       => _serviceLocator.ExecuteInIsolatedScope(() => useSession(_serviceLocator.Resolve<ITeventStoreUpdater>()));
 
    [PCT]
-   public void WhenFetchingAggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
+   public void WhenFetchingTaggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
    {
       UseInTransactionalScope(session => FluentActions.Invoking(() => session.Get<User>(Guid.NewGuid()))
                                                       .Should().Throw<ArgumentOutOfRangeException>());
    }
 
    [PCT]
-   public void CanSaveAndLoadAggregate()
+   public void CanSaveAndLoadTaggregate()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -120,7 +120,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void CanLoadSpecificVersionOfAggregate()
+   public void CanLoadSpecificVersionOfTaggregate()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -183,7 +183,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void TracksAndUpdatesLoadedAggregates()
+   public void TracksAndUpdatesLoadedTaggregates()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -204,7 +204,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void DoesNotUpdateAggregatesLoadedViaSpecificVersion()
+   public void DoesNotUpdateTaggregatesLoadedViaSpecificVersion()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", Guid.NewGuid());
@@ -225,7 +225,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void ResetsAggregatesAfterSaveChanges()
+   public void ResetsTaggregatesAfterSaveChanges()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", Guid.NewGuid());
@@ -235,7 +235,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void ThrowsWhenAttemptingToSaveExistingAggregate()
+   public void ThrowsWhenAttemptingToSaveExistingTaggregate()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", Guid.NewGuid());
@@ -257,7 +257,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void AggregateCannotBeRetrievedAfterBeingDeleted()
+   public void TaggregateCannotBeRetrievedAfterBeingDeleted()
    {
       var user1 = new User();
       user1.Register("email1@email.se", "password", Guid.NewGuid());
@@ -285,7 +285,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void DeletingAnAggregateDoesNotPrteventTeventsFromItFromBeingRaised()
+   public void DeletingAnTaggregateDoesNotPrteventTeventsFromItFromBeingRaised()
    {
       var user1 = new User();
       user1.Register("email1@email.se", "password", Guid.NewGuid());
@@ -339,7 +339,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void When_fetching_history_from_the_same_instance_after_updating_an_aggregate_the_fetched_history_includes_the_new_tevents()
+   public void When_fetching_history_from_the_same_instance_after_updating_an_taggregate_the_fetched_history_includes_the_new_tevents()
    {
       var userId = Guid.NewGuid();
       UseInTransactionalScope(session =>
@@ -363,7 +363,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void When_deleting_and_then_fetching_an_aggregates_history_the_history_should_be_gone()
+   public void When_deleting_and_then_fetching_an_taggregates_history_the_history_should_be_gone()
    {
       var userId = Guid.NewGuid();
 
@@ -384,7 +384,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void When_fetching_and_deleting_an_aggregate_then_fetching_history_again_the_history_should_be_gone()
+   public void When_fetching_and_deleting_an_taggregate_then_fetching_history_again_the_history_should_be_gone()
    {
       var userId = Guid.NewGuid();
 
@@ -411,7 +411,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory], 
         SkipReasons = ["Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite",
                        "Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite"])]
-   public void Concurrent_read_only_access_to_aggregate_history_can_occur_in_parallel()
+   public void Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -442,7 +442,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void TeventsArePublishedImmediatelyOnAggregateChanges()
+   public void TeventsArePublishedImmediatelyOnTaggregateChanges()
    {
       var users = 1.Through(9).Select(i =>
       {
@@ -476,7 +476,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          _teventSpy.DispatchedTessages.Count().Should().Be(18);
 
-         var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<IAggregateTevent>().ToList();
+         var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
          dispatchedTevents.Select(e => e.TessageId).Distinct().Count().Should().Be(18);
 
          var allPersistedTevents = _serviceLocator.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
@@ -544,7 +544,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed_even_if_history_has_been_read_outside_of_modifying_transactions()
+   public void Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed_even_if_history_has_been_read_outside_of_modifying_transactions()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -565,12 +565,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       changeEmailSection.Open();
       getHistorySection.Open();
 
-      Task.WaitAll(tasks); //Sql duplicate key (AggregateId, Version) Exception would be thrown here if history was not serialized
+      Task.WaitAll(tasks); //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized
 
       UseInScope(session =>
       {
          var userHistory = ((ITeventStoreReader)session).GetHistory(user.Id)
-                                                       .ToArray(); //Reading the aggregate will throw an exception if the history is invalid.
+                                                       .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
          userHistory.Length.Should()
                     .Be(threads + 2); //Make sure that all of the transactions completed
       });
@@ -598,7 +598,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory],
         SkipReasons = ["We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...",
                        "We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway..."])]
-   public void Serializes_access_to_an_aggregate_so_that_concurrent_transactions_succeed()
+   public void Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed()
    {
       var user = new User();
       user.Register("email@email.se", "password", Guid.NewGuid());
@@ -621,13 +621,13 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       Thread.Sleep(100.Milliseconds());
 
-      var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Should().Be(1, "Only one thread should have been able to fetch the aggregate"));
+      var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Should().Be(1, "Only one thread should have been able to fetch the taggregate"));
 
       var bothTasksCompletedException = ExceptionCE.TryCatch(() => changeEmailSection.ExitGate.Queued.Should().Be(1, "One thread should be blocked by transaction and never reach here until the other completes the transaction."));
 
       changeEmailSection.Open();
 
-      var taskException = ExceptionCE.TryCatch(() => Task.WaitAll(tasks)) as AggregateException; //Sql duplicate key (AggregateId, Version) Exception would be thrown here if history was not serialized. Or a deadlock will be thrown if the locking is not done correctly.
+      var taskException = ExceptionCE.TryCatch(() => Task.WaitAll(tasks)) as AggregateException; //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized. Or a deadlock will be thrown if the locking is not done correctly.
 
       if(bothTasksCompletedException != null || taskException != null || bothTasksReadUserException != null)
          throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException?.InnerExceptions ?? new ReadOnlyCollection<Exception>([])).Where(it => it != null).Cast<Exception>());
@@ -635,7 +635,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInScope(session =>
       {
          var userHistory = ((ITeventStoreReader)session).GetHistory(user.Id)
-                                                       .ToArray(); //Reading the aggregate will throw an exception if the history is invalid.
+                                                       .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
          userHistory.Length.Should()
                     .Be(threads + 2); //Make sure that all of the transactions completed
       });

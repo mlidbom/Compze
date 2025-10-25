@@ -6,22 +6,22 @@ namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 public interface ITeventStoreUpdater : IDisposable
 {
    /// <summary>
-   /// Loads an aggregate and tracks it for changes.
+   /// Loads an taggregate and tracks it for changes.
    /// </summary>
-   TAggregate Get<TAggregate>(Guid aggregateId) where TAggregate : class, ITeventStored;
+   TTaggregate Get<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITeventStored;
 
    /// <summary>
-   /// Causes the store to start tracking the aggregate.
+   /// Causes the store to start tracking the taggregate.
    /// </summary>
-   void Save<TAggregate>(TAggregate aggregate) where TAggregate : class, ITeventStored;
+   void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITeventStored;
 
    /// <summary>
-   /// Tries to get the specified instance. Returns false and sets the result to null if the aggregate did not exist.
+   /// Tries to get the specified instance. Returns false and sets the result to null if the taggregate did not exist.
    /// </summary>
-   bool TryGet<TAggregate>(Guid aggregateId, out TAggregate? result) where TAggregate : class, ITeventStored;
+   bool TryGet<TTaggregate>(Guid taggregateId, out TTaggregate? result) where TTaggregate : class, ITeventStored;
 
    /// <summary>
-   /// Deletes all traces of an aggregate from the store.
+   /// Deletes all traces of an taggregate from the store.
    /// </summary>
-   void Delete(Guid aggregateId);
+   void Delete(Guid taggregateId);
 }

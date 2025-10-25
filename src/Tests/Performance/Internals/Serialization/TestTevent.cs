@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
-public class TestTevent : AggregateTevent
+public class TestTevent : TaggregateTevent
 {
    [JsonConstructor]public TestTevent(string test1, string test2)
    {
@@ -17,16 +17,16 @@ public class TestTevent : AggregateTevent
    public TestTevent(
       string test1,
       string test2,
-      int aggregateVersion,
-      Guid aggregateId,
-      DateTime utcTimeStamp):base(aggregateId)
+      int taggregateVersion,
+      Guid taggregateId,
+      DateTime utcTimeStamp):base(taggregateId)
    {
       Test1 = test1;
       Test2 = test2;
 
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableAggregateTevent)this).SetAggregateVersionInternal(aggregateVersion);
-      ((IMutableAggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
+      ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(taggregateVersion);
+      ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
    }
 

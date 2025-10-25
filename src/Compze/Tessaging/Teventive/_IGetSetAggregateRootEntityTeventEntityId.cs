@@ -1,7 +1,0 @@
-namespace Compze.Tessaging.Teventive;
-
-//Refactor: Consider removing this interface and having the aggregate component|entity pass actions as a constructor arguments to its base class instead.
-public interface IGetSetAggregateEntityTeventEntityId<TEntityId, in TTeventImplementation, in TTevent> : IGetAggregateEntityTeventEntityId<TTevent, TEntityId>
-{
-   void SetEntityId(TTeventImplementation @tevent, TEntityId id);
-}

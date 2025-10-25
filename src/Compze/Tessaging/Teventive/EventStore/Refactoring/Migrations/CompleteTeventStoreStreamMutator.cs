@@ -17,16 +17,16 @@ abstract class CompleteTeventStoreStreamMutator
 
    class OnlySerializeVersionsMutator : ICompleteTeventStreamMutator
    {
-      readonly Dictionary<Guid, int> _aggregateVersions = new();
+      readonly Dictionary<Guid, int> _taggregateVersions = new();
 
-      public IEnumerable<AggregateTevent> Mutate(IEnumerable<AggregateTevent> teventStream)
+      public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
       {
          foreach(var @tevent in teventStream)
          {
-            var version = _aggregateVersions.GetOrAddDefault(@tevent.AggregateId) + 1;
-            _aggregateVersions[@tevent.AggregateId] = version;
+            var version = _taggregateVersions.GetOrAddDefault(@tevent.TaggregateId) + 1;
+            _taggregateVersions[@tevent.TaggregateId] = version;
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((IMutableAggregateTevent)@tevent).SetAggregateVersionInternal(version);
+            ((IMutableTaggregateTevent)@tevent).SetTaggregateVersionInternal(version);
 #pragma warning restore CS0618 // Type or member is obsolete
             yield return @tevent;
          }
@@ -36,15 +36,15 @@ abstract class CompleteTeventStoreStreamMutator
    class RealMutator(IReadOnlyList<ITeventMigration> teventMigrationFactories) : ICompleteTeventStreamMutator
    {
       readonly IReadOnlyList<ITeventMigration> _teventMigrationFactories = teventMigrationFactories;
-      readonly Dictionary<Guid, ISingleAggregateInstanceTeventStreamMutator> _aggregateMutatorsCache = new();
+      readonly Dictionary<Guid, ISingleTaggregateInstanceTeventStreamMutator> _taggregateMutatorsCache = new();
 
-      public IEnumerable<AggregateTevent> Mutate(IEnumerable<AggregateTevent> teventStream)
+      public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
       {
          foreach(var @tevent in teventStream)
          {
-            var mutatedTevents = _aggregateMutatorsCache.GetOrAdd(
-               @tevent.AggregateId,
-               () => SingleAggregateInstanceTeventStreamMutator.Create(@tevent, _teventMigrationFactories)
+            var mutatedTevents = _taggregateMutatorsCache.GetOrAdd(
+               @tevent.TaggregateId,
+               () => SingleTaggregateInstanceTeventStreamMutator.Create(@tevent, _teventMigrationFactories)
             ).Mutate(@tevent);
 
             foreach(var mutatedTevent in mutatedTevents)
@@ -54,9 +54,9 @@ abstract class CompleteTeventStoreStreamMutator
          }
 
          // ReSharper disable once ForeachCanBePartlyConvertedToTueryUsingAnotherGetEnumerator
-         foreach (var mutator in _aggregateMutatorsCache)
+         foreach (var mutator in _taggregateMutatorsCache)
          {
-            foreach (var finalTevent in mutator.Value.EndOfAggregate())
+            foreach (var finalTevent in mutator.Value.EndOfTaggregate())
             {
                yield return finalTevent;
             }

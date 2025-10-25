@@ -45,7 +45,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
 
    [PCT]
-   public async Task Should_throw_aggregate_exception_on_dispose_when_background_task_throws()
+   public async Task Should_throw_taggregate_exception_on_dispose_when_background_task_throws()
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
@@ -57,9 +57,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
 
 
          var disposeAction = async () => await _host.DisposeAsync().caf();
-         var aggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+         var taggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
 
-         var flattened = aggregateException.Which.Flatten();
+         var flattened = taggregateException.Which.Flatten();
          flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
       });
    }
@@ -91,9 +91,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
          gate.AwaitPassedThroughCountEqualTo(3);
 
          var disposeAction = async () => await _host.DisposeAsync().caf();
-         var aggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+         var taggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
 
-         var flattened = aggregateException.Which.Flatten();
+         var flattened = taggregateException.Which.Flatten();
          flattened.InnerExceptions.Should().HaveCount(3);
          flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
          flattened.InnerExceptions.Should().Contain(e => e is ArgumentException && e.Message == "exception2");

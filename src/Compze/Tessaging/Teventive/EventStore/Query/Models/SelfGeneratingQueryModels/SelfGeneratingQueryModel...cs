@@ -8,36 +8,36 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateTevent> : VersionedPersistentEntity<TQueryModel>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
-   where TAggregateTevent : class, IAggregateTevent
+public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedPersistentEntity<TQueryModel>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
+   where TTaggregateTevent : class, ITaggregateTevent
 {
-   //Yes empty. Id should be assigned by an action, and it should be obvious that the aggregate in invalid until that happens
-   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TAggregateTevent).IsInterface);
+   //Yes empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
+   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
 
-   readonly IMutableTeventDispatcher<TAggregateTevent> _teventDispatcher = IMutableTeventDispatcher<TAggregateTevent>.New();
+   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
 
-   protected ITeventHandlerRegistrar<TAggregateTevent> RegisterTeventAppliers() => _teventDispatcher.Register();
+   protected ITeventHandlerRegistrar<TTaggregateTevent> RegisterTeventAppliers() => _teventDispatcher.Register();
 
-   public void ApplyTevent(TAggregateTevent theTevent)
+   public void ApplyTevent(TTaggregateTevent theTevent)
    {
-      if(theTevent is IAggregateCreatedTevent)
+      if(theTevent is ITaggregateCreatedTevent)
       {
 #pragma warning disable 618 //Reviewed OK: This is precisely the type of internal code this is supposed to use this "obsolete" method.
-         SetIdBeVerySureYouKnowWhatYouAreDoing(theTevent.AggregateId);
+         SetIdBeVerySureYouKnowWhatYouAreDoing(theTevent.TaggregateId);
 #pragma warning restore 618
       }
 
-      Version = theTevent.AggregateVersion;
+      Version = theTevent.TaggregateVersion;
       _teventDispatcher.Dispatch(theTevent);
    }
 
-   public bool HandlesTevent(TAggregateTevent @tevent) => _teventDispatcher.Handles(@tevent);
+   public bool HandlesTevent(TTaggregateTevent @tevent) => _teventDispatcher.Handles(@tevent);
 
-   public void LoadFromHistory(IEnumerable<IAggregateTevent> history)
+   public void LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {
       Assert.State.Is(Version == 0);
-      history.ForEach(theTevent => ApplyTevent((TAggregateTevent)theTevent));
+      history.ForEach(theTevent => ApplyTevent((TTaggregateTevent)theTevent));
       AssertInvariantsAreMet();
    }
 

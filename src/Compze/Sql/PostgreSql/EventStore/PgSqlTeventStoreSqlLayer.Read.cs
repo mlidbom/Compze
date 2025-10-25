@@ -27,7 +27,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
       return $"""
 
               SELECT {topClause} 
-              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.AggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, cast({Tevent.ReadOrder} as varchar) as CharEffectiveOrder --The as is required, or Postgre sorts by this column when we ask it to sort by EffectiveOrder.
+              {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.TaggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, cast({Tevent.ReadOrder} as varchar) as CharEffectiveOrder --The as is required, or Postgre sorts by this column when we ask it to sort by EffectiveOrder.
               FROM {Tevent.TableName}
               """;
    }
@@ -38,11 +38,11 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
          teventType: teventReader.GetGuid(0),
          teventJson: teventReader.GetString(1),
          teventId: teventReader.GetGuid(4),
-         aggregateVersion: teventReader.GetInt32(3),
-         aggregateId: teventReader.GetGuid(2),
+         taggregateVersion: teventReader.GetInt32(3),
+         taggregateId: teventReader.GetGuid(2),
          //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
          utcTimeStamp: DateTime.SpecifyKind(teventReader.GetDateTime(5), DateTimeKind.Utc),
-         storageInformation: new AggregateTeventStorageInformation
+         storageInformation: new TaggregateTeventStorageInformation
                              {
                                 ReadOrder = ReadOrder.Parse(teventReader.GetString(10)),
                                 InsertedVersion = teventReader.GetInt32(9),
@@ -51,7 +51,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                 {
                                    (null, null) => null,
                                    // ReSharper disable PatternAlwaysOfType
-                                   (Guid targetTevent, short type) => new AggregateTeventRefactoringInformation(targetTevent, (AggregateTeventRefactoringType)type),
+                                   (Guid targetTevent, short type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
                                    // ReSharper restore PatternAlwaysOfType
                                    (_, _) => throw new Exception("Should not be possible to get here")
                                 }
@@ -59,7 +59,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
       );
    }
 
-   public IReadOnlyList<TeventDataRow> GetAggregateHistory(Guid aggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
       IReadOnlyList<TeventDataRow> GetHistory() =>
          _connectionManager.UseCommand(suppressTransactionWarning: true,
@@ -67,13 +67,13 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
 
 
                                                                           {CreateSelectClause()} 
-                                                                          WHERE {Tevent.AggregateId} = @{Tevent.AggregateId}
+                                                                          WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
                                                                               AND {Tevent.InsertedVersion} >= @CachedVersion
                                                                               AND {Tevent.EffectiveVersion} > 0
                                                                           ORDER BY {Tevent.ReadOrder} ASC;
 
                                                                           """)
-                                                         .AddParameter(Tevent.AggregateId, aggregateId)
+                                                         .AddParameter(Tevent.TaggregateId, taggregateId)
                                                          .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                          .PrepareStatement()
                                                          .ExecuteReaderAndSelect(ReadDataRow)
@@ -83,11 +83,11 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
       if(takeWriteLock)
       {
          //Performance: Find a way of doing this so that it does not involve two round trips to the server. If running as single-instance we can use in-memory transactional locking such as in the InMemory Sql Layer to avoid needing this.
-         //Without this hack PostgreSql does not correctly serialize access to aggregates and odds are you would get a lot of failed transactions if an aggregate is "popular"
-         //We prefer predictable performance, even if slightly slower under easy conditions, to services that suddenly virtually stop working completely due to tons of concurrency issues as an aggregate is accessed by many threads.
+         //Without this hack PostgreSql does not correctly serialize access to taggregates and odds are you would get a lot of failed transactions if an taggregate is "popular"
+         //We prefer predictable performance, even if slightly slower under easy conditions, to services that suddenly virtually stop working completely due to tons of concurrency issues as an taggregate is accessed by many threads.
          //Pages that led to the below hack: https://tinyurl.com/y7nef75p, https://tinyurl.com/y7c63cny, https://tinyurl.com/y75qlwar
-         _connectionManager.UseCommand(command => command.SetCommandText($"select {Tevent.AggregateId} from AggregateLock where AggregateId = @{Tevent.AggregateId} for update;")
-                                                         .AddParameter(Tevent.AggregateId, aggregateId)
+         _connectionManager.UseCommand(command => command.SetCommandText($"select {Tevent.TaggregateId} from TaggregateLock where TaggregateId = @{Tevent.TaggregateId} for update;")
+                                                         .AddParameter(Tevent.TaggregateId, taggregateId)
                                                          .PrepareStatement()
                                                          .ExecuteNonQuery());
 
@@ -138,17 +138,17 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
       } while(!(fetchedInThisBatch < batchSize));
    }
 
-   public IReadOnlyList<CreationTeventRow> ListAggregateIdsInCreationOrder()
+   public IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder()
    {
       return _connectionManager.UseCommand(suppressTransactionWarning: true,
                                            action: command => command.SetCommandText($"""
 
-                                                                                      SELECT {Tevent.AggregateId}, {Tevent.TeventType} 
+                                                                                      SELECT {Tevent.TaggregateId}, {Tevent.TeventType} 
                                                                                       FROM {Tevent.TableName} 
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
                                                                      .PrepareStatement()
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(aggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
    }
 }

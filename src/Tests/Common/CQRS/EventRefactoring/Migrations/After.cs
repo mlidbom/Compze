@@ -20,18 +20,18 @@ public class After<TTevent> : TeventMigration<IRootTevent>
 
    After(IEnumerable<Type> insert) : base(Guid.Parse("544C6694-7B29-4CC0-8DAA-6C50A5F28B70"), "After", "Long description of After") => _insert = insert;
 
-   public override ISingleAggregateInstanceHandlingTeventMigrator CreateSingleAggregateInstanceHandlingMigrator() => new Inspector(_insert);
+   public override ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator() => new Inspector(_insert);
 
-   class Inspector(IEnumerable<Type> insert) : ISingleAggregateInstanceHandlingTeventMigrator
+   class Inspector(IEnumerable<Type> insert) : ISingleTaggregateInstanceHandlingTeventMigrator
    {
       readonly IEnumerable<Type> _insert = insert;
       Type? _lastSeenTeventType;
 
-      public void MigrateTevent(IAggregateTevent tevent, ITeventModifier modifier)
+      public void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier)
       {
          if (_lastSeenTeventType == typeof(TTevent) && tevent.GetType() != _insert.First())
          {
-            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<AggregateTevent>().ToArray());
+            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<TaggregateTevent>().ToArray());
          }
 
          _lastSeenTeventType = tevent.GetType();

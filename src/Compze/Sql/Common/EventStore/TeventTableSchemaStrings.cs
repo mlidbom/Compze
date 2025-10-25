@@ -8,7 +8,7 @@ public static class TeventTableSchemaStrings
 
    public const string ReadOrderType = "decimal(38,19)";
 
-   public const string AggregateId = nameof(AggregateId);
+   public const string TaggregateId = nameof(TaggregateId);
    public const string InsertedVersion = nameof(InsertedVersion);
    public const string EffectiveVersion = nameof(EffectiveVersion);
    public const string InsertionOrder = nameof(InsertionOrder);
@@ -28,8 +28,8 @@ public static class TeventTableSchemaStrings
    public const string Tevent = nameof(Tevent);
 }
 
-public static class AggregateLockTableSchemaStrings
+public static class TaggregateLockTableSchemaStrings
 {
-   public const string TableName = "AggregateLock";
-   public const string AggregateId = Tevent.AggregateId;
+   public const string TableName = "TaggregateLock";
+   public const string TaggregateId = Tevent.TaggregateId;
 }

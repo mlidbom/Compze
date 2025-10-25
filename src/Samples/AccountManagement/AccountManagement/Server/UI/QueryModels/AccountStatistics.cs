@@ -14,7 +14,7 @@ namespace AccountManagement.UI.QueryModels;
 static class AccountStatistics
 {
    /// <summary>
-   /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TAggregateTevent}"/> even though we will store it in a document database.
+   /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TTaggregateTevent}"/> even though we will store it in a document database.
    /// Doing so lets the tuery model cleanly encapsulate how it maintains its own state when it receives tevents.
    /// </summary>
    public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, AccountTevent.Root>
@@ -33,7 +33,7 @@ static class AccountStatistics
       public int NumberOfSuccessfulLogins { get; private set; }
       public int NumberOfFailedLogins { get; private set; }
 
-      //Since this is a singleton tuery model and not bound to a specific Aggregate's tevents we override the Id member to always be the singleton Id.
+      //Since this is a singleton tuery model and not bound to a specific Taggregate's tevents we override the Id member to always be the singleton Id.
       public override Guid Id => StaticId;
       internal static Guid StaticId = Guid.Parse("93498554-5C2E-4D6A-862D-2DA7BCCAC747");
    }

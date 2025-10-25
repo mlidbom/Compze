@@ -19,18 +19,18 @@ public class Before<TTevent> : TeventMigration<IRootTevent>
 
    Before(IEnumerable<Type> insert) : base(Guid.Parse("0533D2E4-DE78-4751-8CAE-3343726D635B"), "Before", "Long description of Before") => _insert = insert;
 
-   public override ISingleAggregateInstanceHandlingTeventMigrator CreateSingleAggregateInstanceHandlingMigrator() => new Inspector(_insert);
+   public override ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator() => new Inspector(_insert);
 
-   class Inspector(IEnumerable<Type> insert) : ISingleAggregateInstanceHandlingTeventMigrator
+   class Inspector(IEnumerable<Type> insert) : ISingleTaggregateInstanceHandlingTeventMigrator
    {
       readonly IEnumerable<Type> _insert = insert;
       Type? _lastSeenTeventType;
 
-      public void MigrateTevent(IAggregateTevent tevent, ITeventModifier modifier)
+      public void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier)
       {
          if (tevent.GetType() == typeof(TTevent) && _lastSeenTeventType != _insert.Last())
          {
-            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<AggregateTevent>().ToArray());
+            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<TaggregateTevent>().ToArray());
          }
 
          _lastSeenTeventType = tevent.GetType();

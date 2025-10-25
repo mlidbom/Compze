@@ -3,12 +3,12 @@ using Compze.Abstractions.Tessaging.Teventive.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
-   where TAggregateTevent : class, IAggregateTevent
+public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
+   where TTaggregateTevent : class, ITaggregateTevent
 {
    public abstract partial class Component<TComponent, TComponentTevent>
-      where TComponentTevent : class, TAggregateTevent
+      where TComponentTevent : class, TTaggregateTevent
       where TComponent : Component<TComponent, TComponentTevent>
    {
       public abstract class RemovableNestedEntity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>
@@ -17,7 +17,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateTe
          where TEntityTevent : class, TComponentTevent
          where TEntityCreatedTevent : TEntityTevent
          where TEntityRemovedTevent : TEntityTevent
-         where TTeventEntityIdGetter : IGetAggregateEntityTeventEntityId<TEntityTevent, TEntityId>
+         where TTeventEntityIdGetter : IGetTaggregateEntityTeventEntityId<TEntityTevent, TEntityId>
          where TEntity : NestedEntity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>
       {
          protected RemovableNestedEntity(TComponent parent) : this(parent.RegisterTeventAppliers()) {}

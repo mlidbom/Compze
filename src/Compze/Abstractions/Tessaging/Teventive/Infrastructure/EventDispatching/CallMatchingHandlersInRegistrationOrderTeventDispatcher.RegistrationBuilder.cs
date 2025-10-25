@@ -32,7 +32,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       }
 
       ///<summary>Lets you register handlers for tevent interfaces that may be defined outside of the tevent hierarchy you specify with TTevent.
-      /// Useful for listening to generic tevents such as IAggregateCreatedTevent or IAggregateDeletedTevent
+      /// Useful for listening to generic tevents such as ITaggregateCreatedTevent or ITaggregateDeletedTevent
       /// Be aware that the concrete tevent received MUST still actually inherit TTevent or there will be an InvalidCastException
       /// </summary>
       RegistrationBuilder ForGenericTevent<THandledTevent>(Action<THandledTevent> handler) where THandledTevent : ITevent

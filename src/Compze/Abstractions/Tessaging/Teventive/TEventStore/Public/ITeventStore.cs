@@ -6,28 +6,28 @@ namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 
 public interface ITeventStore : IDisposable
 {
-   IReadOnlyList<IAggregateTevent> GetAggregateHistoryForUpdate(Guid id);
-   IReadOnlyList<IAggregateTevent> GetAggregateHistory(Guid id);
-   void SaveSingleAggregateTevents(IReadOnlyList<IAggregateTevent> tevents);
+   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(Guid id);
+   IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(Guid id);
+   void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent> tevents);
    //todo: Utilize C# 8 asynchronous streams.
-   void StreamTevents(int batchSize, Action<IReadOnlyList<IAggregateTevent>> handleTevents);
-   void DeleteAggregate(Guid aggregateId);
+   void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent>> handleTevents);
+   void DeleteTaggregate(Guid taggregateId);
    void PersistMigrations();
 
-   ///<summary>The passed <paramref name="teventType"/> filters the aggregate Ids so that only ids of aggregates that are created by an tevent that inherits from <paramref name="teventType"/> are returned.</summary>
-   IEnumerable<Guid> StreamAggregateIdsInCreationOrder(Type? teventType = null);
+   ///<summary>The passed <paramref name="teventType"/> filters the taggregate Ids so that only ids of taggregates that are created by an tevent that inherits from <paramref name="teventType"/> are returned.</summary>
+   IEnumerable<Guid> StreamTaggregateIdsInCreationOrder(Type? teventType = null);
 }
 
 public static class TeventStoreExtensions
 {
-   public static IEnumerable<Guid> StreamAggregateIdsInCreationOrder<TAggregateTevent>(this ITeventStore @this) => @this.StreamAggregateIdsInCreationOrder(typeof(TAggregateTevent));
+   public static IEnumerable<Guid> StreamTaggregateIdsInCreationOrder<TTaggregateTevent>(this ITeventStore @this) => @this.StreamTaggregateIdsInCreationOrder(typeof(TTaggregateTevent));
 }
 
 public static class TeventStoreTestingExtensions
 {
-   public static IReadOnlyList<IAggregateTevent> ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(this ITeventStore @this, int batchSize = 10000)
+   public static IReadOnlyList<ITaggregateTevent> ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(this ITeventStore @this, int batchSize = 10000)
    {
-      var tevents = new List<IAggregateTevent>();
+      var tevents = new List<ITaggregateTevent>();
       @this.StreamTevents(batchSize, tevents.AddRange);
       return tevents;
    }

@@ -6,8 +6,8 @@ using Compze.Abstractions.Tessaging.Teventive.Public;
 namespace Compze.Tessaging.Teventive;
 
 public interface ITeventiveInternals<in TTevent, in TTeventImplementation>
-    where TTeventImplementation : AggregateTevent, TTevent
-    where TTevent : class, IAggregateTevent
+    where TTeventImplementation : TaggregateTevent, TTevent
+    where TTevent : class, ITaggregateTevent
 {
     [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void PublishInternal(TTeventImplementation theTevent);
     [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void ApplyTeventInternal(TTevent @tevent);

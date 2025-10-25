@@ -25,8 +25,8 @@ namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 [LongRunning]
 public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 {
-   readonly List<AggregateTevent> _history;
-   readonly TestAggregate _aggregate;
+   readonly List<TaggregateTevent> _history;
+   readonly TestTaggregate _taggregate;
    readonly IServiceLocator? _container;
    IReadOnlyList<ITeventMigration> _currentMigrations;
    public TeventMigrationPerformanceTest()
@@ -39,13 +39,13 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
                                                     .Select(_ => typeof(E1))
                                                     .Concat(EnumerableCE.OfTypes<E2, E4, E6, E8>()))).ToList();
 
-      _aggregate = TestAggregate.FromTevents(TestingTimeSource.FrozenUtcNow(), Guid.NewGuid(), historyTypes);
-      _history = _aggregate.History.Cast<AggregateTevent>().ToList();
+      _taggregate = TestTaggregate.FromTevents(TestingTimeSource.FrozenUtcNow(), Guid.NewGuid(), historyTypes);
+      _history = _taggregate.History.Cast<TaggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
       _container = CreateServiceLocatorForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<ITeventStore>().SaveSingleAggregateTevents(_history));
+      _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<ITeventStore>().SaveSingleTaggregateTevents(_history));
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -54,7 +54,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
          await _container.DisposeAsync();
    }
 
-   async Task AssertUncachedAndCachedAggregateLoadTimes(TimeSpan maxUncachedLoadTime, TimeSpan maxCachedLoadTime, IReadOnlyList<ITeventMigration> migrations)
+   async Task AssertUncachedAndCachedTaggregateLoadTimes(TimeSpan maxUncachedLoadTime, TimeSpan maxCachedLoadTime, IReadOnlyList<ITeventMigration> migrations)
    {
       _currentMigrations = migrations;
 
@@ -84,7 +84,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
       return;
 
       void LoadWithCloneLocator(IServiceLocator locator) => locator.ExecuteTransactionInIsolatedScope(() => locator.Resolve<ITeventStoreUpdater>()
-                                                                                                                   .Get<TestAggregate>(_aggregate.Id));
+                                                                                                                   .Get<TestTaggregate>(_taggregate.Id));
    }
 
    //Performance: Figure out why oracle under performs so dramatically in these tests and fix it. (Hmm. Adding FOR UPDATE to the DB2 tuery really really slowed DB2 down. Might Oracle be similar?)
@@ -97,7 +97,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
          Before<E8>.Insert<E9>()
       ).ToArray();
 
-      await AssertUncachedAndCachedAggregateLoadTimes(
+      await AssertUncachedAndCachedTaggregateLoadTimes(
          maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 35, mySql: 75, pgSql: 35, sqlite: 50, sqliteMemory: 50).Milliseconds().EnvMultiply(instrumented: 2.5),
          maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
          teventMigrations);
@@ -112,7 +112,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
          Before<E9>.Insert<E1>()
       ).ToArray();
 
-      await AssertUncachedAndCachedAggregateLoadTimes(
+      await AssertUncachedAndCachedTaggregateLoadTimes(
          maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 30, mySql: 30, pgSql: 30, sqlite: 35, sqliteMemory: 35).Milliseconds().EnvMultiply(instrumented: 2.5),
          maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2),
          teventMigrations);
@@ -121,7 +121,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
    [PCT]  public async Task When_there_are_no_migrations_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds()
    {
       var teventMigrations = EnumerableCE.Create<ITeventMigration>().ToArray();
-      await AssertUncachedAndCachedAggregateLoadTimes(
+      await AssertUncachedAndCachedTaggregateLoadTimes(
          maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 25, mySql: 45, pgSql: 20, sqlite: 25, sqliteMemory: 25).Milliseconds().EnvMultiply(instrumented: 3),
          maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 8, pgSql: 8, sqlite: 15, sqliteMemory: 15).Milliseconds().EnvMultiply(instrumented: 2.5),
          teventMigrations);
