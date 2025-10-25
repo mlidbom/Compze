@@ -78,9 +78,16 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
           }
           catch(Exception exception)
           {
-             File.WriteAllText($"{_filePath}_{Guid.NewGuid()}.DEBUG", json, Encoding.UTF8);
              File.Delete(_filePath);
-             throw new Exception($"Failed to deserialize object from file {_filePath}. Deleted file.", exception);
+             throw new Exception($"""
+                                  
+                                  Failed to deserialize object from file {_filePath}
+                                  Deleted the apparently corrupt file.
+                                  The file content was: 
+                                  
+                                  {json}
+                                   
+                                  """, exception);
           }
        }
 
