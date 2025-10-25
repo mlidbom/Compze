@@ -15,8 +15,4 @@
    <Allowed From="Compze.Sql.MySql.Wiring"
             To="Compze.Core.*.Internal.SqlLayer.*"/>
 
-	<Allowed From="Compze.Sql.MySql.Private.*"
-            To="Compze.Sql.MySql.Private.SystemExtensions.*"/>
-
-
 </NsDepCopConfig>

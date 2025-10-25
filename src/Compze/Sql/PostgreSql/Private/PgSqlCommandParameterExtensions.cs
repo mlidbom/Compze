@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace Compze.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql.Private;
 
 static class NpgsqlCommandParameterExtensions
 {

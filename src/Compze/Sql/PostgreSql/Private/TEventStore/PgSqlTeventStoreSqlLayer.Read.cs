@@ -8,7 +8,7 @@ using Npgsql;
 using NpgsqlTypes;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.PostgreSql.TEventStore;
+namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
 partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connectionManager) : ITeventStoreSqlLayer
 {

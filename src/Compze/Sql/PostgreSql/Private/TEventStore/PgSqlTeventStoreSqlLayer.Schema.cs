@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TaggregateLockTableSchemaStrings;
 
-namespace Compze.Sql.PostgreSql.TEventStore;
+namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
 partial class PgSqlTeventStoreSqlLayer
 {

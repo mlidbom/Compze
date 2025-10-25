@@ -12,7 +12,7 @@ using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TaggregateLockTableSchemaStrings;
 
-namespace Compze.Sql.PostgreSql.TEventStore;
+namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
 //Performance: explore PgSql alternatives to commented out MSSql hints throughout the sql layer.
 partial class PgSqlTeventStoreSqlLayer

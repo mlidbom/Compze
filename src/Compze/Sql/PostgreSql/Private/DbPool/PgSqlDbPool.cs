@@ -9,13 +9,7 @@ using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase
 
-namespace Compze.Sql.PostgreSql.DbPool;
-
-static class PgSqlDbPoolRegistrar
-{
-   public static IComponentRegistrar PgSqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      PgSqlDbPoolSqlLayer.RegisterWith(registrar);
-}
+namespace Compze.Sql.PostgreSql.Private.DbPool;
 
 sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {

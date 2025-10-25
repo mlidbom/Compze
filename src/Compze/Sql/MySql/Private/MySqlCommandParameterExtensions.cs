@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.Private.SystemExtensions;
+namespace Compze.Sql.MySql.Private;
 
 internal static class MySqlCommandParameterExtensions
 {

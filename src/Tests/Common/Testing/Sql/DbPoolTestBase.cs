@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.Common.Abstractions;
 using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MySql.Private.SystemExtensions;
+using Compze.Sql.MySql.Private;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;

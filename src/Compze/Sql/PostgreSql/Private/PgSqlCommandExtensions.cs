@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Sql.Common;
 using Npgsql;
 
-namespace Compze.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql.Private;
 
 static class MyNpgsqlCommandExtensions
 {

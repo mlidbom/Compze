@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.Private.SystemExtensions;
+namespace Compze.Sql.MySql.Private;
 
 public static class MySqlConnectionPoolRegistrar
 {

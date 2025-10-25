@@ -8,7 +8,7 @@ using NpgsqlTypes;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Sql.PostgreSql.Tessaging;
+namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
 partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
 {

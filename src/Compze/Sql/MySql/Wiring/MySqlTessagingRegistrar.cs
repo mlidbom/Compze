@@ -1,5 +1,5 @@
 using Compze.Core.Tessaging.Internal.SqlLayer;
-using Compze.Sql.MySql.Private.SystemExtensions;
+using Compze.Sql.MySql.Private;
 using Compze.Sql.MySql.Private.Tessaging;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

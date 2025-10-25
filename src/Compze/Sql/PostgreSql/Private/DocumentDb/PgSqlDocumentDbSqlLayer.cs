@@ -10,7 +10,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 using Npgsql;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.PostgreSql.DocumentDb;
+namespace Compze.Sql.PostgreSql.Private.DocumentDb;
 
 partial class PgSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {

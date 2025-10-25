@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
-using Compze.Sql.MySql.Private.SystemExtensions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;

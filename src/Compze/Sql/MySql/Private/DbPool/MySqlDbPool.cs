@@ -1,6 +1,5 @@
 using System;
 using Compze.Sql.Common.DbPool;
-using Compze.Sql.MySql.Private.SystemExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
