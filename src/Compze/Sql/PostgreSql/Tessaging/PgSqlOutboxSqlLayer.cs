@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
-using Compze.Sql.PostgreSql;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Sql.Common.Tessaging;
 using Compze.Utilities.SystemCE.LinqCE;
 using NpgsqlTypes;
-using TessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using TessageTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql.Tessaging;
 
 partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
 {

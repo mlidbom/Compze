@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
-using Compze.Sql.PostgreSql;
 using Compze.Utilities.Threading.TasksCE;
-using Tessage = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using Dispatch = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using Tessage = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using Dispatch = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql.Tessaging;
 
 partial class PgSqlOutboxSqlLayer
 {

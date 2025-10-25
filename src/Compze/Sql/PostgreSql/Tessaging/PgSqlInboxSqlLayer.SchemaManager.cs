@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
-using Compze.Sql.PostgreSql;
 using Compze.Utilities.Threading.TasksCE;
-using Tessage =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using Tessage =  Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql.Tessaging;
 
 partial class PgSqlInboxSqlLayer
 {

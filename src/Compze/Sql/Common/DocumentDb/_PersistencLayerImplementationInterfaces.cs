@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Sql.DocumentDb.Abstractions.Internal;
+namespace Compze.Sql.Common.DocumentDb;
 
 interface IDocumentDbSqlLayer
 {

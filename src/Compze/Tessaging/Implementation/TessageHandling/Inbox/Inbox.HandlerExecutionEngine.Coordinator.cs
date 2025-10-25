@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -13,7 +12,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tessaging.Implementation.TessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 partial class Inbox
 {

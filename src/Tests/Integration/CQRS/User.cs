@@ -1,6 +1,6 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;

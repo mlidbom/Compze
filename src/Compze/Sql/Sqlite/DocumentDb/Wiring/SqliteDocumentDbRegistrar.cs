@@ -1,9 +1,8 @@
-using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.Sqlite;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.DocumentDb.Sqlite.Wiring;
+namespace Compze.Sql.Sqlite.DocumentDb.Wiring;
 
 public static class SqliteDocumentDbRegistrar
 {

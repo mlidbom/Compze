@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using Compze.Serialization;
+using Compze.Serialization.Newtonsoft;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;

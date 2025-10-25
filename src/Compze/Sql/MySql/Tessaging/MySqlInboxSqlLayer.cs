@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
+using Compze.Sql.Common.Tessaging;
 using Compze.Sql.MySql.SystemExtensions;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
-using TessageTable =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using TessageTable =  Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MySql;
+namespace Compze.Sql.MySql.Tessaging;
 
 internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
 {

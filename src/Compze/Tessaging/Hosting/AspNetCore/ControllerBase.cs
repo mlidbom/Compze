@@ -7,6 +7,7 @@ using Compze.Abstractions.Time;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Client.Http;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;

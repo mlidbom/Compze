@@ -1,6 +1,5 @@
 using System;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 
 // ReSharper disable All

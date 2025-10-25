@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public.Exceptions;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public.Exceptions;
 
 // ReSharper disable LoopCanBeConvertedToTuery
 

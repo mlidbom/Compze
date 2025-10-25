@@ -1,9 +1,8 @@
-using Compze.Sql.Sqlite;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Sql.Common.Tessaging;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Sql.Sqlite;
+namespace Compze.Sql.Sqlite.Tessaging;
 
 public static class SqliteTessagingRegistrar
 {

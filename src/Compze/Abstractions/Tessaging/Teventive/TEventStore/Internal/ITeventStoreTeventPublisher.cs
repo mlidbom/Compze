@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Teventive.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Internal;
+namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.Internal;
 
 interface ITeventStoreTeventPublisher
 {

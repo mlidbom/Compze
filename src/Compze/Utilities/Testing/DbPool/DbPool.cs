@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace

@@ -3,15 +3,13 @@ using System.Text.RegularExpressions;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Abstractions.Time;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 
-namespace Compze.Serialization;
+namespace Compze.Serialization.Newtonsoft;
 
 class RenamingSupportingJsonSerializer : IJsonSerializer
 {
@@ -72,7 +70,7 @@ class RenamingDecorator(ITypeMapper typeMapper)
 
 class TeventStoreSerializer : ITeventStoreSerializer
 {
-   internal static readonly JsonSerializerSettings JsonSettings = Serialization.JsonSettings.SqlTeventStoreSerializerSettings;
+   internal static readonly JsonSerializerSettings JsonSettings = Newtonsoft.JsonSettings.SqlTeventStoreSerializerSettings;
 
    readonly RenamingSupportingJsonSerializer _serializer;
 
@@ -99,7 +97,7 @@ class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerial
 static class RemotableTessageSerializerRegistrar
 {
    internal static IComponentRegistrar RemotableTessageSerializer(this IComponentRegistrar registrar)
-      => registrar.Register(Serialization.RemotableTessageSerializer.RegisterWith);
+      => registrar.Register(Newtonsoft.RemotableTessageSerializer.RegisterWith);
 }
 
 class RemotableTessageSerializer : IRemotableTessageSerializer
@@ -110,7 +108,7 @@ class RemotableTessageSerializer : IRemotableTessageSerializer
       => registrar.Register(Singleton.For<IRemotableTessageSerializer>()
                                      .CreatedBy((ITypeMapper typeMapper) => new RemotableTessageSerializer(typeMapper)));
 
-   RemotableTessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
+   RemotableTessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings.JsonSerializerSettings, typeMapper);
 
    public string SerializeResponse(object response) => _serializer.Serialize(response);
    public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);

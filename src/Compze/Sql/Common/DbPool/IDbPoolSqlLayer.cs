@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Compze.Utilities.Testing.DbPool;
+namespace Compze.Sql.Common.DbPool;
 
 interface IDbPoolSqlLayer
 {

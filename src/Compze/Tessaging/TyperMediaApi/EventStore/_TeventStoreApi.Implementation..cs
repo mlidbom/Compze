@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Newtonsoft.Json;
 
-namespace Compze.Tessaging.TyperMediaApi.TeventStore;
+namespace Compze.Tessaging.TyperMediaApi.EventStore;
 
 public partial class TeventStoreApi
 {

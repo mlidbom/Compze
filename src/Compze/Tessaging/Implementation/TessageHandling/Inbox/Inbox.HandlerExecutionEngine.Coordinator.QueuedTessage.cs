@@ -8,7 +8,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Tessaging.Implementation.TessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 partial class Inbox
 {

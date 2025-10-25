@@ -8,7 +8,7 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Time;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Sql.Common.Tessaging;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;

@@ -5,8 +5,7 @@ using System.Linq;
 using Compze.Abstractions.DocumentDb.Public;
 using Compze.Abstractions.Public;
 using Compze.Sql.Common;
-using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Sql.DocumentDb.Abstractions.Internal;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -14,7 +13,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Sql.DocumentDb;
+namespace Compze.DocumentDb;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession

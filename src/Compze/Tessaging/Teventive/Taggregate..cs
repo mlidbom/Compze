@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Utilities.Contracts;

@@ -1,0 +1,61 @@
+using System;
+
+namespace Compze.Sql.Common.TEventStore.Abstractions;
+
+public class TeventDataRow
+{
+   public TeventDataRow(TaggregateTeventData @tevent, TaggregateTeventStorageInformation storageInformation, Guid teventType, string teventAsJson)
+   {
+      TeventJson = teventAsJson;
+      TeventType = teventType;
+
+      TeventId = @tevent.TessageId;
+      TaggregateVersion = @tevent.TaggregateVersion;
+      TaggregateId = @tevent.TaggregateId;
+      UtcTimeStamp = @tevent.UtcTimeStamp;
+
+      StorageInformation = storageInformation;
+   }
+
+   public TeventDataRow(TeventInsertionSpecification specification, Guid typeId, string teventAsJson)
+   {
+      var @tevent = specification.Tevent;
+      TeventJson = teventAsJson;
+      TeventType = typeId;
+
+      TeventId = @tevent.TessageId;
+      TaggregateVersion = @tevent.TaggregateVersion;
+      TaggregateId = @tevent.TaggregateId;
+      UtcTimeStamp = @tevent.UtcTimeStamp;
+
+      StorageInformation = new TaggregateTeventStorageInformation
+                           {
+                              InsertedVersion = specification.InsertedVersion,
+                              EffectiveVersion = specification.EffectiveVersion
+                           };
+   }
+
+   public TeventDataRow(Guid teventType, string teventJson, Guid teventId, int taggregateVersion, Guid taggregateId, DateTime utcTimeStamp, TaggregateTeventStorageInformation storageInformation)
+   {
+      TeventType = teventType;
+      TeventJson = teventJson;
+      TeventId = teventId;
+      TaggregateVersion = taggregateVersion;
+      TaggregateId = taggregateId;
+      UtcTimeStamp = utcTimeStamp;
+
+      StorageInformation = storageInformation;
+   }
+
+   public Guid TeventType { get; private set; }
+   public string TeventJson { get; private set; }
+   public Guid TeventId { get; private set; }
+   public int TaggregateVersion { get; private set; }
+
+   public Guid TaggregateId { get; private set; }
+   public DateTime UtcTimeStamp { get; private set; }
+
+   public TaggregateTeventStorageInformation StorageInformation { get; private set; }
+
+   public override string ToString() => $"{nameof(StorageInformation.InsertedVersion)}{StorageInformation.InsertedVersion},{nameof(StorageInformation.EffectiveVersion)}{StorageInformation.EffectiveVersion}, {nameof(StorageInformation.ReadOrder)}{StorageInformation.ReadOrder}";
+}

@@ -1,9 +1,9 @@
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Serialization;
+using Compze.Serialization.Newtonsoft;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.DocumentDb.Wiring;
+namespace Compze.DocumentDb.Wiring;
 
 public static class DocumentDbRegistrar
 {
@@ -12,7 +12,7 @@ public static class DocumentDbRegistrar
 
    public static DocumentDbRegistrationBuilder DocumentDb(this IComponentRegistrar registrar)
    {
-      registrar.Register(Sql.DocumentDb.DocumentDb.RegisterWith,
+      registrar.Register(Compze.DocumentDb.DocumentDb.RegisterWith,
                          DocumentDbSerializer.RegisterWith,
                          DocumentDbSession.RegisterWith);
 

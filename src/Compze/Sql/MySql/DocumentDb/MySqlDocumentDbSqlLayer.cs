@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Sql.Common;
-using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.MySql;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
-using Schema = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Schema = Compze.Sql.Common.DocumentDb.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.DocumentDb.MySql;
+namespace Compze.Sql.MySql.DocumentDb;
 
 internal partial class MySqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {

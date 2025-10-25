@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
+using Compze.Sql.Common.Tessaging;
 using Compze.Sql.MySql.SystemExtensions;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.SystemCE.LinqCE;
-using TessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using TessageTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MySql;
+namespace Compze.Sql.MySql.Tessaging;
 
 internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
 {

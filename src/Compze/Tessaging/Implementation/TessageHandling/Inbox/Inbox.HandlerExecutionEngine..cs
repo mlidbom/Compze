@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -10,7 +9,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading;
 
-namespace Compze.Tessaging.Implementation.TessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 partial class Inbox
 {

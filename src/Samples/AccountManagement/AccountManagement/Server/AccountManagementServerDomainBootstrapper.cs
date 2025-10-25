@@ -5,14 +5,14 @@ using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
-using Compze.Sql.DocumentDb.MicrosoftSql.Wiring;
-using Compze.Sql.DocumentDb.Wiring;
+using Compze.DocumentDb.Wiring;
 using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;
+using Compze.Sql.MicrosoftSql.Tessaging;
+using Compze.Sql.MicrosoftSql.TEventStore;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Sql.MicrosoftSql;
-using Compze.Tessaging.Teventive.TeventStore.DependencyInjection;
-using Compze.Tessaging.Teventive.TeventStore.MicrosoftSql;
-using Compze.Tessaging.TyperMediaApi.TeventStore;
+using Compze.Tessaging.Teventive.TeventStore.Wiring;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 
 namespace AccountManagement;
 

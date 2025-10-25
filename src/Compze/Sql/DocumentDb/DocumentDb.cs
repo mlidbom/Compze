@@ -6,10 +6,8 @@ using Compze.Abstractions.DocumentDb.Public;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Time;
 using Compze.Abstractions.Time.Public;
-using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Sql.DocumentDb.Abstractions.Internal;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -17,7 +15,7 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Sql.DocumentDb;
+namespace Compze.DocumentDb;
 
 class DocumentDb : IDocumentDb
 {

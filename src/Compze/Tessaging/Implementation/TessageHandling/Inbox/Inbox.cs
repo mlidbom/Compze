@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Sql.Common.Tessaging;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -11,12 +11,12 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Implementation.TessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 static class InboxRegistrar
 {
    internal static IComponentRegistrar Inbox(this IComponentRegistrar registrar)
-      => registrar.Register(TessageHandling.Inbox.RegisterWith);
+      => registrar.Register(TessageHandling.Inbox.Inbox.RegisterWith);
 }
 
 [UsedImplicitly] partial class Inbox : IInbox, IAsyncDisposable

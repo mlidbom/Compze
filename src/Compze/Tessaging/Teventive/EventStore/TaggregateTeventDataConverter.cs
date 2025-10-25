@@ -1,6 +1,5 @@
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Sql.Common.TeventStore.Abstractions;
+using Compze.Sql.Common.TEventStore.Abstractions;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 

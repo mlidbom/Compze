@@ -1,7 +1,6 @@
 using System;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Newtonsoft.Json;
 

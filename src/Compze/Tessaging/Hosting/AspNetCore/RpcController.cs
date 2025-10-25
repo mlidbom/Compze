@@ -10,6 +10,7 @@ using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Tessaging.Implementation.TessageHandling;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Client.Http;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;

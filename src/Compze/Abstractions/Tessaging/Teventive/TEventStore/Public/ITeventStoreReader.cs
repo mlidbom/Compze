@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
+namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 
 public interface ITeventStoreReader
 {

@@ -4,8 +4,8 @@ using AccountManagement.Domain.Tevents;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Sql.DocumentDb;
-using Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
+using Compze.DocumentDb;
+using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;
 

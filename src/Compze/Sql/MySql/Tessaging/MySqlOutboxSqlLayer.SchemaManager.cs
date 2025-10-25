@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.Threading.TasksCE;
-using M = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using D = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using M = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using D = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MySql;
+namespace Compze.Sql.MySql.Tessaging;
 
 partial class MySqlOutboxSqlLayer
 {

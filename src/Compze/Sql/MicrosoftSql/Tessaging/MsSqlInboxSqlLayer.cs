@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
-using Compze.Sql.MicrosoftSql;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Sql.Common.Tessaging;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
-using TessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using TessageTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql.Tessaging;
 
 partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
 {

@@ -1,5 +1,5 @@
 using System;
-using Compze.Tessaging.TyperMediaApi.TeventStore;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 
 // ReSharper disable All
 namespace AccountManagement;

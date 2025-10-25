@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Sql.Common.Tessaging;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tessaging.Implementation.TessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
 {

@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
-using Compze.Sql.Sqlite;
 using Compze.Utilities.Threading.TasksCE;
-using Tessage = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using D = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using Tessage = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using D = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.Sqlite;
+namespace Compze.Sql.Sqlite.Tessaging;
 
 partial class SqliteOutboxSqlLayer
 {

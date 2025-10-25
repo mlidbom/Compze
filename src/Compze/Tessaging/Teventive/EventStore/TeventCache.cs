@@ -9,9 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Sql.Common.TeventStore.Abstractions;
+using Compze.Sql.Common.TEventStore.Abstractions;
 using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Teventive.TeventStore;

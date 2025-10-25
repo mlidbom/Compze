@@ -1,7 +1,6 @@
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Internal;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.TEventStore.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

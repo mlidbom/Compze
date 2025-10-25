@@ -3,7 +3,7 @@ using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.TyperMediaApi.TeventStore;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Functional;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want _composable_ fluent APIs which does not happen with static members since we need instances to compose the API.

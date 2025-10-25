@@ -1,5 +1,4 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;

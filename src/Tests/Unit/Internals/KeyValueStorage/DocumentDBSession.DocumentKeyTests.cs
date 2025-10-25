@@ -1,4 +1,4 @@
-using Compze.Sql.DocumentDb;
+using Compze.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;

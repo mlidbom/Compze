@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Utilities.SystemCE.LinqCE;
 

@@ -1,6 +1,5 @@
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;

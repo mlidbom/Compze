@@ -2,16 +2,14 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Serialization;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
-using Compze.Tessaging.TyperMediaApi.TeventStore;
+using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+using Compze.Serialization.Newtonsoft;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Teventive.TeventStore.DependencyInjection;
+namespace Compze.Tessaging.Teventive.TeventStore.Wiring;
 
 public static class TeventStoreRegistrar
 {

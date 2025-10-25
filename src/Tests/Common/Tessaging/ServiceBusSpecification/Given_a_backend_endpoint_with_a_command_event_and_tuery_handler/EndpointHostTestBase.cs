@@ -1,7 +1,6 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Teventive.TeventStore.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
@@ -15,7 +14,8 @@ using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.TyperMediaApi.TeventStore;
+using Compze.Tessaging.Teventive.TeventStore.Wiring;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Tests.Infrastructure;
 
 // ReSharper disable ClassNeverInstantiated.Global

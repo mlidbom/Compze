@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.Threading.TasksCE;
-using T =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using T =  Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MySql;
+namespace Compze.Sql.MySql.Tessaging;
 
 partial class MySqlInboxSqlLayer
 {

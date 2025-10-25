@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Compze.Serialization;
+namespace Compze.Serialization.Newtonsoft;
 
 class IncludeMembersWithPrivateSettersResolver : DefaultContractResolver, IStaticInstancePropertySingleton<IncludeMembersWithPrivateSettersResolver>
 {

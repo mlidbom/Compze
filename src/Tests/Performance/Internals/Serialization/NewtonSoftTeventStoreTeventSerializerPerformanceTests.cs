@@ -3,6 +3,7 @@ using System.Linq;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Common.Refactoring.Naming;
 using Compze.Serialization;
+using Compze.Serialization.Newtonsoft;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;

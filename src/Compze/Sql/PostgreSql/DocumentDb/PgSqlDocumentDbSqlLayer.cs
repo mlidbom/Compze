@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Sql.Common;
-using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Npgsql;
-using Schema = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Schema = Compze.Sql.Common.DocumentDb.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.DocumentDb.PostgreSql;
+namespace Compze.Sql.PostgreSql.DocumentDb;
 
 partial class PgSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {

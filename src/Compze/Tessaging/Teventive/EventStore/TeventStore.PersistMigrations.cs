@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Sql.Common.TeventStore.Abstractions;
+using Compze.Sql.Common.TEventStore.Abstractions;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using ReadOrder = Compze.Sql.Common.TeventStore.Abstractions.ReadOrder;
+using ReadOrder = Compze.Sql.Common.TEventStore.Abstractions.ReadOrder;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 

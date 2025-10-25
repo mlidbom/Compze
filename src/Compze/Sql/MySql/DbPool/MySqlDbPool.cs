@@ -1,4 +1,5 @@
 using System;
+using Compze.Sql.Common.DbPool;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -6,7 +7,7 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Utilities.Testing.DbPool.MySql;
+namespace Compze.Sql.MySql.DbPool;
 
 static class MySqlDbPoolRegistrar
 {

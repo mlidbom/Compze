@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
+namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Internal;
 
 interface ICompleteTeventStreamMutator
 {
