@@ -4,18 +4,18 @@
                 InheritanceDepth="1">
 
 
-   <Allowed From="Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public"
-            To="Compze.Abstractions.Tessaging.Teventive.Internal.Implementation" />
+   <Allowed From="Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public"
+            To="Compze.Core.Tessaging.Teventive.Internal.Implementation" />
 
-   <Allowed From="Compze.Abstractions.Tessaging.Teventive.Public"
-            To="Compze.Abstractions.Tessaging.Teventive.Infrastructure.EventDispatching" />
+   <Allowed From="Compze.Core.Tessaging.Teventive.Public"
+            To="Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching" />
 
-   <Allowed From="Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public"
-            To="Compze.Abstractions.Tessaging.Teventive.Infrastructure" />
+   <Allowed From="Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public"
+            To="Compze.Core.Tessaging.Teventive.Infrastructure" />
 
    <!--todo: Remove this-->
-   <Allowed From="Compze.Abstractions.Tessaging.Hosting.Public"
-            To="Compze.Abstractions.Tessaging.Transport.Internal" />
+   <Allowed From="Compze.Core.Tessaging.Hosting.Public"
+            To="Compze.Core.Tessaging.Transport.Internal" />
 
 
 </NsDepCopConfig>

@@ -8,7 +8,7 @@
    <Allowed From="*" To="JetBrains.Annotations.*" />
    <Allowed From="*" To="System.*" />
 	
-   <Allowed From="Compze.*" To="Compze.Abstractions.*.Public" />
+   <Allowed From="Compze.*" To="Compze.Core.*.Public" />
    <Allowed From="Compze.*.Internal.*" To="Compze.*.Internal.*" />
    <Allowed From="Compze.*.Internal.*" To="Compze.*.Infrastructure.*" />
    <Allowed From="Compze.*.Infrastructure.*" To="Compze.*.Infrastructure.*" />
