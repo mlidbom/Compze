@@ -163,7 +163,7 @@ class OutboxRetryPoller : IDisposable
 
          this.Log().Debug($"Retrying delivery of tessage {undeliveredTessage.TessageId} to endpoint {endpointId} (attempt {undeliveredTessage.RetryCount + 1})");
 
-         sendTask.ContinueAsynchronouslyOnDefaultScheduler(completedTask => HandleRetryResult(completedTask, undeliveredTessage.TessageId, endpointId));
+         sendTask.ContinueWithAsynchronously(completedTask => HandleRetryResult(completedTask, undeliveredTessage.TessageId, endpointId));
       }
       catch(Exception exception)
       {
