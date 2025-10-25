@@ -18,6 +18,7 @@ function C-Relocate-Project {
     if (-not $projectFile) { Write-Error "Project file not found"; return }
     
     $currentProjectDir = Split-Path -Parent $projectFile.FullName
+    $projectFileName = Split-Path -Leaf $projectFile.FullName
     
     # Step 2: Calculate target
     $targetRelativePath = $ProjectName -replace '\.', '\'
@@ -39,7 +40,18 @@ function C-Relocate-Project {
     if (-not (Test-Path $targetParentDir)) {
         New-Item -ItemType Directory -Path $targetParentDir -Force | Out-Null
     }
-    Move-Item -Path $currentProjectDir -Destination $targetProjectDir
+    
+    # Check if target is a subdirectory of source (cannot move a folder into itself)
+    $normalizedCurrent = $currentProjectDir.TrimEnd('\') + '\'
+    $normalizedTarget = $targetProjectDir.TrimEnd('\') + '\'
+    if ($normalizedTarget.StartsWith($normalizedCurrent, [StringComparison]::OrdinalIgnoreCase)) {
+        # Move to temp location first, then to final destination
+        $tempDir = Join-Path $solutionDir ("temp_" + [Guid]::NewGuid().ToString())
+        Move-Item -Path $currentProjectDir -Destination $tempDir -Force
+        Move-Item -Path $tempDir -Destination $targetProjectDir -Force
+    } else {
+        Move-Item -Path $currentProjectDir -Destination $targetProjectDir -Force
+    }
     
     # Step 4: Update the moved project's own references
     $movedProjectFile = Join-Path $targetProjectDir $projectFileName
