@@ -11,7 +11,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation;
 
-partial class RoutingTransportClient
+partial class RoutingInboxTransportClient
 {
    class Router(ITypeMapper typeMapper)
    {

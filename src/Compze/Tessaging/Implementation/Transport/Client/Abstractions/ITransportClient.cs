@@ -5,7 +5,7 @@ using Compze.Core.Tessaging.Transport.Internal;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 
-interface IRoutingTransportClient
+interface IRoutingInboxTransportClient
 {
     Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress);
     void Start();
