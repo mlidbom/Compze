@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -20,7 +20,6 @@
       <ProjectReference Include="..\..\Compze\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\..\Compze\Tessaging\Common\Compze.Tessaging.Common.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Compze.Tessaging.Teventive.csproj" />

@@ -5,12 +5,12 @@ namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
 static class WrapperEvent
 {
-   public static IWrapperEvent<IEvent> WrapEvent(IEvent theEvent) =>
-      WrapperEventImplementationGenerator.ConstructorFor(theEvent.GetType()).Invoke(theEvent);
+   public static IWrapperTevent<ITevent> WrapEvent(ITevent theTevent) =>
+      WrapperEventImplementationGenerator.ConstructorFor(theTevent.GetType()).Invoke(theTevent);
 }
 
-public class WrapperEvent<TEventInterface>(TEventInterface @event) : IWrapperEvent<TEventInterface>
-   where TEventInterface : IEvent
+public class WrapperTevent<TEventInterface>(TEventInterface @event) : IWrapperTevent<TEventInterface>
+   where TEventInterface : ITevent
 {
    public TEventInterface Event { get; } = @event;
 }

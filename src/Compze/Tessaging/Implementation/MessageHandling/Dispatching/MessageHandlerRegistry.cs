@@ -24,38 +24,38 @@ namespace Compze.Tessaging.Implementation.MessageHandling.Dispatching;
 static class MessageHandlerRegistryRegistrar
 {
    internal static IComponentRegistrar MessageHandlerRegistry(this IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IMessageHandlerRegistrar, IMessageHandlerRegistry, MessageHandlerRegistry>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new MessageHandlerRegistry(typeMapper)));
+      => registrar.Register(Singleton.For<ITessageHandlerRegistrar, IMessageHandlerRegistry, TessageHandlerRegistry>()
+                                     .CreatedBy((ITypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
 }
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. QueryTypeIndexFor<TQuery>.Index. Etc
-class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar, IMessageHandlerRegistry
+class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, IMessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _commandHandlers = new Dictionary<Type, Action<object>>();
-   IReadOnlyDictionary<Type, IReadOnlyList<Action<IEvent>>> _eventHandlers = new Dictionary<Type, IReadOnlyList<Action<IEvent>>>();
+   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _eventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _queryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _commandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyList<EventHandlerRegistration> _eventHandlerRegistrations = new List<EventHandlerRegistration>();
 
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-   IMessageHandlerRegistrar IMessageHandlerRegistrar.ForEvent<TEvent>(Action<TEvent> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForEvent<TEvent>(Action<TEvent> handler) => _monitor.Update(() =>
    {
       MessageInspector.AssertValid<TEvent>();
       _eventHandlers.TryGetValue(typeof(TEvent), out var currentEventSubscribers);
-      currentEventSubscribers ??= new List<Action<IEvent>>();
+      currentEventSubscribers ??= new List<Action<ITevent>>();
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlers, typeof(TEvent), ReadonlyCollectionsCE.AddToCopy(currentEventSubscribers, @event => handler((TEvent)@event)));
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlerRegistrations, new EventHandlerRegistration(typeof(TEvent), registrar => registrar.For(handler)));
       return this;
    });
 
-   IMessageHandlerRegistrar IMessageHandlerRegistrar.ForCommand<TCommand>(Action<TCommand> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForCommand<TCommand>(Action<TCommand> handler) => _monitor.Update(() =>
    {
       MessageInspector.AssertValid<TCommand>();
 
-      if(typeof(TCommand).Implements(typeof(ICommand<>)))
+      if(typeof(TCommand).Implements(typeof(ITommand<>)))
       {
          throw new Exception($"{typeof(TCommand)} expects a result. You must register a method that returns a result.");
       }
@@ -64,7 +64,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
       return this;
    });
 
-   IMessageHandlerRegistrar IMessageHandlerRegistrar.ForCommand<TCommand, TResult>(Func<TCommand, TResult> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForCommand<TCommand, TResult>(Func<TCommand, TResult> handler) => _monitor.Update(() =>
    {
       MessageInspector.AssertValid<TCommand>();
 
@@ -72,7 +72,7 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
       return this;
    });
 
-   IMessageHandlerRegistrar IMessageHandlerRegistrar.ForQuery<TQuery, TResult>(Func<TQuery, TResult> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForQuery<TQuery, TResult>(Func<TQuery, TResult> handler) => _monitor.Update(() =>
    {
       MessageInspector.AssertValid<TQuery>();
 
@@ -80,51 +80,51 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
       return this;
    });
 
-   Action<object> IMessageHandlerRegistry.GetCommandHandler(ICommand message)
+   Action<object> IMessageHandlerRegistry.GetCommandHandler(ITommand message)
    {
       if(TryGetCommandHandler(message, out var handler)) return handler;
 
       throw new NoHandlerException(message.GetType());
    }
 
-   bool TryGetCommandHandler(ICommand message, [MaybeNullWhen(false)]out Action<object> handler) =>
+   bool TryGetCommandHandler(ITommand message, [MaybeNullWhen(false)]out Action<object> handler) =>
       _commandHandlers.TryGetValue(message.GetType(), out handler);
 
-   public Func<ICommand, object> GetCommandHandlerWithReturnValue(Type commandType) => _commandHandlersReturningResults[commandType].HandlerMethod;
+   public Func<ITommand, object> GetCommandHandlerWithReturnValue(Type commandType) => _commandHandlersReturningResults[commandType].HandlerMethod;
 
-   public Action<ICommand> GetCommandHandler(Type commandType) => _commandHandlers[commandType];
+   public Action<ITommand> GetCommandHandler(Type commandType) => _commandHandlers[commandType];
 
-   public Func<IQuery<object>, object> GetQueryHandler(Type queryType) => _queryHandlers[queryType].HandlerMethod;
+   public Func<ITuery<object>, object> GetQueryHandler(Type queryType) => _queryHandlers[queryType].HandlerMethod;
 
    //performance: Use static caching trick.
-   public IReadOnlyList<Action<IEvent>> GetEventHandlers(Type eventType) => _eventHandlers.Where(it => it.Key.IsAssignableFrom(eventType)).SelectMany(it => it.Value).ToList();
+   public IReadOnlyList<Action<ITevent>> GetEventHandlers(Type eventType) => _eventHandlers.Where(it => it.Key.IsAssignableFrom(eventType)).SelectMany(it => it.Value).ToList();
 
-   public Func<IStrictlyLocalQuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>
+   public Func<IStrictlyLocalTuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalTuery<TQuery, TResult> tuery) where TQuery : IStrictlyLocalTuery<TQuery, TResult>
    {
       //Urgent: If we don't actually use the TQuery type parameter to do static caching here, remove it.
-      if(_queryHandlers.TryGetValue(query.GetType(), out var handler))
+      if(_queryHandlers.TryGetValue(tuery.GetType(), out var handler))
       {
          return actualQuery => (TResult)handler.HandlerMethod(actualQuery);
       }
 
-      throw new NoHandlerException(query.GetType());
+      throw new NoHandlerException(tuery.GetType());
    }
 
-   public Func<ICommand<TResult>, TResult> GetCommandHandler<TResult>(ICommand<TResult> command)
+   public Func<ITommand<TResult>, TResult> GetCommandHandler<TResult>(ITommand<TResult> tommand)
    {
-      if(_commandHandlersReturningResults.TryGetValue(command.GetType(), out var handler))
+      if(_commandHandlersReturningResults.TryGetValue(tommand.GetType(), out var handler))
       {
          return actualCommand => (TResult)handler.HandlerMethod(actualCommand);
       }
 
-      throw new NoHandlerException(command.GetType());
+      throw new NoHandlerException(tommand.GetType());
    }
 
-   IEventDispatcher<IEvent> IMessageHandlerRegistry.CreateEventDispatcher()
+   IEventDispatcher<ITevent> IMessageHandlerRegistry.CreateEventDispatcher()
    {
-      var dispatcher = IMutableEventDispatcher<IEvent>.New();
+      var dispatcher = IMutableEventDispatcher<ITevent>.New();
       var registrar = dispatcher.Register()
-                                .IgnoreUnhandled<IEvent>();
+                                .IgnoreUnhandled<ITevent>();
 
       _eventHandlerRegistrations.ForEach(handlerRegistration => handlerRegistration.RegisterHandlerWithRegistrar(registrar));
 
@@ -137,13 +137,13 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
                                          .Concat(_commandHandlersReturningResults.Keys)
                                          .Concat(_queryHandlers.Keys)
                                          .Concat(_eventHandlerRegistrations.Select(reg => reg.Type))
-                                         .Where(messageType => messageType.Implements<IRemotableMessage>())
+                                         .Where(messageType => messageType.Implements<IRemotableTessage>())
                                          .Where(messageType => !messageType.Implements<MessageTypesInternal.IMessage>())
                                          .ToHashSet();
 
       var remoteResultTypes = _commandHandlersReturningResults
-                             .Where(handler => handler.Key.Implements<IRemotableMessage>())
-                             .Where(handler => handler.Value.ReturnValueType.Implements<IRemotableMessage>())
+                             .Where(handler => handler.Key.Implements<IRemotableTessage>())
+                             .Where(handler => handler.Value.ReturnValueType.Implements<IRemotableTessage>())
                              .Select(handler => handler.Value.ReturnValueType)
                              .ToList();
 
@@ -155,10 +155,10 @@ class MessageHandlerRegistry(ITypeMapper typeMapper) : IMessageHandlerRegistrar,
                          .ToHashSet();
    }
 
-   class EventHandlerRegistration(Type type, Action<IEventHandlerRegistrar<IEvent>> registerHandlerWithRegistrar)
+   class EventHandlerRegistration(Type type, Action<IEventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
    {
       public Type Type { get; } = type;
-      public Action<IEventHandlerRegistrar<IEvent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
+      public Action<IEventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
    }
 
    abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)

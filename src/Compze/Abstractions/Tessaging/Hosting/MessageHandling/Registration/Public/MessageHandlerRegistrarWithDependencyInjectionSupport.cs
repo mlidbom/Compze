@@ -3,15 +3,15 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 
-public class MessageHandlerRegistrarWithDependencyInjectionSupport
+public class TessageHandlerRegistrarWithDependencyInjectionSupport
 {
-   internal MessageHandlerRegistrarWithDependencyInjectionSupport(IMessageHandlerRegistrar register, LazyCE<IServiceLocator> serviceLocator)
+   internal TessageHandlerRegistrarWithDependencyInjectionSupport(ITessageHandlerRegistrar register, LazyCE<IServiceLocator> serviceLocator)
    {
       Register = register;
       ServiceLocator = serviceLocator;
    }
 
-   internal IMessageHandlerRegistrar Register { get; }
+   internal ITessageHandlerRegistrar Register { get; }
 
    LazyCE<IServiceLocator> ServiceLocator { get; }
 

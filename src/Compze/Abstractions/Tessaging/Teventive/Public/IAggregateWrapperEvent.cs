@@ -3,10 +3,10 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
-public interface IAggregateWrapperEvent<out TEventInterface> : IExactlyOnceWrapperEvent<TEventInterface>
-   where TEventInterface : IAggregateEvent;
+public interface IAggregateWrapperTevent<out TEventInterface> : IExactlyOnceWrapperTevent<TEventInterface>
+   where TEventInterface : IAggregateTevent;
 
-public interface IAggregateEvent : IExactlyOnceEvent
+public interface IAggregateTevent : IExactlyOnceTevent
 {
    int AggregateVersion { get; }
    //Refactor: We should use a custom type for AggregateIds. Likely a record struct.

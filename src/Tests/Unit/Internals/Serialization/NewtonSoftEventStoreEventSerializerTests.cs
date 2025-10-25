@@ -18,15 +18,15 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
 {
    readonly IEventStoreSerializer _eventSerializer = new EventStoreSerializer(TypeMapper.Instance);
 
-   public class TestEvent : AggregateEvent
+   public class TestTevent : AggregateTevent
    {
-      [JsonConstructor]public TestEvent(string test1, string test2)
+      [JsonConstructor]public TestTevent(string test1, string test2)
       {
          Test1 = test1;
          Test2 = test2;
       }
 
-      public TestEvent(
+      public TestTevent(
          string test1,
          string test2,
          int aggregateVersion,
@@ -37,8 +37,8 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
          Test2 = test2;
 
 #pragma warning disable CS0618 // Type or member is obsolete
-         ((IMutableAggregateEvent)this).SetAggregateVersionInternal(aggregateVersion);
-         ((IMutableAggregateEvent)this).SetUtcTimeStampInternal(utcTimeStamp);
+         ((IMutableAggregateTevent)this).SetAggregateVersionInternal(aggregateVersion);
+         ((IMutableAggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -52,21 +52,21 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
    [XF]
    public void IgnoresAllIAggregateEventProperties()
    {
-      var eventWithAllValuesSet = new TestEvent(
+      var eventWithAllValuesSet = new TestTevent(
          test1: "Test1",
          test2: "Test2",
          aggregateId:  Guid.NewGuid(),
          aggregateVersion:  2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
-      var eventWithOnlySubclassValues = new TestEvent("Test1", "Test2");
+      var eventWithOnlySubclassValues = new TestTevent("Test1", "Test2");
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableAggregateEvent)eventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
+      ((IMutableAggregateTevent)eventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
 #pragma warning restore CS0618 // Type or member is obsolete
 
       var eventWithAllValuesJson = _eventSerializer.Serialize(eventWithAllValuesSet);
       var eventWithOnlySubclassValuesJson = _eventSerializer.Serialize(eventWithOnlySubclassValues);
-      var roundTripped = (TestEvent)_eventSerializer.Deserialize(typeof(TestEvent), eventWithAllValuesJson);
+      var roundTripped = (TestTevent)_eventSerializer.Deserialize(typeof(TestTevent), eventWithAllValuesJson);
 
       eventWithAllValuesJson.Should().Be("""
                                          {
@@ -79,7 +79,7 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
       roundTripped.Should().BeEquivalentTo(eventWithOnlySubclassValues,
                                            config => config
                                                     .PreferringRuntimeMemberTypes()
-                                                    .ComparingByMembers<AggregateEvent>()
+                                                    .ComparingByMembers<AggregateTevent>()
                                                     .Excluding(@event => @event.UtcTimeStamp)//Timestamp is defaulted in the constructor used by serialization.
                                                     .Excluding(@event => @event.MessageId)
       );

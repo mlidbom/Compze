@@ -20,7 +20,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
 
    [XF] public void Should_roundtrip_simple_event_1000_times_in_25_milliseconds()
    {
-      var @event = new TestEvent(
+      var @event = new TestTevent(
          test1: "Test1",
          test2: "Test2",
          aggregateId: Guid.NewGuid(),
@@ -28,13 +28,13 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
       //Warmup
-      _eventSerializer.Deserialize(typeof(TestEvent), _eventSerializer.Serialize(@event));
+      _eventSerializer.Deserialize(typeof(TestTevent), _eventSerializer.Serialize(@event));
 
       TimeAsserter.Execute(
          () =>
          {
             var eventJson = _eventSerializer.Serialize(@event);
-            _eventSerializer.Deserialize(typeof(TestEvent), eventJson);
+            _eventSerializer.Deserialize(typeof(TestTevent), eventJson);
          },
          iterations:1000,
          maxTotal: 25.Milliseconds()
@@ -46,7 +46,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
       const int iterations = 1000;
       const double allowedSlowdown = 1.5;
 
-      var events = 1.Through(iterations).Select( _ =>  new TestEvent(
+      var events = 1.Through(iterations).Select( _ =>  new TestTevent(
                                                     test1: "Test1",
                                                     test2: "Test2",
                                                     aggregateId: Guid.NewGuid(),
@@ -56,14 +56,14 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
       var settings = EventStoreSerializer.JsonSettings;
 
       //Warmup
-      _eventSerializer.Deserialize(typeof(TestEvent), _eventSerializer.Serialize(events.First()));
-      JsonConvert.DeserializeObject<TestEvent>(JsonConvert.SerializeObject(events.First(), settings), settings);
+      _eventSerializer.Deserialize(typeof(TestTevent), _eventSerializer.Serialize(events.First()));
+      JsonConvert.DeserializeObject<TestTevent>(JsonConvert.SerializeObject(events.First(), settings), settings);
 
       var defaultSerializerPerformanceNumbers = StopwatchCE.TimeExecution(() =>
       {
          var eventJson = events.Select(it => JsonConvert.SerializeObject(it, settings))
                                .ToList();
-         eventJson.ForEach(it => JsonConvert.DeserializeObject<TestEvent>(it, settings));
+         eventJson.ForEach(it => JsonConvert.DeserializeObject<TestTevent>(it, settings));
       });
 
       var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown).EnvMultiply(unoptimized:1.2);
@@ -73,7 +73,7 @@ public class NewtonSoftEventStoreEventSerializerPerformanceTests : UniversalTest
                            {
                               var eventJson = events.Select(_eventSerializer.Serialize)
                                                     .ToList();
-                              eventJson.ForEach(it => _eventSerializer.Deserialize(typeof(TestEvent), it));
+                              eventJson.ForEach(it => _eventSerializer.Deserialize(typeof(TestTevent), it));
                            },
                            maxTotal: allowedTime);
    }

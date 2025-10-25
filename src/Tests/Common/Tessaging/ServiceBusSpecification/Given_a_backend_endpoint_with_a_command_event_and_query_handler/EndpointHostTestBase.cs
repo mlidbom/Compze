@@ -99,25 +99,25 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
 
             builder.RegisterHandlers
-                   .ForCommand((MyExactlyOnceCommand _) => MyExactlyOnceCommandHandlerThreadGate.AwaitPassThrough())
-                   .ForCommand((MyCreateAggregateCommand command, IInProcessHypermediaNavigator navigator) =>
+                   .ForCommand((MyExactlyOnceTommand _) => MyExactlyOnceCommandHandlerThreadGate.AwaitPassThrough())
+                   .ForCommand((MyCreateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
                     {
                        MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough();
-                       MyAggregate.Create(command.AggregateId, navigator);
+                       MyAggregate.Create(tommand.AggregateId, navigator);
                     })
-                   .ForCommand((MyUpdateAggregateCommand command, IInProcessHypermediaNavigator navigator) =>
+                   .ForCommand((MyUpdateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
                     {
                        MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough();
-                       navigator.Execute(new EventStoreApi().Queries.GetForUpdate<MyAggregate>(command.AggregateId)).Update();
+                       navigator.Execute(new EventStoreApi().Queries.GetForUpdate<MyAggregate>(tommand.AggregateId)).Update();
                     })
-                   .ForEvent((IMyExactlyOnceEvent _) => EventHandlerThreadGate.AwaitPassThrough())
+                   .ForEvent((IMyExactlyOnceTevent _) => EventHandlerThreadGate.AwaitPassThrough())
                    .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
-                   .ForQuery((MyQuery _) =>
+                   .ForQuery((MyTuery _) =>
                     {
                        QueryHandlerThreadGate.AwaitPassThrough();
                        return new MyQueryResult();
                     })
-                   .ForCommandWithResult((MyAtMostOnceCommandWithResult _) =>
+                   .ForCommandWithResult((MyAtMostOnceTommandWithResult _) =>
                     {
                        CommandHandlerWithResultThreadGate.AwaitPassThrough();
                        return new MyCommandResult();

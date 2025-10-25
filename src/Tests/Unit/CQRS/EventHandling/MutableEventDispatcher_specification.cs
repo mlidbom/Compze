@@ -13,7 +13,7 @@ public static class MutableEventDispatcher_specification
 {
    public class Given_an_instance
    {
-      readonly IMutableEventDispatcher<IUserEvent> _dispatcher = IMutableEventDispatcher<IUserEvent>.New();
+      readonly IMutableEventDispatcher<IUserTevent> _dispatcher = IMutableEventDispatcher<IUserTevent>.New();
 
       public class with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_event_type : Given_an_instance
       {
@@ -30,12 +30,12 @@ public static class MutableEventDispatcher_specification
          public with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_event_type()
          {
             _dispatcher.Register()
-                       .IgnoreUnhandled<IIgnoredUserEvent>()
+                       .IgnoreUnhandled<IIgnoredUserTevent>()
                        .BeforeHandlers(_ => BeforeHandlers1CallOrder = ++CallsMade)
                        .BeforeHandlers(_ => BeforeHandlers2CallOrder = ++CallsMade)
                        .AfterHandlers(_ => AfterHandlers1CallOrder = ++CallsMade)
                        .AfterHandlers(_ => AfterHandlers2CallOrder = ++CallsMade)
-                       .For<IUserCreatedEvent>(_ => UserCreatedCallOrder = ++CallsMade)
+                       .For<IUserCreatedTevent>(_ => UserCreatedCallOrder = ++CallsMade)
                        .For<IUserRegistered>(_ => ++CallsMade)
                        .For<IUserSkillsRemoved>(_ => ++CallsMade)
                        .For<IUserSkillsAdded>(_ => ++CallsMade);
@@ -43,16 +43,16 @@ public static class MutableEventDispatcher_specification
 
          [XF] public void when_dispatching_an_ignored_event_no_calls_are_made_to_any_handlers()
          {
-            _dispatcher.Dispatch(new IgnoredUserEvent());
+            _dispatcher.Dispatch(new IgnoredUserTevent());
             CallsMade.Should().Be(0);
          }
 
          [XF] public void when_dispatching_an_unhandled_event_that_is_not_ignored_an_exception_is_thrown() =>
-            FluentActions.Invoking(() => _dispatcher.Dispatch(new UnHandledUserEvent())).Should().Throw<EventUnhandledException>();
+            FluentActions.Invoking(() => _dispatcher.Dispatch(new UnHandledUserTevent())).Should().Throw<EventUnhandledException>();
 
          public class when_dispatching_an_IUserCreatedEvent : with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_event_type
          {
-            public when_dispatching_an_IUserCreatedEvent() => _dispatcher.Dispatch(new UserCreatedEvent());
+            public when_dispatching_an_IUserCreatedEvent() => _dispatcher.Dispatch(new UserCreatedTevent());
 
             [XF] public void BeforeHandler1_is_called_first() => BeforeHandlers1CallOrder.Should().Be(1);
             [XF] public void BeforeHandler2_is_called_second() => BeforeHandlers2CallOrder.Should().Be(2);
@@ -82,20 +82,20 @@ public static class MutableEventDispatcher_specification
          }
       }
 
-      interface IUserEvent : IAggregateEvent;
-      interface IUserCreatedEvent : IUserEvent;
-      interface IUserRegistered : IUserCreatedEvent;
-      interface IUserSkillsEvent : IUserEvent;
-      interface IUserSkillsAdded : IUserSkillsEvent;
-      interface IUserSkillsRemoved : IUserSkillsEvent;
-      interface IIgnoredUserEvent : IUserEvent;
+      interface IUserTevent : IAggregateTevent;
+      interface IUserCreatedTevent : IUserTevent;
+      interface IUserRegistered : IUserCreatedTevent;
+      interface IUserSkillsTevent : IUserTevent;
+      interface IUserSkillsAdded : IUserSkillsTevent;
+      interface IUserSkillsRemoved : IUserSkillsTevent;
+      interface IIgnoredUserTevent : IUserTevent;
 
-      class UnHandledUserEvent : AggregateEvent, IUserEvent;
+      class UnHandledUserTevent : AggregateTevent, IUserTevent;
 
-      class IgnoredUserEvent : AggregateEvent, IIgnoredUserEvent;
+      class IgnoredUserTevent : AggregateTevent, IIgnoredUserTevent;
 
-      class UserCreatedEvent : AggregateEvent, IUserCreatedEvent;
+      class UserCreatedTevent : AggregateTevent, IUserCreatedTevent;
 
-      class UserRegistered : AggregateEvent, IUserRegistered;
+      class UserRegistered : AggregateTevent, IUserRegistered;
    }
 }

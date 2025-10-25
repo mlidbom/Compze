@@ -15,7 +15,7 @@ class IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : I
    {
       var property = base.CreateProperty(member, memberSerialization);
 
-      if(property.DeclaringType == typeof(AggregateEvent))
+      if(property.DeclaringType == typeof(AggregateTevent))
       {
          property.Ignored = true;
       }

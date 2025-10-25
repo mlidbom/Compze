@@ -54,11 +54,11 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
 
             builder.RegisterHandlers
                    .ForEvent((UserEvent.IUserRegistered _) => {})
-                   .ForQuery((GetUserQuery query, IEventStoreReader eventReader) => new UserResource(eventReader.GetHistory(query.UserId)))
-                   .ForCommandWithResult((UserRegistrarCommand.RegisterUserCommand command, IEventStoreUpdater store) =>
+                   .ForQuery((GetUserTuery tuery, IEventStoreReader eventReader) => new UserResource(eventReader.GetHistory(tuery.UserId)))
+                   .ForCommandWithResult((UserRegistrarCommand.RegisterUserTommand tommand, IEventStoreUpdater store) =>
                     {
-                       store.Save(UserAggregate.Register(command));
-                       return new RegisterUserResult(command.UserId);
+                       store.Save(UserAggregate.Register(tommand));
+                       return new RegisterUserResult(tommand.UserId);
                     });
          });
 
@@ -88,13 +88,13 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
 
    public static class UserEvent
    {
-      public interface IRoot : IAggregateEvent;
+      public interface IRoot : IAggregateTevent;
 
-      public interface IUserRegistered : IRoot, IAggregateCreatedEvent;
+      public interface IUserRegistered : IRoot, IAggregateCreatedTevent;
 
       public static class Implementation
       {
-         public class Root : AggregateEvent, IRoot
+         public class Root : AggregateTevent, IRoot
          {
             protected Root() {}
             protected Root(Guid aggregateId) : base(aggregateId) {}
@@ -106,29 +106,29 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
 
    public static class UserRegistrarCommand
    {
-      public class RegisterUserCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<RegisterUserResult>
+      public class RegisterUserTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<RegisterUserResult>
       {
          public Guid UserId { get; private set; } = Guid.NewGuid();
 
-         RegisterUserCommand() : base(DeduplicationIdHandling.Reuse) {}
+         RegisterUserTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-         internal static RegisterUserCommand Create() => new() { MessageId = Guid.CreateVersion7() };
+         internal static RegisterUserTommand Create() => new() { MessageId = Guid.CreateVersion7() };
       }
    }
 
    public static class UserRegistrarEvent
    {
-      public interface IRoot : IAggregateEvent;
+      public interface IRoot : IAggregateTevent;
 
       public static class Implementation
       {
-         public class Root : AggregateEvent, IRoot
+         public class Root : AggregateTevent, IRoot
          {
             protected Root() {}
             protected Root(Guid aggregateId) : base(aggregateId) {}
          }
 
-         public class Created() : Root(UserRegistrarAggregate.SingleId), IAggregateCreatedEvent;
+         public class Created() : Root(UserRegistrarAggregate.SingleId), IAggregateCreatedTevent;
       }
    }
 
@@ -147,7 +147,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
          => RegisterEventAppliers()
            .IgnoreUnhandled<UserRegistrarEvent.IRoot>();
 
-      internal static RegisterUserResult RegisterUser(IRemoteHypermediaNavigator navigator) => UserRegistrarCommand.RegisterUserCommand.Create().PostOn(navigator);
+      internal static RegisterUserResult RegisterUser(IRemoteHypermediaNavigator navigator) => UserRegistrarCommand.RegisterUserTommand.Create().PostOn(navigator);
    }
 
    public class UserAggregate : Aggregate<UserAggregate, UserEvent.IRoot, UserEvent.Implementation.Root>
@@ -156,26 +156,26 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
          => RegisterEventAppliers()
            .IgnoreUnhandled<UserEvent.IRoot>();
 
-      internal static UserAggregate Register(UserRegistrarCommand.RegisterUserCommand command)
+      internal static UserAggregate Register(UserRegistrarCommand.RegisterUserTommand tommand)
       {
          var registered = new UserAggregate();
-         registered.Publish(new UserEvent.Implementation.UserRegisteredEvent(command.UserId));
+         registered.Publish(new UserEvent.Implementation.UserRegisteredEvent(tommand.UserId));
          return registered;
       }
    }
 
-   public class GetUserQuery(Guid userId) : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
+   public class GetUserTuery(Guid userId) : TessageTypes.Remotable.NonTransactional.Queries.Tuery<UserResource>
    {
       public Guid UserId { get; private set; } = userId;
    }
 
-   public class UserResource(IEnumerable<IAggregateEvent> history)
+   public class UserResource(IEnumerable<IAggregateTevent> history)
    {
-      public IEnumerable<IAggregateEvent> History { get; } = history;
+      public IEnumerable<IAggregateTevent> History { get; } = history;
    }
 
    public class RegisterUserResult(Guid userId)
    {
-      public GetUserQuery UserLink { get; private set; } = new(userId);
+      public GetUserTuery UserLink { get; private set; } = new(userId);
    }
 }

@@ -130,13 +130,13 @@ static class TypeMapperTypeDiscovery
       }
 
       // Only map non-abstract types, or abstract types that are IRemotableEvent
-      if(type.IsAbstract && !typeof(IRemotableEvent).IsAssignableFrom(type))
+      if(type.IsAbstract && !typeof(IRemotableTevent).IsAssignableFrom(type))
       {
          return false;
       }
 
       // Map if it's an IMessage or implements IHasPersistentIdentity<>
-      return typeof(IRemotableMessage).IsAssignableFrom(type) ||
+      return typeof(IRemotableTessage).IsAssignableFrom(type) ||
              type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasPersistentIdentity<>));
    }
 }

@@ -20,9 +20,9 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {
    public static class RootEvent
    {
-      public interface IRoot : IAggregateEvent { string Public1 { get; set; } }
+      public interface IRoot : IAggregateTevent { string Public1 { get; set; } }
 
-      public class Root : AggregateEvent, IRoot { public string Public1 { get; set; } = string.Empty; }
+      public class Root : AggregateTevent, IRoot { public string Public1 { get; set; } = string.Empty; }
 
       [AllowPublicSetters]
       public class Ignored : Root { public string IgnoredMember { get; set; } = string.Empty; }

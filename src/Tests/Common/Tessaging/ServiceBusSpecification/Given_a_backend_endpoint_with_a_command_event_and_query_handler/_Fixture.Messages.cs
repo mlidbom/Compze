@@ -19,30 +19,30 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 
 public class MyCommandResult;
 
-public class MyAtMostOnceCommandWithResult : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<MyCommandResult>
+public class MyAtMostOnceTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<MyCommandResult>
 {
-   MyAtMostOnceCommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-   public static MyAtMostOnceCommandWithResult Create() => new() {MessageId = Guid.CreateVersion7()};
+   MyAtMostOnceTommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
+   public static MyAtMostOnceTommandWithResult Create() => new() {MessageId = Guid.CreateVersion7()};
 }
 
 public class MyQueryResult;
-public class MyQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
-public class MyExactlyOnceEvent : AggregateEvent, IMyExactlyOnceEvent;
-public interface IMyExactlyOnceEvent : IAggregateEvent;
-public class MyExactlyOnceCommand : MessageTypes.Remotable.ExactlyOnce.Command;
+public class MyTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyQueryResult>;
+public class MyExactlyOnceTevent : AggregateTevent, IMyExactlyOnceTevent;
+public interface IMyExactlyOnceTevent : IAggregateTevent;
+public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
-public class MyUpdateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+public class MyUpdateAggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaTommand
 {
-   [UsedImplicitly] MyUpdateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
-   public MyUpdateAggregateCommand(Guid aggregateId) : base(DeduplicationIdHandling.Create) => AggregateId = aggregateId;
+   [UsedImplicitly] MyUpdateAggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
+   public MyUpdateAggregateTommand(Guid aggregateId) : base(DeduplicationIdHandling.Create) => AggregateId = aggregateId;
    public Guid AggregateId { get; private set; }
 }
 
-public class MyCreateAggregateCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaCommand
+public class MyCreateAggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaTommand
 {
-   MyCreateAggregateCommand() : base(DeduplicationIdHandling.Reuse) {}
+   MyCreateAggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-   public static MyCreateAggregateCommand Create() => new()
+   public static MyCreateAggregateTommand Create() => new()
                                                       {
                                                          MessageId = Guid.CreateVersion7(),
                                                          AggregateId = Guid.NewGuid()
@@ -71,12 +71,12 @@ public class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggr
 
 public static class MyAggregateEvent
 {
-   public interface IRoot : IAggregateEvent;
-   public interface Created : IRoot, IAggregateCreatedEvent;
+   public interface IRoot : IAggregateTevent;
+   public interface Created : IRoot, IAggregateCreatedTevent;
    public interface Updated : IRoot;
    public static class Implementation
    {
-      public class Root : AggregateEvent, IRoot
+      public class Root : AggregateTevent, IRoot
       {
          protected Root() {}
          protected Root(Guid aggregateId) : base(aggregateId) {}

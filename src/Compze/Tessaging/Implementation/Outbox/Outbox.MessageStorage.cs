@@ -36,11 +36,11 @@ partial class Outbox
          _serializer = serializer;
       }
 
-      public void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds)
+      public void SaveMessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds)
       {
-         var outboxMessageWithReceivers = new IServiceBusSqlLayer.OutboxMessageWithReceivers(_serializer.SerializeMessage(message),
-                                                                                             _typeMapper.GetId(message.GetType()).GuidValue,
-                                                                                             message.MessageId,
+         var outboxMessageWithReceivers = new IServiceBusSqlLayer.OutboxMessageWithReceivers(_serializer.SerializeMessage(tessage),
+                                                                                             _typeMapper.GetId(tessage.GetType()).GuidValue,
+                                                                                             tessage.MessageId,
                                                                                              receiverEndpointIds.Select(it => it.GuidValue));
 
          _sqlLayer.SaveMessage(outboxMessageWithReceivers);

@@ -28,15 +28,15 @@ static class TransportMessage
       readonly Type _messageType;
       internal readonly TransportMessageType MessageTypeEnum;
 
-      IMessage? _message;
+      ITessage? _message;
 
-      public IMessage DeserializeMessageAndCacheForNextCall()
+      public ITessage DeserializeMessageAndCacheForNextCall()
       {
          if(_message == null)
          {
-            _message = _serializer.DeserializeMessage(_messageType, Body);
+            _message = _serializer.DeserializeTessage(_messageType, Body);
 
-            Assert.State.Is(_message is not IExactlyOnceMessage actualMessage || MessageId == actualMessage.MessageId);
+            Assert.State.Is(_message is not IExactlyOnceTessage actualMessage || MessageId == actualMessage.MessageId);
          }
 
          return _message;
@@ -55,15 +55,15 @@ static class TransportMessage
 
       static TransportMessageType GetMessageTypeEnum(Type messageType)
       {
-         if(typeof(IRemotableQuery<object>).IsAssignableFrom(messageType))
+         if(typeof(IRemotableTuery<object>).IsAssignableFrom(messageType))
             return TransportMessageType.NonTransactionalQuery;
-         if(typeof(IAtMostOnceCommand<object>).IsAssignableFrom(messageType))
+         if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(messageType))
             return TransportMessageType.AtMostOnceCommandWithReturnValue;
-         if(typeof(IAtMostOnceHypermediaCommand).IsAssignableFrom(messageType))
+         if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(messageType))
             return TransportMessageType.AtMostOnceCommand;
-         else if(typeof(IExactlyOnceEvent).IsAssignableFrom(messageType))
+         else if(typeof(IExactlyOnceTevent).IsAssignableFrom(messageType))
             return TransportMessageType.ExactlyOnceEvent;
-         if(typeof(IExactlyOnceCommand).IsAssignableFrom(messageType))
+         if(typeof(IExactlyOnceTommand).IsAssignableFrom(messageType))
             return TransportMessageType.ExactlyOnceCommand;
          else
             throw new ArgumentOutOfRangeException();
@@ -78,11 +78,11 @@ static class TransportMessage
       internal readonly TypeId Type;
       internal readonly string Body;
 
-      public static OutGoing Create(IRemotableMessage message, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+      public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
       {
-         var messageId = (message as IAtMostOnceMessage)?.MessageId ?? Guid.CreateVersion7();
-         var body = serializer.SerializeMessage(message);
-         return new OutGoing(typeMapper.GetId(message.GetType()), messageId, body, message is IExactlyOnceMessage);
+         var messageId = (tessage as IAtMostOnceTessage)?.MessageId ?? Guid.CreateVersion7();
+         var body = serializer.SerializeMessage(tessage);
+         return new OutGoing(typeMapper.GetId(tessage.GetType()), messageId, body, tessage is IExactlyOnceTessage);
       }
 
       OutGoing(TypeId type, Guid id, string body, bool isExactlyOnceDeliveryMessage)

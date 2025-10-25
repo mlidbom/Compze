@@ -9,13 +9,13 @@ public interface IEventStored
    Guid Id { get; }
    int Version { get; }
 
-   void Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents);
-   void LoadFromHistory(IEnumerable<IAggregateEvent> history);
+   void Commit(Action<IReadOnlyList<IAggregateTevent>> commitEvents);
+   void LoadFromHistory(IEnumerable<IAggregateTevent> history);
    void SetTimeSource(IUtcTimeTimeSource timeSource);
-   IObservable<IAggregateEvent> EventStream { get; }
+   IObservable<IAggregateTevent> EventStream { get; }
 }
 
-public interface IEventStored<out TEvent> : IEventStored where TEvent : IAggregateEvent
+public interface IEventStored<out TEvent> : IEventStored where TEvent : IAggregateTevent
 {
    new IObservable<TEvent> EventStream { get; }
 }

@@ -15,36 +15,36 @@ static partial class MessageInspector
 
    internal static void AssertValid<TMessage>() => MessageTypeInspector.AssertValid(typeof(TMessage));
 
-   internal static void AssertValidToSendRemote(IMessage message)
+   internal static void AssertValidToSendRemote(ITessage tessage)
    {
-      CommonAssertions(message);
+      CommonAssertions(tessage);
 
 #pragma warning disable IDE0010
-      switch(message)
+      switch(tessage)
       {
          case IStrictlyLocalMessage strictlyLocalMessage:
             throw new AttemptToSendStrictlyLocalMessageRemotelyException(strictlyLocalMessage);
          case IMustBeSentTransactionally when Transaction.Current == null:
-            throw new MissingTransactionException(message);
+            throw new MissingTransactionException(tessage);
          case ICannotBeSentRemotelyFromWithinTransaction when Transaction.Current != null:
-            throw new TransactionPresentException(message);
-         case IAtMostOnceMessage atMostOnce when atMostOnce.MessageId == Guid.Empty:
-            throw new MissingMessageIdException(message);
+            throw new TransactionPresentException(tessage);
+         case IAtMostOnceTessage atMostOnce when atMostOnce.MessageId == Guid.Empty:
+            throw new MissingMessageIdException(tessage);
       }
 #pragma warning restore IDE0010
    }
 
-   internal static void AssertValidToExecuteLocally(IMessage message)
+   internal static void AssertValidToExecuteLocally(ITessage tessage)
    {
-      CommonAssertions(message);
+      CommonAssertions(tessage);
 
-      if(message is IMustBeSentTransactionally && Transaction.Current == null)
-         throw new MissingTransactionException(message);
+      if(tessage is IMustBeSentTransactionally && Transaction.Current == null)
+         throw new MissingTransactionException(tessage);
    }
 
-   static void CommonAssertions(IMessage message)
+   static void CommonAssertions(ITessage tessage)
    {
-      MessageTypeInspector.AssertValid(message.GetType());
-      if(message is ICommand command) CommandValidator.AssertCommandIsValid(command);
+      MessageTypeInspector.AssertValid(tessage.GetType());
+      if(tessage is ITommand command) CommandValidator.AssertCommandIsValid(command);
    }
 }

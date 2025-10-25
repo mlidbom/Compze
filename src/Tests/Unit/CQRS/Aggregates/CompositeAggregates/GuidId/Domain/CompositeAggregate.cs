@@ -7,7 +7,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 class CompositeAggregate :
     Aggregate<CompositeAggregate,
-        CompositeAggregateEvent.ICompositeAggregateEvent,
+        CompositeAggregateEvent.ICompositeAggregateTevent,
         CompositeAggregateEvent.Implementation.Root>
 {
     public string Name { get; private set; } = string.Empty;

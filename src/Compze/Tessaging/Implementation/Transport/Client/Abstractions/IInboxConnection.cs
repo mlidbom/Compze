@@ -8,10 +8,10 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 interface IInboxConnection : IDisposable
 {
     MessageTypesInternal.EndpointInformation EndpointInformation { get; }
-    Task SendAsync(IExactlyOnceEvent @event);
-    Task SendAsync(IExactlyOnceCommand command);
+    Task SendAsync(IExactlyOnceTevent tevent);
+    Task SendAsync(IExactlyOnceTommand tommand);
 
-    Task PostAsync(IAtMostOnceHypermediaCommand command);
-    Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> command);
-    Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query);
+    Task PostAsync(IAtMostOnceHypermediaTommand tommand);
+    Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceTommand<TCommandResult> tommand);
+    Task<TQueryResult> GetAsync<TQueryResult>(IRemotableTuery<TQueryResult> tuery);
 }

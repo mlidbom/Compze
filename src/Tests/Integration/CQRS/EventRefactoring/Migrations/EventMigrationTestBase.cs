@@ -74,7 +74,7 @@ public abstract class EventMigrationTestBase : UniversalTestBase
 
       var timeSource = serviceLocator.Resolve<TestingTimeSource>();
 
-      IReadOnlyList<IAggregateEvent> eventsInStoreAtStart;
+      IReadOnlyList<IAggregateTevent> eventsInStoreAtStart;
       using(serviceLocator.BeginScope()) //Why is this needed? It fails without it but I do not understand why...
       {
          var eventStore = serviceLocator.Resolve<IEventStore>();
@@ -202,7 +202,7 @@ public abstract class EventMigrationTestBase : UniversalTestBase
       return serviceLocator;
    }
 
-   internal static void AssertStreamsAreIdentical(IReadOnlyList<IAggregateEvent> expected, IReadOnlyList<IAggregateEvent> migratedHistory, string descriptionOfHistory, DeferredConsoleWriter writer)
+   internal static void AssertStreamsAreIdentical(IReadOnlyList<IAggregateTevent> expected, IReadOnlyList<IAggregateTevent> migratedHistory, string descriptionOfHistory, DeferredConsoleWriter writer)
    {
       try
       {
@@ -216,12 +216,12 @@ public abstract class EventMigrationTestBase : UniversalTestBase
             }
          });
 
-         migratedHistory.Cast<AggregateEvent>()
+         migratedHistory.Cast<AggregateTevent>()
                         .Should().BeEquivalentTo(
-                            expected.Cast<AggregateEvent>(),
+                            expected.Cast<AggregateTevent>(),
                             config => config.PreferringRuntimeMemberTypes()
                                             .WithStrictOrdering()
-                                            .ComparingByMembers<AggregateEvent>()
+                                            .ComparingByMembers<AggregateTevent>()
                                             .Excluding(@event => @event.MessageId));
       }
       catch(Exception)

@@ -19,7 +19,7 @@ public class Parallelism_policies : EndpointHostTestBase
 
       var tasks = Task.WhenAll(1.Through(5)
                                 .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(session =>
-                                                                                          session.GetAsync(new MyQuery()))));
+                                                                                          session.GetAsync(new MyTuery()))));
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       OpenGates();
@@ -29,7 +29,7 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public async Task Five_query_handlers_can_execute_in_parallel_when_using_Query()
    {
       QueryHandlerThreadGate.Close();
-      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery())))).ToList();
+      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery())))).ToList();
 
       QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       QueryHandlerThreadGate.Open();
@@ -39,8 +39,8 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public void Two_event_handlers_cannot_execute_in_parallel()
    {
       MyRemoteAggregateEventHandlerThreadGate.Close();
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
 
       MyRemoteAggregateEventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
@@ -50,8 +50,8 @@ public class Parallelism_policies : EndpointHostTestBase
    {
       CloseGates();
 
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       MyExactlyOnceCommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                               .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
@@ -63,8 +63,8 @@ public class Parallelism_policies : EndpointHostTestBase
 
       ClientEndpoint.ExecuteClientRequest(session =>
       {
-         session.PostAsync(MyCreateAggregateCommand.Create());
-         session.PostAsync(MyCreateAggregateCommand.Create());
+         session.PostAsync(MyCreateAggregateTommand.Create());
+         session.PostAsync(MyCreateAggregateTommand.Create());
       });
 
       MyCreateAggregateCommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)

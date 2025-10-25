@@ -6,11 +6,11 @@ namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 
 public interface IEventStore : IDisposable
 {
-   IReadOnlyList<IAggregateEvent> GetAggregateHistoryForUpdate(Guid id);
-   IReadOnlyList<IAggregateEvent> GetAggregateHistory(Guid id);
-   void SaveSingleAggregateEvents(IReadOnlyList<IAggregateEvent> events);
+   IReadOnlyList<IAggregateTevent> GetAggregateHistoryForUpdate(Guid id);
+   IReadOnlyList<IAggregateTevent> GetAggregateHistory(Guid id);
+   void SaveSingleAggregateEvents(IReadOnlyList<IAggregateTevent> events);
    //todo: Utilize C# 8 asynchronous streams.
-   void StreamEvents(int batchSize, Action<IReadOnlyList<IAggregateEvent>> handleEvents);
+   void StreamEvents(int batchSize, Action<IReadOnlyList<IAggregateTevent>> handleEvents);
    void DeleteAggregate(Guid aggregateId);
    void PersistMigrations();
 
@@ -25,9 +25,9 @@ public static class EventStoreExtensions
 
 public static class EventStoreTestingExtensions
 {
-   public static IReadOnlyList<IAggregateEvent> ListAllEventsForTestingPurposesAbsolutelyNotUsableForARealEventStoreOfAnySize(this IEventStore @this, int batchSize = 10000)
+   public static IReadOnlyList<IAggregateTevent> ListAllEventsForTestingPurposesAbsolutelyNotUsableForARealEventStoreOfAnySize(this IEventStore @this, int batchSize = 10000)
    {
-      var events = new List<IAggregateEvent>();
+      var events = new List<IAggregateTevent>();
       @this.StreamEvents(batchSize, events.AddRange);
       return events;
    }

@@ -17,7 +17,7 @@ public static partial class AccountEvent
    public static class Implementation
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
-      public abstract class Root : AggregateEvent, AccountEvent.Root
+      public abstract class Root : AggregateTevent, AccountEvent.Root
       {
          protected Root() {}
          protected Root(Guid aggregateId) : base(aggregateId) {}

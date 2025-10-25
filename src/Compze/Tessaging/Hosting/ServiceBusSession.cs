@@ -36,22 +36,22 @@ static class ServiceBusSessionRegistrar
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
-   public void Send(IExactlyOnceCommand command)
+   public void Send(IExactlyOnceTommand tommand)
    {
-      RunAssertions(command);
-      _transport.SendTransactionally(command);
+      RunAssertions(tommand);
+      _transport.SendTransactionally(tommand);
    }
 
-   public void ScheduleSend(DateTime sendAt, IExactlyOnceCommand command)
+   public void ScheduleSend(DateTime sendAt, IExactlyOnceTommand tommand)
    {
-      RunAssertions(command);
-      _commandScheduler.Schedule(sendAt, command);
+      RunAssertions(tommand);
+      _commandScheduler.Schedule(sendAt, tommand);
    }
 
-   void RunAssertions(IExactlyOnceCommand command)
+   void RunAssertions(IExactlyOnceTommand tommand)
    {
       _contextGuard.EnsureAccessValid();
-      MessageInspector.AssertValidToSendRemote(command);
-      CommandValidator.AssertCommandIsValid(command);
+      MessageInspector.AssertValidToSendRemote(tommand);
+      CommandValidator.AssertCommandIsValid(tommand);
    }
 }

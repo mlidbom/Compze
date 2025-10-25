@@ -9,13 +9,13 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Ev
 
 static partial class CompositeAggregateEvent
 {
-   public interface ICompositeAggregateEvent : IAggregateEvent;
+   public interface ICompositeAggregateTevent : IAggregateTevent;
 
-   interface Created : IAggregateCreatedEvent, PropertyUpdated.Name;
+   interface Created : IAggregateCreatedTevent, PropertyUpdated.Name;
 
    public static class PropertyUpdated
    {
-      public interface Name : CompositeAggregateEvent.ICompositeAggregateEvent
+      public interface Name : CompositeAggregateEvent.ICompositeAggregateTevent
       {
          string Name { get; }
       }
@@ -23,7 +23,7 @@ static partial class CompositeAggregateEvent
 
    internal static class Implementation
    {
-      public abstract class Root : AggregateEvent, ICompositeAggregateEvent
+      public abstract class Root : AggregateTevent, ICompositeAggregateTevent
       {
          protected Root() { }
          protected Root(Guid aggregateId) : base(aggregateId) { }

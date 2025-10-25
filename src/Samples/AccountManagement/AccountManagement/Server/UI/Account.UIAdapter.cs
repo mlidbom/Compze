@@ -13,7 +13,7 @@ namespace AccountManagement.UI;
 
 static class AccountUIAdapter
 {
-   public static void Login(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommandWithResult(
+   public static void Login(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommandWithResult(
       (AccountResource.Command.LogIn logIn, IInProcessHypermediaNavigator navigator) =>
       {
          var email = Email.Parse(logIn.Email);
@@ -32,15 +32,15 @@ static class AccountUIAdapter
          }
       });
 
-   internal static void ChangePassword(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
+   internal static void ChangePassword(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
       (AccountResource.Command.ChangePassword command, IInProcessHypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Queries.GetForUpdate(command.AccountId)).ChangePassword(command.OldPassword, new Password(command.NewPassword)));
 
-   internal static void ChangeEmail(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
+   internal static void ChangeEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
       (AccountResource.Command.ChangeEmail command, IInProcessHypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Queries.GetForUpdate(command.AccountId)).ChangeEmail(Email.Parse(command.Email)));
 
-   internal static void Register(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommandWithResult(
+   internal static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommandWithResult(
       (AccountResource.Command.Register command, IInProcessHypermediaNavigator bus) =>
       {
          var (status, account) = Account.Register(command.AccountId, Email.Parse(command.Email), new Password(command.Password), bus);
@@ -52,7 +52,7 @@ static class AccountUIAdapter
          };
       });
 
-   internal static void GetById(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-      (MessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> accountQuery, IInProcessHypermediaNavigator navigator)
+   internal static void GetById(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
+      (TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> accountQuery, IInProcessHypermediaNavigator navigator)
          => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Queries.Get(accountQuery.EntityId))));
 }

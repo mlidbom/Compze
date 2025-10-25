@@ -30,7 +30,7 @@ public static partial class Composite_aggregate_specification
          _aggregateId = Guid.NewGuid();
          _aggregate = new CompositeAggregate("root", _aggregateId);
          _queryModel = new RootQueryModel();
-         IEventStored<CompositeAggregateEvent.ICompositeAggregateEvent> eventStored = _aggregate;
+         IEventStored<CompositeAggregateEvent.ICompositeAggregateTevent> eventStored = _aggregate;
          eventStored.EventStream.Subscribe(_queryModel.ApplyEvent);
          eventStored.Commit(_queryModel.LoadFromHistory);
       }

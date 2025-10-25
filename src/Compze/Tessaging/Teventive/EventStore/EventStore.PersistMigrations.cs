@@ -54,7 +54,7 @@ partial class EventStore
 
                   var inMemoryMigratedHistory = SingleAggregateInstanceEventStreamMutator.MutateCompleteAggregateHistory(
                      _migrationFactories,
-                     original.Select(it => it.Event).ToArray(),
+                     original.Select(it => it.Tevent).ToArray(),
                      newEvents =>
                      {
                         //Make sure we don't try to insert into an occupied InsertedVersion
@@ -64,10 +64,10 @@ partial class EventStore
                         });
 
                         refactorings.Add(newEvents
-                                        .Select(it => new EventDataRow(@event: it.NewEvent.ToAggregateEventData(),
+                                        .Select(it => new EventDataRow(@event: it.NewTevent.ToAggregateEventData(),
                                                                           it.StorageInformation,
-                                                                          _typeMapper.GetId(it.NewEvent.GetType()).GuidValue,
-                                                                          eventAsJson: _serializer.Serialize(it.NewEvent)))
+                                                                          _typeMapper.GetId(it.NewTevent.GetType()).GuidValue,
+                                                                          eventAsJson: _serializer.Serialize(it.NewTevent)))
                                         .ToList());
 
                         updatedAggregates = updatedAggregatesBeforeMigrationOfThisAggregate + 1;
@@ -126,11 +126,11 @@ partial class EventStore
 
    }
 
-   void FixManualVersions(AggregateEventWithRefactoringInformation[] originalHistory, AggregateEvent[] newHistory, IReadOnlyList<List<EventDataRow>> refactorings)
+   void FixManualVersions(AggregateEventWithRefactoringInformation[] originalHistory, AggregateTevent[] newHistory, IReadOnlyList<List<EventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
-      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@event => @event.MessageId == it.Event.MessageId)).ToList();
-      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Event.MessageId, -it.StorageInformation.EffectiveVersion)));
+      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@event => @event.MessageId == it.Tevent.MessageId)).ToList();
+      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Tevent.MessageId, -it.StorageInformation.EffectiveVersion)));
 
       var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@event => @event.MessageId == it.EventId));
       versionUpdates.AddRange(replacedOrRemoved2.Select(it => new VersionSpecification(it.EventId, -it.StorageInformation.EffectiveVersion)));
@@ -141,7 +141,7 @@ partial class EventStore
       _sqlLayer.UpdateEffectiveVersions(versionUpdates);
    }
 
-   void AssertHistoriesAreIdentical(AggregateEvent[] inMemoryMigratedHistory, IReadOnlyList<IAggregateEvent> loadedAggregateHistory)
+   void AssertHistoriesAreIdentical(AggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<IAggregateTevent> loadedAggregateHistory)
    {
       Assert.Result.Is(inMemoryMigratedHistory.Length == loadedAggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
@@ -154,7 +154,7 @@ partial class EventStore
                .Is(inMemory.AggregateVersion == loaded.AggregateVersion)
                .Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp)
                .Is(inMemory.GetType() == loaded.GetType())
-               .Is(_serializer.Serialize(inMemory) == _serializer.Serialize((AggregateEvent)loaded));
+               .Is(_serializer.Serialize(inMemory) == _serializer.Serialize((AggregateTevent)loaded));
       }
    }
 

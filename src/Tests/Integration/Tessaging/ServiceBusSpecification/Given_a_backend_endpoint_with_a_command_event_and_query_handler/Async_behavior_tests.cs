@@ -13,7 +13,7 @@ public class Async_behavior_test : EndpointHostTestBase
 
       using var _ = ClientEndpoint.ServiceLocator.BeginScope();
       var session = ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
-      var query = session.GetAsync(new MyQuery());
+      var query = session.GetAsync(new MyTuery());
       QueryHandlerThreadGate.Open();
       await query;
    }

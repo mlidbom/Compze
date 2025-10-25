@@ -4,7 +4,7 @@ namespace AccountManagement.UI;
 
 static class UIAdapterLayer
 {
-   public static void Register(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
       AccountUIAdapter.GetById(registrar);
       AccountUIAdapter.Register(registrar);

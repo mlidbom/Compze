@@ -10,7 +10,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
 static class AggregateHistoryValidator
 {
-   public static void ValidateHistory(Guid aggregateId, IReadOnlyList<IAggregateEvent> history)
+   public static void ValidateHistory(Guid aggregateId, IReadOnlyList<IAggregateTevent> history)
    {
       var version = 1;
       foreach(var aggregateEvent in history)

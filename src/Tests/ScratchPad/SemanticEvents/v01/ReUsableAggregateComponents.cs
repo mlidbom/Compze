@@ -8,9 +8,9 @@ using Compze.Abstractions.Tessaging.Teventive.Public;
 namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
 
 //todo: Implement the ability to use this pattern in the aggregate root and ensure that routing on the bus also work correctly.
-interface IAggregate1Event : IAggregateEvent{}
+interface IAggregate1Tevent : IAggregateTevent{}
 
-interface IAggregate1ComponentEvent<out TComponentEvent> : IAggregateEvent{}
+interface IAggregate1ComponentTevent<out TComponentEvent> : IAggregateTevent{}
 
 interface IComponentEventBase{}
 
@@ -27,9 +27,9 @@ public class ReUsableAggregateComponents
 #pragma warning disable IDE0051 // Remove unused private members
    static void DemonstrateSemanticRelationships()
    {
-      IAggregate1ComponentEvent<IComponentEventBase> wceb = null!;
-      IAggregate1ComponentEvent<IComponentEvent1> wce1 = null!;
-      IAggregate1ComponentEvent<IComponentEvent2> wce2 = null!;
+      IAggregate1ComponentTevent<IComponentEventBase> wceb = null!;
+      IAggregate1ComponentTevent<IComponentEvent1> wce1 = null!;
+      IAggregate1ComponentTevent<IComponentEvent2> wce2 = null!;
 
       //Semantic relationship is maintained.
       //For registering handlers we could enable registering via the wrapped type so that handlers need not always do the unwrapping.

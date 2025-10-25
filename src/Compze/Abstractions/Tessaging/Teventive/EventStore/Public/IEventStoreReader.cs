@@ -6,7 +6,7 @@ namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 
 public interface IEventStoreReader
 {
-   IReadOnlyList<IAggregateEvent> GetHistory(Guid aggregateId);
+   IReadOnlyList<IAggregateTevent> GetHistory(Guid aggregateId);
    /// <summary>
    /// Loads a specific version of the aggregate.
    /// This instance is NOT tracked for changes.

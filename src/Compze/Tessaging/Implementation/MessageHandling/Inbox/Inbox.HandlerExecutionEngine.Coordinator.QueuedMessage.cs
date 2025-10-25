@@ -47,7 +47,7 @@ partial class Inbox
                                         ? _serviceLocator.ExecuteTransactionInIsolatedScope(() =>
                                         {
                                            var innerResult = _messageTask(message);
-                                           if(message is IAtMostOnceMessage)
+                                           if(message is IAtMostOnceTessage)
                                            {
                                               _messageStorage.MarkAsSucceeded(TransportMessage);
                                            }
@@ -62,14 +62,14 @@ partial class Inbox
                      }
                      catch(Exception exception)
                      {
-                        if(message is IAtMostOnceMessage)
+                        if(message is IAtMostOnceTessage)
                         {
                            _messageStorage.RecordException(TransportMessage, exception);
                         }
 
                         if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                         {
-                           if(message is IAtMostOnceMessage)
+                           if(message is IAtMostOnceTessage)
                            {
                               _messageStorage.MarkAsFailed(TransportMessage);
                            }
@@ -102,31 +102,31 @@ partial class Inbox
                   Implementation.TransportMessage.TransportMessageType.ExactlyOnceEvent => message =>
                   {
                      var eventHandlers = _handlerRegistry.GetEventHandlers(message.GetType());
-                     eventHandlers.ForEach(handler => handler((IExactlyOnceEvent)message));
+                     eventHandlers.ForEach(handler => handler((IExactlyOnceTevent)message));
                      return null;
                   },
                   Implementation.TransportMessage.TransportMessageType.AtMostOnceCommandWithReturnValue => message =>
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandlerWithReturnValue(message.GetType());
-                     return commandHandler((IAtMostOnceHypermediaCommand)message);
+                     return commandHandler((IAtMostOnceHypermediaTommand)message);
                   },
                   Implementation.TransportMessage.TransportMessageType.AtMostOnceCommand => message =>
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
-                     commandHandler((IAtMostOnceHypermediaCommand)message);
+                     commandHandler((IAtMostOnceHypermediaTommand)message);
                      return unit.Value; //Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.ExactlyOnceCommand => message =>
                   {
                      var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
-                     commandHandler((IExactlyOnceCommand)message);
+                     commandHandler((IExactlyOnceTommand)message);
                      return unit.Value;//Todo:Properly handle commands with and without return values
                   },
                   Implementation.TransportMessage.TransportMessageType.NonTransactionalQuery => actualMessage =>
                   {
                      var queryHandler = _handlerRegistry.GetQueryHandler(actualMessage.GetType());
                      //todo: Double dispatch instead of casting?
-                     return queryHandler((IQuery<object>)actualMessage);
+                     return queryHandler((ITuery<object>)actualMessage);
                   },
                   _ => throw new ArgumentOutOfRangeException()
                };

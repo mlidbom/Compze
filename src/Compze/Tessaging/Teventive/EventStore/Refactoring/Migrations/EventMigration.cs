@@ -7,7 +7,7 @@ using Compze.Utilities.Contracts;
 namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 
 public abstract class EventMigration<TMigratedAggregateEventHierarchyRootInterface> : IEventMigration
-   where TMigratedAggregateEventHierarchyRootInterface : IAggregateEvent
+   where TMigratedAggregateEventHierarchyRootInterface : IAggregateTevent
 {
    protected EventMigration(Guid id, string name, string description)
    {

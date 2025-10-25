@@ -19,7 +19,7 @@ interface IHandlerPolicyConfigurationBuilder
 
 interface IMessageHandlerPolicy
 {
-   void Configure(IHandlerPolicyConfigurationBuilder builder, IMessage message);
+   void Configure(IHandlerPolicyConfigurationBuilder builder, ITessage tessage);
 }
 
 
@@ -92,5 +92,5 @@ class Endpoint
 class CompositePolicy : IMessageHandlerPolicy
 {
    public CompositePolicy(params IMessageHandlerPolicy[] policies) { }
-   public void Configure(IHandlerPolicyConfigurationBuilder builder, IMessage message) { throw new Exception(); }
+   public void Configure(IHandlerPolicyConfigurationBuilder builder, ITessage tessage) { throw new Exception(); }
 }

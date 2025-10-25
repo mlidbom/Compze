@@ -12,7 +12,7 @@ public class Transaction_policies : EndpointHostTestBase
 {
    [PCT] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       var transaction = MyExactlyOnceCommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                 .PassedThrough.Single().Transaction;
@@ -22,7 +22,7 @@ public class Transaction_policies : EndpointHostTestBase
 
    [PCT] public void Command_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
    {
-      var commandResult = ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyAtMostOnceCommandWithResult.Create()));
+      var commandResult = ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyAtMostOnceTommandWithResult.Create()));
 
       commandResult.Should().NotBe(null);
 
@@ -34,7 +34,7 @@ public class Transaction_policies : EndpointHostTestBase
 
    [PCT] public void Event_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
 
       var transaction = MyRemoteAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                                .PassedThrough.Single().Transaction;
@@ -44,7 +44,7 @@ public class Transaction_policies : EndpointHostTestBase
 
    [PCT] public void Query_handler_does_not_run_in_transaction()
    {
-      ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery()));
+      ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()));
 
       QueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                             .PassedThrough.Single().Transaction.Should().Be(null);

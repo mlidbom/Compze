@@ -25,39 +25,39 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
 
    int _aggregateVersion = 1;
 
-   public static ISingleAggregateInstanceEventStreamMutator Create(IAggregateEvent creationEvent, IReadOnlyList<IEventMigration> eventMigrations, Action<IReadOnlyList<EventModifier.RefactoredEvent>>? eventsAddedCallback = null)
-      => new SingleAggregateInstanceEventStreamMutator(creationEvent, eventMigrations, eventsAddedCallback);
+   public static ISingleAggregateInstanceEventStreamMutator Create(IAggregateTevent creationTevent, IReadOnlyList<IEventMigration> eventMigrations, Action<IReadOnlyList<EventModifier.RefactoredEvent>>? eventsAddedCallback = null)
+      => new SingleAggregateInstanceEventStreamMutator(creationTevent, eventMigrations, eventsAddedCallback);
 
    SingleAggregateInstanceEventStreamMutator
-      (IAggregateEvent creationEvent, IEnumerable<IEventMigration> eventMigrations, Action<IReadOnlyList<EventModifier.RefactoredEvent>>? eventsAddedCallback)
+      (IAggregateTevent creationTevent, IEnumerable<IEventMigration> eventMigrations, Action<IReadOnlyList<EventModifier.RefactoredEvent>>? eventsAddedCallback)
    {
       _eventModifier = new EventModifier(eventsAddedCallback ?? (_ => { }));
-      _aggregateId = creationEvent.AggregateId;
+      _aggregateId = creationTevent.AggregateId;
       _eventMigrators = eventMigrations
-                       .Where(migration => migration.MigratedAggregateEventHierarchyRootInterface.IsInstanceOfType(creationEvent))
+                       .Where(migration => migration.MigratedAggregateEventHierarchyRootInterface.IsInstanceOfType(creationTevent))
                        .Select(migration => migration.CreateSingleAggregateInstanceHandlingMigrator())
                        .ToArray();
    }
 
-   static IEnumerable<AggregateEvent> SingleEventSequence(AggregateEvent @event) { yield return @event; }
-   public IEnumerable<AggregateEvent> Mutate(AggregateEvent @event)
+   static IEnumerable<AggregateTevent> SingleEventSequence(AggregateTevent tevent) { yield return tevent; }
+   public IEnumerable<AggregateTevent> Mutate(AggregateTevent tevent)
    {
-      Assert.Argument.Is(_aggregateId == @event.AggregateId);
+      Assert.Argument.Is(_aggregateId == tevent.AggregateId);
       if (_eventMigrators.Length == 0)
       {
-         return SingleEventSequence(@event);
+         return SingleEventSequence(tevent);
       }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableAggregateEvent)@event).SetAggregateVersionInternal(_aggregateVersion);
+      ((IMutableAggregateTevent)tevent).SetAggregateVersionInternal(_aggregateVersion);
 #pragma warning restore CS0618 // Type or member is obsolete
-      _eventModifier.Reset(@event);
+      _eventModifier.Reset(tevent);
 
       for(var index = 0; index < _eventMigrators.Length; index++)
       {
          if (_eventModifier.Events == null)
          {
-            _eventMigrators[index].MigrateEvent(@event, _eventModifier);
+            _eventMigrators[index].MigrateEvent(tevent, _eventModifier);
          }
          else
          {
@@ -76,16 +76,16 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
       return newHistory;
    }
 
-   public IEnumerable<AggregateEvent> EndOfAggregate()
+   public IEnumerable<AggregateTevent> EndOfAggregate()
    {
-      return EnumerableCE.Create(new EndOfAggregateHistoryEventPlaceHolder(_aggregateId, _aggregateVersion))
+      return EnumerableCE.Create(new EndOfAggregateHistoryTeventPlaceHolder(_aggregateId, _aggregateVersion))
                          .SelectMany(Mutate)
-                         .Where(@event => @event.GetType() != typeof(EndOfAggregateHistoryEventPlaceHolder));
+                         .Where(@event => @event.GetType() != typeof(EndOfAggregateHistoryTeventPlaceHolder));
    }
 
-   public static AggregateEvent[] MutateCompleteAggregateHistory
+   public static AggregateTevent[] MutateCompleteAggregateHistory
    (IReadOnlyList<IEventMigration> eventMigrations,
-    AggregateEvent[] events,
+    AggregateTevent[] events,
     Action<IReadOnlyList<EventModifier.RefactoredEvent>>? eventsAddedCallback = null)
    {
       if (eventMigrations.None())
@@ -95,7 +95,7 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
 
       if(events.None())
       {
-         return Enumerable.Empty<AggregateEvent>().ToArray();
+         return Enumerable.Empty<AggregateTevent>().ToArray();
       }
 
       var mutator = Create(events.First(), eventMigrations, eventsAddedCallback);
@@ -111,7 +111,7 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
       return result;
    }
 
-   public static void AssertMigrationsAreIdempotent(IReadOnlyList<IEventMigration> eventMigrations, AggregateEvent[] events)
+   public static void AssertMigrationsAreIdempotent(IReadOnlyList<IEventMigration> eventMigrations, AggregateTevent[] events)
    {
       var creationEvent = events.First();
 
@@ -131,8 +131,8 @@ class SingleAggregateInstanceEventStreamMutator : ISingleAggregateInstanceEventS
    }
 }
 
-sealed class EndOfAggregateHistoryEventPlaceHolder : AggregateEvent {
+sealed class EndOfAggregateHistoryTeventPlaceHolder : AggregateTevent {
 #pragma warning disable CS0618 // Type or member is obsolete
-    public EndOfAggregateHistoryEventPlaceHolder(Guid aggregateId, int i):base(aggregateId) => ((IMutableAggregateEvent)this).SetAggregateVersionInternal(i);
+    public EndOfAggregateHistoryTeventPlaceHolder(Guid aggregateId, int i):base(aggregateId) => ((IMutableAggregateTevent)this).SetAggregateVersionInternal(i);
 #pragma warning restore CS0618 // Type or member is obsolete
 }

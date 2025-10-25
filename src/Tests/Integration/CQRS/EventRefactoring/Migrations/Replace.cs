@@ -11,7 +11,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
 
-class Replace<TEvent> : EventMigration<IRootEvent>
+class Replace<TEvent> : EventMigration<IRootTevent>
 {
    readonly Migrator _migratorSingleton;
 
@@ -26,11 +26,11 @@ class Replace<TEvent> : EventMigration<IRootEvent>
    {
       readonly IEnumerable<Type> _replaceWith = replaceWith;
 
-      public void MigrateEvent(IAggregateEvent @event, IEventModifier modifier)
+      public void MigrateEvent(IAggregateTevent tevent, IEventModifier modifier)
       {
-         if (@event.GetType() == typeof(TEvent))
+         if (tevent.GetType() == typeof(TEvent))
          {
-            modifier.Replace(_replaceWith.Select(Constructor.CreateInstance).Cast<AggregateEvent>().ToArray());
+            modifier.Replace(_replaceWith.Select(Constructor.CreateInstance).Cast<AggregateTevent>().ToArray());
          }
       }
    }

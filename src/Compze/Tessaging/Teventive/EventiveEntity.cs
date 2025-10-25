@@ -19,10 +19,10 @@ public abstract class EventiveEntity<TParent,
                                      TEntityEventIdGetterSetter>
     : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityEvent, TEntityEventImplementation>
     where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
-    where TParentEvent : class, IAggregateEvent
+    where TParentEvent : class, IAggregateTevent
     where TEntityId : struct
     where TEntityEvent : class, TParentEvent
-    where TParentEventImplementation : AggregateEvent, TParentEvent
+    where TParentEventImplementation : AggregateTevent, TParentEvent
     where TEntityEventImplementation : TParentEventImplementation, TEntityEvent
     where TEntityCreatedEvent : TEntityEvent
     where TEntity : EventiveEntity<TParent, TParentEvent, TParentEventImplementation, TEntity, TEntityId, TEntityEventImplementation, TEntityEvent, TEntityCreatedEvent, TEntityEventIdGetterSetter>

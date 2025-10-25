@@ -16,7 +16,7 @@ public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewMode
      IVersioningQueryModelGenerator<TViewModel>
    where TImplementer : SingleAggregateQueryModelGenerator<TImplementer, TViewModel, TEvent, TSession>
    where TSession : IEventStoreReader
-   where TEvent : class, IAggregateEvent
+   where TEvent : class, IAggregateTevent
    where TViewModel : class, ISingleAggregateQueryModel
 {
    readonly IMutableEventDispatcher<TEvent> _eventDispatcher = IMutableEventDispatcher<TEvent>.New();
@@ -27,8 +27,8 @@ public abstract class SingleAggregateQueryModelGenerator<TImplementer, TViewMode
    {
       _session = session;
       _eventDispatcher.Register()
-                      .ForGenericEvent<IAggregateCreatedEvent>(e => Model!.SetId(e.AggregateId))
-                      .ForGenericEvent<IAggregateDeletedEvent>(_ => Model = null);
+                      .ForGenericEvent<IAggregateCreatedTevent>(e => Model!.SetId(e.AggregateId))
+                      .ForGenericEvent<IAggregateDeletedTevent>(_ => Model = null);
    }
 
    ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>

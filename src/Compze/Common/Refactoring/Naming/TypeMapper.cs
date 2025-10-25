@@ -113,9 +113,9 @@ class TypeMapper : ITypeMapper
    {
       if(type.IsAbstract)
       {
-         if(!typeof(IRemotableEvent).IsAssignableFrom(type))
+         if(!typeof(IRemotableTevent).IsAssignableFrom(type))
          {
-            throw new Exception($"Type: {type.FullName} is abstract and is not a {typeof(IRemotableEvent).FullName}. For other types you should only map concrete types.");
+            throw new Exception($"Type: {type.FullName} is abstract and is not a {typeof(IRemotableTevent).FullName}. For other types you should only map concrete types.");
          }
       }
    }

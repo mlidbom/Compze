@@ -16,25 +16,25 @@ using FluentAssertions;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
-public interface IUserWrapperEvent<out TWrappedUserEvent> : IWrapperEvent<TWrappedUserEvent>
-   where TWrappedUserEvent : IUserEvent;
+public interface IUserWrapperTevent<out TWrappedUserEvent> : IWrapperTevent<TWrappedUserEvent>
+   where TWrappedUserEvent : IUserTevent;
 
-public interface IUserEvent : IEvent;
+public interface IUserTevent : ITevent;
 
-class UserEvent : IUserEvent;
+class UserTevent : IUserTevent;
 
 public class Example
 {
    [XF] public void BuildWrapperEventType()
    {
-      var genericWrapperEventType = CreateGenericWrapperEventType(typeof(IUserWrapperEvent<>));
+      var genericWrapperEventType = CreateGenericWrapperEventType(typeof(IUserWrapperTevent<>));
 
       //instantiate a concrete version.
-      var wrapperEventIUserEvent = genericWrapperEventType.MakeGenericType(typeof(IUserEvent));
+      var wrapperEventIUserEvent = genericWrapperEventType.MakeGenericType(typeof(IUserTevent));
 
-      var constructor = (Func<IUserEvent, IUserWrapperEvent<IUserEvent>>)Constructor.Compile.ForReturnType(wrapperEventIUserEvent).WithArgumentTypes(typeof(IUserEvent));
+      var constructor = (Func<IUserTevent, IUserWrapperTevent<IUserTevent>>)Constructor.Compile.ForReturnType(wrapperEventIUserEvent).WithArgumentTypes(typeof(IUserTevent));
 
-      var userEvent = new UserEvent();
+      var userEvent = new UserTevent();
       var instance = constructor(userEvent);
 
       instance.Event.Should().Be(userEvent);
@@ -58,12 +58,12 @@ public class Example
          }
 
          if(!wrapperEventType.IsInterface) throw new ArgumentException("Must be an interface", $"{nameof(wrapperEventType)}");
-         if(wrapperEventType.GetInterfaces().All(iface => iface != typeof(IWrapperEvent<>).MakeGenericType(wrapperEventType.GetGenericArguments()[0])))
-            throw new ArgumentException($"Must implement {typeof(IWrapperEvent<>).FullName}", $"{nameof(wrapperEventType)}");
+         if(wrapperEventType.GetInterfaces().All(iface => iface != typeof(IWrapperTevent<>).MakeGenericType(wrapperEventType.GetGenericArguments()[0])))
+            throw new ArgumentException($"Must implement {typeof(IWrapperTevent<>).FullName}", $"{nameof(wrapperEventType)}");
 
          var wrappedEventType = wrapperEventType.GetGenericArguments()[0];
 
-         var requiredEventInterface = wrappedEventType.GetGenericParameterConstraints().Single(constraint => constraint.IsInterface && typeof(IEvent).IsAssignableFrom(constraint));
+         var requiredEventInterface = wrappedEventType.GetGenericParameterConstraints().Single(constraint => constraint.IsInterface && typeof(ITevent).IsAssignableFrom(constraint));
 
          var genericWrapperEventType = AssemblyBuilderCE.Module.Update(module =>
          {
@@ -77,7 +77,7 @@ public class Example
 
             wrappedEventTypeParameter.SetInterfaceConstraints(requiredEventInterface);
 
-            var (wrappedEventField, _) = wrapperEventBuilder.ImplementProperty(nameof(IWrapperEvent<IAggregateEvent>.Event), wrappedEventTypeParameter);
+            var (wrappedEventField, _) = wrapperEventBuilder.ImplementProperty(nameof(IWrapperTevent<IAggregateTevent>.Event), wrappedEventTypeParameter);
 
             wrapperEventBuilder.ImplementConstructor(wrappedEventField);
 

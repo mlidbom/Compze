@@ -19,7 +19,7 @@ public partial class EventStoreApi
 
       public GetReadonlyCopyOfAggregateVersion<TAggregate> GetReadOnlyCopyOfVersion<TAggregate>(Guid id, int version) where TAggregate : class, IEventStored => new(id, version);
 
-      public GetAggregateHistory<TEvent> GetHistory<TEvent>(Guid id) where TEvent : IAggregateEvent => new(id);
+      public GetAggregateHistory<TEvent> GetHistory<TEvent>(Guid id) where TEvent : IAggregateTevent => new(id);
    }
 
    public partial class CommandApi

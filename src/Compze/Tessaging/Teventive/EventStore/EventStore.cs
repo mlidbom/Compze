@@ -50,11 +50,11 @@ namespace Compze.Tessaging.Teventive.EventStore;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<IAggregateEvent> GetAggregateHistoryForUpdate(Guid aggregateId) => GetAggregateHistoryInternal(aggregateId: aggregateId, takeWriteLock: true);
+   public IReadOnlyList<IAggregateTevent> GetAggregateHistoryForUpdate(Guid aggregateId) => GetAggregateHistoryInternal(aggregateId: aggregateId, takeWriteLock: true);
 
-   public IReadOnlyList<IAggregateEvent> GetAggregateHistory(Guid aggregateId) => GetAggregateHistoryInternal(aggregateId, takeWriteLock: false);
+   public IReadOnlyList<IAggregateTevent> GetAggregateHistory(Guid aggregateId) => GetAggregateHistoryInternal(aggregateId, takeWriteLock: false);
 
-   IReadOnlyList<IAggregateEvent> GetAggregateHistoryInternal(Guid aggregateId, bool takeWriteLock)
+   IReadOnlyList<IAggregateTevent> GetAggregateHistoryInternal(Guid aggregateId, bool takeWriteLock)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -80,7 +80,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
          return GetAggregateHistoryInternal(aggregateId, takeWriteLock);
       }
 
-      var newEventsFromSqlLayer = newHistoryFromSqlLayer.Select(it => it.Event).ToArray();
+      var newEventsFromSqlLayer = newHistoryFromSqlLayer.Select(it => it.Tevent).ToArray();
       if(cachedAggregateHistory.Events.Count == 0)
       {
          AggregateHistoryValidator.ValidateHistory(aggregateId, newEventsFromSqlLayer);
@@ -103,14 +103,14 @@ namespace Compze.Tessaging.Teventive.EventStore;
       return newAggregateHistory;
    }
 
-   AggregateEvent HydrateEvent(EventDataRow eventDataRowRow)
+   AggregateTevent HydrateEvent(EventDataRow eventDataRowRow)
    {
-      var @event = (AggregateEvent)_serializer.Deserialize(eventType: _typeMapper.GetType(new TypeId(eventDataRowRow.EventType)), json: eventDataRowRow.EventJson);
+      var @event = (AggregateTevent)_serializer.Deserialize(eventType: _typeMapper.GetType(new TypeId(eventDataRowRow.EventType)), json: eventDataRowRow.EventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableAggregateEvent)@event).SetAggregateIdInternal(eventDataRowRow.AggregateId);
-      ((IMutableAggregateEvent)@event).SetAggregateVersionInternal(eventDataRowRow.AggregateVersion);
-      ((IMutableAggregateEvent)@event).SetMessageIdInternal(eventDataRowRow.EventId);
-      ((IMutableAggregateEvent)@event).SetUtcTimeStampInternal(eventDataRowRow.UtcTimeStamp);
+      ((IMutableAggregateTevent)@event).SetAggregateIdInternal(eventDataRowRow.AggregateId);
+      ((IMutableAggregateTevent)@event).SetAggregateVersionInternal(eventDataRowRow.AggregateVersion);
+      ((IMutableAggregateTevent)@event).SetMessageIdInternal(eventDataRowRow.EventId);
+      ((IMutableAggregateTevent)@event).SetUtcTimeStampInternal(eventDataRowRow.UtcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
       return @event;
    }
@@ -124,13 +124,13 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
    static bool IsRefactoringEvent(AggregateEventWithRefactoringInformation @event) => @event.StorageInformation.RefactoringInformation != null;
 
-   IEnumerable<IAggregateEvent> StreamEvents(int batchSize)
+   IEnumerable<IAggregateTevent> StreamEvents(int batchSize)
    {
       var streamMutator = CompleteEventStoreStreamMutator.Create(_migrationFactories);
       return streamMutator.Mutate(_sqlLayer.StreamEvents(batchSize).Select(HydrateEvent));
    }
 
-   public void StreamEvents(int batchSize, Action<IReadOnlyList<IAggregateEvent>> handleEvents)
+   public void StreamEvents(int batchSize, Action<IReadOnlyList<IAggregateTevent>> handleEvents)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -144,7 +144,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
       }
    }
 
-   public void SaveSingleAggregateEvents(IReadOnlyList<IAggregateEvent> aggregateEvents)
+   public void SaveSingleAggregateEvents(IReadOnlyList<IAggregateTevent> aggregateEvents)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -160,7 +160,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
       var specifications = aggregateEvents.Select(@event => cacheEntry.CreateInsertionSpecificationForNewEvent(@event)).ToArray();
 
       var eventRows = aggregateEvents
-                     .Select(@event => new EventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewEvent(@event), _typeMapper.GetId(@event.GetType()).GuidValue, eventAsJson: _serializer.Serialize((AggregateEvent)@event)))
+                     .Select(@event => new EventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewEvent(@event), _typeMapper.GetId(@event.GetType()).GuidValue, eventAsJson: _serializer.Serialize((AggregateTevent)@event)))
                      .ToList();
 
       eventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.AggregateVersion);
@@ -168,7 +168,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
       var completeAggregateHistory = cacheEntry
                                     .Events.Concat(aggregateEvents)
-                                    .Cast<AggregateEvent>()
+                                    .Cast<AggregateTevent>()
                                     .ToArray();
       SingleAggregateInstanceEventStreamMutator.AssertMigrationsAreIdempotent(_migrationFactories, completeAggregateHistory);
       AggregateHistoryValidator.ValidateHistory(aggregateId, completeAggregateHistory);
@@ -188,7 +188,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 
    public IEnumerable<Guid> StreamAggregateIdsInCreationOrder(Type? eventBaseType = null)
    {
-      Assert.Argument.Is(eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateEvent).IsAssignableFrom(eventBaseType));
+      Assert.Argument.Is(eventBaseType == null || eventBaseType.IsInterface && typeof(IAggregateTevent).IsAssignableFrom(eventBaseType));
       _usageGuard.EnsureAccessValid();
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -197,9 +197,9 @@ namespace Compze.Tessaging.Teventive.EventStore;
                               .Select(it => it.AggregateId);
    }
 
-   class AggregateEventWithRefactoringInformation(AggregateEvent @event, AggregateEventStorageInformation storageInformation)
+   class AggregateEventWithRefactoringInformation(AggregateTevent tevent, AggregateEventStorageInformation storageInformation)
    {
-      internal AggregateEvent Event { get; } = @event;
+      internal AggregateTevent Tevent { get; } = tevent;
       internal AggregateEventStorageInformation StorageInformation { get; } = storageInformation;
    }
 

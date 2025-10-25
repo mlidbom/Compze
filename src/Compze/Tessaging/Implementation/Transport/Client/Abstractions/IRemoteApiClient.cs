@@ -5,7 +5,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 
 interface IRemoteApiClient
 {
-   Task<TResult> QueryAsync<TResult>(IRemotableQuery<TResult> query);
-   Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command);
-   Task PostAsync(IAtMostOnceHypermediaCommand command);
+   Task<TResult> QueryAsync<TResult>(IRemotableTuery<TResult> tuery);
+   Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand);
+   Task PostAsync(IAtMostOnceHypermediaTommand tommand);
 }

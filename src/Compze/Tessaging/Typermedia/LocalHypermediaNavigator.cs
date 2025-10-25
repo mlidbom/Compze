@@ -30,38 +30,38 @@ class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
-   public TResult Execute<TResult>(IStrictlyLocalCommand<TResult> command)
+   public TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand)
    {
-      CommonAssertion(command);
+      CommonAssertion(tommand);
 
-      var commandHandler = _handlerRegistry.GetCommandHandler(command);
-      return commandHandler.Invoke(command);
+      var commandHandler = _handlerRegistry.GetCommandHandler(tommand);
+      return commandHandler.Invoke(tommand);
    }
 
-   public void Execute(IStrictlyLocalCommand command)
+   public void Execute(IStrictlyLocalTommand tommand)
    {
-      CommonAssertion(command);
+      CommonAssertion(tommand);
 
-      var commandHandler = _handlerRegistry.GetCommandHandler(command);
-      commandHandler.Invoke(command);
+      var commandHandler = _handlerRegistry.GetCommandHandler(tommand);
+      commandHandler.Invoke(tommand);
    }
 
-   public TResult Execute<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>
+   public TResult Execute<TQuery, TResult>(IStrictlyLocalTuery<TQuery, TResult> tuery) where TQuery : IStrictlyLocalTuery<TQuery, TResult>
    {
-      CommonAssertion(query);
+      CommonAssertion(tuery);
 
       // ReSharper disable once SuspiciousTypeConversion.Global
       //Todo: Test and stop disabling ReSharper warning
-      if(query is ICreateMyOwnResultQuery<TResult> selfCreating)
+      if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return selfCreating.CreateResult();
 
-      var queryHandler = _handlerRegistry.GetQueryHandler(query);
-      return queryHandler.Invoke(query);
+      var queryHandler = _handlerRegistry.GetQueryHandler(tuery);
+      return queryHandler.Invoke(tuery);
    }
 
-   void CommonAssertion(IMessage message)
+   void CommonAssertion(ITessage tessage)
    {
       _contextGuard.EnsureAccessValid();
-      MessageInspector.AssertValidToExecuteLocally(message);
+      MessageInspector.AssertValidToExecuteLocally(tessage);
    }
 }

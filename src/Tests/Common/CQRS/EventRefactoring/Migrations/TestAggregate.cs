@@ -12,40 +12,40 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations
 {
-    public interface IRootEvent : IAggregateEvent;
+    public interface IRootTevent : IAggregateTevent;
 
-    public abstract class RootEvent : AggregateEvent, IRootEvent;
+    public abstract class RootTevent : AggregateTevent, IRootTevent;
 
     namespace Events
     {
-        public abstract class EcAbstract : RootEvent, IAggregateCreatedEvent;
+        public abstract class EcAbstract : RootTevent, IAggregateCreatedTevent;
 
         // ReSharper disable ClassNeverInstantiated.Global
         public class Ec1 : EcAbstract;
         public class Ec2 : EcAbstract;
         public class Ec3 : EcAbstract;
-        public class E1 : RootEvent;
-        public class E2 : RootEvent;
-        public class E3 : RootEvent;
-        public class E4 : RootEvent;
-        public class E5 : RootEvent;
-        public class E6 : RootEvent;
-        public class E7 : RootEvent;
-        public class E8 : RootEvent;
-        public class E9 : RootEvent;
-        public class Ef : RootEvent;
+        public class E1 : RootTevent;
+        public class E2 : RootTevent;
+        public class E3 : RootTevent;
+        public class E4 : RootTevent;
+        public class E5 : RootTevent;
+        public class E6 : RootTevent;
+        public class E7 : RootTevent;
+        public class E8 : RootTevent;
+        public class E9 : RootTevent;
+        public class Ef : RootTevent;
         // ReSharper restore ClassNeverInstantiated.Global
     }
 
-    public class TestAggregate : Aggregate<TestAggregate, IRootEvent, RootEvent>
+    public class TestAggregate : Aggregate<TestAggregate, IRootTevent, RootTevent>
     {
-        public void Publish(params RootEvent[] events)
+        public void Publish(params RootTevent[] events)
         {
 #pragma warning disable 618 //Reviewed OK: This test class is allowed to use these "obsolete" methods.
             if (GetIdBypassContractValidation() == Guid.Empty && events.First().AggregateId == Guid.Empty)
             {
                 SetIdBeVerySureYouKnowWhatYouAreDoing(Guid.NewGuid());
-                events.Cast<IMutableAggregateEvent>().First().SetAggregateIdInternal(Id);
+                events.Cast<IMutableAggregateTevent>().First().SetAggregateIdInternal(Id);
 #pragma warning restore 618
             }
 
@@ -64,12 +64,12 @@ namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations
         void SetupAppliers()
         {
             RegisterEventAppliers()
-                .For<IRootEvent>(e => _history.Add(e));
+                .For<IRootTevent>(e => _history.Add(e));
         }
 
-        public TestAggregate(IUtcTimeTimeSource timeSource, params RootEvent[] events):this(timeSource)
+        public TestAggregate(IUtcTimeTimeSource timeSource, params RootTevent[] events):this(timeSource)
         {
-           if(events.First() is not IAggregateCreatedEvent) throw new Exception($"First event must be {nameof(IAggregateCreatedEvent)}");
+           if(events.First() is not IAggregateCreatedTevent) throw new Exception($"First event must be {nameof(IAggregateCreatedTevent)}");
 
             Publish(events);
         }
@@ -78,17 +78,17 @@ namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations
         {
             var rootEvents = events.ToEvents();
 #pragma warning disable CS0618 // Type or member is obsolete
-            rootEvents.Cast<IMutableAggregateEvent>().First().SetAggregateIdInternal(id ?? Guid.NewGuid());
+            rootEvents.Cast<IMutableAggregateTevent>().First().SetAggregateIdInternal(id ?? Guid.NewGuid());
 #pragma warning restore CS0618 // Type or member is obsolete
             return new TestAggregate(timeSource, rootEvents);
         }
 
-        readonly List<IRootEvent> _history = [];
-        public IReadOnlyList<IAggregateEvent> History => _history;
+        readonly List<IRootTevent> _history = [];
+        public IReadOnlyList<IAggregateTevent> History => _history;
     }
 
     static class EventSequenceGenerator
     {
-        public static RootEvent[] ToEvents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<RootEvent>().ToArray();
+        public static RootTevent[] ToEvents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<RootTevent>().ToArray();
     }
 }

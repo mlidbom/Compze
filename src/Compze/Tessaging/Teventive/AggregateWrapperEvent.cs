@@ -3,5 +3,5 @@ using Compze.Abstractions.Tessaging.Teventive.Public;
 
 namespace Compze.Tessaging.Teventive;
 
-public abstract class AggregateWrapperEvent<TBaseEventInterface>(TBaseEventInterface @event) : WrapperEvent<TBaseEventInterface>(@event), IAggregateWrapperEvent<TBaseEventInterface>
-   where TBaseEventInterface : IAggregateEvent;
+public abstract class AggregateWrapperTevent<TBaseEventInterface>(TBaseEventInterface @event) : WrapperTevent<TBaseEventInterface>(@event), IAggregateWrapperTevent<TBaseEventInterface>
+   where TBaseEventInterface : IAggregateTevent;

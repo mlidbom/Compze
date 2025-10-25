@@ -38,7 +38,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
             builder.Container.Register()
                    .AspNetCoreTransport()
                    .CurrentTestsConfiguredSqlLayer();
-            builder.RegisterHandlers.ForCommand<ScheduledCommand>(_ => _receivedCommandGate.AwaitPassThrough());
+            builder.RegisterHandlers.ForCommand<ScheduledTommand>(_ => _receivedCommandGate.AwaitPassThrough());
          });
    }
 
@@ -55,7 +55,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
    [PCT]  public void Messages_whose_due_time_has_passed_are_delivered()
    {
       var now = _timeSource.UtcNow;
-      var inOneHour = new ScheduledCommand();
+      var inOneHour = new ScheduledTommand();
 
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + .2.Seconds(), inOneHour));
 
@@ -65,12 +65,12 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
    [PCT]  public void Messages_whose_due_time_have_not_passed_are_not_delivered()
    {
       var now = _timeSource.UtcNow;
-      var inOneHour = new ScheduledCommand();
+      var inOneHour = new ScheduledTommand();
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 
       _receivedCommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: .5.Seconds())
                           .Should().Be(false);
    }
 
-   internal class ScheduledCommand : MessageTypes.Remotable.ExactlyOnce.Command;
+   internal class ScheduledTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 }

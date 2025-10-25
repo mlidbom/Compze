@@ -64,35 +64,35 @@ partial class TransportClient
          }
       }
 
-      internal IInboxConnection ConnectionToHandlerFor(IRemotableCommand command) =>
-         _commandHandlerRoutes.TryGetValue(command.GetType(), out var connection)
+      internal IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
+         _commandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
             ? connection
-            : throw new NoHandlerForMessageTypeException(command.GetType());
+            : throw new NoHandlerForMessageTypeException(tommand.GetType());
 
-      internal IInboxConnection ConnectionToHandlerFor<TQuery>(IRemotableQuery<TQuery> query) =>
-         _queryHandlerRoutes.TryGetValue(query.GetType(), out var connection)
+      internal IInboxConnection ConnectionToHandlerFor<TQuery>(IRemotableTuery<TQuery> tuery) =>
+         _queryHandlerRoutes.TryGetValue(tuery.GetType(), out var connection)
             ? connection
-            : throw new NoHandlerForMessageTypeException(query.GetType());
+            : throw new NoHandlerForMessageTypeException(tuery.GetType());
 
-      internal IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceEvent @event)
+      internal IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent)
       {
-         if(_eventSubscriberRouteCache.TryGetValue(@event.GetType(), out var connection)) return connection;
+         if(_eventSubscriberRouteCache.TryGetValue(tevent.GetType(), out var connection)) return connection;
 
          var subscriberConnections = _eventSubscriberRoutes
-                                    .Where(route => route.EventType.IsInstanceOfType(@event))
+                                    .Where(route => route.EventType.IsInstanceOfType(tevent))
                                     .Select(route => route.Connection)
                                     .ToArray();
 
          using(_monitor.TakeUpdateLock())
          {
-             OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventSubscriberRouteCache, @event.GetType(), subscriberConnections);
+             OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventSubscriberRouteCache, tevent.GetType(), subscriberConnections);
          }
 
          return subscriberConnections;
       }
 
-      static bool IsRemoteCommand(Type type) => typeof(IRemotableCommand).IsAssignableFrom(type);
-      static bool IsRemoteEvent(Type type) => typeof(IExactlyOnceEvent).IsAssignableFrom(type);
-      static bool IsRemoteQuery(Type type) => typeof(IRemotableQuery<object>).IsAssignableFrom(type);
+      static bool IsRemoteCommand(Type type) => typeof(IRemotableTommand).IsAssignableFrom(type);
+      static bool IsRemoteEvent(Type type) => typeof(IExactlyOnceTevent).IsAssignableFrom(type);
+      static bool IsRemoteQuery(Type type) => typeof(IRemotableTuery<object>).IsAssignableFrom(type);
    }
 }

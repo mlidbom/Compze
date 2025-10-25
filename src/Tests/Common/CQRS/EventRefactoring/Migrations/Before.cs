@@ -10,7 +10,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
 
-public class Before<TEvent> : EventMigration<IRootEvent>
+public class Before<TEvent> : EventMigration<IRootTevent>
 {
    readonly IEnumerable<Type> _insert;
 
@@ -26,14 +26,14 @@ public class Before<TEvent> : EventMigration<IRootEvent>
       readonly IEnumerable<Type> _insert = insert;
       Type? _lastSeenEventType;
 
-      public void MigrateEvent(IAggregateEvent @event, IEventModifier modifier)
+      public void MigrateEvent(IAggregateTevent tevent, IEventModifier modifier)
       {
-         if (@event.GetType() == typeof(TEvent) && _lastSeenEventType != _insert.Last())
+         if (tevent.GetType() == typeof(TEvent) && _lastSeenEventType != _insert.Last())
          {
-            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<AggregateEvent>().ToArray());
+            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<AggregateTevent>().ToArray());
          }
 
-         _lastSeenEventType = @event.GetType();
+         _lastSeenEventType = tevent.GetType();
       }
    }
 }

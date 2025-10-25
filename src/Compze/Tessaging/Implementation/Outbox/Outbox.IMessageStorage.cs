@@ -12,7 +12,7 @@ partial class Outbox
 {
    public interface IMessageStorage
    {
-      void SaveMessage(IExactlyOnceMessage message, params EndpointId[] receiverEndpointIds);
+      void SaveMessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds);
       void MarkAsReceived(Guid messageId, EndpointId receiverId);
       void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, Exception? exception);
       IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan);

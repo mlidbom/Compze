@@ -18,7 +18,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       FluentActions.Invoking(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
                     {
                        Transaction.Current!.FailOnPrepare();
-                       session.Send(new MyExactlyOnceCommand());
+                       session.Send(new MyExactlyOnceTommand());
                     }))
                    .Should().Throw<TransactionAbortedException>();
 
@@ -32,7 +32,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       const string exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
 
-      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateCommand.Create())));
+      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateTommand.Create())));
 
       backendException.InnerException!.Message.Should().Contain(exceptionMessage);
       frontEndException.Message.Should().Contain(exceptionMessage);

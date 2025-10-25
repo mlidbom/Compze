@@ -32,9 +32,6 @@
   <Folder Name="/Compze/Tessaging/">
     <Project Path="Compze/Tessaging/Compze.Tessaging.csproj" />
   </Folder>
-  <Folder Name="/Compze/Tessaging/Common/">
-    <Project Path="Compze/Tessaging/Common/Compze.Tessaging.Common.csproj" />
-  </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/">
     <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
   </Folder>

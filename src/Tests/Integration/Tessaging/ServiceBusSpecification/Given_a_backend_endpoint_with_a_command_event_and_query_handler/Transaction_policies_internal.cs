@@ -12,22 +12,22 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_bac
 public class Transaction_policies_internal : EndpointHostTestBase
 {
    [PCT] public async Task Calling_PostRemoteAsync_within_a_transaction_with_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
-      await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceCommandWithResult.Create()))))
+      await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceTommandWithResult.Create()))))
            .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public async Task Calling_GetRemoteAsync_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
-      await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery()))))
+      await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyTuery()))))
            .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_PostRemoteAsync_within_a_transaction_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
-      Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Post(MyAtMostOnceCommandWithResult.Create()))))
+      Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Post(MyAtMostOnceTommandWithResult.Create()))))
         .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_PostRemoteAsync_without_a_transaction_with_ExactlyOnceCommand_throws_TransactionPolicyViolationException() =>
-      Invoking(() => RemoteEndpoint.ExecuteServerRequest(session => session.Send(new MyExactlyOnceCommand())))
+      Invoking(() => RemoteEndpoint.ExecuteServerRequest(session => session.Send(new MyExactlyOnceTommand())))
         .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_GetRemote_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
-      Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery()))))
+      Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()))))
         .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
 }

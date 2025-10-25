@@ -9,5 +9,5 @@ public interface IEndpointBuilder : IDisposable
 {
     IDependencyInjectionContainer Container { get; }
     EndpointConfiguration Configuration { get; }
-    MessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+    TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 }

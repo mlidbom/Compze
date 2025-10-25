@@ -37,9 +37,9 @@ public class EventStoreUpdaterTest : UniversalTestBase
 {
    class EventSpy
    {
-      public IEnumerable<IExactlyOnceEvent> DispatchedMessages => _events.ToList();
-      public void Receive(IExactlyOnceEvent @event) => _events.Add(@event);
-      readonly List<IExactlyOnceEvent> _events = [];
+      public IEnumerable<IExactlyOnceTevent> DispatchedMessages => _events.ToList();
+      public void Receive(IExactlyOnceTevent tevent) => _events.Add(tevent);
+      readonly List<IExactlyOnceTevent> _events = [];
    }
 
    readonly EventSpy _eventSpy;
@@ -51,8 +51,8 @@ public class EventStoreUpdaterTest : UniversalTestBase
 
       _eventSpy = new EventSpy();
 
-      _serviceLocator.Resolve<IMessageHandlerRegistrar>()
-                     .ForEvent<IExactlyOnceEvent>(_eventSpy.Receive);
+      _serviceLocator.Resolve<ITessageHandlerRegistrar>()
+                     .ForEvent<IExactlyOnceTevent>(_eventSpy.Receive);
    }
 
    protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync().AsTask();
@@ -476,7 +476,7 @@ public class EventStoreUpdaterTest : UniversalTestBase
       {
          _eventSpy.DispatchedMessages.Count().Should().Be(18);
 
-         var dispatchedEvents = _eventSpy.DispatchedMessages.OfType<IAggregateEvent>().ToList();
+         var dispatchedEvents = _eventSpy.DispatchedMessages.OfType<IAggregateTevent>().ToList();
          dispatchedEvents.Select(e => e.MessageId).Distinct().Count().Should().Be(18);
 
          var allPersistedEvents = _serviceLocator.EventStore().ListAllEventsForTestingPurposesAbsolutelyNotUsableForARealEventStoreOfAnySize();

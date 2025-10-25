@@ -8,8 +8,8 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Tessaging;
 
-interface INonGenericWrapperEvent : IWrapperEvent<IEvent>;
-interface INonCovariantTypeParameterWrapperEvent : IWrapperEvent<IEvent>;
+interface INonGenericWrapperTevent : IWrapperTevent<ITevent>;
+interface INonCovariantTypeParameterWrapperTevent : IWrapperTevent<ITevent>;
 
 public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_ : UniversalTestBase
 {
@@ -20,9 +20,9 @@ public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_
    {
       public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
-         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
+         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperTevent>();
 
-         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperEvent>();
+         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperTevent>();
       }
    }
 
@@ -30,33 +30,33 @@ public class MessageTypeInspector_throws_MessageTypeDesignViolationException_if_
    {
       public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
       {
-         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperEvent>();
+         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperTevent>();
 
-         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperEvent>();
+         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperTevent>();
       }
 
       interface INotMessage;
       [XF] public void Is_not_IMessage() => AssertInvalidForSending<INotMessage>();
 
-      interface ICommandAndEvent : IEvent, ICommand;
-      [XF] public void Is_Both_command_and_event() => AssertInvalidForSending<ICommandAndEvent>();
+      interface ITommandAndTevent : ITevent, ITommand;
+      [XF] public void Is_Both_command_and_event() => AssertInvalidForSending<ITommandAndTevent>();
 
-      interface ICommandAndQuery : IEvent, IQuery<object>;
-      [XF] public void Is_Both_command_and_query() => AssertInvalidForSending<ICommandAndQuery>();
+      interface ICommandAndTuery : ITevent, ITuery<object>;
+      [XF] public void Is_Both_command_and_query() => AssertInvalidForSending<ICommandAndTuery>();
 
-      interface IStrictlyLocalAndRemotable : IRemotableMessage, IStrictlyLocalMessage;
+      interface IStrictlyLocalAndRemotable : IRemotableTessage, IStrictlyLocalMessage;
       [XF] public void Is_Both_strictly_local_and_remotable() => AssertInvalidForSending<IStrictlyLocalAndRemotable>();
 
       interface IForbidAndRequireTransactionalSender : IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction;
       [XF] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
 
 #pragma warning disable CA1812 //uninstantiated class 
-      internal class AtMostOnceCommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaCommand
+      internal class AtMostOnceTommandSettingMessageIdInDefaultConstructor : IAtMostOnceHypermediaTommand
       {
          public Guid MessageId { get; } = Guid.NewGuid();
       }
 #pragma warning restore CA1812 //uninstantiated class 
 
-      [XF] public void Is_at_most_once_command_and_sets_MessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceCommandSettingMessageIdInDefaultConstructor>();
+      [XF] public void Is_at_most_once_command_and_sets_MessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceTommandSettingMessageIdInDefaultConstructor>();
    }
 }

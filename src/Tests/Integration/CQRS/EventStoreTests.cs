@@ -15,15 +15,15 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS;
 
-interface ISomeEvent : IAggregateEvent;
+interface ISomeTevent : IAggregateTevent;
 
-class SomeEvent : AggregateEvent, ISomeEvent
+class SomeTevent : AggregateTevent, ISomeTevent
 {
-   public SomeEvent(Guid aggregateId, int version) : base(aggregateId)
+   public SomeTevent(Guid aggregateId, int version) : base(aggregateId)
    {
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableAggregateEvent)this).SetAggregateVersionInternal(version);
-      ((IMutableAggregateEvent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
+      ((IMutableAggregateTevent)this).SetAggregateVersionInternal(version);
+      ((IMutableAggregateTevent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
 #pragma warning restore CS0618 // Type or member is obsolete
    }
 }
@@ -40,7 +40,7 @@ public class EventStoreTests : UniversalTestBase
    {
       var aggregateId = Guid.NewGuid();
       TransactionScopeCe.Execute(() => EventStore.SaveSingleAggregateEvents(1.Through(10)
-                                                                             .Select(i => new SomeEvent(aggregateId, i)).ToList()));
+                                                                             .Select(i => new SomeTevent(aggregateId, i)).ToList()));
       var stream = EventStore.ListAllEventsForTestingPurposesAbsolutelyNotUsableForARealEventStoreOfAnySize();
 
       stream.Should()
@@ -55,7 +55,7 @@ public class EventStoreTests : UniversalTestBase
       var aggregateId = Guid.NewGuid();
 
       TransactionScopeCe.Execute(() => EventStore.SaveSingleAggregateEvents(1.Through(moreEventsThanTheBatchSizeForStreamingEvents)
-                                                                             .Select(i => new SomeEvent(aggregateId, i)).ToList()));
+                                                                             .Select(i => new SomeTevent(aggregateId, i)).ToList()));
 
       var stream = EventStore.ListAllEventsForTestingPurposesAbsolutelyNotUsableForARealEventStoreOfAnySize(batchSize: batchSize)
                              .ToList();
@@ -79,7 +79,7 @@ public class EventStoreTests : UniversalTestBase
                                                 {
                                                    var aggregateId = Guid.NewGuid();
                                                    return 1.Through(10)
-                                                           .Select(j => new SomeEvent(aggregateId, j))
+                                                           .Select(j => new SomeTevent(aggregateId, j))
                                                            .ToList();
                                                 });
 
@@ -107,7 +107,7 @@ public class EventStoreTests : UniversalTestBase
                                                 {
                                                    var aggregateId = Guid.NewGuid();
                                                    return 1.Through(10)
-                                                           .Select(j => new SomeEvent(aggregateId, j))
+                                                           .Select(j => new SomeTevent(aggregateId, j))
                                                            .ToList();
                                                 });
 
@@ -128,12 +128,12 @@ public class EventStoreTests : UniversalTestBase
                                                 {
                                                    var aggregateId = Guid.NewGuid();
                                                    return 1.Through(10)
-                                                           .Select(j => new SomeEvent(aggregateId, j))
+                                                           .Select(j => new SomeTevent(aggregateId, j))
                                                            .ToList();
                                                 });
 
       TransactionScopeCe.Execute(() => aggregatesWithEvents.ForEach(it => EventStore.SaveSingleAggregateEvents(it.Value)));
-      var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder<ISomeEvent>()
+      var allAggregateIds = EventStore.StreamAggregateIdsInCreationOrder<ISomeTevent>()
                                       .ToList();
       allAggregateIds.Should().HaveCount(aggregatesWithEvents.Count);
    });

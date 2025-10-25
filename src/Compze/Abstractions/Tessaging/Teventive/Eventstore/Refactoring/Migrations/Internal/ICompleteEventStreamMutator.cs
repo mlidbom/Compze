@@ -6,5 +6,5 @@ namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Refactoring.Migrati
 
 interface ICompleteEventStreamMutator
 {
-   IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream);
+   IEnumerable<AggregateTevent> Mutate(IEnumerable<AggregateTevent> eventStream);
 }

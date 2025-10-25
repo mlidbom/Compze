@@ -60,31 +60,31 @@ partial class TransportClient : ITransportClient, IDisposable
       _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledMessageTypes);
    }
 
-   public IInboxConnection ConnectionToHandlerFor(IRemotableCommand command) =>
-      AssertRunning().then(() => _router.ConnectionToHandlerFor(command));
+   public IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
+      AssertRunning().then(() => _router.ConnectionToHandlerFor(tommand));
 
-   public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceEvent @event) =>
-      AssertRunning().then(() => _router.SubscriberConnectionsFor(@event));
+   public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
+      AssertRunning().then(() => _router.SubscriberConnectionsFor(tevent));
 
-   public async Task PostAsync(IAtMostOnceHypermediaCommand atMostOnceCommand)
+   public async Task PostAsync(IAtMostOnceHypermediaTommand atMostOnceTommand)
    {
       AssertRunning();
-      var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-      await connection.PostAsync(atMostOnceCommand).caf();
+      var connection = _router.ConnectionToHandlerFor(atMostOnceTommand);
+      await connection.PostAsync(atMostOnceTommand).caf();
    }
 
-   public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> atMostOnceCommand)
+   public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceTommand<TCommandResult> atMostOnceTommand)
    {
       AssertRunning();
-      var connection = _router.ConnectionToHandlerFor(atMostOnceCommand);
-      return await connection.PostAsync(atMostOnceCommand).caf();
+      var connection = _router.ConnectionToHandlerFor(atMostOnceTommand);
+      return await connection.PostAsync(atMostOnceTommand).caf();
    }
 
-   public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query)
+   public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableTuery<TQueryResult> tuery)
    {
       AssertRunning();
-      var connection = _router.ConnectionToHandlerFor(query);
-      return await connection.GetAsync(query).caf();
+      var connection = _router.ConnectionToHandlerFor(tuery);
+      return await connection.GetAsync(tuery).caf();
    }
 
    public void Start() => Assert.State.Is(!_running, () => "already running")

@@ -9,9 +9,9 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain
 
 static partial class RootEvent
 {
-   public interface IRoot : IAggregateEvent;
+   public interface IRoot : IAggregateTevent;
 
-   interface Created : IAggregateCreatedEvent, PropertyUpdated.Name;
+   interface Created : IAggregateCreatedTevent, PropertyUpdated.Name;
 
    public static class PropertyUpdated
    {
@@ -23,7 +23,7 @@ static partial class RootEvent
 
    internal static class Implementation
    {
-      public abstract class Root : AggregateEvent, IRoot
+      public abstract class Root : AggregateTevent, IRoot
       {
          protected Root() { }
          protected Root(Guid aggregateId) : base(aggregateId) { }

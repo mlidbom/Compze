@@ -26,9 +26,9 @@ static class InMemoryEventStoreEventPublisherRegistrar
 
    public InMemoryEventStoreEventPublisher(IMessageHandlerRegistry handlerRegistry) => _handlerRegistry = handlerRegistry;
 
-   void IEventStoreEventPublisher.Publish(IAggregateEvent @event)
+   void IEventStoreEventPublisher.Publish(IAggregateTevent tevent)
    {
-      MessageInspector.AssertValidToSendRemote(@event);
-      _handlerRegistry.CreateEventDispatcher().Dispatch(@event);
+      MessageInspector.AssertValidToSendRemote(tevent);
+      _handlerRegistry.CreateEventDispatcher().Dispatch(tevent);
    }
 }

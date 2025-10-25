@@ -8,7 +8,7 @@ namespace Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQuery
 
 public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
-   where TAggregateEvent : class, IAggregateEvent
+   where TAggregateEvent : class, IAggregateTevent
 {
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
    public abstract class Entity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter> : Component<TEntity, TEntityEvent>

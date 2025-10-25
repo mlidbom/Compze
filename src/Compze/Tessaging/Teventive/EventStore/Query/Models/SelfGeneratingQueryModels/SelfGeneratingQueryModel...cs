@@ -10,7 +10,7 @@ namespace Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQuery
 
 public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : VersionedPersistentEntity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
-   where TAggregateEvent : class, IAggregateEvent
+   where TAggregateEvent : class, IAggregateTevent
 {
    //Yes empty. Id should be assigned by an action, and it should be obvious that the aggregate in invalid until that happens
    protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TAggregateEvent).IsInterface);
@@ -21,7 +21,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
 
    public void ApplyEvent(TAggregateEvent theEvent)
    {
-      if(theEvent is IAggregateCreatedEvent)
+      if(theEvent is IAggregateCreatedTevent)
       {
 #pragma warning disable 618 //Reviewed OK: This is precisely the type of internal code this is supposed to use this "obsolete" method.
          SetIdBeVerySureYouKnowWhatYouAreDoing(theEvent.AggregateId);
@@ -34,7 +34,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent> : Ve
 
    public bool HandlesEvent(TAggregateEvent @event) => _eventDispatcher.Handles(@event);
 
-   public void LoadFromHistory(IEnumerable<IAggregateEvent> history)
+   public void LoadFromHistory(IEnumerable<IAggregateTevent> history)
    {
       Assert.State.Is(Version == 0);
       history.ForEach(theEvent => ApplyEvent((TAggregateEvent)theEvent));

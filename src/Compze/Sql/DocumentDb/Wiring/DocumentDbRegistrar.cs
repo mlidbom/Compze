@@ -22,7 +22,7 @@ public static class DocumentDbRegistrar
 
 public class DocumentDbRegistrationBuilder
 {
-   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
       DocumentDbApi.HandleDocumentType<TDocument>(registrar);
       return this;

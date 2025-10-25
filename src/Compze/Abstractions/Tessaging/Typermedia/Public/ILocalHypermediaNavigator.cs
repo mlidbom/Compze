@@ -5,12 +5,12 @@ namespace Compze.Abstractions.Tessaging.Typermedia.Public;
 ///<summary>Dispatches messages within a process.</summary>
 public interface IInProcessHypermediaNavigator
 {
-   ///<summary>Synchronously executes local handler for <paramref name="query"/>. The handler takes part in the active transaction and guarantees consistent results within a transaction.</summary>
-   TResult Execute<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>;
+   ///<summary>Synchronously executes local handler for <paramref name="tuery"/>. The handler takes part in the active transaction and guarantees consistent results within a transaction.</summary>
+   TResult Execute<TQuery, TResult>(IStrictlyLocalTuery<TQuery, TResult> tuery) where TQuery : IStrictlyLocalTuery<TQuery, TResult>;
 
-   ///<summary>Synchronously executes local handler for <paramref name="command"/>. The handler takes part in the active transaction and guarantees consistent results within a transaction.</summary>
-   TResult Execute<TResult>(IStrictlyLocalCommand<TResult> command);
+   ///<summary>Synchronously executes local handler for <paramref name="tommand"/>. The handler takes part in the active transaction and guarantees consistent results within a transaction.</summary>
+   TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand);
 
-   ///<summary>Synchronously executes local handler for <paramref name="command"/>. The handler takes part in the active transaction and guarantees consistent results within a transaction.</summary>
-   void Execute(IStrictlyLocalCommand command);
+   ///<summary>Synchronously executes local handler for <paramref name="tommand"/>. The handler takes part in the active transaction and guarantees consistent results within a transaction.</summary>
+   void Execute(IStrictlyLocalTommand tommand);
 }

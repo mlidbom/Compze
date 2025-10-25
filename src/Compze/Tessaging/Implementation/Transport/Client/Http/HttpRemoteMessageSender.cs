@@ -26,17 +26,17 @@ class HttpRemoteMessageSender(
    readonly string _remoteAddress = remoteAddress.AspNetAddress;
    readonly EndpointId _remoteEndpointId = remoteEndpointId;
 
-   public async Task SendAsync(IExactlyOnceCommand command)
+   public async Task SendAsync(IExactlyOnceTommand tommand)
    {
-      var outGoingMessage = TransportMessage.OutGoing.Create(command, _typeMapper, _serializer);
+      var outGoingMessage = TransportMessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _messagesInFlightTracker.SendingMessageOnTransport(outGoingMessage, _remoteEndpointId);
-      await _transportClient.PostAsync(outGoingMessage, command, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Command}")).caf();
+      await _transportClient.PostAsync(outGoingMessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Command}")).caf();
    }
 
-   public async Task SendAsync(IExactlyOnceEvent @event)
+   public async Task SendAsync(IExactlyOnceTevent tevent)
    {
-      var message = TransportMessage.OutGoing.Create(@event, _typeMapper, _serializer);
+      var message = TransportMessage.OutGoing.Create(tevent, _typeMapper, _serializer);
       _messagesInFlightTracker.SendingMessageOnTransport(message, _remoteEndpointId);
-      await _transportClient.PostAsync(message, @event, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Event}")).caf();
+      await _transportClient.PostAsync(message, tevent, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Event}")).caf();
    }
 }

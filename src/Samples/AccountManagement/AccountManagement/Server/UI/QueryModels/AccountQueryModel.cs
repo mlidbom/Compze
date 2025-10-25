@@ -40,13 +40,13 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountEve
       internal Query Queries => new();
       internal class Query
       {
-         public MessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
+         public TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
       }
 
-      public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
+      public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
 
-      static void Get(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-         (MessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> query, IInProcessHypermediaNavigator navigator) =>
+      static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
+         (TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> query, IInProcessHypermediaNavigator navigator) =>
             new AccountQueryModel(navigator.Execute(new EventStoreApi().Queries.GetHistory<AccountEvent.Root>(query.EntityId))));
    }
 }

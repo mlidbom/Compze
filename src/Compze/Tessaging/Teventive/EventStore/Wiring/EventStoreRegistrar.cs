@@ -50,12 +50,12 @@ public static class EventStoreRegistrar
 
 public class EventStoreRegistrationBuilder
 {
-   readonly MessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
-   internal EventStoreRegistrationBuilder(MessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
+   readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
+   internal EventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
 
    public EventStoreRegistrationBuilder HandleAggregate<TAggregate, TEvent>()
       where TAggregate : class, IEventStored<TEvent>
-      where TEvent : IAggregateEvent
+      where TEvent : IAggregateTevent
    {
       EventStoreApi.RegisterHandlersForAggregate<TAggregate, TEvent>(_handlerRegistrar);
       return this;

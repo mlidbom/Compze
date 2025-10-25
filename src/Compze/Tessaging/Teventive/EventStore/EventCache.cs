@@ -88,27 +88,27 @@ class EventCache : IDisposable, IEventCache
          MaxSeenInsertedVersion = 0;
       }
 
-      public IReadOnlyList<AggregateEvent> Events { get; private set; }
+      public IReadOnlyList<AggregateTevent> Events { get; private set; }
       public int MaxSeenInsertedVersion { get; private set; }
       int InsertedVersionToAggregateVersionOffset { get; }
 
-      public Entry(IReadOnlyList<AggregateEvent> events, int maxSeenInsertedVersion)
+      public Entry(IReadOnlyList<AggregateTevent> events, int maxSeenInsertedVersion)
       {
          Events = events;
          MaxSeenInsertedVersion = maxSeenInsertedVersion;
          InsertedVersionToAggregateVersionOffset = MaxSeenInsertedVersion - events[^1].AggregateVersion;
       }
 
-      public EventInsertionSpecification CreateInsertionSpecificationForNewEvent(IAggregateEvent @event)
+      public EventInsertionSpecification CreateInsertionSpecificationForNewEvent(IAggregateTevent tevent)
       {
          if(InsertedVersionToAggregateVersionOffset > 0)
          {
-            return new EventInsertionSpecification(@event: @event.ToAggregateEventData(),
-                                                   insertedVersion: @event.AggregateVersion + InsertedVersionToAggregateVersionOffset,
-                                                   effectiveVersion:@event.AggregateVersion);
+            return new EventInsertionSpecification(@event: tevent.ToAggregateEventData(),
+                                                   insertedVersion: tevent.AggregateVersion + InsertedVersionToAggregateVersionOffset,
+                                                   effectiveVersion:tevent.AggregateVersion);
          } else
          {
-            return new EventInsertionSpecification(@event:@event.ToAggregateEventData());
+            return new EventInsertionSpecification(@event:tevent.ToAggregateEventData());
          }
       }
    }

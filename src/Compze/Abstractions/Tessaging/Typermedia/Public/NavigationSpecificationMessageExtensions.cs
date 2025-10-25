@@ -6,16 +6,16 @@ namespace Compze.Abstractions.Tessaging.Typermedia.Public;
 
 public static class NavigationSpecificationMessageExtensions
 {
-   public static NavigationSpecification Post(this IAtMostOnceHypermediaCommand command) => NavigationSpecification.Post(command);
+   public static NavigationSpecification Post(this IAtMostOnceHypermediaTommand tommand) => NavigationSpecification.Post(tommand);
 
-   public static NavigationSpecification<TResult> Post<TResult>(this IAtMostOnceCommand<TResult> command) => NavigationSpecification.Post(command);
+   public static NavigationSpecification<TResult> Post<TResult>(this IAtMostOnceTommand<TResult> tommand) => NavigationSpecification.Post(tommand);
 
-   public static NavigationSpecification<TResult> Get<TResult>(this IRemotableQuery<TResult> query) => NavigationSpecification.Get(query);
+   public static NavigationSpecification<TResult> Get<TResult>(this IRemotableTuery<TResult> tuery) => NavigationSpecification.Get(tuery);
 
 
-   public static TResult PostOn<TResult>(this IAtMostOnceCommand<TResult> command, IRemoteHypermediaNavigator bus) => NavigationSpecification.Post(command).NavigateOn(bus);
+   public static TResult PostOn<TResult>(this IAtMostOnceTommand<TResult> tommand, IRemoteHypermediaNavigator bus) => NavigationSpecification.Post(tommand).NavigateOn(bus);
 
-   public static TResult GetOn<TResult>(this IRemotableQuery<TResult> query, IRemoteHypermediaNavigator bus) => NavigationSpecification.Get(query).NavigateOn(bus);
+   public static TResult GetOn<TResult>(this IRemotableTuery<TResult> tuery, IRemoteHypermediaNavigator bus) => NavigationSpecification.Get(tuery).NavigateOn(bus);
 
    public static TResult Navigate<TResult>(this IRemoteHypermediaNavigator navigator, NavigationSpecification<TResult> navigationSpecification) => navigationSpecification.NavigateOn(navigator);
 

@@ -12,7 +12,7 @@ public class Query_policies : EndpointHostTestBase
 {
    [PCT] public async Task The_same_query_can_be_reused_in_parallel_without_issues()
    {
-      var myQuery = new MyQuery();
+      var myQuery = new MyTuery();
 
       QueryHandlerThreadGate.Close();
 

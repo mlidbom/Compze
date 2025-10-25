@@ -51,7 +51,7 @@ class MessagesInFlightTracker(ITypeMapper typeMapper) : IMessagesInFlightTracker
       public void DoneWith(TransportMessage.InComing message, EndpointId handlingEndpointId, Exception? exception)
       {
          var messageType = _typeMapper.GetType(message.MessageTypeId);
-         if(messageType == typeof(MessageTypesInternal.EndpointInformationQuery))
+         if(messageType == typeof(MessageTypesInternal.EndpointInformationTuery))
             return; //this is an initial endpoint information request though which the endpoint IDs we use to track messages is first established.
          if(exception != null)
          {

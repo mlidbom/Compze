@@ -9,18 +9,18 @@ namespace Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 
 interface IMessageHandlerRegistry
 {
-    Action<object> GetCommandHandler(ICommand message);
+    Action<object> GetCommandHandler(ITommand message);
 
-    Action<ICommand> GetCommandHandler(Type commandType);
-    Func<ICommand, object> GetCommandHandlerWithReturnValue(Type commandType);
-    Func<IQuery<object>, object> GetQueryHandler(Type commandType);
-    IReadOnlyList<Action<IEvent>> GetEventHandlers(Type eventType);
+    Action<ITommand> GetCommandHandler(Type commandType);
+    Func<ITommand, object> GetCommandHandlerWithReturnValue(Type commandType);
+    Func<ITuery<object>, object> GetQueryHandler(Type commandType);
+    IReadOnlyList<Action<ITevent>> GetEventHandlers(Type eventType);
 
-    Func<IStrictlyLocalQuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>;
+    Func<IStrictlyLocalTuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalTuery<TQuery, TResult> tuery) where TQuery : IStrictlyLocalTuery<TQuery, TResult>;
 
-    Func<ICommand<TResult>, TResult> GetCommandHandler<TResult>(ICommand<TResult> command);
+    Func<ITommand<TResult>, TResult> GetCommandHandler<TResult>(ITommand<TResult> tommand);
 
-    IEventDispatcher<IEvent> CreateEventDispatcher();
+    IEventDispatcher<ITevent> CreateEventDispatcher();
 
     ISet<TypeId> HandledRemoteMessageTypeIds();
 }

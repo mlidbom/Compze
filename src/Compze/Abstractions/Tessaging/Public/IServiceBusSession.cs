@@ -6,8 +6,8 @@ namespace Compze.Abstractions.Tessaging.Public;
 public interface IServiceBusSession
 {
     ///<summary>Sends a command if the current transaction succeeds. The execution of the handler runs is a separate transaction at the receiver.</summary>
-    void Send(IExactlyOnceCommand command);
+    void Send(IExactlyOnceTommand tommand);
 
     ///<summary>Schedules a command to be sent later if the current transaction succeeds. The execution of the handler runs is a separate transaction at the receiver.</summary>
-    void ScheduleSend(DateTime sendAt, IExactlyOnceCommand command);
+    void ScheduleSend(DateTime sendAt, IExactlyOnceTommand tommand);
 }

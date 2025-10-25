@@ -49,10 +49,10 @@ partial class Outbox : IOutbox
       _retryPoller = retryPoller;
    }
 
-   public void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent)
+   public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceEvent)
+      var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch events to ourselves synchronously so don't go doing it again here.;
 
@@ -60,27 +60,27 @@ partial class Outbox : IOutbox
       if(connections.Length != 0)
       {
          var eventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
-         _storage.SaveMessage(exactlyOnceEvent, eventHandlerEndpointIds);
+         _storage.SaveMessage(exactlyOnceTevent, eventHandlerEndpointIds);
 
          Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
          {
-            subscriberConnection.SendAsync(exactlyOnceEvent)
-                                .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceEvent.MessageId));
+            subscriberConnection.SendAsync(exactlyOnceTevent)
+                                .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.MessageId));
          }));
       }
    }
 
-   public void SendTransactionally(IExactlyOnceCommand exactlyOnceCommand)
+   public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connection = _transportClient.ConnectionToHandlerFor(exactlyOnceCommand);
+      var connection = _transportClient.ConnectionToHandlerFor(exactlyOnceTommand);
 
-      _storage.SaveMessage(exactlyOnceCommand, connection.EndpointInformation.Id);
+      _storage.SaveMessage(exactlyOnceTommand, connection.EndpointInformation.Id);
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
-         connection.SendAsync(exactlyOnceCommand)
-                   .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceCommand.MessageId));
+         connection.SendAsync(exactlyOnceTommand)
+                   .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.MessageId));
       });
    }
 

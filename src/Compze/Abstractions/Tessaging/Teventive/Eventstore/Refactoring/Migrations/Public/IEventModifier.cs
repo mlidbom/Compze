@@ -5,6 +5,6 @@ namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Refactoring.Migrati
 
 public interface IEventModifier
 {
-   void Replace(params AggregateEvent[] events);
-   void InsertBefore(params AggregateEvent[] insert);
+   void Replace(params AggregateTevent[] events);
+   void InsertBefore(params AggregateTevent[] insert);
 }

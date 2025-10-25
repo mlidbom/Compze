@@ -7,7 +7,7 @@ static partial class CompositeAggregateEvent
 {
    public static partial class Component
    {
-      public interface IRoot : CompositeAggregateEvent.ICompositeAggregateEvent;
+      public interface IRoot : CompositeAggregateEvent.ICompositeAggregateTevent;
 
       interface Renamed : PropertyUpdated.Name;
 

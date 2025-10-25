@@ -8,9 +8,9 @@ namespace Compze.Abstractions.Tessaging.Typermedia.Infrastructure.Validation;
 
 static class CommandValidator
 {
-   public static void AssertCommandIsValid(ICommand command)
+   public static void AssertCommandIsValid(ITommand tommand)
    {
-      var failures = ValidationFailures(command);
+      var failures = ValidationFailures(tommand);
       if(failures.Any())
       {
          throw new CommandValidationFailureException(failures);

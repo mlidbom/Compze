@@ -83,8 +83,8 @@ class EventStoreSerializer : IEventStoreSerializer
 
    internal EventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
 
-   public string Serialize(AggregateEvent @event) => _serializer.Serialize(@event);
-   public IAggregateEvent Deserialize(Type eventType, string json) => (IAggregateEvent)_serializer.Deserialize(eventType, json);
+   public string Serialize(AggregateTevent tevent) => _serializer.Serialize(tevent);
+   public IAggregateTevent Deserialize(Type eventType, string json) => (IAggregateTevent)_serializer.Deserialize(eventType, json);
 }
 
 class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
@@ -115,6 +115,6 @@ class RemotableMessageSerializer : IRemotableMessageSerializer
    public string SerializeResponse(object response) => _serializer.Serialize(response);
    public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);
 
-   public string SerializeMessage(IRemotableMessage message) => _serializer.Serialize(message);
-   public IRemotableMessage DeserializeMessage(Type messageType, string json) => (IRemotableMessage)_serializer.Deserialize(messageType, json);
+   public string SerializeMessage(IRemotableTessage tessage) => _serializer.Serialize(tessage);
+   public IRemotableTessage DeserializeTessage(Type messageType, string json) => (IRemotableTessage)_serializer.Deserialize(messageType, json);
 }

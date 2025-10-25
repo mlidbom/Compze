@@ -26,12 +26,12 @@ partial class Outbox
 
       public MessageTypesInternal.EndpointInformation EndpointInformation => _endpointInformation!;
 
-      public async Task SendAsync(IExactlyOnceEvent @event) => await _messageSender!.SendAsync(@event).caf();
-      public async Task SendAsync(IExactlyOnceCommand command) => await _messageSender!.SendAsync(command).caf();
+      public async Task SendAsync(IExactlyOnceTevent tevent) => await _messageSender!.SendAsync(tevent).caf();
+      public async Task SendAsync(IExactlyOnceTommand tommand) => await _messageSender!.SendAsync(tommand).caf();
 
-      public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceCommand<TCommandResult> command) => await _rpcClient!.PostAsync(command).caf();
-      public async Task PostAsync(IAtMostOnceHypermediaCommand command) => await _rpcClient!.PostAsync(command).caf();
-      public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableQuery<TQueryResult> query) => await _rpcClient!.QueryAsync(query).caf();
+      public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceTommand<TCommandResult> tommand) => await _rpcClient!.PostAsync(tommand).caf();
+      public async Task PostAsync(IAtMostOnceHypermediaTommand tommand) => await _rpcClient!.PostAsync(tommand).caf();
+      public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableTuery<TQueryResult> tuery) => await _rpcClient!.QueryAsync(tuery).caf();
 
       internal async Task InitAsync()
       {

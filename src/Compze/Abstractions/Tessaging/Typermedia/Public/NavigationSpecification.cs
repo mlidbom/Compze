@@ -7,19 +7,19 @@ namespace Compze.Abstractions.Tessaging.Typermedia.Public;
 
 public abstract class NavigationSpecification
 {
-   public static NavigationSpecification Post(IAtMostOnceHypermediaCommand command) => new VoidCommand(command);
+   public static NavigationSpecification Post(IAtMostOnceHypermediaTommand tommand) => new VoidCommand(tommand);
 
-   public static NavigationSpecification<TResult> Get<TResult>(IRemotableQuery<TResult> query) => NavigationSpecification<TResult>.Get(query);
-   public static NavigationSpecification<TResult> Post<TResult>(IAtMostOnceCommand<TResult> command) => NavigationSpecification<TResult>.Post(command);
+   public static NavigationSpecification<TResult> Get<TResult>(IRemotableTuery<TResult> tuery) => NavigationSpecification<TResult>.Get(tuery);
+   public static NavigationSpecification<TResult> Post<TResult>(IAtMostOnceTommand<TResult> tommand) => NavigationSpecification<TResult>.Post(tommand);
 
    public void NavigateOn(IRemoteHypermediaNavigator busSession) => NavigateOnAsync(busSession).WaitUnwrappingException();
    public abstract Task NavigateOnAsync(IRemoteHypermediaNavigator busSession);
 
-   class VoidCommand(IAtMostOnceHypermediaCommand command) : NavigationSpecification
+   class VoidCommand(IAtMostOnceHypermediaTommand tommand) : NavigationSpecification
    {
-      readonly IAtMostOnceHypermediaCommand _command = command;
+      readonly IAtMostOnceHypermediaTommand _tommand = tommand;
 
-      public override async Task NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_command).caf();
+      public override async Task NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_tommand).caf();
    }
 }
 
@@ -30,12 +30,12 @@ public abstract class NavigationSpecification<TResult>
 
    public NavigationSpecification<TNext> Select<TNext>(Func<TResult, TNext> select) => new NavigationSpecification<TNext>.SelectQuery<TResult>(this, select);
 
-   public NavigationSpecification Post(Func<TResult, IAtMostOnceHypermediaCommand> next) => new PostVoidCommand<TResult>(this, next);
-   public NavigationSpecification<TNext> Get<TNext>(Func<TResult, IRemotableQuery<TNext>> next) => new NavigationSpecification<TNext>.ContinuationQuery<TResult>(this, next);
-   public NavigationSpecification<TNext> Post<TNext>(Func<TResult, IAtMostOnceCommand<TNext>> next) => new NavigationSpecification<TNext>.PostCommand<TResult>(this, next);
+   public NavigationSpecification Post(Func<TResult, IAtMostOnceHypermediaTommand> next) => new PostVoidCommand<TResult>(this, next);
+   public NavigationSpecification<TNext> Get<TNext>(Func<TResult, IRemotableTuery<TNext>> next) => new NavigationSpecification<TNext>.ContinuationQuery<TResult>(this, next);
+   public NavigationSpecification<TNext> Post<TNext>(Func<TResult, IAtMostOnceTommand<TNext>> next) => new NavigationSpecification<TNext>.PostCommand<TResult>(this, next);
 
-   internal static NavigationSpecification<TResult> Get(IRemotableQuery<TResult> query) => new StartQuery(query);
-   internal static NavigationSpecification<TResult> Post(IAtMostOnceCommand<TResult> command) => new StartCommand(command);
+   internal static NavigationSpecification<TResult> Get(IRemotableTuery<TResult> tuery) => new StartQuery(tuery);
+   internal static NavigationSpecification<TResult> Post(IAtMostOnceTommand<TResult> tommand) => new StartCommand(tommand);
 
    class SelectQuery<TPrevious> : NavigationSpecification<TResult>
    {
@@ -57,18 +57,18 @@ public abstract class NavigationSpecification<TResult>
 
    class StartQuery : NavigationSpecification<TResult>
    {
-      readonly IRemotableQuery<TResult> _start;
+      readonly IRemotableTuery<TResult> _start;
 
-      internal StartQuery(IRemotableQuery<TResult> start) => _start = start;
+      internal StartQuery(IRemotableTuery<TResult> start) => _start = start;
 
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.GetAsync(_start).caf();
    }
 
    class StartCommand : NavigationSpecification<TResult>
    {
-      readonly IAtMostOnceCommand<TResult> _start;
+      readonly IAtMostOnceTommand<TResult> _start;
 
-      internal StartCommand(IAtMostOnceCommand<TResult> start) => _start = start;
+      internal StartCommand(IAtMostOnceTommand<TResult> start) => _start = start;
 
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_start).caf();
    }
@@ -76,9 +76,9 @@ public abstract class NavigationSpecification<TResult>
    class ContinuationQuery<TPrevious> : NavigationSpecification<TResult>
    {
       readonly NavigationSpecification<TPrevious> _previous;
-      readonly Func<TPrevious, IRemotableQuery<TResult>> _nextQuery;
+      readonly Func<TPrevious, IRemotableTuery<TResult>> _nextQuery;
 
-      internal ContinuationQuery(NavigationSpecification<TPrevious> previous, Func<TPrevious, IRemotableQuery<TResult>> nextQuery)
+      internal ContinuationQuery(NavigationSpecification<TPrevious> previous, Func<TPrevious, IRemotableTuery<TResult>> nextQuery)
       {
          _previous = previous;
          _nextQuery = nextQuery;
@@ -95,8 +95,8 @@ public abstract class NavigationSpecification<TResult>
    class PostCommand<TPrevious> : NavigationSpecification<TResult>
    {
       readonly NavigationSpecification<TPrevious> _previous;
-      readonly Func<TPrevious, IAtMostOnceCommand<TResult>> _next;
-      internal PostCommand(NavigationSpecification<TPrevious> previous, Func<TPrevious, IAtMostOnceCommand<TResult>> next)
+      readonly Func<TPrevious, IAtMostOnceTommand<TResult>> _next;
+      internal PostCommand(NavigationSpecification<TPrevious> previous, Func<TPrevious, IAtMostOnceTommand<TResult>> next)
       {
          _previous = previous;
          _next = next;
@@ -113,8 +113,8 @@ public abstract class NavigationSpecification<TResult>
    class PostVoidCommand<TPrevious> : NavigationSpecification
    {
       readonly NavigationSpecification<TPrevious> _previous;
-      readonly Func<TPrevious, IAtMostOnceHypermediaCommand> _next;
-      internal PostVoidCommand(NavigationSpecification<TPrevious> previous, Func<TPrevious, IAtMostOnceHypermediaCommand> next)
+      readonly Func<TPrevious, IAtMostOnceHypermediaTommand> _next;
+      internal PostVoidCommand(NavigationSpecification<TPrevious> previous, Func<TPrevious, IAtMostOnceHypermediaTommand> next)
       {
          _previous = previous;
          _next = next;

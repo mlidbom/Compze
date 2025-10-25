@@ -5,26 +5,26 @@ namespace Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Pub
 
 public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TResult> handler) where TCommand : ITommand<TResult>
    {
       @this.Register.ForCommand(handler);
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TResult> handler) where TCommand : ITommand<TResult>
                                                      where TDependency1 : class
    {
       @this.Register.ForCommand<TCommand, TResult>(command => handler(command, @this.Resolve<TDependency1>()));
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TResult> handler) where TCommand : ITommand<TResult>
                                                                    where TDependency1 : class
                                                                    where TDependency2 : class
    {
@@ -32,9 +32,9 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TDependency3, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TDependency3, TResult> handler) where TCommand : ITommand<TResult>
                                                                                  where TDependency1 : class
                                                                                  where TDependency2 : class
                                                                                  where TDependency3 : class
@@ -43,9 +43,9 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TResult> handler) where TCommand : ITommand<TResult>
                                                                                                where TDependency1 : class
                                                                                                where TDependency2 : class
                                                                                                where TDependency3 : class
@@ -55,9 +55,9 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TResult> handler) where TCommand : ITommand<TResult>
                                                                                                              where TDependency1 : class
                                                                                                              where TDependency2 : class
                                                                                                              where TDependency3 : class
@@ -68,9 +68,9 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TResult> handler) where TCommand : ITommand<TResult>
                                                                                                                            where TDependency1 : class
                                                                                                                            where TDependency2 : class
                                                                                                                            where TDependency3 : class
@@ -82,9 +82,9 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TResult> handler) where TCommand : ITommand<TResult>
                                                                                                                                          where TDependency1 : class
                                                                                                                                          where TDependency2 : class
                                                                                                                                          where TDependency3 : class
@@ -97,9 +97,9 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TResult> handler) where TCommand : ITommand<TResult>
                                                                                                                                                        where TDependency1 : class
                                                                                                                                                        where TDependency2 : class
                                                                                                                                                        where TDependency3 : class
@@ -113,9 +113,9 @@ public static partial class MessageHandlerRegistrarWithDependencyInjectionSuppor
       return @this;
    }
 
-   public static MessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult>(
-      this MessageHandlerRegistrarWithDependencyInjectionSupport @this,
-      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult> handler) where TCommand : ICommand<TResult>
+   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult>(
+      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+      Func<TCommand, TDependency1, TDependency2, TDependency3, TDependency4, TDependency5, TDependency6, TDependency7, TDependency8, TDependency9, TResult> handler) where TCommand : ITommand<TResult>
                                                                                                                                                                      where TDependency1 : class
                                                                                                                                                                      where TDependency2 : class
                                                                                                                                                                      where TDependency3 : class

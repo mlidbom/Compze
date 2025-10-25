@@ -16,14 +16,14 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_command_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
       MyExactlyOnceCommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceCommand()));
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
    [PCT]  public async Task If_command_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
    {
       CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceCommandWithResult.Create())))
+      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTommandWithResult.Create())))
                          .Should().ThrowAsync<MessageDispatchingFailedException>();
 
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
@@ -32,14 +32,14 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_event_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
       MyRemoteAggregateEventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateCommand.Create()));
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
    [PCT]  public async Task If_query_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyQuery())))
+      await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyTuery())))
                          .Should().ThrowAsync<MessageDispatchingFailedException>();
 
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();

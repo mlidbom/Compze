@@ -3,7 +3,7 @@ using Compze.Abstractions.Public;
 
 namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
-public interface IMutableAggregateEvent : IAggregateEvent
+public interface IMutableAggregateTevent : IAggregateTevent
 {
     [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void SetAggregateIdInternal(Guid aggregateId);
     [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void SetAggregateVersionInternal(int aggregateVersion);

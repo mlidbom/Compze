@@ -132,7 +132,7 @@ class OutboxRetryPoller : IDisposable
       {
          var messageTypeId = new TypeId(undeliveredMessage.TypeIdGuid);
          var messageType = _typeMapper.GetType(messageTypeId);
-         var message = _serializer.DeserializeMessage(messageType, undeliveredMessage.SerializedMessage);
+         var message = _serializer.DeserializeTessage(messageType, undeliveredMessage.SerializedMessage);
 
          // Get the connection using the transport's routing logic
          IInboxConnection connection;
@@ -140,7 +140,7 @@ class OutboxRetryPoller : IDisposable
 
          switch(message)
          {
-            case IExactlyOnceEvent exactlyOnceEvent:
+            case IExactlyOnceTevent exactlyOnceEvent:
             {
                var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceEvent);
                connection = connections.FirstOrDefault(c => c.EndpointInformation.Id.GuidValue == endpointId)
@@ -148,7 +148,7 @@ class OutboxRetryPoller : IDisposable
                sendTask = connection.SendAsync(exactlyOnceEvent);
                break;
             }
-            case IExactlyOnceCommand exactlyOnceCommand:
+            case IExactlyOnceTommand exactlyOnceCommand:
             {
                connection = _transportClient.ConnectionToHandlerFor(exactlyOnceCommand);
                if(connection.EndpointInformation.Id.GuidValue != endpointId)

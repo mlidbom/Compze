@@ -9,8 +9,8 @@ namespace Compze.Tests.Integration.CQRS;
 static class EventStorageTestHelper
 {
    //Not all storage providers stores with more than 6 decimal points precision
-   internal static void StripSeventhDecimalPointFromSecondFractionOnUtcUpdateTime(IReadOnlyList<IAggregateEvent> events)
+   internal static void StripSeventhDecimalPointFromSecondFractionOnUtcUpdateTime(IReadOnlyList<IAggregateTevent> events)
 #pragma warning disable CS0618 // Type or member is obsolete
-       => events.Cast<IMutableAggregateEvent>().ForEach(@event => @event.SetUtcTimeStampInternal(@event.UtcTimeStamp.AddTicks(-(@event.UtcTimeStamp.Ticks % 10))));
+       => events.Cast<IMutableAggregateTevent>().ForEach(@event => @event.SetUtcTimeStampInternal(@event.UtcTimeStamp.AddTicks(-(@event.UtcTimeStamp.Ticks % 10))));
 #pragma warning restore CS0618 // Type or member is obsolete
 }

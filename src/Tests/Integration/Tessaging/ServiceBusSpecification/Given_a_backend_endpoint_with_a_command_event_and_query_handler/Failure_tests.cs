@@ -13,21 +13,21 @@ public class Failure_tests : EndpointHostTestBase
    [PCT] public async Task If_command_handler_with_result_throws_awaiting_SendAsync_throws()
    {
       CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequestAsync(async session => await session.PostAsync(MyAtMostOnceCommandWithResult.Create())))
+      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequestAsync(async session => await session.PostAsync(MyAtMostOnceTommandWithResult.Create())))
                    .Should().ThrowAsync<Exception>();
    }
 
    [PCT] public async Task If_query_handler_throws_awaiting_QueryAsync_throws()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyQuery())))
+      await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyTuery())))
                          .Should().ThrowAsync<Exception>();
    }
 
    [PCT] public void If_query_handler_throws_Query_throws()
    {
       QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      var exception = FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyQuery()))).Should().Throw<Exception>().Which;
+      var exception = FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()))).Should().Throw<Exception>().Which;
       exception.Should().NotBeNull();
    }
 

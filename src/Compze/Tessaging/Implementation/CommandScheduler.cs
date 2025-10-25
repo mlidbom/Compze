@@ -43,7 +43,7 @@ class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRu
       await Task.CompletedTask.caf();
    }
 
-   public void Schedule(DateTime sendAt, IExactlyOnceCommand message) => _guard.Update(() =>
+   public void Schedule(DateTime sendAt, IExactlyOnceTommand message) => _guard.Update(() =>
    {
       if(_timeSource.UtcNow > sendAt.ToUniversalTimeSafely())
          throw new InvalidOperationException(message: "You cannot schedule a queuedMessageInformation to be sent in the past.");
@@ -58,15 +58,15 @@ class CommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRu
    bool HasPassedSendTime(ScheduledCommand message) => _timeSource.UtcNow >= message.SendAt;
 
    const string SendTaskName = $"{nameof(CommandScheduler)}_Send";
-   void Send(ScheduledCommand scheduledCommand) => _taskRunner.Run(SendTaskName, () => TransactionScopeCe.Execute(() => _transport.SendTransactionally(scheduledCommand.Command)));
+   void Send(ScheduledCommand scheduledCommand) => _taskRunner.Run(SendTaskName, () => TransactionScopeCe.Execute(() => _transport.SendTransactionally(scheduledCommand.Tommand)));
 
    public void Dispose() => Stop();
 
    public void Stop() => _scheduledMessagesTimer?.Dispose();
 
-   class ScheduledCommand(DateTime sendAt, IExactlyOnceCommand command)
+   class ScheduledCommand(DateTime sendAt, IExactlyOnceTommand tommand)
    {
       public DateTime SendAt { get; } = sendAt.ToUniversalTimeSafely();
-      public IExactlyOnceCommand Command { get; } = command;
+      public IExactlyOnceTommand Tommand { get; } = tommand;
    }
 }

@@ -4,7 +4,7 @@ using Compze.Abstractions.Tessaging.Teventive.Infrastructure.EventDispatching;
 namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
 public interface IMutableEventDispatcher<in TEvent> : IEventDispatcher<TEvent>
-   where TEvent : class, IEvent
+   where TEvent : class, ITevent
 {
    ///<summary>Registers handlers for the incoming events. All matching handlers will be called in the order they were registered.</summary>
    IEventHandlerRegistrar<TEvent> Register();

@@ -57,7 +57,7 @@ public class AggregateTests : UniversalTestBase
    public void When_Raising_event_that_triggers_another_event_both_events_are_outputted_on_the_observable_only_after_the_triggered_event_and_in_the_raised_order()
    {
       var aggregate = new CascadingEventsAggregate();
-      var receivedEvents = new List<IAggregateEvent>();
+      var receivedEvents = new List<IAggregateTevent>();
       using(((IEventStored)aggregate).EventStream.Subscribe(@event =>
             {
                receivedEvents.Add(@event);
@@ -71,30 +71,30 @@ public class AggregateTests : UniversalTestBase
       }
 
       receivedEvents.Count.Should().Be(2);
-      receivedEvents[0].GetType().Should().Be<TriggeringEvent>();
-      receivedEvents[1].GetType().Should().Be<TriggeredEvent>();
+      receivedEvents[0].GetType().Should().Be<TriggeringTevent>();
+      receivedEvents[1].GetType().Should().Be<TriggeredTevent>();
    }
 
-   class CascadingEventsAggregate : Aggregate<CascadingEventsAggregate, IAggregateEvent, AggregateEvent>
+   class CascadingEventsAggregate : Aggregate<CascadingEventsAggregate, IAggregateTevent, AggregateTevent>
    {
       public CascadingEventsAggregate():base(TestingTimeSource.FrozenUtcNow())
       {
          RegisterEventHandlers()
-           .For<ITriggeringEvent>(_ => Publish(new TriggeredEvent()));
+           .For<ITriggeringTevent>(_ => Publish(new TriggeredTevent()));
 
          RegisterEventAppliers()
-           .For<ITriggeringEvent>(_ => TriggeringEventApplied = true)
-           .For<ITriggeredEvent>(_ => TriggeredEventApplied = true);
+           .For<ITriggeringTevent>(_ => TriggeringEventApplied = true)
+           .For<ITriggeredTevent>(_ => TriggeredEventApplied = true);
       }
       public bool TriggeredEventApplied { get; private set; }
       public bool TriggeringEventApplied { get; private set; }
-      public void RaiseTriggeringEvent() => Publish(new TriggeringEvent());
+      public void RaiseTriggeringEvent() => Publish(new TriggeringTevent());
    }
 
-   interface ITriggeringEvent : IAggregateCreatedEvent;
+   interface ITriggeringTevent : IAggregateCreatedTevent;
 
-   class TriggeringEvent() : AggregateEvent(Guid.NewGuid()), ITriggeringEvent;
+   class TriggeringTevent() : AggregateTevent(Guid.NewGuid()), ITriggeringTevent;
 
-   interface ITriggeredEvent : IAggregateEvent;
-   class TriggeredEvent : AggregateEvent, ITriggeredEvent;
+   interface ITriggeredTevent : IAggregateTevent;
+   class TriggeredTevent : AggregateTevent, ITriggeredTevent;
 }

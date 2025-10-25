@@ -43,7 +43,7 @@ public class Local_Query_performance_tests : PerformanceTestBase
          {
             for(var i = 0; i < queriesPerRequest; i++)
             {
-               InProcessNavigator.Execute(new MyLocalStrictlyLocalQuery());
+               InProcessNavigator.Execute(new MyLocalStrictlyLocalTuery());
             }
          });
    }

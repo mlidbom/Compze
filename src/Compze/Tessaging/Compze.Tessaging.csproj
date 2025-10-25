@@ -7,7 +7,6 @@
       <ProjectReference Include="..\Common\Compze.Common.csproj" />
       <ProjectReference Include="..\Serialization\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />
-      <ProjectReference Include="Common\Compze.Tessaging.Common.csproj" />
       <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
@@ -33,10 +32,6 @@
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="Common\**" />
-    <EmbeddedResource Remove="Common\**" />
-    <None Remove="Common\**" />
-    <Content Remove="Common\**" />
     <Compile Remove="Hosting\AspNetCore\**" />
     <EmbeddedResource Remove="Hosting\AspNetCore\**" />
     <None Remove="Hosting\AspNetCore\**" />

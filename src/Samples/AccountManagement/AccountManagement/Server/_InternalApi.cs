@@ -19,7 +19,7 @@ static class InternalApi
 
    internal class Query
    {
-      internal TryGetByEmailQuery TryGetByEmail(Email email) => new(email);
+      internal TryGetByEmailTuery TryGetByEmail(Email email) => new(email);
 
       internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => EventStore.Queries.GetForUpdate<Account>(id);
 
@@ -27,9 +27,9 @@ static class InternalApi
 
       internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
-      internal class TryGetByEmailQuery : IStrictlyLocalQuery<TryGetByEmailQuery, Option<Account>>
+      internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Option<Account>>
       {
-         public TryGetByEmailQuery(Email email)
+         public TryGetByEmailTuery(Email email)
          {
             Guard.IsNotNull(email);
             Email = email;

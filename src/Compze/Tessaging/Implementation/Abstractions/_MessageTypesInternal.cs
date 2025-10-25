@@ -19,7 +19,7 @@ public static class MessageTypesInternal
 {
    internal interface IMessage;
 
-   internal class EndpointInformationQuery : MessageTypesInternal.IMessage, IRemotableQuery<EndpointInformation>;
+   internal class EndpointInformationTuery : MessageTypesInternal.IMessage, IRemotableTuery<EndpointInformation>;
 
    internal class EndpointInformation
    {
@@ -44,7 +44,7 @@ public static class MessageTypesInternal
       public HashSet<TypeId> HandledMessageTypes { get; private set; }
    }
 
-   public static void RegisterHandlers(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
-      => registrar.ForQuery((EndpointInformationQuery _, TypeMapper _, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
+   public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+      => registrar.ForQuery((EndpointInformationTuery _, TypeMapper _, IMessageHandlerRegistry registry, EndpointConfiguration configuration) =>
                                new EndpointInformation(registry.HandledRemoteMessageTypeIds(), configuration));
 }

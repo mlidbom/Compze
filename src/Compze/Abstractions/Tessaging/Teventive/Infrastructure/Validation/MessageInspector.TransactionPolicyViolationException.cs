@@ -30,12 +30,12 @@ static partial class MessageInspector
                                                            """;
    }
 
-   public class MissingTransactionException(IMessage message) :
-      TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.") {}
+   public class MissingTransactionException(ITessage tessage) :
+      TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.") {}
 
-   public class TransactionPresentException(IMessage message) :
-      TransactionPolicyViolationException($"{message.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.") {}
+   public class TransactionPresentException(ITessage tessage) :
+      TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.") {}
 
-   public class MissingMessageIdException(IMessage message) :
-      ArgumentException($"{nameof(IAtMostOnceMessage.MessageId)} was Guid.Empty for message of type: {message.GetType().FullName}") {}
+   public class MissingMessageIdException(ITessage tessage) :
+      ArgumentException($"{nameof(IAtMostOnceTessage.MessageId)} was Guid.Empty for message of type: {tessage.GetType().FullName}") {}
 }

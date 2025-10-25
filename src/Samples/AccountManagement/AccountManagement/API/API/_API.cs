@@ -16,7 +16,7 @@ namespace AccountManagement.API;
 /// </summary>
 public static class AccountWebClientApi
 {
-   public static MessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource> Start => new();
+   public static TessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource> Start => new();
 }
 
 

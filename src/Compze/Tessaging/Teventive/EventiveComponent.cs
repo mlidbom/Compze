@@ -11,8 +11,8 @@ public abstract class EventiveComponent<TParent,
                                         TComponentEventImplementation>
     : IEventiveInternals<TComponentEvent, TComponentEventImplementation>
     where TParent : IEventiveInternals<TParentEvent, TParentEventImplementation>
-    where TParentEvent : class, IAggregateEvent
-    where TParentEventImplementation : AggregateEvent, TParentEvent
+    where TParentEvent : class, IAggregateTevent
+    where TParentEventImplementation : AggregateTevent, TParentEvent
     where TComponentEvent : class, TParentEvent
     where TComponentEventImplementation : TParentEventImplementation, TComponentEvent
     where TComponent : EventiveComponent<TParent, TParentEvent, TParentEventImplementation, TComponent, TComponentEvent, TComponentEventImplementation>

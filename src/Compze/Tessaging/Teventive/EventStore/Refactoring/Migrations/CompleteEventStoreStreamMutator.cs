@@ -19,14 +19,14 @@ abstract class CompleteEventStoreStreamMutator
    {
       readonly Dictionary<Guid, int> _aggregateVersions = new();
 
-      public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
+      public IEnumerable<AggregateTevent> Mutate(IEnumerable<AggregateTevent> eventStream)
       {
          foreach(var @event in eventStream)
          {
             var version = _aggregateVersions.GetOrAddDefault(@event.AggregateId) + 1;
             _aggregateVersions[@event.AggregateId] = version;
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((IMutableAggregateEvent)@event).SetAggregateVersionInternal(version);
+            ((IMutableAggregateTevent)@event).SetAggregateVersionInternal(version);
 #pragma warning restore CS0618 // Type or member is obsolete
             yield return @event;
          }
@@ -38,7 +38,7 @@ abstract class CompleteEventStoreStreamMutator
       readonly IReadOnlyList<IEventMigration> _eventMigrationFactories = eventMigrationFactories;
       readonly Dictionary<Guid, ISingleAggregateInstanceEventStreamMutator> _aggregateMutatorsCache = new();
 
-      public IEnumerable<AggregateEvent> Mutate(IEnumerable<AggregateEvent> eventStream)
+      public IEnumerable<AggregateTevent> Mutate(IEnumerable<AggregateTevent> eventStream)
       {
          foreach(var @event in eventStream)
          {

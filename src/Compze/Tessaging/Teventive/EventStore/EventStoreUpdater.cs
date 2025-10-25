@@ -118,16 +118,16 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
       _disposableResources.Add(aggregate.EventStream.Subscribe(OnAggregateEvent));
    }
 
-   void OnAggregateEvent(IAggregateEvent @event)
+   void OnAggregateEvent(IAggregateTevent tevent)
    {
       _usageGuard.EnsureAccessValid();
-      if(!_idMap.ContainsKey(@event.AggregateId))
+      if(!_idMap.ContainsKey(tevent.AggregateId))
       {
-         throw new Exception($"Got event from aggregate that is not tracked! Id: {@event.AggregateId}");
+         throw new Exception($"Got event from aggregate that is not tracked! Id: {tevent.AggregateId}");
       }
 
-      _store.SaveSingleAggregateEvents([@event]);
-      _eventStoreEventPublisher.Publish(@event);
+      _store.SaveSingleAggregateEvents([tevent]);
+      _eventStoreEventPublisher.Publish(tevent);
    }
 
    public void Delete(Guid aggregateId)
@@ -146,9 +146,9 @@ class EventStoreUpdater : IEventStoreReader, IEventStoreUpdater
    public override string ToString() => $"{_id}: {GetType().FullName}";
    readonly Guid _id = Guid.NewGuid();
 
-   public IReadOnlyList<IAggregateEvent> GetHistory(Guid aggregateId) => GetHistoryInternal(aggregateId, takeWriteLock: false);
+   public IReadOnlyList<IAggregateTevent> GetHistory(Guid aggregateId) => GetHistoryInternal(aggregateId, takeWriteLock: false);
 
-   IReadOnlyList<IAggregateEvent> GetHistoryInternal(Guid aggregateId, bool takeWriteLock) =>
+   IReadOnlyList<IAggregateTevent> GetHistoryInternal(Guid aggregateId, bool takeWriteLock) =>
       takeWriteLock
          ? _store.GetAggregateHistoryForUpdate(aggregateId)
          : _store.GetAggregateHistory(aggregateId);

@@ -33,11 +33,11 @@ class ServerEndpointBuilder : IEndpointBuilder
    public IDependencyInjectionContainer Container { get; }
 
    readonly IMessagesInFlightTracker _globalStateTracker;
-   readonly MessageHandlerRegistry _registry;
+   readonly TessageHandlerRegistry _registry;
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
 
-   public MessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 
    public IEndpoint Build()
    {
@@ -61,8 +61,8 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Configuration = configuration;
 
-      _registry = new MessageHandlerRegistry(TypeMapper.Instance);
-      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
+      _registry = new TessageHandlerRegistry(TypeMapper.Instance);
+      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
    }
 
    void SetupContainer()
@@ -107,7 +107,7 @@ class ServerEndpointBuilder : IEndpointBuilder
          Container.Register(
             Singleton.For<IDependencyInjectionContainer>().Instance(Container),
             Singleton.For<EndpointConfiguration>().Instance(Configuration),
-            Singleton.For<IMessageHandlerRegistry, IMessageHandlerRegistrar>().Instance(_registry)
+            Singleton.For<IMessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_registry)
          );
       }
    }

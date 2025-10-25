@@ -13,10 +13,10 @@ using JetBrains.Annotations;
 namespace Compze.Tessaging.Teventive;
 
 //Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]. Really? If you don't intend to inherit from the Aggregate, what good is it to set the last two type parameters so anything else?
-public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation> : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, IAggregateWrapperEvent<TAggregateEvent>, AggregateWrapperEvent<TAggregateEvent>>
+public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation> : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, IAggregateWrapperTevent<TAggregateEvent>, AggregateWrapperTevent<TAggregateEvent>>
     where TAggregate : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation>
-    where TAggregateEvent : class, IAggregateEvent
-    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
+    where TAggregateEvent : class, IAggregateTevent
+    where TAggregateEventImplementation : AggregateTevent, TAggregateEvent
 {
     [Obsolete("Only for infrastructure", true)]
     protected Aggregate() : this(DateTimeNowTimeSource.Instance) {}
@@ -29,10 +29,10 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
     IEventStored<TAggregateEvent>,
     IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>
     where TWrapperEventImplementation : TWrapperEventInterface
-    where TWrapperEventInterface : IAggregateWrapperEvent<TAggregateEvent>
+    where TWrapperEventInterface : IAggregateWrapperTevent<TAggregateEvent>
     where TAggregate : Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementation, TWrapperEventInterface, TWrapperEventImplementation>
-    where TAggregateEvent : class, IAggregateEvent
-    where TAggregateEventImplementation : AggregateEvent, TAggregateEvent
+    where TAggregateEvent : class, IAggregateTevent
+    where TAggregateEventImplementation : AggregateTevent, TAggregateEvent
 {
     IUtcTimeTimeSource TimeSource { get; set; }
 
@@ -47,7 +47,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
         _eventHandlersDispatcher.Register().IgnoreUnhandled<TAggregateEvent>();
     }
 
-    readonly List<IAggregateEvent> _unCommittedEvents = [];
+    readonly List<IAggregateTevent> _unCommittedEvents = [];
     readonly IMutableEventDispatcher<TAggregateEvent> _eventAppliersDispatcher = IMutableEventDispatcher<TAggregateEvent>.New();
     readonly IMutableEventDispatcher<TAggregateEvent> _eventHandlersDispatcher = IMutableEventDispatcher<TAggregateEvent>.New();
 
@@ -63,17 +63,17 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
         using(ScopedChange.Enter(() => _reentrancyLevel++, () => _reentrancyLevel--))
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((IMutableAggregateEvent)theEvent).SetAggregateVersionInternal(Version + 1);
-            ((IMutableAggregateEvent)theEvent).SetUtcTimeStampInternal(TimeSource.UtcNow);
+            ((IMutableAggregateTevent)theEvent).SetAggregateVersionInternal(Version + 1);
+            ((IMutableAggregateTevent)theEvent).SetUtcTimeStampInternal(TimeSource.UtcNow);
             if(Version == 0)
             {
-                if(theEvent is not IAggregateCreatedEvent) throw new Exception($"The first published event {theEvent.GetType()} did not implement {nameof(IAggregateCreatedEvent)}. The first event an aggregate publishes must always implement {nameof(IAggregateCreatedEvent)}.");
-                if(theEvent.AggregateId == Guid.Empty) throw new Exception($"{nameof(IAggregateEvent.AggregateId)} was empty in {nameof(IAggregateCreatedEvent)}");
-                ((IMutableAggregateEvent)theEvent).SetAggregateVersionInternal(1);
+                if(theEvent is not IAggregateCreatedTevent) throw new Exception($"The first published event {theEvent.GetType()} did not implement {nameof(IAggregateCreatedTevent)}. The first event an aggregate publishes must always implement {nameof(IAggregateCreatedTevent)}.");
+                if(theEvent.AggregateId == Guid.Empty) throw new Exception($"{nameof(IAggregateTevent.AggregateId)} was empty in {nameof(IAggregateCreatedTevent)}");
+                ((IMutableAggregateTevent)theEvent).SetAggregateVersionInternal(1);
             } else
             {
                 if(theEvent.AggregateId != Guid.Empty && theEvent.AggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise event for Aggregated: {theEvent.AggregateId} from Aggregate with Id: {Id}.");
-                ((IMutableAggregateEvent)theEvent).SetAggregateIdInternal(Id);
+                ((IMutableAggregateTevent)theEvent).SetAggregateIdInternal(Id);
             }
 #pragma warning restore CS0618 // Type or member is obsolete
             ApplyEvent(theEvent);
@@ -101,7 +101,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
     {
         using(ScopedChange.Enter(() => _applyingEvents = true, () => _applyingEvents = false))
         {
-            if(theEvent is IAggregateCreatedEvent)
+            if(theEvent is IAggregateCreatedTevent)
             {
 #pragma warning disable 618 // Reviewed OK: This is the one place where we are quite sure that calling this obsolete method is correct.
                 SetIdBeVerySureYouKnowWhatYouAreDoing(theEvent.AggregateId);
@@ -121,10 +121,10 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
     void IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.PublishInternal(TAggregateEventImplementation theEvent) => Publish(theEvent);
     IEventHandlerRegistrar<TAggregateEvent> IEventiveInternals<TAggregateEvent, TAggregateEventImplementation>.RegisterEventAppliersInternal() => RegisterEventAppliers();
 
-    IObservable<IAggregateEvent> IEventStored.EventStream => _eventStream;
+    IObservable<IAggregateTevent> IEventStored.EventStream => _eventStream;
     IObservable<TAggregateEvent> IEventStored<TAggregateEvent>.EventStream => _eventStream;
 
-    void IEventStored.Commit(Action<IReadOnlyList<IAggregateEvent>> commitEvents)
+    void IEventStored.Commit(Action<IReadOnlyList<IAggregateTevent>> commitEvents)
     {
         commitEvents(_unCommittedEvents);
         _unCommittedEvents.Clear();
@@ -132,7 +132,7 @@ public class Aggregate<TAggregate, TAggregateEvent, TAggregateEventImplementatio
 
     void IEventStored.SetTimeSource(IUtcTimeTimeSource timeSource) => TimeSource = timeSource;
 
-    void IEventStored.LoadFromHistory(IEnumerable<IAggregateEvent> history)
+    void IEventStored.LoadFromHistory(IEnumerable<IAggregateTevent> history)
     {
         Assert.State.Is(Version == 0, () => $"You can only call {nameof(IEventStored.LoadFromHistory)} on an empty Aggregate with {nameof(Version)} == 0");
         history.ForEach(theEvent => ApplyEvent((TAggregateEvent)theEvent));

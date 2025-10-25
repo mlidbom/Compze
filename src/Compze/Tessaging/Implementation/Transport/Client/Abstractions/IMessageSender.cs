@@ -5,6 +5,6 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 
 interface IRemoteMessageSender
 {
-   Task SendAsync(IExactlyOnceEvent @event);
-   Task SendAsync(IExactlyOnceCommand command);
+   Task SendAsync(IExactlyOnceTevent tevent);
+   Task SendAsync(IExactlyOnceTommand tommand);
 }

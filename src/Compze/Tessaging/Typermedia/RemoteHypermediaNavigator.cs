@@ -27,32 +27,32 @@ static class RemoteHypermediaNavigatorRegistrar
    readonly ITransportClient _transportClient;
    public RemoteHypermediaNavigator(ITransportClient transportClient) { _transportClient = transportClient; }
 
-   public void Post(IAtMostOnceHypermediaCommand command) => PostAsync(command).WaitUnwrappingException();
+   public void Post(IAtMostOnceHypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 
-   public Task PostAsync(IAtMostOnceHypermediaCommand command)
+   public Task PostAsync(IAtMostOnceHypermediaTommand tommand)
    {
-      MessageInspector.AssertValidToSendRemote(command);
-      return _transportClient.PostAsync(command);
+      MessageInspector.AssertValidToSendRemote(tommand);
+      return _transportClient.PostAsync(tommand);
    }
 
-   public TResult Post<TResult>(IAtMostOnceCommand<TResult> command) => PostAsync(command).ResultUnwrappingException();
+   public TResult Post<TResult>(IAtMostOnceTommand<TResult> tommand) => PostAsync(tommand).ResultUnwrappingException();
 
-   public Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command)
+   public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand)
    {
-      MessageInspector.AssertValidToSendRemote(command);
-      return _transportClient.PostAsync(command);
+      MessageInspector.AssertValidToSendRemote(tommand);
+      return _transportClient.PostAsync(tommand);
    }
 
-   public async Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
+   public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
-      MessageInspector.AssertValidToSendRemote(query);
-      if(query is ICreateMyOwnResultQuery<TResult> selfCreating)
+      MessageInspector.AssertValidToSendRemote(tuery);
+      if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return await Task.FromResult(selfCreating.CreateResult()).caf();
 
-      return await GetAsyncAfterFastPathOptimization(query).caf();
+      return await GetAsyncAfterFastPathOptimization(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transportClient.GetAsync(query).caf();
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _transportClient.GetAsync(tuery).caf();
 
-   TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableQuery<TResult> query) => GetAsync(query).ResultUnwrappingException();
+   TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
 }

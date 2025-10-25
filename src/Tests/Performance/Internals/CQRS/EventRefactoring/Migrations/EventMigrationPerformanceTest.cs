@@ -25,7 +25,7 @@ namespace Compze.Tests.Performance.Internals.CQRS.EventRefactoring.Migrations;
 [LongRunning]
 public class EventMigrationPerformanceTest : EventMigrationTestBase
 {
-   readonly List<AggregateEvent> _history;
+   readonly List<AggregateTevent> _history;
    readonly TestAggregate _aggregate;
    readonly IServiceLocator? _container;
    IReadOnlyList<IEventMigration> _currentMigrations;
@@ -40,7 +40,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
                                                     .Concat(EnumerableCE.OfTypes<E2, E4, E6, E8>()))).ToList();
 
       _aggregate = TestAggregate.FromEvents(TestingTimeSource.FrozenUtcNow(), Guid.NewGuid(), historyTypes);
-      _history = _aggregate.History.Cast<AggregateEvent>().ToList();
+      _history = _aggregate.History.Cast<AggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<IEventMigration>().ToList();
       _container = CreateServiceLocatorForEventStoreType(migrationsFactory: () => _currentMigrations);

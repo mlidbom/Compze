@@ -11,7 +11,7 @@ static partial class CompositeAggregateEvent
 {
    public static partial class Entity
    {
-      public interface IRoot : CompositeAggregateEvent.ICompositeAggregateEvent
+      public interface IRoot : CompositeAggregateEvent.ICompositeAggregateTevent
       {
          Guid EntityId { get; }
       }

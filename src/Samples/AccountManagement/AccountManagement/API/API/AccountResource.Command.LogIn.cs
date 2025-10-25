@@ -11,7 +11,7 @@ public partial class AccountResource
 {
    public static partial class Command
    {
-      public partial class LogIn() : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
+      public partial class LogIn() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
       {
          public static LogIn Create() => new() {MessageId = Guid.CreateVersion7()};
 

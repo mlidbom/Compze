@@ -7,7 +7,7 @@ namespace Compze.Tests.Unit.CQRS.EventHandling;
 static class EventDispatcherAsserter
 {
    internal class DispatcherAssertion<TDispatcherRootEvent>(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher)
-      where TDispatcherRootEvent : class, IEvent
+      where TDispatcherRootEvent : class, ITevent
    {
       readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher = dispatcher;
 
@@ -15,7 +15,7 @@ static class EventDispatcherAsserter
    }
 
    internal class RouteAssertion<TDispatcherRootEvent>(IMutableEventDispatcher<TDispatcherRootEvent> dispatcher, TDispatcherRootEvent @event)
-      where TDispatcherRootEvent : class, IEvent
+      where TDispatcherRootEvent : class, ITevent
    {
       readonly IMutableEventDispatcher<TDispatcherRootEvent> _dispatcher = dispatcher;
       readonly TDispatcherRootEvent _event = @event;
@@ -31,7 +31,7 @@ static class EventDispatcherAsserter
       }
 
       public void DispatchesToWrapped<THandlerEvent>()
-         where THandlerEvent : IWrapperEvent<TDispatcherRootEvent>
+         where THandlerEvent : IWrapperTevent<TDispatcherRootEvent>
       {
          var callCount = 0;
          _dispatcher.Register().IgnoreAllUnhandled();
@@ -41,7 +41,7 @@ static class EventDispatcherAsserter
       }
 
       public void DoesNotDispatchToWrapped<THandlerEvent>()
-         where THandlerEvent : IWrapperEvent<TDispatcherRootEvent>
+         where THandlerEvent : IWrapperTevent<TDispatcherRootEvent>
       {
          var callCount = 0;
          _dispatcher.Register().IgnoreAllUnhandled();
@@ -51,5 +51,5 @@ static class EventDispatcherAsserter
       }
    }
 
-   internal static DispatcherAssertion<TEvent> Assert<TEvent>(this IMutableEventDispatcher<TEvent> @this) where TEvent : class, IEvent => new(@this);
+   internal static DispatcherAssertion<TEvent> Assert<TEvent>(this IMutableEventDispatcher<TEvent> @this) where TEvent : class, ITevent => new(@this);
 }

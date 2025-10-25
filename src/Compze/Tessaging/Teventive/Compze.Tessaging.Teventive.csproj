@@ -9,7 +9,6 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Common\Compze.Tessaging.Common.csproj" />
       <ProjectReference Include="..\..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.

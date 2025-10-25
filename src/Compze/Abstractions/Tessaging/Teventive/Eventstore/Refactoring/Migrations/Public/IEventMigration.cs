@@ -30,5 +30,5 @@ public interface ISingleAggregateInstanceHandlingEventMigrator
    /// <para>Called once for each event in the aggregate's history. </para>
    /// <para>Then it is called once with an instance of <see cref="EndOfAggregateHistoryEventPlaceHolder"/>. </para>
    /// </summary>
-   void MigrateEvent(IAggregateEvent @event, IEventModifier modifier);
+   void MigrateEvent(IAggregateTevent tevent, IEventModifier modifier);
 }

@@ -15,17 +15,17 @@ namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.EventDispatchin
 /// Handlers should be registered using the RegisterHandlers method in the constructor of the inheritor.
 /// </summary>
 partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : IMutableEventDispatcher<TEvent>
-   where TEvent : class, IEvent
+   where TEvent : class, ITevent
 {
    readonly List<RegisteredHandler> _handlers = [];
    readonly List<Action<object>> _runBeforeHandlers = [];
    readonly List<Action<object>> _runAfterHandlers = [];
    readonly HashSet<Type> _ignoredEvents = [];
    int _totalHandlers;
-   Dictionary<Type, Action<IEvent>[]> _typeToHandlerCache = new();
+   Dictionary<Type, Action<ITevent>[]> _typeToHandlerCache = new();
    int _cachedTotalHandlers;
    // ReSharper disable once StaticMemberInGenericType
-   static readonly Action<IEvent>[] NullHandlerList = [];
+   static readonly Action<ITevent>[] NullHandlerList = [];
 
    public IEventHandlerRegistrar<TEvent> Register() => new RegistrationBuilder(this);
 
@@ -33,7 +33,7 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : I
    public void Dispatch(TEvent evt)
    {
       //Urgent: Wrapping here seems arguable at best.
-      var wrapped = evt as IWrapperEvent<IEvent>
+      var wrapped = evt as IWrapperTevent<ITevent>
                  ?? WrapperEvent.WrapEvent(evt);
 
       var handlers = GetHandlers(wrapped.GetType());
@@ -45,12 +45,12 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : I
 
    public bool Handles(TEvent @event) => GetHandlers(@event.GetType(), validateHandlerExists: false).Any();
 
-   Action<IEvent>[] GetHandlers(Type type, bool validateHandlerExists = true)
+   Action<ITevent>[] GetHandlers(Type type, bool validateHandlerExists = true)
    {
       if(_cachedTotalHandlers != _totalHandlers)
       {
          _cachedTotalHandlers = _totalHandlers;
-         _typeToHandlerCache = new Dictionary<Type, Action<IEvent>[]>();
+         _typeToHandlerCache = new Dictionary<Type, Action<ITevent>[]>();
       }
 
       if(_typeToHandlerCache.TryGetValue(type, out var arrayResult))
@@ -58,7 +58,7 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : I
          return arrayResult;
       }
 
-      var result = new List<Action<IEvent>>();
+      var result = new List<Action<ITevent>>();
       var hasFoundHandler = false;
 
       // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator

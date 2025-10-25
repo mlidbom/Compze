@@ -7,6 +7,6 @@ interface IOutbox
 {
     Task StartAsync();
     Task StopAsync();
-    void PublishTransactionally(IExactlyOnceEvent exactlyOnceEvent);
-    void SendTransactionally(IExactlyOnceCommand exactlyOnceCommand);
+    void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent);
+    void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand);
 }
