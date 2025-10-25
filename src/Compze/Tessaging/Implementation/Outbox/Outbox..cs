@@ -27,23 +27,23 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITransportClient transportClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
-                                                => new Outbox(transportClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
+                                  .CreatedBy((EndpointConfiguration configuration, IRoutingTransportClient routingTransportClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+                                                => new Outbox(routingTransportClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
       registrar.Register(TessageStorage.RegisterWith);
       registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
    readonly ITessageStorage _storage;
    readonly EndpointConfiguration _configuration;
-   readonly ITransportClient _transportClient;
+   readonly IRoutingTransportClient _routingTransportClient;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(ITransportClient transportClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+   Outbox(IRoutingTransportClient routingTransportClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
    {
       _storage = tessageStorage;
       _configuration = configuration;
-      _transportClient = transportClient;
+      _routingTransportClient = routingTransportClient;
       _exceptionReporter = exceptionReporter;
       _retryPoller = retryPoller;
    }
@@ -51,7 +51,7 @@ partial class Outbox : IOutbox
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceTevent)
+      var connections = _routingTransportClient.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
 
@@ -72,7 +72,7 @@ partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connection = _transportClient.ConnectionToHandlerFor(exactlyOnceTommand);
+      var connection = _routingTransportClient.ConnectionToHandlerFor(exactlyOnceTommand);
 
       _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
 

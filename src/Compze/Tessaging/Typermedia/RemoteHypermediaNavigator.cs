@@ -22,17 +22,17 @@ static class RemoteHypermediaNavigatorRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteHypermediaNavigator>()
-                                  .CreatedBy((ITransportClient transportClient) => new RemoteHypermediaNavigator(transportClient)));
+                                  .CreatedBy((IRoutingTransportClient routingTransportClient) => new RemoteHypermediaNavigator(routingTransportClient)));
 
-   readonly ITransportClient _transportClient;
-   public RemoteHypermediaNavigator(ITransportClient transportClient) => _transportClient = transportClient;
+   readonly IRoutingTransportClient _routingTransportClient;
+   public RemoteHypermediaNavigator(IRoutingTransportClient routingTransportClient) => _routingTransportClient = routingTransportClient;
 
    public void Post(IAtMostOnceHypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 
    public Task PostAsync(IAtMostOnceHypermediaTommand tommand)
    {
       TessageInspector.AssertValidToSendRemote(tommand);
-      return _transportClient.PostAsync(tommand);
+      return _routingTransportClient.PostAsync(tommand);
    }
 
    public TResult Post<TResult>(IAtMostOnceTommand<TResult> tommand) => PostAsync(tommand).ResultUnwrappingException();
@@ -40,7 +40,7 @@ static class RemoteHypermediaNavigatorRegistrar
    public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand)
    {
       TessageInspector.AssertValidToSendRemote(tommand);
-      return _transportClient.PostAsync(tommand);
+      return _routingTransportClient.PostAsync(tommand);
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
@@ -52,7 +52,7 @@ static class RemoteHypermediaNavigatorRegistrar
       return await GetAsyncAfterFastPathOptimization(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _transportClient.GetAsync(tuery).caf();
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _routingTransportClient.GetAsync(tuery).caf();
 
    TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
 }

@@ -31,14 +31,14 @@ class Endpoint : IEndpoint
 
    public Endpoint(IServiceLocator serviceLocator,
                    ITessagesInFlightTracker globalStateTracker,
-                   ITransportClient transportClient,
+                   IRoutingTransportClient routingTransportClient,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
-      _transportClient = transportClient;
+      _routingTransportClient = routingTransportClient;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
@@ -48,7 +48,7 @@ class Endpoint : IEndpoint
 
    public HttpEndPointAddress? Address => _serverComponents?.Inbox.Address;
    readonly ITessagesInFlightTracker _globalStateTracker;
-   readonly ITransportClient _transportClient;
+   readonly IRoutingTransportClient _routingTransportClient;
    readonly IEndpointRegistry _endpointRegistry;
 
    ServerComponents? _serverComponents;
@@ -64,7 +64,7 @@ class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _transportClient.Start();
+      _routingTransportClient.Start();
 
       //todo: find cleaner way of handling what an endpoint supports
       if(!_configuration.IsPureClientEndpoint)
@@ -80,7 +80,7 @@ class Endpoint : IEndpoint
       State.Is(!_isSending);
       _isSending = true;
       var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
-      await Task.WhenAll(serverEndpoints.Select(address => _transportClient.ConnectAsync(address))).caf();
+      await Task.WhenAll(serverEndpoints.Select(address => _routingTransportClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
@@ -116,7 +116,7 @@ class Endpoint : IEndpoint
             await _serverComponents.Inbox.StopAsync().caf();
          }
 
-         _transportClient.Stop();
+         _routingTransportClient.Stop();
       }
    }
 
