@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Utilities.Threading.TasksCE;
-using Outbox = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using Dispatching = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using Outbox = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using Dispatching = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.Tessaging;
 

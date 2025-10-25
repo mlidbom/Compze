@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
-using Compze.Sql.Common.Tessaging;
 using Compze.Utilities.SystemCE.LinqCE;
-using TessageTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Tessaging;
 

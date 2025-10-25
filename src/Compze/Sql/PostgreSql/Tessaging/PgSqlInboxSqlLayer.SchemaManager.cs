@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Compze.Utilities.Threading.TasksCE;
-using Tessage =  Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using Tessage =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Sql.PostgreSql.Tessaging;
 

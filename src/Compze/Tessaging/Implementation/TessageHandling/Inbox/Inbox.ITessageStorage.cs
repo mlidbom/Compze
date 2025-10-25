@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Sql.Common.Tessaging;
+using Compze.Core.Tessaging.Internal.SqlLayer;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

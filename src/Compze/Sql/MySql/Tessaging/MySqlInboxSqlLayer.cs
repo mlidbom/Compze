@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
-using Compze.Sql.Common.Tessaging;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
-using TessageTable =  Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Sql.MySql.Tessaging;
 

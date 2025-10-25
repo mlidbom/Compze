@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Compze.Sql.Common.Tessaging;
+namespace Compze.Core.Tessaging.Internal.SqlLayer;
 
 interface IServiceBusSqlLayer
 {

@@ -3,7 +3,7 @@
 <NsDepCopConfig IsEnabled="true"
                 InheritanceDepth="10">
 
-	<Allowed From="*"
+	<Allowed From="Compze.Sql.*"
             To="Compze.Sql.Common.*"/>
 
 	<Allowed From="Compze.Sql.?.DocumentDb.*"
@@ -14,6 +14,9 @@
 
 	<Allowed From="Compze.Sql.*"
             To="Compze.Core.Configuration.Internal"/>
+
+	<Allowed From="Compze.Sql.?.Tessaging.*"
+            To="Compze.Core.Tessaging.Internal.SqlLayer.*"/>
 
 
 </NsDepCopConfig>

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.Threading.TasksCE;
-using M = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using D = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using M = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using D = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Sql.MySql.Tessaging;
 
