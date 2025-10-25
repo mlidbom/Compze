@@ -5,5 +5,11 @@
 
    <Allowed From="*"
             To="Microsoft.Data.SqlClient"/>
-	
+
+	<Allowed From="Compze.Sql.MicrosoftSql.Wiring"
+            To="Compze.Sql.MicrosoftSql.*"/>
+
+	<Allowed From="Compze.Sql.MicrosoftSql.Wiring"
+            To="Compze.Core.*.Internal.SqlLayer.*"/>
+
 </NsDepCopConfig>

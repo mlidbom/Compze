@@ -4,7 +4,7 @@
                 InheritanceDepth="10">
 
    <Allowed From="Compze.Tessaging.Hosting.Testing.Wiring"
-            To="Compze.Sql.*" />
+            To="Compze.Sql.?.Wiring" />
 
 	<Allowed From="Compze.Tessaging.Hosting.Testing.Wiring"
             To="Compze.Core.*.Wiring.*" />
