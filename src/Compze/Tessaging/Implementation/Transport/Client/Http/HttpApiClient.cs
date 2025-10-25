@@ -12,13 +12,13 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Http;
 
-class HttpApiClient(
+class HttpApiEndpointClient(
    IRemoteApiTransportClient remoteApiTransportClient,
    HttpEndPointAddress remoteAddress,
    ITypeMapper typeMapper,
    IRemotableTessageSerializer serializer,
    ITessagesInFlightTracker tessagesInFlightTracker,
-   EndpointId remoteEndpointId) : IRemoteApiClient
+   EndpointId remoteEndpointId) : IRemoteApiEndpointClient
 {
    readonly IRemoteApiTransportClient _transportClient = remoteApiTransportClient;
    readonly ITypeMapper _typeMapper = typeMapper;
@@ -48,11 +48,11 @@ class HttpApiClient(
       return await _transportClient.PostAsync<TResult>(tessage, tuery, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.Tuery}")).caf();
    }
 
-   internal static async Task<(HttpApiClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IRemoteApiTransportClient remoteApiTransportClient, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITessagesInFlightTracker tessagesInFlightTracker)
+   internal static async Task<(HttpApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IRemoteApiTransportClient remoteApiTransportClient, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITessagesInFlightTracker tessagesInFlightTracker)
    {
       var endpointInformationTuery = new TessageTypesInternal.EndpointInformationTuery();
       var endpointInformationTueryTessage = TransportTessage.OutGoing.Create(endpointInformationTuery, typeMapper, serializer);
       var endpointInformation = await remoteApiTransportClient.PostAsync<TessageTypesInternal.EndpointInformation>(endpointInformationTueryTessage, endpointInformationTuery, new Uri($"{remoteAddress.AspNetAddress}{HttpConstants.Routes.Rpc.Tuery}")).caf();
-      return (new HttpApiClient(remoteApiTransportClient, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
+      return (new HttpApiEndpointClient(remoteApiTransportClient, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
    }
 }

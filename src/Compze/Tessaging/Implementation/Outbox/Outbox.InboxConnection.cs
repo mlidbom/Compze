@@ -16,7 +16,7 @@ partial class Outbox
    internal class InboxConnection(ITessagesInFlightTracker tessagesInFlightTracker, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient) : IInboxConnection
    {
       TessageTypesInternal.EndpointInformation? _endpointInformation = null;
-      IRemoteApiClient? _remoteApiClient;
+      IRemoteApiEndpointClient? _remoteApiClient;
       IRemoteTessageSender? _tessageSender;
       readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
       readonly HttpEndPointAddress _remoteAddress = remoteAddress;
@@ -35,7 +35,7 @@ partial class Outbox
 
       internal async Task InitAsync()
       {
-         (_remoteApiClient, _endpointInformation) = await HttpApiClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
+         (_remoteApiClient, _endpointInformation) = await HttpApiEndpointClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
          _tessageSender = new HttpRemoteTessageSender(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
       }
 
