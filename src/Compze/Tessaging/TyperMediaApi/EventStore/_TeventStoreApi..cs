@@ -24,6 +24,6 @@ public partial class TeventStoreApi
 
    public partial class TommandApi
    {
-      public SaveTaggregate<TTaggregate> Save<TTaggregate>(TTaggregate aggregate) where TTaggregate : class, ITaggregate => new(aggregate);
+      public SaveTaggregate<TTaggregate> Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate => new(taggregate);
    }
 }
