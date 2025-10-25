@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-public class LoginScenario(IEndpoint clientEndpoint, string email, string password) : ScenarioBase<AccountResource.Command.LogIn.LoginAttemptResult>
+public class LoginScenario(IEndpoint clientEndpoint, string email, string password) : ScenarioBase<AccountResource.Tommand.LogIn.LoginAttemptResult>
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
    public string Password { get; set; } = password;
@@ -31,5 +31,5 @@ public class LoginScenario(IEndpoint clientEndpoint, string email, string passwo
 
    public LoginScenario(IEndpoint clientEndpoint, AccountResource account, string password) : this(clientEndpoint, account.Email.ToString(), password) {}
 
-   public override AccountResource.Command.LogIn.LoginAttemptResult Execute() => Api.Command.Login(Email, Password).ExecuteAsClientRequestOn(_clientEndpoint);
+   public override AccountResource.Tommand.LogIn.LoginAttemptResult Execute() => Api.Tommand.Login(Email, Password).ExecuteAsClientRequestOn(_clientEndpoint);
 }

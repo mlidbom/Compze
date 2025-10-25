@@ -8,16 +8,16 @@
       <RootNamespace>AccountManagement</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
-      <Compile Update="API\RegisterAccountCommandResources.Designer.cs">
+      <Compile Update="API\RegisterAccountTommandResources.Designer.cs">
          <DesignTime>True</DesignTime>
          <AutoGen>True</AutoGen>
-         <DependentUpon>RegisterAccountCommandResources.resx</DependentUpon>
+         <DependentUpon>RegisterAccountTommandResources.resx</DependentUpon>
       </Compile>
    </ItemGroup>
    <ItemGroup>
-      <EmbeddedResource Update="API\RegisterAccountCommandResources.resx">
+      <EmbeddedResource Update="API\RegisterAccountTommandResources.resx">
          <Generator>PublicResXFileCodeGenerator</Generator>
-         <LastGenOutput>RegisterAccountCommandResources.Designer.cs</LastGenOutput>
+         <LastGenOutput>RegisterAccountTommandResources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>

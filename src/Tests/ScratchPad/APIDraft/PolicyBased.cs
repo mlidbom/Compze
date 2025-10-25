@@ -40,7 +40,7 @@ public class PolicyBased
    enum TransactionBoundary { Tessage, Handler }
    enum HandlerFailurePolicy { ContinueWithOtherHandlers, StopInvokingHandlers }
 
-   //When sending commands the sender should specify if they wish in-transaction execution so no equivalent option for commands is needed.
+   //When sending tommands the sender should specify if they wish in-transaction execution so no equivalent option for tommands is needed.
    //Maybe the Synchronous option here should be a completely different type of  EventHandler / EventHandler-registration?
    enum EndpointInternalEventCascadePolicy { Synchronous, Asynchronous }
 
@@ -56,19 +56,19 @@ public class PolicyBased
       var policiesAsEnums =
          new Endpoint("ADomainEndpoint",
                       new HandlerGroup(
-                         "Command handlers",
-                         TessageThreadingPolicy.Parallel,                 //Commands should be handled in parallel or we essentially single thread our entire endpoint/service.
+                         "Tommand handlers",
+                         TessageThreadingPolicy.Parallel,                 //Tommands should be handled in parallel or we essentially single thread our entire endpoint/service.
                          TessageThreadingPolicy.SerializeAggregateAccess, //It is useless to try to execute more than one modification of the same aggregate at a time, so let's not waste resources trying.
 
 
-                         HandlerInvokation.InRegistrationOrder,           //Meaningless since there can only be one command handler.
-                         TransactionBoundary.Tessage,                     //Meaningless since there can only be one command handler.
-                         EndpointInternalEventCascadePolicy.Asynchronous, //Invalid for commands. Overriding the default async behavior should be done by the caller of send, Be part of the bus API
+                         HandlerInvokation.InRegistrationOrder,           //Meaningless since there can only be one tommand handler.
+                         TransactionBoundary.Tessage,                     //Meaningless since there can only be one tommand handler.
+                         EndpointInternalEventCascadePolicy.Asynchronous, //Invalid for tommands. Overriding the default async behavior should be done by the caller of send, Be part of the bus API
 
-                         new TessageHandler("command handler 1"),
-                         new TessageHandler("command handler 2"),
-                         new TessageHandler("command handler 3"),
-                         new TessageHandler("command handler 4")),
+                         new TessageHandler("tommand handler 1"),
+                         new TessageHandler("tommand handler 2"),
+                         new TessageHandler("tommand handler 3"),
+                         new TessageHandler("tommand handler 4")),
                       new HandlerGroup(
                          "Tuery model updaters",
                          EndpointInternalEventCascadePolicy.Synchronous, //Domain tuery models should be immediatelly consistent if at all possible..

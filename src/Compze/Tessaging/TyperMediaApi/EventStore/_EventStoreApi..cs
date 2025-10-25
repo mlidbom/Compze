@@ -9,7 +9,7 @@ namespace Compze.Tessaging.TyperMediaApi.EventStore;
 public partial class EventStoreApi
 {
    public TueryApi Queries => new();
-   public CommandApi Commands => new();
+   public TommandApi Tommands => new();
 
    public partial class TueryApi
    {
@@ -22,7 +22,7 @@ public partial class EventStoreApi
       public GetAggregateHistory<TEvent> GetHistory<TEvent>(Guid id) where TEvent : IAggregateTevent => new(id);
    }
 
-   public partial class CommandApi
+   public partial class TommandApi
    {
       public SaveAggregate<TAggregate> Save<TAggregate>(TAggregate account) where TAggregate : class, IEventStored => new(account);
    }

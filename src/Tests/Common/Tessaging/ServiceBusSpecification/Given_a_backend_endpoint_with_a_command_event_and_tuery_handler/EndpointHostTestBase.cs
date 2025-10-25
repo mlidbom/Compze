@@ -25,16 +25,16 @@ using Compze.Tests.Infrastructure;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
    static readonly TimeSpan _timeout = 10.Seconds();
    public ITestingEndpointHost Host = null!;
-   public readonly IThreadGate MyExactlyOnceCommandHandlerThreadGate;
-   public readonly IThreadGate CommandHandlerWithResultThreadGate;
-   public readonly IThreadGate MyCreateAggregateCommandHandlerThreadGate;
-   public readonly IThreadGate MyUpdateAggregateCommandHandlerThreadGate;
+   public readonly IThreadGate MyExactlyOnceTommandHandlerThreadGate;
+   public readonly IThreadGate TommandHandlerWithResultThreadGate;
+   public readonly IThreadGate MyCreateAggregateTommandHandlerThreadGate;
+   public readonly IThreadGate MyUpdateAggregateTommandHandlerThreadGate;
    public readonly IThreadGate MyRemoteAggregateEventHandlerThreadGate;
    public readonly IThreadGate MyLocalAggregateEventHandlerThreadGate;
    public readonly IThreadGate EventHandlerThreadGate;
@@ -56,10 +56,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
       AllGates =
       [
-         MyExactlyOnceCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyExactlyOnceCommandHandlerThreadGate)),
-         CommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(CommandHandlerWithResultThreadGate)),
-         MyCreateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateCommandHandlerThreadGate)),
-         MyUpdateAggregateCommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateCommandHandlerThreadGate)),
+         MyExactlyOnceTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyExactlyOnceTommandHandlerThreadGate)),
+         TommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TommandHandlerWithResultThreadGate)),
+         MyCreateAggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateTommandHandlerThreadGate)),
+         MyUpdateAggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateTommandHandlerThreadGate)),
          MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate)),
          MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate)),
          EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate)),
@@ -99,15 +99,15 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
 
             builder.RegisterHandlers
-                   .ForCommand((MyExactlyOnceTommand _) => MyExactlyOnceCommandHandlerThreadGate.AwaitPassThrough())
-                   .ForCommand((MyCreateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
+                   .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
+                   .ForTommand((MyCreateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
                     {
-                       MyCreateAggregateCommandHandlerThreadGate.AwaitPassThrough();
+                       MyCreateAggregateTommandHandlerThreadGate.AwaitPassThrough();
                        MyAggregate.Create(tommand.AggregateId, navigator);
                     })
-                   .ForCommand((MyUpdateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
+                   .ForTommand((MyUpdateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
                     {
-                       MyUpdateAggregateCommandHandlerThreadGate.AwaitPassThrough();
+                       MyUpdateAggregateTommandHandlerThreadGate.AwaitPassThrough();
                        navigator.Execute(new EventStoreApi().Queries.GetForUpdate<MyAggregate>(tommand.AggregateId)).Update();
                     })
                    .ForEvent((IMyExactlyOnceTevent _) => EventHandlerThreadGate.AwaitPassThrough())
@@ -117,10 +117,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                        TueryHandlerThreadGate.AwaitPassThrough();
                        return new MyTueryResult();
                     })
-                   .ForCommandWithResult((MyAtMostOnceTommandWithResult _) =>
+                   .ForTommandWithResult((MyAtMostOnceTommandWithResult _) =>
                     {
-                       CommandHandlerWithResultThreadGate.AwaitPassThrough();
-                       return new MyCommandResult();
+                       TommandHandlerWithResultThreadGate.AwaitPassThrough();
+                       return new MyTommandResult();
                     });
          });
 

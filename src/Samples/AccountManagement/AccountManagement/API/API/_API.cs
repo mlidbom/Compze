@@ -10,7 +10,7 @@ namespace AccountManagement.API;
 
 /// <summary>
 /// This class provides the ability to use type safe API navigation from a type that does not run on .Net. For instance via Typescript in browser.
-/// We generate typescript interfaces for each of the resources exposed via the Queries and commands ultimately reachable through the Start Tuery.
+/// We generate typescript interfaces for each of the resources exposed via the Queries and tommands ultimately reachable through the Start Tuery.
 /// A generic browser type can then be used to navigate the whole API remotely.
 /// For .Net clients the next class in this file is a far more convenient way to consume the API.
 /// </summary>
@@ -30,7 +30,7 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
    NavigationSpecification<StartResource> Start => NavigationSpecification.Get(AccountWebClientApi.Start);
 
    public TuerySection Tuery => new();
-   public CommandsSection Command => new();
+   public TommandsSection Tommand => new();
 
    public class TuerySection
    {
@@ -39,15 +39,15 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
       public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Queries.Get(queries => queries.AccountById.WithId(accountId));
    }
 
-   public class CommandsSection
+   public class TommandsSection
    {
-      static NavigationSpecification<StartResource.Command> Commands => Instance.Start.Select(start => start.Commands);
+      static NavigationSpecification<StartResource.Tommand> Tommands => Instance.Start.Select(start => start.Tommands);
 
-      public NavigationSpecification<AccountResource.Command.Register> Register() => Commands.Select(commands => commands.Register);
-      public NavigationSpecification<AccountResource.Command.Register.RegistrationAttemptResult> Register(Guid accountId, string email, string password) => Commands.Post(commands => commands.Register.WithValues(accountId, email, password));
+      public NavigationSpecification<AccountResource.Tommand.Register> Register() => Tommands.Select(tommands => tommands.Register);
+      public NavigationSpecification<AccountResource.Tommand.Register.RegistrationAttemptResult> Register(Guid accountId, string email, string password) => Tommands.Post(tommands => tommands.Register.WithValues(accountId, email, password));
 
-      public NavigationSpecification<AccountResource.Command.LogIn> Login() => Commands.Select(commands => commands.Login);
-      public NavigationSpecification<AccountResource.Command.LogIn.LoginAttemptResult> Login(string email, string password) => Commands.Post(commands => commands.Login.WithValues(email, password));
+      public NavigationSpecification<AccountResource.Tommand.LogIn> Login() => Tommands.Select(tommands => tommands.Login);
+      public NavigationSpecification<AccountResource.Tommand.LogIn.LoginAttemptResult> Login(string email, string password) => Tommands.Post(tommands => tommands.Login.WithValues(email, password));
    }
 
    ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Eventually we will probably be setting up pipeline components such as custom caches etc here.</summary>

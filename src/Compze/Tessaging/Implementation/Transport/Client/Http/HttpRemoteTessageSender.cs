@@ -30,7 +30,7 @@ class HttpRemoteTessageSender(
    {
       var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(outGoingTessage, _remoteEndpointId);
-      await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Command}")).caf();
+      await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Tommand}")).caf();
    }
 
    public async Task SendAsync(IExactlyOnceTevent tevent)

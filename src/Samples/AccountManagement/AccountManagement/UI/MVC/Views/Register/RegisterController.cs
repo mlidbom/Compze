@@ -11,24 +11,24 @@ public class RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) :
 {
    readonly IRemoteHypermediaNavigator _bus = remoteApiNavigator;
 
-   public IActionResult Register(AccountResource.Command.Register registrationCommand)
+   public IActionResult Register(AccountResource.Tommand.Register registrationTommand)
    {
       if(!ModelState.IsValid) return View("RegistrationForm");
 
-      var result = registrationCommand.PostOn(_bus);
+      var result = registrationTommand.PostOn(_bus);
       switch(result.Status)
       {
          case RegistrationAttemptStatus.Successful:
             return View("ValidateYourEmail", result.RegisteredAccount);
          case RegistrationAttemptStatus.EmailAlreadyRegistered:
-            ModelState.AddModelError((AccountResource.Command.Register model) => model.Email, "Email is already registered");
-            ModelState.Remove((AccountResource.Command.Register model) => model.TessageId);
-            registrationCommand.ReplaceDeduplicationId();
-            return View("RegistrationForm", registrationCommand);
+            ModelState.AddModelError((AccountResource.Tommand.Register model) => model.Email, "Email is already registered");
+            ModelState.Remove((AccountResource.Tommand.Register model) => model.TessageId);
+            registrationTommand.ReplaceDeduplicationId();
+            return View("RegistrationForm", registrationTommand);
          default:
             throw new ArgumentOutOfRangeException();
       }
    }
 
-   public IActionResult RegistrationForm() => View("RegistrationForm", Api.Accounts.Command.Register().NavigateOn(_bus));
+   public IActionResult RegistrationForm() => View("RegistrationForm", Api.Accounts.Tommand.Register().NavigateOn(_bus));
 }

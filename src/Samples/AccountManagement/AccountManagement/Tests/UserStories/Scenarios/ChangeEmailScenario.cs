@@ -32,7 +32,7 @@ public class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 
    public override AccountResource Execute()
    {
-      Account.Commands.ChangeEmail.WithEmail(NewEmail).Post().ExecuteAsClientRequestOn(_clientEndpoint);
+      Account.Tommands.ChangeEmail.WithEmail(NewEmail).Post().ExecuteAsClientRequestOn(_clientEndpoint);
 
       return Account = Api.Tuery.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
    }

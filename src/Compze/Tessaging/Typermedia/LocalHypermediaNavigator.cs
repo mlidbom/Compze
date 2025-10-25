@@ -34,16 +34,16 @@ class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
    {
       CommonAssertion(tommand);
 
-      var commandHandler = _handlerRegistry.GetCommandHandler(tommand);
-      return commandHandler.Invoke(tommand);
+      var tommandHandler = _handlerRegistry.GetTommandHandler(tommand);
+      return tommandHandler.Invoke(tommand);
    }
 
    public void Execute(IStrictlyLocalTommand tommand)
    {
       CommonAssertion(tommand);
 
-      var commandHandler = _handlerRegistry.GetCommandHandler(tommand);
-      commandHandler.Invoke(tommand);
+      var tommandHandler = _handlerRegistry.GetTommandHandler(tommand);
+      tommandHandler.Invoke(tommand);
    }
 
    public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>

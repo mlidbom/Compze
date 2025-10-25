@@ -5,7 +5,7 @@ namespace AccountManagement.API;
 
 [UsedImplicitly] public class StartResource
 {
-   public Command Commands { get; private set; } = new();
+   public Tommand Tommands { get; private set; } = new();
 
    public Tuery Queries { get; private set; } = new();
 
@@ -16,9 +16,9 @@ namespace AccountManagement.API;
       public TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> AccountById { get; private set; } = new();
    }
 
-   public class Command
+   public class Tommand
    {
-      public AccountResource.Command.LogIn Login { get; private set; } = AccountResource.Command.LogIn.Create();
-      public AccountResource.Command.Register Register { get; private set; } = AccountResource.Command.Register.Create();
+      public AccountResource.Tommand.LogIn Login { get; private set; } = AccountResource.Tommand.LogIn.Create();
+      public AccountResource.Tommand.Register Register { get; private set; } = AccountResource.Tommand.Register.Create();
    }
 }

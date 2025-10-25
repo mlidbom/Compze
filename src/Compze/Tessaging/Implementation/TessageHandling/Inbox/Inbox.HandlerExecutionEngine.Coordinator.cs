@@ -53,11 +53,11 @@ partial class Inbox
             readonly EndpointId _endpointId = endpointId;
 
 
-            //performance: Split waiting tessages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional tuery
-            //don't postpone checking if mutations are allowed to run because we have a ton of queries queued up. Also the queries are likely not allowed to run due to the commands and events!
+            //performance: Split waiting tessages into prioritized categories: Exactly once event/tommand, At most once event/tommand,  NonTransactional tuery
+            //don't postpone checking if mutations are allowed to run because we have a ton of queries queued up. Also the queries are likely not allowed to run due to the tommands and events!
             //performance: Use static type caching trick to ensure that we know which rules need to be applied to which tessages. Don't check rules that don't apply. (Double dispatching might be required.)
-            public IReadOnlyList<TransportTessage.InComing> AtMostOnceCommands => _executingAtMostOnceCommands;
-            public IReadOnlyList<TransportTessage.InComing> ExactlyOnceCommands => _executingExactlyOnceCommands;
+            public IReadOnlyList<TransportTessage.InComing> AtMostOnceTommands => _executingAtMostOnceTommands;
+            public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands => _executingExactlyOnceTommands;
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceEvents => _executingExactlyOnceEvents;
             public IReadOnlyList<TransportTessage.InComing> ExecutingNonTransactionalQueries => _executingNonTransactionalQueries;
 
@@ -99,12 +99,12 @@ partial class Inbox
                   case TransportTessage.TransportTessageType.ExactlyOnceEvent:
                      _executingExactlyOnceEvents.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.AtMostOnceCommandWithReturnValue:
-                  case TransportTessage.TransportTessageType.AtMostOnceCommand:
-                     _executingAtMostOnceCommands.Add(dispatchable.TransportTessage);
+                  case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+                  case TransportTessage.TransportTessageType.AtMostOnceTommand:
+                     _executingAtMostOnceTommands.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.ExactlyOnceCommand:
-                     _executingExactlyOnceCommands.Add(dispatchable.TransportTessage);
+                  case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+                     _executingExactlyOnceTommands.Add(dispatchable.TransportTessage);
                      break;
                   case TransportTessage.TransportTessageType.NonTransactionalTuery:
                      _executingNonTransactionalQueries.Add(dispatchable.TransportTessage);
@@ -126,12 +126,12 @@ partial class Inbox
                   case TransportTessage.TransportTessageType.ExactlyOnceEvent:
                      _executingExactlyOnceEvents.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.AtMostOnceCommandWithReturnValue:
-                  case TransportTessage.TransportTessageType.AtMostOnceCommand:
-                     _executingAtMostOnceCommands.Remove(doneExecuting.TransportTessage);
+                  case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+                  case TransportTessage.TransportTessageType.AtMostOnceTommand:
+                     _executingAtMostOnceTommands.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.ExactlyOnceCommand:
-                     _executingExactlyOnceCommands.Remove(doneExecuting.TransportTessage);
+                  case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+                     _executingExactlyOnceTommands.Remove(doneExecuting.TransportTessage);
                      break;
                   case TransportTessage.TransportTessageType.NonTransactionalTuery:
                      _executingNonTransactionalQueries.Remove(doneExecuting.TransportTessage);
@@ -144,8 +144,8 @@ partial class Inbox
             }
 
             int _executingTessages;
-            readonly List<TransportTessage.InComing> _executingExactlyOnceCommands = [];
-            readonly List<TransportTessage.InComing> _executingAtMostOnceCommands = [];
+            readonly List<TransportTessage.InComing> _executingExactlyOnceTommands = [];
+            readonly List<TransportTessage.InComing> _executingAtMostOnceTommands = [];
             readonly List<TransportTessage.InComing> _executingExactlyOnceEvents = [];
             readonly List<TransportTessage.InComing> _executingNonTransactionalQueries = [];
          }

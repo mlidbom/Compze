@@ -26,9 +26,9 @@ using FluentAssertions;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 
-public class Experiment_with_unifying_events_and_commands_test : UniversalTestBase
+public class Experiment_with_unifying_events_and_tommands_test : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
 
@@ -38,7 +38,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
 
    IRemoteHypermediaNavigator RemoteNavigator => _clientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
 
-   public Experiment_with_unifying_events_and_commands_test()
+   public Experiment_with_unifying_events_and_tommands_test()
    {
       _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
@@ -55,7 +55,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
             builder.RegisterHandlers
                    .ForEvent((UserEvent.IUserRegistered _) => {})
                    .ForTuery((GetUserTuery tuery, IEventStoreReader eventReader) => new UserResource(eventReader.GetHistory(tuery.UserId)))
-                   .ForCommandWithResult((UserRegistrarCommand.RegisterUserTommand tommand, IEventStoreUpdater store) =>
+                   .ForTommandWithResult((UserRegistrarTommand.RegisterUserTommand tommand, IEventStoreUpdater store) =>
                     {
                        store.Save(UserAggregate.Register(tommand));
                        return new RegisterUserResult(tommand.UserId);
@@ -104,7 +104,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
       }
    }
 
-   public static class UserRegistrarCommand
+   public static class UserRegistrarTommand
    {
       public class RegisterUserTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<RegisterUserResult>
       {
@@ -147,7 +147,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
          => RegisterEventAppliers()
            .IgnoreUnhandled<UserRegistrarEvent.IRoot>();
 
-      internal static RegisterUserResult RegisterUser(IRemoteHypermediaNavigator navigator) => UserRegistrarCommand.RegisterUserTommand.Create().PostOn(navigator);
+      internal static RegisterUserResult RegisterUser(IRemoteHypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTommand.Create().PostOn(navigator);
    }
 
    public class UserAggregate : Aggregate<UserAggregate, UserEvent.IRoot, UserEvent.Implementation.Root>
@@ -156,7 +156,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
          => RegisterEventAppliers()
            .IgnoreUnhandled<UserEvent.IRoot>();
 
-      internal static UserAggregate Register(UserRegistrarCommand.RegisterUserTommand tommand)
+      internal static UserAggregate Register(UserRegistrarTommand.RegisterUserTommand tommand)
       {
          var registered = new UserAggregate();
          registered.Publish(new UserEvent.Implementation.UserRegisteredEvent(tommand.UserId));

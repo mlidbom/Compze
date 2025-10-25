@@ -1,32 +1,32 @@
 using System.Linq;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 
 public class Transaction_policies : EndpointHostTestBase
 {
-   [PCT] public void Command_handler_runs_in_transaction_with_isolation_level_Serializable()
+   [PCT] public void Tommand_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
-      var transaction = MyExactlyOnceCommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+      var transaction = MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                 .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
-   [PCT] public void Command_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
+   [PCT] public void Tommand_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
    {
-      var commandResult = ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyAtMostOnceTommandWithResult.Create()));
+      var tommandResult = ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyAtMostOnceTommandWithResult.Create()));
 
-      commandResult.Should().NotBe(null);
+      tommandResult.Should().NotBe(null);
 
-      var transaction = CommandHandlerWithResultThreadGate.AwaitPassedThroughCountEqualTo(1)
+      var transaction = TommandHandlerWithResultThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                           .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);

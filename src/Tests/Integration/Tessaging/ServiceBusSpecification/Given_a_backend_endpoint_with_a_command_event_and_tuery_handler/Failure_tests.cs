@@ -1,18 +1,18 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 
 public class Failure_tests : EndpointHostTestBase
 {
-   [PCT] public async Task If_command_handler_with_result_throws_awaiting_SendAsync_throws()
+   [PCT] public async Task If_tommand_handler_with_result_throws_awaiting_SendAsync_throws()
    {
-      CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
+      TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
       await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequestAsync(async session => await session.PostAsync(MyAtMostOnceTommandWithResult.Create())))
                    .Should().ThrowAsync<Exception>();
    }

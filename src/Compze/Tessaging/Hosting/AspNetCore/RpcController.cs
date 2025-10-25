@@ -48,16 +48,16 @@ class RpcController : ControllerBase
       }
    }
 
-   [HttpPost(HttpConstants.Routes.Rpc.CommandWithResult)]
-   public async Task<IActionResult> CommandWithResult()
+   [HttpPost(HttpConstants.Routes.Rpc.TommandWithResult)]
+   public async Task<IActionResult> TommandWithResult()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         var commandResponse = (await Inbox.Receive(incomingTessage).caf()).NotNull();
-         var commandResponseJson = Serializer.SerializeResponse(commandResponse);
-         return Ok(commandResponseJson);
+         var tommandResponse = (await Inbox.Receive(incomingTessage).caf()).NotNull();
+         var tommandResponseJson = Serializer.SerializeResponse(tommandResponse);
+         return Ok(tommandResponseJson);
       }
       catch(Exception exception)
       {
@@ -65,8 +65,8 @@ class RpcController : ControllerBase
       }
    }
 
-   [HttpPost(HttpConstants.Routes.Rpc.CommandNoResult)]
-   public async Task<IActionResult> CommandWithNoResult()
+   [HttpPost(HttpConstants.Routes.Rpc.TommandNoResult)]
+   public async Task<IActionResult> TommandWithNoResult()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
 

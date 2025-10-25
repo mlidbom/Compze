@@ -14,7 +14,7 @@ static class InternalApi
 {
    static EventStoreApi EventStore => new EventStoreApi();
    internal static Tuery Queries => new();
-   internal static Command Commands => new();
+   internal static Tommand Tommands => new();
    internal static AccountQueryModel.Api AccountQueryModel => new();
 
    internal class Tuery
@@ -39,8 +39,8 @@ static class InternalApi
       }
    }
 
-   internal class Command
+   internal class Tommand
    {
-      internal EventStoreApi.CommandApi.SaveAggregate<Account> Save(Account account) => EventStore.Commands.Save(account);
+      internal EventStoreApi.TommandApi.SaveAggregate<Account> Save(Account account) => EventStore.Tommands.Save(account);
    }
 }

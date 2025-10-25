@@ -42,7 +42,7 @@ public class Navigator_specification : UniversalTestBase
             builder.RegisterHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
-                   .ForCommandWithResult((RegisterUserTommand tommand, IServiceBusSession _) =>
+                   .ForTommandWithResult((RegisterUserTommand tommand, IServiceBusSession _) =>
                     {
                        tueryResults.Add(new UserResource(tommand.Name));
                        return new UserRegisteredConfirmationResource(tommand.Name);
@@ -56,13 +56,13 @@ public class Navigator_specification : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
-   [PCT]  public void Can_get_command_result()
+   [PCT]  public void Can_get_tommand_result()
    {
-      var commandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTommand.Create("new-user-name")));
-      commandResult1.Name.Should().Be("new-user-name");
+      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTommand.Create("new-user-name")));
+      tommandResult1.Name.Should().Be("new-user-name");
    }
 
-   [PCT]  public void Can_navigate_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
+   [PCT]  public void Can_navigate_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
       var userResource = _clientEndpoint.ExecuteClientRequest(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                      .Post(startpage => startpage.RegisterUser("new-user-name"))
@@ -71,7 +71,7 @@ public class Navigator_specification : UniversalTestBase
       userResource.Name.Should().Be("new-user-name");
    }
 
-   [PCT]  public async Task Can_navigate_async_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
+   [PCT]  public async Task Can_navigate_async_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
       var userResource = _clientEndpoint.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))

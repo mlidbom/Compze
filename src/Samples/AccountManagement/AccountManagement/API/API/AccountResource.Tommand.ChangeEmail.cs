@@ -8,7 +8,7 @@ namespace AccountManagement.API;
 
 public partial class AccountResource
 {
-   public static partial class Command
+   public static partial class Tommand
    {
       public class ChangeEmail : TessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaTommand
       {

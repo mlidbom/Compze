@@ -39,10 +39,10 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
       [XF] public void Is_not_ITessage() => AssertInvalidForSending<INotTessage>();
 
       interface ITommandAndTevent : ITevent, ITommand;
-      [XF] public void Is_Both_command_and_event() => AssertInvalidForSending<ITommandAndTevent>();
+      [XF] public void Is_Both_tommand_and_event() => AssertInvalidForSending<ITommandAndTevent>();
 
-      interface ICommandAndTuery : ITevent, ITuery<object>;
-      [XF] public void Is_Both_command_and_tuery() => AssertInvalidForSending<ICommandAndTuery>();
+      interface ITommandAndTuery : ITevent, ITuery<object>;
+      [XF] public void Is_Both_tommand_and_tuery() => AssertInvalidForSending<ITommandAndTuery>();
 
       interface IStrictlyLocalAndRemotable : IRemotableTessage, IStrictlyLocalTessage;
       [XF] public void Is_Both_strictly_local_and_remotable() => AssertInvalidForSending<IStrictlyLocalAndRemotable>();
@@ -57,6 +57,6 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
       }
 #pragma warning restore CA1812 //uninstantiated class 
 
-      [XF] public void Is_at_most_once_command_and_sets_TessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceTommandSettingTessageIdInDefaultConstructor>();
+      [XF] public void Is_at_most_once_tommand_and_sets_TessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceTommandSettingTessageIdInDefaultConstructor>();
    }
 }

@@ -4,4 +4,4 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Compze.Abstractions.Tessaging.Typermedia.Public;
 
-class CommandValidationFailureException(IEnumerable<ValidationResult> failures) : Exception(string.Join(Environment.NewLine, failures));
+class TommandValidationFailureException(IEnumerable<ValidationResult> failures) : Exception(string.Join(Environment.NewLine, failures));

@@ -31,14 +31,14 @@ class HttpApiClient(
    {
       var tessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
-      return await _transportClient.PostAsync<TResult>(tessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.CommandWithResult}")).caf();
+      return await _transportClient.PostAsync<TResult>(tessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.TommandWithResult}")).caf();
    }
 
    public async Task PostAsync(IAtMostOnceHypermediaTommand tommand)
    {
       var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(outGoingTessage, _remoteEndpointId);
-      await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.CommandNoResult}")).caf();
+      await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.TommandNoResult}")).caf();
    }
 
    public async Task<TResult> TueryAsync<TResult>(IRemotableTuery<TResult> tuery)

@@ -6,23 +6,23 @@ namespace Compze.Tessaging.Implementation.TessageHandling;
 
 partial class Inbox
 {
-   class QueriesExecuteAfterAllCommandsAndEventsAreDone : ITessageDispatchingRule
+   class QueriesExecuteAfterAllTommandsAndEventsAreDone : ITessageDispatchingRule
    {
       public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
       {
          if(candidateTessage.TessageTypeEnum != TransportTessage.TransportTessageType.NonTransactionalTuery) return true;
 
-         return executing.AtMostOnceCommands.None() && executing.ExactlyOnceCommands.None() && executing.ExactlyOnceEvents.None();
+         return executing.AtMostOnceTommands.None() && executing.ExactlyOnceTommands.None() && executing.ExactlyOnceEvents.None();
       }
    }
 
-   class CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint : ITessageDispatchingRule
+   class TommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint : ITessageDispatchingRule
    {
       public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
       {
          if(candidateTessage.TessageTypeEnum == TransportTessage.TransportTessageType.NonTransactionalTuery) return true;
 
-         return executing.AtMostOnceCommands.None() && executing.ExactlyOnceCommands.None() && executing.ExactlyOnceEvents.None();
+         return executing.AtMostOnceTommands.None() && executing.ExactlyOnceTommands.None() && executing.ExactlyOnceEvents.None();
       }
    }
 }

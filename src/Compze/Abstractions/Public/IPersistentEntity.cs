@@ -18,7 +18,7 @@ namespace Compze.Abstractions.Public;
 ///
 /// Rationale:
 /// First:
-/// In distributed system, where clients send commands to create new
+/// In distributed system, where clients send tommands to create new
 /// Entities, any type that is not guaranteed to be globally unique requires
 /// non-trivial coordination between the client and server to ensure uniqueness
 /// and that the client will know the ID of the created Entity.

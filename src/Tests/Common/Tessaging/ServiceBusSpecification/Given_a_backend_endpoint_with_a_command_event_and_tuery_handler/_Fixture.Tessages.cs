@@ -15,11 +15,11 @@ using JetBrains.Annotations;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 
-public class MyCommandResult;
+public class MyTommandResult;
 
-public class MyAtMostOnceTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<MyCommandResult>
+public class MyAtMostOnceTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<MyTommandResult>
 {
    MyAtMostOnceTommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
    public static MyAtMostOnceTommandWithResult Create() => new() {TessageId = Guid.CreateVersion7()};
@@ -65,7 +65,7 @@ public class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggr
    {
       var created = new MyAggregate();
       created.Publish(new MyAggregateEvent.Implementation.Created(id));
-      bus.Execute(new EventStoreApi().Commands.Save(created));
+      bus.Execute(new EventStoreApi().Tommands.Save(created));
    }
 }
 

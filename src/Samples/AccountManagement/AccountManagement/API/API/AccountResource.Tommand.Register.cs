@@ -10,7 +10,7 @@ namespace AccountManagement.API;
 
 public partial class AccountResource
 {
-   public static partial class Command
+   public static partial class Tommand
    {
       public partial class Register() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<Register.RegistrationAttemptResult>(DeduplicationIdHandling.Reuse), IValidatableObject
       {
@@ -21,15 +21,15 @@ public partial class AccountResource
                                             };
 
          //Note the use of a custom validation attributes.
-         [EntityId(ErrorMessageResourceType = typeof(RegisterAccountCommandResources), ErrorMessageResourceName = "IdInvalid")]
-         [Required(ErrorMessageResourceType = typeof(RegisterAccountCommandResources), ErrorMessageResourceName = "IdMissing")]
+         [EntityId(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "IdInvalid")]
+         [Required(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "IdMissing")]
          public Guid AccountId { [UsedImplicitly] get; set; } = Guid.NewGuid();
 
-         [Email(ErrorMessageResourceType = typeof(RegisterAccountCommandResources), ErrorMessageResourceName = "EmailInvalid")]
-         [Required(ErrorMessageResourceType = typeof(RegisterAccountCommandResources), ErrorMessageResourceName = "EmailMissing")]
+         [Email(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "EmailInvalid")]
+         [Required(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "EmailMissing")]
          public string Email { [UsedImplicitly] get; set; } = string.Empty;
 
-         [Required(ErrorMessageResourceType = typeof(RegisterAccountCommandResources), ErrorMessageResourceName = "PasswordMissing")]
+         [Required(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "PasswordMissing")]
          public string Password { get; set; } = string.Empty;
 
          public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) => Domain.Passwords.Password.Validate(Password, this, () => Password);

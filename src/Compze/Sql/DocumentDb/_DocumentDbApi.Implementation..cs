@@ -40,18 +40,18 @@ public partial class DocumentDbApi
       }
    }
 
-   public partial class Command
+   public partial class Tommand
    {
-      public class DeleteDocument<TDocument> : TessageTypes.StrictlyLocal.Commands.StrictlyLocalTommand
+      public class DeleteDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
       {
          internal DeleteDocument(string key) => Key = key;
          string Key { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
             (DeleteDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Delete<TDocument>(command.Key));
       }
 
-      public class SaveDocument<TDocument> : TessageTypes.StrictlyLocal.Commands.StrictlyLocalTommand
+      public class SaveDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
       {
          internal SaveDocument(string key, TDocument entity)
          {
@@ -62,8 +62,8 @@ public partial class DocumentDbApi
          string Key { get; }
          TDocument Entity { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
-            (DocumentDbApi.Command.SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+            (DocumentDbApi.Tommand.SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
       }
    }
 
@@ -72,8 +72,8 @@ public partial class DocumentDbApi
       TueryApi.TryGetDocument<TDocument>.RegisterHandler(registrar);
       TueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(registrar);
       TueryApi.GetDocumentForUpdate<TDocument>.RegisterHandler(registrar);
-      Command.SaveDocument<TDocument>.RegisterHandler(registrar);
-      Command.DeleteDocument<TDocument>.RegisterHandler(registrar);
+      Tommand.SaveDocument<TDocument>.RegisterHandler(registrar);
+      Tommand.DeleteDocument<TDocument>.RegisterHandler(registrar);
    }
 
 }

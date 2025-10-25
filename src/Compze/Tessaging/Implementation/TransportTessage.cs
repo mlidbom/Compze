@@ -12,9 +12,9 @@ static class TransportTessage
    internal enum TransportTessageType
    {
       ExactlyOnceEvent,
-      AtMostOnceCommand,
-      AtMostOnceCommandWithReturnValue,
-      ExactlyOnceCommand,
+      AtMostOnceTommand,
+      AtMostOnceTommandWithReturnValue,
+      ExactlyOnceTommand,
       NonTransactionalTuery
    }
 
@@ -58,13 +58,13 @@ static class TransportTessage
          if(typeof(IRemotableTuery<object>).IsAssignableFrom(tessageType))
             return TransportTessageType.NonTransactionalTuery;
          if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(tessageType))
-            return TransportTessageType.AtMostOnceCommandWithReturnValue;
+            return TransportTessageType.AtMostOnceTommandWithReturnValue;
          if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(tessageType))
-            return TransportTessageType.AtMostOnceCommand;
+            return TransportTessageType.AtMostOnceTommand;
          else if(typeof(IExactlyOnceTevent).IsAssignableFrom(tessageType))
             return TransportTessageType.ExactlyOnceEvent;
          if(typeof(IExactlyOnceTommand).IsAssignableFrom(tessageType))
-            return TransportTessageType.ExactlyOnceCommand;
+            return TransportTessageType.ExactlyOnceTommand;
          else
             throw new ArgumentOutOfRangeException();
       }

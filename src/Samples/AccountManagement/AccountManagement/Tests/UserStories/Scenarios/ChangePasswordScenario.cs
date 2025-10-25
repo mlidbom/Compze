@@ -45,7 +45,7 @@ public class ChangePasswordScenario : ScenarioBase<AccountResource>
 
    public override AccountResource Execute()
    {
-      Account.Commands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteAsClientRequestOn(_clientEndpoint);
+      Account.Tommands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteAsClientRequestOn(_clientEndpoint);
 
       return Account = Api.Tuery.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
    }

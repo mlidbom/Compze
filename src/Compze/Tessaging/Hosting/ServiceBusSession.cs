@@ -22,17 +22,17 @@ static class ServiceBusSessionRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IServiceBusSession>()
-                                  .CreatedBy((IOutbox outbox, CommandScheduler commandScheduler)
-                                                => new ServiceBusSession(outbox, commandScheduler)));
+                                  .CreatedBy((IOutbox outbox, TommandScheduler tommandScheduler)
+                                                => new ServiceBusSession(outbox, tommandScheduler)));
 
    readonly IOutbox _transport;
-   readonly CommandScheduler _commandScheduler;
+   readonly TommandScheduler _tommandScheduler;
    readonly IUsageGuard _contextGuard;
 
-   public ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler)
+   public ServiceBusSession(IOutbox transport, TommandScheduler tommandScheduler)
    {
       _transport = transport;
-      _commandScheduler = commandScheduler;
+      _tommandScheduler = tommandScheduler;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
@@ -45,13 +45,13 @@ static class ServiceBusSessionRegistrar
    public void ScheduleSend(DateTime sendAt, IExactlyOnceTommand tommand)
    {
       RunAssertions(tommand);
-      _commandScheduler.Schedule(sendAt, tommand);
+      _tommandScheduler.Schedule(sendAt, tommand);
    }
 
    void RunAssertions(IExactlyOnceTommand tommand)
    {
       _contextGuard.EnsureAccessValid();
       TessageInspector.AssertValidToSendRemote(tommand);
-      CommandValidator.AssertCommandIsValid(tommand);
+      TommandValidator.AssertTommandIsValid(tommand);
    }
 }

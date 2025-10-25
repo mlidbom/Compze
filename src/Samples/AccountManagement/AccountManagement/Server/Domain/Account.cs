@@ -60,7 +60,7 @@ class Account : Aggregate<Account, AccountEvent.Root, AccountEvent.Implementatio
       var newAccount = new Account();
       newAccount.Publish(new AccountEvent.Implementation.UserRegistered(accountId: accountId, email: email, password: password));
 
-      navigator.Execute(InternalApi.Commands.Save(newAccount));
+      navigator.Execute(InternalApi.Tommands.Save(newAccount));
 
       return (RegistrationAttemptStatus.Successful, newAccount);
    }

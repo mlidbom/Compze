@@ -2,27 +2,27 @@ using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 
 public class EndpointHostTest_Tests : EndpointHostTestBase
 {
-   [PCT]  public async Task If_command_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
+   [PCT]  public async Task If_tommand_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
-      MyExactlyOnceCommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      MyExactlyOnceTommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
-   [PCT]  public async Task If_command_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
+   [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
-      CommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
+      TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
       await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTommandWithResult.Create())))
                          .Should().ThrowAsync<TessageDispatchingFailedException>();
 

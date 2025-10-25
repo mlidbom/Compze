@@ -45,6 +45,6 @@ static partial class TessageInspector
    static void CommonAssertions(ITessage tessage)
    {
       TessageTypeInspector.AssertValid(tessage.GetType());
-      if(tessage is ITommand command) CommandValidator.AssertCommandIsValid(command);
+      if(tessage is ITommand tommand) TommandValidator.AssertTommandIsValid(tommand);
    }
 }

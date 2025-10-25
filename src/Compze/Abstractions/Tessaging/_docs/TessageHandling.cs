@@ -13,24 +13,24 @@ namespace Compze.Tessaging.Abstractions;
 class TessageHandlingExamples
 {
    #region tessage_handler_example
-   void Handle(MyCommand command)
+   void Handle(MyTommand tommand)
    {
-      // Process the command
+      // Process the tommand
    }
    #endregion
 
    #region tessage_handler_interface
-   class MyCommandHandler : ITessageHandler<MyCommand>
+   class MyTommandHandler : ITessageHandler<MyTommand>
    {
-      public void Handle(MyCommand command)
+      public void Handle(MyTommand tommand)
       {
-         // Process the command
+         // Process the tommand
       }
    }
    #endregion
 }
 
-class MyCommand {}
+class MyTommand {}
 
 interface IMyEvent : IAggregateEvent
 {
@@ -39,5 +39,5 @@ interface IMyEvent : IAggregateEvent
 
 interface ITessageHandler<T>
 {
-   void Handle(T command);
+   void Handle(T tommand);
 }

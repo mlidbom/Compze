@@ -148,15 +148,15 @@ class OutboxRetryPoller : IDisposable
                sendTask = connection.SendAsync(exactlyOnceEvent);
                break;
             }
-            case IExactlyOnceTommand exactlyOnceCommand:
+            case IExactlyOnceTommand exactlyOnceTommand:
             {
-               connection = _transportClient.ConnectionToHandlerFor(exactlyOnceCommand);
+               connection = _transportClient.ConnectionToHandlerFor(exactlyOnceTommand);
                if(connection.EndpointInformation.Id.GuidValue != endpointId)
                {
-                  throw new InvalidOperationException($"Command routing changed - expected endpoint {endpointId}, got {connection.EndpointInformation.Id.GuidValue}");
+                  throw new InvalidOperationException($"Tommand routing changed - expected endpoint {endpointId}, got {connection.EndpointInformation.Id.GuidValue}");
                }
 
-               sendTask = connection.SendAsync(exactlyOnceCommand);
+               sendTask = connection.SendAsync(exactlyOnceTommand);
                break;
             }
             default:

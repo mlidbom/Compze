@@ -1,13 +1,13 @@
 using System;
 using AccountManagement.API.ValidationAttributes;
-using AccountManagement.Tests.Unit.UI.Commands.UserCommands;
+using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using JetBrains.Annotations;
 
 
-namespace AccountManagement.Tests.Unit.UI.Commands;
+namespace AccountManagement.Tests.Unit.UI.Tommands;
 
 
 public class EntityIdAttributeTests: UniversalTestBase
@@ -15,18 +15,18 @@ public class EntityIdAttributeTests: UniversalTestBase
    [XF]
    public void IsValidIfIdIsNull()
    {
-      CommandValidator.ValidationFailures(new ACommand {AnId = null})
+      TommandValidator.ValidationFailures(new ATommand {AnId = null})
                       .Should().NotBeEmpty();
    }
 
    [XF]
    public void IsNotValidIfIdIsEmpty()
    {
-      CommandValidator.ValidationFailures(new ACommand {AnId = Guid.Empty})
+      TommandValidator.ValidationFailures(new ATommand {AnId = Guid.Empty})
                       .Should().NotBeEmpty();
    }
 
-   class ACommand
+   class ATommand
    {
       [EntityId]
       public Guid? AnId { [UsedImplicitly] get; set; }

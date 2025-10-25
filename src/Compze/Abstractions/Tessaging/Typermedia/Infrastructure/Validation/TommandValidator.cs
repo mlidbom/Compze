@@ -6,23 +6,23 @@ using Compze.Abstractions.Tessaging.Typermedia.Public;
 
 namespace Compze.Abstractions.Tessaging.Typermedia.Infrastructure.Validation;
 
-static class CommandValidator
+static class TommandValidator
 {
-   public static void AssertCommandIsValid(ITommand tommand)
+   public static void AssertTommandIsValid(ITommand tommand)
    {
       var failures = ValidationFailures(tommand);
       if(failures.Any())
       {
-         throw new CommandValidationFailureException(failures);
+         throw new TommandValidationFailureException(failures);
       }
    }
 
-   static IReadOnlyList<ValidationResult> ValidationFailures(object command)
+   static IReadOnlyList<ValidationResult> ValidationFailures(object tommand)
    {
-      var context = new ValidationContext(command, serviceProvider: null, items: null);
+      var context = new ValidationContext(tommand, serviceProvider: null, items: null);
       var results = new List<ValidationResult>();
 
-      Validator.TryValidateObject(command, context, results, validateAllProperties: true);
+      Validator.TryValidateObject(tommand, context, results, validateAllProperties: true);
       return results;
    }
 }

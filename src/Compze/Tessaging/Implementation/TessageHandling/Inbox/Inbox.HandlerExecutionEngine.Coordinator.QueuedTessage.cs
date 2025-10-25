@@ -105,22 +105,22 @@ partial class Inbox
                      eventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
                      return null;
                   },
-                  Implementation.TransportTessage.TransportTessageType.AtMostOnceCommandWithReturnValue => tessage =>
+                  Implementation.TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue => tessage =>
                   {
-                     var commandHandler = _handlerRegistry.GetCommandHandlerWithReturnValue(tessage.GetType());
-                     return commandHandler((IAtMostOnceHypermediaTommand)tessage);
+                     var tommandHandler = _handlerRegistry.GetTommandHandlerWithReturnValue(tessage.GetType());
+                     return tommandHandler((IAtMostOnceHypermediaTommand)tessage);
                   },
-                  Implementation.TransportTessage.TransportTessageType.AtMostOnceCommand => tessage =>
+                  Implementation.TransportTessage.TransportTessageType.AtMostOnceTommand => tessage =>
                   {
-                     var commandHandler = _handlerRegistry.GetCommandHandler(tessage.GetType());
-                     commandHandler((IAtMostOnceHypermediaTommand)tessage);
-                     return unit.Value; //Todo:Properly handle commands with and without return values
+                     var tommandHandler = _handlerRegistry.GetTommandHandler(tessage.GetType());
+                     tommandHandler((IAtMostOnceHypermediaTommand)tessage);
+                     return unit.Value; //Todo:Properly handle tommands with and without return values
                   },
-                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceCommand => tessage =>
+                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceTommand => tessage =>
                   {
-                     var commandHandler = _handlerRegistry.GetCommandHandler(tessage.GetType());
-                     commandHandler((IExactlyOnceTommand)tessage);
-                     return unit.Value;//Todo:Properly handle commands with and without return values
+                     var tommandHandler = _handlerRegistry.GetTommandHandler(tessage.GetType());
+                     tommandHandler((IExactlyOnceTommand)tessage);
+                     return unit.Value;//Todo:Properly handle tommands with and without return values
                   },
                   Implementation.TransportTessage.TransportTessageType.NonTransactionalTuery => actualTessage =>
                   {

@@ -27,8 +27,8 @@ partial class Inbox
 
       readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
       [
-         new QueriesExecuteAfterAllCommandsAndEventsAreDone(),
-         new CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
+         new QueriesExecuteAfterAllTommandsAndEventsAreDone(),
+         new TommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
       readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);

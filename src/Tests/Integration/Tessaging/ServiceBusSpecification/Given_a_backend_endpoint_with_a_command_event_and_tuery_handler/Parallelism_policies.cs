@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.TasksCE;
@@ -9,7 +9,7 @@ using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
 
 public class Parallelism_policies : EndpointHostTestBase
 {
@@ -46,18 +46,18 @@ public class Parallelism_policies : EndpointHostTestBase
                                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 
-   [PCT] public void Two_exactly_once_command_handlers_cannot_execute_in_parallel()
+   [PCT] public void Two_exactly_once_tommand_handlers_cannot_execute_in_parallel()
    {
       CloseGates();
 
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
-      MyExactlyOnceCommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
+      MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                               .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 
-   [PCT] public void Two_AtMostOnce_command_handlers_from_the_same_session_cannot_execute_in_parallel()
+   [PCT] public void Two_AtMostOnce_tommand_handlers_from_the_same_session_cannot_execute_in_parallel()
    {
       CloseGates();
 
@@ -67,7 +67,7 @@ public class Parallelism_policies : EndpointHostTestBase
          session.PostAsync(MyCreateAggregateTommand.Create());
       });
 
-      MyCreateAggregateCommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
+      MyCreateAggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                                .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 }

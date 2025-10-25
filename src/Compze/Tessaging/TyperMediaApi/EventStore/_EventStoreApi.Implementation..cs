@@ -56,16 +56,16 @@ public partial class EventStoreApi
       }
    }
 
-   public partial class CommandApi
+   public partial class TommandApi
    {
-      public class SaveAggregate<TAggregate> : TessageTypes.StrictlyLocal.Commands.StrictlyLocalTommand
+      public class SaveAggregate<TAggregate> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
          where TAggregate : class, IEventStored
       {
          [JsonConstructor] internal SaveAggregate(TAggregate entity) => Entity = entity;
          TAggregate Entity { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
-            (SaveAggregate<TAggregate> command, IEventStoreUpdater updater) => updater.Save(command.Entity));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+            (SaveAggregate<TAggregate> tommand, IEventStoreUpdater updater) => updater.Save(tommand.Entity));
       }
    }
 
@@ -73,7 +73,7 @@ public partial class EventStoreApi
       where TAggregate : class, IEventStored<TEvent>
       where TEvent : IAggregateTevent
    {
-      CommandApi.SaveAggregate<TAggregate>.RegisterHandler(registrar);
+      TommandApi.SaveAggregate<TAggregate>.RegisterHandler(registrar);
       TueryApi.AggregateLink<TAggregate>.RegisterHandler(registrar);
       TueryApi.GetReadonlyCopyOfAggregate<TAggregate>.RegisterHandler(registrar);
       TueryApi.GetReadonlyCopyOfAggregateVersion<TAggregate>.RegisterHandler(registrar);

@@ -9,21 +9,21 @@ public class LoginController(IRemoteHypermediaNavigator remoteApiNavigator) : Co
 {
    readonly IRemoteHypermediaNavigator _bus = remoteApiNavigator;
 
-   public IActionResult Login(AccountResource.Command.LogIn loginCommand)
+   public IActionResult Login(AccountResource.Tommand.LogIn loginTommand)
    {
       if(!ModelState.IsValid) return View("LoginForm");
 
-      var result = loginCommand.PostOn(_bus);
+      var result = loginTommand.PostOn(_bus);
       if(result.Succeeded)
       {
          return View("LoggedIn");
       }
 
       ModelState.AddModelError("Something", "Login Failed");
-      ModelState.Remove((AccountResource.Command.LogIn model) => model.TessageId);
-      loginCommand.ReplaceDeduplicationId();
-      return View("LoginForm", loginCommand);
+      ModelState.Remove((AccountResource.Tommand.LogIn model) => model.TessageId);
+      loginTommand.ReplaceDeduplicationId();
+      return View("LoginForm", loginTommand);
    }
 
-   public IActionResult LoginForm() => View("LoginForm", _bus.Navigate(Api.Accounts.Command.Login()));
+   public IActionResult LoginForm() => View("LoginForm", _bus.Navigate(Api.Accounts.Tommand.Login()));
 }

@@ -12,7 +12,7 @@ class APIDraft01
    class TessageHandler<TImplementation>
    {
       public TessageHandler<TImplementation> ForEvent<TEvent>(Action<TImplementation, TEvent> action) => this;
-      public TessageHandler<TImplementation> ForCommand<TCommand>(Action<TImplementation, TCommand> action) => this;
+      public TessageHandler<TImplementation> ForTommand<TTommand>(Action<TImplementation, TTommand> action) => this;
       public TessageHandler<TImplementation> ForTuery<TTuery, TResult>(Func<TImplementation, TTuery, TResult> action) => this;
 
 
@@ -22,7 +22,7 @@ class APIDraft01
    {
       public TessageHandler ForEvent<TEvent>(Action<TEvent> action) => this;
 
-      public TessageHandler ForCommand<TCommand>(Action<TCommand> action) => this;
+      public TessageHandler ForTommand<TTommand>(Action<TTommand> action) => this;
 
       public TessageHandler ForTuery<TTuery, TResult>(Func<TTuery, TResult> action) => this;
    }
@@ -66,13 +66,13 @@ class APIDraft01
          Add(new TessageHandlerGroup(
                 new TessageHandler<AccountQueryModelUpdater>()
                   .ForEvent<AccountCreatedEvent>((handler, @event) => handler.Handle(@event)),
-                new TessageHandler<AccountCommandHandler>()
-                  .ForCommand<CreateAccountCommand>((handler, command) => handler.Handle(command)),
+                new TessageHandler<AccountTommandHandler>()
+                  .ForTommand<CreateAccountTommand>((handler, tommand) => handler.Handle(tommand)),
                 new TessageHandler<AccountTueryHandler>()
                   .ForTuery<GetAccountTuery, string>((handler, tuery) => handler.Handle(tuery)),
                 new TessageHandler<AccountController>()
                   .ForEvent<AccountCreatedEvent>((handler, @event) => handler.Handle(@event))
-                  .ForCommand<CreateAccountCommand>((handler, command) => handler.Handle(command))
+                  .ForTommand<CreateAccountTommand>((handler, tommand) => handler.Handle(tommand))
                   .ForTuery<GetAccountTuery, string>((handler, tuery) => handler.Handle(tuery))
              ));
 

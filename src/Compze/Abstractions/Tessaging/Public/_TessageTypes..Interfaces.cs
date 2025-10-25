@@ -49,11 +49,11 @@ public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery
 
 //Todo: Is helping with clicking twice in UIs really core logic worth spending time before 1.0 on or should AtMostOnce simply be removed for now?
 ///<summary>A tessage that is guaranteed not to be delivered more than once. The <see cref="TessageId"/> is used by infrastructure to maintain this guarantee.
-/// The <see cref="TessageId"/> must be maintained when binding a command to a UI or the guarantee will be lost.</summary>
+/// The <see cref="TessageId"/> must be maintained when binding a tommand to a UI or the guarantee will be lost.</summary>
 public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransactionally
 {
    //Refactor: We should use a custom type for TessageIds. Likely a record struct.
-   ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a command in a UI etc.</summary>
+   ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
    Guid TessageId { get; }
 }
 public interface IAtMostOnceHypermediaTommand : IAtMostOnceTessage, IRemotableTommand, IHypermediaTessage;
@@ -61,7 +61,7 @@ public interface IAtMostOnceTommand<out TResult> : IAtMostOnceHypermediaTommand,
 
 
 //Todo: IRequireTransactionalReceiver seems too restrictive. Surely things such as maintaining in-memory caches, monitoring/debugging tooling etc should be allowed to listen transiently to events without the full exactly once delivery overhead?
-//For commands it makes sense that the tessage-type dictates such things, but for events it seems like the subscriber should get to choose their preferred way of listening and level of delivery guarantee.
+//For tommands it makes sense that the tessage-type dictates such things, but for events it seems like the subscriber should get to choose their preferred way of listening and level of delivery guarantee.
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;

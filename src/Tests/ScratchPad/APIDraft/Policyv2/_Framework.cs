@@ -35,14 +35,14 @@ static class Policy
       public static ITessageHandlerPolicy CurrentTessage;
       public static ITessageHandlerPolicy AggregateRelatedToTessage;
       public static ITessageHandlerPolicy TessageProcessing => null;
-      public static ITessageHandlerPolicy CommandProcessing => null;
+      public static ITessageHandlerPolicy TommandProcessing => null;
       public static ITessageHandlerPolicy EventProcessing => null;
    }
 
    public class Inclusivelock
    {
       public static ITessageHandlerPolicy TessageProcessing => null;
-      public static ITessageHandlerPolicy CommandProcessing => null;
+      public static ITessageHandlerPolicy TommandProcessing => null;
       public static ITessageHandlerPolicy EventProcessing => null;
    }
 
@@ -80,7 +80,7 @@ class EventHandler : TessageHandler
 {
 }
 
-class CommandHandler : TessageHandler
+class TommandHandler : TessageHandler
 {
 }
 

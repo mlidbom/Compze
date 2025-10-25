@@ -19,17 +19,17 @@ using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
-public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBase, IAsyncLifetime
+public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBase, IAsyncLifetime
 {
    IUtcTimeTimeSource _timeSource = DateTimeNowTimeSource.Instance;
-   readonly IThreadGate _receivedCommandGate;
+   readonly IThreadGate _receivedTommandGate;
    readonly ITestingEndpointHost _host;
    readonly IEndpoint _endpoint;
 
-   public When_scheduling_commands_to_be_sent_in_the_future()
+   public When_scheduling_tommands_to_be_sent_in_the_future()
    {
       _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
-      _receivedCommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
+      _receivedTommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
       _endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("17ED9DF9-33A8-4DF8-B6EC-6ED97AB2030B")),
@@ -38,7 +38,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
             builder.Container.Register()
                    .AspNetCoreTransport()
                    .CurrentTestsConfiguredSqlLayer();
-            builder.RegisterHandlers.ForCommand<ScheduledTommand>(_ => _receivedCommandGate.AwaitPassThrough());
+            builder.RegisterHandlers.ForTommand<ScheduledTommand>(_ => _receivedTommandGate.AwaitPassThrough());
          });
    }
 
@@ -59,7 +59,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
 
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + .2.Seconds(), inOneHour));
 
-      _receivedCommandGate.AwaitPassedThroughCountEqualTo(1, timeout: 2.Seconds());
+      _receivedTommandGate.AwaitPassedThroughCountEqualTo(1, timeout: 2.Seconds());
    }
 
    [PCT]  public void Tessages_whose_due_time_have_not_passed_are_not_delivered()
@@ -68,7 +68,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
       var inOneHour = new ScheduledTommand();
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 
-      _receivedCommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: .5.Seconds())
+      _receivedTommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: .5.Seconds())
                           .Should().Be(false);
    }
 

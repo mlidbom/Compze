@@ -65,10 +65,10 @@ public partial class Password
          {
             yield return policyFailures.First() switch
             {
-               Policy.Failures.BorderedByWhitespace => owner.CreateValidationResult(RegisterAccountCommandResources.Password_BorderedByWhitespace, passwordMember),
-               Policy.Failures.MissingLowerCaseCharacter => owner.CreateValidationResult(RegisterAccountCommandResources.Password_MissingLowerCaseCharacter, passwordMember),
-               Policy.Failures.MissingUppercaseCharacter => owner.CreateValidationResult(RegisterAccountCommandResources.Password_MissingUpperCaseCharacter, passwordMember),
-               Policy.Failures.ShorterThanFourCharacters => owner.CreateValidationResult(RegisterAccountCommandResources.Password_ShorterThanFourCharacters, passwordMember),
+               Policy.Failures.BorderedByWhitespace => owner.CreateValidationResult(RegisterAccountTommandResources.Password_BorderedByWhitespace, passwordMember),
+               Policy.Failures.MissingLowerCaseCharacter => owner.CreateValidationResult(RegisterAccountTommandResources.Password_MissingLowerCaseCharacter, passwordMember),
+               Policy.Failures.MissingUppercaseCharacter => owner.CreateValidationResult(RegisterAccountTommandResources.Password_MissingUpperCaseCharacter, passwordMember),
+               Policy.Failures.ShorterThanFourCharacters => owner.CreateValidationResult(RegisterAccountTommandResources.Password_ShorterThanFourCharacters, passwordMember),
                Policy.Failures.Null => throw new Exception("Null should have been caught by the Required attribute"),
                _ => throw new Exception($"Unknown password failure type {policyFailures.First()}")
             };

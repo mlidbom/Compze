@@ -73,7 +73,7 @@ partial class TransportClient : ITransportClient, IDisposable
       await connection.PostAsync(atMostOnceTommand).caf();
    }
 
-   public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceTommand<TCommandResult> atMostOnceTommand)
+   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> atMostOnceTommand)
    {
       AssertRunning();
       var connection = _router.ConnectionToHandlerFor(atMostOnceTommand);

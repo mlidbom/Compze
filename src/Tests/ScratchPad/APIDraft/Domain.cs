@@ -4,7 +4,7 @@ namespace Compze.Tests.ScratchPad.APIDraft;
 
 interface IAccountEvent { }
 
-class SendAccountRegistrationWelcomeEmailCommand { }
+class SendAccountRegistrationWelcomeEmailTommand { }
 
 class AccountAggregate { }
 class AccountReadModel { }
@@ -12,7 +12,7 @@ class EmailToAccountLookupModel { }
 
 class GetAccountTuery { }
 class AccountCreatedEvent { }
-class CreateAccountCommand { }
+class CreateAccountTommand { }
 
 class AccountTueryHandler
 {
@@ -24,14 +24,14 @@ class AccountQueryModelUpdater
    public void Handle(AccountCreatedEvent @event) { }
 }
 
-class AccountCommandHandler
+class AccountTommandHandler
 {
-   public void Handle(CreateAccountCommand command) { }
+   public void Handle(CreateAccountTommand tommand) { }
 }
 
 class AccountController
 {
    public string Handle(GetAccountTuery tuery) => string.Empty;
    public void Handle(AccountCreatedEvent @event) { }
-   public void Handle(CreateAccountCommand command) { }
+   public void Handle(CreateAccountTommand tommand) { }
 }

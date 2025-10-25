@@ -11,24 +11,24 @@ public class PuttingItAllTogether
       var defaultEventHandlerPolicies = new CompositePolicy(
          Policy.LockExclusively.ThisHandler,   //Ensures that this handler is never invoked in parallel with itself.
          Policy.LockExclusively.CurrentTessage //Ensures that no other handler handle the same queuedTessageInformation in parallel with this handler.
-         //Useless when applied to a command handler since there can only be one.
+         //Useless when applied to a tommand handler since there can only be one.
       );
 
-      var defaultCommandHandlerPolicies = new CompositePolicy(
+      var defaultTommandHandlerPolicies = new CompositePolicy(
          Policy.LockExclusively.AggregateRelatedToTessage
       );
 
       var pauseAllOtherHandlers = new CompositePolicy(
-         Policy.LockExclusively.CommandProcessing,
+         Policy.LockExclusively.TommandProcessing,
          Policy.LockExclusively.EventProcessing
       );
 
       var endpoint = new Endpoint(
-         //Normal command handlers
-         CommandHandler.For<CreateAccountCommand>(
+         //Normal tommand handlers
+         TommandHandler.For<CreateAccountTommand>(
             "17893552-D533-4A59-A177-63EAF3B7B07E",
-            command => { },
-            defaultCommandHandlerPolicies,
+            tommand => { },
+            defaultTommandHandlerPolicies,
             //Being explicit about which events might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
             Policy.Publishes<IAccountEvent>(),
@@ -36,14 +36,14 @@ public class PuttingItAllTogether
             //Policy.Updates<EmailToAccountLookupModel>. Throws an exception on registration if there are no handlers with matching Updates<> policy.
             Policy.RequiresUpToDate<EmailToAccountLookupModel>.All),
 
-         //This command handler is completely independent of any other handler since it just sends an email based on the data in the command.
+         //This tommand handler is completely independent of any other handler since it just sends an email based on the data in the tommand.
          //It can run in parallel with any other handler and itself.
-         CommandHandler.For<SendAccountRegistrationWelcomeEmailCommand>("76773E2F-9E44-4150-8C3C-8A4FC93899C3", command => { }, Policy.NoRestrictions),
+         TommandHandler.For<SendAccountRegistrationWelcomeEmailTommand>("76773E2F-9E44-4150-8C3C-8A4FC93899C3", tommand => { }, Policy.NoRestrictions),
 
 
-         //System command handlers:
-         CommandHandler.For<OptimizeEventStoreCommand>("F9688A3B-F6AF-4884-9FB5-F6670718F6BE", command => { }, pauseAllOtherHandlers),
-         CommandHandler.For<OptimizeDocumentDbCommand>("7A2DC4C3-F2DB-43BD-ACB0-BF454BC6C958", command => { }, pauseAllOtherHandlers),
+         //System tommand handlers:
+         TommandHandler.For<OptimizeEventStoreTommand>("F9688A3B-F6AF-4884-9FB5-F6670718F6BE", tommand => { }, pauseAllOtherHandlers),
+         TommandHandler.For<OptimizeDocumentDbCommand>("7A2DC4C3-F2DB-43BD-ACB0-BF454BC6C958", tommand => { }, pauseAllOtherHandlers),
 
          //Event handlers
          EventHandler.For<AccountCreatedEvent>(
@@ -56,9 +56,9 @@ public class PuttingItAllTogether
             "A5A1DF35-982C-4962-A7DA-C98AC88633C0",
             @event => { },
             defaultEventHandlerPolicies,
-            //Being explicit about which commands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
+            //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
-            Policy.Sends<SendAccountRegistrationWelcomeEmailCommand>()
+            Policy.Sends<SendAccountRegistrationWelcomeEmailTommand>()
          ),
 
          EventHandler.For<AccountCreatedEvent>(

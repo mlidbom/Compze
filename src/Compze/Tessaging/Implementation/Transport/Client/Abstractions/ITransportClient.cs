@@ -15,6 +15,6 @@ interface ITransportClient
     IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent);
 
     Task PostAsync(IAtMostOnceHypermediaTommand tommand);
-    Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceTommand<TCommandResult> tommand);
+    Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> tommand);
     Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery);
 }

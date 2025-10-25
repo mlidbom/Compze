@@ -8,7 +8,7 @@ namespace Compze.Sql.DocumentDb;
 public partial class DocumentDbApi
 {
    public TueryApi Queries => new();
-   public Command Commands => new();
+   public Tommand Tommands => new();
 
    public partial class TueryApi
    {
@@ -21,7 +21,7 @@ public partial class DocumentDbApi
       public GetReadonlyCopyOfDocument<TDocument> GetReadOnlyCopy<TDocument>(Guid id) => new(id);
    }
 
-   public partial class Command
+   public partial class Tommand
    {
       public SaveDocument<TDocument> Save<TDocument>(string key, TDocument account) => new(key, account);
 

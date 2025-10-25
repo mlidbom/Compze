@@ -70,7 +70,7 @@ static class AccountStatistics
                _isInitialized = true;
                if(navigator.Execute(_documentDbApi.Queries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is None<SingletonStatisticsQueryModel>)
                {
-                  navigator.Execute(_documentDbApi.Commands.Save(new SingletonStatisticsQueryModel()));
+                  navigator.Execute(_documentDbApi.Tommands.Save(new SingletonStatisticsQueryModel()));
                }
             }
          }

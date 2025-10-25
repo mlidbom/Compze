@@ -9,7 +9,7 @@ namespace AccountManagement.API;
 
 public partial class AccountResource
 {
-   public static partial class Command
+   public static partial class Tommand
    {
       public partial class LogIn() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
       {

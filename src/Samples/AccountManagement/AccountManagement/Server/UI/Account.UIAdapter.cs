@@ -13,8 +13,8 @@ namespace AccountManagement.UI;
 
 static class AccountUIAdapter
 {
-   public static void Login(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommandWithResult(
-      (AccountResource.Command.LogIn logIn, IInProcessHypermediaNavigator navigator) =>
+   public static void Login(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
+      (AccountResource.Tommand.LogIn logIn, IInProcessHypermediaNavigator navigator) =>
       {
          var email = Email.Parse(logIn.Email);
 
@@ -22,32 +22,32 @@ static class AccountUIAdapter
          {
             return account.Value.Login(logIn.Password) switch
             {
-               AccountEvent.LoggedIn loggedIn => AccountResource.Command.LogIn.LoginAttemptResult.Success(loggedIn.AuthenticationToken),
-               AccountEvent.LoginFailed _ => AccountResource.Command.LogIn.LoginAttemptResult.Failure(),
+               AccountEvent.LoggedIn loggedIn => AccountResource.Tommand.LogIn.LoginAttemptResult.Success(loggedIn.AuthenticationToken),
+               AccountEvent.LoginFailed _ => AccountResource.Tommand.LogIn.LoginAttemptResult.Failure(),
                _ => throw new ArgumentOutOfRangeException()
             };
          } else
          {
-            return AccountResource.Command.LogIn.LoginAttemptResult.Failure();
+            return AccountResource.Tommand.LogIn.LoginAttemptResult.Failure();
          }
       });
 
-   internal static void ChangePassword(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
-      (AccountResource.Command.ChangePassword command, IInProcessHypermediaNavigator navigator) =>
-         navigator.Execute(InternalApi.Queries.GetForUpdate(command.AccountId)).ChangePassword(command.OldPassword, new Password(command.NewPassword)));
+   internal static void ChangePassword(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+      (AccountResource.Tommand.ChangePassword tommand, IInProcessHypermediaNavigator navigator) =>
+         navigator.Execute(InternalApi.Queries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
 
-   internal static void ChangeEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
-      (AccountResource.Command.ChangeEmail command, IInProcessHypermediaNavigator navigator) =>
-         navigator.Execute(InternalApi.Queries.GetForUpdate(command.AccountId)).ChangeEmail(Email.Parse(command.Email)));
+   internal static void ChangeEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+      (AccountResource.Tommand.ChangeEmail tommand, IInProcessHypermediaNavigator navigator) =>
+         navigator.Execute(InternalApi.Queries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 
-   internal static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommandWithResult(
-      (AccountResource.Command.Register command, IInProcessHypermediaNavigator bus) =>
+   internal static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
+      (AccountResource.Tommand.Register tommand, IInProcessHypermediaNavigator bus) =>
       {
-         var (status, account) = Account.Register(command.AccountId, Email.Parse(command.Email), new Password(command.Password), bus);
+         var (status, account) = Account.Register(tommand.AccountId, Email.Parse(tommand.Email), new Password(tommand.Password), bus);
          return status switch
          {
-            RegistrationAttemptStatus.Successful => new AccountResource.Command.Register.RegistrationAttemptResult(status, new AccountResource(account!)),
-            RegistrationAttemptStatus.EmailAlreadyRegistered => new AccountResource.Command.Register.RegistrationAttemptResult(status, null),
+            RegistrationAttemptStatus.Successful => new AccountResource.Tommand.Register.RegistrationAttemptResult(status, new AccountResource(account!)),
+            RegistrationAttemptStatus.EmailAlreadyRegistered => new AccountResource.Tommand.Register.RegistrationAttemptResult(status, null),
             _ => throw new ArgumentOutOfRangeException()
          };
       });

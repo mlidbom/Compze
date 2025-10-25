@@ -12,15 +12,15 @@ public class Testing
 {
    public void Test()
    {
-      var createAccountHandler = new TestTessageHandler<CreateAccountCommand>();
+      var createAccountHandler = new TestTessageHandler<CreateAccountTommand>();
       var accountQueryModelUpdater = new TestTessageHandler<AccountCreatedEvent>();
 
       var endpoint = new Endpoint(
-         CommandHandler.For<CreateAccountCommand>("BE8B06E7-28BB-439D-BDD6-CF7E9454424B", createAccountHandler.Handle),
+         TommandHandler.For<CreateAccountTommand>("BE8B06E7-28BB-439D-BDD6-CF7E9454424B", createAccountHandler.Handle),
          EventHandler.For<AccountCreatedEvent>("AD198D3E-5340-4CB3-8BDB-31AFD0C7FC9A", accountQueryModelUpdater.Handle)
       );
 
-      //bus.SendAsyncAsync(new CreateAccountCommand)
+      //bus.SendAsyncAsync(new CreateAccountTommand)
       createAccountHandler.Started.Wait();
       accountQueryModelUpdater.IsStarted.Should().Be(false);
       createAccountHandler.AllowToComplete.Set();

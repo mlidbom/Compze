@@ -32,10 +32,10 @@ static class TessageHandlerRegistryRegistrar
 class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
-   IReadOnlyDictionary<Type, Action<object>> _commandHandlers = new Dictionary<Type, Action<object>>();
+   IReadOnlyDictionary<Type, Action<object>> _tommandHandlers = new Dictionary<Type, Action<object>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _eventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
-   IReadOnlyDictionary<Type, HandlerWithResultRegistration> _commandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
+   IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyList<EventHandlerRegistration> _eventHandlerRegistrations = new List<EventHandlerRegistration>();
 
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
@@ -51,24 +51,24 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForCommand<TCommand>(Action<TCommand> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _monitor.Update(() =>
    {
-      TessageInspector.AssertValid<TCommand>();
+      TessageInspector.AssertValid<TTommand>();
 
-      if(typeof(TCommand).Implements(typeof(ITommand<>)))
+      if(typeof(TTommand).Implements(typeof(ITommand<>)))
       {
-         throw new Exception($"{typeof(TCommand)} expects a result. You must register a method that returns a result.");
+         throw new Exception($"{typeof(TTommand)} expects a result. You must register a method that returns a result.");
       }
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _commandHandlers, typeof(TCommand), command => handler((TCommand)command));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _tommandHandlers, typeof(TTommand), tommand => handler((TTommand)tommand));
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForCommand<TCommand, TResult>(Func<TCommand, TResult> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _monitor.Update(() =>
    {
-      TessageInspector.AssertValid<TCommand>();
+      TessageInspector.AssertValid<TTommand>();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _commandHandlersReturningResults, typeof(TCommand), new CommandHandlerWithResultRegistration<TCommand, TResult>(handler));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _tommandHandlersReturningResults, typeof(TTommand), new TommandHandlerWithResultRegistration<TTommand, TResult>(handler));
       return this;
    });
 
@@ -80,19 +80,19 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       return this;
    });
 
-   Action<object> ITessageHandlerRegistry.GetCommandHandler(ITommand tessage)
+   Action<object> ITessageHandlerRegistry.GetTommandHandler(ITommand tessage)
    {
-      if(TryGetCommandHandler(tessage, out var handler)) return handler;
+      if(TryGetTommandHandler(tessage, out var handler)) return handler;
 
       throw new NoHandlerException(tessage.GetType());
    }
 
-   bool TryGetCommandHandler(ITommand tessage, [MaybeNullWhen(false)]out Action<object> handler) =>
-      _commandHandlers.TryGetValue(tessage.GetType(), out handler);
+   bool TryGetTommandHandler(ITommand tessage, [MaybeNullWhen(false)]out Action<object> handler) =>
+      _tommandHandlers.TryGetValue(tessage.GetType(), out handler);
 
-   public Func<ITommand, object> GetCommandHandlerWithReturnValue(Type commandType) => _commandHandlersReturningResults[commandType].HandlerMethod;
+   public Func<ITommand, object> GetTommandHandlerWithReturnValue(Type tommandType) => _tommandHandlersReturningResults[tommandType].HandlerMethod;
 
-   public Action<ITommand> GetCommandHandler(Type commandType) => _commandHandlers[commandType];
+   public Action<ITommand> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
 
    public Func<ITuery<object>, object> GetTueryHandler(Type tueryType) => _tueryHandlers[tueryType].HandlerMethod;
 
@@ -110,11 +110,11 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       throw new NoHandlerException(tuery.GetType());
    }
 
-   public Func<ITommand<TResult>, TResult> GetCommandHandler<TResult>(ITommand<TResult> tommand)
+   public Func<ITommand<TResult>, TResult> GetTommandHandler<TResult>(ITommand<TResult> tommand)
    {
-      if(_commandHandlersReturningResults.TryGetValue(tommand.GetType(), out var handler))
+      if(_tommandHandlersReturningResults.TryGetValue(tommand.GetType(), out var handler))
       {
-         return actualCommand => (TResult)handler.HandlerMethod(actualCommand);
+         return actualTommand => (TResult)handler.HandlerMethod(actualTommand);
       }
 
       throw new NoHandlerException(tommand.GetType());
@@ -133,15 +133,15 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
 
    public ISet<TypeId> HandledRemoteTessageTypeIds()
    {
-      var handledTypes = _commandHandlers.Keys
-                                         .Concat(_commandHandlersReturningResults.Keys)
+      var handledTypes = _tommandHandlers.Keys
+                                         .Concat(_tommandHandlersReturningResults.Keys)
                                          .Concat(_tueryHandlers.Keys)
                                          .Concat(_eventHandlerRegistrations.Select(reg => reg.Type))
                                          .Where(tessageType => tessageType.Implements<IRemotableTessage>())
                                          .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
                                          .ToHashSet();
 
-      var remoteResultTypes = _commandHandlersReturningResults
+      var remoteResultTypes = _tommandHandlersReturningResults
                              .Where(handler => handler.Key.Implements<IRemotableTessage>())
                              .Where(handler => handler.Value.ReturnValueType.Implements<IRemotableTessage>())
                              .Select(handler => handler.Value.ReturnValueType)
@@ -167,9 +167,9 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       internal Func<object, object> HandlerMethod { get; } = handlerMethod;
    }
 
-   class CommandHandlerWithResultRegistration<TCommand, TResult>(Func<TCommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
-                                                                                                                                        command => handlerMethod((TCommand)command) ?? throw new Exception("You cannot return null from a command handler"));
+   class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+                                                                                                                                        tommand => handlerMethod((TTommand)tommand) ?? throw new Exception("You cannot return null from a tommand handler"));
 
    class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
-                                                                                                                        command => handlerMethod((TTuery)command) ?? throw new Exception("You cannot return null from a tuery handler"));
+                                                                                                                        tommand => handlerMethod((TTuery)tommand) ?? throw new Exception("You cannot return null from a tuery handler"));
 }

@@ -18,13 +18,13 @@ namespace Compze.Tessaging.Hosting;
 
 class Endpoint : IEndpoint
 {
-   class ServerComponents(CommandScheduler commandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
+   class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
-      public readonly CommandScheduler CommandScheduler = commandScheduler;
+      public readonly TommandScheduler TommandScheduler = tommandScheduler;
       public readonly IInbox Inbox = inbox;
       public readonly IOutbox Outbox = outbox;
 
-      public void Dispose() => CommandScheduler.Dispose();
+      public void Dispose() => TommandScheduler.Dispose();
    }
 
    readonly EndpointConfiguration _configuration;
@@ -69,9 +69,9 @@ class Endpoint : IEndpoint
       //todo: find cleaner way of handling what an endpoint supports
       if(!_configuration.IsPureClientEndpoint)
       {
-         _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
+         _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.CommandScheduler.StartAsync()).caf();
+         await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
       }
    }
 
@@ -84,7 +84,7 @@ class Endpoint : IEndpoint
       if(_serverComponents != null)
       {
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
-         serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
+         serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
       }
    }
 
@@ -100,7 +100,7 @@ class Endpoint : IEndpoint
          _isSending = false;
          if(_serverComponents != null)
          {
-            _serverComponents.CommandScheduler.Stop();
+            _serverComponents.TommandScheduler.Stop();
             await _serverComponents.Outbox.StopAsync().caf();
          }
       }

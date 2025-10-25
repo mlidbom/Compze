@@ -41,8 +41,8 @@ class TessagingController : ControllerBase
       }
    }
 
-   [HttpPost(HttpConstants.Routes.Tessaging.Command)]
-   public async Task<IActionResult> Command()
+   [HttpPost(HttpConstants.Routes.Tessaging.Tommand)]
+   public async Task<IActionResult> Tommand()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
 

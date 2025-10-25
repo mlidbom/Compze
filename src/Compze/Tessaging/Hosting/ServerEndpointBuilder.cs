@@ -99,7 +99,7 @@ class ServerEndpointBuilder : IEndpointBuilder
                  .TaskRunner()
                  .Outbox()
                  .Inbox()
-                 .CommandScheduler()
+                 .TommandScheduler()
                  .ServiceBusEventStoreEventPublisher()
                  .ServiceBusSession()
                  .InProcessHypermediaNavigator();

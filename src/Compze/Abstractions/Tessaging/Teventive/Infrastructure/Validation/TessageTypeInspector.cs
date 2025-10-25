@@ -15,12 +15,12 @@ partial class TessageTypeInspector
    static readonly TessageTypeDesignRule[] TessageTypeDesignRules =
    [
       new MustBeITessage(),
-      new CannotBeBothCommandAndEvent(),
-      new CannotBeBothCommandAndTuery(),
+      new CannotBeBothTommandAndEvent(),
+      new CannotBeBothTommandAndTuery(),
       new CannotBeBothEventAndTuery(),
       new CannotBeBothRemotableAndStrictlyLocal(),
       new CannotForbidAndRequireTransactionalSender(),
-      new AtMostOnceCommandDefaultConstructorMustNotSetATessageId(),
+      new AtMostOnceTommandDefaultConstructorMustNotSetATessageId(),
       new WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
    ];
 
@@ -89,9 +89,9 @@ partial class TessageTypeInspector
       protected override string CreateTessage(Type type) => $"{type.GetFullNameCompilable()} implements both {typeof(TInterface1).GetFullNameCompilable()} and {typeof(TInterface2).GetFullNameCompilable()}";
    }
 
-   class CannotBeBothCommandAndEvent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
+   class CannotBeBothTommandAndEvent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
 
-   class CannotBeBothCommandAndTuery : MutuallyExclusiveInterfaces<ITommand, ITuery<object>>;
+   class CannotBeBothTommandAndTuery : MutuallyExclusiveInterfaces<ITommand, ITuery<object>>;
 
    class CannotBeBothEventAndTuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
 
@@ -118,7 +118,7 @@ partial class TessageTypeInspector
       }
    }
 
-   class AtMostOnceCommandDefaultConstructorMustNotSetATessageId : TessageTypeDesignRule
+   class AtMostOnceTommandDefaultConstructorMustNotSetATessageId : TessageTypeDesignRule
    {
       internal override void AssertFulfilledBy(Type type)
       {
@@ -132,8 +132,8 @@ partial class TessageTypeInspector
                   throw new TessageTypeDesignViolationException($"""
                                                                  The default constructor of {type.GetFullNameCompilable()} sets {nameof(IAtMostOnceTessage)}.{nameof(IAtMostOnceTessage.TessageId)} to a value other than Guid.Empty.
                                                                  Since {type.GetFullNameCompilable()} is an {typeof(IAtMostOnceHypermediaTommand).GetFullNameCompilable()} this is very likely to break the exactly once guarantee.
-                                                                 For instance: If you bind this command in a web UI and forget to bind the {nameof(IAtMostOnceTessage.TessageId)} then the infrastructure will be unable to realize that this is NOT the correct originally created {nameof(IAtMostOnceTessage.TessageId)}.
-                                                                 This in turn means that if your user clicks multiple times the command may well be both sent and handled multiple times. Thus breaking the exactly once guarantee. The same thing if a Single Page Application receives an HTTP timeout and retries the command. 
+                                                                 For instance: If you bind this tommand in a web UI and forget to bind the {nameof(IAtMostOnceTessage.TessageId)} then the infrastructure will be unable to realize that this is NOT the correct originally created {nameof(IAtMostOnceTessage.TessageId)}.
+                                                                 This in turn means that if your user clicks multiple times the tommand may well be both sent and handled multiple times. Thus breaking the exactly once guarantee. The same thing if a Single Page Application receives an HTTP timeout and retries the tommand. 
                                                                  And another example: If you make the setter private many serialization technologies will not be able to maintain the value of the property. But since you used this constructor the property will have a value. A new one each time the instance is deserialized. Again breaking the at most once guarantee.
 
                                                                  """);

@@ -17,7 +17,7 @@ static class RemoteHypermediaNavigatorRegistrar
       => registrar.Register(Typermedia.RemoteHypermediaNavigator.RegisterWith);
 }
 
-//Todo: Build a pipeline to handle things like command validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
+//Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
 [UsedImplicitly] class RemoteHypermediaNavigator : IRemoteHypermediaNavigator
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
