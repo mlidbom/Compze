@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Typermedia.Public;
 
-namespace Compze.Tessaging.Common.Typermedia.Implementation;
+namespace Compze.Tessaging.Common.Typermedia;
 
 static class CommandValidator
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Common.Typermedia.Implementation;
+using Compze.Tessaging.Common.Typermedia;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Common;
