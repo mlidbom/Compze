@@ -1,3 +1,9 @@
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Time;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading.ResourceAccess;
@@ -8,15 +14,21 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Time;
-using Compze.Utilities.Functional;
 
 namespace Compze.Common.Refactoring.Naming;
 
+static class TypeMapperRegistrar
+{
+   public static IComponentRegistrar TypeMapper(this IComponentRegistrar @this)
+      => Naming.TypeMapper.RegisterWith(@this);
+}
+
 class TypeMapper : ITypeMapper
 {
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<ITypeMapper, TypeMapper>()
+                                  .Instance(Naming.TypeMapper.Instance));
+
    TypeMapper() {}
    internal static readonly ITypeMapper Instance = new TypeMapper();
    static readonly IThreadShared<MappingState> State = IThreadShared.WithDefaultTimeout<MappingState>();

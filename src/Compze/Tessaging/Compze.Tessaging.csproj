@@ -23,9 +23,6 @@
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="_docs\**\*.cs" />
-    <None Include="_docs\**\*.cs" />
-    <Content Include="_docs\**\*.md" />
     <Compile Remove="Teventive\_docs\**\*.cs" />
     <None Include="Teventive\_docs\**\*.cs" />
     <Content Include="Teventive\_docs\**\*.md" />

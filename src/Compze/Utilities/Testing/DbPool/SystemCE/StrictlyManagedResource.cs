@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Compze.Abstractions.Configuration.Internal;
 using Compze.Common.Configuration;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;

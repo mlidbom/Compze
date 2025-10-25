@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Common.Configuration;
 using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;

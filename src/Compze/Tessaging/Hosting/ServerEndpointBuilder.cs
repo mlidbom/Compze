@@ -1,9 +1,9 @@
+using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Common.Configuration;
 using Compze.Common.Refactoring.Naming;
-using Compze.Common.Refactoring.Naming.Wiring;
 using Compze.Serialization;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;

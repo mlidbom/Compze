@@ -7,6 +7,7 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
    </ItemGroup>
    <ItemGroup>
+      <ProjectReference Include="..\..\Abstractions\Compze.Abstractions.csproj" />
       <ProjectReference Include="..\..\Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
 </Project>

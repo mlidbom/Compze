@@ -1,4 +1,4 @@
-namespace Compze.Common.Configuration;
+namespace Compze.Abstractions.Configuration.Internal;
 
 ///<summary>Allows for reading configuration parameters from a source such as a configuration file</summary>
 interface IConfigurationParameterProvider
