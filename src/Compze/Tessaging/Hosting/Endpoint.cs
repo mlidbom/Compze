@@ -66,7 +66,7 @@ class Endpoint : IEndpoint
 
       _routingInboxTransportClient.Start();
 
-      //todo: find cleaner way of handling what an endpoint supports
+      //todo: find cleaner way of getting a TyperMedia navigator than pretending to be an endpoint.
       if(!_configuration.IsPureClientEndpoint)
       {
          _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
