@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Transport.Internal;
+using Compze.Core.Tessaging.Transport.Internal;
 
 namespace Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
 

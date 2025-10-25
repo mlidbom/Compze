@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.DocumentDb.Public;
+namespace Compze.Core.DocumentDb.Public;
 
 //refactor: break up and probably remove this monolithic interface.
 public interface IDocumentDbSession : IDocumentDbBulkReader, IDocumentDbUpdater;

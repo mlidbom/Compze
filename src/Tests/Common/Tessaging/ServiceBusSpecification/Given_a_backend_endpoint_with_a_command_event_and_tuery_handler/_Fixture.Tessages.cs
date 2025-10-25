@@ -1,9 +1,9 @@
 using System;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Abstractions.Time.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Core.Time.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using JetBrains.Annotations;
 

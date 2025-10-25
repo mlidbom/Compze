@@ -1,8 +1,8 @@
 using System;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Common.Refactoring.Naming;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Core.Serialization.Internal;
+using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Serialization.Newtonsoft;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;

@@ -1,11 +1,11 @@
 using System;
-using Compze.Abstractions.Public;
+using Compze.Core.Public;
 
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace Compze.Abstractions.Tessaging.Public;
+namespace Compze.Core.Tessaging.Public;
 
 public static class TessageTypes
 {

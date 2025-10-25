@@ -1,6 +1,6 @@
 using Compze.Utilities.Contracts;
 
-namespace Compze.Abstractions.Tessaging.Transport.Internal;
+namespace Compze.Core.Tessaging.Transport.Internal;
 
 public record HttpEndPointAddress
 {

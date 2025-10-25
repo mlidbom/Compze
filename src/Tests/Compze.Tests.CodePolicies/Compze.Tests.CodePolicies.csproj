@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -10,7 +10,7 @@
       <ProjectReference Include="..\ScratchPad\Compze.Tests.ScratchPad.csproj" />
       <ProjectReference Include="..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
       <ProjectReference Include="..\Unit\Compze.Tests.Unit.csproj" />
-      <ProjectReference Include="..\..\Compze\Abstractions\Compze.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Compze\Abstractions\Compze.Core.csproj" />
       <ProjectReference Include="..\..\Compze\Serialization\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Compze.DocumentDb.csproj" />

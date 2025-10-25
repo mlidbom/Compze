@@ -7,7 +7,7 @@
       <ProjectReference Include="..\..\Compze\Tessaging\Teventive\TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
       <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
-      <ProjectReference Include="..\..\Compze\Abstractions\Compze.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Compze\Abstractions\Compze.Core.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

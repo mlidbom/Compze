@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Public;
+using Compze.Core.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.QueryModels;
+namespace Compze.Core.Tessaging.Teventive.TEventStore.QueryModels;
 
 public interface ISingleTaggregateQueryModel : IHasPersistentIdentity<Guid>
 {

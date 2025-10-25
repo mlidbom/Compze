@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Transport.Internal;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Abstractions.Tessaging.Hosting.Public;
+namespace Compze.Core.Tessaging.Hosting.Public;
 
 public interface IEndpoint : IAsyncDisposable
 {

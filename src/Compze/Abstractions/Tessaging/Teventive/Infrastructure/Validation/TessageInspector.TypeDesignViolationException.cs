@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
+namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
 static partial class TessageTypeInspector
 {

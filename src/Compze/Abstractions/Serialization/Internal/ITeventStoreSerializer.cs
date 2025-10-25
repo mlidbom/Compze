@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-namespace Compze.Abstractions.Serialization.Internal;
+namespace Compze.Core.Serialization.Internal;
 
 interface ITeventStoreSerializer
 {

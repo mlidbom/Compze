@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
@@ -14,7 +14,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 // ReSharper disable UnusedTypeParameter : todo: We'll keep the unused stuff for reference for now. If it is not used during the refactoring of wrapped tevent dispatching, ditch it.
 // ReSharper disable UnusedMember.Global
 
-namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure;
+namespace Compze.Core.Tessaging.Teventive.Infrastructure;
 
 static class WrapperTeventImplementationGenerator
 {

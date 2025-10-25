@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Time.Public;
+using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;

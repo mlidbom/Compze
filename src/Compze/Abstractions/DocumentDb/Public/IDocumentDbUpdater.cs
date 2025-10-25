@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Public;
+using Compze.Core.Public;
 
-namespace Compze.Abstractions.DocumentDb.Public;
+namespace Compze.Core.DocumentDb.Public;
 
 public interface IDocumentDbUpdater
 {

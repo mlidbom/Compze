@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
-using Compze.Abstractions.Tessaging.Teventive.TEventStore.QueryModels;
-using Compze.Abstractions.Tessaging.Teventive.TEventStore.QueryModels.Generators.Public;
+using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.QueryModels;
+using Compze.Core.Tessaging.Teventive.TEventStore.QueryModels.Generators.Public;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;

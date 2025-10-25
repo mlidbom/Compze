@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Abstractions.Tessaging.Teventive.Internal.Implementation;
-using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Teventive.Internal.Implementation;
+using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
 using Compze.Serialization.Newtonsoft;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Contracts;

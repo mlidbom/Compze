@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Typermedia.Infrastructure.Validation;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
+namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
 static partial class TessageInspector
 {

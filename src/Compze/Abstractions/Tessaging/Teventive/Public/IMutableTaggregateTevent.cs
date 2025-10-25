@@ -1,8 +1,8 @@
 using System;
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Public;
+namespace Compze.Core.Tessaging.Teventive.Public;
 
 public interface IMutableTaggregateTevent : ITaggregateTevent
 {

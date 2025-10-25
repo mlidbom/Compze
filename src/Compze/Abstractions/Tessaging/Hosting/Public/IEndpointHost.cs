@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Compze.Abstractions.Tessaging.Hosting.Public;
+namespace Compze.Core.Tessaging.Hosting.Public;
 
 public interface IEndpointHost : IAsyncDisposable
 {

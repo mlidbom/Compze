@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Time.Public;
-using Compze.Abstractions.Wiring.Testing.Internal;
-using Compze.Common.Refactoring.Naming;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Core.Time.Public;
+using Compze.Core.Wiring.Testing.Internal;
 using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Implementation;

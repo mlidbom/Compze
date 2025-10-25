@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;

@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Tessaging.Teventive.Public;
+namespace Compze.Core.Tessaging.Teventive.Public;
 
 public interface ITeventDispatcher<in TTevent>
 {

@@ -1,5 +1,5 @@
 using AccountManagement.API;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;

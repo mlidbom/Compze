@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Common.Refactoring.Naming;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Core.Serialization.Internal;
 using Compze.Serialization.Newtonsoft;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;

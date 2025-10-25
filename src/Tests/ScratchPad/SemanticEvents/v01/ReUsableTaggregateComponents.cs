@@ -1,4 +1,4 @@
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 // ReSharper disable All
 #pragma warning disable 414

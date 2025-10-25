@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Tests.Infrastructure.XUnit;

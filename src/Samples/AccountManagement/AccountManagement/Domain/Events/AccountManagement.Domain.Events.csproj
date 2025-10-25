@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -8,6 +8,6 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\..\..\..\..\Compze\Abstractions\Compze.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\..\..\Compze\Abstractions\Compze.Core.csproj" />
    </ItemGroup>
 </Project>

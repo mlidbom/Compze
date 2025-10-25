@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Common.Refactoring.Naming;
+namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 
 static class TypeMapperTypeDiscovery
 {

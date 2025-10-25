@@ -1,11 +1,3 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,20 +5,27 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Compze.Core.Tessaging.Public;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.Threading.ResourceAccess;
 
-namespace Compze.Common.Refactoring.Naming;
+namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 
 static class TypeMapperRegistrar
 {
    public static IComponentRegistrar TypeMapper(this IComponentRegistrar @this)
-      => Naming.TypeMapper.RegisterWith(@this);
+      => Implementation.TypeMapper.RegisterWith(@this);
 }
 
 class TypeMapper : ITypeMapper
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<ITypeMapper, TypeMapper>()
-                                  .Instance(Naming.TypeMapper.Instance));
+                                  .Instance(TypeMapper.Instance));
 
    TypeMapper() {}
    internal static readonly ITypeMapper Instance = new TypeMapper();

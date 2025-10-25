@@ -1,6 +1,6 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Abstractions.Time.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Core.Time.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;

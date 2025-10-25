@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Utilities.Functional;
 
-namespace Compze.Abstractions.Refactoring.Naming.Internal;
+namespace Compze.Core.Refactoring.Naming.Internal;
 
 
 /// <summary>

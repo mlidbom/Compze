@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Teventive.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
+namespace Compze.Core.Tessaging.Teventive.TEventStore.Public;
 
 public interface ITeventStoreUpdater : IDisposable
 {

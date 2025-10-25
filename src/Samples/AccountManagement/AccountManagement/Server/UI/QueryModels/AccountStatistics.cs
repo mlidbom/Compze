@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using AccountManagement.Domain.Tevents;
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Abstractions.Tessaging.Typermedia.Public;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.DocumentDb;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Utilities.DependencyInjection;

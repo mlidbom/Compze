@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
+namespace Compze.Core.Tessaging.Teventive.TEventStore.Public;
 
 public interface ITeventStore : IDisposable
 {

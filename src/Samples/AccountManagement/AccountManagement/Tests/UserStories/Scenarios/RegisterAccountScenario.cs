@@ -1,7 +1,7 @@
 using System;
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Abstractions.Public;
+namespace Compze.Core.Public;
 
 /// <summary>
 /// Should be implemented by all persistent entities in the Domain Driven Design sense of the word.

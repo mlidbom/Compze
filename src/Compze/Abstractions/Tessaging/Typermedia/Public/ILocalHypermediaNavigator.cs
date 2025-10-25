@@ -1,6 +1,6 @@
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 
-namespace Compze.Abstractions.Tessaging.Typermedia.Public;
+namespace Compze.Core.Tessaging.Typermedia.Public;
 
 ///<summary>Dispatches tessages within a process.</summary>
 public interface IInProcessHypermediaNavigator

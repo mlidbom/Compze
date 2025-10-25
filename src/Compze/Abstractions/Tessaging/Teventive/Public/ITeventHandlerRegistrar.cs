@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Public;
+namespace Compze.Core.Tessaging.Teventive.Public;
 
 public interface ITeventHandlerRegistrar<in TTevent>
    where TTevent : class, ITevent

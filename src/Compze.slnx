@@ -8,10 +8,8 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Compze/">
+    <Project Path="Compze/Abstractions/Compze.Core.csproj" />
     <Project Path="Compze/Utilities/Compze.Utilities.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Abstractions/">
-    <Project Path="Compze/Abstractions/Compze.Abstractions.csproj" />
   </Folder>
   <Folder Name="/Compze/DocumentDb/">
     <Project Path="Compze/Sql/DocumentDb/Compze.DocumentDb.csproj" />

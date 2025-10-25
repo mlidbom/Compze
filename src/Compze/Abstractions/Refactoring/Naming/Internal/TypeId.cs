@@ -3,7 +3,7 @@ using Compze.Utilities.Contracts;
 
 // ReSharper disable ImpureMethodCallOnReadonlyValueField
 
-namespace Compze.Abstractions.Refactoring.Naming.Internal;
+namespace Compze.Core.Refactoring.Naming.Internal;
 
 class TypeId
 {

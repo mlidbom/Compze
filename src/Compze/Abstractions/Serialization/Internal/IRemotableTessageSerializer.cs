@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 
-namespace Compze.Abstractions.Serialization.Internal;
+namespace Compze.Core.Serialization.Internal;
 
 interface IRemotableTessageSerializer
 {

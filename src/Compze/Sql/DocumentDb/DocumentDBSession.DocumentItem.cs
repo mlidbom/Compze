@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.DocumentDb.Public;
+using Compze.Core.DocumentDb.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 

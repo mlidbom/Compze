@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling;
 

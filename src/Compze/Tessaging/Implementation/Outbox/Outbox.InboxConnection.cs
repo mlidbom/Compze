@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Transport.Internal;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Serialization.Internal;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;

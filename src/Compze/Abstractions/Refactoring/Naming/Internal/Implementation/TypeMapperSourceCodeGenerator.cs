@@ -4,10 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Common.Refactoring.Naming;
+namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 
 static class TypeMapperSourceCodeGenerator
 {

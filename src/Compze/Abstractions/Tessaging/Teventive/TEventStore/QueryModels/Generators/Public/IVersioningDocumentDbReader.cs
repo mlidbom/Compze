@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Public;
+using Compze.Core.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.QueryModels.Generators.Public;
+namespace Compze.Core.Tessaging.Teventive.TEventStore.QueryModels.Generators.Public;
 
 public interface IQueryModelReader
 {

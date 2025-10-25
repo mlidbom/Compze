@@ -1,7 +1,7 @@
 using System;
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
-using Compze.Abstractions.Tessaging.Typermedia.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 

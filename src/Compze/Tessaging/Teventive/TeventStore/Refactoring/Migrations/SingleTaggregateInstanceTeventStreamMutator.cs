@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Internal;
-using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Internal;
+using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 

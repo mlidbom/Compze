@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Abstractions.Public;
+namespace Compze.Core.Public;
 
 /// <summary>
 /// Base class for any class that considers equality to be that the Ids for two instances are the same,

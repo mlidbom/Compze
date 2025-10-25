@@ -3,11 +3,11 @@
 // ReSharper disable MemberHidesStaticFromOuterClass
 
 using System.Collections.Generic;
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Common.Refactoring.Naming;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Newtonsoft.Json;
 

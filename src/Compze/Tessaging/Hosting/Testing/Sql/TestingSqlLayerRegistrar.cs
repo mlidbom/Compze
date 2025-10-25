@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;
 using Compze.Sql.MicrosoftSql.Tessaging;

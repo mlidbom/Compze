@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;

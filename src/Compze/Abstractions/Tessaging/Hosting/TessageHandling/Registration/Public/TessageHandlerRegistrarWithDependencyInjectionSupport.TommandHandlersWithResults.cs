@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 
-namespace Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+namespace Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 public static partial class TessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -7,6 +7,6 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Abstractions\Compze.Abstractions.csproj" />
+      <ProjectReference Include="..\Abstractions\Compze.Core.csproj" />
    </ItemGroup>
 </Project>

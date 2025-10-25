@@ -1,11 +1,11 @@
 using System;
 using System.Globalization;
-using Compze.Abstractions.Time.Public;
+using Compze.Core.Time.Public;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Abstractions.Time.Testing.Public;
+namespace Compze.Core.Time.Testing.Public;
 
 static class TestingTimeSourceRegistrar
 {

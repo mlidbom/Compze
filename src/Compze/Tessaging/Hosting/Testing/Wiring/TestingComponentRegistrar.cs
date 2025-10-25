@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Time.Public;
-using Compze.Abstractions.Time.Testing.Public;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Core.Time.Public;
+using Compze.Core.Time.Testing.Public;
+using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MicrosoftSql.DbPool;
 using Compze.Sql.MySql.DbPool;

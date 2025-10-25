@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Core.Wiring.Testing.Internal;
 
 namespace Compze.Tessaging.Hosting.Testing;
 

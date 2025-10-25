@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Abstractions.Serialization.Internal;
+namespace Compze.Core.Serialization.Internal;
 
 interface IJsonSerializer
 {

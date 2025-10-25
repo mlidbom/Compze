@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Sql.Common.Tessaging;
 
 namespace Compze.Tessaging.Implementation.Outbox;

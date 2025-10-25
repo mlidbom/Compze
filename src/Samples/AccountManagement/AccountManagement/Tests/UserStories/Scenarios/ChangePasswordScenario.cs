@@ -1,7 +1,7 @@
 using AccountManagement.API;
 using CommunityToolkit.Diagnostics;
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Typermedia.Public;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;

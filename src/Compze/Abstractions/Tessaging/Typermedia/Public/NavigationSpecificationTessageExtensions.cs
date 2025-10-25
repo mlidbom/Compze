@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Abstractions.Tessaging.Typermedia.Public;
+namespace Compze.Core.Tessaging.Typermedia.Public;
 
 public static class NavigationSpecificationTessageExtensions
 {

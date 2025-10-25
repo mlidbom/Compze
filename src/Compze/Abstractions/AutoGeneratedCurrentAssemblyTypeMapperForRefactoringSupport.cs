@@ -1,10 +1,10 @@
 using System;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 // ReSharper disable All
-namespace Compze.Abstractions;
+namespace Compze.Core;
 
 #pragma warning disable IDE1006,IDE0001,IDE0002,IDE0003,IDE0004,IDE0005,IDE0055,CA1050,CA1707,CA1716
 

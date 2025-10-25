@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
 public interface IReadOnlyEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity>
 {

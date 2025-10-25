@@ -1,6 +1,6 @@
 using System;
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Public;
+using Compze.Core.Tessaging.Public;
 
 // ReSharper disable All
 namespace AccountManagement;

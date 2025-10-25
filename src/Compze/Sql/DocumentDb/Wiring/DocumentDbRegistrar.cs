@@ -1,5 +1,5 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Serialization.Newtonsoft;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

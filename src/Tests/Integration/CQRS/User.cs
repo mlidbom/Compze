@@ -1,8 +1,8 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
-using Compze.Abstractions.Time.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Public;
+using Compze.Core.Time.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Integration.CQRS;

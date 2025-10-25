@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Transport.Internal;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

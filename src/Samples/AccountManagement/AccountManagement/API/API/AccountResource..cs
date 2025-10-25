@@ -1,6 +1,6 @@
 using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
-using Compze.Abstractions.Public;
+using Compze.Core.Public;
 using Newtonsoft.Json;
 
 namespace AccountManagement.API;

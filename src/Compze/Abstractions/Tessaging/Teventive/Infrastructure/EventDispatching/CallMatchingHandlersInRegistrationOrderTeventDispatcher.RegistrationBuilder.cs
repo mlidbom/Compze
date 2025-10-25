@@ -1,14 +1,14 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
 using System;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
-using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.EventDispatching;
+namespace Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching;
 
 /// <summary>
 /// Calls all matching handlers in the order they were registered when an tevent is Dispatched.

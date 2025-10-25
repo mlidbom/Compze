@@ -3,13 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.EventDispatching;
+namespace Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching;
 
 /// <summary>
 /// Calls all matching handlers in the order they were registered when an tevent is Dispatched.

@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Core.Wiring.Testing.Internal;
 using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 namespace Compze.Tests.Infrastructure.XUnit;

@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
+namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
 static partial class TessageInspector
 {

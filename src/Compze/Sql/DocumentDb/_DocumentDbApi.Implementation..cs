@@ -1,7 +1,7 @@
 using System;
-using Compze.Abstractions.DocumentDb.Public;
-using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.DocumentDb.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Utilities.Functional;
 using Newtonsoft.Json;
 

@@ -1,9 +1,9 @@
 using System;
 using System.Text.RegularExpressions;
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Serialization.Internal;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Public;
+using Compze.Core.Public;
 
-namespace Compze.Abstractions.DocumentDb.Public;
+namespace Compze.Core.DocumentDb.Public;
 
 public interface IDocumentDbReader : IDisposable
 {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Abstractions.Time.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Time.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Public;
+namespace Compze.Core.Tessaging.Teventive.Public;
 
 public interface ITaggregate
 {

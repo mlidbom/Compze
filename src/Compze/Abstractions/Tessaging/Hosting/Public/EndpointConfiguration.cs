@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Tessaging.Hosting.Public;
+namespace Compze.Core.Tessaging.Hosting.Public;
 
 public class EndpointConfiguration
 {

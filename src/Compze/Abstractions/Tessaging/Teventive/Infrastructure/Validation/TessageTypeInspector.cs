@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
+namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
 partial class TessageTypeInspector
 {
