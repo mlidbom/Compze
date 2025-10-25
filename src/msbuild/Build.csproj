@@ -1,7 +1,7 @@
 ﻿<!-- ReSharper disable MarkupAttributeTypo -->
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
-      <TargetFramework>net8.0</TargetFramework>
+      <TargetFramework>net9.0</TargetFramework>
       <IsPackable>false</IsPackable>
       <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
 
