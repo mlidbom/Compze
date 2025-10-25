@@ -110,4 +110,8 @@ function C-Delete-Project {
     # Step 5: Run C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
     # This will clean up any exclusions in parent projects that are no longer needed
     C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
+    
+    # Step 6: Run C-Clean to remove all build artifacts
+    # This prevents duplicate assembly attribute errors from stale obj/bin folders
+    C-Clean
 }

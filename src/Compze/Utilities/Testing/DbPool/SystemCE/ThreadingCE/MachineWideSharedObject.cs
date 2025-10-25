@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
-using Compze.Serialization;
+using Compze.Serialization.Newtonsoft;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
@@ -28,8 +28,8 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
        bool _disposed;
        readonly bool _usePersistentFile;
 
-       static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, JsonSettings.JsonSerializerSettings);
-       static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, JsonSettings.JsonSerializerSettings).NotNull();
+       static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJSONSettings.Default);
+       static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, RenamingAndNonPublicMembersSupportingJSONSettings.Default).NotNull();
 
        internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false) => new(name, usePersistentFile);
 
@@ -78,9 +78,16 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
           }
           catch(Exception exception)
           {
-             File.WriteAllText($"{_filePath}_{Guid.NewGuid()}.DEBUG", json, Encoding.UTF8);
              File.Delete(_filePath);
-             throw new Exception($"Failed to deserialize object from file {_filePath}. Deleted file.", exception);
+             throw new Exception($"""
+                                  
+                                  Failed to deserialize object from file {_filePath}
+                                  Deleted the apparently corrupt file.
+                                  The file content was: 
+                                  
+                                  {json}
+                                   
+                                  """, exception);
           }
        }
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<NsDepCopConfig IsEnabled="true"
+                InheritanceDepth="1">
+
+
+   <Allowed From="Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public"
+            To="Compze.Core.Tessaging.Teventive.Internal.Implementation" />
+
+   <Allowed From="Compze.Core.Tessaging.Teventive.Public"
+            To="Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching" />
+
+   <Allowed From="Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public"
+            To="Compze.Core.Tessaging.Teventive.Infrastructure" />
+
+	<!--todo: review these-->
+	<Allowed From="Compze.Core.Tessaging.Teventive.Infrastructure.Validation"
+            To="Compze.Core.Tessaging.Typermedia.Infrastructure.Validation" />
+
+	<Allowed From="Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching"
+		To="Compze.Core.Tessaging.Teventive.Infrastructure.Validation" />
+
+	<Allowed From="Compze.Core.Tessaging.Teventive.Internal.Implementation"
+            To="Compze.Core.Tessaging.Teventive.Infrastructure.Validation" />
+
+	<!--todo: Remove this-->
+   <Allowed From="Compze.Core.Tessaging.Hosting.Public"
+            To="Compze.Core.Tessaging.Transport.Internal" />
+
+
+</NsDepCopConfig>

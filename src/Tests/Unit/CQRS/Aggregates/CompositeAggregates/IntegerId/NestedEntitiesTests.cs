@@ -1,6 +1,6 @@
 using System;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId.Domain;
+using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 
@@ -12,7 +12,7 @@ using FluentAssertions;
 
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.IntegerId;
+namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId;
 
 public class NestedEntitiesTests : UniversalTestBase
 {
@@ -20,7 +20,7 @@ public class NestedEntitiesTests : UniversalTestBase
    public void ConstructorWorks() => new Root("root").Name.Should().Be("root");
 
    [XF]
-   public void Createing_nested_entities_works_and_events_dispatch_correctly()
+   public void Createing_nested_entities_works_and_tevents_dispatch_correctly()
    {
       var root = new Root("root");
 

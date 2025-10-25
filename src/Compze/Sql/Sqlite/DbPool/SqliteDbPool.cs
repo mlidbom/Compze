@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Compze.Sql.Sqlite;
+using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Utilities.Testing.DbPool.Sqlite;
+namespace Compze.Sql.Sqlite.DbPool;
 
 static class SqliteDbPoolRegistrar
 {

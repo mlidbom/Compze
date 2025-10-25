@@ -28,13 +28,13 @@ public enum DIContainer
    SimpleInjector
 }
 
-public enum EventStore
+public enum TeventStore
 {
    InMemory,
    SqlServer
 }
 
-public enum MessageBus
+public enum TessageBus
 {
    InProcess,
    RabbitMQ

@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Common.Refactoring.Naming;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Tessaging.Implementation.Transport;
+using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -17,13 +18,13 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
 {
    readonly List<Exception> _expectedExceptions = [];
    public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
-      MessagesInFlightTracker = new MessagesInFlightTracker(TypeMapper.Instance);
+      TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
-   public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
+   public IEnumerable<HttpEndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
                                                                    .Select(it => it.Address!)
                                                                    .ToList();
 
-   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride));
+   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoTessagesInFlight(timeoutOverride));
 
    public IEndpoint RegisterTestingEndpoint(string? name = null, EndpointId? id = null, Action<IEndpointBuilder>? setup = null)
    {
@@ -69,9 +70,9 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
          {
             await base.DisposeAsync(disposing).caf();
          }
-         catch(AggregateException aggregateException)
+         catch(AggregateException taggregateException)
          {
-            unHandledExceptions.AddRange(aggregateException.Flatten().InnerExceptions);
+            unHandledExceptions.AddRange(taggregateException.Flatten().InnerExceptions);
          }
 
          if(unHandledExceptions.Any())
@@ -84,5 +85,5 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    public bool WaitForEndPointsToBeAtRestOnDispose { get; set; } = true;
    public async Task DisposeAsyncWithoutWaitingForEndpointsToBeAtRest() => await DisposeAsync(true, false).caf();
 
-   List<Exception> GetThrownExceptions() => MessagesInFlightTracker.GetExceptions().ToList();
+   List<Exception> GetThrownExceptions() => TessagesInFlightTracker.GetExceptions().ToList();
 }

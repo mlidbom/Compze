@@ -1,56 +1,55 @@
 using System;
-using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Core.DocumentDb.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Public;
 using Compze.Utilities.Functional;
-using Newtonsoft.Json;
 
-namespace Compze.Sql.DocumentDb;
+namespace Compze.DocumentDb;
 
 public partial class DocumentDbApi
 {
-   public partial class QueryApi
+   public partial class TueryApi
    {
-      public class GetDocumentForUpdate<TDocument> : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<GetDocumentForUpdate<TDocument>, TDocument>
+      public class GetDocumentForUpdate<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetDocumentForUpdate<TDocument>, TDocument>
       {
-         [JsonConstructor] internal GetDocumentForUpdate(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; set; }
+         internal GetDocumentForUpdate(Guid id) => Id = id;
+         Guid Id { get; set; }
 
-         internal static void RegisterHandler(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (GetDocumentForUpdate<TDocument> query, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(query.Id));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+            (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
       }
 
-      public class TryGetDocument<TDocument> : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<TryGetDocument<TDocument>, Option<TDocument>>
+      public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<TryGetDocument<TDocument>, Option<TDocument>>
       {
-         [JsonConstructor] internal TryGetDocument(string id) => Id = id;
-         [JsonProperty] string Id { get; set; }
+         internal TryGetDocument(string id) => Id = id;
+         string Id { get; set; }
 
-         internal static void RegisterHandler(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (TryGetDocument<TDocument> query, IDocumentDbReader updater) => updater.TryGet<TDocument>(query.Id, out var document) ? Option.Some(document) : Option.None<TDocument>());
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+            (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? Option.Some(document) : Option.None<TDocument>());
       }
 
-      public class GetReadonlyCopyOfDocument<TDocument> : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>
+      public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>
       {
-         [JsonConstructor] internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; set; }
+         internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
+         Guid Id { get; set; }
 
-         internal static void RegisterHandler(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (GetReadonlyCopyOfDocument<TDocument> query, IDocumentDbReader reader) => reader.Get<TDocument>(query.Id));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+            (GetReadonlyCopyOfDocument<TDocument> tuery, IDocumentDbReader reader) => reader.Get<TDocument>(tuery.Id));
       }
    }
 
-   public partial class Command
+   public partial class Tommand
    {
-      public class DeleteDocument<TDocument> : MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand
+      public class DeleteDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
       {
          internal DeleteDocument(string key) => Key = key;
          string Key { get; }
 
-         internal static void RegisterHandler(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
             (DeleteDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Delete<TDocument>(command.Key));
       }
 
-      public class SaveDocument<TDocument> : MessageTypes.StrictlyLocal.Commands.StrictlyLocalCommand
+      public class SaveDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
       {
          internal SaveDocument(string key, TDocument entity)
          {
@@ -61,18 +60,18 @@ public partial class DocumentDbApi
          string Key { get; }
          TDocument Entity { get; }
 
-         internal static void RegisterHandler(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForCommand(
-            (DocumentDbApi.Command.SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+            (DocumentDbApi.Tommand.SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
       }
    }
 
-   internal static void HandleDocumentType<TDocument>(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   internal static void HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
-      QueryApi.TryGetDocument<TDocument>.RegisterHandler(registrar);
-      QueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(registrar);
-      QueryApi.GetDocumentForUpdate<TDocument>.RegisterHandler(registrar);
-      Command.SaveDocument<TDocument>.RegisterHandler(registrar);
-      Command.DeleteDocument<TDocument>.RegisterHandler(registrar);
+      TueryApi.TryGetDocument<TDocument>.RegisterHandler(registrar);
+      TueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(registrar);
+      TueryApi.GetDocumentForUpdate<TDocument>.RegisterHandler(registrar);
+      Tommand.SaveDocument<TDocument>.RegisterHandler(registrar);
+      Tommand.DeleteDocument<TDocument>.RegisterHandler(registrar);
    }
 
 }

@@ -12,7 +12,7 @@ class ConsoleLogger : Logger
    public override ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type, level);
 
    protected override void ErrorInternal(Exception exception, string? message) =>
-      ConsoleCE.WriteLine(ExceptionMessageBuilder.BuildExceptionLogMessage(exception, _type, message));
+      ConsoleCE.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, message));
 
    protected override void WarningInternal(string message) =>
       ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");

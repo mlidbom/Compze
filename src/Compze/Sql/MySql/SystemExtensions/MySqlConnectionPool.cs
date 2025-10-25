@@ -7,7 +7,7 @@ using Compze.Utilities.Threading.TasksCE;
 using MySql.Data.MySqlClient;
 using System;
 using System.Threading.Tasks;
-using Compze.Common.Configuration;
+using Compze.Core.Configuration.Internal;
 
 namespace Compze.Sql.MySql.SystemExtensions;
 

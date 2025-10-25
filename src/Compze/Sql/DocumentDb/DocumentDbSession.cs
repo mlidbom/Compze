@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.Abstractions;
+using Compze.Core.DocumentDb.Public;
+using Compze.Core.Public;
 using Compze.Sql.Common;
-using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Sql.DocumentDb.Abstractions.Internal;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -13,7 +13,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Sql.DocumentDb;
+namespace Compze.DocumentDb;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 partial class DocumentDbSession : IDocumentDbSession
@@ -74,7 +74,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       if(documentType.IsInterface)
       {
-         throw new ArgumentException("You cannot query by id for an interface type. There is no guarantee of uniqueness");
+         throw new ArgumentException("You cannot tuery by id for an interface type. There is no guarantee of uniqueness");
       }
 
       if(_entitiesByIdAndType.TryGet(key, out value) && documentType.IsInstanceOfType(value))

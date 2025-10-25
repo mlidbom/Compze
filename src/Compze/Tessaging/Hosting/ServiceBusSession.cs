@@ -1,12 +1,12 @@
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Common;
-using Compze.Tessaging.Common.Typermedia.Implementation;
-using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using System;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;
+using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Utilities.Threading;
 
 namespace Compze.Tessaging.Hosting;
@@ -22,36 +22,36 @@ static class ServiceBusSessionRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IServiceBusSession>()
-                                  .CreatedBy((IOutbox outbox, CommandScheduler commandScheduler)
-                                                => new ServiceBusSession(outbox, commandScheduler)));
+                                  .CreatedBy((IOutbox outbox, TommandScheduler tommandScheduler)
+                                                => new ServiceBusSession(outbox, tommandScheduler)));
 
    readonly IOutbox _transport;
-   readonly CommandScheduler _commandScheduler;
+   readonly TommandScheduler _tommandScheduler;
    readonly IUsageGuard _contextGuard;
 
-   public ServiceBusSession(IOutbox transport, CommandScheduler commandScheduler)
+   public ServiceBusSession(IOutbox transport, TommandScheduler tommandScheduler)
    {
       _transport = transport;
-      _commandScheduler = commandScheduler;
+      _tommandScheduler = tommandScheduler;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
-   public void Send(IExactlyOnceCommand command)
+   public void Send(IExactlyOnceTommand tommand)
    {
-      RunAssertions(command);
-      _transport.SendTransactionally(command);
+      RunAssertions(tommand);
+      _transport.SendTransactionally(tommand);
    }
 
-   public void ScheduleSend(DateTime sendAt, IExactlyOnceCommand command)
+   public void ScheduleSend(DateTime sendAt, IExactlyOnceTommand tommand)
    {
-      RunAssertions(command);
-      _commandScheduler.Schedule(sendAt, command);
+      RunAssertions(tommand);
+      _tommandScheduler.Schedule(sendAt, tommand);
    }
 
-   void RunAssertions(IExactlyOnceCommand command)
+   void RunAssertions(IExactlyOnceTommand tommand)
    {
       _contextGuard.EnsureAccessValid();
-      MessageInspector.AssertValidToSendRemote(command);
-      CommandValidator.AssertCommandIsValid(command);
+      TessageInspector.AssertValidToSendRemote(tommand);
+      TommandValidator.AssertTommandIsValid(tommand);
    }
 }

@@ -1,7 +1,7 @@
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Common;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
-using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading;
@@ -18,50 +18,50 @@ class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IInProcessHypermediaNavigator>()
-                                  .CreatedBy((IMessageHandlerRegistry messageHandlerRegistry)
-                                                => new InProcessHypermediaNavigator(messageHandlerRegistry)));
+                                  .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
+                                                => new InProcessHypermediaNavigator(tessageHandlerRegistry)));
 
-   readonly IMessageHandlerRegistry _handlerRegistry;
+   readonly ITessageHandlerRegistry _handlerRegistry;
    readonly IUsageGuard _contextGuard;
 
-   public InProcessHypermediaNavigator(IMessageHandlerRegistry handlerRegistry)
+   public InProcessHypermediaNavigator(ITessageHandlerRegistry handlerRegistry)
    {
       _handlerRegistry = handlerRegistry;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
-   public TResult Execute<TResult>(IStrictlyLocalCommand<TResult> command)
+   public TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand)
    {
-      CommonAssertion(command);
+      CommonAssertion(tommand);
 
-      var commandHandler = _handlerRegistry.GetCommandHandler(command);
-      return commandHandler.Invoke(command);
+      var tommandHandler = _handlerRegistry.GetTommandHandler(tommand);
+      return tommandHandler.Invoke(tommand);
    }
 
-   public void Execute(IStrictlyLocalCommand command)
+   public void Execute(IStrictlyLocalTommand tommand)
    {
-      CommonAssertion(command);
+      CommonAssertion(tommand);
 
-      var commandHandler = _handlerRegistry.GetCommandHandler(command);
-      commandHandler.Invoke(command);
+      var tommandHandler = _handlerRegistry.GetTommandHandler(tommand);
+      tommandHandler.Invoke(tommand);
    }
 
-   public TResult Execute<TQuery, TResult>(IStrictlyLocalQuery<TQuery, TResult> query) where TQuery : IStrictlyLocalQuery<TQuery, TResult>
+   public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
    {
-      CommonAssertion(query);
+      CommonAssertion(tuery);
 
       // ReSharper disable once SuspiciousTypeConversion.Global
       //Todo: Test and stop disabling ReSharper warning
-      if(query is ICreateMyOwnResultQuery<TResult> selfCreating)
+      if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return selfCreating.CreateResult();
 
-      var queryHandler = _handlerRegistry.GetQueryHandler(query);
-      return queryHandler.Invoke(query);
+      var tueryHandler = _handlerRegistry.GetTueryHandler(tuery);
+      return tueryHandler.Invoke(tuery);
    }
 
-   void CommonAssertion(IMessage message)
+   void CommonAssertion(ITessage tessage)
    {
       _contextGuard.EnsureAccessValid();
-      MessageInspector.AssertValidToExecuteLocally(message);
+      TessageInspector.AssertValidToExecuteLocally(tessage);
    }
 }

@@ -3,7 +3,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
-namespace Compze.Utilities.Testing.DbPool;
+namespace Compze.Sql.Common.DbPool;
 
 
 public class DbPoolDatabase

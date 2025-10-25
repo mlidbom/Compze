@@ -1,12 +1,20 @@
-using Compze.Abstractions.Internal.Time;
-using Compze.Common.Configuration;
-using Compze.Common.Refactoring.Naming;
-using Compze.Common.Refactoring.Naming.Wiring;
-using Compze.Serialization;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
-using Compze.Tessaging.Hosting.Implementation.Http;
+using Compze.Core.Configuration.Internal;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Time.Public;
+using Compze.Tessaging.Configuration;
+using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.Outbox;
+using Compze.Tessaging.Implementation.TessageHandling.Inbox;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Http;
+using Compze.Tessaging.Implementation.Transport.Routing;
+using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Typermedia;
 using Compze.Utilities.DependencyInjection;
@@ -23,28 +31,28 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    public IDependencyInjectionContainer Container { get; }
 
-   readonly IMessagesInFlightTracker _globalStateTracker;
-   readonly MessageHandlerRegistry _registry;
+   readonly ITessagesInFlightTracker _globalStateTracker;
+   readonly TessageHandlerRegistry _registry;
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
 
-   public MessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 
    public IEndpoint Build()
    {
       SetupContainer();
-      MessageTypesInternal.RegisterHandlers(RegisterHandlers);
+      TessageTypesInternal.RegisterHandlers(RegisterHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
-                                  serviceLocator.Resolve<IMessagesInFlightTracker>(),
-                                  serviceLocator.Resolve<ITransport>(),
+                                  serviceLocator.Resolve<ITessagesInFlightTracker>(),
+                                  serviceLocator.Resolve<ITransportClient>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
       _builtSuccessfully = true;
       return endpoint;
    }
 
-   public ServerEndpointBuilder(IEndpointHost host, IMessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
+   public ServerEndpointBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
    {
       _host = host;
       Container = container;
@@ -52,8 +60,8 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Configuration = configuration;
 
-      _registry = new MessageHandlerRegistry(TypeMapper.Instance);
-      RegisterHandlers = new MessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
+      _registry = new TessageHandlerRegistry(TypeMapper.Instance);
+      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
    }
 
    void SetupContainer()
@@ -75,13 +83,12 @@ class ServerEndpointBuilder : IEndpointBuilder
       }
 
       //Transport
-      register.RemotableMessageSerializer()
-              .Transport()
+      register.Transport()
               .RemoteHypermediaNavigator()
               .HttpClientFactoryCE()
               .HttpApiClient();
 
-      Container.Register(Singleton.For<IMessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
+      Container.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
       //Only real endpoint stuff after here
       if(!Configuration.IsPureClientEndpoint)
@@ -90,15 +97,15 @@ class ServerEndpointBuilder : IEndpointBuilder
                  .TaskRunner()
                  .Outbox()
                  .Inbox()
-                 .CommandScheduler()
-                 .ServiceBusEventStoreEventPublisher()
+                 .TommandScheduler()
+                 .ServiceBusTeventStoreTeventPublisher()
                  .ServiceBusSession()
                  .InProcessHypermediaNavigator();
 
          Container.Register(
             Singleton.For<IDependencyInjectionContainer>().Instance(Container),
             Singleton.For<EndpointConfiguration>().Instance(Configuration),
-            Singleton.For<IMessageHandlerRegistry, IMessageHandlerRegistrar>().Instance(_registry)
+            Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_registry)
          );
       }
    }

@@ -7,7 +7,7 @@ using Compze.Utilities.Threading.TasksCE;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Threading.Tasks;
-using Compze.Common.Configuration;
+using Compze.Core.Configuration.Internal;
 
 namespace Compze.Sql.MicrosoftSql;
 

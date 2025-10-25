@@ -9,12 +9,12 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Utilities.Logging;
 
-static class ExceptionMessageBuilder
+static class ExceptionTessageBuilder
 {
    const string LineSeparator = "----------------------------------------------------";
    const string IndentWith = "   ";
    const int StartDepth = 1;
-   internal static string BuildExceptionLogMessage(Exception exception, Type type, string? message)
+   internal static string BuildExceptionLogTessage(Exception exception, Type type, string? message)
    {
       var builder = new StringBuilder();
 
@@ -24,43 +24,43 @@ static class ExceptionMessageBuilder
                                                           {IndentWith}MESSAGE: {message} 
                                                           """);
 
-      if(exception is AggregateException aggregateException)
+      if(exception is AggregateException taggregateException)
       {
-         builder.AppendLine(BuildAggregateExceptionMessage(aggregateException, depth: StartDepth));
+         builder.AppendLine(BuildAggregateExceptionTessage(taggregateException, depth: StartDepth));
       } else
       {
-         builder.Append(BuildRegularExceptionMessage(exception, depth: StartDepth));
+         builder.Append(BuildRegularExceptionTessage(exception, depth: StartDepth));
       }
 
       return builder.ToString();
    }
 
-   static string BuildAggregateExceptionMessage(AggregateException aggregateException, int depth)
+   static string BuildAggregateExceptionTessage(AggregateException taggregateException, int depth)
    {
       return $"""
-              {LineSeparator} Aggregate exception
+              {LineSeparator} Taggregate exception
               StackTrace:
               {LineSeparator}
-              {aggregateException.StackTrace}
+              {taggregateException.StackTrace}
               {LineSeparator}
-              {BuildInnerExceptionsMessages(aggregateException.InnerExceptions, depth)}
+              {BuildInnerExceptionsTessages(taggregateException.InnerExceptions, depth)}
               """.IndentToDepth(IndentWith, depth);
    }
 
-   static string BuildInnerExceptionsMessages(ReadOnlyCollection<Exception> exceptions, int depth) =>
+   static string BuildInnerExceptionsTessages(ReadOnlyCollection<Exception> exceptions, int depth) =>
       exceptions.Select((exception, index) => $"""
                                                {LineSeparator} Inner Exception {index + 1}
-                                               {(exception is AggregateException aggregateException ?
-                                                    BuildAggregateExceptionMessage(aggregateException, 1) :
-                                                    BuildRegularExceptionMessage(exception, depth + 1))}
+                                               {(exception is AggregateException taggregateException ?
+                                                    BuildAggregateExceptionTessage(taggregateException, 1) :
+                                                    BuildRegularExceptionTessage(exception, depth + 1))}
                                                """)
                 .Select(it => it.IndentToDepth("   ", depth))
                 .Join(Environment.NewLine);
 
-   static string BuildRegularExceptionMessage(Exception exception, int depth) =>
+   static string BuildRegularExceptionTessage(Exception exception, int depth) =>
       $"""
           Type: {exception.GetType().FullName}
-          Message:
+          Tessage:
           {LineSeparator}
           {exception.Message}
           {LineSeparator}

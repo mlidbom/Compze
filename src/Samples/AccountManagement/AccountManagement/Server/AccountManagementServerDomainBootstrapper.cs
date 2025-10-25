@@ -1,17 +1,17 @@
 using System;
 using AccountManagement.Domain;
-using AccountManagement.Domain.Events;
+using AccountManagement.Domain.Tevents;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Compze.Sql.DocumentDb.MicrosoftSql.Wiring;
-using Compze.Sql.DocumentDb.Wiring;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.DocumentDb.Wiring;
 using Compze.Sql.MicrosoftSql;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;
+using Compze.Sql.MicrosoftSql.Tessaging;
+using Compze.Sql.MicrosoftSql.TEventStore;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Sql.EventStore;
-using Compze.Tessaging.Sql.MicrosoftSql;
-using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
-using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
+using Compze.Tessaging.Teventive.TeventStore.Wiring;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 
 namespace AccountManagement;
 
@@ -36,14 +36,14 @@ public class AccountManagementServerDomainBootstrapper
       var register = builder.Container.Register();
       register.MsSqlConnectionPool(connectionStringName)
               .MsSqlDocumentDb()
-              .MsSqlEventStore()
+              .MsSqlTeventStore()
               .MsSqlTessaging();
 
-      builder.RegisterEventStore()
-             .HandleAggregate<Account, AccountEvent.Root>();
+      builder.RegisterTeventStore()
+             .HandleTaggregate<Account, AccountTevent.Root>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<EventStoreApi.QueryApi.AggregateLink<Account>>(builder.RegisterHandlers)
+             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterHandlers)
              .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterHandlers);
    }
 

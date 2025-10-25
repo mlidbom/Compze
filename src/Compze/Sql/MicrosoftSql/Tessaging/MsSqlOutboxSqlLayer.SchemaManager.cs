@@ -1,16 +1,15 @@
 using System.Threading.Tasks;
-using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.Threading.TasksCE;
-using Outbox = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
-using Dispatching = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Outbox = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using Dispatching = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql.Tessaging;
 
 partial class MsSqlOutboxSqlLayer
 {
    static class SchemaManager
    {
-      //Performance: Why is the MessageId not the primary key? Are we worried about performance loss because of fragmentation because of non-sequential Guids? Is there a (performant and truly reliable) sequential-guid-generator we could use? How does it not being the clustered index impact row vs page etc locking?
+      //Performance: Why is the TessageId not the primary key? Are we worried about performance loss because of fragmentation because of non-sequential Guids? Is there a (performant and truly reliable) sequential-guid-generator we could use? How does it not being the clustered index impact row vs page etc locking?
       public static async Task EnsureTablesExistAsync(IMsSqlConnectionPool connectionFactory)
       {
          // ReSharper disable once MethodHasAsyncOverload | THis crashes with weird exception if called async so ...
@@ -22,27 +21,27 @@ partial class MsSqlOutboxSqlLayer
                                                 (
                                                     {Outbox.GeneratedId}       bigint IDENTITY(1,1) NOT NULL,
                                                     {Outbox.TypeIdGuidValue}   uniqueidentifier     NOT NULL,
-                                                    {Outbox.MessageId}         uniqueidentifier     NOT NULL,
-                                                    {Outbox.SerializedMessage} nvarchar(MAX)        NOT NULL,
+                                                    {Outbox.TessageId}         uniqueidentifier     NOT NULL,
+                                                    {Outbox.SerializedTessage} nvarchar(MAX)        NOT NULL,
                                             
                                                     CONSTRAINT PK_{Outbox.TableName} PRIMARY KEY CLUSTERED ( [{Outbox.GeneratedId}] ASC ),
                                             
-                                                    CONSTRAINT IX_{Outbox.TableName}_Unique_{Outbox.MessageId} UNIQUE ( {Outbox.MessageId} )
+                                                    CONSTRAINT IX_{Outbox.TableName}_Unique_{Outbox.TessageId} UNIQUE ( {Outbox.TessageId} )
                                                 )
                                             
                                                 CREATE TABLE {Dispatching.TableName}
                                                 (
-                                                    {Dispatching.MessageId}        uniqueidentifier NOT NULL,
+                                                    {Dispatching.TessageId}        uniqueidentifier NOT NULL,
                                                     {Dispatching.EndpointId}       uniqueidentifier NOT NULL,
                                                     {Dispatching.IsReceived}       bit              NOT NULL,
                                                     {Dispatching.RetryCount}       int              NOT NULL DEFAULT 0,
                                                     {Dispatching.LastAttemptTime}  datetime2        NULL,
                                                     {Dispatching.FailureReason}    nvarchar(MAX)    NULL,
                                             
-                                                    CONSTRAINT PK_{Dispatching.TableName} PRIMARY KEY CLUSTERED( {Dispatching.MessageId}, {Dispatching.EndpointId})
+                                                    CONSTRAINT PK_{Dispatching.TableName} PRIMARY KEY CLUSTERED( {Dispatching.TessageId}, {Dispatching.EndpointId})
                                                         WITH (ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = OFF),
                                             
-                                                    CONSTRAINT FK_{Dispatching.TableName}_{Dispatching.MessageId} FOREIGN KEY ( {Dispatching.MessageId} )  REFERENCES {Outbox.TableName} ({Outbox.MessageId})
+                                                    CONSTRAINT FK_{Dispatching.TableName}_{Dispatching.TessageId} FOREIGN KEY ( {Dispatching.TessageId} )  REFERENCES {Outbox.TableName} ({Outbox.TessageId})
                                                 )
                                             END
 

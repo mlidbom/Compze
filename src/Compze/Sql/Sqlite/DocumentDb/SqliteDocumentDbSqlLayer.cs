@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Sql.Common;
-using Compze.Sql.DocumentDb.Abstractions.Internal;
-using Compze.Sql.Sqlite;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
-using Schema = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Schema = Compze.Sql.Common.DocumentDb.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.DocumentDb.Sqlite;
+namespace Compze.Sql.Sqlite.DocumentDb;
 
 internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
 {

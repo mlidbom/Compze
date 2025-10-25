@@ -6,8 +6,9 @@ function Save-XmlWithThreeSpacesIndentation {
     Saves an XML document with three-space indentation
     
     .DESCRIPTION
-    Saves an XmlDocument to a file and then converts all two-space indentation
-    to three-space indentation to match the project's formatting standards.
+    Saves an XmlDocument to a file with three-space indentation to match the project's formatting standards.
+    Uses XmlWriterSettings to configure the indentation directly, avoiding the need for post-processing
+    and preventing file locking issues with Visual Studio.
     
     .PARAMETER Xml
     The XmlDocument to save
@@ -25,28 +26,19 @@ function Save-XmlWithThreeSpacesIndentation {
         [string]$Path
     )
     
-    # Save the XML document
-    $Xml.Save($Path)
+    # Configure XML writer settings for three-space indentation
+    $settings = New-Object System.Xml.XmlWriterSettings
+    $settings.Indent = $true
+    $settings.IndentChars = "   "  # Three spaces
+    $settings.Encoding = [System.Text.Encoding]::UTF8
+    $settings.OmitXmlDeclaration = $true  # .csproj files don't have XML declarations
     
-    # Read the content
-    $content = Get-Content $Path -Raw
-    
-    # Replace two-space indentation with three-space indentation
-    # This regex matches lines that start with whitespace (two spaces repeated)
-    $lines = $content -split "`r`n"
-    $convertedLines = foreach ($line in $lines) {
-        if ($line -match '^( {2})+') {
-            # Count how many two-space indents there are
-            $leadingSpaces = $matches[0]
-            $indentLevel = $leadingSpaces.Length / 2
-            $newIndent = '   ' * $indentLevel  # Three spaces per indent level
-            $line -replace '^( {2})+', $newIndent
-        } else {
-            $line
-        }
+    # Create the XML writer and save
+    $writer = [System.Xml.XmlWriter]::Create($Path, $settings)
+    try {
+        $Xml.Save($writer)
     }
-    
-    # Join back and save
-    $newContent = $convertedLines -join "`r`n"
-    Set-Content -Path $Path -Value $newContent -NoNewline -Encoding UTF8
+    finally {
+        $writer.Dispose()
+    }
 }

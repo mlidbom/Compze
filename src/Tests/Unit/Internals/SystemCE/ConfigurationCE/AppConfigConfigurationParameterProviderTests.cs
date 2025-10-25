@@ -1,5 +1,6 @@
 using System;
-using Compze.Common.Configuration;
+using Compze.Core.Configuration.Internal;
+using Compze.Tessaging.Configuration;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;

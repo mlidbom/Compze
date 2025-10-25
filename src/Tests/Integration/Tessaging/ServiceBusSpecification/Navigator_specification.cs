@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tessaging.Abstractions;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing.Sql;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
@@ -25,9 +26,9 @@ public class Navigator_specification : UniversalTestBase
 
    public Navigator_specification()
    {
-      var queryResults = new List<UserResource>();
+      var tueryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
 
       _host.RegisterEndpoint(
          "Backend",
@@ -38,12 +39,12 @@ public class Navigator_specification : UniversalTestBase
                    .AspNetCoreTransport()
                    .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
-                   .ForQuery((GetUserQuery query) => queryResults.Single(result => result.Name == query.Name))
-                   .ForQuery((UserApiStartPageQuery _) => new UserApiStartPage())
-                   .ForCommandWithResult((RegisterUserCommand command, IServiceBusSession _) =>
+                   .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
+                   .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
+                   .ForTommandWithResult((RegisterUserTommand tommand, IServiceBusSession _) =>
                     {
-                       queryResults.Add(new UserResource(command.Name));
-                       return new UserRegisteredConfirmationResource(command.Name);
+                       tueryResults.Add(new UserResource(tommand.Name));
+                       return new UserRegisteredConfirmationResource(tommand.Name);
                     });
          });
 
@@ -54,13 +55,13 @@ public class Navigator_specification : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
-   [PCT]  public void Can_get_command_result()
+   [PCT]  public void Can_get_tommand_result()
    {
-      var commandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserCommand.Create("new-user-name")));
-      commandResult1.Name.Should().Be("new-user-name");
+      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTommand.Create("new-user-name")));
+      tommandResult1.Name.Should().Be("new-user-name");
    }
 
-   [PCT]  public void Can_navigate_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
+   [PCT]  public void Can_navigate_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
       var userResource = _clientEndpoint.ExecuteClientRequest(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                      .Post(startpage => startpage.RegisterUser("new-user-name"))
@@ -69,7 +70,7 @@ public class Navigator_specification : UniversalTestBase
       userResource.Name.Should().Be("new-user-name");
    }
 
-   [PCT]  public async Task Can_navigate_async_to_startpage_execute_command_and_follow_command_result_link_to_the_created_resource()
+   [PCT]  public async Task Can_navigate_async_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
       var userResource = _clientEndpoint.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))
@@ -80,11 +81,11 @@ public class Navigator_specification : UniversalTestBase
 
    protected internal class UserApiStartPage
    {
-      public static UserApiStartPageQuery Self => new();
-      public RegisterUserCommand RegisterUser(string userName) => RegisterUserCommand.Create(userName);
+      public static UserApiStartPageTuery Self => new();
+      public RegisterUserTommand RegisterUser(string userName) => RegisterUserTommand.Create(userName);
    }
 
-   protected internal class GetUserQuery(string name) : MessageTypes.Remotable.NonTransactional.Queries.Query<UserResource>
+   protected internal class GetUserTuery(string name) : TessageTypes.Remotable.NonTransactional.Queries.Tuery<UserResource>
    {
       public string Name { get; private set; } = name;
    }
@@ -94,14 +95,14 @@ public class Navigator_specification : UniversalTestBase
       public string Name { get; private set; } = name;
    }
 
-   protected internal class RegisterUserCommand : MessageTypes.Remotable.AtMostOnce.AtMostOnceCommand<UserRegisteredConfirmationResource>
+   protected internal class RegisterUserTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<UserRegisteredConfirmationResource>
    {
-      RegisterUserCommand() : base(DeduplicationIdHandling.Reuse) {}
+      RegisterUserTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-      public static RegisterUserCommand Create(string name) => new()
+      public static RegisterUserTommand Create(string name) => new()
                                                                {
                                                                   Name = name,
-                                                                  MessageId = Guid.CreateVersion7()
+                                                                  TessageId = Guid.CreateVersion7()
                                                                };
 
       public string Name { get; private set; } = "";
@@ -109,9 +110,9 @@ public class Navigator_specification : UniversalTestBase
 
    protected internal class UserRegisteredConfirmationResource(string name)
    {
-      public GetUserQuery User => new(Name);
+      public GetUserTuery User => new(Name);
       public string Name { get; } = name;
    }
 
-   protected internal class UserApiStartPageQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<UserApiStartPage>;
+   protected internal class UserApiStartPageTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<UserApiStartPage>;
 }

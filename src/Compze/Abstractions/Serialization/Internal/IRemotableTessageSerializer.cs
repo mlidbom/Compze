@@ -1,0 +1,13 @@
+using System;
+using Compze.Core.Tessaging.Public;
+
+namespace Compze.Core.Serialization.Internal;
+
+interface IRemotableTessageSerializer
+{
+   string SerializeTessage(IRemotableTessage tessage);
+   IRemotableTessage DeserializeTessage(Type tessageType, string json);
+
+   string SerializeResponse(object response);
+   object DeserializeResponse(Type responseType, string json);
+}

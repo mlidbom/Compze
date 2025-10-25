@@ -1,6 +1,6 @@
 using System;
 using Compze.Sql.Common;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
@@ -9,7 +9,7 @@ using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase
 
-namespace Compze.Utilities.Testing.DbPool.PostgreSql;
+namespace Compze.Sql.PostgreSql.DbPool;
 
 static class PgSqlDbPoolRegistrar
 {

@@ -2,7 +2,7 @@
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
 
 using System;
-using Compze.Tessaging.Abstractions;
+using Compze.Core.Tessaging.Public;
 
 namespace Compze.Tests.ScratchPad.APIDraft.Policyv2;
 
@@ -17,80 +17,80 @@ interface IHandlerPolicyConfigurationBuilder
    void TriggerWithinPublishingTransaction();
 }
 
-interface IMessageHandlerPolicy
+interface ITessageHandlerPolicy
 {
-   void Configure(IHandlerPolicyConfigurationBuilder builder, IMessage message);
+   void Configure(IHandlerPolicyConfigurationBuilder builder, ITessage tessage);
 }
 
 
 static class Policy
 {
-   public static IMessageHandlerPolicy NoRestrictions => null;
-   public static IMessageHandlerPolicy Publishes<T>() => null;
-   public static IMessageHandlerPolicy Sends<T>() => null;
+   public static ITessageHandlerPolicy NoRestrictions => null;
+   public static ITessageHandlerPolicy Publishes<T>() => null;
+   public static ITessageHandlerPolicy Sends<T>() => null;
 
    public static class LockExclusively
    {
-      public static IMessageHandlerPolicy ThisHandler;
-      public static IMessageHandlerPolicy CurrentMessage;
-      public static IMessageHandlerPolicy AggregateRelatedToMessage;
-      public static IMessageHandlerPolicy MessageProcessing => null;
-      public static IMessageHandlerPolicy CommandProcessing => null;
-      public static IMessageHandlerPolicy EventProcessing => null;
+      public static ITessageHandlerPolicy ThisHandler;
+      public static ITessageHandlerPolicy CurrentTessage;
+      public static ITessageHandlerPolicy TaggregateRelatedToTessage;
+      public static ITessageHandlerPolicy TessageProcessing => null;
+      public static ITessageHandlerPolicy TommandProcessing => null;
+      public static ITessageHandlerPolicy TeventProcessing => null;
    }
 
    public class Inclusivelock
    {
-      public static IMessageHandlerPolicy MessageProcessing => null;
-      public static IMessageHandlerPolicy CommandProcessing => null;
-      public static IMessageHandlerPolicy EventProcessing => null;
+      public static ITessageHandlerPolicy TessageProcessing => null;
+      public static ITessageHandlerPolicy TommandProcessing => null;
+      public static ITessageHandlerPolicy TeventProcessing => null;
    }
 
    public static class Updates<T>
    {
-      public static IMessageHandlerPolicy WithCurrentMessageAggregateId() => null;
-      public static IMessageHandlerPolicy WithId(IMessageDataExtractor extractEmailFromEmailUpdatedEvent) => null;
+      public static ITessageHandlerPolicy WithCurrentTessageTaggregateId() => null;
+      public static ITessageHandlerPolicy WithId(ITessageDataExtractor extractEmailFromEmailUpdatedTevent) => null;
    }
 
    public static class RequiresUpToDate<T>
    {
-      public static IMessageHandlerPolicy All => null;
-      public static IMessageHandlerPolicy WithCurrentMessageAggregateId => null;
+      public static ITessageHandlerPolicy All => null;
+      public static ITessageHandlerPolicy WithCurrentTessageTaggregateId => null;
    }
 
-   public static class OnCascadedMessage
+   public static class OnCascadedTessage
    {
-      public static IMessageHandlerPolicy InvokeWithinTriggeringTransaction;
+      public static ITessageHandlerPolicy InvokeWithinTriggeringTransaction;
    }
 }
 
 interface ISomeDependency { }
-interface IMessageDataExtractor { }
-class ExtractEmailFromEmailUpdatedEvent : IMessageDataExtractor { }
+interface ITessageDataExtractor { }
+class ExtractEmailFromEmailUpdatedTevent : ITessageDataExtractor { }
 
-interface IMessageHandler { }
+interface ITessageHandler { }
 
-class MessageHandler
+class TessageHandler
 {
-   public static IMessageHandler For<T>(string uniqueId, Action<T> handler, params IMessageHandlerPolicy[] policies) => null;
-   public static IMessageHandler For<T, D1>(string uniqueId, Action<T, D1> handler, params IMessageHandlerPolicy[] policies) => null;
-   public static IMessageHandler For<T, D1, D2>(string uniqueId, Action<T, D1, D2> handler, params IMessageHandlerPolicy[] policies) => null;
+   public static ITessageHandler For<T>(string uniqueId, Action<T> handler, params ITessageHandlerPolicy[] policies) => null;
+   public static ITessageHandler For<T, D1>(string uniqueId, Action<T, D1> handler, params ITessageHandlerPolicy[] policies) => null;
+   public static ITessageHandler For<T, D1, D2>(string uniqueId, Action<T, D1, D2> handler, params ITessageHandlerPolicy[] policies) => null;
 }
-class EventHandler : MessageHandler
+class TeventHandler : TessageHandler
 {
 }
 
-class CommandHandler : MessageHandler
+class TommandHandler : TessageHandler
 {
 }
 
 class Endpoint
 {
-   public Endpoint(params IMessageHandler[] messageHandlers) { }
+   public Endpoint(params ITessageHandler[] tessageHandlers) { }
 }
 
-class CompositePolicy : IMessageHandlerPolicy
+class CompositePolicy : ITessageHandlerPolicy
 {
-   public CompositePolicy(params IMessageHandlerPolicy[] policies) { }
-   public void Configure(IHandlerPolicyConfigurationBuilder builder, IMessage message) { throw new Exception(); }
+   public CompositePolicy(params ITessageHandlerPolicy[] policies) { }
+   public void Configure(IHandlerPolicyConfigurationBuilder builder, ITessage tessage) { throw new Exception(); }
 }

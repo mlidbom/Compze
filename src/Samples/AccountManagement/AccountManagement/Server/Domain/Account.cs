@@ -1,33 +1,33 @@
 using System;
 using AccountManagement.API;
-using AccountManagement.Domain.Events;
+using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using CommunityToolkit.Diagnostics;
-using Compze.Abstractions.Internal.Time;
-using Compze.Tessaging.Teventive;
-using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Core.Time.Public;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.Domain;
 
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
-class Account : Aggregate<Account, AccountEvent.Root, AccountEvent.Implementation.Root>, IAccountResourceData
+class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementation.Root>, IAccountResourceData
 {
-   public Email Email { get; private set; } = null!;       //Never public setters on an aggregate. AssertInvariantsAreMet guarantees not null status.
-   public Password Password { get; private set; } = null!; //Never public setters on an aggregate. AssertInvariantsAreMet guarantees not null status.
+   public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
+   public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
 
-   //No public constructors please. Aggregates are created through domain verbs.
+   //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
    Account() : base(new DateTimeNowTimeSource())
    {
-      //Maintain correct state as events are raised or read from the store.
-      //Use property updated events whenever possible. Changes to public state should be represented by property updated events.
-      RegisterEventAppliers()
-        .For<AccountEvent.PropertyUpdated.Email>(e => Email = e.Email)
-        .For<AccountEvent.PropertyUpdated.Password>(e => Password = e.Password)
-        .IgnoreUnhandled<AccountEvent.LoggedIn>()
-        .IgnoreUnhandled<AccountEvent.LoginFailed>();
+      //Maintain correct state as tevents are raised or read from the store.
+      //Use property updated tevents whenever possible. Changes to public state should be represented by property updated tevents.
+      RegisterTeventAppliers()
+        .For<AccountTevent.PropertyUpdated.Email>(e => Email = e.Email)
+        .For<AccountTevent.PropertyUpdated.Password>(e => Password = e.Password)
+        .IgnoreUnhandled<AccountTevent.LoggedIn>()
+        .IgnoreUnhandled<AccountTevent.LoginFailed>();
    }
 
    //Ensure that the state of the instance is sane. If not throw an exception.
@@ -58,9 +58,9 @@ class Account : Aggregate<Account, AccountEvent.Root, AccountEvent.Implementatio
       }
 
       var newAccount = new Account();
-      newAccount.Publish(new AccountEvent.Implementation.UserRegistered(accountId: accountId, email: email, password: password));
+      newAccount.Publish(new AccountTevent.Implementation.UserRegistered(accountId: accountId, email: email, password: password));
 
-      navigator.Execute(InternalApi.Commands.Save(newAccount));
+      navigator.Execute(InternalApi.Tommands.Save(newAccount));
 
       return (RegistrationAttemptStatus.Successful, newAccount);
    }
@@ -71,24 +71,24 @@ class Account : Aggregate<Account, AccountEvent.Root, AccountEvent.Implementatio
 
       Password.AssertIsCorrectPassword(oldPassword);
 
-      Publish(new AccountEvent.Implementation.UserChangedPassword(newPassword));
+      Publish(new AccountTevent.Implementation.UserChangedPassword(newPassword));
    }
 
    internal void ChangeEmail(Email email)
    {
       Guard.IsNotNull(email);
 
-      Publish(new AccountEvent.Implementation.UserChangedEmail(email));
+      Publish(new AccountTevent.Implementation.UserChangedEmail(email));
    }
 
-   internal AccountEvent.LoginAttempted Login(string logInPassword)
+   internal AccountTevent.LoginAttempted Login(string logInPassword)
    {
       if(Password.IsCorrectPassword(logInPassword))
       {
-         return Publish(new AccountEvent.Implementation.LoggedIn(token: Guid.NewGuid().ToString()));
+         return Publish(new AccountTevent.Implementation.LoggedIn(token: Guid.NewGuid().ToString()));
       } else
       {
-         return Publish(new AccountEvent.Implementation.LoginFailed());
+         return Publish(new AccountTevent.Implementation.LoginFailed());
       }
    }
 }

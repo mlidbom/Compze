@@ -1,8 +1,3 @@
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Serialization;
-using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
-using Compze.Tessaging.Hosting.Implementation.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
@@ -11,6 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Serialization.Internal;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Inbox;
+using Compze.Tessaging.Implementation.Transport.Client.Http;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;
 
@@ -19,27 +19,45 @@ class RpcController : ControllerBase
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<RpcController>()
-               .CreatedBy((IRemotableMessageSerializer serializer,
+               .CreatedBy((IRemotableTessageSerializer serializer,
                            ITypeMapper typeMapper,
                            IInbox inbox,
                            Inbox.HandlerExecutionEngine handlerExecutionEngine)
                              => new RpcController(serializer, typeMapper, inbox, handlerExecutionEngine)));
 
-   RpcController(IRemotableMessageSerializer serializer,
+   RpcController(IRemotableTessageSerializer serializer,
                  ITypeMapper typeMapper,
                  IInbox inbox,
                  Inbox.HandlerExecutionEngine handlerExecutionEngine) : base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
-   [HttpPost(HttpConstants.Routes.Rpc.Query)]
-   public async Task<IActionResult> Query()
+   [HttpPost(HttpConstants.Routes.Rpc.Tuery)]
+   public async Task<IActionResult> Tuery()
    {
-      var incomingMessage = await CreateIncomingMessage().caf();
+      var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         var queryResponse = (await HandlerExecutionEngine.Enqueue(incomingMessage).caf()).NotNull();
-         var queryResponseJson = Serializer.SerializeResponse(queryResponse);
-         return Ok(queryResponseJson);
+         var tueryResponse = (await HandlerExecutionEngine.Enqueue(incomingTessage).caf()).NotNull();
+         var tueryResponseJson = Serializer.SerializeResponse(tueryResponse);
+         return Ok(tueryResponseJson);
+      }
+      catch(Exception exception)
+      {
+         //todo: eliminate all this code duplication
+         return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
+      }
+   }
+
+   [HttpPost(HttpConstants.Routes.Rpc.TommandWithResult)]
+   public async Task<IActionResult> TommandWithResult()
+   {
+      var incomingTessage = await CreateIncomingTessage().caf();
+
+      try
+      {
+         var tommandResponse = (await Inbox.Receive(incomingTessage).caf()).NotNull();
+         var tommandResponseJson = Serializer.SerializeResponse(tommandResponse);
+         return Ok(tommandResponseJson);
       }
       catch(Exception exception)
       {
@@ -47,31 +65,14 @@ class RpcController : ControllerBase
       }
    }
 
-   [HttpPost(HttpConstants.Routes.Rpc.CommandWithResult)]
-   public async Task<IActionResult> CommandWithResult()
+   [HttpPost(HttpConstants.Routes.Rpc.TommandNoResult)]
+   public async Task<IActionResult> TommandWithNoResult()
    {
-      var incomingMessage = await CreateIncomingMessage().caf();
+      var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         var commandResponse = (await Inbox.Receive(incomingMessage).caf()).NotNull();
-         var commandResponseJson = Serializer.SerializeResponse(commandResponse);
-         return Ok(commandResponseJson);
-      }
-      catch(Exception exception)
-      {
-         return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
-      }
-   }
-
-   [HttpPost(HttpConstants.Routes.Rpc.CommandNoResult)]
-   public async Task<IActionResult> CommandWithNoResult()
-   {
-      var incomingMessage = await CreateIncomingMessage().caf();
-
-      try
-      {
-         await Inbox.Receive(incomingMessage).caf();
+         await Inbox.Receive(incomingTessage).caf();
          return Ok();
       }
       catch(Exception exception)

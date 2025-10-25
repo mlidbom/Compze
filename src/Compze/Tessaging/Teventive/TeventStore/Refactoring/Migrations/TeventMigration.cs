@@ -1,0 +1,27 @@
+using System;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+using Compze.Utilities.Contracts;
+
+namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
+
+public abstract class TeventMigration<TMigratedTaggregateTeventHierarchyRootInterface> : ITeventMigration
+   where TMigratedTaggregateTeventHierarchyRootInterface : ITaggregateTevent
+{
+   protected TeventMigration(Guid id, string name, string description)
+   {
+      Assert.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Is(typeof(TMigratedTaggregateTeventHierarchyRootInterface).IsInterface);
+
+      Id = id;
+      Name = name;
+      Description = description;
+      Done = false;
+   }
+
+   public Guid Id { get; }
+   public string Name { get; }
+   public string Description { get; }
+   public bool Done { get; }
+   public Type MigratedTaggregateTeventHierarchyRootInterface => typeof(TMigratedTaggregateTeventHierarchyRootInterface);
+   public abstract ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator();
+}

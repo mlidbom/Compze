@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Compze.Abstractions;
-using Compze.Abstractions.Internal;
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Abstractions.Internal.Time;
-using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Serialization;
-using Compze.Sql.DocumentDb.Abstractions.Internal;
+using Compze.Core.DocumentDb.Public;
+using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Serialization.Internal;
+using Compze.Core.Time.Public;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -16,7 +15,7 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Sql.DocumentDb;
+namespace Compze.DocumentDb;
 
 class DocumentDb : IDocumentDb
 {
@@ -42,7 +41,7 @@ class DocumentDb : IDocumentDb
    //todo:urgent:bug: The DocumentKey uses (id, type) as the key. But polymorphism queries by base type, while storage is by concrete type:
    // Save<Animal>("1", new Dog());
    // Save<Animal>("1", new Cat()); // Same ID, different concrete types
-   // This creates two documents with the same logical ID but different type GUIDs. Querying Get<Animal>("1") becomes ambiguous.
+   // This creates two documents with the same logical ID but different type GUIDs. Tuerying Get<Animal>("1") becomes ambiguous.
    // I don't see any simple fix for this. I think we should just rip out the polymorphism support. It is too complex to manage and reason about, and the use cases are limited.
    bool IDocumentDb.TryGet<TDocument>(object id, [MaybeNullWhen(false)] out TDocument value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock)
    {

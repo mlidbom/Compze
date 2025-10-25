@@ -1,10 +1,10 @@
-using AccountManagement.Domain.Events;
-using Compze.Sql.DocumentDb;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Typermedia.Abstractions;
+using AccountManagement.Domain.Tevents;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.DocumentDb;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
-using AccountLink = Compze.Tessaging.Sql.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
+using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;
 
 namespace AccountManagement.Domain;
 
@@ -12,22 +12,22 @@ namespace AccountManagement.Domain;
 {
    static DocumentDbApi DocumentDb => new();
 
-   internal static void UpdateMappingWhenEmailChanges(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForEvent(
-      (AccountEvent.PropertyUpdated.Email emailUpdated, IInProcessHypermediaNavigator navigator) =>
+   internal static void UpdateMappingWhenEmailChanges(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
+      (AccountTevent.PropertyUpdated.Email emailUpdated, IInProcessHypermediaNavigator navigator) =>
       {
-         if(emailUpdated.AggregateVersion > 1)
+         if(emailUpdated.TaggregateVersion > 1)
          {
-            var previousAccountVersion = navigator.Execute(InternalApi.Queries.GetReadOnlyCopyOfVersion(emailUpdated.AggregateId, emailUpdated.AggregateVersion - 1));
-            navigator.Execute(DocumentDb.Commands.Delete<AccountLink>(previousAccountVersion.Email.StringValue));
+            var previousAccountVersion = navigator.Execute(InternalApi.Queries.GetReadOnlyCopyOfVersion(emailUpdated.TaggregateId, emailUpdated.TaggregateVersion - 1));
+            navigator.Execute(DocumentDb.Tommands.Delete<AccountLink>(previousAccountVersion.Email.StringValue));
          }
 
          var newEmail = emailUpdated.Email;
-         navigator.Execute(DocumentDb.Commands.Save(newEmail.StringValue, InternalApi.Queries.GetForUpdate(emailUpdated.AggregateId)));
+         navigator.Execute(DocumentDb.Tommands.Save(newEmail.StringValue, InternalApi.Queries.GetForUpdate(emailUpdated.TaggregateId)));
       });
 
-   internal static void TryGetAccountByEmail(MessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-      (InternalApi.Query.TryGetByEmailQuery query, IInProcessHypermediaNavigator navigator) =>
-         navigator.Execute(DocumentDb.Queries.TryGet<AccountLink>(query.Email.StringValue)) is Some<AccountLink> accountLink
+   internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+      (InternalApi.Tuery.TryGetByEmailTuery tuery, IInProcessHypermediaNavigator navigator) =>
+         navigator.Execute(DocumentDb.Queries.TryGet<AccountLink>(tuery.Email.StringValue)) is Some<AccountLink> accountLink
             ? Option.Some(navigator.Execute(accountLink.Value))
             : Option.None<Account>());
 }

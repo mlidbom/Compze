@@ -8,73 +8,73 @@ public class PuttingItAllTogether
 {
    void IllustratateRegistration()
    {
-      var defaultEventHandlerPolicies = new CompositePolicy(
+      var defaultTeventHandlerPolicies = new CompositePolicy(
          Policy.LockExclusively.ThisHandler,   //Ensures that this handler is never invoked in parallel with itself.
-         Policy.LockExclusively.CurrentMessage //Ensures that no other handler handle the same queuedMessageInformation in parallel with this handler.
-         //Useless when applied to a command handler since there can only be one.
+         Policy.LockExclusively.CurrentTessage //Ensures that no other handler handle the same queuedTessageInformation in parallel with this handler.
+         //Useless when applied to a tommand handler since there can only be one.
       );
 
-      var defaultCommandHandlerPolicies = new CompositePolicy(
-         Policy.LockExclusively.AggregateRelatedToMessage
+      var defaultTommandHandlerPolicies = new CompositePolicy(
+         Policy.LockExclusively.TaggregateRelatedToTessage
       );
 
       var pauseAllOtherHandlers = new CompositePolicy(
-         Policy.LockExclusively.CommandProcessing,
-         Policy.LockExclusively.EventProcessing
+         Policy.LockExclusively.TommandProcessing,
+         Policy.LockExclusively.TeventProcessing
       );
 
       var endpoint = new Endpoint(
-         //Normal command handlers
-         CommandHandler.For<CreateAccountCommand>(
+         //Normal tommand handlers
+         TommandHandler.For<CreateAccountTommand>(
             "17893552-D533-4A59-A177-63EAF3B7B07E",
-            command => { },
-            defaultCommandHandlerPolicies,
-            //Being explicit about which events might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
+            tommand => { },
+            defaultTommandHandlerPolicies,
+            //Being explicit about which tevents might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
-            Policy.Publishes<IAccountEvent>(),
-            //This handler must wait until there are no messages queued to any handler with policy:
+            Policy.Publishes<IAccountTevent>(),
+            //This handler must wait until there are no tessages queued to any handler with policy:
             //Policy.Updates<EmailToAccountLookupModel>. Throws an exception on registration if there are no handlers with matching Updates<> policy.
             Policy.RequiresUpToDate<EmailToAccountLookupModel>.All),
 
-         //This command handler is completely independent of any other handler since it just sends an email based on the data in the command.
+         //This tommand handler is completely independent of any other handler since it just sends an email based on the data in the tommand.
          //It can run in parallel with any other handler and itself.
-         CommandHandler.For<SendAccountRegistrationWelcomeEmailCommand>("76773E2F-9E44-4150-8C3C-8A4FC93899C3", command => { }, Policy.NoRestrictions),
+         TommandHandler.For<SendAccountRegistrationWelcomeEmailTommand>("76773E2F-9E44-4150-8C3C-8A4FC93899C3", tommand => { }, Policy.NoRestrictions),
 
 
-         //System command handlers:
-         CommandHandler.For<OptimizeEventStoreCommand>("F9688A3B-F6AF-4884-9FB5-F6670718F6BE", command => { }, pauseAllOtherHandlers),
-         CommandHandler.For<OptimizeDocumentDbCommand>("7A2DC4C3-F2DB-43BD-ACB0-BF454BC6C958", command => { }, pauseAllOtherHandlers),
+         //System tommand handlers:
+         TommandHandler.For<OptimizeTeventStoreTommand>("F9688A3B-F6AF-4884-9FB5-F6670718F6BE", tommand => { }, pauseAllOtherHandlers),
+         TommandHandler.For<OptimizeDocumentDbCommand>("7A2DC4C3-F2DB-43BD-ACB0-BF454BC6C958", tommand => { }, pauseAllOtherHandlers),
 
-         //Event handlers
-         EventHandler.For<AccountCreatedEvent>(
+         //Tevent handlers
+         TeventHandler.For<AccountCreatedTevent>(
             "2E8642CA-6C60-4B91-A92E-54AD3753E7F2",
-            @event => { },
-            defaultEventHandlerPolicies,
-            Policy.Updates<AccountReadModel>.WithCurrentMessageAggregateId()),
+            @tevent => { },
+            defaultTeventHandlerPolicies,
+            Policy.Updates<AccountReadModel>.WithCurrentTessageTaggregateId()),
 
-         EventHandler.For<AccountCreatedEvent>(
+         TeventHandler.For<AccountCreatedTevent>(
             "A5A1DF35-982C-4962-A7DA-C98AC88633C0",
-            @event => { },
-            defaultEventHandlerPolicies,
-            //Being explicit about which commands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
+            @tevent => { },
+            defaultTeventHandlerPolicies,
+            //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
-            Policy.Sends<SendAccountRegistrationWelcomeEmailCommand>()
+            Policy.Sends<SendAccountRegistrationWelcomeEmailTommand>()
          ),
 
-         EventHandler.For<AccountCreatedEvent>(
+         TeventHandler.For<AccountCreatedTevent>(
             "E59B41A3-BF32-4B7A-B497-F29E3AF42D42",
-            @event => { },
-            defaultEventHandlerPolicies,
+            @tevent => { },
+            defaultTeventHandlerPolicies,
             //(Deprecated. See: Policy.RequiresUpToDate above. )
             //This denormalizer keeps a domain read model up to date. For the domain to work reliably it needs to be executed within the triggering transaction.
-            Policy.OnCascadedMessage.InvokeWithinTriggeringTransaction,
-            Policy.Updates<EmailToAccountLookupModel>.WithId(new ExtractEmailFromEmailUpdatedEvent())),
+            Policy.OnCascadedTessage.InvokeWithinTriggeringTransaction,
+            Policy.Updates<EmailToAccountLookupModel>.WithId(new ExtractEmailFromEmailUpdatedTevent())),
 
-         //Delegate to container registered component to handle the event.
-         EventHandler.For("6E0EA0E6-67DB-4D25-AFE5-99E67130773D", (AccountCreatedEvent @event, AccountController controller) => controller.Handle(@event)),
+         //Delegate to container registered component to handle the tevent.
+         TeventHandler.For("6E0EA0E6-67DB-4D25-AFE5-99E67130773D", (AccountCreatedTevent @tevent, AccountController controller) => controller.Handle(@tevent)),
 
          //Generic parameter injection. Actually the same thing as the example above..
-         EventHandler.For("85966417-20B9-4373-9A4B-8398ECA86429", (AccountCreatedEvent @event, AccountController dependency1, ISomeDependency dependency2) => { })
+         TeventHandler.For("85966417-20B9-4373-9A4B-8398ECA86429", (AccountCreatedTevent @tevent, AccountController dependency1, ISomeDependency dependency2) => { })
       );
    }
 }

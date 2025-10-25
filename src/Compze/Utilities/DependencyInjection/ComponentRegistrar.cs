@@ -4,7 +4,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Utilities.DependencyInjection;
 
-class ComponentRegistrar : IComponentRegistrar
+public class ComponentRegistrar : IComponentRegistrar
 {
    IDependencyInjectionContainer? _container = null;
 

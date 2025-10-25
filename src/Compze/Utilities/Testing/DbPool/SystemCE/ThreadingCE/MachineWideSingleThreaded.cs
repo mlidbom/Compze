@@ -29,6 +29,7 @@ class MachineWideSingleThreaded
                                                        }
                                                        catch
                                                        {
+                                                          //Todo: This code actually runs NCrunch coverage reveals. That is worrying. Will this run on non-windows platforms?
                                                           var mutex = new Mutex(initiallyOwned: false, name: lockId1);
 
                                                           if(OperatingSystem.IsWindows())

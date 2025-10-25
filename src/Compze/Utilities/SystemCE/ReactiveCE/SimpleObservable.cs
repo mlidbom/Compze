@@ -7,20 +7,20 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Utilities.SystemCE.ReactiveCE;
 
 ///<summary>Simple implementation of <see cref="IObservable{T}"/> that tracks subscribers and allows for calling OnNext on them all at once.</summary>
-class SimpleObservable<TEvent> : IObservable<TEvent>
+class SimpleObservable<TTevent> : IObservable<TTevent>
 {
-   readonly IThreadShared<HashSet<IObserver<TEvent>>> _observerCollection = IThreadShared.WithDefaultTimeout<HashSet<IObserver<TEvent>>>();
+   readonly IThreadShared<HashSet<IObserver<TTevent>>> _observerCollection = IThreadShared.WithDefaultTimeout<HashSet<IObserver<TTevent>>>();
 
    ///<summary>Calls <see cref="IObserver{T}.OnNext"/> for each subscribed observer.</summary>
-   public void OnNext(TEvent @event)
+   public void OnNext(TTevent @tevent)
    {
-      Argument.NotNull(@event);
+      Argument.NotNull(@tevent);
 
-      _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(@event)));
+      _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(@tevent)));
    }
 
    /// <inheritdoc />
-   public IDisposable Subscribe(IObserver<TEvent> observer)
+   public IDisposable Subscribe(IObserver<TTevent> observer)
    {
       _observerCollection.Update(it =>  it.Add(observer));
       return new Disposable(() => _observerCollection.Update(it => it.Remove(observer)));

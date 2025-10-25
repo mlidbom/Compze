@@ -1,0 +1,61 @@
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Threading;
+
+namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
+
+partial class Inbox
+{
+   // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
+   internal partial class HandlerExecutionEngine(
+      ITessagesInFlightTracker globalStateTracker,
+      ITessageHandlerRegistry handlerRegistry,
+      IServiceLocator serviceLocator,
+      ITessageStorage storage,
+      ITaskRunner taskRunner,
+      EndpointId endpointId)
+   {
+      Thread? _awaitDispatchableTessageThread;
+
+      readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
+      [
+         new QueriesExecuteAfterAllTommandsAndTeventsAreDone(),
+         new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
+      ];
+
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);
+
+      internal Task<object?> Enqueue(TransportTessage.InComing transportTessage) => _coordinator.EnqueueTessageTask(transportTessage);
+
+      void AwaitDispatchableTessageThreadLoop()
+      {
+         while(true)
+         {
+            var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules);
+            task.Execute();
+         }
+         // ReSharper disable once FunctionNeverReturns
+      }
+
+      public void Start()
+      {
+         _awaitDispatchableTessageThread = taskRunner.RunOnNamedThread(
+            nameof(AwaitDispatchableTessageThreadLoop),
+            AwaitDispatchableTessageThreadLoop,
+            ThreadPriority.AboveNormal);
+      }
+
+      public void Stop()
+      {
+         _awaitDispatchableTessageThread?.InterruptAndJoin();
+         _awaitDispatchableTessageThread = null;
+      }
+   }
+}

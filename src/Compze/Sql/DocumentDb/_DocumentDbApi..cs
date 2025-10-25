@@ -1,16 +1,16 @@
 using System;
-using Compze.Abstractions;
+using Compze.Core.Public;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Compze.Sql.DocumentDb;
+namespace Compze.DocumentDb;
 
 public partial class DocumentDbApi
 {
-   public QueryApi Queries => new();
-   public Command Commands => new();
+   public TueryApi Queries => new();
+   public Tommand Tommands => new();
 
-   public partial class QueryApi
+   public partial class TueryApi
    {
       public TryGetDocument<TDocument> TryGet<TDocument>(Guid id) where TDocument : IHasPersistentIdentity<Guid> => new(id.ToString());
 
@@ -21,7 +21,7 @@ public partial class DocumentDbApi
       public GetReadonlyCopyOfDocument<TDocument> GetReadOnlyCopy<TDocument>(Guid id) => new(id);
    }
 
-   public partial class Command
+   public partial class Tommand
    {
       public SaveDocument<TDocument> Save<TDocument>(string key, TDocument account) => new(key, account);
 

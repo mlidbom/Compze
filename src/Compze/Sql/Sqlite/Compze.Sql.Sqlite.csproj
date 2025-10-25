@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
-    <ProjectReference Include="..\Common\Compze.Sql.Common.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
-  </ItemGroup>
-  </Project>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Abstractions\Compze.Core.csproj" />
+      <ProjectReference Include="..\Common\Compze.Sql.Common.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
+   </ItemGroup>
+</Project>

@@ -1,5 +1,5 @@
 using System;
-using Compze.Common.Configuration;
+using Compze.Core.Configuration.Internal;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

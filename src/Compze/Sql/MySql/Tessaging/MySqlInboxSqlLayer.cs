@@ -1,19 +1,19 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
+using Compze.Sql.Common.Tessaging;
 using Compze.Sql.MySql.SystemExtensions;
-using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
-using MessageTable =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
+using TessageTable =  Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MySql;
+namespace Compze.Sql.MySql.Tessaging;
 
 internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
 
-   public IServiceBusSqlLayer.SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(Guid tessageId, Guid typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
@@ -22,25 +22,25 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
               .SetCommandText(
                   $"""
 
-                   INSERT {MessageTable.TableName} 
-                               ({MessageTable.MessageId},  {MessageTable.TypeId},  {MessageTable.Body}, {MessageTable.Status}) 
-                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)InboxMessageStatus.UnHandled})
-                   ON DUPLICATE KEY UPDATE {MessageTable.MessageId} = {MessageTable.MessageId}
+                   INSERT {TessageTable.TableName} 
+                               ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status}) 
+                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
+                   ON DUPLICATE KEY UPDATE {TessageTable.TessageId} = {TessageTable.TessageId}
 
                    """)
-              .AddParameter(MessageTable.MessageId, messageId)
-              .AddParameter(MessageTable.TypeId, typeId)
-               //performance: Like with the event store, keep all framework properties out of the JSON and put it into separate columns instead. For events. Reuse a pre-serialized instance from the persisting to the event store.
-              .AddMediumTextParameter(MessageTable.Body, serializedMessage)
+              .AddParameter(TessageTable.TessageId, tessageId)
+              .AddParameter(TessageTable.TypeId, typeId)
+               //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
+              .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 
             return affectedRows == 1 
-               ? IServiceBusSqlLayer.SaveMessageResult.NewMessage 
-               : IServiceBusSqlLayer.SaveMessageResult.Duplicate;
+               ? IServiceBusSqlLayer.SaveTessageResult.NewTessage 
+               : IServiceBusSqlLayer.SaveTessageResult.Duplicate;
          });
    }
 
-   public void MarkAsSucceeded(Guid messageId)
+   public void MarkAsSucceeded(Guid tessageId)
    {
       _connectionFactory.UseCommand(
          command =>
@@ -49,13 +49,13 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                               .SetCommandText(
                                   $"""
 
-                                   UPDATE {MessageTable.TableName} 
-                                       SET {MessageTable.Status} = {(int)InboxMessageStatus.Succeeded}
-                                   WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                                       AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
+                                   UPDATE {TessageTable.TableName} 
+                                       SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
+                                   WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                                       AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                                    """)
-                              .AddParameter(MessageTable.MessageId, messageId)
+                              .AddParameter(TessageTable.TessageId, tessageId)
                               .ExecuteNonQuery();
 
             Assert.Result.Is(affectedRows == 1);
@@ -63,42 +63,42 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
          });
    }
 
-   public int RecordException(Guid messageId, string exceptionStackTrace, string exceptionMessage, string exceptionType)
+   public int RecordException(Guid tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
    {
       return _connectionFactory.UseCommand(
          command => command
                    .SetCommandText(
                        $"""
 
-                        UPDATE {MessageTable.TableName} 
-                            SET {MessageTable.ExceptionCount} = {MessageTable.ExceptionCount} + 1,
-                                {MessageTable.ExceptionType} = @{MessageTable.ExceptionType},
-                                {MessageTable.ExceptionStackTrace} = @{MessageTable.ExceptionStackTrace},
-                                {MessageTable.ExceptionMessage} = @{MessageTable.ExceptionMessage}
+                        UPDATE {TessageTable.TableName} 
+                            SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
+                                {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
+                                {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
+                                {TessageTable.ExceptionTessage} = @{TessageTable.ExceptionTessage}
                                 
-                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                         """)
-                   .AddParameter(MessageTable.MessageId, messageId)
-                   .AddMediumTextParameter(MessageTable.ExceptionStackTrace, exceptionStackTrace)
-                   .AddMediumTextParameter(MessageTable.ExceptionMessage, exceptionMessage)
-                   .AddVarcharParameter(MessageTable.ExceptionType, 500, exceptionType)
+                   .AddParameter(TessageTable.TessageId, tessageId)
+                   .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
+                   .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
+                   .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
                    .ExecuteNonQuery());
    }
 
-   public int MarkAsFailed(Guid messageId)
+   public int MarkAsFailed(Guid tessageId)
    {
       return _connectionFactory.UseCommand(
          command => command
                    .SetCommandText(
                        $"""
 
-                        UPDATE {MessageTable.TableName} 
-                            SET {MessageTable.Status} = {(int)InboxMessageStatus.Failed}
-                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                            AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
+                        UPDATE {TessageTable.TableName} 
+                            SET {TessageTable.Status} = {(int)InboxTessageStatus.Failed}
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                            AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                         """)
-                   .AddParameter(MessageTable.MessageId, messageId)
+                   .AddParameter(TessageTable.TessageId, tessageId)
                    .ExecuteNonQuery());
    }
 

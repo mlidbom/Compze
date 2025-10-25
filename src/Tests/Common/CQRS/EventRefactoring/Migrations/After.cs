@@ -1,38 +1,39 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 
-public class After<TEvent> : EventMigration<IRootEvent>
+public class After<TTevent> : TeventMigration<IRootTevent>
 {
    readonly IEnumerable<Type> _insert;
 
-   public static After<TEvent> Insert<T1>() => new(EnumerableCE.OfTypes<T1>());
+   public static After<TTevent> Insert<T1>() => new(EnumerableCE.OfTypes<T1>());
    // ReSharper disable once UnusedMember.Global todo:Write test that uses this. We should have a test replacing with a collection.
-   public static After<TEvent> Insert<T1, T2>() => new(EnumerableCE.OfTypes<T1, T2>());
+   public static After<TTevent> Insert<T1, T2>() => new(EnumerableCE.OfTypes<T1, T2>());
 
    After(IEnumerable<Type> insert) : base(Guid.Parse("544C6694-7B29-4CC0-8DAA-6C50A5F28B70"), "After", "Long description of After") => _insert = insert;
 
-   public override ISingleAggregateInstanceHandlingEventMigrator CreateSingleAggregateInstanceHandlingMigrator() => new Inspector(_insert);
+   public override ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator() => new Inspector(_insert);
 
-   class Inspector(IEnumerable<Type> insert) : ISingleAggregateInstanceHandlingEventMigrator
+   class Inspector(IEnumerable<Type> insert) : ISingleTaggregateInstanceHandlingTeventMigrator
    {
       readonly IEnumerable<Type> _insert = insert;
-      Type? _lastSeenEventType;
+      Type? _lastSeenTeventType;
 
-      public void MigrateEvent(IAggregateEvent @event, IEventModifier modifier)
+      public void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier)
       {
-         if (_lastSeenEventType == typeof(TEvent) && @event.GetType() != _insert.First())
+         if (_lastSeenTeventType == typeof(TTevent) && tevent.GetType() != _insert.First())
          {
-            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<AggregateEvent>().ToArray());
+            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<TaggregateTevent>().ToArray());
          }
 
-         _lastSeenEventType = @event.GetType();
+         _lastSeenTeventType = tevent.GetType();
       }
 
    }

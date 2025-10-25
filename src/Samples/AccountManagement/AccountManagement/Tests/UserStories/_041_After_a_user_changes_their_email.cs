@@ -28,7 +28,7 @@ public class _041_After_a_user_changes_their_email : UserStoryTest
 
    [PCT] public void Registering_an_account_with_the_old_email_works() => Scenario.Register.WithEmail(_changeEmailScenario!.OldEmail.ToString()).Execute();
 
-   [PCT] public void Attempting_to_register_an_account_with_the_new_email_fails_with_email_already_registered_message() =>
+   [PCT] public void Attempting_to_register_an_account_with_the_new_email_fails_with_email_already_registered_tessage() =>
       Scenario.Register.WithEmail(_changeEmailScenario!.NewEmail).Execute()
               .Result.Status
               .Should().Be(RegistrationAttemptStatus.EmailAlreadyRegistered);

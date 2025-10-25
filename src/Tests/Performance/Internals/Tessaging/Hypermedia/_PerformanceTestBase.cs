@@ -1,12 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing.Sql;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Typermedia.Abstractions;
 using Compze.Tests.Infrastructure;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
@@ -21,7 +22,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
 
    protected PerformanceTestBase()
    {
-      Host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
+      Host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
       ServerEndpoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
@@ -31,8 +32,8 @@ public abstract class PerformanceTestBase : UniversalTestBase
                    .AspNetCoreTransport()
                    .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
-                   .ForQuery((MyRemoteQuery _) => new MyQueryResult())
-                   .ForQuery((MyLocalStrictlyLocalQuery _) => new MyQueryResult());
+                   .ForTuery((MyRemoteTuery _) => new MyTueryResult())
+                   .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
          });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
@@ -42,7 +43,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await Host.DisposeAsync();
 
-   protected internal class MyRemoteQuery : MessageTypes.Remotable.NonTransactional.Queries.Query<MyQueryResult>;
-   protected internal class MyLocalStrictlyLocalQuery : MessageTypes.StrictlyLocal.Queries.StrictlyLocalQuery<MyLocalStrictlyLocalQuery, MyQueryResult>;
-   protected internal class MyQueryResult;
+   protected internal class MyRemoteTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyTueryResult>;
+   protected internal class MyLocalStrictlyLocalTuery : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<MyLocalStrictlyLocalTuery, MyTueryResult>;
+   protected internal class MyTueryResult;
 }

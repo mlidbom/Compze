@@ -1,24 +1,24 @@
-using Compze.Tessaging.Abstractions;
+using Compze.Core.Tessaging.Public;
 using JetBrains.Annotations;
 
 namespace AccountManagement.API;
 
 [UsedImplicitly] public class StartResource
 {
-   public Command Commands { get; private set; } = new();
+   public Tommand Tommands { get; private set; } = new();
 
-   public Query Queries { get; private set; } = new();
+   public Tuery Queries { get; private set; } = new();
 
 #pragma warning disable CA1724 // Type names should not match namespaces
-   public class Query
+   public class Tuery
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
-      public MessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> AccountById { get; private set; } = new();
+      public TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> AccountById { get; private set; } = new();
    }
 
-   public class Command
+   public class Tommand
    {
-      public AccountResource.Command.LogIn Login { get; private set; } = AccountResource.Command.LogIn.Create();
-      public AccountResource.Command.Register Register { get; private set; } = AccountResource.Command.Register.Create();
+      public AccountResource.Tommand.LogIn Login { get; private set; } = AccountResource.Tommand.LogIn.Create();
+      public AccountResource.Tommand.Register Register { get; private set; } = AccountResource.Tommand.Register.Create();
    }
 }

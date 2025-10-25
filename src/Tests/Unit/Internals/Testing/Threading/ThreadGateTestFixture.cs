@@ -14,7 +14,7 @@ class ThreadGateTestFixture : IDisposable
 {
    public readonly IThreadGate Gate;
    public int NumberOfThreads { get; private init; }
-   IReadOnlyList<Entrant> _entrantEvents = [];
+   IReadOnlyList<Entrant> _entrantTevents = [];
    Task[] _tasksPassingGate = [];
 
    class Entrant
@@ -41,17 +41,17 @@ class ThreadGateTestFixture : IDisposable
 
    void StartThreads()
    {
-      _entrantEvents = 1.Through(NumberOfThreads)
+      _entrantTevents = 1.Through(NumberOfThreads)
                        .Select(_ => new Entrant())
                        .ToList();
 
-      _tasksPassingGate = _entrantEvents.Select(
-                                           entrantEvent => TaskCE.Run(
+      _tasksPassingGate = _entrantTevents.Select(
+                                           entrantTevent => TaskCE.Run(
                                               () =>
                                               {
-                                                 entrantEvent.HasStarted.Set();
+                                                 entrantTevent.HasStarted.Set();
                                                  Gate.AwaitPassThrough();
-                                                 entrantEvent.HasCompleted.Set();
+                                                 entrantTevent.HasCompleted.Set();
                                               }))
                                        .ToArray();
    }
@@ -59,7 +59,7 @@ class ThreadGateTestFixture : IDisposable
    public int ThreadsPassedTheGate(TimeSpan waitTime)
    {
       Thread.Sleep(waitTime);
-      return _entrantEvents.Count(entrant => entrant.HasCompleted.IsSet);
+      return _entrantTevents.Count(entrant => entrant.HasCompleted.IsSet);
    }
 
    public ThreadGateTestFixture WaitForAllThreadsToQueueUpAtPassThrough()

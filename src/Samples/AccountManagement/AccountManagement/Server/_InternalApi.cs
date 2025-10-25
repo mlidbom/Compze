@@ -2,8 +2,8 @@ using System;
 using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Sql.EventStore;
+using Compze.Core.Tessaging.Public;
+using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Functional;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want _composable_ fluent APIs which does not happen with static members since we need instances to compose the API.
@@ -12,24 +12,24 @@ namespace AccountManagement;
 
 static class InternalApi
 {
-   static EventStoreApi EventStore => new EventStoreApi();
-   internal static Query Queries => new();
-   internal static Command Commands => new();
+   static TeventStoreApi TeventStore => new TeventStoreApi();
+   internal static Tuery Queries => new();
+   internal static Tommand Tommands => new();
    internal static AccountQueryModel.Api AccountQueryModel => new();
 
-   internal class Query
+   internal class Tuery
    {
-      internal TryGetByEmailQuery TryGetByEmail(Email email) => new(email);
+      internal TryGetByEmailTuery TryGetByEmail(Email email) => new(email);
 
-      internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => EventStore.Queries.GetForUpdate<Account>(id);
+      internal TeventStoreApi.TueryApi.TaggregateLink<Account> GetForUpdate(Guid id) => TeventStore.Queries.GetForUpdate<Account>(id);
 
-      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => EventStore.Queries.GetReadOnlyCopy<Account>(id);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregate<Account> GetReadOnlyCopy(Guid id) => TeventStore.Queries.GetReadOnlyCopy<Account>(id);
 
-      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => TeventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
-      internal class TryGetByEmailQuery : IStrictlyLocalQuery<TryGetByEmailQuery, Option<Account>>
+      internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Option<Account>>
       {
-         public TryGetByEmailQuery(Email email)
+         public TryGetByEmailTuery(Email email)
          {
             Guard.IsNotNull(email);
             Email = email;
@@ -39,8 +39,8 @@ static class InternalApi
       }
    }
 
-   internal class Command
+   internal class Tommand
    {
-      internal EventStoreApi.CommandApi.SaveAggregate<Account> Save(Account account) => EventStore.Commands.Save(account);
+      internal TeventStoreApi.TommandApi.SaveTaggregate<Account> Save(Account account) => TeventStore.Tommands.Save(account);
    }
 }

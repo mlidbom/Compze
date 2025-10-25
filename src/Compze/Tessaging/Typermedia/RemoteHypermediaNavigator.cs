@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Common;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
-using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
@@ -17,42 +17,42 @@ static class RemoteHypermediaNavigatorRegistrar
       => registrar.Register(Typermedia.RemoteHypermediaNavigator.RegisterWith);
 }
 
-//Todo: Build a pipeline to handle things like command validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
+//Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
 [UsedImplicitly] class RemoteHypermediaNavigator : IRemoteHypermediaNavigator
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteHypermediaNavigator>()
-                                  .CreatedBy((ITransport transport) => new RemoteHypermediaNavigator(transport)));
+                                  .CreatedBy((ITransportClient transportClient) => new RemoteHypermediaNavigator(transportClient)));
 
-   readonly ITransport _transport;
-   public RemoteHypermediaNavigator(ITransport transport) { _transport = transport; }
+   readonly ITransportClient _transportClient;
+   public RemoteHypermediaNavigator(ITransportClient transportClient) { _transportClient = transportClient; }
 
-   public void Post(IAtMostOnceHypermediaCommand command) => PostAsync(command).WaitUnwrappingException();
+   public void Post(IAtMostOnceHypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 
-   public Task PostAsync(IAtMostOnceHypermediaCommand command)
+   public Task PostAsync(IAtMostOnceHypermediaTommand tommand)
    {
-      MessageInspector.AssertValidToSendRemote(command);
-      return _transport.PostAsync(command);
+      TessageInspector.AssertValidToSendRemote(tommand);
+      return _transportClient.PostAsync(tommand);
    }
 
-   public TResult Post<TResult>(IAtMostOnceCommand<TResult> command) => PostAsync(command).ResultUnwrappingException();
+   public TResult Post<TResult>(IAtMostOnceTommand<TResult> tommand) => PostAsync(tommand).ResultUnwrappingException();
 
-   public Task<TResult> PostAsync<TResult>(IAtMostOnceCommand<TResult> command)
+   public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand)
    {
-      MessageInspector.AssertValidToSendRemote(command);
-      return _transport.PostAsync(command);
+      TessageInspector.AssertValidToSendRemote(tommand);
+      return _transportClient.PostAsync(tommand);
    }
 
-   public async Task<TResult> GetAsync<TResult>(IRemotableQuery<TResult> query)
+   public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
-      MessageInspector.AssertValidToSendRemote(query);
-      if(query is ICreateMyOwnResultQuery<TResult> selfCreating)
+      TessageInspector.AssertValidToSendRemote(tuery);
+      if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return await Task.FromResult(selfCreating.CreateResult()).caf();
 
-      return await GetAsyncAfterFastPathOptimization(query).caf();
+      return await GetAsyncAfterFastPathOptimization(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableQuery<TResult> query) => await _transport.GetAsync(query).caf();
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _transportClient.GetAsync(tuery).caf();
 
-   TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableQuery<TResult> query) => GetAsync(query).ResultUnwrappingException();
+   TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
 }

@@ -1,0 +1,30 @@
+using System;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Core.Time.Public;
+using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+
+namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
+
+class CompositeTaggregate :
+    Taggregate<CompositeTaggregate,
+        CompositeTaggregateTevent.ICompositeTaggregateTevent,
+        CompositeTaggregateTevent.Implementation.Root>
+{
+    public string Name { get; private set; } = string.Empty;
+    readonly RemovableEntity.CollectionManager _entities;
+    public Component Component { get; private set; }
+
+    public CompositeTaggregate(string name, Guid id) : base(new DateTimeNowTimeSource())
+    {
+        Component = new Component(this);
+        _entities = RemovableEntity.CreateSelfManagingCollection(this);
+
+        RegisterTeventAppliers()
+           .For<CompositeTaggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
+
+        Publish(new CompositeTaggregateTevent.Implementation.Created(id, name));
+    }
+
+    public IReadOnlyEntityCollection<RemovableEntity, Guid> Entities => _entities.Entities;
+    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.Implementation.Created(Guid.NewGuid(), name));
+}

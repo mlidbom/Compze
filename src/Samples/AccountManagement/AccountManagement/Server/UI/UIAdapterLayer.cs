@@ -1,10 +1,10 @@
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 namespace AccountManagement.UI;
 
 static class UIAdapterLayer
 {
-   public static void Register(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
       AccountUIAdapter.GetById(registrar);
       AccountUIAdapter.Register(registrar);

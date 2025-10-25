@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using Compze.Sql.Sqlite;
+using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Utilities.Testing.DbPool.Sqlite;
+namespace Compze.Sql.Sqlite.DbPool;
 
 static class SqliteMemoryDbPoolRegistrar
 {
@@ -26,7 +26,7 @@ class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
-   // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
+   // Keep one connection open per database to prtevent the in-memory database from disappearing when the last connection is closed
    readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = IThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());
 
    public string ConnectionStringFor(DbPoolDatabase db)

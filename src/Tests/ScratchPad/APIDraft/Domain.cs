@@ -2,36 +2,36 @@
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
 namespace Compze.Tests.ScratchPad.APIDraft;
 
-interface IAccountEvent { }
+interface IAccountTevent { }
 
-class SendAccountRegistrationWelcomeEmailCommand { }
+class SendAccountRegistrationWelcomeEmailTommand { }
 
-class AccountAggregate { }
+class AccountTaggregate { }
 class AccountReadModel { }
 class EmailToAccountLookupModel { }
 
-class GetAccountQuery { }
-class AccountCreatedEvent { }
-class CreateAccountCommand { }
+class GetAccountTuery { }
+class AccountCreatedTevent { }
+class CreateAccountTommand { }
 
-class AccountQueryHandler
+class AccountTueryHandler
 {
-   public string Handle(GetAccountQuery query) => string.Empty;
+   public string Handle(GetAccountTuery tuery) => string.Empty;
 }
 
 class AccountQueryModelUpdater
 {
-   public void Handle(AccountCreatedEvent @event) { }
+   public void Handle(AccountCreatedTevent @tevent) { }
 }
 
-class AccountCommandHandler
+class AccountTommandHandler
 {
-   public void Handle(CreateAccountCommand command) { }
+   public void Handle(CreateAccountTommand tommand) { }
 }
 
 class AccountController
 {
-   public string Handle(GetAccountQuery query) => string.Empty;
-   public void Handle(AccountCreatedEvent @event) { }
-   public void Handle(CreateAccountCommand command) { }
+   public string Handle(GetAccountTuery tuery) => string.Empty;
+   public void Handle(AccountCreatedTevent @tevent) { }
+   public void Handle(CreateAccountTommand tommand) { }
 }

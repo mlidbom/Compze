@@ -2,31 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
+using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
 
-namespace Compze.Tests.Integration.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 
 class MigrationScenario
 {
    public readonly IEnumerable<Type> OriginalHistory;
    public readonly IEnumerable<Type> ExpectedHistory;
-   public readonly IReadOnlyList<IEventMigration> Migrations;
-   public Guid AggregateId { get; }
+   public readonly IReadOnlyList<ITeventMigration> Migrations;
+   public Guid TaggregateId { get; }
    static int _instances = 1;
 
-   public MigrationScenario(IEnumerable<Type> originalHistory, IEnumerable<Type> expectedHistory, params IEventMigration[] migrations)
+   public MigrationScenario(IEnumerable<Type> originalHistory, IEnumerable<Type> expectedHistory, params ITeventMigration[] migrations)
       : this(Guid.Parse($"00000000-0000-0000-0000-0000000{_instances:D5}"),
              originalHistory,
              expectedHistory,
              migrations) {}
 
    MigrationScenario
-   (Guid aggregateId,
+   (Guid taggregateId,
     IEnumerable<Type> originalHistory,
     IEnumerable<Type> expectedHistory,
-    params IEventMigration[] migrations)
+    params ITeventMigration[] migrations)
    {
-      AggregateId = aggregateId;
+      TaggregateId = taggregateId;
       OriginalHistory = originalHistory;
       ExpectedHistory = expectedHistory;
       Migrations = migrations.ToList();

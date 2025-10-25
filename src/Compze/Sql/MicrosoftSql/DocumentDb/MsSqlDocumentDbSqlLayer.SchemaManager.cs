@@ -1,9 +1,8 @@
-using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.ResourceAccess;
-using Document = Compze.Sql.DocumentDb.Abstractions.Internal.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Document = Compze.Sql.Common.DocumentDb.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.DocumentDb.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql.DocumentDb;
 
 partial class MsSqlDocumentDbSqlLayer
 {

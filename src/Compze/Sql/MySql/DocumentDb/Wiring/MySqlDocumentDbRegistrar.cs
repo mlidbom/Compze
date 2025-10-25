@@ -1,9 +1,9 @@
-using Compze.Sql.DocumentDb.Abstractions.Internal;
+using Compze.Sql.Common.DocumentDb;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.DocumentDb.MySql.Wiring;
+namespace Compze.Sql.MySql.DocumentDb.Wiring;
 
 public static class MySqlDocumentDbRegistrar
 {

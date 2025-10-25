@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Internal.Refactoring.Naming;
-using Compze.Serialization;
-using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
-using Compze.Tessaging.Hosting.Implementation.Http;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Serialization.Internal;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Inbox;
+using Compze.Tessaging.Implementation.Transport.Client.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
@@ -17,22 +17,22 @@ class TessagingController : ControllerBase
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<TessagingController>()
-                               .CreatedBy((IRemotableMessageSerializer serializer,
+                               .CreatedBy((IRemotableTessageSerializer serializer,
                                            ITypeMapper typeMapper,
                                            IInbox inbox,
                                            Inbox.HandlerExecutionEngine handlerExecutionEngine)
                                              => new TessagingController(serializer, typeMapper, inbox, handlerExecutionEngine)));
 
-   public TessagingController(IRemotableMessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) :
+   public TessagingController(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) :
       base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
-   [HttpPost(HttpConstants.Routes.Tessaging.Event)]
-   public async Task<IActionResult> Event()
+   [HttpPost(HttpConstants.Routes.Tessaging.Tevent)]
+   public async Task<IActionResult> Tevent()
    {
-      var incomingMessage = await CreateIncomingMessage().caf();
+      var incomingTessage = await CreateIncomingTessage().caf();
       try
       {
-         await Inbox.Receive(incomingMessage).caf();
+         await Inbox.Receive(incomingTessage).caf();
          return Ok();
       }
       catch(Exception exception)
@@ -41,14 +41,14 @@ class TessagingController : ControllerBase
       }
    }
 
-   [HttpPost(HttpConstants.Routes.Tessaging.Command)]
-   public async Task<IActionResult> Command()
+   [HttpPost(HttpConstants.Routes.Tessaging.Tommand)]
+   public async Task<IActionResult> Tommand()
    {
-      var incomingMessage = await CreateIncomingMessage().caf();
+      var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         await Inbox.Receive(incomingMessage).caf();
+         await Inbox.Receive(incomingTessage).caf();
          return Ok();
       }
       catch(Exception exception)

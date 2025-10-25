@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
-using Compze.Sql.PostgreSql;
 using Compze.Utilities.Threading.TasksCE;
-using Message =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
+using Tessage =  Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
-namespace Compze.Tessaging.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql.Tessaging;
 
 partial class PgSqlInboxSqlLayer
 {
@@ -17,22 +16,22 @@ partial class PgSqlInboxSqlLayer
                                                                  
                                                                  
                                                                  
-                                                                     CREATE TABLE IF NOT EXISTS {Message.TableName}
+                                                                     CREATE TABLE IF NOT EXISTS {Tessage.TableName}
                                                                      (
-                                                                         {Message.GeneratedId}           bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-                                                                         {Message.TypeId}                {PgSqlGuidType}                     NOT NULL,
-                                                                         {Message.MessageId}             {PgSqlGuidType}                     NOT NULL,
-                                                                         {Message.Status}                smallint                            NOT NULL,
-                                                                         {Message.Body}                  text                                NOT NULL,
-                                                                         {Message.ExceptionCount}        int                                 NOT NULL  DEFAULT 0,
-                                                                         {Message.ExceptionType}         varchar(500)                        NULL,
-                                                                         {Message.ExceptionStackTrace}   text                                NULL,
-                                                                         {Message.ExceptionMessage}      text                                NULL,
+                                                                         {Tessage.GeneratedId}           bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+                                                                         {Tessage.TypeId}                {PgSqlGuidType}                     NOT NULL,
+                                                                         {Tessage.TessageId}             {PgSqlGuidType}                     NOT NULL,
+                                                                         {Tessage.Status}                smallint                            NOT NULL,
+                                                                         {Tessage.Body}                  text                                NOT NULL,
+                                                                         {Tessage.ExceptionCount}        int                                 NOT NULL  DEFAULT 0,
+                                                                         {Tessage.ExceptionType}         varchar(500)                        NULL,
+                                                                         {Tessage.ExceptionStackTrace}   text                                NULL,
+                                                                         {Tessage.ExceptionTessage}      text                                NULL,
                                                                  
                                                                  
-                                                                         PRIMARY KEY ( {Message.GeneratedId} ),
+                                                                         PRIMARY KEY ( {Tessage.GeneratedId} ),
                                                                  
-                                                                         CONSTRAINT IX_{Message.TableName}_Unique_{Message.MessageId} UNIQUE ( {Message.MessageId} )
+                                                                         CONSTRAINT IX_{Tessage.TableName}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
                                                                      );
 
 

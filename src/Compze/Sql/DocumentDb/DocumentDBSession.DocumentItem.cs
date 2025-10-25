@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Compze.Sql.DocumentDb.Abstractions;
+using Compze.Core.DocumentDb.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Sql.DocumentDb;
+namespace Compze.DocumentDb;
 
 partial class DocumentDbSession
 {

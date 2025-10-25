@@ -11,7 +11,7 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Component
 public class WhenAnInvalidComponentIsMentionedInSkipped
 {
    [NotArgumentPassingTwoComponentsPCT]
-   public async Task TheTestIsSkippedWithAnErrorMessage()
+   public async Task TheTestIsSkippedWithAnErrorTessage()
    {
       var testData = await new NotArgumentPassingTwoComponentsPCTAttribute()
                            {

@@ -1,36 +1,36 @@
 using AccountManagement.API.ValidationAttributes;
-using AccountManagement.Tests.Unit.UI.Commands.UserCommands;
+using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using JetBrains.Annotations;
 
-namespace AccountManagement.Tests.Unit.UI.Commands;
+namespace AccountManagement.Tests.Unit.UI.Tommands;
 
 public class EmailAttributeTests : UniversalTestBase
 {
    [XF]
    public void IsNotValidIfEmailIsNull()
    {
-      CommandValidator.ValidationFailures(new ACommand {Email = null})
+      TommandValidator.ValidationFailures(new ATommand {Email = null})
                       .Should().NotBeEmpty();
    }
 
    [XF]
    public void IsValidIfEmailIsEmpty()
    {
-      CommandValidator.ValidationFailures(new ACommand {Email = ""})
+      TommandValidator.ValidationFailures(new ATommand {Email = ""})
                       .Should().BeEmpty();
    }
 
    [XF]
    public void IsNotValidIfEmailIsInvalid()
    {
-      CommandValidator.ValidationFailures(new ACommand {Email = "InvalidEmail"})
+      TommandValidator.ValidationFailures(new ATommand {Email = "InvalidEmail"})
                       .Should().NotBeEmpty();
    }
 
-   class ACommand
+   class ATommand
    {
       [Email]
       public string? Email { [UsedImplicitly] get; set; }

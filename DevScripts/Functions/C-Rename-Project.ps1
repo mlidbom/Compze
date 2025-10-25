@@ -149,4 +149,23 @@ function C-Rename-Project {
             $solutionFilesUpdated++
         }
     }
+    
+    # Step 6: Update src/Compze/Directory.Build.props
+    $directoryBuildPropsPath = Join-Path $solutionDir "Compze\Directory.Build.props"
+    
+    if (Test-Path $directoryBuildPropsPath) {
+        $content = Get-Content $directoryBuildPropsPath -Raw
+        
+        # Match InternalsVisibleTo with exact project name
+        # Pattern: <InternalsVisibleTo Include="OldName" />
+        $pattern = '(<InternalsVisibleTo\s+Include=")(' + [regex]::Escape($Old) + ')(")'
+        
+        if ($content -match $pattern) {
+            $content = $content -replace $pattern, ('$1' + $New + '$3')
+            Set-Content -Path $directoryBuildPropsPath -Value $content -NoNewline -Encoding UTF8
+        }
+    }
+    
+    # Step 7: Run C-Clean to avoid build errors from leftover artifacts
+    C-Clean
 }

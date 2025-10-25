@@ -1,0 +1,52 @@
+using System.Linq;
+using System.Transactions;
+using Compze.Tessaging.Hosting;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Threading.Testing;
+using FluentAssertions;
+
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+
+public class Transaction_policies : EndpointHostTestBase
+{
+   [PCT] public void Tommand_handler_runs_in_transaction_with_isolation_level_Serializable()
+   {
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+
+      var transaction = MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+                                                .PassedThrough.Single().Transaction;
+      transaction.Should().NotBeNull();
+      transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
+   }
+
+   [PCT] public void Tommand_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
+   {
+      var tommandResult = ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyAtMostOnceTommandWithResult.Create()));
+
+      tommandResult.Should().NotBe(null);
+
+      var transaction = TommandHandlerWithResultThreadGate.AwaitPassedThroughCountEqualTo(1)
+                                                          .PassedThrough.Single().Transaction;
+      transaction.Should().NotBeNull();
+      transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
+   }
+
+   [PCT] public void Tevent_handler_runs_in_transaction_with_isolation_level_Serializable()
+   {
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+
+      var transaction = MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+                                                               .PassedThrough.Single().Transaction;
+      transaction.Should().NotBeNull();
+      transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
+   }
+
+   [PCT] public void Tuery_handler_does_not_run_in_transaction()
+   {
+      ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()));
+
+      TueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+                            .PassedThrough.Single().Transaction.Should().Be(null);
+   }
+}

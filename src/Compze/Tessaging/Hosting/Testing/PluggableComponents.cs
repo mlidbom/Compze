@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Compze.Wiring.Testing;
-using Compze.Wiring.Testing.Sql;
+using Compze.Core.Wiring.Testing.Internal;
 
 namespace Compze.Tessaging.Hosting.Testing;
 
-public readonly record struct PluggableComponents(SqlLayer SqlLayer, DIContainer DiContainer)
+public readonly record struct PluggableComponents(SqlLayer SqlLayer, DIContainer DiContainer, Serializer Serializer)
 {
-   public override string ToString() => $"{SqlLayer}:{DiContainer}";
+   public override string ToString() => $"{SqlLayer}:{DiContainer}:{Serializer}";
 
-   public static PluggableComponents FromEnums(IReadOnlyList<Enum> parts) => new((SqlLayer)parts[0], (DIContainer)parts[1]);
+   public static PluggableComponents FromEnums(IReadOnlyList<Enum> components) => new((SqlLayer)components[0], (DIContainer)components[1], (Serializer)components[2]);
 }

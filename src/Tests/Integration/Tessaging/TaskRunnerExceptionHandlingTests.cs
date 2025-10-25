@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing.Sql;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -27,7 +27,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
 
    public TaskRunnerExceptionHandlingTests()
    {
-      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
       var endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),
@@ -44,7 +44,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
 
    [PCT]
-   public async Task Should_throw_aggregate_exception_on_dispose_when_background_task_throws()
+   public async Task Should_throw_taggregate_exception_on_dispose_when_background_task_throws()
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
@@ -56,9 +56,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
 
 
          var disposeAction = async () => await _host.DisposeAsync().caf();
-         var aggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+         var taggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
 
-         var flattened = aggregateException.Which.Flatten();
+         var flattened = taggregateException.Which.Flatten();
          flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
       });
    }
@@ -90,9 +90,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
          gate.AwaitPassedThroughCountEqualTo(3);
 
          var disposeAction = async () => await _host.DisposeAsync().caf();
-         var aggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+         var taggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
 
-         var flattened = aggregateException.Which.Flatten();
+         var flattened = taggregateException.Which.Flatten();
          flattened.InnerExceptions.Should().HaveCount(3);
          flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
          flattened.InnerExceptions.Should().Contain(e => e is ArgumentException && e.Message == "exception2");

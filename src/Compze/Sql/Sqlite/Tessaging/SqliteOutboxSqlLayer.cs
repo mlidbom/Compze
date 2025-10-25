@@ -1,21 +1,20 @@
 using System;
 using System.Collections.Generic;
-using Compze.Sql.Common;
-using Compze.Tessaging.Hosting.Implementation;
-using Compze.Utilities.SystemCE.LinqCE;
 using System.Globalization;
 using System.Threading.Tasks;
-using Compze.Sql.Sqlite;
-using MessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Compze.Sql.Common;
+using Compze.Sql.Common.Tessaging;
+using Compze.Utilities.SystemCE.LinqCE;
+using TessageTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.Sqlite;
+namespace Compze.Sql.Sqlite.Tessaging;
 
 partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
 
-   public void SaveMessage(IServiceBusSqlLayer.OutboxMessageWithReceivers messageWithReceivers)
+   public void SaveTessage(IServiceBusSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
       _connectionFactory.UseCommand(
          command =>
@@ -24,23 +23,23 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {MessageTable.TableName} 
-                               ({MessageTable.MessageId},  {MessageTable.TypeIdGuidValue}, {MessageTable.SerializedMessage}) 
-                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeIdGuidValue}, @{MessageTable.SerializedMessage});
+                   INSERT INTO {TessageTable.TableName} 
+                               ({TessageTable.TessageId},  {TessageTable.TypeIdGuidValue}, {TessageTable.SerializedTessage}) 
+                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeIdGuidValue}, @{TessageTable.SerializedTessage});
 
                    """)
-              .AddVarcharParameter(MessageTable.MessageId, 36, messageWithReceivers.MessageId.ToString())
-              .AddVarcharParameter(MessageTable.TypeIdGuidValue, 36, messageWithReceivers.TypeIdGuidValue.ToString())
-              .AddMediumTextParameter(MessageTable.SerializedMessage, messageWithReceivers.SerializedMessage)
+              .AddVarcharParameter(TessageTable.TessageId, 36, tessageWithReceivers.TessageId.ToString())
+              .AddVarcharParameter(TessageTable.TypeIdGuidValue, 36, tessageWithReceivers.TypeIdGuidValue.ToString())
+              .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, 0);
 
-            messageWithReceivers.ReceiverEndpointIds.ForEach(
+            tessageWithReceivers.ReceiverEndpointIds.ForEach(
                (endpointId, index)
                   => command.AppendCommandText($"""
 
                                                 INSERT INTO {DispatchingTable.TableName} 
-                                                            ({DispatchingTable.MessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
-                                                    VALUES (@{DispatchingTable.MessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
+                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
+                                                    VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
                                                 """).AddVarcharParameter($"{DispatchingTable.EndpointId}_{index}", 36, endpointId.ToString()));
 
@@ -48,7 +47,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
          });
    }
 
-   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(Guid messageId, Guid endpointId)
+   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(Guid tessageId, Guid endpointId)
    {
       var affectedRows = _connectionFactory.UseCommand(
          command => command
@@ -57,12 +56,12 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
 
                         UPDATE {DispatchingTable.TableName} 
                             SET {DispatchingTable.IsReceived} = 1
-                        WHERE {DispatchingTable.MessageId} = @{DispatchingTable.MessageId}
+                        WHERE {DispatchingTable.TessageId} = @{DispatchingTable.TessageId}
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
                             AND {DispatchingTable.IsReceived} = 0
 
                         """)
-                   .AddVarcharParameter(DispatchingTable.MessageId, 36, messageId.ToString())
+                   .AddVarcharParameter(DispatchingTable.TessageId, 36, tessageId.ToString())
                    .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
                    .ExecuteNonQuery());
 
@@ -71,7 +70,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
                 : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
-   public void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason)
+   public void RecordDeliveryFailure(Guid tessageId, Guid endpointId, string failureReason)
    {
       _connectionFactory.UseCommand(
          command => command
@@ -82,38 +81,38 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
                             SET {DispatchingTable.RetryCount} = {DispatchingTable.RetryCount} + 1,
                                 {DispatchingTable.LastAttemptTime} = @{DispatchingTable.LastAttemptTime},
                                 {DispatchingTable.FailureReason} = @{DispatchingTable.FailureReason}
-                        WHERE {DispatchingTable.MessageId} = @{DispatchingTable.MessageId}
+                        WHERE {DispatchingTable.TessageId} = @{DispatchingTable.TessageId}
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
 
                         """)
-                   .AddVarcharParameter(DispatchingTable.MessageId, 36, messageId.ToString())
+                   .AddVarcharParameter(DispatchingTable.TessageId, 36, tessageId.ToString())
                    .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
                    .AddVarcharParameter(DispatchingTable.LastAttemptTime, 50, DateTime.UtcNow.ToString("O"))
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
                    .ExecuteNonQuery());
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan)
+   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan)
    {
       var cutoffTime = DateTime.UtcNow - olderThan;
       
       return _connectionFactory.UseCommand(
          command =>
          {
-            var messages = new List<IServiceBusSqlLayer.UndeliveredMessage>();
+            var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
             
             command
                .SetCommandText(
                    $"""
 
-                    SELECT m.{MessageTable.MessageId}, 
-                           m.{MessageTable.TypeIdGuidValue}, 
-                           m.{MessageTable.SerializedMessage},
+                    SELECT m.{TessageTable.TessageId}, 
+                           m.{TessageTable.TypeIdGuidValue}, 
+                           m.{TessageTable.SerializedTessage},
                            d.{DispatchingTable.EndpointId},
                            d.{DispatchingTable.RetryCount},
                            d.{DispatchingTable.LastAttemptTime}
-                    FROM {MessageTable.TableName} m
-                    INNER JOIN {DispatchingTable.TableName} d ON m.{MessageTable.MessageId} = d.{DispatchingTable.MessageId}
+                    FROM {TessageTable.TableName} m
+                    INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
                     WHERE d.{DispatchingTable.IsReceived} = 0
                       AND (d.{DispatchingTable.LastAttemptTime} IS NULL 
                            OR d.{DispatchingTable.LastAttemptTime} < @cutoffTime)
@@ -125,16 +124,16 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
-               messages.Add(new IServiceBusSqlLayer.UndeliveredMessage(
-                  messageId: Guid.Parse(reader.GetString(0)),
+               tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
+                  tessageId: Guid.Parse(reader.GetString(0)),
                   typeIdGuid: Guid.Parse(reader.GetString(1)),
-                  serializedMessage: reader.GetString(2),
+                  serializedTessage: reader.GetString(2),
                   targetEndpointId: Guid.Parse(reader.GetString(3)),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }
             
-            return messages;
+            return tessages;
          });
    }
 

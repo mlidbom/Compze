@@ -1,12 +1,12 @@
 using System;
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Abstractions;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource? Account)>
+public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Tommand.Register.RegistrationAttemptResult Result, AccountResource? Account)>
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
 
@@ -33,13 +33,13 @@ public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = n
       return this;
    }
 
-   public override (AccountResource.Command.Register.RegistrationAttemptResult Result, AccountResource? Account) Execute()
+   public override (AccountResource.Tommand.Register.RegistrationAttemptResult Result, AccountResource? Account) Execute()
    {
-      var registrationAttemptResult = _clientEndpoint.ExecuteClientRequest(Api.Command.Register(AccountId, Email, Password));
+      var registrationAttemptResult = _clientEndpoint.ExecuteClientRequest(Api.Tommand.Register(AccountId, Email, Password));
 
       return registrationAttemptResult.Status switch
       {
-         RegistrationAttemptStatus.Successful => (registrationAttemptResult, Api.Query.AccountById(AccountId).ExecuteAsClientRequestOn(_clientEndpoint)),
+         RegistrationAttemptStatus.Successful => (registrationAttemptResult, Api.Tuery.AccountById(AccountId).ExecuteAsClientRequestOn(_clientEndpoint)),
          RegistrationAttemptStatus.EmailAlreadyRegistered => (registrationAttemptResult, null),
          _ => throw new ArgumentOutOfRangeException()
       };

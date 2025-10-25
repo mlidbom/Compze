@@ -1,57 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
-    <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-    <ProjectReference Include="..\Integration\Compze.Tests.Integration.csproj" />
-    <ProjectReference Include="..\ScratchPad\Compze.Tests.ScratchPad.csproj" />
-    <ProjectReference Include="..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
-    <ProjectReference Include="..\Unit\Compze.Tests.Unit.csproj" />
-    <ProjectReference Include="..\..\Compze\Abstractions\Compze.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Abstractions\Internal\Compze.Abstractions.Internal.csproj" />
-    <ProjectReference Include="..\..\Compze\Common\Compze.Common.csproj" />
-    <ProjectReference Include="..\..\Compze\Serialization\Compze.Serialization.csproj" />
-    <ProjectReference Include="..\..\Compze\Sql\Common\Compze.Sql.Common.csproj" />
-    <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Compze.Sql.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-    <ProjectReference Include="..\..\Compze\Sql\MySql\Compze.Sql.MySql.csproj" />
-    <ProjectReference Include="..\..\Compze\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
-    <ProjectReference Include="..\..\Compze\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Abstractions\Compze.Tessaging.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Common\Compze.Tessaging.Common.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Abstractions\Compze.Tessaging.Hosting.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\Compze\Common\Configuration\Compze.Common.Configuration.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Compze.Tessaging.Teventive.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Abstractions\Compze.Tessaging.Teventive.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Abstractions\Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Tessaging\Typermedia\Abstractions\Compze.Tessaging.Typermedia.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-    <ProjectReference Include="..\..\Compze\Wiring\Compze.Wiring.csproj" />
-    <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
-    <PackageReference Include="FluentAssertions" Version="8.7.1" />
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
-      <IncludeAssets>compile;analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.v3" Version="3.1.0" />
-  </ItemGroup>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Common\Compze.Tests.Common.csproj" />
+      <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
+      <ProjectReference Include="..\Integration\Compze.Tests.Integration.csproj" />
+      <ProjectReference Include="..\ScratchPad\Compze.Tests.ScratchPad.csproj" />
+      <ProjectReference Include="..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
+      <ProjectReference Include="..\Unit\Compze.Tests.Unit.csproj" />
+      <ProjectReference Include="..\..\Compze\Abstractions\Compze.Core.csproj" />
+      <ProjectReference Include="..\..\Compze\Serialization\Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\Common\Compze.Sql.Common.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Compze.DocumentDb.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\MySql\Compze.Sql.MySql.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />
+      <ProjectReference Include="..\..\Compze\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
+      <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+      <ProjectReference Include="..\..\Compze\Tessaging\Teventive\TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\DependencyInjection\Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Logging\Serilog\Compze.Utilities.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+      <PackageReference Include="FluentAssertions" Version="8.7.1" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+         <IncludeAssets>compile;analyzers</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+   </ItemGroup>
 </Project>

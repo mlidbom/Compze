@@ -1,6 +1,4 @@
-using Compze.Sql.MicrosoftSql;
-
-namespace Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
+namespace Compze.Sql.MicrosoftSql.DbPool.Databases;
 
 static class MsSqlDatabaseHelpers
 {

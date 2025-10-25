@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Typermedia.Abstractions;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Threading.TasksCE;
 

@@ -1,9 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Implementation;
-using Compze.Tessaging.Hosting.Implementation.Abstractions;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
@@ -13,27 +18,27 @@ namespace Compze.Tessaging.Hosting;
 
 class Endpoint : IEndpoint
 {
-   class ServerComponents(CommandScheduler commandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
+   class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
-      public readonly CommandScheduler CommandScheduler = commandScheduler;
+      public readonly TommandScheduler TommandScheduler = tommandScheduler;
       public readonly IInbox Inbox = inbox;
       public readonly IOutbox Outbox = outbox;
 
-      public void Dispose() => CommandScheduler.Dispose();
+      public void Dispose() => TommandScheduler.Dispose();
    }
 
    readonly EndpointConfiguration _configuration;
 
    public Endpoint(IServiceLocator serviceLocator,
-                   IMessagesInFlightTracker globalStateTracker,
-                   ITransport transport,
+                   ITessagesInFlightTracker globalStateTracker,
+                   ITransportClient transportClient,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
-      _transport = transport;
+      _transportClient = transportClient;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
@@ -41,9 +46,9 @@ class Endpoint : IEndpoint
    public EndpointId Id => _configuration.Id;
    public IServiceLocator ServiceLocator { get; }
 
-   public EndPointAddress? Address => _serverComponents?.Inbox.Address;
-   readonly IMessagesInFlightTracker _globalStateTracker;
-   readonly ITransport _transport;
+   public HttpEndPointAddress? Address => _serverComponents?.Inbox.Address;
+   readonly ITessagesInFlightTracker _globalStateTracker;
+   readonly ITransportClient _transportClient;
    readonly IEndpointRegistry _endpointRegistry;
 
    ServerComponents? _serverComponents;
@@ -59,14 +64,14 @@ class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _transport.Start();
+      _transportClient.Start();
 
       //todo: find cleaner way of handling what an endpoint supports
       if(!_configuration.IsPureClientEndpoint)
       {
-         _serverComponents = new ServerComponents(ServiceLocator.Resolve<CommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
+         _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.CommandScheduler.StartAsync()).caf();
+         await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
       }
    }
 
@@ -75,11 +80,11 @@ class Endpoint : IEndpoint
       State.Is(!_isSending);
       _isSending = true;
       var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
-      await Task.WhenAll(serverEndpoints.Select(address => _transport.ConnectAsync(address))).caf();
+      await Task.WhenAll(serverEndpoints.Select(address => _transportClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
-         serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled commands need to dispatch over the remote protocol to get the delivery guarantees...
+         serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
       }
    }
 
@@ -95,7 +100,7 @@ class Endpoint : IEndpoint
          _isSending = false;
          if(_serverComponents != null)
          {
-            _serverComponents.CommandScheduler.Stop();
+            _serverComponents.TommandScheduler.Stop();
             await _serverComponents.Outbox.StopAsync().caf();
          }
       }
@@ -111,11 +116,11 @@ class Endpoint : IEndpoint
             await _serverComponents.Inbox.StopAsync().caf();
          }
 
-         _transport.Stop();
+         _transportClient.Stop();
       }
    }
 
-   public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoMessagesInFlight(timeoutOverride);
+   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoTessagesInFlight(timeoutOverride);
 
    public async ValueTask DisposeAsync()
    {

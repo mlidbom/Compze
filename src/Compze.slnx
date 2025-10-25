@@ -8,18 +8,14 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Compze/">
+    <Project Path="Compze/Abstractions/Compze.Core.csproj" />
     <Project Path="Compze/Utilities/Compze.Utilities.csproj" />
   </Folder>
-  <Folder Name="/Compze/Abstractions/">
-    <Project Path="Compze/Abstractions/Compze.Abstractions.csproj" />
-    <Project Path="Compze/Abstractions/Internal/Compze.Abstractions.Internal.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Common/">
-    <Project Path="Compze/Common/Compze.Common.csproj" />
-    <Project Path="Compze/Common/Configuration/Compze.Common.Configuration.csproj" />
+  <Folder Name="/Compze/DocumentDb/">
+    <Project Path="Compze/Sql/DocumentDb/Compze.DocumentDb.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
-    <Project Path="Compze/Serialization/Compze.Serialization.csproj" />
+    <Project Path="Compze/Serialization/Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
   </Folder>
   <Folder Name="/Compze/Sql/">
     <Project Path="Compze/Sql/Common/Compze.Sql.Common.csproj" />
@@ -28,36 +24,15 @@
     <Project Path="Compze/Sql/PostgreSql/Compze.Sql.PostgreSql.csproj" />
     <Project Path="Compze/Sql/Sqlite/Compze.Sql.Sqlite.csproj" />
   </Folder>
-  <Folder Name="/Compze/Sql/DocumentDb/">
-    <Project Path="Compze/Sql/DocumentDb/Abstractions/Compze.Sql.DocumentDb.Abstractions.csproj" />
-    <Project Path="Compze/Sql/DocumentDb/Compze.Sql.DocumentDb.csproj" />
-  </Folder>
   <Folder Name="/Compze/Tessaging/">
     <Project Path="Compze/Tessaging/Compze.Tessaging.csproj" />
   </Folder>
-  <Folder Name="/Compze/Tessaging/Abstractions/">
-    <Project Path="Compze/Tessaging/Abstractions/Compze.Tessaging.Abstractions.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Common/">
-    <Project Path="Compze/Tessaging/Common/Compze.Tessaging.Common.csproj" />
-  </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/">
-    <Project Path="Compze/Tessaging/Hosting/Abstractions/Compze.Tessaging.Hosting.Abstractions.csproj" />
     <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Hosting/Testing/">
     <Project Path="Compze/Tessaging/Hosting/Testing/Compze.Tessaging.Hosting.Testing.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/">
-    <Project Path="Compze/Tessaging/Teventive/Abstractions/Compze.Tessaging.Teventive.Abstractions.csproj" />
-    <Project Path="Compze/Tessaging/Teventive/Compze.Tessaging.Teventive.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Teventive/EventStore/">
-    <Project Path="Compze/Tessaging/Teventive/EventStore/Abstractions/Compze.Tessaging.Teventive.EventStore.Abstractions.csproj" />
-    <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.EventStore.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Typermedia/">
-    <Project Path="Compze/Tessaging/Typermedia/Abstractions/Compze.Tessaging.Typermedia.Abstractions.csproj" />
+    <Project Path="Compze/Tessaging/Teventive/TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
   </Folder>
   <Folder Name="/Compze/Utilities/">
     <Project Path="Compze/Utilities/DependencyInjection/Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
@@ -65,9 +40,6 @@
     <Project Path="Compze/Utilities/Logging/Serilog/Compze.Utilities.Logging.Serilog.csproj" />
     <Project Path="Compze/Utilities/Testing/DbPool/Compze.Utilities.Testing.DbPool.csproj" />
     <Project Path="Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Wiring/">
-    <Project Path="Compze/Wiring/Compze.Wiring.csproj" />
   </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">

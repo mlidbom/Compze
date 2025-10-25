@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Internal.Time;
+using Compze.Core.Time.Public;
+using Compze.Core.Time.Testing.Public;
+using Compze.Core.Wiring.Testing.Internal;
+using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MicrosoftSql.DbPool;
+using Compze.Sql.MySql.DbPool;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Sql.PostgreSql;
+using Compze.Sql.PostgreSql.DbPool;
 using Compze.Sql.Sqlite;
+using Compze.Sql.Sqlite.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool.MicrosoftSql;
-using Compze.Utilities.Testing.DbPool.MySql;
-using Compze.Utilities.Testing.DbPool.PostgreSql;
-using Compze.Utilities.Testing.DbPool.Sqlite;
 using Compze.Utilities.Testing.DbPool;
-using Compze.Wiring.Testing.Sql;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-class TestingComponentRegistrar : ComponentRegistrar
+public class TestingComponentRegistrar : ComponentRegistrar
 {
    readonly IDictionary<Type, object> _testingRegistrars;
 
@@ -41,26 +43,6 @@ class TestingComponentRegistrar : ComponentRegistrar
       }
 
       return null;
-   }
-
-   public IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered()
-   {
-      this.DbPoolIfNotAlreadyRegistered();
-      switch(TestEnv.SqlLayer)
-      {
-         case SqlLayer.MicrosoftSqlServer:
-            return this.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.MySql:
-            return this.MySqlDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.PostgreSql:
-            return this.PgSqlDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.Sqlite:
-            return this.SqliteDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.SqliteMemory:
-            return  this.SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered();
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
    }
 
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();

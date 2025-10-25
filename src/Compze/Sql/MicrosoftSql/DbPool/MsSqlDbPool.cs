@@ -1,11 +1,11 @@
 using System;
-using Compze.Sql.MicrosoftSql;
+using Compze.Sql.Common.DbPool;
+using Compze.Sql.MicrosoftSql.DbPool.Databases;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool.MicrosoftSql.Databases;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql.DbPool;
 
 static class MicrosoftSqlDbPoolRegistrar
 {

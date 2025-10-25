@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Abstractions;
-using Compze.Sql.DocumentDb.Abstractions;
+using Compze.Core.DocumentDb.Public;
+using Compze.Core.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
@@ -111,7 +111,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
 
     [PCT]
-    public void CanSaveAndLoadAggregateForUpdate()
+    public void CanSaveAndLoadTaggregateForUpdate()
     {
         var user = new User
         {
@@ -466,7 +466,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void TracksAndUpdatesLoadedAggregates()
+    public void TracksAndUpdatesLoadedTaggregates()
     {
         var user = new User();
 
@@ -486,7 +486,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void ThrowsWhenAttemptingToSaveExistingAggregate()
+    public void ThrowsWhenAttemptingToSaveExistingTaggregate()
     {
         var user = new User();
 

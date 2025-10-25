@@ -1,13 +1,13 @@
-using Compze.Sql.DocumentDb.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Core.DocumentDb.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Public;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tests.Infrastructure;
 
 public static class TestWiringHelper
 {
-   public static IEventStore EventStore(this IServiceLocator @this) =>
-      @this.Resolve<IEventStore>();
+   public static ITeventStore TeventStore(this IServiceLocator @this) =>
+      @this.Resolve<ITeventStore>();
 
    public static IDocumentDb DocumentDb(this IServiceLocator @this) =>
       @this.Resolve<IDocumentDb>();

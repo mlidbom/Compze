@@ -1,8 +1,8 @@
-using Compze.Serialization;
-using Compze.Tessaging.Hosting.Abstractions;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.DocumentDb.Wiring;
+namespace Compze.DocumentDb.Wiring;
 
 public static class DocumentDbRegistrar
 {
@@ -11,8 +11,7 @@ public static class DocumentDbRegistrar
 
    public static DocumentDbRegistrationBuilder DocumentDb(this IComponentRegistrar registrar)
    {
-      registrar.Register(Sql.DocumentDb.DocumentDb.RegisterWith,
-                         DocumentDbSerializer.RegisterWith,
+      registrar.Register(Compze.DocumentDb.DocumentDb.RegisterWith,
                          DocumentDbSession.RegisterWith);
 
       return new DocumentDbRegistrationBuilder();
@@ -21,7 +20,7 @@ public static class DocumentDbRegistrar
 
 public class DocumentDbRegistrationBuilder
 {
-   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(MessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
       DocumentDbApi.HandleDocumentType<TDocument>(registrar);
       return this;

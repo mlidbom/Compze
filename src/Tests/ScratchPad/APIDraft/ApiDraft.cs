@@ -12,6 +12,6 @@ interface IEndpoint;
 interface IConsistencyBoundary;
 
 
-interface IMessageHandler;
-interface IEventHandler;
-interface ICommandHandler;
+interface ITessageHandler;
+interface ITeventHandler;
+interface ITommandHandler;

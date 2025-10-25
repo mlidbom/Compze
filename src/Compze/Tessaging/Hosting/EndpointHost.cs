@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Implementation.Transport;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -18,13 +19,13 @@ public class EndpointHost : IEndpointHost
    readonly IComponentRegistrar _registrar;
    readonly Func<IComponentRegistrar, IDependencyInjectionContainer> _containerFactory;
    protected IList<IEndpoint> Endpoints { get; } = [];
-   internal IMessagesInFlightTracker MessagesInFlightTracker;
+   internal ITessagesInFlightTracker TessagesInFlightTracker;
 
    protected EndpointHost(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory)
    {
       _registrar = registrar;
       _containerFactory = containerFactory;
-      MessagesInFlightTracker = new NullOpMessagesInFlightTracker();
+      TessagesInFlightTracker = new NullOpTessagesInFlightTracker();
    }
 
    public static class Production
@@ -36,7 +37,7 @@ public class EndpointHost : IEndpointHost
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
-      using var builder = new ServerEndpointBuilder(this, MessagesInFlightTracker, _containerFactory(_registrar), configuration);
+      using var builder = new ServerEndpointBuilder(this, TessagesInFlightTracker, _containerFactory(_registrar), configuration);
       setup(builder);
 
       var endpoint = builder.Build();

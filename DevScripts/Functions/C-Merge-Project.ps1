@@ -167,4 +167,7 @@ function C-Merge-Project {
     # Step 7: Run C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
     # This will clean up any exclusions in the parent project that are no longer needed
     C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
+    
+    # This prevents duplicate assembly attribute errors from stale obj/bin folders
+    C-Clean
 }

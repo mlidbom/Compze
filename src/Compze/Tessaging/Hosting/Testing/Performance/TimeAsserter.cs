@@ -105,17 +105,17 @@ static class TimeAsserter
          {
             var executionSummary = await runScenario();
 
-            var failureMessage = GetFailureMessage(executionSummary, maxAverage, maxTotal);
-            if(failureMessage.Length > 0)
+            var failureTessage = GetFailureTessage(executionSummary, maxAverage, maxTotal);
+            if(failureTessage.Length > 0)
             {
                if(tries >= maxTries) throw new TimeOutException($"""
                                                                  {description}:
-                                                                 {failureMessage.Indent()}
+                                                                 {failureTessage.Indent()}
                                                                  """);
                var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
-               writer.WriteWarningLine($"Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               writer.WriteWarningLine($"Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
                if(VerboseMode)
-                  Log.Warning($"{description}: Try: {tries} {failureMessage}, waiting {waitTime.FormatReadable()} before next attempt");
+                  Log.Warning($"{description}: Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
                Thread.Sleep(waitTime);
                continue;
             }
@@ -140,18 +140,18 @@ static class TimeAsserter
       throw new Exception("Unreachable");
    }
 
-   static string GetFailureMessage(StopwatchCE.TimedExecutionSummary executionSummary, TimeSpan? maxAverage, TimeSpan? maxTotal)
+   static string GetFailureTessage(StopwatchCE.TimedExecutionSummary executionSummary, TimeSpan? maxAverage, TimeSpan? maxTotal)
    {
-      var failureMessage = "";
+      var failureTessage = "";
       if(maxTotal.HasValue && executionSummary.Total > maxTotal.Value)
       {
-         failureMessage = $"Total:{executionSummary.Total.FormatReadable()} {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
+         failureTessage = $"Total:{executionSummary.Total.FormatReadable()} {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
       } else if(maxAverage.HasValue && executionSummary.Average > maxAverage.Value)
       {
-         failureMessage = $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
+         failureTessage = $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
       }
 
-      return failureMessage;
+      return failureTessage;
    }
 
    static void PrintSummary(StopwatchCE.TimedExecutionSummary executionSummary, int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal, DeferredConsoleWriter writer)

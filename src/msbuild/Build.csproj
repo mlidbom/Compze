@@ -11,7 +11,8 @@
 
    <ItemGroup>
       <None Include="../**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../**/*.editorconfig" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/config.nsdepcop" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+	   <None Include="../**/*.editorconfig" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*test*.json" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*.autoinclude.cs" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />

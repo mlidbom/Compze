@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<NsDepCopConfig IsEnabled="true"
+                InheritanceDepth="1">
+
+
+	<Allowed From="*" To="Newtonsoft.Json.*"/>
+   <Allowed From="*" To="Compze.Serialization.Newtonsoft.Private.*"/>
+
+
+</NsDepCopConfig>

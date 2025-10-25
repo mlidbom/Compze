@@ -1,7 +1,9 @@
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 
@@ -12,7 +14,8 @@ public class LifestyleValidationTests : UniversalTestBase
    [PCT]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
-      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(new TestingComponentRegistrar());
+      IComponentRegistrar registrar = new TestingComponentRegistrar();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
 
       var exception = Invoking(() =>
       {
@@ -30,7 +33,8 @@ public class LifestyleValidationTests : UniversalTestBase
    [PCT]
    public void Should_allow_singleton_depending_on_singleton()
    {
-      var container = TestingContainerFactory.CreateWithRegisteredServiceLocator(new TestingComponentRegistrar());
+      IComponentRegistrar registrar = new TestingComponentRegistrar();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
 
       container.Register(
          Singleton.For<ISingletonDependency>().CreatedBy(() => new SingletonDependency()),

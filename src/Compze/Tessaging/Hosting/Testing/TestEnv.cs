@@ -1,6 +1,5 @@
 using System;
-using Compze.Wiring.Testing;
-using Compze.Wiring.Testing.Sql;
+using Compze.Core.Wiring.Testing.Internal;
 
 namespace Compze.Tessaging.Hosting.Testing;
 
@@ -16,6 +15,8 @@ public static partial class TestEnv
 
       throw new Exception($"No components provider found any components");
    }
+
+   public static Serializer Serializer => GetComponents().Serializer;
 
    public static SqlLayer SqlLayer => GetComponents().SqlLayer;
 

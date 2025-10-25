@@ -1,37 +1,38 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations;
+namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 
-public class Before<TEvent> : EventMigration<IRootEvent>
+public class Before<TTevent> : TeventMigration<IRootTevent>
 {
    readonly IEnumerable<Type> _insert;
 
-   public static Before<TEvent> Insert<T1>() => new(EnumerableCE.OfTypes<T1>());
-   public static Before<TEvent> Insert<T1, T2>() => new(EnumerableCE.OfTypes<T1, T2>());
+   public static Before<TTevent> Insert<T1>() => new(EnumerableCE.OfTypes<T1>());
+   public static Before<TTevent> Insert<T1, T2>() => new(EnumerableCE.OfTypes<T1, T2>());
 
    Before(IEnumerable<Type> insert) : base(Guid.Parse("0533D2E4-DE78-4751-8CAE-3343726D635B"), "Before", "Long description of Before") => _insert = insert;
 
-   public override ISingleAggregateInstanceHandlingEventMigrator CreateSingleAggregateInstanceHandlingMigrator() => new Inspector(_insert);
+   public override ISingleTaggregateInstanceHandlingTeventMigrator CreateSingleTaggregateInstanceHandlingMigrator() => new Inspector(_insert);
 
-   class Inspector(IEnumerable<Type> insert) : ISingleAggregateInstanceHandlingEventMigrator
+   class Inspector(IEnumerable<Type> insert) : ISingleTaggregateInstanceHandlingTeventMigrator
    {
       readonly IEnumerable<Type> _insert = insert;
-      Type? _lastSeenEventType;
+      Type? _lastSeenTeventType;
 
-      public void MigrateEvent(IAggregateEvent @event, IEventModifier modifier)
+      public void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier)
       {
-         if (@event.GetType() == typeof(TEvent) && _lastSeenEventType != _insert.Last())
+         if (tevent.GetType() == typeof(TTevent) && _lastSeenTeventType != _insert.Last())
          {
-            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<AggregateEvent>().ToArray());
+            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<TaggregateTevent>().ToArray());
          }
 
-         _lastSeenEventType = @event.GetType();
+         _lastSeenTeventType = tevent.GetType();
       }
    }
 }

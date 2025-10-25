@@ -9,16 +9,16 @@ public class PausingAllOtherHandlers
    {
 
       var pauseAllOtherHandlers = new CompositePolicy(
-         Policy.LockExclusively.CommandProcessing,
-         Policy.LockExclusively.EventProcessing
+         Policy.LockExclusively.TommandProcessing,
+         Policy.LockExclusively.TeventProcessing
       );
 
       var policiesAsInterfaces = new Endpoint(
-         //Command handlers
-         //various normal command and event handler registrations
+         //Tommand handlers
+         //various normal tommand and tevent handler registrations
 
-         CommandHandler.For<OptimizeEventStoreCommand>("F9688A3B-F6AF-4884-9FB5-F6670718F6BE", command => { }, pauseAllOtherHandlers),
-         CommandHandler.For<OptimizeDocumentDbCommand>("7A2DC4C3-F2DB-43BD-ACB0-BF454BC6C958", command => { }, pauseAllOtherHandlers)
+         TommandHandler.For<OptimizeTeventStoreTommand>("F9688A3B-F6AF-4884-9FB5-F6670718F6BE", tommand => { }, pauseAllOtherHandlers),
+         TommandHandler.For<OptimizeDocumentDbCommand>("7A2DC4C3-F2DB-43BD-ACB0-BF454BC6C958", tommand => { }, pauseAllOtherHandlers)
       );
    }
 
@@ -27,4 +27,4 @@ public class PausingAllOtherHandlers
 
 class OptimizeDocumentDbCommand {}
 
-class OptimizeEventStoreCommand {}
+class OptimizeTeventStoreTommand {}

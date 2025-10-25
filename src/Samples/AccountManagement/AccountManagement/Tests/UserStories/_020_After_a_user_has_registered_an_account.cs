@@ -32,6 +32,6 @@ public class _020_After_a_user_has_registered_an_account : UserStoryTest
    [PCT] public void Login_with_the_wrong_email_but_correct_password_fails()
       => Scenario.Login(_registerAccountScenario!).WithEmail("some_other@email.com").Execute().Succeeded.Should().Be(false);
 
-   [PCT] public void Registering_another_account_with_the_same_email_fails_with_email_already_registered_message() =>
+   [PCT] public void Registering_another_account_with_the_same_email_fails_with_email_already_registered_tessage() =>
       Scenario.Register.WithEmail(_registerAccountScenario!.Email).Execute().Result.Status.Should().Be(RegistrationAttemptStatus.EmailAlreadyRegistered);
 }

@@ -2,19 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
-using Compze.Sql.MicrosoftSql;
-using Compze.Tessaging.Hosting.Implementation;
+using Compze.Sql.Common.Tessaging;
 using Compze.Utilities.SystemCE.LinqCE;
-using MessageTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
-using DispatchingTable = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
+using TessageTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Sql.Common.Tessaging.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Tessaging.Sql.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql.Tessaging;
 
 partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
 
-   public void SaveMessage(IServiceBusSqlLayer.OutboxMessageWithReceivers messageWithReceivers)
+   public void SaveTessage(IServiceBusSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
       _connectionFactory.UseCommand(
          command =>
@@ -23,24 +22,24 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
               .SetCommandText(
                   $"""
 
-                   INSERT {MessageTable.TableName} 
-                               ({MessageTable.MessageId},  {MessageTable.TypeIdGuidValue}, {MessageTable.SerializedMessage}) 
-                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeIdGuidValue}, @{MessageTable.SerializedMessage})
+                   INSERT {TessageTable.TableName} 
+                               ({TessageTable.TessageId},  {TessageTable.TypeIdGuidValue}, {TessageTable.SerializedTessage}) 
+                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeIdGuidValue}, @{TessageTable.SerializedTessage})
 
                    """)
-              .AddParameter(MessageTable.MessageId, messageWithReceivers.MessageId)
-              .AddParameter(MessageTable.TypeIdGuidValue, messageWithReceivers.TypeIdGuidValue)
-               //performance: Like with the event store, keep all framework properties out of the JSON and put it into separate columns instead. For events. Reuse a pre-serialized instance from the persisting to the event store.
-              .AddNVarcharMaxParameter(MessageTable.SerializedMessage, messageWithReceivers.SerializedMessage)
+              .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId)
+              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeIdGuidValue)
+               //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
+              .AddNVarcharMaxParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, 0);
 
-            messageWithReceivers.ReceiverEndpointIds.ForEach(
+            tessageWithReceivers.ReceiverEndpointIds.ForEach(
                (endpointId, index)
                   => command.AppendCommandText($"""
 
                                                 INSERT {DispatchingTable.TableName} 
-                                                            ({DispatchingTable.MessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
-                                                    VALUES (@{DispatchingTable.MessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived})
+                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
+                                                    VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived})
 
                                                 """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId));
 
@@ -48,7 +47,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
          });
    }
 
-   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(Guid messageId, Guid endpointId)
+   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(Guid tessageId, Guid endpointId)
    {
       var affectedRows = _connectionFactory.UseCommand(
          command => command
@@ -57,12 +56,12 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
 
                         UPDATE {DispatchingTable.TableName} 
                             SET {DispatchingTable.IsReceived} = 1
-                        WHERE {DispatchingTable.MessageId} = @{DispatchingTable.MessageId}
+                        WHERE {DispatchingTable.TessageId} = @{DispatchingTable.TessageId}
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
                             AND {DispatchingTable.IsReceived} = 0
 
                         """)
-                   .AddParameter(DispatchingTable.MessageId, messageId)
+                   .AddParameter(DispatchingTable.TessageId, tessageId)
                    .AddParameter(DispatchingTable.EndpointId, endpointId)
                    .ExecuteNonQuery());
 
@@ -71,7 +70,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
                 : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
-   public void RecordDeliveryFailure(Guid messageId, Guid endpointId, string failureReason)
+   public void RecordDeliveryFailure(Guid tessageId, Guid endpointId, string failureReason)
    {
       _connectionFactory.UseCommand(
          command => command
@@ -82,38 +81,38 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
                             SET {DispatchingTable.RetryCount} = {DispatchingTable.RetryCount} + 1,
                                 {DispatchingTable.LastAttemptTime} = @{DispatchingTable.LastAttemptTime},
                                 {DispatchingTable.FailureReason} = @{DispatchingTable.FailureReason}
-                        WHERE {DispatchingTable.MessageId} = @{DispatchingTable.MessageId}
+                        WHERE {DispatchingTable.TessageId} = @{DispatchingTable.TessageId}
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
 
                         """)
-                   .AddParameter(DispatchingTable.MessageId, messageId)
+                   .AddParameter(DispatchingTable.TessageId, tessageId)
                    .AddParameter(DispatchingTable.EndpointId, endpointId)
                    .AddDateTime2Parameter(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
                    .AddNVarcharMaxParameter(DispatchingTable.FailureReason, failureReason)
                    .ExecuteNonQuery());
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan)
+   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan)
    {
       var cutoffTime = DateTime.UtcNow - olderThan;
 
       return _connectionFactory.UseCommand(
          command =>
          {
-            var messages = new List<IServiceBusSqlLayer.UndeliveredMessage>();
+            var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
 
             command
                .SetCommandText(
                    $"""
 
-                    SELECT m.{MessageTable.MessageId}, 
-                           m.{MessageTable.TypeIdGuidValue}, 
-                           m.{MessageTable.SerializedMessage},
+                    SELECT m.{TessageTable.TessageId}, 
+                           m.{TessageTable.TypeIdGuidValue}, 
+                           m.{TessageTable.SerializedTessage},
                            d.{DispatchingTable.EndpointId},
                            d.{DispatchingTable.RetryCount},
                            d.{DispatchingTable.LastAttemptTime}
-                    FROM {MessageTable.TableName} m
-                    INNER JOIN {DispatchingTable.TableName} d ON m.{MessageTable.MessageId} = d.{DispatchingTable.MessageId}
+                    FROM {TessageTable.TableName} m
+                    INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
                     WHERE d.{DispatchingTable.IsReceived} = 0
                       AND (d.{DispatchingTable.LastAttemptTime} IS NULL 
                            OR d.{DispatchingTable.LastAttemptTime} < @cutoffTime)
@@ -125,16 +124,16 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
-               messages.Add(new IServiceBusSqlLayer.UndeliveredMessage(
-                  messageId: reader.GetGuid(0),
+               tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
+                  tessageId: reader.GetGuid(0),
                   typeIdGuid: reader.GetGuid(1),
-                  serializedMessage: reader.GetString(2),
+                  serializedTessage: reader.GetString(2),
                   targetEndpointId: reader.GetGuid(3),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
 
-            return messages;
+            return tessages;
          });
    }
 
