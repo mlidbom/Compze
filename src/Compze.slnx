@@ -41,8 +41,8 @@
   <Folder Name="/Compze/Tessaging/Teventive/">
     <Project Path="Compze/Tessaging/Teventive/Compze.Tessaging.Teventive.csproj" />
   </Folder>
-  <Folder Name="/Compze/Tessaging/Teventive/EventStore/">
-    <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.EventStore.csproj" />
+  <Folder Name="/Compze/Tessaging/Teventive/TEventStore/">
+    <Project Path="Compze/Tessaging/Teventive/EventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
   </Folder>
   <Folder Name="/Compze/Utilities/">
     <Project Path="Compze/Utilities/DependencyInjection/Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
