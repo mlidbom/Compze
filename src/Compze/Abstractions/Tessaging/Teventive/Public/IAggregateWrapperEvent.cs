@@ -1,7 +1,7 @@
 using System;
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
 public interface IAggregateWrapperEvent<out TEventInterface> : IExactlyOnceWrapperEvent<TEventInterface>
    where TEventInterface : IAggregateEvent;

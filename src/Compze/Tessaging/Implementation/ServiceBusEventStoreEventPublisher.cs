@@ -1,5 +1,7 @@
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Internal;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;

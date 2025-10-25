@@ -1,6 +1,7 @@
 using System;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 
 // ReSharper disable All
 namespace Compze.Abstractions;

@@ -4,6 +4,7 @@ using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Refactoring.Migrations.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Serialization;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
 using Compze.Tessaging.TyperMediaApi.EventStore;

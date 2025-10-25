@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Refactoring.Migrations.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time.Testing.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;

@@ -5,6 +5,7 @@ using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Refactoring.Migrations.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time;
 using Compze.Sql.Common.EventStore.Abstractions;
 using Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;

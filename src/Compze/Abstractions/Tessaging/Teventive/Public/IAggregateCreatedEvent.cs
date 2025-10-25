@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
 /// <summary>
 /// Marks an event as meaning that the aggregate was created.

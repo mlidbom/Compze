@@ -8,6 +8,7 @@ using System.Transactions;
 using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using FluentAssertions;
 using JetBrains.Annotations;

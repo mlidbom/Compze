@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 
 namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 

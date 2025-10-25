@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public.Exceptions;
+using Compze.Abstractions.Tessaging.Teventive.Public;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 
