@@ -57,7 +57,7 @@ partial class RoutingInboxTransportClient : IRoutingInboxTransportClient, IDispo
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 
-      //urgent: we can't have routes be discovered at startup bases on the assumption that all endpoints are up...
+      //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
       _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledTessageTypes);
    }
 
