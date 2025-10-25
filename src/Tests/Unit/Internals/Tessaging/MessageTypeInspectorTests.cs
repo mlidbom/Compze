@@ -1,6 +1,6 @@
 using System;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Common;
+using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;

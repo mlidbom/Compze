@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 
-namespace Compze.Tessaging.Common.Typermedia;
+namespace Compze.Abstractions.Tessaging.Typermedia.Infrastructure.Validation;
 
 static class CommandValidator
 {

@@ -1,10 +1,10 @@
-using Compze.Tessaging.Common;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using System;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Common.Typermedia;
+using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Abstractions.Tessaging.Typermedia.Infrastructure.Validation;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Utilities.Threading;

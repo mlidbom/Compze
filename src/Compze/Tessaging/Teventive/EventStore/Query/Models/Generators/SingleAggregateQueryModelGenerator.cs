@@ -3,7 +3,6 @@ using System.Linq;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Query.Models.Generators.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Tessaging.Common.Teventive;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;

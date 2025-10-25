@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
-using Compze.Tessaging.Common;
+using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;

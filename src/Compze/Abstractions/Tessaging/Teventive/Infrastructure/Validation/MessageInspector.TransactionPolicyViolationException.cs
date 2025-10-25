@@ -1,7 +1,7 @@
 using System;
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Tessaging.Common;
+namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
 static partial class MessageInspector
 {

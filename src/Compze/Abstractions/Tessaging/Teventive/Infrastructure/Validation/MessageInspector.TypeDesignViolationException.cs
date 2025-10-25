@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Tessaging.Common;
+namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
 static partial class MessageTypeInspector
 {

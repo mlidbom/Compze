@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Common;
 using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

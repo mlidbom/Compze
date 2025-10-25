@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Infrastructure.EventDispatching;
 
-namespace Compze.Tessaging.Common.Teventive;
+namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
 public interface IMutableEventDispatcher<in TEvent> : IEventDispatcher<TEvent>
    where TEvent : class, IEvent

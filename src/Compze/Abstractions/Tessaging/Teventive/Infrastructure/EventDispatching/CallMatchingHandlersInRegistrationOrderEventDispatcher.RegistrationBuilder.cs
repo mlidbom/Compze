@@ -2,12 +2,13 @@
 
 using System;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Tessaging.Common.Teventive;
+namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.EventDispatching;
 
 /// <summary>
 /// Calls all matching handlers in the order they were registered when an event is Dispatched.

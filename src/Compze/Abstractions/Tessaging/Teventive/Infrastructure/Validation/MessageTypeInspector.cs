@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
 
-namespace Compze.Tessaging.Common;
+namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
 partial class MessageTypeInspector
 {
