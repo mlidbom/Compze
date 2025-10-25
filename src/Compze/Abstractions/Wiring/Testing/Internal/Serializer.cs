@@ -1,6 +1,6 @@
 namespace Compze.Core.Wiring.Testing.Internal;
 
-enum Serializer
+public enum Serializer
 {
    Newtonsoft
 }
