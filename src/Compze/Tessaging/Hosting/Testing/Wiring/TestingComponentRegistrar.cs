@@ -3,14 +3,27 @@ using System.Collections.Generic;
 using Compze.Core.Time.Public;
 using Compze.Core.Time.Testing.Public;
 using Compze.Core.Wiring.Testing.Internal;
+using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MicrosoftSql.DbPool;
+using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;
+using Compze.Sql.MicrosoftSql.Tessaging;
+using Compze.Sql.MicrosoftSql.TEventStore;
 using Compze.Sql.MySql.DbPool;
+using Compze.Sql.MySql.DocumentDb.Wiring;
 using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Tessaging;
+using Compze.Sql.MySql.TEventStore;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.PostgreSql.DbPool;
+using Compze.Sql.PostgreSql.DocumentDb.Wiring;
+using Compze.Sql.PostgreSql.Tessaging;
+using Compze.Sql.PostgreSql.TEventStore;
 using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite.DbPool;
+using Compze.Sql.Sqlite.DocumentDb.Wiring;
+using Compze.Sql.Sqlite.Tessaging;
+using Compze.Sql.Sqlite.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool;
@@ -62,6 +75,52 @@ class TestingComponentRegistrar : ComponentRegistrar
          default:
             throw new ArgumentOutOfRangeException();
       }
+   }
+
+   public IComponentRegistrar CurrentTestsSerializers()
+   {
+      return this.NewtonsoftSerializers();
+   }
+
+   public IComponentRegistrar CurrentTestsConfiguredSqlLayer(string connectionStringName)
+   {
+      switch(TestEnv.SqlLayer)
+      {
+         case SqlLayer.MicrosoftSqlServer:
+            this.MsSqlConnectionPool(connectionStringName)
+                    .MsSqlDocumentDb()
+                    .MsSqlTeventStore()
+                    .MsSqlTessaging();
+            break;
+         case SqlLayer.MySql:
+            this.MySqlConnectionPool(connectionStringName)
+                .MySqlDocumentDb()
+                .MySqlTeventStore()
+                .MySqlTessaging();
+            break;
+         case SqlLayer.PostgreSql:
+            this.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
+                .PgSqlDocumentDb()
+                .PgSqlTeventStore()
+                .PgSqlTessaging();
+            break;
+         case SqlLayer.Sqlite:
+            this.SqliteConnectionPool(connectionStringName)
+                .SqliteDocumentDb()
+                .SqliteTeventStore()
+                .SqliteTessaging();
+            break;
+         case SqlLayer.SqliteMemory:
+            this.SqliteMemoryConnectionPool(connectionStringName)
+                .SqliteDocumentDb()
+                .SqliteTeventStore()
+                .SqliteTessaging();
+            break;
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+
+      return this;
    }
 
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();

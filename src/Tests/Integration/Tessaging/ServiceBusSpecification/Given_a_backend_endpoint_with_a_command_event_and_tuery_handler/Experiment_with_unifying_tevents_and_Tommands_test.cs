@@ -11,7 +11,6 @@ using Compze.Core.Tessaging.Teventive.TEventStore.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Core.Time.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
