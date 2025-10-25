@@ -1,8 +1,8 @@
 using System;
 
-namespace Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
-public class MessageDispatchingFailedException(string remoteExceptionAsString) : Exception($"""
-                                                                                            Dispatching message failed. Remote exception message: 
+public class TessageDispatchingFailedException(string remoteExceptionAsString) : Exception($"""
+                                                                                            Dispatching tessage failed. Remote exception tessage: 
                                                                                             {remoteExceptionAsString} 
                                                                                             """);

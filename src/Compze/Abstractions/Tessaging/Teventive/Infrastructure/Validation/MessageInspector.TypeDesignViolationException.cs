@@ -2,15 +2,15 @@ using System;
 
 namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
-static partial class MessageTypeInspector
+static partial class TessageTypeInspector
 {
-   public class MessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
+   public class TessageTypeDesignViolationException(string tessage) : Exception(tessage + TypeDesignRationale)
    {
       const string TypeDesignRationale = """
 
 
                                          Rationale: 
-                                         In order to provide reliable guarantees as to the behavior of services on the bus we must know the exact semantics of each message sent. 
+                                         In order to provide reliable guarantees as to the behavior of services on the bus we must know the exact semantics of each tessage sent. 
                                          Some combinations of inherited interfaces would present contradictions which would make it impossible for the bus to know how to act.
                                          Some inherited interfaces absolutely require that concrete types implement some other interface.
                                          It is quite easy to miss this when designing your types unless you have help.

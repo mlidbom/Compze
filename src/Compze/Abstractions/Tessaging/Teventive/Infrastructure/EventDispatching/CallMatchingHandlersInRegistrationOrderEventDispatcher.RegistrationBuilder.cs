@@ -25,7 +25,7 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> whe
 
       RegistrationBuilder ForWrapped<TWrapperEvent>(Action<TWrapperEvent> handler) where TWrapperEvent : IWrapperTevent<TEvent>
       {
-         MessageTypeInspector.AssertValidForSubscription(typeof(TWrapperEvent));
+         TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperEvent));
          _owner._handlers.Add(new RegisteredWrappedHandler<TWrapperEvent>(handler));
          _owner._totalHandlers++;
          return this;
@@ -37,7 +37,7 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> whe
       /// </summary>
       RegistrationBuilder ForGenericEvent<THandledEvent>(Action<THandledEvent> handler) where THandledEvent : ITevent
       {
-         MessageTypeInspector.AssertValidForSubscription(typeof(THandledEvent));
+         TessageTypeInspector.AssertValidForSubscription(typeof(THandledEvent));
          if(typeof(THandledEvent).Is<IWrapperTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IWrapperTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
          _owner._handlers.Add(new RegisteredHandler<THandledEvent>(handler));
          _owner._totalHandlers++;

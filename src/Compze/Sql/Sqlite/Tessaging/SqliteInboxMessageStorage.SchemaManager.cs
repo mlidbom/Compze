@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Sql.Sqlite;
 using Compze.Utilities.Threading.TasksCE;
-using Message =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
+using Tessage =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sql.Sqlite;
 
@@ -13,17 +13,17 @@ partial class SqliteInboxSqlLayer
       {
          await connectionFactory.ExecuteNonQueryAsync($"""
 
-                                            CREATE TABLE IF NOT EXISTS {Message.TableName}
+                                            CREATE TABLE IF NOT EXISTS {Tessage.TableName}
                                             (
-                                                {Message.GeneratedId}         INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                                {Message.TypeId}              TEXT                              NOT NULL,
-                                                {Message.MessageId}           TEXT                              NOT NULL UNIQUE,
-                                                {Message.Status}              INTEGER                           NOT NULL,
-                                                {Message.Body}                TEXT                              NOT NULL,
-                                                {Message.ExceptionCount}      INTEGER                           NOT NULL DEFAULT 0,
-                                                {Message.ExceptionType}       TEXT                              NULL,
-                                                {Message.ExceptionStackTrace} TEXT                              NULL,
-                                                {Message.ExceptionMessage}    TEXT                              NULL
+                                                {Tessage.GeneratedId}         INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                                {Tessage.TypeId}              TEXT                              NOT NULL,
+                                                {Tessage.TessageId}           TEXT                              NOT NULL UNIQUE,
+                                                {Tessage.Status}              INTEGER                           NOT NULL,
+                                                {Tessage.Body}                TEXT                              NOT NULL,
+                                                {Tessage.ExceptionCount}      INTEGER                           NOT NULL DEFAULT 0,
+                                                {Tessage.ExceptionType}       TEXT                              NULL,
+                                                {Tessage.ExceptionStackTrace} TEXT                              NULL,
+                                                {Tessage.ExceptionTessage}    TEXT                              NULL
                                             )
 
                                             """).caf();

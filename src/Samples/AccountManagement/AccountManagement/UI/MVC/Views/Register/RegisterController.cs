@@ -22,7 +22,7 @@ public class RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) :
             return View("ValidateYourEmail", result.RegisteredAccount);
          case RegistrationAttemptStatus.EmailAlreadyRegistered:
             ModelState.AddModelError((AccountResource.Command.Register model) => model.Email, "Email is already registered");
-            ModelState.Remove((AccountResource.Command.Register model) => model.MessageId);
+            ModelState.Remove((AccountResource.Command.Register model) => model.TessageId);
             registrationCommand.ReplaceDeduplicationId();
             return View("RegistrationForm", registrationCommand);
          default:

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
@@ -103,7 +103,7 @@ public class Navigator_specification : UniversalTestBase
       public static RegisterUserTommand Create(string name) => new()
                                                                {
                                                                   Name = name,
-                                                                  MessageId = Guid.CreateVersion7()
+                                                                  TessageId = Guid.CreateVersion7()
                                                                };
 
       public string Name { get; private set; } = "";

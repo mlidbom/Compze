@@ -13,21 +13,21 @@ public class Transaction_policies_internal : EndpointHostTestBase
 {
    [PCT] public async Task Calling_PostRemoteAsync_within_a_transaction_with_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
       await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.PostAsync(MyAtMostOnceTommandWithResult.Create()))))
-           .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>();
+           .Should().ThrowAsync<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public async Task Calling_GetRemoteAsync_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
       await Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyTuery()))))
-           .Should().ThrowAsync<MessageInspector.TransactionPolicyViolationException>();
+           .Should().ThrowAsync<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_PostRemoteAsync_within_a_transaction_AtLeastOnceCommand_throws_TransactionPolicyViolationException() =>
       Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Post(MyAtMostOnceTommandWithResult.Create()))))
-        .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
+        .Should().Throw<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_PostRemoteAsync_without_a_transaction_with_ExactlyOnceCommand_throws_TransactionPolicyViolationException() =>
       Invoking(() => RemoteEndpoint.ExecuteServerRequest(session => session.Send(new MyExactlyOnceTommand())))
-        .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
+        .Should().Throw<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_GetRemote_within_a_transaction_with_Query_throws_TransactionPolicyViolationException() =>
       Invoking(() => TransactionScopeCe.Execute(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()))))
-        .Should().Throw<MessageInspector.TransactionPolicyViolationException>();
+        .Should().Throw<TessageInspector.TransactionPolicyViolationException>();
 }

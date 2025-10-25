@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Time;
-using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
@@ -30,17 +30,17 @@ partial class TransportClient
          var queryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
          foreach(var typeId in handledTypeIds)
          {
-            if(_typeMapper.TryGetType(typeId, out var messageType))
+            if(_typeMapper.TryGetType(typeId, out var tessageType))
             {
-               if(IsRemoteEvent(messageType))
+               if(IsRemoteEvent(tessageType))
                {
-                  eventSubscribers.Add((messageType, inboxConnection));
-               } else if(IsRemoteCommand(messageType))
+                  eventSubscribers.Add((tessageType, inboxConnection));
+               } else if(IsRemoteCommand(tessageType))
                {
-                  commandHandlerRoutes.Add(messageType, inboxConnection);
-               } else if(IsRemoteQuery(messageType))
+                  commandHandlerRoutes.Add(tessageType, inboxConnection);
+               } else if(IsRemoteQuery(tessageType))
                {
-                  queryHandlerRoutes.Add(messageType, inboxConnection);
+                  queryHandlerRoutes.Add(tessageType, inboxConnection);
                } else
                {
                   throw new Exception($"Type {typeId} is neither a remote command, event or query.");
@@ -67,12 +67,12 @@ partial class TransportClient
       internal IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
          _commandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
             ? connection
-            : throw new NoHandlerForMessageTypeException(tommand.GetType());
+            : throw new NoHandlerForTessageTypeException(tommand.GetType());
 
       internal IInboxConnection ConnectionToHandlerFor<TQuery>(IRemotableTuery<TQuery> tuery) =>
          _queryHandlerRoutes.TryGetValue(tuery.GetType(), out var connection)
             ? connection
-            : throw new NoHandlerForMessageTypeException(tuery.GetType());
+            : throw new NoHandlerForTessageTypeException(tuery.GetType());
 
       internal IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent)
       {

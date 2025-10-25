@@ -22,7 +22,7 @@ public class MyCommandResult;
 public class MyAtMostOnceTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<MyCommandResult>
 {
    MyAtMostOnceTommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-   public static MyAtMostOnceTommandWithResult Create() => new() {MessageId = Guid.CreateVersion7()};
+   public static MyAtMostOnceTommandWithResult Create() => new() {TessageId = Guid.CreateVersion7()};
 }
 
 public class MyQueryResult;
@@ -44,7 +44,7 @@ public class MyCreateAggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMost
 
    public static MyCreateAggregateTommand Create() => new()
                                                       {
-                                                         MessageId = Guid.CreateVersion7(),
+                                                         TessageId = Guid.CreateVersion7(),
                                                          AggregateId = Guid.NewGuid()
                                                       };
 

@@ -222,7 +222,7 @@ public abstract class EventMigrationTestBase : UniversalTestBase
                             config => config.PreferringRuntimeMemberTypes()
                                             .WithStrictOrdering()
                                             .ComparingByMembers<AggregateTevent>()
-                                            .Excluding(@event => @event.MessageId));
+                                            .Excluding(@event => @event.TessageId));
       }
       catch(Exception)
       {

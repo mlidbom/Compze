@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
@@ -112,7 +112,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
 
          RegisterUserTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-         internal static RegisterUserTommand Create() => new() { MessageId = Guid.CreateVersion7() };
+         internal static RegisterUserTommand Create() => new() { TessageId = Guid.CreateVersion7() };
       }
    }
 

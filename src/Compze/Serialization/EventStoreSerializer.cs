@@ -96,25 +96,25 @@ class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerial
                                      .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
 }
 
-static class RemotableMessageSerializerRegistrar
+static class RemotableTessageSerializerRegistrar
 {
-   internal static IComponentRegistrar RemotableMessageSerializer(this IComponentRegistrar registrar)
-      => registrar.Register(Serialization.RemotableMessageSerializer.RegisterWith);
+   internal static IComponentRegistrar RemotableTessageSerializer(this IComponentRegistrar registrar)
+      => registrar.Register(Serialization.RemotableTessageSerializer.RegisterWith);
 }
 
-class RemotableMessageSerializer : IRemotableMessageSerializer
+class RemotableTessageSerializer : IRemotableTessageSerializer
 {
    readonly RenamingSupportingJsonSerializer _serializer;
 
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IRemotableMessageSerializer>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new RemotableMessageSerializer(typeMapper)));
+      => registrar.Register(Singleton.For<IRemotableTessageSerializer>()
+                                     .CreatedBy((ITypeMapper typeMapper) => new RemotableTessageSerializer(typeMapper)));
 
-   RemotableMessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
+   RemotableTessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(Serialization.JsonSettings.JsonSerializerSettings, typeMapper);
 
    public string SerializeResponse(object response) => _serializer.Serialize(response);
    public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);
 
-   public string SerializeMessage(IRemotableTessage tessage) => _serializer.Serialize(tessage);
-   public IRemotableTessage DeserializeTessage(Type messageType, string json) => (IRemotableTessage)_serializer.Deserialize(messageType, json);
+   public string SerializeTessage(IRemotableTessage tessage) => _serializer.Serialize(tessage);
+   public IRemotableTessage DeserializeTessage(Type tessageType, string json) => (IRemotableTessage)_serializer.Deserialize(tessageType, json);
 }

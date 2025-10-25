@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Compze.Sql.PostgreSql;
 using Compze.Utilities.Threading.TasksCE;
-using Message = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
-using Dispatch = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
+using Tessage = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using Dispatch = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Tessaging.Sql.PostgreSql;
 
@@ -19,22 +19,22 @@ partial class PgSqlOutboxSqlLayer
                                                                  
                                                                     
                                                                  
-                                                                     CREATE TABLE IF NOT EXISTS {Message.TableName}
+                                                                     CREATE TABLE IF NOT EXISTS {Tessage.TableName}
                                                                      (
-                                                                         {Message.GeneratedId}       bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-                                                                         {Message.TypeIdGuidValue}   {PgSqlGuidType}                     NOT NULL,
-                                                                         {Message.MessageId}         {PgSqlGuidType}                     NOT NULL,
-                                                                         {Message.SerializedMessage} TEXT                                NOT NULL,
+                                                                         {Tessage.GeneratedId}       bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+                                                                         {Tessage.TypeIdGuidValue}   {PgSqlGuidType}                     NOT NULL,
+                                                                         {Tessage.TessageId}         {PgSqlGuidType}                     NOT NULL,
+                                                                         {Tessage.SerializedTessage} TEXT                                NOT NULL,
                                                                  
-                                                                         PRIMARY KEY ({Message.GeneratedId}),
+                                                                         PRIMARY KEY ({Tessage.GeneratedId}),
                                                                  
-                                                                         CONSTRAINT IX_{Message.TableName}_Unique_{Message.MessageId} UNIQUE ( {Message.MessageId} )
+                                                                         CONSTRAINT IX_{Tessage.TableName}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
                                                                      );
                                                                  
                                                                  
                                                                     CREATE TABLE  IF NOT EXISTS {Dispatch.TableName}
                                                                     (
-                                                                        {Dispatch.MessageId}        {PgSqlGuidType} NOT NULL,
+                                                                        {Dispatch.TessageId}        {PgSqlGuidType} NOT NULL,
                                                                         {Dispatch.EndpointId}       {PgSqlGuidType} NOT NULL,
                                                                         {Dispatch.IsReceived}       boolean         NOT NULL,
                                                                         {Dispatch.RetryCount}       integer         NOT NULL DEFAULT 0,
@@ -42,8 +42,8 @@ partial class PgSqlOutboxSqlLayer
                                                                         {Dispatch.FailureReason}    TEXT            NULL,
 
 
-                                                                        PRIMARY KEY ( {Dispatch.MessageId}, {Dispatch.EndpointId}),
-                                                                         FOREIGN KEY ({Dispatch.MessageId}) REFERENCES {Message.TableName} ({Message.MessageId})
+                                                                        PRIMARY KEY ( {Dispatch.TessageId}, {Dispatch.EndpointId}),
+                                                                         FOREIGN KEY ({Dispatch.TessageId}) REFERENCES {Tessage.TableName} ({Tessage.TessageId})
                                                                      );
 
 

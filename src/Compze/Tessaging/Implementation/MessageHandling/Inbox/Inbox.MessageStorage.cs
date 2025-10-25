@@ -4,21 +4,21 @@ using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tessaging.Implementation.MessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling;
 
-class InboxMessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.IMessageStorage
+class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
 {
    readonly IServiceBusSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 
-   public IServiceBusSqlLayer.SaveMessageResult SaveIncomingMessage(TransportMessage.InComing message)
-      => _sqlLayer.SaveMessage(message.MessageId, message.MessageTypeId.GuidValue, message.Body);
+   public IServiceBusSqlLayer.SaveTessageResult SaveIncomingTessage(TransportTessage.InComing tessage)
+      => _sqlLayer.SaveTessage(tessage.TessageId, tessage.TessageTypeId.GuidValue, tessage.Body);
 
-   public void MarkAsSucceeded(TransportMessage.InComing message)
-      => _sqlLayer.MarkAsSucceeded(message.MessageId);
+   public void MarkAsSucceeded(TransportTessage.InComing tessage)
+      => _sqlLayer.MarkAsSucceeded(tessage.TessageId);
 
-   public void RecordException(TransportMessage.InComing message, Exception exception)
+   public void RecordException(TransportTessage.InComing tessage, Exception exception)
    {
-      var affectedRows = _sqlLayer.RecordException(message.MessageId,
+      var affectedRows = _sqlLayer.RecordException(tessage.TessageId,
                                                            exception.StackTrace ?? string.Empty,
                                                            exception.Message,
                                                            exception.GetType().GetFullNameCompilable());
@@ -26,9 +26,9 @@ class InboxMessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.I
       Assert.Result.Is(affectedRows == 1);
    }
 
-   public void MarkAsFailed(TransportMessage.InComing message)
+   public void MarkAsFailed(TransportTessage.InComing tessage)
    {
-      var affectedRows = _sqlLayer.MarkAsFailed(message.MessageId);
+      var affectedRows = _sqlLayer.MarkAsFailed(tessage.TessageId);
       Assert.Result.Is(affectedRows == 1);
    }
 

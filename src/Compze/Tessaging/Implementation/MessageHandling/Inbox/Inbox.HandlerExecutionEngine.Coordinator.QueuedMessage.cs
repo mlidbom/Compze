@@ -1,14 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Tessaging.Implementation.MessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling;
 
 partial class Inbox
 {
@@ -20,41 +20,41 @@ partial class Inbox
          internal class HandlerExecutionTask
          {
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
-            internal readonly TransportMessage.InComing TransportMessage;
+            internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, object?> _messageTask;
+            readonly Func<object, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;
-            readonly IMessageStorage _messageStorage;
+            readonly ITessageStorage _tessageStorage;
             readonly IServiceLocator _serviceLocator;
-            readonly IMessageHandlerRegistry _handlerRegistry;
+            readonly ITessageHandlerRegistry _handlerRegistry;
 
             internal Task<object?> Task => _taskCompletionSource.Task;
-            public Guid MessageId { get; }
+            public Guid TessageId { get; }
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
             public void Execute()
             {
-               var message = TransportMessage.DeserializeMessageAndCacheForNextCall();
+               var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
                _taskRunner.Run(ExecuteTaskName, () =>
                {
-                  var retryPolicy = new DefaultRetryPolicy(message);
+                  var retryPolicy = new DefaultRetryPolicy(tessage);
 
                   while(true)
                   {
                      try
                      {
-                        var result = message is IMustBeHandledTransactionally
+                        var result = tessage is IMustBeHandledTransactionally
                                         ? _serviceLocator.ExecuteTransactionInIsolatedScope(() =>
                                         {
-                                           var innerResult = _messageTask(message);
-                                           if(message is IAtMostOnceTessage)
+                                           var innerResult = _tessageTask(tessage);
+                                           if(tessage is IAtMostOnceTessage)
                                            {
-                                              _messageStorage.MarkAsSucceeded(TransportMessage);
+                                              _tessageStorage.MarkAsSucceeded(TransportTessage);
                                            }
 
                                            return innerResult;
                                         })
-                                        : _serviceLocator.ExecuteInIsolatedScope(() => _messageTask(message));
+                                        : _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
 
                         _taskCompletionSource.SetResult(result);
                         _coordinator.Succeeded(this);
@@ -62,16 +62,16 @@ partial class Inbox
                      }
                      catch(Exception exception)
                      {
-                        if(message is IAtMostOnceTessage)
+                        if(tessage is IAtMostOnceTessage)
                         {
-                           _messageStorage.RecordException(TransportMessage, exception);
+                           _tessageStorage.RecordException(TransportTessage, exception);
                         }
 
                         if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                         {
-                           if(message is IAtMostOnceTessage)
+                           if(tessage is IAtMostOnceTessage)
                            {
-                              _messageStorage.MarkAsFailed(TransportMessage);
+                              _tessageStorage.MarkAsFailed(TransportTessage);
                            }
 
                            _taskCompletionSource.SetException(exception);
@@ -83,50 +83,50 @@ partial class Inbox
                });
             }
 
-            public HandlerExecutionTask(TransportMessage.InComing transportMessage, Coordinator coordinator, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry handlerRegistry)
+            public HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry handlerRegistry)
             {
-               MessageId = transportMessage.MessageId;
-               TransportMessage = transportMessage;
+               TessageId = transportTessage.TessageId;
+               TransportTessage = transportTessage;
                _coordinator = coordinator;
                _taskRunner = taskRunner;
-               _messageStorage = messageStorage;
+               _tessageStorage = tessageStorage;
                _serviceLocator = serviceLocator;
                _handlerRegistry = handlerRegistry;
-               _messageTask = CreateMessageTask();
+               _tessageTask = CreateTessageTask();
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, object?> CreateMessageTask() =>
-               TransportMessage.MessageTypeEnum switch
+            Func<object, object?> CreateTessageTask() =>
+               TransportTessage.TessageTypeEnum switch
                {
-                  Implementation.TransportMessage.TransportMessageType.ExactlyOnceEvent => message =>
+                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceEvent => tessage =>
                   {
-                     var eventHandlers = _handlerRegistry.GetEventHandlers(message.GetType());
-                     eventHandlers.ForEach(handler => handler((IExactlyOnceTevent)message));
+                     var eventHandlers = _handlerRegistry.GetEventHandlers(tessage.GetType());
+                     eventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
                      return null;
                   },
-                  Implementation.TransportMessage.TransportMessageType.AtMostOnceCommandWithReturnValue => message =>
+                  Implementation.TransportTessage.TransportTessageType.AtMostOnceCommandWithReturnValue => tessage =>
                   {
-                     var commandHandler = _handlerRegistry.GetCommandHandlerWithReturnValue(message.GetType());
-                     return commandHandler((IAtMostOnceHypermediaTommand)message);
+                     var commandHandler = _handlerRegistry.GetCommandHandlerWithReturnValue(tessage.GetType());
+                     return commandHandler((IAtMostOnceHypermediaTommand)tessage);
                   },
-                  Implementation.TransportMessage.TransportMessageType.AtMostOnceCommand => message =>
+                  Implementation.TransportTessage.TransportTessageType.AtMostOnceCommand => tessage =>
                   {
-                     var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
-                     commandHandler((IAtMostOnceHypermediaTommand)message);
+                     var commandHandler = _handlerRegistry.GetCommandHandler(tessage.GetType());
+                     commandHandler((IAtMostOnceHypermediaTommand)tessage);
                      return unit.Value; //Todo:Properly handle commands with and without return values
                   },
-                  Implementation.TransportMessage.TransportMessageType.ExactlyOnceCommand => message =>
+                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceCommand => tessage =>
                   {
-                     var commandHandler = _handlerRegistry.GetCommandHandler(message.GetType());
-                     commandHandler((IExactlyOnceTommand)message);
+                     var commandHandler = _handlerRegistry.GetCommandHandler(tessage.GetType());
+                     commandHandler((IExactlyOnceTommand)tessage);
                      return unit.Value;//Todo:Properly handle commands with and without return values
                   },
-                  Implementation.TransportMessage.TransportMessageType.NonTransactionalQuery => actualMessage =>
+                  Implementation.TransportTessage.TransportTessageType.NonTransactionalQuery => actualTessage =>
                   {
-                     var queryHandler = _handlerRegistry.GetQueryHandler(actualMessage.GetType());
+                     var queryHandler = _handlerRegistry.GetQueryHandler(actualTessage.GetType());
                      //todo: Double dispatch instead of casting?
-                     return queryHandler((ITuery<object>)actualMessage);
+                     return queryHandler((ITuery<object>)actualTessage);
                   },
                   _ => throw new ArgumentOutOfRangeException()
                };

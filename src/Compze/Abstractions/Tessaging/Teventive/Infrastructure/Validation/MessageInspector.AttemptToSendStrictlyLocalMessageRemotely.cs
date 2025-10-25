@@ -3,17 +3,17 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
-static partial class MessageInspector
+static partial class TessageInspector
 {
-   public class AttemptToSendStrictlyLocalMessageRemotelyException(IStrictlyLocalMessage message) : Exception(RemoteSendOfStrictlyLocalMessageMessage(message))
+   public class AttemptToSendStrictlyLocalTessageRemotelyException(IStrictlyLocalTessage tessage) : Exception(RemoteSendOfStrictlyLocalTessageTessage(tessage))
    {
-      static string RemoteSendOfStrictlyLocalMessageMessage(IStrictlyLocalMessage message) => $"""
+      static string RemoteSendOfStrictlyLocalTessageTessage(IStrictlyLocalTessage tessage) => $"""
 
 
-                                                                                               {message.GetType().FullName} cannot be sent remotely because it implements {typeof(IStrictlyLocalMessage)}.
+                                                                                               {tessage.GetType().FullName} cannot be sent remotely because it implements {typeof(IStrictlyLocalTessage)}.
 
                                                                                                Rationale: 
-                                                                                               {typeof(IStrictlyLocalMessage)} implementations are designed explicitly to be used locally.
+                                                                                               {typeof(IStrictlyLocalTessage)} implementations are designed explicitly to be used locally.
                                                                                                The result of sending them off remotely is unclear to say the least and very unlikely to end up doing what you want. 
 
                                                                                                """;

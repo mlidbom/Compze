@@ -10,17 +10,17 @@ using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
-partial class MessageTypeInspector
+partial class TessageTypeInspector
 {
-   static readonly MessageTypeDesignRule[] MessageTypeDesignRules =
+   static readonly TessageTypeDesignRule[] TessageTypeDesignRules =
    [
-      new MustBeIMessage(),
+      new MustBeITessage(),
       new CannotBeBothCommandAndEvent(),
       new CannotBeBothCommandAndQuery(),
       new CannotBeBothEventAndQuery(),
       new CannotBeBothRemotableAndStrictlyLocal(),
       new CannotForbidAndRequireTransactionalSender(),
-      new AtMostOnceCommandDefaultConstructorMustNotSetAMessageId(),
+      new AtMostOnceCommandDefaultConstructorMustNotSetATessageId(),
       new WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
    ];
 
@@ -56,37 +56,37 @@ partial class MessageTypeInspector
    }
 
    static void AssertTypeIsValidInternal(Type type) =>
-      MessageTypeDesignRules.ForEach(rule => rule.AssertFulfilledBy(type));
+      TessageTypeDesignRules.ForEach(rule => rule.AssertFulfilledBy(type));
 
-   abstract class MessageTypeDesignRule
+   abstract class TessageTypeDesignRule
    {
       internal abstract void AssertFulfilledBy(Type type);
    }
 
-   abstract class SimpleMessageTypeDesignRule : MessageTypeDesignRule
+   abstract class SimpleTessageTypeDesignRule : TessageTypeDesignRule
    {
       protected abstract bool IsInvalid(Type type);
-      protected abstract string CreateMessage(Type type);
+      protected abstract string CreateTessage(Type type);
 
       internal override void AssertFulfilledBy(Type type)
       {
          if(IsInvalid(type))
          {
-            throw new MessageTypeDesignViolationException(CreateMessage(type));
+            throw new TessageTypeDesignViolationException(CreateTessage(type));
          }
       }
    }
 
-   class MustBeIMessage : SimpleMessageTypeDesignRule
+   class MustBeITessage : SimpleTessageTypeDesignRule
    {
       protected override bool IsInvalid(Type type) => !type.Implements<ITessage>();
-      protected override string CreateMessage(Type type) => $"{type.GetFullNameCompilable()} does not implement {typeof(ITessage).GetFullNameCompilable()}";
+      protected override string CreateTessage(Type type) => $"{type.GetFullNameCompilable()} does not implement {typeof(ITessage).GetFullNameCompilable()}";
    }
 
-   class MutuallyExclusiveInterfaces<TInterface1, TInterface2> : SimpleMessageTypeDesignRule
+   class MutuallyExclusiveInterfaces<TInterface1, TInterface2> : SimpleTessageTypeDesignRule
    {
       protected override bool IsInvalid(Type type) => typeof(TInterface1).IsAssignableFrom(type) && typeof(TInterface2).IsAssignableFrom(type);
-      protected override string CreateMessage(Type type) => $"{type.GetFullNameCompilable()} implements both {typeof(TInterface1).GetFullNameCompilable()} and {typeof(TInterface2).GetFullNameCompilable()}";
+      protected override string CreateTessage(Type type) => $"{type.GetFullNameCompilable()} implements both {typeof(TInterface1).GetFullNameCompilable()} and {typeof(TInterface2).GetFullNameCompilable()}";
    }
 
    class CannotBeBothCommandAndEvent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
@@ -95,11 +95,11 @@ partial class MessageTypeInspector
 
    class CannotBeBothEventAndQuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
 
-   class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalMessage>;
+   class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalTessage>;
 
    class CannotForbidAndRequireTransactionalSender : MutuallyExclusiveInterfaces<IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction>;
 
-   class WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : MessageTypeDesignRule
+   class WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : TessageTypeDesignRule
    {
       internal override void AssertFulfilledBy(Type type)
       {
@@ -110,15 +110,15 @@ partial class MessageTypeInspector
 
             var wrapperInterfacesImplemented = allInterfaces.Where(@interface => @interface.Is<IWrapperTevent<ITevent>>()).ToArray();
             var nonGeneric = wrapperInterfacesImplemented.FirstOrDefault(@interface => !@interface.IsGenericType);
-            if(nonGeneric != null) throw new MessageTypeDesignViolationException($"{nonGeneric.GetFullNameCompilable()} implements {typeof(IWrapperTevent<>).GetFullNameCompilable()} but is not generic. This means that routing based on the covariance of the wrapping type is impossible and thus semantic routing breaks down.");
+            if(nonGeneric != null) throw new TessageTypeDesignViolationException($"{nonGeneric.GetFullNameCompilable()} implements {typeof(IWrapperTevent<>).GetFullNameCompilable()} but is not generic. This means that routing based on the covariance of the wrapping type is impossible and thus semantic routing breaks down.");
 
             var typeParameterIsNotOut = wrapperInterfacesImplemented.FirstOrDefault(@interface => !@interface.GetGenericTypeDefinition().GetGenericArguments()[0].GenericParameterAttributes.HasFlag(GenericParameterAttributes.Covariant));
-            if(typeParameterIsNotOut != null) throw new MessageTypeDesignViolationException($"{typeParameterIsNotOut.GetFullNameCompilable()} implements {typeof(IWrapperTevent<>).GetFullNameCompilable()} but does not declare the type parameter as covariant(out). If the type parameter is not covariant routing to derived types does not work because they are not assignable to the base interface type");
+            if(typeParameterIsNotOut != null) throw new TessageTypeDesignViolationException($"{typeParameterIsNotOut.GetFullNameCompilable()} implements {typeof(IWrapperTevent<>).GetFullNameCompilable()} but does not declare the type parameter as covariant(out). If the type parameter is not covariant routing to derived types does not work because they are not assignable to the base interface type");
          }
       }
    }
 
-   class AtMostOnceCommandDefaultConstructorMustNotSetAMessageId : MessageTypeDesignRule
+   class AtMostOnceCommandDefaultConstructorMustNotSetATessageId : TessageTypeDesignRule
    {
       internal override void AssertFulfilledBy(Type type)
       {
@@ -127,12 +127,12 @@ partial class MessageTypeInspector
             if(Constructor.HasDefaultConstructor(type))
             {
                var instance = (IAtMostOnceHypermediaTommand)Constructor.CreateInstance(type);
-               if(instance.MessageId != Guid.Empty)
+               if(instance.TessageId != Guid.Empty)
                {
-                  throw new MessageTypeDesignViolationException($"""
-                                                                 The default constructor of {type.GetFullNameCompilable()} sets {nameof(IAtMostOnceTessage)}.{nameof(IAtMostOnceTessage.MessageId)} to a value other than Guid.Empty.
+                  throw new TessageTypeDesignViolationException($"""
+                                                                 The default constructor of {type.GetFullNameCompilable()} sets {nameof(IAtMostOnceTessage)}.{nameof(IAtMostOnceTessage.TessageId)} to a value other than Guid.Empty.
                                                                  Since {type.GetFullNameCompilable()} is an {typeof(IAtMostOnceHypermediaTommand).GetFullNameCompilable()} this is very likely to break the exactly once guarantee.
-                                                                 For instance: If you bind this command in a web UI and forget to bind the {nameof(IAtMostOnceTessage.MessageId)} then the infrastructure will be unable to realize that this is NOT the correct originally created {nameof(IAtMostOnceTessage.MessageId)}.
+                                                                 For instance: If you bind this command in a web UI and forget to bind the {nameof(IAtMostOnceTessage.TessageId)} then the infrastructure will be unable to realize that this is NOT the correct originally created {nameof(IAtMostOnceTessage.TessageId)}.
                                                                  This in turn means that if your user clicks multiple times the command may well be both sent and handled multiple times. Thus breaking the exactly once guarantee. The same thing if a Single Page Application receives an HTTP timeout and retries the command. 
                                                                  And another example: If you make the setter private many serialization technologies will not be able to maintain the value of the property. But since you used this constructor the property will have a value. A new one each time the instance is deserialized. Again breaking the at most once guarantee.
 

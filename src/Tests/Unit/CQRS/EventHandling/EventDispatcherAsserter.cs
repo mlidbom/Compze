@@ -27,7 +27,7 @@ static class EventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().For((THandlerEvent _) => callCount++);
          _dispatcher.Dispatch(_event);
-         callCount.Should().Be(1, "Message was not dispatched to handler.");
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DispatchesToWrapped<THandlerEvent>()
@@ -37,7 +37,7 @@ static class EventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerEvent _) => callCount++);
          _dispatcher.Dispatch(_event);
-         callCount.Should().Be(1, "Message was not dispatched to handler.");
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DoesNotDispatchToWrapped<THandlerEvent>()
@@ -47,7 +47,7 @@ static class EventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerEvent _) => callCount++);
          _dispatcher.Dispatch(_event);
-         callCount.Should().Be(0, "Message was dispatched to handler.");
+         callCount.Should().Be(0, "Tessage was dispatched to handler.");
       }
    }
 

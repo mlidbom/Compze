@@ -81,7 +81,7 @@ public class NewtonSoftEventStoreEventSerializerTests : UniversalTestBase
                                                     .PreferringRuntimeMemberTypes()
                                                     .ComparingByMembers<AggregateTevent>()
                                                     .Excluding(@event => @event.UtcTimeStamp)//Timestamp is defaulted in the constructor used by serialization.
-                                                    .Excluding(@event => @event.MessageId)
+                                                    .Excluding(@event => @event.TessageId)
       );
    }
 }

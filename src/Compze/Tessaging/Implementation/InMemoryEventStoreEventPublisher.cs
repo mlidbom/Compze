@@ -2,7 +2,7 @@ using Compze.Abstractions.Tessaging.Teventive.EventStore.Internal;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Abstractions.Tessaging.Teventive.Public;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
@@ -19,16 +19,16 @@ static class InMemoryEventStoreEventPublisherRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IEventStoreEventPublisher>()
-                                     .CreatedBy((IMessageHandlerRegistry messageHandlerRegistry)
-                                                   => new InMemoryEventStoreEventPublisher(messageHandlerRegistry)));
+                                     .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
+                                                   => new InMemoryEventStoreEventPublisher(tessageHandlerRegistry)));
 
-   readonly IMessageHandlerRegistry _handlerRegistry;
+   readonly ITessageHandlerRegistry _handlerRegistry;
 
-   public InMemoryEventStoreEventPublisher(IMessageHandlerRegistry handlerRegistry) => _handlerRegistry = handlerRegistry;
+   public InMemoryEventStoreEventPublisher(ITessageHandlerRegistry handlerRegistry) => _handlerRegistry = handlerRegistry;
 
    void IEventStoreEventPublisher.Publish(IAggregateTevent tevent)
    {
-      MessageInspector.AssertValidToSendRemote(tevent);
+      TessageInspector.AssertValidToSendRemote(tevent);
       _handlerRegistry.CreateEventDispatcher().Dispatch(tevent);
    }
 }

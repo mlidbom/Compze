@@ -1,6 +1,6 @@
 using System;
 using Compze.Abstractions.DocumentDb.Public;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Sql.DocumentDb.Abstractions;
 using Compze.Utilities.Functional;

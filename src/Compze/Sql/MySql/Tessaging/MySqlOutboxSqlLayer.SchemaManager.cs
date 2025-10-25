@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.Threading.TasksCE;
-using M = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessagesDatabaseSchemaStrings;
-using D = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxMessageDispatchingTableSchemaStrings;
+using M = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using D = Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Tessaging.Sql.MySql;
 
@@ -19,19 +19,19 @@ partial class MySqlOutboxSqlLayer
                                                            (
                                                                {M.GeneratedId}       bigint          NOT NULL  AUTO_INCREMENT,
                                                                {M.TypeIdGuidValue}   {MySqlGuidType} NOT NULL,
-                                                               {M.MessageId}         {MySqlGuidType} NOT NULL,
-                                                               {M.SerializedMessage} MEDIUMTEXT      NOT NULL,
+                                                               {M.TessageId}         {MySqlGuidType} NOT NULL,
+                                                               {M.SerializedTessage} MEDIUMTEXT      NOT NULL,
                                                        
                                                                PRIMARY KEY ( {M.GeneratedId}),
                                                        
-                                                               UNIQUE INDEX IX_{M.TableName}_Unique_{M.MessageId} ( {M.MessageId} )
+                                                               UNIQUE INDEX IX_{M.TableName}_Unique_{M.TessageId} ( {M.TessageId} )
                                                            )
                                                            ENGINE = InnoDB
                                                            DEFAULT CHARACTER SET = utf8mb4;
                                                        
                                                            CREATE TABLE  IF NOT EXISTS {D.TableName}
                                                            (
-                                                               {D.MessageId}        {MySqlGuidType} NOT NULL,
+                                                               {D.TessageId}        {MySqlGuidType} NOT NULL,
                                                                {D.EndpointId}       {MySqlGuidType} NOT NULL,
                                                                {D.IsReceived}       bit             NOT NULL,
                                                                {D.RetryCount}       int             NOT NULL DEFAULT 0,
@@ -39,10 +39,10 @@ partial class MySqlOutboxSqlLayer
                                                                {D.FailureReason}    MEDIUMTEXT      NULL,
                                                        
                                                        
-                                                               PRIMARY KEY ( {D.MessageId}, {D.EndpointId}),
+                                                               PRIMARY KEY ( {D.TessageId}, {D.EndpointId}),
                                                                    /*WITH (ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = OFF) ON PRIMARY,*/
                                                        
-                                                               FOREIGN KEY ({D.MessageId}) REFERENCES {M.TableName} ({M.MessageId})
+                                                               FOREIGN KEY ({D.TessageId}) REFERENCES {M.TableName} ({M.TessageId})
                                                            )
                                                            ENGINE = InnoDB
                                                            DEFAULT CHARACTER SET = utf8mb4;

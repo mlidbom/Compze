@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;

@@ -8,8 +8,8 @@ using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
-using Compze.Tessaging.Implementation.MessageHandling;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Http;
 
 namespace Compze.Tessaging.Hosting.AspNetCore;
@@ -19,13 +19,13 @@ class RpcController : ControllerBase
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<RpcController>()
-               .CreatedBy((IRemotableMessageSerializer serializer,
+               .CreatedBy((IRemotableTessageSerializer serializer,
                            ITypeMapper typeMapper,
                            IInbox inbox,
                            Inbox.HandlerExecutionEngine handlerExecutionEngine)
                              => new RpcController(serializer, typeMapper, inbox, handlerExecutionEngine)));
 
-   RpcController(IRemotableMessageSerializer serializer,
+   RpcController(IRemotableTessageSerializer serializer,
                  ITypeMapper typeMapper,
                  IInbox inbox,
                  Inbox.HandlerExecutionEngine handlerExecutionEngine) : base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
@@ -33,11 +33,11 @@ class RpcController : ControllerBase
    [HttpPost(HttpConstants.Routes.Rpc.Query)]
    public async Task<IActionResult> Query()
    {
-      var incomingMessage = await CreateIncomingMessage().caf();
+      var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         var queryResponse = (await HandlerExecutionEngine.Enqueue(incomingMessage).caf()).NotNull();
+         var queryResponse = (await HandlerExecutionEngine.Enqueue(incomingTessage).caf()).NotNull();
          var queryResponseJson = Serializer.SerializeResponse(queryResponse);
          return Ok(queryResponseJson);
       }
@@ -51,11 +51,11 @@ class RpcController : ControllerBase
    [HttpPost(HttpConstants.Routes.Rpc.CommandWithResult)]
    public async Task<IActionResult> CommandWithResult()
    {
-      var incomingMessage = await CreateIncomingMessage().caf();
+      var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         var commandResponse = (await Inbox.Receive(incomingMessage).caf()).NotNull();
+         var commandResponse = (await Inbox.Receive(incomingTessage).caf()).NotNull();
          var commandResponseJson = Serializer.SerializeResponse(commandResponse);
          return Ok(commandResponseJson);
       }
@@ -68,11 +68,11 @@ class RpcController : ControllerBase
    [HttpPost(HttpConstants.Routes.Rpc.CommandNoResult)]
    public async Task<IActionResult> CommandWithNoResult()
    {
-      var incomingMessage = await CreateIncomingMessage().caf();
+      var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         await Inbox.Receive(incomingMessage).caf();
+         await Inbox.Receive(incomingTessage).caf();
          return Ok();
       }
       catch(Exception exception)

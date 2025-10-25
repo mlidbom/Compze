@@ -129,14 +129,14 @@ partial class EventStore
    void FixManualVersions(AggregateEventWithRefactoringInformation[] originalHistory, AggregateTevent[] newHistory, IReadOnlyList<List<EventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
-      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@event => @event.MessageId == it.Tevent.MessageId)).ToList();
-      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Tevent.MessageId, -it.StorageInformation.EffectiveVersion)));
+      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@event => @event.TessageId == it.Tevent.TessageId)).ToList();
+      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Tevent.TessageId, -it.StorageInformation.EffectiveVersion)));
 
-      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@event => @event.MessageId == it.EventId));
+      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@event => @event.TessageId == it.EventId));
       versionUpdates.AddRange(replacedOrRemoved2.Select(it => new VersionSpecification(it.EventId, -it.StorageInformation.EffectiveVersion)));
 
       //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every event in every refactored aggregate if only a few, or none, have actually changed.
-      versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.MessageId, index + 1)));
+      versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.TessageId, index + 1)));
 
       _sqlLayer.UpdateEffectiveVersions(versionUpdates);
    }
@@ -150,7 +150,7 @@ partial class EventStore
          var loaded = loadedAggregateHistory[index];
          Assert.Result
                .Is(inMemory.AggregateId == loaded.AggregateId)
-               .Is(inMemory.MessageId == loaded.MessageId)
+               .Is(inMemory.TessageId == loaded.TessageId)
                .Is(inMemory.AggregateVersion == loaded.AggregateVersion)
                .Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp)
                .Is(inMemory.GetType() == loaded.GetType())
@@ -227,7 +227,7 @@ partial class EventStore
 
    static bool IsRecoverableSqlException(Exception exception)
    {
-      var message = exception.Message.ToUpperInvariant();
-      return message.ContainsInvariant("TIMEOUT") || message.ContainsInvariant("DEADLOCK");
+      var tessage = exception.Message.ToUpperInvariant();
+      return tessage.ContainsInvariant("TIMEOUT") || tessage.ContainsInvariant("DEADLOCK");
    }
 }

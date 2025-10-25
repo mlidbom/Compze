@@ -34,7 +34,7 @@ public enum EventStore
    SqlServer
 }
 
-public enum MessageBus
+public enum TessageBus
 {
    InProcess,
    RabbitMQ

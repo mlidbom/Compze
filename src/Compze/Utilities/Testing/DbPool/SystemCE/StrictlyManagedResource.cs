@@ -155,9 +155,9 @@ public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManaged
 }
 
 ///<summary><see cref="IStrictlyManagedResource"/></summary>
-class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatMessage(instanceType, reservationCallStack))
+class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
 {
-   static string FormatMessage(Type instanceType, string? reservationCallStack)
+   static string FormatTessage(Type instanceType, string? reservationCallStack)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()
             ? $"""
                User code failed to Dispose this instance of {instanceType.GetFullNameCompilable()}

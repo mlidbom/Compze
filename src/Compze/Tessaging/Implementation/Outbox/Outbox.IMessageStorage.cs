@@ -10,12 +10,12 @@ namespace Compze.Tessaging.Implementation.Outbox;
 
 partial class Outbox
 {
-   public interface IMessageStorage
+   public interface ITessageStorage
    {
-      void SaveMessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds);
-      void MarkAsReceived(Guid messageId, EndpointId receiverId);
-      void RecordDeliveryFailure(Guid messageId, EndpointId receiverId, Exception? exception);
-      IReadOnlyList<IServiceBusSqlLayer.UndeliveredMessage> GetUndeliveredMessages(TimeSpan olderThan);
+      void SaveTessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds);
+      void MarkAsReceived(Guid tessageId, EndpointId receiverId);
+      void RecordDeliveryFailure(Guid tessageId, EndpointId receiverId, Exception? exception);
+      IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan);
       Task StartAsync();
    }
 }

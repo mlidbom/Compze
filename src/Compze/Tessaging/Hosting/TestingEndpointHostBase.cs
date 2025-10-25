@@ -18,13 +18,13 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
 {
    readonly List<Exception> _expectedExceptions = [];
    public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
-      MessagesInFlightTracker = new MessagesInFlightTracker(TypeMapper.Instance);
+      TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
    public IEnumerable<HttpEndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
                                                                    .Select(it => it.Address!)
                                                                    .ToList();
 
-   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoMessagesInFlight(timeoutOverride));
+   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoTessagesInFlight(timeoutOverride));
 
    public IEndpoint RegisterTestingEndpoint(string? name = null, EndpointId? id = null, Action<IEndpointBuilder>? setup = null)
    {
@@ -85,5 +85,5 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    public bool WaitForEndPointsToBeAtRestOnDispose { get; set; } = true;
    public async Task DisposeAsyncWithoutWaitingForEndpointsToBeAtRest() => await DisposeAsync(true, false).caf();
 
-   List<Exception> GetThrownExceptions() => MessagesInFlightTracker.GetExceptions().ToList();
+   List<Exception> GetThrownExceptions() => TessagesInFlightTracker.GetExceptions().ToList();
 }

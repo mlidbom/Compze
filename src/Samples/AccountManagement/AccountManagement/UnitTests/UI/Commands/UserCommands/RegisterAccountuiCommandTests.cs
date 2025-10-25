@@ -65,19 +65,19 @@ public class RegisterAccountUICommandTests : UniversalTestBase
    public void WhenNotMatchingThePolicyTheFailureTellsHow()
    {
       _registerAccountUiCommand!.Password = TestData.Passwords.Invalid.ShorterThanFourCharacters;
-      ValidateAndGetFirstMessage().Should().Be(RegisterAccountCommandResources.Password_ShorterThanFourCharacters);
+      ValidateAndGetFirstTessage().Should().Be(RegisterAccountCommandResources.Password_ShorterThanFourCharacters);
 
       _registerAccountUiCommand!.Password = TestData.Passwords.Invalid.BorderedByWhiteSpaceAtEnd;
-      ValidateAndGetFirstMessage().Should().Be(RegisterAccountCommandResources.Password_BorderedByWhitespace);
+      ValidateAndGetFirstTessage().Should().Be(RegisterAccountCommandResources.Password_BorderedByWhitespace);
 
       _registerAccountUiCommand.Password = TestData.Passwords.Invalid.MissingLowercaseCharacter;
-      ValidateAndGetFirstMessage().Should().Be(RegisterAccountCommandResources.Password_MissingLowerCaseCharacter);
+      ValidateAndGetFirstTessage().Should().Be(RegisterAccountCommandResources.Password_MissingLowerCaseCharacter);
 
       _registerAccountUiCommand.Password = TestData.Passwords.Invalid.MissingUpperCaseCharacter;
-      ValidateAndGetFirstMessage().Should().Be(RegisterAccountCommandResources.Password_MissingUpperCaseCharacter);
+      ValidateAndGetFirstTessage().Should().Be(RegisterAccountCommandResources.Password_MissingUpperCaseCharacter);
 
       _registerAccountUiCommand.Password = TestData.Passwords.Invalid.Null!;
-      ValidateAndGetFirstMessage().Should().Be(RegisterAccountCommandResources.PasswordMissing);
+      ValidateAndGetFirstTessage().Should().Be(RegisterAccountCommandResources.PasswordMissing);
    }
 
    [XF]
@@ -89,5 +89,5 @@ public class RegisterAccountUICommandTests : UniversalTestBase
       _registerAccountUiCommand.Invoking(command => command.Validate(null!).ToArray()).Should().Throw<Exception>();
    }
 
-   string ValidateAndGetFirstMessage() => CommandValidator.ValidationFailures(_registerAccountUiCommand!).First().ErrorMessage ?? string.Empty;
+   string ValidateAndGetFirstTessage() => CommandValidator.ValidationFailures(_registerAccountUiCommand!).First().ErrorMessage ?? string.Empty;
 }

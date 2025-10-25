@@ -3,7 +3,7 @@ using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
@@ -20,13 +20,13 @@ static class ServiceBusEventStoreEventPublisherRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IEventStoreEventPublisher>()
-                                     .CreatedBy((IOutbox outbox, IMessageHandlerRegistry messageHandlerRegistry)
-                                                   => new ServiceBusEventStoreEventPublisher(outbox, messageHandlerRegistry)));
+                                     .CreatedBy((IOutbox outbox, ITessageHandlerRegistry tessageHandlerRegistry)
+                                                   => new ServiceBusEventStoreEventPublisher(outbox, tessageHandlerRegistry)));
 
    readonly IOutbox _outbox;
-   readonly IMessageHandlerRegistry _handlerRegistry;
+   readonly ITessageHandlerRegistry _handlerRegistry;
 
-   public ServiceBusEventStoreEventPublisher(IOutbox outbox, IMessageHandlerRegistry handlerRegistry)
+   public ServiceBusEventStoreEventPublisher(IOutbox outbox, ITessageHandlerRegistry handlerRegistry)
    {
       _outbox = outbox;
       _handlerRegistry = handlerRegistry;
@@ -34,7 +34,7 @@ static class ServiceBusEventStoreEventPublisherRegistrar
 
    void IEventStoreEventPublisher.Publish(IAggregateTevent tevent)
    {
-      MessageInspector.AssertValidToSendRemote(tevent);
+      TessageInspector.AssertValidToSendRemote(tevent);
       _handlerRegistry.CreateEventDispatcher().Dispatch(tevent);
       _outbox.PublishTransactionally(tevent);
    }

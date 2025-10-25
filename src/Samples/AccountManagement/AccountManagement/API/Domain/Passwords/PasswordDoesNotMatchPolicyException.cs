@@ -6,9 +6,9 @@ namespace AccountManagement.Domain.Passwords;
 
 public class PasswordDoesNotMatchPolicyException : ArgumentException
 {
-   internal PasswordDoesNotMatchPolicyException(IEnumerable<Password.Policy.Failures> passwordPolicyFailures) : base(BuildMessage(passwordPolicyFailures)) => Failures = passwordPolicyFailures;
+   internal PasswordDoesNotMatchPolicyException(IEnumerable<Password.Policy.Failures> passwordPolicyFailures) : base(BuildTessage(passwordPolicyFailures)) => Failures = passwordPolicyFailures;
 
    public IEnumerable<Password.Policy.Failures> Failures { get; private set; }
 
-   static string BuildMessage(IEnumerable<Password.Policy.Failures> passwordPolicyFailures) => string.Join(",", passwordPolicyFailures.Select(failure => failure.ToString()));
+   static string BuildTessage(IEnumerable<Password.Policy.Failures> passwordPolicyFailures) => string.Join(",", passwordPolicyFailures.Select(failure => failure.ToString()));
 }

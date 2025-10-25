@@ -5,7 +5,7 @@ using Compze.Common.Refactoring.Naming;
 using Compze.Sql.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Implementation;
-using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -44,7 +44,7 @@ public static class DiContainerExtensions
                .TypeMapper()
                .DummyConfigurationParameterProvider()
                .CurrentTestsConfiguredSqlLayer()
-               .MessageHandlerRegistry()
+               .TessageHandlerRegistry()
                .InMemoryEventStoreEventPublisher();
       setup(container.Register());
 

@@ -51,7 +51,7 @@ static class ServiceBusSessionRegistrar
    void RunAssertions(IExactlyOnceTommand tommand)
    {
       _contextGuard.EnsureAccessValid();
-      MessageInspector.AssertValidToSendRemote(tommand);
+      TessageInspector.AssertValidToSendRemote(tommand);
       CommandValidator.AssertCommandIsValid(tommand);
    }
 }

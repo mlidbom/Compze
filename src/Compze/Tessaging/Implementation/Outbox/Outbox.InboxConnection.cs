@@ -13,21 +13,21 @@ namespace Compze.Tessaging.Implementation.Outbox;
 
 partial class Outbox
 {
-   internal class InboxConnection(IMessagesInFlightTracker messagesInFlightTracker, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient) : IInboxConnection
+   internal class InboxConnection(ITessagesInFlightTracker tessagesInFlightTracker, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient) : IInboxConnection
    {
-      MessageTypesInternal.EndpointInformation? _endpointInformation = null;
+      TessageTypesInternal.EndpointInformation? _endpointInformation = null;
       IRemoteApiClient? _rpcClient;
-      IRemoteMessageSender? _messageSender;
-      readonly IMessagesInFlightTracker _messagesInFlightTracker = messagesInFlightTracker;
+      IRemoteTessageSender? _tessageSender;
+      readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
       readonly HttpEndPointAddress _remoteAddress = remoteAddress;
       readonly ITypeMapper _typeMapper = typeMapper;
-      readonly IRemotableMessageSerializer _serializer = serializer;
+      readonly IRemotableTessageSerializer _serializer = serializer;
       readonly IRemoteApiTransportClient _remoteApiTransportClient = remoteApiTransportClient;
 
-      public MessageTypesInternal.EndpointInformation EndpointInformation => _endpointInformation!;
+      public TessageTypesInternal.EndpointInformation EndpointInformation => _endpointInformation!;
 
-      public async Task SendAsync(IExactlyOnceTevent tevent) => await _messageSender!.SendAsync(tevent).caf();
-      public async Task SendAsync(IExactlyOnceTommand tommand) => await _messageSender!.SendAsync(tommand).caf();
+      public async Task SendAsync(IExactlyOnceTevent tevent) => await _tessageSender!.SendAsync(tevent).caf();
+      public async Task SendAsync(IExactlyOnceTommand tommand) => await _tessageSender!.SendAsync(tommand).caf();
 
       public async Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceTommand<TCommandResult> tommand) => await _rpcClient!.PostAsync(tommand).caf();
       public async Task PostAsync(IAtMostOnceHypermediaTommand tommand) => await _rpcClient!.PostAsync(tommand).caf();
@@ -35,8 +35,8 @@ partial class Outbox
 
       internal async Task InitAsync()
       {
-         (_rpcClient, _endpointInformation) = await HttpApiClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker).caf();
-         _messageSender = new HttpRemoteMessageSender(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _messagesInFlightTracker, _endpointInformation.Id);
+         (_rpcClient, _endpointInformation) = await HttpApiClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
+         _tessageSender = new HttpRemoteTessageSender(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
       }
 
       public void Dispose() {}

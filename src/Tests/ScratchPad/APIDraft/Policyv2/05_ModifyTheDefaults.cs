@@ -10,12 +10,12 @@ public class ModifyTheDefaults
    {
       var defaultEventHandlerPolicies = new CompositePolicy(
          Policy.LockExclusively.ThisHandler,   //Ensures that this handler is never invoked in parallel with itself.
-         Policy.LockExclusively.CurrentMessage //Ensures that no other handler handle the same queuedMessageInformation in parallel with this handler.
+         Policy.LockExclusively.CurrentTessage //Ensures that no other handler handle the same queuedTessageInformation in parallel with this handler.
          //Useless when applied to a command handler since there can only be one.
       );
 
       var defaultCommandHandlerPolicies = new CompositePolicy(
-         Policy.LockExclusively.AggregateRelatedToMessage
+         Policy.LockExclusively.AggregateRelatedToTessage
       );
 
       var endpoint = new Endpoint(

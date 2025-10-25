@@ -1,4 +1,4 @@
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 namespace AccountManagement.UI;
 

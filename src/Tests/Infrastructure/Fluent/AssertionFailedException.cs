@@ -3,10 +3,10 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public class AssertionFailedException(string message) :
+public class AssertionFailedException(string tessage) :
    Exception($"""
 
               
-              {message.Indent()}
+              {tessage.Indent()}
 
               """);

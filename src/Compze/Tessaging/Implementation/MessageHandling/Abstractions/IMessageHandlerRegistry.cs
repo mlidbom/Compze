@@ -5,11 +5,11 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time;
 
-namespace Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
-interface IMessageHandlerRegistry
+interface ITessageHandlerRegistry
 {
-    Action<object> GetCommandHandler(ITommand message);
+    Action<object> GetCommandHandler(ITommand tessage);
 
     Action<ITommand> GetCommandHandler(Type commandType);
     Func<ITommand, object> GetCommandHandlerWithReturnValue(Type commandType);
@@ -22,5 +22,5 @@ interface IMessageHandlerRegistry
 
     IEventDispatcher<ITevent> CreateEventDispatcher();
 
-    ISet<TypeId> HandledRemoteMessageTypeIds();
+    ISet<TypeId> HandledRemoteTessageTypeIds();
 }

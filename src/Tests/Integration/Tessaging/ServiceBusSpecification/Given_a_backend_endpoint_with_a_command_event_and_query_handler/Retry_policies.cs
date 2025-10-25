@@ -16,8 +16,8 @@ public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : Endpo
    protected override async Task InitializeAsyncInternal()
    {
       await base.InitializeAsyncInternal();
-      const string exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
-      MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
+      const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
+      MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
       Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(action: () => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateTommand.Create())));
       await Task.CompletedTask;

@@ -11,32 +11,32 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Http;
 
-class HttpRemoteMessageSender(
+class HttpRemoteTessageSender(
    IRemoteApiTransportClient remoteApiTransportClient,
    HttpEndPointAddress remoteAddress,
    ITypeMapper typeMapper,
-   IRemotableMessageSerializer serializer,
-   IMessagesInFlightTracker messagesInFlightTracker,
-   EndpointId remoteEndpointId) : IRemoteMessageSender
+   IRemotableTessageSerializer serializer,
+   ITessagesInFlightTracker tessagesInFlightTracker,
+   EndpointId remoteEndpointId) : IRemoteTessageSender
 {
    readonly IRemoteApiTransportClient _transportClient = remoteApiTransportClient;
    readonly ITypeMapper _typeMapper = typeMapper;
-   readonly IRemotableMessageSerializer _serializer = serializer;
-   readonly IMessagesInFlightTracker _messagesInFlightTracker = messagesInFlightTracker;
+   readonly IRemotableTessageSerializer _serializer = serializer;
+   readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
    readonly string _remoteAddress = remoteAddress.AspNetAddress;
    readonly EndpointId _remoteEndpointId = remoteEndpointId;
 
    public async Task SendAsync(IExactlyOnceTommand tommand)
    {
-      var outGoingMessage = TransportMessage.OutGoing.Create(tommand, _typeMapper, _serializer);
-      _messagesInFlightTracker.SendingMessageOnTransport(outGoingMessage, _remoteEndpointId);
-      await _transportClient.PostAsync(outGoingMessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Command}")).caf();
+      var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
+      _tessagesInFlightTracker.SendingTessageOnTransport(outGoingTessage, _remoteEndpointId);
+      await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Command}")).caf();
    }
 
    public async Task SendAsync(IExactlyOnceTevent tevent)
    {
-      var message = TransportMessage.OutGoing.Create(tevent, _typeMapper, _serializer);
-      _messagesInFlightTracker.SendingMessageOnTransport(message, _remoteEndpointId);
-      await _transportClient.PostAsync(message, tevent, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Event}")).caf();
+      var tessage = TransportTessage.OutGoing.Create(tevent, _typeMapper, _serializer);
+      _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
+      await _transportClient.PostAsync(tessage, tevent, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Event}")).caf();
    }
 }

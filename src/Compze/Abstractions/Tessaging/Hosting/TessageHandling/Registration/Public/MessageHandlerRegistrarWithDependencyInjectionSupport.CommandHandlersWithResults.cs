@@ -1,9 +1,9 @@
 using System;
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+namespace Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
-public static partial class MessageHandlerRegistrarWithDependencyInjectionSupportExtensions
+public static partial class TessageHandlerRegistrarWithDependencyInjectionSupportExtensions
 {
    public static TessageHandlerRegistrarWithDependencyInjectionSupport ForCommandWithResult<TCommand, TResult>(
       this TessageHandlerRegistrarWithDependencyInjectionSupport @this,

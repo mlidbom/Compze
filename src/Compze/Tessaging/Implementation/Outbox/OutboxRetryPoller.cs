@@ -24,33 +24,33 @@ class OutboxRetryPoller : IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<OutboxRetryPoller>()
-                                     .CreatedBy((Outbox.IMessageStorage messageStorage,
+                                     .CreatedBy((Outbox.ITessageStorage tessageStorage,
                                                  ITransportClient transportClient,
                                                  ITypeMapper typeMapper,
-                                                 IRemotableMessageSerializer serializer,
+                                                 IRemotableTessageSerializer serializer,
                                                  ITaskRunner taskRunner,
                                                  IBackgroundExceptionReporter exceptionReporter)
-                                                   => new OutboxRetryPoller(messageStorage, transportClient, typeMapper, serializer, taskRunner, exceptionReporter)));
+                                                   => new OutboxRetryPoller(tessageStorage, transportClient, typeMapper, serializer, taskRunner, exceptionReporter)));
 
-   readonly Outbox.IMessageStorage _messageStorage;
+   readonly Outbox.ITessageStorage _tessageStorage;
    readonly ITransportClient _transportClient;
    readonly ITypeMapper _typeMapper;
-   readonly IRemotableMessageSerializer _serializer;
+   readonly IRemotableTessageSerializer _serializer;
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
    //Todo: implement a sane way of handling retries, something like an exponential backoff
    static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
-   static readonly TimeSpan MessageAgeThatIsConsideredFailed = TimeSpan.FromSeconds(5);
+   static readonly TimeSpan TessageAgeThatIsConsideredFailed = TimeSpan.FromSeconds(5);
 
-   OutboxRetryPoller(Outbox.IMessageStorage messageStorage,
+   OutboxRetryPoller(Outbox.ITessageStorage tessageStorage,
                      ITransportClient transportClient,
                      ITypeMapper typeMapper,
-                     IRemotableMessageSerializer serializer,
+                     IRemotableTessageSerializer serializer,
                      ITaskRunner taskRunner,
                      IBackgroundExceptionReporter exceptionReporter)
    {
-      _messageStorage = messageStorage;
+      _tessageStorage = tessageStorage;
       _transportClient = transportClient;
       _typeMapper = typeMapper;
       _serializer = serializer;
@@ -87,13 +87,13 @@ class OutboxRetryPoller : IDisposable
    {
       this.Log().Info("OutboxRetryPoller started");
 
-      RetryUndeliveredMessages(TimeSpan.Zero);
+      RetryUndeliveredTessages(TimeSpan.Zero);
 
       while(!_cancellationTokenSource.Token.IsCancellationRequested)
       {
          try
          {
-            RetryUndeliveredMessages();
+            RetryUndeliveredTessages();
          }
          catch(Exception exception)
          {
@@ -114,31 +114,31 @@ class OutboxRetryPoller : IDisposable
       this.Log().Info("OutboxRetryPoller stopped");
    }
 
-   void RetryUndeliveredMessages(TimeSpan? minimumAge = null)
+   void RetryUndeliveredTessages(TimeSpan? minimumAge = null)
    {
-      var undeliveredMessages = _messageStorage.GetUndeliveredMessages(minimumAge ?? MessageAgeThatIsConsideredFailed);
-      if(undeliveredMessages.Count == 0)
+      var undeliveredTessages = _tessageStorage.GetUndeliveredTessages(minimumAge ?? TessageAgeThatIsConsideredFailed);
+      if(undeliveredTessages.Count == 0)
          return;
 
-      this.Log().Info($"Found {undeliveredMessages.Count} undelivered message(s) to retry");
-      undeliveredMessages.ForEach(RetryMessage);
+      this.Log().Info($"Found {undeliveredTessages.Count} undelivered tessage(s) to retry");
+      undeliveredTessages.ForEach(RetryTessage);
    }
 
-   void RetryMessage(IServiceBusSqlLayer.UndeliveredMessage undeliveredMessage)
+   void RetryTessage(IServiceBusSqlLayer.UndeliveredTessage undeliveredTessage)
    {
-      var endpointId = undeliveredMessage.TargetEndpointId;
+      var endpointId = undeliveredTessage.TargetEndpointId;
 
       try
       {
-         var messageTypeId = new TypeId(undeliveredMessage.TypeIdGuid);
-         var messageType = _typeMapper.GetType(messageTypeId);
-         var message = _serializer.DeserializeTessage(messageType, undeliveredMessage.SerializedMessage);
+         var tessageTypeId = new TypeId(undeliveredTessage.TypeIdGuid);
+         var tessageType = _typeMapper.GetType(tessageTypeId);
+         var tessage = _serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
 
          // Get the connection using the transport's routing logic
          IInboxConnection connection;
          Task sendTask;
 
-         switch(message)
+         switch(tessage)
          {
             case IExactlyOnceTevent exactlyOnceEvent:
             {
@@ -160,42 +160,42 @@ class OutboxRetryPoller : IDisposable
                break;
             }
             default:
-               throw new InvalidOperationException($"Unexpected message type: {message.GetType().FullName}");
+               throw new InvalidOperationException($"Unexpected tessage type: {tessage.GetType().FullName}");
          }
 
-         this.Log().Debug($"Retrying delivery of message {undeliveredMessage.MessageId} to endpoint {endpointId} (attempt {undeliveredMessage.RetryCount + 1})");
+         this.Log().Debug($"Retrying delivery of tessage {undeliveredTessage.TessageId} to endpoint {endpointId} (attempt {undeliveredTessage.RetryCount + 1})");
 
-         sendTask.ContinueAsynchronouslyOnDefaultScheduler(completedTask => HandleRetryResult(completedTask, undeliveredMessage.MessageId, endpointId));
+         sendTask.ContinueAsynchronouslyOnDefaultScheduler(completedTask => HandleRetryResult(completedTask, undeliveredTessage.TessageId, endpointId));
       }
       catch(Exception exception)
       {
-         this.Log().Error(exception, $"Error retrying message {undeliveredMessage.MessageId} to endpoint {endpointId}");
-         RecordFailure(undeliveredMessage.MessageId, endpointId, exception);
+         this.Log().Error(exception, $"Error retrying tessage {undeliveredTessage.TessageId} to endpoint {endpointId}");
+         RecordFailure(undeliveredTessage.TessageId, endpointId, exception);
       }
    }
 
-   void HandleRetryResult(Task completedSendTask, Guid messageId, Guid endpointId) => _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
+   void HandleRetryResult(Task completedSendTask, Guid tessageId, Guid endpointId) => _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
    {
       if(!_running)
-         return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this message after restart.
+         return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
       if(completedSendTask.IsFaulted)
       {
          if(completedSendTask.Exception != null)
          {
-            this.Log().Warning(completedSendTask.Exception, $"Retry failed for message {messageId} to endpoint {endpointId}");
+            this.Log().Warning(completedSendTask.Exception, $"Retry failed for tessage {tessageId} to endpoint {endpointId}");
          } else
          {
-            this.Log().Warning($"Retry failed for message {messageId} to endpoint {endpointId} - no exception details available");
+            this.Log().Warning($"Retry failed for tessage {tessageId} to endpoint {endpointId} - no exception details available");
          }
 
-         RecordFailure(messageId, endpointId, completedSendTask.Exception);
+         RecordFailure(tessageId, endpointId, completedSendTask.Exception);
       } else
       {
-         this.Log().Info($"Successfully delivered message {messageId} to endpoint {endpointId}");
-         _messageStorage.MarkAsReceived(messageId, new EndpointId(endpointId));
+         this.Log().Info($"Successfully delivered tessage {tessageId} to endpoint {endpointId}");
+         _tessageStorage.MarkAsReceived(tessageId, new EndpointId(endpointId));
       }
    });
 
-   void RecordFailure(Guid messageId, Guid endpointId, Exception? exception) =>
-      _messageStorage.RecordDeliveryFailure(messageId, new EndpointId(endpointId), exception);
+   void RecordFailure(Guid tessageId, Guid endpointId, Exception? exception) =>
+      _tessageStorage.RecordDeliveryFailure(tessageId, new EndpointId(endpointId), exception);
 }

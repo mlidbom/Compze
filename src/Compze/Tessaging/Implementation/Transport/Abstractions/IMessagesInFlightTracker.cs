@@ -5,11 +5,11 @@ using Compze.Abstractions.Tessaging.Transport.Internal;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
-interface IMessagesInFlightTracker
+interface ITessagesInFlightTracker
 {
     IReadOnlyList<Exception> GetExceptions();
 
-    void SendingMessageOnTransport(TransportMessage.OutGoing transportMessage, EndpointId remoteEndpointId);
-    void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride);
-    void DoneWith(TransportMessage.InComing message, EndpointId handlingEndpointId, Exception? exception);
+    void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId);
+    void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride);
+    void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception);
 }

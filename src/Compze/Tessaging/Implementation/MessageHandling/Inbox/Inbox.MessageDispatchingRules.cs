@@ -1,26 +1,26 @@
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Tessaging.Implementation.MessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling;
 
 partial class Inbox
 {
-   class QueriesExecuteAfterAllCommandsAndEventsAreDone : IMessageDispatchingRule
+   class QueriesExecuteAfterAllCommandsAndEventsAreDone : ITessageDispatchingRule
    {
-      public bool CanBeDispatched(IExecutingMessagesSnapshot executing, TransportMessage.InComing candidateMessage)
+      public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
       {
-         if(candidateMessage.MessageTypeEnum != TransportMessage.TransportMessageType.NonTransactionalQuery) return true;
+         if(candidateTessage.TessageTypeEnum != TransportTessage.TransportTessageType.NonTransactionalQuery) return true;
 
          return executing.AtMostOnceCommands.None() && executing.ExactlyOnceCommands.None() && executing.ExactlyOnceEvents.None();
       }
    }
 
-   class CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint : IMessageDispatchingRule
+   class CommandsAndEventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint : ITessageDispatchingRule
    {
-      public bool CanBeDispatched(IExecutingMessagesSnapshot executing, TransportMessage.InComing candidateMessage)
+      public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
       {
-         if(candidateMessage.MessageTypeEnum == TransportMessage.TransportMessageType.NonTransactionalQuery) return true;
+         if(candidateTessage.TessageTypeEnum == TransportTessage.TransportTessageType.NonTransactionalQuery) return true;
 
          return executing.AtMostOnceCommands.None() && executing.ExactlyOnceCommands.None() && executing.ExactlyOnceEvents.None();
       }

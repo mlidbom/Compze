@@ -1,5 +1,5 @@
 using System;
 
-namespace Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
-class NoHandlerException(Type messageType) : Exception($"No handler registered for queuedMessageInformation type: {messageType.FullName}");
+class NoHandlerException(Type tessageType) : Exception($"No handler registered for queuedTessageInformation type: {tessageType.FullName}");

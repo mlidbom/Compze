@@ -1,16 +1,16 @@
 using System;
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using FluentAssertions;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public static class TestingHostExtensions
 {
-   public static (TException BackendException, MessageDispatchingFailedException FrontEndException) AssertThatRunningScenarioThrowsBackendAndClientException<TException>(this ITestingEndpointHost @this, Action action) where TException : Exception
+   public static (TException BackendException, TessageDispatchingFailedException FrontEndException) AssertThatRunningScenarioThrowsBackendAndClientException<TException>(this ITestingEndpointHost @this, Action action) where TException : Exception
    {
       var frontEndException = FluentActions.Invoking(action)
-                                           .Should().Throw<MessageDispatchingFailedException>()
+                                           .Should().Throw<TessageDispatchingFailedException>()
                                            .Which;
 
       return (@this.AssertThrown<TException>(), frontEndException);

@@ -1,6 +1,6 @@
 namespace Compze.Tessaging.Hosting.Implementation;
 
-enum InboxMessageStatus
+enum InboxTessageStatus
 {
    UnHandled = 0,
    Succeeded = 1,

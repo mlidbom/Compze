@@ -9,7 +9,7 @@ public class EventDataRow
       EventJson = eventAsJson;
       EventType = eventType;
 
-      EventId = @event.MessageId;
+      EventId = @event.TessageId;
       AggregateVersion = @event.AggregateVersion;
       AggregateId = @event.AggregateId;
       UtcTimeStamp = @event.UtcTimeStamp;
@@ -23,7 +23,7 @@ public class EventDataRow
       EventJson = eventAsJson;
       EventType = typeId;
 
-      EventId = @event.MessageId;
+      EventId = @event.TessageId;
       AggregateVersion = @event.AggregateVersion;
       AggregateId = @event.AggregateId;
       UtcTimeStamp = @event.UtcTimeStamp;

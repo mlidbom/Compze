@@ -7,12 +7,12 @@ class Basics
 {
    public void DoNothing() {}
 
-   #region message_handler
+   #region tessage_handler
    void Handle(RegisterAccountCommand command) {}
    #endregion
 
    #region register_account_command_handler
-   class RegisterAccountCommandHandler : IMessageHandler<RegisterAccountCommand>
+   class RegisterAccountCommandHandler : ITessageHandler<RegisterAccountCommand>
    {
       public void Handle(RegisterAccountCommand command) {}
    }
@@ -21,7 +21,7 @@ class Basics
 
 class RegisterAccountCommand {}
 
-interface IMessageHandler<T>
+interface ITessageHandler<T>
 {
    void Handle(T command);
 }

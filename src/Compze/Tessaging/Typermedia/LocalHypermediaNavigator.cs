@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading;
@@ -18,13 +18,13 @@ class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IInProcessHypermediaNavigator>()
-                                  .CreatedBy((IMessageHandlerRegistry messageHandlerRegistry)
-                                                => new InProcessHypermediaNavigator(messageHandlerRegistry)));
+                                  .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
+                                                => new InProcessHypermediaNavigator(tessageHandlerRegistry)));
 
-   readonly IMessageHandlerRegistry _handlerRegistry;
+   readonly ITessageHandlerRegistry _handlerRegistry;
    readonly IUsageGuard _contextGuard;
 
-   public InProcessHypermediaNavigator(IMessageHandlerRegistry handlerRegistry)
+   public InProcessHypermediaNavigator(ITessageHandlerRegistry handlerRegistry)
    {
       _handlerRegistry = handlerRegistry;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
@@ -62,6 +62,6 @@ class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
    void CommonAssertion(ITessage tessage)
    {
       _contextGuard.EnsureAccessValid();
-      MessageInspector.AssertValidToExecuteLocally(tessage);
+      TessageInspector.AssertValidToExecuteLocally(tessage);
    }
 }

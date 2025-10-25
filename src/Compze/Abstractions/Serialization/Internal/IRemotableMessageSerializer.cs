@@ -3,10 +3,10 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Abstractions.Serialization.Internal;
 
-interface IRemotableMessageSerializer
+interface IRemotableTessageSerializer
 {
-   string SerializeMessage(IRemotableTessage tessage);
-   IRemotableTessage DeserializeTessage(Type messageType, string json);
+   string SerializeTessage(IRemotableTessage tessage);
+   IRemotableTessage DeserializeTessage(Type tessageType, string json);
 
    string SerializeResponse(object response);
    object DeserializeResponse(Type responseType, string json);

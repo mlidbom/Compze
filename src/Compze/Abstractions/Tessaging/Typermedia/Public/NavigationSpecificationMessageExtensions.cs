@@ -4,7 +4,7 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Abstractions.Tessaging.Typermedia.Public;
 
-public static class NavigationSpecificationMessageExtensions
+public static class NavigationSpecificationTessageExtensions
 {
    public static NavigationSpecification Post(this IAtMostOnceHypermediaTommand tommand) => NavigationSpecification.Post(tommand);
 

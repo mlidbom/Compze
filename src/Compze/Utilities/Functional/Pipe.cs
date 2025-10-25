@@ -42,8 +42,8 @@ public static class Pipe
    }
 
    ///<summary>Throws Exception if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
-   public static T assert<T>(this T it, Predicate<T> predicate, Func<T, string> messageFactory) =>
-      it.assert(predicate, () => new Exception(messageFactory(it)));
+   public static T assert<T>(this T it, Predicate<T> predicate, Func<T, string> tessageFactory) =>
+      it.assert(predicate, () => new Exception(tessageFactory(it)));
 
    ///<summary>Throws <paramref name="exceptionFactory"/>() if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
    public static T assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)

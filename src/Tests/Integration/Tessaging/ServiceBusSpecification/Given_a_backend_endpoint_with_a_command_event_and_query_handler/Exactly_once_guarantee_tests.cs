@@ -29,13 +29,13 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 
    [PCT] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceEvent_event_never_reaches_remote_handler_but_does_reach_local_handler()
    {
-      const string exceptionMessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
-      MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionMessage));
+      const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
+      MyCreateAggregateCommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
       var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateAggregateTommand.Create())));
 
-      backendException.InnerException!.Message.Should().Contain(exceptionMessage);
-      frontEndException.Message.Should().Contain(exceptionMessage);
+      backendException.InnerException!.Message.Should().Contain(exceptionTessage);
+      frontEndException.Message.Should().Contain(exceptionTessage);
 
       MyLocalAggregateEventHandlerThreadGate.Passed.Should().BeGreaterThanOrEqualTo(1);
 

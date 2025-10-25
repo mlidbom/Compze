@@ -82,7 +82,7 @@ class EventModifier(Action<IReadOnlyList<EventModifier.RefactoredEvent>> eventsA
 #pragma warning disable CS0618 // Type or member is obsolete
              ((IMutableAggregateTevent)e.NewTevent).SetAggregateVersionInternal(_inspectedEvent!.AggregateVersion + index);
 
-             e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.Replaces(_inspectedEvent.MessageId);
+             e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.Replaces(_inspectedEvent.TessageId);
             e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
             ((IMutableAggregateTevent)e.NewTevent).SetAggregateIdInternal(_inspectedEvent.AggregateId);
@@ -132,7 +132,7 @@ class EventModifier(Action<IReadOnlyList<EventModifier.RefactoredEvent>> eventsA
             {
                ((IMutableAggregateTevent)e.NewTevent).SetAggregateVersionInternal(_inspectedEvent.AggregateVersion + index);
 
-               e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertAfter(_lastEventInActualStream!.MessageId);
+               e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertAfter(_lastEventInActualStream!.TessageId);
                e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
                ((IMutableAggregateTevent)e.NewTevent).SetAggregateIdInternal(_inspectedEvent.AggregateId);
@@ -146,7 +146,7 @@ class EventModifier(Action<IReadOnlyList<EventModifier.RefactoredEvent>> eventsA
             {
                ((IMutableAggregateTevent)e.NewTevent).SetAggregateVersionInternal(_inspectedEvent!.AggregateVersion + index);
 
-               e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertBefore(_inspectedEvent.MessageId);
+               e.StorageInformation.RefactoringInformation = AggregateEventRefactoringInformation.InsertBefore(_inspectedEvent.TessageId);
                e.StorageInformation.EffectiveVersion = _inspectedEvent.AggregateVersion + index;
 
                ((IMutableAggregateTevent)e.NewTevent).SetAggregateIdInternal(_inspectedEvent.AggregateId);

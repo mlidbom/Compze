@@ -28,21 +28,21 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITransportClient transportClient, IMessageStorage messageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
-                                                => new Outbox(transportClient, messageStorage, configuration, exceptionReporter, retryPoller)));
-      registrar.Register(MessageStorage.RegisterWith);
+                                  .CreatedBy((EndpointConfiguration configuration, ITransportClient transportClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+                                                => new Outbox(transportClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
+      registrar.Register(TessageStorage.RegisterWith);
       registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
-   readonly IMessageStorage _storage;
+   readonly ITessageStorage _storage;
    readonly EndpointConfiguration _configuration;
    readonly ITransportClient _transportClient;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(ITransportClient transportClient, IMessageStorage messageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+   Outbox(ITransportClient transportClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
    {
-      _storage = messageStorage;
+      _storage = tessageStorage;
       _configuration = configuration;
       _transportClient = transportClient;
       _exceptionReporter = exceptionReporter;
@@ -56,16 +56,16 @@ partial class Outbox : IOutbox
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch events to ourselves synchronously so don't go doing it again here.;
 
-      //Urgent: bug. Our traceability thinking does not allow just discarding this message.But removing this if statement breaks a lot of tests that uses endpoint wiring but do not start an endpoint.
+      //Urgent: bug. Our traceability thinking does not allow just discarding this tessage.But removing this if statement breaks a lot of tests that uses endpoint wiring but do not start an endpoint.
       if(connections.Length != 0)
       {
          var eventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
-         _storage.SaveMessage(exactlyOnceTevent, eventHandlerEndpointIds);
+         _storage.SaveTessage(exactlyOnceTevent, eventHandlerEndpointIds);
 
          Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
          {
             subscriberConnection.SendAsync(exactlyOnceTevent)
-                                .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.MessageId));
+                                .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.TessageId));
          }));
       }
    }
@@ -75,27 +75,27 @@ partial class Outbox : IOutbox
       Assert.State.NotNull(Transaction.Current);
       var connection = _transportClient.ConnectionToHandlerFor(exactlyOnceTommand);
 
-      _storage.SaveMessage(exactlyOnceTommand, connection.EndpointInformation.Id);
+      _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
          connection.SendAsync(exactlyOnceTommand)
-                   .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.MessageId));
+                   .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.TessageId));
       });
    }
 
-   void HandleDeliveryTaskResults(Task completedSendTask, EndpointId receiverId, Guid messageId)
+   void HandleDeliveryTaskResults(Task completedSendTask, EndpointId receiverId, Guid tessageId)
    {
       _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
       {
          if(!_running)
-            return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this message after restart.
+            return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
          if(completedSendTask.IsFaulted)
          {
-            _storage.RecordDeliveryFailure(messageId, receiverId, completedSendTask.Exception);
+            _storage.RecordDeliveryFailure(tessageId, receiverId, completedSendTask.Exception);
          } else
          {
-            _storage.MarkAsReceived(messageId, receiverId);
+            _storage.MarkAsReceived(tessageId, receiverId);
          }
       });
    }

@@ -16,33 +16,33 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_bac
 public class Outbox_retry_tests : EndpointHostTestBase
 {
    [PCT]
-   public async Task When_remote_endpoint_is_down_messages_are_stored_and_delivered_after_endpoint_restarts()
+   public async Task When_remote_endpoint_is_down_tessages_are_stored_and_delivered_after_endpoint_restarts()
    {
       await BackendEndPoint.StopListeningComponentsAsync();
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
-      var originalRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
-      await Await.Async(() => originalRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero).Any(it => it.RetryCount > 0),
+      var originalRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
+      await Await.Async(() => originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Any(it => it.RetryCount > 0),
                         10.Seconds(),
                         10.Milliseconds(),
-                        "A message with a retry count greater than 0 should have been added to storage");
+                        "A tessage with a retry count greater than 0 should have been added to storage");
 
-      var undeliveredMessage = originalRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero)[0];
-      undeliveredMessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
-      undeliveredMessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
+      var undeliveredTessage = originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero)[0];
+      undeliveredTessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
+      undeliveredTessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
 
-      var newRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
+      var newRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
 
       MyExactlyOnceCommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, 15.Seconds());
-      await Await.Async(() => newRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero).Count == 0,
+      await Await.Async(() => newRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Count == 0,
                         10.Seconds(),
                         10.Milliseconds(),
-                        "Timeout waiting for messages to be removed from outbox");
+                        "Timeout waiting for tessages to be removed from outbox");
 
-      originalRemoteStorage.GetUndeliveredMessages(TimeSpan.Zero).Should().HaveCount(0, "the new endpoint after restart should be using the same database");
+      originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Should().HaveCount(0, "the new endpoint after restart should be using the same database");
    }
 
    [PCT]
@@ -51,15 +51,15 @@ public class Outbox_retry_tests : EndpointHostTestBase
       await BackendEndPoint.StopListeningComponentsAsync();
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
-      var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.IMessageStorage>();
-      await Await.Async(() => remoteStorage.GetUndeliveredMessages(TimeSpan.Zero).Any(it => it.RetryCount > 0),
+      var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
+      await Await.Async(() => remoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Any(it => it.RetryCount > 0),
                         10.Seconds(),
                         10.Milliseconds(),
-                        "A message with a retry count greater than 0 should have been added to storage");
+                        "A tessage with a retry count greater than 0 should have been added to storage");
 
-      var undeliveredMessage = remoteStorage.GetUndeliveredMessages(TimeSpan.Zero)[0];
-      undeliveredMessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
-      undeliveredMessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
+      var undeliveredTessage = remoteStorage.GetUndeliveredTessages(TimeSpan.Zero)[0];
+      undeliveredTessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
+      undeliveredTessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
    }

@@ -7,7 +7,7 @@ namespace Compze.Tests;
 // No need to copy it to each project!
 public static class FluentAssertionsModuleInitializer
 {
-   [SuppressMessage("Usage", "CA2255:The 'ModuleInitializer' attribute should not be used in libraries", Justification = "Shared test infrastructure needs module initialization to suppress FluentAssertions license message across all test projects")]
+   [SuppressMessage("Usage", "CA2255:The 'ModuleInitializer' attribute should not be used in libraries", Justification = "Shared test infrastructure needs module initialization to suppress FluentAssertions license tessage across all test projects")]
    [ModuleInitializer]
    public static void Initialize()
    {

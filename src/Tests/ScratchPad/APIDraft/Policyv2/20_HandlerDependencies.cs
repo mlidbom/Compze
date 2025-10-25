@@ -12,7 +12,7 @@ public class HandlerDependencies
          CommandHandler.For<CreateAccountCommand>(
             "17893552-D533-4A59-A177-63EAF3B7B07E",
             command => {},
-            //This handler must wait until there are no messages queued to any handler with policy:
+            //This handler must wait until there are no tessages queued to any handler with policy:
             //Policy.Updates<EmailToAccountLookupModel>. Throws an exception on registration if there are no handlers with matching Updates<> policy.
             Policy.RequiresUpToDate<EmailToAccountLookupModel>.All),
 

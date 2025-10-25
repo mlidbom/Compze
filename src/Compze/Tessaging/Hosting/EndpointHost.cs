@@ -20,13 +20,13 @@ public class EndpointHost : IEndpointHost
    readonly IComponentRegistrar _registrar;
    readonly Func<IComponentRegistrar, IDependencyInjectionContainer> _containerFactory;
    protected IList<IEndpoint> Endpoints { get; } = [];
-   internal IMessagesInFlightTracker MessagesInFlightTracker;
+   internal ITessagesInFlightTracker TessagesInFlightTracker;
 
    protected EndpointHost(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory)
    {
       _registrar = registrar;
       _containerFactory = containerFactory;
-      MessagesInFlightTracker = new NullOpMessagesInFlightTracker();
+      TessagesInFlightTracker = new NullOpTessagesInFlightTracker();
    }
 
    public static class Production
@@ -38,7 +38,7 @@ public class EndpointHost : IEndpointHost
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
-      using var builder = new ServerEndpointBuilder(this, MessagesInFlightTracker, _containerFactory(_registrar), configuration);
+      using var builder = new ServerEndpointBuilder(this, TessagesInFlightTracker, _containerFactory(_registrar), configuration);
       setup(builder);
 
       var endpoint = builder.Build();

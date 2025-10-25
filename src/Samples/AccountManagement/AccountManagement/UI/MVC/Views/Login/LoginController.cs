@@ -20,7 +20,7 @@ public class LoginController(IRemoteHypermediaNavigator remoteApiNavigator) : Co
       }
 
       ModelState.AddModelError("Something", "Login Failed");
-      ModelState.Remove((AccountResource.Command.LogIn model) => model.MessageId);
+      ModelState.Remove((AccountResource.Command.LogIn model) => model.TessageId);
       loginCommand.ReplaceDeduplicationId();
       return View("LoginForm", loginCommand);
    }

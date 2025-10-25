@@ -48,10 +48,10 @@ class TypeMapper : ITypeMapper
             return typeId;
          }
 
-         // Check if we have a stored message for this assembly
-         if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var message))
+         // Check if we have a stored tessage for this assembly
+         if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
          {
-            throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{message}");
+            throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{tessage}");
          }
 
          throw BuildExceptionDescribingHowToAddMissingMappings([type]);
@@ -90,10 +90,10 @@ class TypeMapper : ITypeMapper
 
          if(!found.Any())
          {
-            // Check if we have a stored message for this assembly
-            if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var message))
+            // Check if we have a stored tessage for this assembly
+            if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
             {
-               throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{message}");
+               throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{tessage}");
             }
 
             throw BuildExceptionDescribingHowToAddMissingMappings([type]);
@@ -172,9 +172,9 @@ class TypeMapper : ITypeMapper
 
       if(assemblyTypeMapperType == null)
       {
-         // Store the message for later use if type mapping fails
-         var message = BuildMessageDescribingHowToAddMissingMappings(assembly);
-         state.AssemblyMappingUpdateMessages[assembly] = message;
+         // Store the tessage for later use if type mapping fails
+         var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
+         state.AssemblyMappingUpdateTessages[assembly] = tessage;
          return;
       }
 
@@ -190,13 +190,13 @@ class TypeMapper : ITypeMapper
       var typesWithMissingMappings = typesRequiringMapping.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
       if(typesWithMissingMappings.Any())
       {
-         // Store the message for later use if type mapping fails
-         var message = BuildMessageDescribingHowToAddMissingMappings(assembly);
-         state.AssemblyMappingUpdateMessages[assembly] = message;
+         // Store the tessage for later use if type mapping fails
+         var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
+         state.AssemblyMappingUpdateTessages[assembly] = tessage;
       }
    }
 
-   static string BuildMessageDescribingHowToAddMissingMappings(Assembly assembly)
+   static string BuildTessageDescribingHowToAddMissingMappings(Assembly assembly)
    {
       var assemblyName = assembly.GetName().Name;
       var rootNamespace = assemblyName;
@@ -213,12 +213,12 @@ class TypeMapper : ITypeMapper
       // Try to automatically find the project file and create the mapping
       var createdFilePath = TypeMapperSourceCodeGenerator.TryFindProjectFileAndCreateMapping(assembly, allTypesRequiringMapping, existingMappings);
 
-      var fixMessage = new StringBuilder();
+      var fixTessage = new StringBuilder();
 
       if(createdFilePath != null)
       {
          // File was auto-generated, but might be in wrong location (e.g., NCrunch temp folder)
-         fixMessage.AppendLine(CultureInfo.InvariantCulture,
+         fixTessage.AppendLine(CultureInfo.InvariantCulture,
                                $"""
 
                                 Type mappings were automatically generated for assembly: {assemblyName}
@@ -235,7 +235,7 @@ class TypeMapper : ITypeMapper
       } else
       {
          // Auto-generation failed, provide manual instructions
-         fixMessage.AppendLine(CultureInfo.InvariantCulture,
+         fixTessage.AppendLine(CultureInfo.InvariantCulture,
                                $"""
 
                                 In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
@@ -246,19 +246,19 @@ class TypeMapper : ITypeMapper
                                 """);
       }
 
-      fixMessage.AppendLine(generatedCode);
+      fixTessage.AppendLine(generatedCode);
 
-      return fixMessage.ToString();
+      return fixTessage.ToString();
    }
 
    static Exception BuildExceptionDescribingHowToAddMissingMappings(IReadOnlyList<Type> missingTypes)
    {
-      var fixMessage = new StringBuilder();
+      var fixTessage = new StringBuilder();
 
       var firstType = missingTypes[0];
       var missingInTheSameAssembly = missingTypes.TakeWhile(it => it.Assembly == firstType.Assembly).ToList();
 
-      fixMessage.AppendLine(CultureInfo.InvariantCulture,
+      fixTessage.AppendLine(CultureInfo.InvariantCulture,
                             $"""
 
                              In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
@@ -267,12 +267,12 @@ class TypeMapper : ITypeMapper
 
       foreach(var missingType in missingInTheSameAssembly)
       {
-         fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(new Guid(\"{Guid.NewGuid()}\"), typeof({missingType.GetFullNameCompilable()}));");
+         fixTessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(new Guid(\"{Guid.NewGuid()}\"), typeof({missingType.GetFullNameCompilable()}));");
       }
 
-      fixMessage.Append(Environment.NewLine).AppendLine();
+      fixTessage.Append(Environment.NewLine).AppendLine();
 
-      return new Exception(fixMessage.ToString());
+      return new Exception(fixTessage.ToString());
    }
 
    class MappingState
@@ -280,7 +280,7 @@ class TypeMapper : ITypeMapper
       public readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       public readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
       public readonly HashSet<Assembly> CheckedAssemblies = [];
-      public readonly Dictionary<Assembly, string> AssemblyMappingUpdateMessages = new();
+      public readonly Dictionary<Assembly, string> AssemblyMappingUpdateTessages = new();
 
       internal void Map(Type type, TypeId typeId)
       {

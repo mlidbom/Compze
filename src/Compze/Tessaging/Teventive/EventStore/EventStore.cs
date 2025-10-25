@@ -109,7 +109,7 @@ namespace Compze.Tessaging.Teventive.EventStore;
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableAggregateTevent)@event).SetAggregateIdInternal(eventDataRowRow.AggregateId);
       ((IMutableAggregateTevent)@event).SetAggregateVersionInternal(eventDataRowRow.AggregateVersion);
-      ((IMutableAggregateTevent)@event).SetMessageIdInternal(eventDataRowRow.EventId);
+      ((IMutableAggregateTevent)@event).SetTessageIdInternal(eventDataRowRow.EventId);
       ((IMutableAggregateTevent)@event).SetUtcTimeStampInternal(eventDataRowRow.UtcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
       return @event;

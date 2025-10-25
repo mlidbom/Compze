@@ -2,16 +2,16 @@ using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting.Implementation;
 
-namespace Compze.Tessaging.Implementation.MessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling;
 
 partial class Inbox
 {
-   public interface IMessageStorage
+   public interface ITessageStorage
    {
-      IServiceBusSqlLayer.SaveMessageResult SaveIncomingMessage(TransportMessage.InComing message);
-      void MarkAsSucceeded(TransportMessage.InComing message);
-      void RecordException(TransportMessage.InComing message, Exception exception );
-      void MarkAsFailed(TransportMessage.InComing message);
+      IServiceBusSqlLayer.SaveTessageResult SaveIncomingTessage(TransportTessage.InComing tessage);
+      void MarkAsSucceeded(TransportTessage.InComing tessage);
+      void RecordException(TransportTessage.InComing tessage, Exception exception );
+      void MarkAsFailed(TransportTessage.InComing tessage);
       Task StartAsync();
    }
 }

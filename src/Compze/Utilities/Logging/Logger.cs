@@ -13,54 +13,54 @@ abstract class Logger : ILogger
 
    protected Logger(LogLevel logLevel) => _configuredLogLevel = logLevel;
 
-   protected abstract void ErrorInternal(Exception exception, string? message);
+   protected abstract void ErrorInternal(Exception exception, string? tessage);
    public abstract ILogger WithLogLevel(LogLevel level);
 
-   public unit Error(Exception exception, string? message) => unit.From(() =>
+   public unit Error(Exception exception, string? tessage) => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Error)
       {
-         ErrorInternal(exception, message);
+         ErrorInternal(exception, tessage);
       }
    });
 
-   protected abstract void WarningInternal(string message);
+   protected abstract void WarningInternal(string tessage);
 
-   public unit Warning(string message) => unit.From(() =>
+   public unit Warning(string tessage) => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Warning)
       {
-         WarningInternal(message);
+         WarningInternal(tessage);
       }
    });
 
-   protected abstract void WarningInternal(Exception exception, string message);
+   protected abstract void WarningInternal(Exception exception, string tessage);
 
-   public unit Warning(Exception exception, string message) => unit.From(() =>
+   public unit Warning(Exception exception, string tessage) => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Warning)
       {
-         WarningInternal(exception, message);
+         WarningInternal(exception, tessage);
       }
    });
 
-   protected abstract void InfoInternal(string message);
+   protected abstract void InfoInternal(string tessage);
 
-   public unit Info(string message) => unit.From(() =>
+   public unit Info(string tessage) => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Info)
       {
-         InfoInternal(message);
+         InfoInternal(tessage);
       }
    });
 
-   protected abstract void DebugInternal(string message);
+   protected abstract void DebugInternal(string tessage);
 
-   public unit Debug(string message) => unit.From(() =>
+   public unit Debug(string tessage) => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Debug)
       {
-         DebugInternal(message);
+         DebugInternal(tessage);
       }
    });
 }

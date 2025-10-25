@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 
-namespace Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 interface IInbox
 {
@@ -9,5 +9,5 @@ interface IInbox
    Task StartAsync();
    Task StopAsync();
 
-   Task<object?> Receive(TransportMessage.InComing message);
+   Task<object?> Receive(TransportTessage.InComing tessage);
 }

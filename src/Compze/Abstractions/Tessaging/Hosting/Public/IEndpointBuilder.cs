@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Abstractions.Tessaging.Hosting.Public;

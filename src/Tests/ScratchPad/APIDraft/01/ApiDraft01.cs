@@ -9,75 +9,75 @@ namespace Compze.Tests.ScratchPad.APIDraft._01;
 
 class APIDraft01
 {
-   class MessageHandler<TImplementation>
+   class TessageHandler<TImplementation>
    {
-      public MessageHandler<TImplementation> ForEvent<TEvent>(Action<TImplementation, TEvent> action) => this;
-      public MessageHandler<TImplementation> ForCommand<TCommand>(Action<TImplementation, TCommand> action) => this;
-      public MessageHandler<TImplementation> ForQuery<TQuery, TResult>(Func<TImplementation, TQuery, TResult> action) => this;
+      public TessageHandler<TImplementation> ForEvent<TEvent>(Action<TImplementation, TEvent> action) => this;
+      public TessageHandler<TImplementation> ForCommand<TCommand>(Action<TImplementation, TCommand> action) => this;
+      public TessageHandler<TImplementation> ForQuery<TQuery, TResult>(Func<TImplementation, TQuery, TResult> action) => this;
 
 
    }
 
-   class MessageHandler
+   class TessageHandler
    {
-      public MessageHandler ForEvent<TEvent>(Action<TEvent> action) => this;
+      public TessageHandler ForEvent<TEvent>(Action<TEvent> action) => this;
 
-      public MessageHandler ForCommand<TCommand>(Action<TCommand> action) => this;
+      public TessageHandler ForCommand<TCommand>(Action<TCommand> action) => this;
 
-      public MessageHandler ForQuery<TQuery, TResult>(Func<TQuery, TResult> action) => this;
+      public TessageHandler ForQuery<TQuery, TResult>(Func<TQuery, TResult> action) => this;
    }
 
-   class MessageHandlerGroup
+   class TessageHandlerGroup
    {
-      public MessageHandlerGroup(params Object[] children) {}
-      public MessageHandlerGroup Add(MessageHandlerGroup child) => this;
-      public MessageHandlerGroup Add(MessageHandler handler) => this;
+      public TessageHandlerGroup(params Object[] children) {}
+      public TessageHandlerGroup Add(TessageHandlerGroup child) => this;
+      public TessageHandlerGroup Add(TessageHandler handler) => this;
    }
 
-   class MessageHandlerGroupSettings
+   class TessageHandlerGroupSettings
    {
       //int MaximumThreads = 1;
    }
 
-   class MessageHandlerSettings {}
+   class TessageHandlerSettings {}
 
-   enum MessageHandlerGroupFlags
+   enum TessageHandlerGroupFlags
    {
       RunHandlersInParallelWithEachOther,
    }
 
 
-   enum MessageHandlerFlags
+   enum TessageHandlerFlags
    {
-      HandleMessagesInParallel
+      HandleTessagesInParallel
    }
 
    class Endpoint
    {
-      public Endpoint(params MessageHandlerGroup[] handlerGroups) { handlerGroups.ForEach(Add); }
+      public Endpoint(params TessageHandlerGroup[] handlerGroups) { handlerGroups.ForEach(Add); }
 
-      protected void Add(MessageHandlerGroup obj) {}
+      protected void Add(TessageHandlerGroup obj) {}
    }
 
    class AccountEndpoint : Endpoint
    {
       public AccountEndpoint()
       {
-         Add(new MessageHandlerGroup(
-                new MessageHandler<AccountQueryModelUpdater>()
+         Add(new TessageHandlerGroup(
+                new TessageHandler<AccountQueryModelUpdater>()
                   .ForEvent<AccountCreatedEvent>((handler, @event) => handler.Handle(@event)),
-                new MessageHandler<AccountCommandHandler>()
+                new TessageHandler<AccountCommandHandler>()
                   .ForCommand<CreateAccountCommand>((handler, command) => handler.Handle(command)),
-                new MessageHandler<AccountQueryHandler>()
+                new TessageHandler<AccountQueryHandler>()
                   .ForQuery<GetAccountQuery, string>((handler, query) => handler.Handle(query)),
-                new MessageHandler<AccountController>()
+                new TessageHandler<AccountController>()
                   .ForEvent<AccountCreatedEvent>((handler, @event) => handler.Handle(@event))
                   .ForCommand<CreateAccountCommand>((handler, command) => handler.Handle(command))
                   .ForQuery<GetAccountQuery, string>((handler, query) => handler.Handle(query))
              ));
 
-         Add(new MessageHandlerGroup(
-                new MessageHandler()
+         Add(new TessageHandlerGroup(
+                new TessageHandler()
              ));
       }
    }
@@ -100,12 +100,12 @@ class APIDraft01
          bus.RegisterEndPoint<AccountEndpoint>()
             .RegisterEndPoint<ForumsEndpoint>();
 
-         var total = new MessageHandlerGroup(
-            MessageHandlerGroupFlags.RunHandlersInParallelWithEachOther,
-            new MessageHandlerGroup(
-               new MessageHandler()
+         var total = new TessageHandlerGroup(
+            TessageHandlerGroupFlags.RunHandlersInParallelWithEachOther,
+            new TessageHandlerGroup(
+               new TessageHandler()
             ),
-            new MessageHandlerGroup()
+            new TessageHandlerGroup()
          );
       }
    }

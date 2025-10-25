@@ -5,7 +5,7 @@ using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Implementation;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
-using MessageTable =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxMessageDatabaseSchemaStrings;
+using TessageTable =  Compze.Tessaging.Hosting.Implementation.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sql.Sqlite;
 
@@ -13,7 +13,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
 
-   public IServiceBusSqlLayer.SaveMessageResult SaveMessage(Guid messageId, Guid typeId, string serializedMessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(Guid tessageId, Guid typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
@@ -22,24 +22,24 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {MessageTable.TableName} 
-                               ({MessageTable.MessageId},  {MessageTable.TypeId},  {MessageTable.Body}, {MessageTable.Status}) 
-                       VALUES (@{MessageTable.MessageId}, @{MessageTable.TypeId}, @{MessageTable.Body}, {(int)InboxMessageStatus.UnHandled})
-                   ON CONFLICT ({MessageTable.MessageId}) DO NOTHING
+                   INSERT INTO {TessageTable.TableName} 
+                               ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status}) 
+                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
+                   ON CONFLICT ({TessageTable.TessageId}) DO NOTHING
 
                    """)
-              .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
-              .AddVarcharParameter(MessageTable.TypeId, 36, typeId.ToString())
-              .AddMediumTextParameter(MessageTable.Body, serializedMessage)
+              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+              .AddVarcharParameter(TessageTable.TypeId, 36, typeId.ToString())
+              .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 
             return affectedRows == 0 
-               ? IServiceBusSqlLayer.SaveMessageResult.Duplicate 
-               : IServiceBusSqlLayer.SaveMessageResult.NewMessage;
+               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate 
+               : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
          });
    }
 
-   public void MarkAsSucceeded(Guid messageId)
+   public void MarkAsSucceeded(Guid tessageId)
    {
       _connectionFactory.UseCommand(
          command =>
@@ -48,13 +48,13 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
                               .SetCommandText(
                                   $"""
 
-                                   UPDATE {MessageTable.TableName} 
-                                       SET {MessageTable.Status} = {(int)InboxMessageStatus.Succeeded}
-                                   WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                                       AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
+                                   UPDATE {TessageTable.TableName} 
+                                       SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
+                                   WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                                       AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                                    """)
-                              .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
+                              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
                               .ExecuteNonQuery();
 
             Assert.Result.Is(affectedRows == 1);
@@ -62,42 +62,42 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory) : ISe
          });
    }
 
-   public int RecordException(Guid messageId, string exceptionStackTrace, string exceptionMessage, string exceptionType)
+   public int RecordException(Guid tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
    {
       return _connectionFactory.UseCommand(
          command => command
                    .SetCommandText(
                        $"""
 
-                        UPDATE {MessageTable.TableName} 
-                            SET {MessageTable.ExceptionCount} = {MessageTable.ExceptionCount} + 1,
-                                {MessageTable.ExceptionType} = @{MessageTable.ExceptionType},
-                                {MessageTable.ExceptionStackTrace} = @{MessageTable.ExceptionStackTrace},
-                                {MessageTable.ExceptionMessage} = @{MessageTable.ExceptionMessage}
+                        UPDATE {TessageTable.TableName} 
+                            SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
+                                {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
+                                {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
+                                {TessageTable.ExceptionTessage} = @{TessageTable.ExceptionTessage}
                                 
-                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                         """)
-                   .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
-                   .AddMediumTextParameter(MessageTable.ExceptionStackTrace, exceptionStackTrace)
-                   .AddMediumTextParameter(MessageTable.ExceptionMessage, exceptionMessage)
-                   .AddVarcharParameter(MessageTable.ExceptionType, 500, exceptionType)
+                   .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+                   .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
+                   .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
+                   .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
                    .ExecuteNonQuery());
    }
 
-   public int MarkAsFailed(Guid messageId)
+   public int MarkAsFailed(Guid tessageId)
    {
       return _connectionFactory.UseCommand(
          command => command
                    .SetCommandText(
                        $"""
 
-                        UPDATE {MessageTable.TableName} 
-                            SET {MessageTable.Status} = {(int)InboxMessageStatus.Failed}
-                        WHERE {MessageTable.MessageId} = @{MessageTable.MessageId}
-                            AND {MessageTable.Status} = {(int)InboxMessageStatus.UnHandled}
+                        UPDATE {TessageTable.TableName} 
+                            SET {TessageTable.Status} = {(int)InboxTessageStatus.Failed}
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                            AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                         """)
-                   .AddVarcharParameter(MessageTable.MessageId, 36, messageId.ToString())
+                   .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
                    .ExecuteNonQuery());
    }
 

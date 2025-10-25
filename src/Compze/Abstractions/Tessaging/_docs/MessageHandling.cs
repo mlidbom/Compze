@@ -7,20 +7,20 @@ using Compze.Tessaging.Teventive.EventStore.Abstractions;
 namespace Compze.Tessaging.Abstractions;
 
 /// <summary>
-/// Example code for documentation purposes - demonstrates basic message handling patterns.
+/// Example code for documentation purposes - demonstrates basic tessage handling patterns.
 /// This file is visible and refactorable in production projects but only compiled into the Website project.
 /// </summary>
-class MessageHandlingExamples
+class TessageHandlingExamples
 {
-   #region message_handler_example
+   #region tessage_handler_example
    void Handle(MyCommand command)
    {
       // Process the command
    }
    #endregion
 
-   #region message_handler_interface
-   class MyCommandHandler : IMessageHandler<MyCommand>
+   #region tessage_handler_interface
+   class MyCommandHandler : ITessageHandler<MyCommand>
    {
       public void Handle(MyCommand command)
       {
@@ -37,7 +37,7 @@ interface IMyEvent : IAggregateEvent
 
 }
 
-interface IMessageHandler<T>
+interface ITessageHandler<T>
 {
    void Handle(T command);
 }

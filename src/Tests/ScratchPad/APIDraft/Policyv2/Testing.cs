@@ -12,8 +12,8 @@ public class Testing
 {
    public void Test()
    {
-      var createAccountHandler = new TestMessageHandler<CreateAccountCommand>();
-      var accountQueryModelUpdater = new TestMessageHandler<AccountCreatedEvent>();
+      var createAccountHandler = new TestTessageHandler<CreateAccountCommand>();
+      var accountQueryModelUpdater = new TestTessageHandler<AccountCreatedEvent>();
 
       var endpoint = new Endpoint(
          CommandHandler.For<CreateAccountCommand>("BE8B06E7-28BB-439D-BDD6-CF7E9454424B", createAccountHandler.Handle),
@@ -80,7 +80,7 @@ public class Testing
 
    //Register a handler implemented like this and you get full insight into when it is invoked, and full control over when it is allowed to complete.
    //This should give us full testability of invokation policies :)
-   class TestMessageHandler<T>
+   class TestTessageHandler<T>
    {
       public readonly TestingResetEvent Started = new TestingResetEvent(nameof(Started));
       public readonly  TestingResetEvent Completed = new TestingResetEvent(nameof(Completed));
@@ -91,7 +91,7 @@ public class Testing
       public bool IsRunning => IsStarted && !IsCompleted;
 
 
-      public void Handle(T message)
+      public void Handle(T tessage)
       {
          Completed.Reset();
          IsCompleted = false;

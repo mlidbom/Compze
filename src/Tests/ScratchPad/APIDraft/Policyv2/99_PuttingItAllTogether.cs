@@ -10,12 +10,12 @@ public class PuttingItAllTogether
    {
       var defaultEventHandlerPolicies = new CompositePolicy(
          Policy.LockExclusively.ThisHandler,   //Ensures that this handler is never invoked in parallel with itself.
-         Policy.LockExclusively.CurrentMessage //Ensures that no other handler handle the same queuedMessageInformation in parallel with this handler.
+         Policy.LockExclusively.CurrentTessage //Ensures that no other handler handle the same queuedTessageInformation in parallel with this handler.
          //Useless when applied to a command handler since there can only be one.
       );
 
       var defaultCommandHandlerPolicies = new CompositePolicy(
-         Policy.LockExclusively.AggregateRelatedToMessage
+         Policy.LockExclusively.AggregateRelatedToTessage
       );
 
       var pauseAllOtherHandlers = new CompositePolicy(
@@ -32,7 +32,7 @@ public class PuttingItAllTogether
             //Being explicit about which events might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
             Policy.Publishes<IAccountEvent>(),
-            //This handler must wait until there are no messages queued to any handler with policy:
+            //This handler must wait until there are no tessages queued to any handler with policy:
             //Policy.Updates<EmailToAccountLookupModel>. Throws an exception on registration if there are no handlers with matching Updates<> policy.
             Policy.RequiresUpToDate<EmailToAccountLookupModel>.All),
 
@@ -50,7 +50,7 @@ public class PuttingItAllTogether
             "2E8642CA-6C60-4B91-A92E-54AD3753E7F2",
             @event => { },
             defaultEventHandlerPolicies,
-            Policy.Updates<AccountReadModel>.WithCurrentMessageAggregateId()),
+            Policy.Updates<AccountReadModel>.WithCurrentTessageAggregateId()),
 
          EventHandler.For<AccountCreatedEvent>(
             "A5A1DF35-982C-4962-A7DA-C98AC88633C0",
@@ -67,7 +67,7 @@ public class PuttingItAllTogether
             defaultEventHandlerPolicies,
             //(Deprecated. See: Policy.RequiresUpToDate above. )
             //This denormalizer keeps a domain read model up to date. For the domain to work reliably it needs to be executed within the triggering transaction.
-            Policy.OnCascadedMessage.InvokeWithinTriggeringTransaction,
+            Policy.OnCascadedTessage.InvokeWithinTriggeringTransaction,
             Policy.Updates<EmailToAccountLookupModel>.WithId(new ExtractEmailFromEmailUpdatedEvent())),
 
          //Delegate to container registered component to handle the event.

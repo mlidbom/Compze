@@ -131,8 +131,8 @@ public class ThreadGate : IThreadGate
       {
          if(!_enableLogging) return;
 
-         var message = $"{@event} {this}";
-         Console.WriteLine(message);
+         var tessage = $"{@event} {this}";
+         Console.WriteLine(tessage);
       }
    });
 

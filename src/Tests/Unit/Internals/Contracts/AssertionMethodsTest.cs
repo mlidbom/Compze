@@ -7,8 +7,8 @@ namespace Compze.Tests.Unit.Internals.Contracts;
 
 public abstract class AssertionMethodsTest
 {
-   internal static readonly ContractAsserter Asserter = new(message => new AssertionTestException(message));
-   protected class AssertionTestException(string message) : Exception(message);
+   internal static readonly ContractAsserter Asserter = new(tessage => new AssertionTestException(tessage));
+   protected class AssertionTestException(string tessage) : Exception(tessage);
 
    // ReSharper disable once EntityNameCapturedOnly.Global : Yes. Capturing its name is the entire point of passing it :)
    internal static void ThrowsAndCapturesArgumentExpressionText(Func<ContractAsserter> assertFunc, object? value, [CallerArgumentExpression(nameof(value))] string valueExpressionString = "")

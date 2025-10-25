@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 
-namespace Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
-interface IExecutingMessagesSnapshot
+interface IExecutingTessagesSnapshot
 {
-    IReadOnlyList<TransportMessage.InComing> AtMostOnceCommands { get; }
-    IReadOnlyList<TransportMessage.InComing> ExactlyOnceCommands { get; }
-    IReadOnlyList<TransportMessage.InComing> ExactlyOnceEvents { get; }
-    IReadOnlyList<TransportMessage.InComing> ExecutingNonTransactionalQueries { get; }
+    IReadOnlyList<TransportTessage.InComing> AtMostOnceCommands { get; }
+    IReadOnlyList<TransportTessage.InComing> ExactlyOnceCommands { get; }
+    IReadOnlyList<TransportTessage.InComing> ExactlyOnceEvents { get; }
+    IReadOnlyList<TransportTessage.InComing> ExecutingNonTransactionalQueries { get; }
 }

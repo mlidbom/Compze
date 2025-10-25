@@ -16,18 +16,18 @@ class SerilogLogger : Logger
    public override ILogger WithLogLevel(LogLevel level) =>
       new SerilogLogger(_logger, level);
 
-   protected override void ErrorInternal(Exception exception, string? message) =>
-      _logger.Error(exception, message ?? exception.GetType().FullName ?? "");
+   protected override void ErrorInternal(Exception exception, string? tessage) =>
+      _logger.Error(exception, tessage ?? exception.GetType().FullName ?? "");
 
-   protected override void WarningInternal(string message) =>
-      _logger.Warning(message);
+   protected override void WarningInternal(string tessage) =>
+      _logger.Warning(tessage);
 
-   protected override void WarningInternal(Exception exception, string message) =>
-      _logger.Warning(exception, message);
+   protected override void WarningInternal(Exception exception, string tessage) =>
+      _logger.Warning(exception, tessage);
 
-   protected override void InfoInternal(string message) =>
-      _logger.Information(message);
+   protected override void InfoInternal(string tessage) =>
+      _logger.Information(tessage);
 
-   protected override void DebugInternal(string message) =>
-      _logger.Debug(message);
+   protected override void DebugInternal(string tessage) =>
+      _logger.Debug(tessage);
 }

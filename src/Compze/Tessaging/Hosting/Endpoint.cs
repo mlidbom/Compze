@@ -5,7 +5,7 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
@@ -30,7 +30,7 @@ class Endpoint : IEndpoint
    readonly EndpointConfiguration _configuration;
 
    public Endpoint(IServiceLocator serviceLocator,
-                   IMessagesInFlightTracker globalStateTracker,
+                   ITessagesInFlightTracker globalStateTracker,
                    ITransportClient transportClient,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
@@ -47,7 +47,7 @@ class Endpoint : IEndpoint
    public IServiceLocator ServiceLocator { get; }
 
    public HttpEndPointAddress? Address => _serverComponents?.Inbox.Address;
-   readonly IMessagesInFlightTracker _globalStateTracker;
+   readonly ITessagesInFlightTracker _globalStateTracker;
    readonly ITransportClient _transportClient;
    readonly IEndpointRegistry _endpointRegistry;
 
@@ -120,7 +120,7 @@ class Endpoint : IEndpoint
       }
    }
 
-   public void AwaitNoMessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoMessagesInFlight(timeoutOverride);
+   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoTessagesInFlight(timeoutOverride);
 
    public async ValueTask DisposeAsync()
    {

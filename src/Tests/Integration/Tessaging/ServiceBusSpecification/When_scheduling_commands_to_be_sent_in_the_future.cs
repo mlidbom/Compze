@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Time.Public;
@@ -52,7 +52,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
-   [PCT]  public void Messages_whose_due_time_has_passed_are_delivered()
+   [PCT]  public void Tessages_whose_due_time_has_passed_are_delivered()
    {
       var now = _timeSource.UtcNow;
       var inOneHour = new ScheduledTommand();
@@ -62,7 +62,7 @@ public class When_scheduling_commands_to_be_sent_in_the_future : UniversalTestBa
       _receivedCommandGate.AwaitPassedThroughCountEqualTo(1, timeout: 2.Seconds());
    }
 
-   [PCT]  public void Messages_whose_due_time_have_not_passed_are_not_delivered()
+   [PCT]  public void Tessages_whose_due_time_have_not_passed_are_not_delivered()
    {
       var now = _timeSource.UtcNow;
       var inOneHour = new ScheduledTommand();

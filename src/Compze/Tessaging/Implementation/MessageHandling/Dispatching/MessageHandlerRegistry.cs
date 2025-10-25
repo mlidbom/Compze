@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
@@ -18,18 +18,18 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
 
-namespace Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
 
-static class MessageHandlerRegistryRegistrar
+static class TessageHandlerRegistryRegistrar
 {
-   internal static IComponentRegistrar MessageHandlerRegistry(this IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<ITessageHandlerRegistrar, IMessageHandlerRegistry, TessageHandlerRegistry>()
+   internal static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
+      => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
                                      .CreatedBy((ITypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
 }
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. QueryTypeIndexFor<TQuery>.Index. Etc
-class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, IMessageHandlerRegistry
+class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _commandHandlers = new Dictionary<Type, Action<object>>();
@@ -42,7 +42,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForEvent<TEvent>(Action<TEvent> handler) => _monitor.Update(() =>
    {
-      MessageInspector.AssertValid<TEvent>();
+      TessageInspector.AssertValid<TEvent>();
       _eventHandlers.TryGetValue(typeof(TEvent), out var currentEventSubscribers);
       currentEventSubscribers ??= new List<Action<ITevent>>();
 
@@ -53,7 +53,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForCommand<TCommand>(Action<TCommand> handler) => _monitor.Update(() =>
    {
-      MessageInspector.AssertValid<TCommand>();
+      TessageInspector.AssertValid<TCommand>();
 
       if(typeof(TCommand).Implements(typeof(ITommand<>)))
       {
@@ -66,7 +66,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForCommand<TCommand, TResult>(Func<TCommand, TResult> handler) => _monitor.Update(() =>
    {
-      MessageInspector.AssertValid<TCommand>();
+      TessageInspector.AssertValid<TCommand>();
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _commandHandlersReturningResults, typeof(TCommand), new CommandHandlerWithResultRegistration<TCommand, TResult>(handler));
       return this;
@@ -74,21 +74,21 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForQuery<TQuery, TResult>(Func<TQuery, TResult> handler) => _monitor.Update(() =>
    {
-      MessageInspector.AssertValid<TQuery>();
+      TessageInspector.AssertValid<TQuery>();
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _queryHandlers, typeof(TQuery), new QueryHandlerRegistration<TQuery, TResult>(handler));
       return this;
    });
 
-   Action<object> IMessageHandlerRegistry.GetCommandHandler(ITommand message)
+   Action<object> ITessageHandlerRegistry.GetCommandHandler(ITommand tessage)
    {
-      if(TryGetCommandHandler(message, out var handler)) return handler;
+      if(TryGetCommandHandler(tessage, out var handler)) return handler;
 
-      throw new NoHandlerException(message.GetType());
+      throw new NoHandlerException(tessage.GetType());
    }
 
-   bool TryGetCommandHandler(ITommand message, [MaybeNullWhen(false)]out Action<object> handler) =>
-      _commandHandlers.TryGetValue(message.GetType(), out handler);
+   bool TryGetCommandHandler(ITommand tessage, [MaybeNullWhen(false)]out Action<object> handler) =>
+      _commandHandlers.TryGetValue(tessage.GetType(), out handler);
 
    public Func<ITommand, object> GetCommandHandlerWithReturnValue(Type commandType) => _commandHandlersReturningResults[commandType].HandlerMethod;
 
@@ -120,7 +120,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       throw new NoHandlerException(tommand.GetType());
    }
 
-   IEventDispatcher<ITevent> IMessageHandlerRegistry.CreateEventDispatcher()
+   IEventDispatcher<ITevent> ITessageHandlerRegistry.CreateEventDispatcher()
    {
       var dispatcher = IMutableEventDispatcher<ITevent>.New();
       var registrar = dispatcher.Register()
@@ -131,14 +131,14 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       return dispatcher;
    }
 
-   public ISet<TypeId> HandledRemoteMessageTypeIds()
+   public ISet<TypeId> HandledRemoteTessageTypeIds()
    {
       var handledTypes = _commandHandlers.Keys
                                          .Concat(_commandHandlersReturningResults.Keys)
                                          .Concat(_queryHandlers.Keys)
                                          .Concat(_eventHandlerRegistrations.Select(reg => reg.Type))
-                                         .Where(messageType => messageType.Implements<IRemotableTessage>())
-                                         .Where(messageType => !messageType.Implements<MessageTypesInternal.IMessage>())
+                                         .Where(tessageType => tessageType.Implements<IRemotableTessage>())
+                                         .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
                                          .ToHashSet();
 
       var remoteResultTypes = _commandHandlersReturningResults

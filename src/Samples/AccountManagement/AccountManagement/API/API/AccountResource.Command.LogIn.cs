@@ -13,14 +13,14 @@ public partial class AccountResource
    {
       public partial class LogIn() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
       {
-         public static LogIn Create() => new() {MessageId = Guid.CreateVersion7()};
+         public static LogIn Create() => new() {TessageId = Guid.CreateVersion7()};
 
          [Required] [Email] public string Email { get; set; } = string.Empty;
          [Required] public string Password { get; set; } = string.Empty;
 
          public LogIn WithValues(string email, string password) => new()
                                                                    {
-                                                                      MessageId = MessageId,
+                                                                      TessageId = TessageId,
                                                                       Email = email,
                                                                       Password = password
                                                                    };

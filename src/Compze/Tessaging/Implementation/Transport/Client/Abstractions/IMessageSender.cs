@@ -3,7 +3,7 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 
-interface IRemoteMessageSender
+interface IRemoteTessageSender
 {
    Task SendAsync(IExactlyOnceTevent tevent);
    Task SendAsync(IExactlyOnceTommand tommand);

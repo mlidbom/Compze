@@ -1,8 +1,8 @@
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
-namespace Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
-interface IMessageDispatchingRule
+interface ITessageDispatchingRule
 {
-   bool CanBeDispatched(IExecutingMessagesSnapshot executing, TransportMessage.InComing candidateMessage);
+   bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage);
 }

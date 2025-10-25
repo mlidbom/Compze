@@ -3,9 +3,9 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
-static partial class MessageInspector
+static partial class TessageInspector
 {
-   public class TransactionPolicyViolationException(string message) : Exception(message + TransactionPolicyRationale)
+   public class TransactionPolicyViolationException(string tessage) : Exception(tessage + TransactionPolicyRationale)
    {
       static readonly string TransactionPolicyRationale = $"""
 
@@ -20,11 +20,11 @@ static partial class MessageInspector
                                                            Rules: 
 
                                                            * Within a transaction you are not allowed send any {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName}
-                                                           These messages will not respect the transaction so if you want to send them during a transaction you have to acknowledge that they will not by suppressing the current transaction before sending them.
+                                                           These tessages will not respect the transaction so if you want to send them during a transaction you have to acknowledge that they will not by suppressing the current transaction before sending them.
 
 
                                                            * There must be a transaction for you to send a {typeof(IMustBeSentTransactionally).FullName}
-                                                           The whole point of these message types is to guarantee you exactly once delivery. Without a transaction while sending this guarantee is lost.
+                                                           The whole point of these tessage types is to guarantee you exactly once delivery. Without a transaction while sending this guarantee is lost.
 
 
                                                            """;
@@ -36,6 +36,6 @@ static partial class MessageInspector
    public class TransactionPresentException(ITessage tessage) :
       TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.") {}
 
-   public class MissingMessageIdException(ITessage tessage) :
-      ArgumentException($"{nameof(IAtMostOnceTessage.MessageId)} was Guid.Empty for message of type: {tessage.GetType().FullName}") {}
+   public class MissingTessageIdException(ITessage tessage) :
+      ArgumentException($"{nameof(IAtMostOnceTessage.TessageId)} was Guid.Empty for tessage of type: {tessage.GetType().FullName}") {}
 }

@@ -31,7 +31,7 @@ static class RemoteHypermediaNavigatorRegistrar
 
    public Task PostAsync(IAtMostOnceHypermediaTommand tommand)
    {
-      MessageInspector.AssertValidToSendRemote(tommand);
+      TessageInspector.AssertValidToSendRemote(tommand);
       return _transportClient.PostAsync(tommand);
    }
 
@@ -39,13 +39,13 @@ static class RemoteHypermediaNavigatorRegistrar
 
    public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand)
    {
-      MessageInspector.AssertValidToSendRemote(tommand);
+      TessageInspector.AssertValidToSendRemote(tommand);
       return _transportClient.PostAsync(tommand);
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
-      MessageInspector.AssertValidToSendRemote(tuery);
+      TessageInspector.AssertValidToSendRemote(tuery);
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return await Task.FromResult(selfCreating.CreateResult()).caf();
 

@@ -7,9 +7,9 @@ using Compze.Utilities.Contracts;
 
 namespace Compze.Tessaging.Implementation;
 
-static class TransportMessage
+static class TransportTessage
 {
-   internal enum TransportMessageType
+   internal enum TransportTessageType
    {
       ExactlyOnceEvent,
       AtMostOnceCommand,
@@ -21,50 +21,50 @@ static class TransportMessage
    internal class InComing
    {
       internal readonly byte[] Client;
-      internal readonly Guid MessageId;
-      readonly IRemotableMessageSerializer _serializer;
+      internal readonly Guid TessageId;
+      readonly IRemotableTessageSerializer _serializer;
       internal readonly string Body;
-      internal readonly TypeId MessageTypeId;
-      readonly Type _messageType;
-      internal readonly TransportMessageType MessageTypeEnum;
+      internal readonly TypeId TessageTypeId;
+      readonly Type _tessageType;
+      internal readonly TransportTessageType TessageTypeEnum;
 
-      ITessage? _message;
+      ITessage? _tessage;
 
-      public ITessage DeserializeMessageAndCacheForNextCall()
+      public ITessage DeserializeTessageAndCacheForNextCall()
       {
-         if(_message == null)
+         if(_tessage == null)
          {
-            _message = _serializer.DeserializeTessage(_messageType, Body);
+            _tessage = _serializer.DeserializeTessage(_tessageType, Body);
 
-            Assert.State.Is(_message is not IExactlyOnceTessage actualMessage || MessageId == actualMessage.MessageId);
+            Assert.State.Is(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.TessageId);
          }
 
-         return _message;
+         return _tessage;
       }
 
-      internal InComing(string body, TypeId messageTypeId, byte[] client, Guid messageId, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+      internal InComing(string body, TypeId tessageTypeId, byte[] client, Guid tessageId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
-         MessageTypeId = messageTypeId;
-         _messageType = typeMapper.GetType(messageTypeId);
-         MessageTypeEnum = GetMessageTypeEnum(_messageType);
+         TessageTypeId = tessageTypeId;
+         _tessageType = typeMapper.GetType(tessageTypeId);
+         TessageTypeEnum = GetTessageTypeEnum(_tessageType);
          Client = client;
-         MessageId = messageId;
+         TessageId = tessageId;
       }
 
-      static TransportMessageType GetMessageTypeEnum(Type messageType)
+      static TransportTessageType GetTessageTypeEnum(Type tessageType)
       {
-         if(typeof(IRemotableTuery<object>).IsAssignableFrom(messageType))
-            return TransportMessageType.NonTransactionalQuery;
-         if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(messageType))
-            return TransportMessageType.AtMostOnceCommandWithReturnValue;
-         if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(messageType))
-            return TransportMessageType.AtMostOnceCommand;
-         else if(typeof(IExactlyOnceTevent).IsAssignableFrom(messageType))
-            return TransportMessageType.ExactlyOnceEvent;
-         if(typeof(IExactlyOnceTommand).IsAssignableFrom(messageType))
-            return TransportMessageType.ExactlyOnceCommand;
+         if(typeof(IRemotableTuery<object>).IsAssignableFrom(tessageType))
+            return TransportTessageType.NonTransactionalQuery;
+         if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(tessageType))
+            return TransportTessageType.AtMostOnceCommandWithReturnValue;
+         if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(tessageType))
+            return TransportTessageType.AtMostOnceCommand;
+         else if(typeof(IExactlyOnceTevent).IsAssignableFrom(tessageType))
+            return TransportTessageType.ExactlyOnceEvent;
+         if(typeof(IExactlyOnceTommand).IsAssignableFrom(tessageType))
+            return TransportTessageType.ExactlyOnceCommand;
          else
             throw new ArgumentOutOfRangeException();
       }
@@ -72,22 +72,22 @@ static class TransportMessage
 
    internal class OutGoing
    {
-      public bool IsExactlyOnceDeliveryMessage { get; }
+      public bool IsExactlyOnceDeliveryTessage { get; }
       public readonly Guid Id;
 
       internal readonly TypeId Type;
       internal readonly string Body;
 
-      public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableMessageSerializer serializer)
+      public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
-         var messageId = (tessage as IAtMostOnceTessage)?.MessageId ?? Guid.CreateVersion7();
-         var body = serializer.SerializeMessage(tessage);
-         return new OutGoing(typeMapper.GetId(tessage.GetType()), messageId, body, tessage is IExactlyOnceTessage);
+         var tessageId = (tessage as IAtMostOnceTessage)?.TessageId ?? Guid.CreateVersion7();
+         var body = serializer.SerializeTessage(tessage);
+         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessageId, body, tessage is IExactlyOnceTessage);
       }
 
-      OutGoing(TypeId type, Guid id, string body, bool isExactlyOnceDeliveryMessage)
+      OutGoing(TypeId type, Guid id, string body, bool isExactlyOnceDeliveryTessage)
       {
-         IsExactlyOnceDeliveryMessage = isExactlyOnceDeliveryMessage;
+         IsExactlyOnceDeliveryTessage = isExactlyOnceDeliveryTessage;
          Type = type;
          Id = id;
          Body = body;

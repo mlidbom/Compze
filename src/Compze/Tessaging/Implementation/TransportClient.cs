@@ -27,21 +27,21 @@ static class TransportRegistrar
 partial class TransportClient : ITransportClient, IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<ITransportClient>().CreatedBy((IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
-                                                                     => new TransportClient(messagesInFlightTracker, typeMapper, serializer, remoteApiTransportClient)));
+      => registrar.Register(Singleton.For<ITransportClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
+                                                                     => new TransportClient(tessagesInFlightTracker, typeMapper, serializer, remoteApiTransportClient)));
 
-   TransportClient(IMessagesInFlightTracker messagesInFlightTracker, ITypeMapper typeMapper, IRemotableMessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
+   TransportClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
    {
-      _messagesInFlightTracker = messagesInFlightTracker;
+      _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;
       _serializer = serializer;
       _remoteApiTransportClient = remoteApiTransportClient;
       _router = new Router(typeMapper);
    }
 
-   readonly IMessagesInFlightTracker _messagesInFlightTracker;
+   readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
-   readonly IRemotableMessageSerializer _serializer;
+   readonly IRemotableTessageSerializer _serializer;
    readonly IRemoteApiTransportClient _remoteApiTransportClient;
 
    bool _running = false;
@@ -51,13 +51,13 @@ partial class TransportClient : ITransportClient, IDisposable
    public async Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.Outbox.InboxConnection(_messagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _remoteApiTransportClient);
+      var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _remoteApiTransportClient);
 
       await clientConnection.InitAsync().caf();
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 
-      _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledMessageTypes);
+      _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledTessageTypes);
    }
 
    public IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>

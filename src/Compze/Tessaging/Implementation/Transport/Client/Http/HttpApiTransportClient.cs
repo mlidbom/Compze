@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Abstractions.Serialization.Internal;
-using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -20,47 +20,47 @@ class HttpApiTransportClient : IRemoteApiTransportClient
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRemoteApiTransportClient>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableMessageSerializer serializer) => new HttpApiTransportClient(factory, serializer)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer) => new HttpApiTransportClient(factory, serializer)));
 
    readonly IHttpClientFactoryCE _clientFactory;
-   readonly IRemotableMessageSerializer _serializer;
+   readonly IRemotableTessageSerializer _serializer;
 
-   HttpApiTransportClient(IHttpClientFactoryCE clientFactory, IRemotableMessageSerializer serializer)
+   HttpApiTransportClient(IHttpClientFactoryCE clientFactory, IRemotableTessageSerializer serializer)
    {
       _clientFactory = clientFactory;
       _serializer = serializer;
    }
 
-   public async Task<TResult> PostAsync<TResult>(TransportMessage.OutGoing message, object realMessage, Uri requestUri)
+   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
    {
-      var response = await PostAsync(message, realMessage, requestUri).caf();
+      var response = await PostAsync(tessage, realTessage, requestUri).caf();
 
       var resultJson = await response.Content.ReadAsStringAsync().caf();
       var result = (TResult)_serializer.DeserializeResponse(typeof(TResult), resultJson);
       return result;
    }
 
-   public async Task<HttpResponseMessage> PostAsync(TransportMessage.OutGoing message, object realMessage, Uri requestUri)
+   public async Task<HttpResponseMessage> PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
    {
       using var it = _clientFactory.CreateClient();
 
-      var content = new StringContent(message.Body);
-      content.Headers.Add(HttpConstants.Headers.MessageId, message.Id.ToString());
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, message.Type.GuidValue.ToString());
+      var content = new StringContent(tessage.Body);
+      content.Headers.Add(HttpConstants.Headers.TessageId, tessage.Id.ToString());
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, tessage.Type.GuidValue.ToString());
       var response = await it.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)
       {
          var problemDetails = await ProblemDetails.FromResponse(response).caf();
 
-         throw new MessageDispatchingFailedException($"""
+         throw new TessageDispatchingFailedException($"""
                                                       Uri:        {requestUri}
                                                       StatusCode: {response.StatusCode}
-                                                      Type:       {realMessage.GetType().FullName}
+                                                      Type:       {realTessage.GetType().FullName}
                                                       Body:
-                                                      {message.Body}
+                                                      {tessage.Body}
 
                                                       Exception Type: {problemDetails.Type}
-                                                      Exception Message: {problemDetails.Detail}
+                                                      Exception Tessage: {problemDetails.Detail}
                                                       """);
       }
 

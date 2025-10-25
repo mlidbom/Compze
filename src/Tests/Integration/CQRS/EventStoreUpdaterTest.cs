@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Abstractions.Tessaging.Hosting.MessageHandling.Registration.Public;
+using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
@@ -37,7 +37,7 @@ public class EventStoreUpdaterTest : UniversalTestBase
 {
    class EventSpy
    {
-      public IEnumerable<IExactlyOnceTevent> DispatchedMessages => _events.ToList();
+      public IEnumerable<IExactlyOnceTevent> DispatchedTessages => _events.ToList();
       public void Receive(IExactlyOnceTevent tevent) => _events.Add(tevent);
       readonly List<IExactlyOnceTevent> _events = [];
    }
@@ -299,7 +299,7 @@ public class EventStoreUpdaterTest : UniversalTestBase
          session.Save(user2);
       });
 
-      _eventSpy.DispatchedMessages.Count().Should().Be(2);
+      _eventSpy.DispatchedTessages.Count().Should().Be(2);
 
       UseInTransactionalScope(session =>
       {
@@ -310,8 +310,8 @@ public class EventStoreUpdaterTest : UniversalTestBase
          session.Delete(user1.Id);
       });
 
-      var published = _eventSpy.DispatchedMessages.ToList();
-      _eventSpy.DispatchedMessages.Count()
+      var published = _eventSpy.DispatchedTessages.ToList();
+      _eventSpy.DispatchedTessages.Count()
                .Should()
                .Be(3);
       published.Last().Should().BeOfType<UserChangedEmail>();
@@ -326,13 +326,13 @@ public class EventStoreUpdaterTest : UniversalTestBase
          user1.Register("email1@email.se", "password", Guid.NewGuid());
          session.Save(user1);
 
-         _eventSpy.DispatchedMessages.Last()
+         _eventSpy.DispatchedTessages.Last()
                   .Should()
                   .BeOfType<UserRegistered>();
 
          user1 = session.Get<User>(user1.Id);
          user1.ChangeEmail("new_email");
-         _eventSpy.DispatchedMessages.Last()
+         _eventSpy.DispatchedTessages.Last()
                   .Should()
                   .BeOfType<UserChangedEmail>();
       });
@@ -455,29 +455,29 @@ public class EventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          users.Take(3).ForEach(session.Save);
-         _eventSpy.DispatchedMessages.Count().Should().Be(6);
+         _eventSpy.DispatchedTessages.Count().Should().Be(6);
       });
 
       UseInTransactionalScope(session =>
       {
-         _eventSpy.DispatchedMessages.Count().Should().Be(6);
+         _eventSpy.DispatchedTessages.Count().Should().Be(6);
          users.Skip(3).Take(3).ForEach(session.Save);
-         _eventSpy.DispatchedMessages.Count().Should().Be(12);
+         _eventSpy.DispatchedTessages.Count().Should().Be(12);
       });
 
       UseInTransactionalScope(session =>
       {
-         _eventSpy.DispatchedMessages.Count().Should().Be(12);
+         _eventSpy.DispatchedTessages.Count().Should().Be(12);
          users.Skip(6).Take(3).ForEach(session.Save);
-         _eventSpy.DispatchedMessages.Count().Should().Be(18);
+         _eventSpy.DispatchedTessages.Count().Should().Be(18);
       });
 
       UseInTransactionalScope(_ =>
       {
-         _eventSpy.DispatchedMessages.Count().Should().Be(18);
+         _eventSpy.DispatchedTessages.Count().Should().Be(18);
 
-         var dispatchedEvents = _eventSpy.DispatchedMessages.OfType<IAggregateTevent>().ToList();
-         dispatchedEvents.Select(e => e.MessageId).Distinct().Count().Should().Be(18);
+         var dispatchedEvents = _eventSpy.DispatchedTessages.OfType<IAggregateTevent>().ToList();
+         dispatchedEvents.Select(e => e.TessageId).Distinct().Count().Should().Be(18);
 
          var allPersistedEvents = _serviceLocator.EventStore().ListAllEventsForTestingPurposesAbsolutelyNotUsableForARealEventStoreOfAnySize();
          EventStorageTestHelper.StripSeventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedEvents);

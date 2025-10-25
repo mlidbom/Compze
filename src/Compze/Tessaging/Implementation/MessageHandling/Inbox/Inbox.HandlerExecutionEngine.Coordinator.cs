@@ -5,74 +5,74 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
-using Compze.Tessaging.Implementation.MessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.MessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tessaging.Implementation.MessageHandling;
+namespace Compze.Tessaging.Implementation.TessageHandling;
 
 partial class Inbox
 {
    partial class HandlerExecutionEngine
    {
-      //refactor: Consider moving all message type specific responsibilities into the message class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(IMessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, IMessageStorage messageStorage, IServiceLocator serviceLocator, IMessageHandlerRegistry messageHandlerRegistry, EndpointId endpointId)
+      //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
+      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessageHandlerRegistry, EndpointId endpointId)
       {
          readonly ITaskRunner _taskRunner = taskRunner;
-         readonly IMessageStorage _messageStorage = messageStorage;
+         readonly ITessageStorage _tessageStorage = tessageStorage;
          readonly IServiceLocator _serviceLocator = serviceLocator;
-         readonly IMessageHandlerRegistry _messageHandlerRegistry = messageHandlerRegistry;
+         readonly ITessageHandlerRegistry _tessageHandlerRegistry = tessageHandlerRegistry;
          readonly IThreadShared<NonThreadsafeImplementation> _implementation = IThreadShared.WithDefaultTimeout(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
-         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<IMessageDispatchingRule> dispatchingRules)
+         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
          {
             HandlerExecutionTask? handlerExecutionTask = null;
-            _implementation.Await(implementation => implementation.TryGetDispatchableMessage(dispatchingRules, out handlerExecutionTask));
+            _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask));
             return Result.ReturnNotNull(handlerExecutionTask);
          }
 
-         public Task<object?> EnqueueMessageTask(TransportMessage.InComing message) => _implementation.Update(implementation =>
+         public Task<object?> EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>
          {
-            var inflightMessage = new HandlerExecutionTask(message, this, _taskRunner, _messageStorage, _serviceLocator, _messageHandlerRegistry);
-            implementation.EnqueueMessageTask(inflightMessage);
-            return inflightMessage.Task;
+            var inflightTessage = new HandlerExecutionTask(tessage, this, _taskRunner, _tessageStorage, _serviceLocator, _tessageHandlerRegistry);
+            implementation.EnqueueTessageTask(inflightTessage);
+            return inflightTessage.Task;
          });
 
-         void Succeeded(HandlerExecutionTask queuedMessageInformation) => _implementation.Update(implementation => implementation.Succeeded(queuedMessageInformation));
+         void Succeeded(HandlerExecutionTask queuedTessageInformation) => _implementation.Update(implementation => implementation.Succeeded(queuedTessageInformation));
 
-         void Failed(HandlerExecutionTask queuedMessageInformation, Exception exception) => _implementation.Update(implementation => implementation.Failed(queuedMessageInformation, exception));
+         void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => _implementation.Update(implementation => implementation.Failed(queuedTessageInformation, exception));
 
-         class NonThreadsafeImplementation(IMessagesInFlightTracker globalStateTracker, EndpointId endpointId) : IExecutingMessagesSnapshot
+         class NonThreadsafeImplementation(ITessagesInFlightTracker globalStateTracker, EndpointId endpointId) : IExecutingTessagesSnapshot
          {
             const int MaxConcurrentlyExecutingHandlers = 20;
-            readonly IMessagesInFlightTracker _globalStateTracker = globalStateTracker;
+            readonly ITessagesInFlightTracker _globalStateTracker = globalStateTracker;
             readonly EndpointId _endpointId = endpointId;
 
 
-            //performance: Split waiting messages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional query
+            //performance: Split waiting tessages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional query
             //don't postpone checking if mutations are allowed to run because we have a ton of queries queued up. Also the queries are likely not allowed to run due to the commands and events!
-            //performance: Use static type caching trick to ensure that we know which rules need to be applied to which messages. Don't check rules that don't apply. (Double dispatching might be required.)
-            public IReadOnlyList<TransportMessage.InComing> AtMostOnceCommands => _executingAtMostOnceCommands;
-            public IReadOnlyList<TransportMessage.InComing> ExactlyOnceCommands => _executingExactlyOnceCommands;
-            public IReadOnlyList<TransportMessage.InComing> ExactlyOnceEvents => _executingExactlyOnceEvents;
-            public IReadOnlyList<TransportMessage.InComing> ExecutingNonTransactionalQueries => _executingNonTransactionalQueries;
+            //performance: Use static type caching trick to ensure that we know which rules need to be applied to which tessages. Don't check rules that don't apply. (Double dispatching might be required.)
+            public IReadOnlyList<TransportTessage.InComing> AtMostOnceCommands => _executingAtMostOnceCommands;
+            public IReadOnlyList<TransportTessage.InComing> ExactlyOnceCommands => _executingExactlyOnceCommands;
+            public IReadOnlyList<TransportTessage.InComing> ExactlyOnceEvents => _executingExactlyOnceEvents;
+            public IReadOnlyList<TransportTessage.InComing> ExecutingNonTransactionalQueries => _executingNonTransactionalQueries;
 
-            readonly List<HandlerExecutionTask> _messagesWaitingToExecute = [];
+            readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
 
-            internal bool TryGetDispatchableMessage(IReadOnlyList<IMessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
+            internal bool TryGetDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
             {
                dispatchable = null!;
-               if(_executingMessages >= MaxConcurrentlyExecutingHandlers)
+               if(_executingTessages >= MaxConcurrentlyExecutingHandlers)
                {
                   return false;
                }
 
-               dispatchable = _messagesWaitingToExecute
-                 .FirstOrDefault(queuedTask => dispatchingRules.All(rule => rule.CanBeDispatched(this, queuedTask.TransportMessage)));
+               dispatchable = _tessagesWaitingToExecute
+                 .FirstOrDefault(queuedTask => dispatchingRules.All(rule => rule.CanBeDispatched(this, queuedTask.TransportTessage)));
 
                if (dispatchable == null)
                {
@@ -83,71 +83,71 @@ partial class Inbox
                return true;
             }
 
-            public void EnqueueMessageTask(HandlerExecutionTask message) => _messagesWaitingToExecute.Add(message);
+            public void EnqueueTessageTask(HandlerExecutionTask tessage) => _tessagesWaitingToExecute.Add(tessage);
 
-            internal void Succeeded(HandlerExecutionTask queuedMessageInformation) => DoneDispatching(queuedMessageInformation);
+            internal void Succeeded(HandlerExecutionTask queuedTessageInformation) => DoneDispatching(queuedTessageInformation);
 
-            internal void Failed(HandlerExecutionTask queuedMessageInformation, Exception exception) => DoneDispatching(queuedMessageInformation, exception);
+            internal void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => DoneDispatching(queuedTessageInformation, exception);
 
             //Refactor: Switching should not be necessary. See also inbox.
             void Dispatching(HandlerExecutionTask dispatchable)
             {
-               _executingMessages++;
+               _executingTessages++;
 
-               switch(dispatchable.TransportMessage.MessageTypeEnum)
+               switch(dispatchable.TransportTessage.TessageTypeEnum)
                {
-                  case TransportMessage.TransportMessageType.ExactlyOnceEvent:
-                     _executingExactlyOnceEvents.Add(dispatchable.TransportMessage);
+                  case TransportTessage.TransportTessageType.ExactlyOnceEvent:
+                     _executingExactlyOnceEvents.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportMessage.TransportMessageType.AtMostOnceCommandWithReturnValue:
-                  case TransportMessage.TransportMessageType.AtMostOnceCommand:
-                     _executingAtMostOnceCommands.Add(dispatchable.TransportMessage);
+                  case TransportTessage.TransportTessageType.AtMostOnceCommandWithReturnValue:
+                  case TransportTessage.TransportTessageType.AtMostOnceCommand:
+                     _executingAtMostOnceCommands.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportMessage.TransportMessageType.ExactlyOnceCommand:
-                     _executingExactlyOnceCommands.Add(dispatchable.TransportMessage);
+                  case TransportTessage.TransportTessageType.ExactlyOnceCommand:
+                     _executingExactlyOnceCommands.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportMessage.TransportMessageType.NonTransactionalQuery:
-                     _executingNonTransactionalQueries.Add(dispatchable.TransportMessage);
+                  case TransportTessage.TransportTessageType.NonTransactionalQuery:
+                     _executingNonTransactionalQueries.Add(dispatchable.TransportTessage);
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();
                }
 
-               _messagesWaitingToExecute.Remove(dispatchable);
+               _tessagesWaitingToExecute.Remove(dispatchable);
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
             void DoneDispatching(HandlerExecutionTask doneExecuting, Exception? exception = null)
             {
-               _executingMessages--;
+               _executingTessages--;
 
-               switch(doneExecuting.TransportMessage.MessageTypeEnum)
+               switch(doneExecuting.TransportTessage.TessageTypeEnum)
                {
-                  case TransportMessage.TransportMessageType.ExactlyOnceEvent:
-                     _executingExactlyOnceEvents.Remove(doneExecuting.TransportMessage);
+                  case TransportTessage.TransportTessageType.ExactlyOnceEvent:
+                     _executingExactlyOnceEvents.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportMessage.TransportMessageType.AtMostOnceCommandWithReturnValue:
-                  case TransportMessage.TransportMessageType.AtMostOnceCommand:
-                     _executingAtMostOnceCommands.Remove(doneExecuting.TransportMessage);
+                  case TransportTessage.TransportTessageType.AtMostOnceCommandWithReturnValue:
+                  case TransportTessage.TransportTessageType.AtMostOnceCommand:
+                     _executingAtMostOnceCommands.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportMessage.TransportMessageType.ExactlyOnceCommand:
-                     _executingExactlyOnceCommands.Remove(doneExecuting.TransportMessage);
+                  case TransportTessage.TransportTessageType.ExactlyOnceCommand:
+                     _executingExactlyOnceCommands.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportMessage.TransportMessageType.NonTransactionalQuery:
-                     _executingNonTransactionalQueries.Remove(doneExecuting.TransportMessage);
+                  case TransportTessage.TransportTessageType.NonTransactionalQuery:
+                     _executingNonTransactionalQueries.Remove(doneExecuting.TransportTessage);
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();
                }
 
-               _globalStateTracker.DoneWith(doneExecuting.TransportMessage, _endpointId, exception);
+               _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
             }
 
-            int _executingMessages;
-            readonly List<TransportMessage.InComing> _executingExactlyOnceCommands = [];
-            readonly List<TransportMessage.InComing> _executingAtMostOnceCommands = [];
-            readonly List<TransportMessage.InComing> _executingExactlyOnceEvents = [];
-            readonly List<TransportMessage.InComing> _executingNonTransactionalQueries = [];
+            int _executingTessages;
+            readonly List<TransportTessage.InComing> _executingExactlyOnceCommands = [];
+            readonly List<TransportTessage.InComing> _executingAtMostOnceCommands = [];
+            readonly List<TransportTessage.InComing> _executingExactlyOnceEvents = [];
+            readonly List<TransportTessage.InComing> _executingNonTransactionalQueries = [];
          }
       }
    }
