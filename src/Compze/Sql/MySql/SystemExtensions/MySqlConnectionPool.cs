@@ -8,7 +8,6 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Configuration.Internal;
-using Compze.Common.Configuration;
 
 namespace Compze.Sql.MySql.SystemExtensions;
 
