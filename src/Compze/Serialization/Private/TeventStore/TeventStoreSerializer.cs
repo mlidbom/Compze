@@ -2,12 +2,11 @@ using System;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Serialization.Newtonsoft.Private;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Newtonsoft.Json;
 
-namespace Compze.Serialization.Newtonsoft.TeventStore;
+namespace Compze.Serialization.Newtonsoft.Private.TeventStore;
 
 static class NewtonsoftTeventStoreSerializerRegistrar
 {

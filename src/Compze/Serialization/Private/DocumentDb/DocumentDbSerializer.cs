@@ -1,10 +1,9 @@
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
-using Compze.Serialization.Newtonsoft.Private;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Serialization.Newtonsoft.DocumentDb;
+namespace Compze.Serialization.Newtonsoft.Private.DocumentDb;
 
 static class NewtonsoftDocumentDbSerializerRegistrar
 {

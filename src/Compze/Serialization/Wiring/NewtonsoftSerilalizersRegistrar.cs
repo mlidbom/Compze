@@ -1,5 +1,5 @@
-using Compze.Serialization.Newtonsoft.DocumentDb;
-using Compze.Serialization.Newtonsoft.Tessaging;
+using Compze.Serialization.Newtonsoft.Private.DocumentDb;
+using Compze.Serialization.Newtonsoft.Private.Tessaging;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Serialization.Newtonsoft.Wiring;

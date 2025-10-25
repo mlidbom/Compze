@@ -1,10 +1,9 @@
 using System.Reflection;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Serialization.Newtonsoft.Private;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Compze.Serialization.Newtonsoft.TeventStore;
+namespace Compze.Serialization.Newtonsoft.Private.TeventStore;
 
 class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver : IncludeMembersWithPrivateSettersResolver
 {

@@ -2,11 +2,10 @@ using System;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
-using Compze.Serialization.Newtonsoft.Private;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Serialization.Newtonsoft.Tessaging;
+namespace Compze.Serialization.Newtonsoft.Private.Tessaging;
 
 static class RemotableTessageSerializerRegistrar
 {

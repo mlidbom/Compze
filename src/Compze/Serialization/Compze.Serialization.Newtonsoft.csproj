@@ -5,6 +5,10 @@
    </PropertyGroup>
    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Abstractions\Compze.Core.csproj" />

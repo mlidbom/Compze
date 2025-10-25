@@ -7,7 +7,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
 using Compze.Serialization.Newtonsoft;
-using Compze.Serialization.Newtonsoft.TeventStore;
+using Compze.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
