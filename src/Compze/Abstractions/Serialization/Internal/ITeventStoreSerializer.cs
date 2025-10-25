@@ -1,5 +1,6 @@
 using System;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace Compze.Abstractions.Serialization.Internal;
 

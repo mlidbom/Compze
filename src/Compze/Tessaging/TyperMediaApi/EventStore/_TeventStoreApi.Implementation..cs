@@ -4,6 +4,7 @@ using System.Linq;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Newtonsoft.Json;
 

@@ -6,7 +6,6 @@
    <ItemGroup>
       <ProjectReference Include="..\..\..\Sql\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\Compze.Tessaging.Teventive.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>

@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Abstractions.Tessaging.Teventive.Internal;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Internal;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public.Exceptions;

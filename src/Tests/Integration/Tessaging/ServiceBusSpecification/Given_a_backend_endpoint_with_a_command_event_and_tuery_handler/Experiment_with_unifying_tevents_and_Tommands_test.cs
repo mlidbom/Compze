@@ -6,6 +6,8 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Tessaging.Typermedia.Public;

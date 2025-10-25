@@ -35,13 +35,13 @@ public static class TestFixtureHelper
 
    public class ShortSourceContextEnricher : ILogEventEnricher
    {
-      public void Enrich(LogEvent logTevent, ILogEventPropertyFactory propertyFactory)
+      public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
       {
-         if (logTevent.Properties.TryGetValue("SourceContext", out var sourceContext))
+         if (logEvent.Properties.TryGetValue("SourceContext", out var sourceContext))
          {
             var fullName = sourceContext.ToString().Trim('"');
             var shortName = fullName.Substring(fullName.LastIndexOf('.') + 1);
-            logTevent.AddPropertyIfAbsent(propertyFactory.CreateProperty("LoggingClass", shortName));
+            logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("LoggingClass", shortName));
          }
       }
    }

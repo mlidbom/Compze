@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Time.Public;

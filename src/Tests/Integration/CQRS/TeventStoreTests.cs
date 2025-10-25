@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Transactions;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Compze.Tests.Infrastructure.XUnit;
 

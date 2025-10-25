@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Teventive;
+namespace Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 public interface IGetTaggregateEntityTeventEntityId<in TTevent, out TEntityId>
 {

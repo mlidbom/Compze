@@ -1,10 +1,11 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Internal.Implementation;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Teventive;
+namespace Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class TeventiveEntity<TParent,

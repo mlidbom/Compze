@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 

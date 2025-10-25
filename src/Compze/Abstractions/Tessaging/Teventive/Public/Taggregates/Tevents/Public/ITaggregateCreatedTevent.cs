@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Tessaging.Teventive.Public;
+namespace Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 /// <summary>
 /// Marks an tevent as meaning that the taggregate was created.

@@ -4,6 +4,7 @@ using System.Linq;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Time;

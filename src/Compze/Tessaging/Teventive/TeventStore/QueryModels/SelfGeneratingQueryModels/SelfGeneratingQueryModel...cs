@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 

@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure;
 
-namespace Compze.Abstractions.Tessaging.Teventive.Public;
+namespace Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 static class WrapperTevent
 {

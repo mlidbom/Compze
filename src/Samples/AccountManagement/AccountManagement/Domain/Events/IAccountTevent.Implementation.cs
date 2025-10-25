@@ -2,6 +2,7 @@ using System;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Newtonsoft.Json;
 
 // ReSharper disable MemberHidesStaticFromOuterClass

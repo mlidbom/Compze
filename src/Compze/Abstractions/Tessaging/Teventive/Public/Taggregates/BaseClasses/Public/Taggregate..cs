@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Internal.Implementation;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
@@ -9,7 +10,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Teventive;
+namespace Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
 //Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]. Really? If you don't intend to inherit from the Taggregate, what good is it to set the last two type parameters so anything else?
 public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation> : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, ITaggregateWrapperTevent<TTaggregateTevent>, TaggregateWrapperTevent<TTaggregateTevent>>

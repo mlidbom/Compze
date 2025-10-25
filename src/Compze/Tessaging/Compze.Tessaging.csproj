@@ -22,9 +22,6 @@
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="Teventive\_docs\**\*.cs" />
-    <None Include="Teventive\_docs\**\*.cs" />
-    <Content Include="Teventive\_docs\**\*.md" />
     <Compile Remove="Typermedia\_docs\**\*.cs" />
     <None Include="Typermedia\_docs\**\*.cs" />
     <Content Include="Typermedia\_docs\**\*.md" />
@@ -40,10 +37,6 @@
     <EmbeddedResource Remove="Hosting\Testing\**" />
     <None Remove="Hosting\Testing\**" />
     <Content Remove="Hosting\Testing\**" />
-    <Compile Remove="Teventive\**" />
-    <EmbeddedResource Remove="Teventive\**" />
-    <None Remove="Teventive\**" />
-    <Content Remove="Teventive\**" />
     <Compile Remove="Teventive\TeventStore\**" />
     <EmbeddedResource Remove="Teventive\TeventStore\**" />
     <None Remove="Teventive\TeventStore\**" />

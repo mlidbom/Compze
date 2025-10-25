@@ -1,7 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Teventive.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TEventStore.QueryModels;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.QueryModels.Generators.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Hosting.Testing;
