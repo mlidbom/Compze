@@ -8,7 +8,7 @@ using Compze.Sql.Common;
 using Microsoft.Data.SqlClient;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.MicrosoftSql.TEventStore;
+namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
 partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connectionManager) : ITeventStoreSqlLayer
 {

@@ -6,7 +6,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
-namespace Compze.Sql.MicrosoftSql.Tessaging;
+namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
 partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
 {

@@ -6,9 +6,9 @@ using AccountManagement.UI.QueryModels;
 using Compze.Core.DocumentDb.Wiring;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;
-using Compze.Sql.MicrosoftSql.Tessaging;
-using Compze.Sql.MicrosoftSql.TEventStore;
+using Compze.Sql.MicrosoftSql.Private.Tessaging;
+using Compze.Sql.MicrosoftSql.Private.TEventStore;
+using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
@@ -35,9 +35,7 @@ public class AccountManagementServerDomainBootstrapper
       var connectionStringName = builder.Configuration.ConnectionStringName;
       var register = builder.Container.Register();
       register.MsSqlConnectionPool(connectionStringName)
-              .MsSqlDocumentDb()
-              .MsSqlTeventStore()
-              .MsSqlTessaging();
+              .MsSqlSqlLayers();
 
       builder.RegisterTeventStore()
              .HandleTaggregate<Account, AccountTevent.Root>();

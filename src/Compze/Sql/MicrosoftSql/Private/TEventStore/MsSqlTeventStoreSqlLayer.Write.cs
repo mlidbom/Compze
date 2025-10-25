@@ -12,7 +12,7 @@ using Microsoft.Data.SqlClient;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.MicrosoftSql.TEventStore;
+namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
 partial class MsSqlTeventStoreSqlLayer
 {

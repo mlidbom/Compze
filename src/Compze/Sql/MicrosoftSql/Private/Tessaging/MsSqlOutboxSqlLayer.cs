@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Sql.MicrosoftSql.Tessaging;
+namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
 partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
 {

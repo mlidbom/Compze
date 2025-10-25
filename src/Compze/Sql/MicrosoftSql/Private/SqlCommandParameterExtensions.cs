@@ -2,9 +2,9 @@ using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Sql.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql.Private;
 
-public static class SqlCommandParameterExtensions
+static class SqlCommandParameterExtensions
 {
    public static SqlCommand AddParameter(this SqlCommand @this, string name, int value) => AddParameter(@this, name, SqlDbType.Int, value);
    public static SqlCommand AddParameter(this SqlCommand @this, string name, Guid value) => AddParameter(@this, name, SqlDbType.UniqueIdentifier, value);
@@ -12,7 +12,7 @@ public static class SqlCommandParameterExtensions
    public static SqlCommand AddNVarcharParameter(this SqlCommand @this, string name, int length, string value) => AddParameter(@this, name, SqlDbType.NVarChar, value, length);
    public static SqlCommand AddNVarcharMaxParameter(this SqlCommand @this, string name, string value) => AddParameter(@this, name, SqlDbType.NVarChar, value, -1);
 
-   public static SqlCommand AddParameter(this SqlCommand @this, SqlParameter parameter)
+   static SqlCommand AddParameter(this SqlCommand @this, SqlParameter parameter)
    {
       @this.Parameters.Add(parameter);
       return @this;

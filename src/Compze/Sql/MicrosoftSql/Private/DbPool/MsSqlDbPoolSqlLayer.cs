@@ -4,18 +4,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Sql.MicrosoftSql.DbPool;
-
-static class MicrosoftSqlDbPoolRegistrar
-{
-   public static IComponentRegistrar MicrosoftSqlDbPoolSqlLayerAndConnectionFactory(this IComponentRegistrar registrar, string connectionStringName)
-   {
-      return registrar.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
-   }
-
-   public static IComponentRegistrar MsSqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      MsSqlDbPoolSqlLayer.RegisterWith(registrar);
-}
+namespace Compze.Sql.MicrosoftSql.Private.DbPool;
 
 class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {

@@ -1,9 +1,9 @@
 using System;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;
-using Compze.Sql.MicrosoftSql.Tessaging;
-using Compze.Sql.MicrosoftSql.TEventStore;
+using Compze.Sql.MicrosoftSql.Private.Tessaging;
+using Compze.Sql.MicrosoftSql.Private.TEventStore;
+using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Sql.MySql.DocumentDb.Wiring;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Sql.MySql.Tessaging;
@@ -36,9 +36,7 @@ public static class TestingComponentRegistrarTestingSqlLayerRegistrar
       {
          case SqlLayer.MicrosoftSqlServer:
             return @this.MsSqlConnectionPool(connectionStringName)
-                        .MsSqlDocumentDb()
-                        .MsSqlTeventStore()
-                        .MsSqlTessaging();
+                        .MsSqlSqlLayers();
          case SqlLayer.MySql:
             return @this.MySqlConnectionPool(connectionStringName)
                         .MySqlDocumentDb()

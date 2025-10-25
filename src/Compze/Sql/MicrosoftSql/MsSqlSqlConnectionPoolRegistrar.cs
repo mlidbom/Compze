@@ -1,0 +1,26 @@
+using Compze.Core.Configuration.Internal;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+
+namespace Compze.Sql.MicrosoftSql;
+
+public static class MsSqlSqlConnectionPoolRegistrar
+{
+   internal interface ITestingRegistrar
+   {
+      public IComponentRegistrar Register(string connectionStringName);
+   }
+
+   public static IComponentRegistrar MsSqlConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
+   {
+      if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
+      {
+         return testingRegistrar.Register(connectionStringName);
+      } else
+      {
+         return registrar.Register(
+            Singleton.For<IMsSqlConnectionPool>()
+                     .CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => IMsSqlConnectionPool.CreateInstance(configurationParameterProvider.GetString(connectionStringName))));
+      }
+   }
+}

@@ -3,7 +3,7 @@ using System.Transactions;
 using JetBrains.Annotations;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Sql.MicrosoftSql.TEventStore;
+namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
 class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
 {

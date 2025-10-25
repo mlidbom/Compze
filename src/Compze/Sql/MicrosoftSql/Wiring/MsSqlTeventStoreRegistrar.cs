@@ -1,12 +1,13 @@
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+using Compze.Sql.MicrosoftSql.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.MicrosoftSql.TEventStore;
+namespace Compze.Sql.MicrosoftSql.Wiring;
 
 public static class MsSqlTeventStoreRegistrar
 {
-   public static IComponentRegistrar MsSqlTeventStore(this IComponentRegistrar registrar) =>
+   public static IComponentRegistrar MsSqlTeventStoreSqlLayer(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<MsSqlTeventStoreConnectionManager>()
                   .CreatedBy((IMsSqlConnectionPool sqlConnectionProvider) => new MsSqlTeventStoreConnectionManager(sqlConnectionProvider)),

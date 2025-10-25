@@ -1,4 +1,4 @@
-namespace Compze.Sql.MicrosoftSql.DbPool;
+namespace Compze.Sql.MicrosoftSql.Private.DbPool;
 
 static class MsSqlDatabaseHelpers
 {
