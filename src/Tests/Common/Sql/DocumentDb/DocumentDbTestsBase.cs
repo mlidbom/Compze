@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Abstractions.DocumentDb.Public;
 using Compze.Sql.DocumentDb.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;

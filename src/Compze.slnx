@@ -27,7 +27,6 @@
     <Project Path="Compze/Sql/Sqlite/Compze.Sql.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze/Sql/DocumentDb/">
-    <Project Path="Compze/Sql/DocumentDb/Abstractions/Compze.Sql.DocumentDb.Abstractions.csproj" />
     <Project Path="Compze/Sql/DocumentDb/Compze.Sql.DocumentDb.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/">

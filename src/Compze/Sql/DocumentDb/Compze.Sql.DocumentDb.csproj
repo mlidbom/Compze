@@ -4,17 +4,8 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="Abstractions\Compze.Sql.DocumentDb.Abstractions.csproj" />
       <ProjectReference Include="..\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\..\Serialization\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\..\Abstractions\Compze.Abstractions.csproj" />
    </ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Abstractions\**" />
-    <EmbeddedResource Remove="Abstractions\**" />
-    <None Remove="Abstractions\**" />
-    <Content Remove="Abstractions\**" />
-  </ItemGroup>
 </Project>

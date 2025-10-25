@@ -15,7 +15,7 @@
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-23</Value>
       <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-41</Value>
       <Value>Threading\ResourceAccess\ThreadShared.cs:Compze\Utilities\Compze.Utilities.csproj-34</Value>
-      <Value>Sql\DocumentDb\DocumentDbTestsBase.cs:Tests\Common\Compze.Tests.Common.csproj-22</Value>
+      <Value>Sql\DocumentDb\DocumentDbTestsBase.cs:Tests\Common\Compze.Tests.Common.csproj-23</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-55</Value>
       <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-79</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-57</Value>

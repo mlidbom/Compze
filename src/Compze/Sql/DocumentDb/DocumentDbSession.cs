@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Abstractions.DocumentDb.Public;
 using Compze.Abstractions.Public;
 using Compze.Sql.Common;
 using Compze.Sql.DocumentDb.Abstractions;

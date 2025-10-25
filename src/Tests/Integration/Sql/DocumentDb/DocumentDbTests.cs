@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Abstractions.DocumentDb.Public;
 using Compze.Abstractions.Public;
 using Compze.Sql.DocumentDb.Abstractions;
 using Compze.Tessaging.Hosting.Testing.Wiring;
