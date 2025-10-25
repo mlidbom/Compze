@@ -28,13 +28,13 @@ static class TessageHandlerRegistryRegistrar
                                      .CreatedBy((ITypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
 }
 
-//performance: Use static caching + indexing trick for storing and retrieving values throughout this class. QueryTypeIndexFor<TQuery>.Index. Etc
+//performance: Use static caching + indexing trick for storing and retrieving values throughout this class. TueryTypeIndexFor<TTuery>.Index. Etc
 class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _commandHandlers = new Dictionary<Type, Action<object>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _eventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
-   IReadOnlyDictionary<Type, HandlerWithResultRegistration> _queryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
+   IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _commandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyList<EventHandlerRegistration> _eventHandlerRegistrations = new List<EventHandlerRegistration>();
 
@@ -72,11 +72,11 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForQuery<TQuery, TResult>(Func<TQuery, TResult> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _monitor.Update(() =>
    {
-      TessageInspector.AssertValid<TQuery>();
+      TessageInspector.AssertValid<TTuery>();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _queryHandlers, typeof(TQuery), new QueryHandlerRegistration<TQuery, TResult>(handler));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _tueryHandlers, typeof(TTuery), new TueryHandlerRegistration<TTuery, TResult>(handler));
       return this;
    });
 
@@ -94,17 +94,17 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
 
    public Action<ITommand> GetCommandHandler(Type commandType) => _commandHandlers[commandType];
 
-   public Func<ITuery<object>, object> GetQueryHandler(Type queryType) => _queryHandlers[queryType].HandlerMethod;
+   public Func<ITuery<object>, object> GetTueryHandler(Type tueryType) => _tueryHandlers[tueryType].HandlerMethod;
 
    //performance: Use static caching trick.
    public IReadOnlyList<Action<ITevent>> GetEventHandlers(Type eventType) => _eventHandlers.Where(it => it.Key.IsAssignableFrom(eventType)).SelectMany(it => it.Value).ToList();
 
-   public Func<IStrictlyLocalTuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalTuery<TQuery, TResult> tuery) where TQuery : IStrictlyLocalTuery<TQuery, TResult>
+   public Func<IStrictlyLocalTuery<TTuery, TResult>, TResult> GetTueryHandler<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
    {
-      //Urgent: If we don't actually use the TQuery type parameter to do static caching here, remove it.
-      if(_queryHandlers.TryGetValue(tuery.GetType(), out var handler))
+      //Urgent: If we don't actually use the TTuery type parameter to do static caching here, remove it.
+      if(_tueryHandlers.TryGetValue(tuery.GetType(), out var handler))
       {
-         return actualQuery => (TResult)handler.HandlerMethod(actualQuery);
+         return actualTuery => (TResult)handler.HandlerMethod(actualTuery);
       }
 
       throw new NoHandlerException(tuery.GetType());
@@ -135,7 +135,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
    {
       var handledTypes = _commandHandlers.Keys
                                          .Concat(_commandHandlersReturningResults.Keys)
-                                         .Concat(_queryHandlers.Keys)
+                                         .Concat(_tueryHandlers.Keys)
                                          .Concat(_eventHandlerRegistrations.Select(reg => reg.Type))
                                          .Where(tessageType => tessageType.Implements<IRemotableTessage>())
                                          .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
@@ -170,6 +170,6 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
    class CommandHandlerWithResultRegistration<TCommand, TResult>(Func<TCommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
                                                                                                                                         command => handlerMethod((TCommand)command) ?? throw new Exception("You cannot return null from a command handler"));
 
-   class QueryHandlerRegistration<TQuery, TResult>(Func<TQuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
-                                                                                                                        command => handlerMethod((TQuery)command) ?? throw new Exception("You cannot return null from a query handler"));
+   class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+                                                                                                                        command => handlerMethod((TTuery)command) ?? throw new Exception("You cannot return null from a tuery handler"));
 }

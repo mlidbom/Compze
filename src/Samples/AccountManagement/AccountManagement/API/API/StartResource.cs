@@ -7,10 +7,10 @@ namespace AccountManagement.API;
 {
    public Command Commands { get; private set; } = new();
 
-   public Query Queries { get; private set; } = new();
+   public Tuery Queries { get; private set; } = new();
 
 #pragma warning disable CA1724 // Type names should not match namespaces
-   public class Query
+   public class Tuery
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
       public TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> AccountById { get; private set; } = new();

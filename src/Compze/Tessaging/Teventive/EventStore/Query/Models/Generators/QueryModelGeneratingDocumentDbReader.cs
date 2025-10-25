@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Query.Models.Generators.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Tuery.Models.Generators.Public;
 using Compze.Sql.Common;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tessaging.Teventive.EventStore.Query.Models.Generators;
+namespace Compze.Tessaging.Teventive.EventStore.Tuery.Models.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
@@ -64,7 +64,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
 
       if(documentType.IsInterface)
       {
-         throw new ArgumentException("You cannot query by id for an interface type. There is no guarantee of uniqueness");
+         throw new ArgumentException("You cannot tuery by id for an interface type. There is no guarantee of uniqueness");
       }
 
       if(!requiresVersioning && _entitiesByIdAndType.TryGet(key, out document) && documentType.IsInstanceOfType(document))

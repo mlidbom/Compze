@@ -1,11 +1,11 @@
 using System;
-using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 
-#pragma warning disable CA1812 // Used via reflection in query model infrastructure
+#pragma warning disable CA1812 // Used via reflection in tuery model infrastructure
 [UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, CompositeAggregateEvent.Entity.IRoot, CompositeAggregateEvent.Entity.Created, CompositeAggregateEvent.Entity.Removed, CompositeAggregateEvent.Entity.Implementation.Root.IdGetterSetter>
 #pragma warning restore CA1812
 {

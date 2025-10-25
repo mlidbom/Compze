@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 
 public class MyCommandResult;
 
@@ -25,8 +25,8 @@ public class MyAtMostOnceTommandWithResult : TessageTypes.Remotable.AtMostOnce.A
    public static MyAtMostOnceTommandWithResult Create() => new() {TessageId = Guid.CreateVersion7()};
 }
 
-public class MyQueryResult;
-public class MyTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyQueryResult>;
+public class MyTueryResult;
+public class MyTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyTueryResult>;
 public class MyExactlyOnceTevent : AggregateTevent, IMyExactlyOnceTevent;
 public interface IMyExactlyOnceTevent : IAggregateTevent;
 public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;

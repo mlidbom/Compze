@@ -4,7 +4,7 @@ using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.EventStore.Public.Exceptions;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 
-// ReSharper disable LoopCanBeConvertedToQuery
+// ReSharper disable LoopCanBeConvertedToTuery
 
 namespace Compze.Tessaging.Teventive.EventStore;
 

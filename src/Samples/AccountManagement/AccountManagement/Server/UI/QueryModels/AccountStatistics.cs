@@ -5,7 +5,7 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Sql.DocumentDb;
-using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;
 
@@ -15,7 +15,7 @@ static class AccountStatistics
 {
    /// <summary>
    /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TAggregateEvent}"/> even though we will store it in a document database.
-   /// Doing so lets the query model cleanly encapsulate how it maintains its own state when it receives events.
+   /// Doing so lets the tuery model cleanly encapsulate how it maintains its own state when it receives events.
    /// </summary>
    public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, AccountEvent.Root>
    {
@@ -33,7 +33,7 @@ static class AccountStatistics
       public int NumberOfSuccessfulLogins { get; private set; }
       public int NumberOfFailedLogins { get; private set; }
 
-      //Since this is a singleton query model and not bound to a specific Aggregate's events we override the Id member to always be the singleton Id.
+      //Since this is a singleton tuery model and not bound to a specific Aggregate's events we override the Id member to always be the singleton Id.
       public override Guid Id => StaticId;
       internal static Guid StaticId = Guid.Parse("93498554-5C2E-4D6A-862D-2DA7BCCAC747");
    }

@@ -73,7 +73,7 @@ partial class PgSqlEventStoreSqlLayer
       var commandText = versions.Select((spec, _) =>
                                            $"UPDATE {Event.TableName} SET {Event.EffectiveVersion} = {spec.EffectiveVersion} WHERE {Event.EventId} = '{spec.EventId}';").Join(Environment.NewLine);
 
-      //We do not prepare here since this query will only ever be executed once.
+      //We do not prepare here since this tuery will only ever be executed once.
       _connectionManager.UseConnection(connection => connection.ExecuteNonQuery(commandText));
    }
 

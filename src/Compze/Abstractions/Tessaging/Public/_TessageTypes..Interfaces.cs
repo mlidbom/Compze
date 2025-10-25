@@ -23,10 +23,10 @@ public interface IWrapperTevent<out TEvent> : ITevent //Todo: IWrapperEvent name
 public interface ITommand : ITessage;
 public interface ITommand<out TResult> : ITommand, IHasReturnValue<TResult>;
 
-///<summary>An instructs the receiver to return a result based upon the data in the query.</summary>
+///<summary>An instructs the receiver to return a result based upon the data in the tuery.</summary>
 public interface ITuery<out TResult> : IHasReturnValue<TResult>;
 
-///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the query is sufficient to create the result. For such queries implement this interface. That way no network roundtrip etc is required to perform the query. Greatly enhancing performance</summary>
+///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such queries implement this interface. That way no network roundtrip etc is required to perform the tuery. Greatly enhancing performance</summary>
 public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 {
    TResult CreateResult();

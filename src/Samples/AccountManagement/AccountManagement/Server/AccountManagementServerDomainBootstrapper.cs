@@ -44,7 +44,7 @@ public class AccountManagementServerDomainBootstrapper
              .HandleAggregate<Account, AccountEvent.Root>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<EventStoreApi.QueryApi.AggregateLink<Account>>(builder.RegisterHandlers)
+             .HandleDocumentType<EventStoreApi.TueryApi.AggregateLink<Account>>(builder.RegisterHandlers)
              .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterHandlers);
    }
 

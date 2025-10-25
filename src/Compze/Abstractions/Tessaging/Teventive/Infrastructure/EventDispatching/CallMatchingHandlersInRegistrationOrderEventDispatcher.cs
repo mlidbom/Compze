@@ -61,7 +61,7 @@ partial class CallMatchingHandlersInRegistrationOrderEventDispatcher<TEvent> : I
       var result = new List<Action<ITevent>>();
       var hasFoundHandler = false;
 
-      // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+      // ReSharper disable once ForeachCanBePartlyConvertedToTueryUsingAnotherGetEnumerator
       foreach(var registeredHandler in _handlers)
       {
          var handler = registeredHandler.TryCreateHandlerFor(type);

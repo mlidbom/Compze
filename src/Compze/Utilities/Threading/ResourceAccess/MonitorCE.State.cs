@@ -17,7 +17,7 @@ public partial class MonitorCE
 #if NCRUNCH
         static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(45); //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
 #else
-   static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(2); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is all but guaranteed that we have an in-memory deadlock.
+   static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(2); //MsSql default tuery timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is all but guaranteed that we have an in-memory deadlock.
 #endif
 
    readonly TimeSpan _timeout;

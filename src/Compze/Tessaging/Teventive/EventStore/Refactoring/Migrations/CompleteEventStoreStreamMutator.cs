@@ -53,7 +53,7 @@ abstract class CompleteEventStoreStreamMutator
             }
          }
 
-         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+         // ReSharper disable once ForeachCanBePartlyConvertedToTueryUsingAnotherGetEnumerator
          foreach (var mutator in _aggregateMutatorsCache)
          {
             foreach (var finalEvent in mutator.Value.EndOfAggregate())

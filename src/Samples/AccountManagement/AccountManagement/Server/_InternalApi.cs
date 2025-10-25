@@ -13,19 +13,19 @@ namespace AccountManagement;
 static class InternalApi
 {
    static EventStoreApi EventStore => new EventStoreApi();
-   internal static Query Queries => new();
+   internal static Tuery Queries => new();
    internal static Command Commands => new();
    internal static AccountQueryModel.Api AccountQueryModel => new();
 
-   internal class Query
+   internal class Tuery
    {
       internal TryGetByEmailTuery TryGetByEmail(Email email) => new(email);
 
-      internal EventStoreApi.QueryApi.AggregateLink<Account> GetForUpdate(Guid id) => EventStore.Queries.GetForUpdate<Account>(id);
+      internal EventStoreApi.TueryApi.AggregateLink<Account> GetForUpdate(Guid id) => EventStore.Queries.GetForUpdate<Account>(id);
 
-      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => EventStore.Queries.GetReadOnlyCopy<Account>(id);
+      internal EventStoreApi.TueryApi.GetReadonlyCopyOfAggregate<Account> GetReadOnlyCopy(Guid id) => EventStore.Queries.GetReadOnlyCopy<Account>(id);
 
-      internal EventStoreApi.QueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
+      internal EventStoreApi.TueryApi.GetReadonlyCopyOfAggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => EventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
       internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Option<Account>>
       {

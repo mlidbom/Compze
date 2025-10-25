@@ -52,7 +52,7 @@ static class AccountUIAdapter
          };
       });
 
-   internal static void GetById(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-      (TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> accountQuery, IInProcessHypermediaNavigator navigator)
-         => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Queries.Get(accountQuery.EntityId))));
+   internal static void GetById(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+      (TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> accountTuery, IInProcessHypermediaNavigator navigator)
+         => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Queries.Get(accountTuery.EntityId))));
 }

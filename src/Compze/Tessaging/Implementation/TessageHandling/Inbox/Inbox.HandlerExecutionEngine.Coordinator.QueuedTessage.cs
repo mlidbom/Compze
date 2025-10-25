@@ -122,11 +122,11 @@ partial class Inbox
                      commandHandler((IExactlyOnceTommand)tessage);
                      return unit.Value;//Todo:Properly handle commands with and without return values
                   },
-                  Implementation.TransportTessage.TransportTessageType.NonTransactionalQuery => actualTessage =>
+                  Implementation.TransportTessage.TransportTessageType.NonTransactionalTuery => actualTessage =>
                   {
-                     var queryHandler = _handlerRegistry.GetQueryHandler(actualTessage.GetType());
+                     var tueryHandler = _handlerRegistry.GetTueryHandler(actualTessage.GetType());
                      //todo: Double dispatch instead of casting?
-                     return queryHandler((ITuery<object>)actualTessage);
+                     return tueryHandler((ITuery<object>)actualTessage);
                   },
                   _ => throw new ArgumentOutOfRangeException()
                };

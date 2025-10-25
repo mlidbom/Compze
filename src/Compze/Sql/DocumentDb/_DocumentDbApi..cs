@@ -7,10 +7,10 @@ namespace Compze.Sql.DocumentDb;
 
 public partial class DocumentDbApi
 {
-   public QueryApi Queries => new();
+   public TueryApi Queries => new();
    public Command Commands => new();
 
-   public partial class QueryApi
+   public partial class TueryApi
    {
       public TryGetDocument<TDocument> TryGet<TDocument>(Guid id) where TDocument : IHasPersistentIdentity<Guid> => new(id.ToString());
 

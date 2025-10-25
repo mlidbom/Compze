@@ -13,10 +13,10 @@ interface ITessageHandlerRegistry
 
     Action<ITommand> GetCommandHandler(Type commandType);
     Func<ITommand, object> GetCommandHandlerWithReturnValue(Type commandType);
-    Func<ITuery<object>, object> GetQueryHandler(Type commandType);
+    Func<ITuery<object>, object> GetTueryHandler(Type commandType);
     IReadOnlyList<Action<ITevent>> GetEventHandlers(Type eventType);
 
-    Func<IStrictlyLocalTuery<TQuery, TResult>, TResult> GetQueryHandler<TQuery, TResult>(IStrictlyLocalTuery<TQuery, TResult> tuery) where TQuery : IStrictlyLocalTuery<TQuery, TResult>;
+    Func<IStrictlyLocalTuery<TTuery, TResult>, TResult> GetTueryHandler<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>;
 
     Func<ITommand<TResult>, TResult> GetCommandHandler<TResult>(ITommand<TResult> tommand);
 

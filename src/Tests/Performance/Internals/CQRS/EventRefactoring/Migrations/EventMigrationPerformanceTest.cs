@@ -87,7 +87,7 @@ public class EventMigrationPerformanceTest : EventMigrationTestBase
                                                                                                                    .Get<TestAggregate>(_aggregate.Id));
    }
 
-   //Performance: Figure out why oracle under performs so dramatically in these tests and fix it. (Hmm. Adding FOR UPDATE to the DB2 query really really slowed DB2 down. Might Oracle be similar?)
+   //Performance: Figure out why oracle under performs so dramatically in these tests and fix it. (Hmm. Adding FOR UPDATE to the DB2 tuery really really slowed DB2 down. Might Oracle be similar?)
    [PCT]  public async Task With_four_migrations_mutation_that_all_actually_changes_things_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds_mSSql_25_5_pgSql_25_5_mySql_25_5_orcl_125_5_inMem_15_DB2_30_5()
    {
       var eventMigrations = EnumerableCE.Create<IEventMigration>(

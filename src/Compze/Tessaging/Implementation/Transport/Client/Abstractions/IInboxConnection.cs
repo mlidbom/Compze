@@ -13,5 +13,5 @@ interface IInboxConnection : IDisposable
 
     Task PostAsync(IAtMostOnceHypermediaTommand tommand);
     Task<TCommandResult> PostAsync<TCommandResult>(IAtMostOnceTommand<TCommandResult> tommand);
-    Task<TQueryResult> GetAsync<TQueryResult>(IRemotableTuery<TQueryResult> tuery);
+    Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery);
 }

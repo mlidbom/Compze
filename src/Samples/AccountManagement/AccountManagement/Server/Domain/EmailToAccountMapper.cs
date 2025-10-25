@@ -4,7 +4,7 @@ using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Sql.DocumentDb;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
-using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.EventStoreApi.QueryApi.AggregateLink<AccountManagement.Domain.Account>;
+using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.EventStoreApi.TueryApi.AggregateLink<AccountManagement.Domain.Account>;
 
 namespace AccountManagement.Domain;
 
@@ -25,8 +25,8 @@ namespace AccountManagement.Domain;
          navigator.Execute(DocumentDb.Commands.Save(newEmail.StringValue, InternalApi.Queries.GetForUpdate(emailUpdated.AggregateId)));
       });
 
-   internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-      (InternalApi.Query.TryGetByEmailTuery tuery, IInProcessHypermediaNavigator navigator) =>
+   internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+      (InternalApi.Tuery.TryGetByEmailTuery tuery, IInProcessHypermediaNavigator navigator) =>
          navigator.Execute(DocumentDb.Queries.TryGet<AccountLink>(tuery.Email.StringValue)) is Some<AccountLink> accountLink
             ? Option.Some(navigator.Execute(accountLink.Value))
             : Option.None<Account>());

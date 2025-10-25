@@ -83,7 +83,7 @@ public class PerformanceTest : UniversalTestBase
                                    action: () =>
                                    {
                                       var accountId = accountsReader.Next().Id;
-                                      _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(accountId)).Id.Should().Be(accountId);
+                                      _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(accountId)).Id.Should().Be(accountId);
                                    },
                                    iterations: fetches,
                                    maxTotal: 20.Milliseconds());
@@ -99,7 +99,7 @@ public class PerformanceTest : UniversalTestBase
             var registerAccountScenario = _scenarioApi!.Register;
             var result = registerAccountScenario.Execute().Result;
             result.Status.Should().Be(RegistrationAttemptStatus.Successful);
-            _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Query.AccountById(result.RegisteredAccount!.Id)).Id.Should().Be(result.RegisteredAccount.Id);
+            _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(result.RegisteredAccount!.Id)).Id.Should().Be(result.RegisteredAccount.Id);
             created.Add((registerAccountScenario.Email, registerAccountScenario.Password, registerAccountScenario.AccountId));
          },
          iterations: accountCount);

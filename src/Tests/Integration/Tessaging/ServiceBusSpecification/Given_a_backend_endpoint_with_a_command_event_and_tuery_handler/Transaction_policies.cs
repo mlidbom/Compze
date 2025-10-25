@@ -1,12 +1,12 @@
 using System.Linq;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 
 public class Transaction_policies : EndpointHostTestBase
 {
@@ -42,11 +42,11 @@ public class Transaction_policies : EndpointHostTestBase
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
-   [PCT] public void Query_handler_does_not_run_in_transaction()
+   [PCT] public void Tuery_handler_does_not_run_in_transaction()
    {
       ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()));
 
-      QueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+      TueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                             .PassedThrough.Single().Transaction.Should().Be(null);
    }
 }

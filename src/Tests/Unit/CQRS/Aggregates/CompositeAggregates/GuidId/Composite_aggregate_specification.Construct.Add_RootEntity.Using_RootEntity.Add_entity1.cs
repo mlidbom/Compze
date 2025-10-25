@@ -9,7 +9,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {
-   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events
+   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
    {
       public partial class After_calling_AddEntity_with_name_RootEntity_and_a_new_Guid
       {
@@ -56,14 +56,14 @@ public static partial class Composite_aggregate_specification
 
                public class The_QueryModels_Entities_collection : After_calling_AddEntity_with_name_entity1_and_a_newGuid
                {
-                  [XF] public void Single_returns_the_entity_query_model() => _qmRootEntity.Entities.Single().Should().Be(_qmEntity1);
-                  [XF] public void InCreationOrder_0_returns_the_entity_query_model() => _qmRootEntity.Entities.InCreationOrder[0].Should().Be(_qmEntity1);
+                  [XF] public void Single_returns_the_entity_tuery_model() => _qmRootEntity.Entities.Single().Should().Be(_qmEntity1);
+                  [XF] public void InCreationOrder_0_returns_the_entity_tuery_model() => _qmRootEntity.Entities.InCreationOrder[0].Should().Be(_qmEntity1);
                   [XF] public void InCreationOrder_Count_is_1() => _qmRootEntity.Entities.InCreationOrder.Count.Should().Be(1);
 
                   public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection
                   {
                      [XF] public void Contains_returns_true() => _qmRootEntity.Entities.Contains(_entity1.Id).Should().Be(true);
-                     [XF] public void Get_returns_the_entity_query_model() => _qmRootEntity.Entities.Get(_entity1.Id).Should().Be(_qmEntity1);
+                     [XF] public void Get_returns_the_entity_tuery_model() => _qmRootEntity.Entities.Get(_entity1.Id).Should().Be(_qmEntity1);
                      [XF] public void Indexer_returns_the_entity() => _qmRootEntity.Entities[_entity1.Id].Should().Be(_qmEntity1);
 
                      [XF] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()

@@ -7,7 +7,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {
-   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events
+   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
    {
       public partial class After_calling_AddEntity_with_name_RootEntity_and_a_new_Guid
       {

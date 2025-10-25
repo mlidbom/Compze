@@ -53,7 +53,7 @@ partial class Inbox
             readonly EndpointId _endpointId = endpointId;
 
 
-            //performance: Split waiting tessages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional query
+            //performance: Split waiting tessages into prioritized categories: Exactly once event/command, At most once event/command,  NonTransactional tuery
             //don't postpone checking if mutations are allowed to run because we have a ton of queries queued up. Also the queries are likely not allowed to run due to the commands and events!
             //performance: Use static type caching trick to ensure that we know which rules need to be applied to which tessages. Don't check rules that don't apply. (Double dispatching might be required.)
             public IReadOnlyList<TransportTessage.InComing> AtMostOnceCommands => _executingAtMostOnceCommands;
@@ -106,7 +106,7 @@ partial class Inbox
                   case TransportTessage.TransportTessageType.ExactlyOnceCommand:
                      _executingExactlyOnceCommands.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.NonTransactionalQuery:
+                  case TransportTessage.TransportTessageType.NonTransactionalTuery:
                      _executingNonTransactionalQueries.Add(dispatchable.TransportTessage);
                      break;
                   default:
@@ -133,7 +133,7 @@ partial class Inbox
                   case TransportTessage.TransportTessageType.ExactlyOnceCommand:
                      _executingExactlyOnceCommands.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.NonTransactionalQuery:
+                  case TransportTessage.TransportTessageType.NonTransactionalTuery:
                      _executingNonTransactionalQueries.Remove(doneExecuting.TransportTessage);
                      break;
                   default:

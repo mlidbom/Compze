@@ -80,7 +80,7 @@ partial class TransportClient : ITransportClient, IDisposable
       return await connection.PostAsync(atMostOnceTommand).caf();
    }
 
-   public async Task<TQueryResult> GetAsync<TQueryResult>(IRemotableTuery<TQueryResult> tuery)
+   public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery)
    {
       AssertRunning();
       var connection = _router.ConnectionToHandlerFor(tuery);

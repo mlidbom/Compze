@@ -75,7 +75,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       if(documentType.IsInterface)
       {
-         throw new ArgumentException("You cannot query by id for an interface type. There is no guarantee of uniqueness");
+         throw new ArgumentException("You cannot tuery by id for an interface type. There is no guarantee of uniqueness");
       }
 
       if(_entitiesByIdAndType.TryGet(key, out value) && documentType.IsInstanceOfType(value))

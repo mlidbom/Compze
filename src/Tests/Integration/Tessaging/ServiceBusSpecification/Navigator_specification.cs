@@ -27,7 +27,7 @@ public class Navigator_specification : UniversalTestBase
 
    public Navigator_specification()
    {
-      var queryResults = new List<UserResource>();
+      var tueryResults = new List<UserResource>();
 
       _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
 
@@ -40,11 +40,11 @@ public class Navigator_specification : UniversalTestBase
                    .AspNetCoreTransport()
                    .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
-                   .ForQuery((GetUserTuery tuery) => queryResults.Single(result => result.Name == tuery.Name))
-                   .ForQuery((UserApiStartPageTuery _) => new UserApiStartPage())
+                   .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
+                   .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
                    .ForCommandWithResult((RegisterUserTommand tommand, IServiceBusSession _) =>
                     {
-                       queryResults.Add(new UserResource(tommand.Name));
+                       tueryResults.Add(new UserResource(tommand.Name));
                        return new UserRegisteredConfirmationResource(tommand.Name);
                     });
          });

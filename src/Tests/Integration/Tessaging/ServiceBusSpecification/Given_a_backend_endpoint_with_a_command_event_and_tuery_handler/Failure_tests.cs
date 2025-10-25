@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 
 public class Failure_tests : EndpointHostTestBase
 {
@@ -17,16 +17,16 @@ public class Failure_tests : EndpointHostTestBase
                    .Should().ThrowAsync<Exception>();
    }
 
-   [PCT] public async Task If_query_handler_throws_awaiting_QueryAsync_throws()
+   [PCT] public async Task If_tuery_handler_throws_awaiting_TueryAsync_throws()
    {
-      QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyTuery())))
                          .Should().ThrowAsync<Exception>();
    }
 
-   [PCT] public void If_query_handler_throws_Query_throws()
+   [PCT] public void If_tuery_handler_throws_Tuery_throws()
    {
-      QueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       var exception = FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()))).Should().Throw<Exception>().Which;
       exception.Should().NotBeNull();
    }

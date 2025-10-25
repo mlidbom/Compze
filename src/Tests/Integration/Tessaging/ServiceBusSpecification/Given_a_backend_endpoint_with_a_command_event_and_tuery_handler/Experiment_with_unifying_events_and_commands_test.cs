@@ -26,7 +26,7 @@ using FluentAssertions;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 
 public class Experiment_with_unifying_events_and_commands_test : UniversalTestBase
 {
@@ -54,7 +54,7 @@ public class Experiment_with_unifying_events_and_commands_test : UniversalTestBa
 
             builder.RegisterHandlers
                    .ForEvent((UserEvent.IUserRegistered _) => {})
-                   .ForQuery((GetUserTuery tuery, IEventStoreReader eventReader) => new UserResource(eventReader.GetHistory(tuery.UserId)))
+                   .ForTuery((GetUserTuery tuery, IEventStoreReader eventReader) => new UserResource(eventReader.GetHistory(tuery.UserId)))
                    .ForCommandWithResult((UserRegistrarCommand.RegisterUserTommand tommand, IEventStoreUpdater store) =>
                     {
                        store.Save(UserAggregate.Register(tommand));

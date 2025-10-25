@@ -2,7 +2,7 @@ using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
+namespace Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
 
 public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>

@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.TasksCE;
@@ -9,30 +9,30 @@ using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 
 public class Parallelism_policies : EndpointHostTestBase
 {
-   [PCT] public async Task Five_query_handlers_can_execute_in_parallel_when_using_QueryAsync()
+   [PCT] public async Task Five_tuery_handlers_can_execute_in_parallel_when_using_TueryAsync()
    {
-      QueryHandlerThreadGate.Close();
+      TueryHandlerThreadGate.Close();
 
       var tasks = Task.WhenAll(1.Through(5)
                                 .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(session =>
                                                                                           session.GetAsync(new MyTuery()))));
 
-      QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       OpenGates();
       await tasks;
    }
 
-   [PCT] public async Task Five_query_handlers_can_execute_in_parallel_when_using_Query()
+   [PCT] public async Task Five_tuery_handlers_can_execute_in_parallel_when_using_Tuery()
    {
-      QueryHandlerThreadGate.Close();
+      TueryHandlerThreadGate.Close();
       var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery())))).ToList();
 
-      QueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
-      QueryHandlerThreadGate.Open();
+      TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      TueryHandlerThreadGate.Open();
       await Task.WhenAll(tasks);
    }
 

@@ -46,7 +46,7 @@ class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
       commandHandler.Invoke(tommand);
    }
 
-   public TResult Execute<TQuery, TResult>(IStrictlyLocalTuery<TQuery, TResult> tuery) where TQuery : IStrictlyLocalTuery<TQuery, TResult>
+   public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
    {
       CommonAssertion(tuery);
 
@@ -55,8 +55,8 @@ class InProcessHypermediaNavigator : IInProcessHypermediaNavigator
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return selfCreating.CreateResult();
 
-      var queryHandler = _handlerRegistry.GetQueryHandler(tuery);
-      return queryHandler.Invoke(tuery);
+      var tueryHandler = _handlerRegistry.GetTueryHandler(tuery);
+      return tueryHandler.Invoke(tuery);
    }
 
    void CommonAssertion(ITessage tessage)

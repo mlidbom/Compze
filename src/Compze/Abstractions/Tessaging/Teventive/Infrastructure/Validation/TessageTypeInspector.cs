@@ -16,8 +16,8 @@ partial class TessageTypeInspector
    [
       new MustBeITessage(),
       new CannotBeBothCommandAndEvent(),
-      new CannotBeBothCommandAndQuery(),
-      new CannotBeBothEventAndQuery(),
+      new CannotBeBothCommandAndTuery(),
+      new CannotBeBothEventAndTuery(),
       new CannotBeBothRemotableAndStrictlyLocal(),
       new CannotForbidAndRequireTransactionalSender(),
       new AtMostOnceCommandDefaultConstructorMustNotSetATessageId(),
@@ -91,9 +91,9 @@ partial class TessageTypeInspector
 
    class CannotBeBothCommandAndEvent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
 
-   class CannotBeBothCommandAndQuery : MutuallyExclusiveInterfaces<ITommand, ITuery<object>>;
+   class CannotBeBothCommandAndTuery : MutuallyExclusiveInterfaces<ITommand, ITuery<object>>;
 
-   class CannotBeBothEventAndQuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
+   class CannotBeBothEventAndTuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
 
    class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalTessage>;
 

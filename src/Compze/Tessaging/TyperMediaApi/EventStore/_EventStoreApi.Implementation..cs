@@ -11,15 +11,15 @@ namespace Compze.Tessaging.TyperMediaApi.EventStore;
 
 public partial class EventStoreApi
 {
-   public partial class QueryApi
+   public partial class TueryApi
    {
       public class AggregateLink<TAggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<AggregateLink<TAggregate>, TAggregate> where TAggregate : class, IEventStored
       {
          [JsonConstructor] internal AggregateLink(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (AggregateLink<TAggregate> query, IEventStoreUpdater updater) => updater.Get<TAggregate>(query.Id));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+            (AggregateLink<TAggregate> tuery, IEventStoreUpdater updater) => updater.Get<TAggregate>(tuery.Id));
       }
 
       public class GetAggregateHistory<TEvent> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetAggregateHistory<TEvent>, IEnumerable<TEvent>> where TEvent : IAggregateTevent
@@ -27,8 +27,8 @@ public partial class EventStoreApi
          [JsonConstructor] internal GetAggregateHistory(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (GetAggregateHistory<TEvent> query, IEventStoreReader reader) => reader.GetHistory(query.Id).Cast<TEvent>());
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+            (GetAggregateHistory<TEvent> tuery, IEventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TEvent>());
       }
 
       public class GetReadonlyCopyOfAggregate<TAggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfAggregate<TAggregate>, TAggregate> where TAggregate : class, IEventStored
@@ -36,8 +36,8 @@ public partial class EventStoreApi
          [JsonConstructor] internal GetReadonlyCopyOfAggregate(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (GetReadonlyCopyOfAggregate<TAggregate> query, IEventStoreReader reader) => reader.GetReadonlyCopy<TAggregate>(query.Id));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+            (GetReadonlyCopyOfAggregate<TAggregate> tuery, IEventStoreReader reader) => reader.GetReadonlyCopy<TAggregate>(tuery.Id));
       }
 
       public class GetReadonlyCopyOfAggregateVersion<TAggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfAggregateVersion<TAggregate>, TAggregate> where TAggregate : class, IEventStored
@@ -51,8 +51,8 @@ public partial class EventStoreApi
          [JsonProperty] Guid Id { get; }
          [JsonProperty] int Version { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-            (GetReadonlyCopyOfAggregateVersion<TAggregate> query, IEventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TAggregate>(query.Id, query.Version));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+            (GetReadonlyCopyOfAggregateVersion<TAggregate> tuery, IEventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TAggregate>(tuery.Id, tuery.Version));
       }
    }
 
@@ -74,9 +74,9 @@ public partial class EventStoreApi
       where TEvent : IAggregateTevent
    {
       CommandApi.SaveAggregate<TAggregate>.RegisterHandler(registrar);
-      QueryApi.AggregateLink<TAggregate>.RegisterHandler(registrar);
-      QueryApi.GetReadonlyCopyOfAggregate<TAggregate>.RegisterHandler(registrar);
-      QueryApi.GetReadonlyCopyOfAggregateVersion<TAggregate>.RegisterHandler(registrar);
-      QueryApi.GetAggregateHistory<TEvent>.RegisterHandler(registrar);
+      TueryApi.AggregateLink<TAggregate>.RegisterHandler(registrar);
+      TueryApi.GetReadonlyCopyOfAggregate<TAggregate>.RegisterHandler(registrar);
+      TueryApi.GetReadonlyCopyOfAggregateVersion<TAggregate>.RegisterHandler(registrar);
+      TueryApi.GetAggregateHistory<TEvent>.RegisterHandler(registrar);
    }
 }

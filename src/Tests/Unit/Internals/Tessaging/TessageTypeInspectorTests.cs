@@ -42,7 +42,7 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
       [XF] public void Is_Both_command_and_event() => AssertInvalidForSending<ITommandAndTevent>();
 
       interface ICommandAndTuery : ITevent, ITuery<object>;
-      [XF] public void Is_Both_command_and_query() => AssertInvalidForSending<ICommandAndTuery>();
+      [XF] public void Is_Both_command_and_tuery() => AssertInvalidForSending<ICommandAndTuery>();
 
       interface IStrictlyLocalAndRemotable : IRemotableTessage, IStrictlyLocalTessage;
       [XF] public void Is_Both_strictly_local_and_remotable() => AssertInvalidForSending<IStrictlyLocalAndRemotable>();

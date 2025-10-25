@@ -19,13 +19,13 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {
-   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events
+   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
    {
       readonly CompositeAggregate _aggregate;
       readonly RootQueryModel _queryModel;
       readonly Guid _aggregateId;
 
-      public After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events()
+      public After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events()
       {
          _aggregateId = Guid.NewGuid();
          _aggregate = new CompositeAggregate("root", _aggregateId);
@@ -36,7 +36,7 @@ public static partial class Composite_aggregate_specification
       }
 
       [XF] public void Aggregate_name_is_root() => _aggregate.Name.Should().Be("root");
-      [XF] public void Query_model_name_is_root() => _queryModel.Name.Should().Be("root");
+      [XF] public void Tuery_model_name_is_root() => _queryModel.Name.Should().Be("root");
       [XF] public void Aggregate_id_is_the_supplied_id() => _aggregate.Id.Should().Be(_aggregateId);
       [XF] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.Should().Be(_aggregateId);
 

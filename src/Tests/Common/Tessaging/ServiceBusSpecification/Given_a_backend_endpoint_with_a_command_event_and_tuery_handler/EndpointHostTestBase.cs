@@ -25,7 +25,7 @@ using Compze.Tests.Infrastructure;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
@@ -38,7 +38,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public readonly IThreadGate MyRemoteAggregateEventHandlerThreadGate;
    public readonly IThreadGate MyLocalAggregateEventHandlerThreadGate;
    public readonly IThreadGate EventHandlerThreadGate;
-   public readonly IThreadGate QueryHandlerThreadGate;
+   public readonly IThreadGate TueryHandlerThreadGate;
 
    public readonly IReadOnlyList<IThreadGate> AllGates;
 
@@ -63,7 +63,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate)),
          MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate)),
          EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate)),
-         QueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(QueryHandlerThreadGate))
+         TueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TueryHandlerThreadGate))
       ];
    }
 
@@ -112,10 +112,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                     })
                    .ForEvent((IMyExactlyOnceTevent _) => EventHandlerThreadGate.AwaitPassThrough())
                    .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
-                   .ForQuery((MyTuery _) =>
+                   .ForTuery((MyTuery _) =>
                     {
-                       QueryHandlerThreadGate.AwaitPassThrough();
-                       return new MyQueryResult();
+                       TueryHandlerThreadGate.AwaitPassThrough();
+                       return new MyTueryResult();
                     })
                    .ForCommandWithResult((MyAtMostOnceTommandWithResult _) =>
                     {

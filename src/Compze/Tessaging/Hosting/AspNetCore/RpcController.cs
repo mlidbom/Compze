@@ -30,16 +30,16 @@ class RpcController : ControllerBase
                  IInbox inbox,
                  Inbox.HandlerExecutionEngine handlerExecutionEngine) : base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
-   [HttpPost(HttpConstants.Routes.Rpc.Query)]
-   public async Task<IActionResult> Query()
+   [HttpPost(HttpConstants.Routes.Rpc.Tuery)]
+   public async Task<IActionResult> Tuery()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
 
       try
       {
-         var queryResponse = (await HandlerExecutionEngine.Enqueue(incomingTessage).caf()).NotNull();
-         var queryResponseJson = Serializer.SerializeResponse(queryResponse);
-         return Ok(queryResponseJson);
+         var tueryResponse = (await HandlerExecutionEngine.Enqueue(incomingTessage).caf()).NotNull();
+         var tueryResponseJson = Serializer.SerializeResponse(tueryResponse);
+         return Ok(tueryResponseJson);
       }
       catch(Exception exception)
       {

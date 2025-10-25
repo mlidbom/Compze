@@ -10,13 +10,13 @@ class AccountAggregate { }
 class AccountReadModel { }
 class EmailToAccountLookupModel { }
 
-class GetAccountQuery { }
+class GetAccountTuery { }
 class AccountCreatedEvent { }
 class CreateAccountCommand { }
 
-class AccountQueryHandler
+class AccountTueryHandler
 {
-   public string Handle(GetAccountQuery query) => string.Empty;
+   public string Handle(GetAccountTuery tuery) => string.Empty;
 }
 
 class AccountQueryModelUpdater
@@ -31,7 +31,7 @@ class AccountCommandHandler
 
 class AccountController
 {
-   public string Handle(GetAccountQuery query) => string.Empty;
+   public string Handle(GetAccountTuery tuery) => string.Empty;
    public void Handle(AccountCreatedEvent @event) { }
    public void Handle(CreateAccountCommand command) { }
 }

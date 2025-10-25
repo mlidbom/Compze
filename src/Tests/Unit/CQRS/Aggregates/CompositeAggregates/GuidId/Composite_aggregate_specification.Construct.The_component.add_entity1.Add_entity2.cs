@@ -8,7 +8,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {
-   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_query_model_to_the_aggregates_events
+   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
    {
       public partial class The_component
       {
@@ -56,13 +56,13 @@ public static partial class Composite_aggregate_specification
                public class The_QueryModels_Entities_collection_ : After_calling_AddEntity_with_name_entity2_and_a_newGuid
                {
                   [XF] public void Single_throws() => _qmComponent.Entities.Invoking(it => it.Single()).Should().Throw<Exception>();
-                  [XF] public void InCreationOrder_1_returns_the_entity_query_model() => _qmComponent.Entities.InCreationOrder[1].Should().Be(_qmEntity2);
+                  [XF] public void InCreationOrder_1_returns_the_entity_tuery_model() => _qmComponent.Entities.InCreationOrder[1].Should().Be(_qmEntity2);
                   [XF] public void InCreationOrder_Count_is_2() => _qmComponent.Entities.InCreationOrder.Count.Should().Be(2);
 
                   public class Passing_the_entitys_id_to : The_QueryModels_Entities_collection_
                   {
                      [XF] public void Contains_returns_true() => _qmComponent.Entities.Contains(_entity2.Id).Should().Be(true);
-                     [XF] public void Get_returns_the_entity_query_model() => _qmComponent.Entities.Get(_entity2.Id).Should().Be(_qmEntity2);
+                     [XF] public void Get_returns_the_entity_tuery_model() => _qmComponent.Entities.Get(_entity2.Id).Should().Be(_qmEntity2);
                      [XF] public void Indexer_returns_the_entity() => _qmComponent.Entities[_entity2.Id].Should().Be(_qmEntity2);
 
                      [XF] public void TryGet_returns_true_and_the_out_parameter_is_the_entity()

@@ -8,10 +8,10 @@ namespace Compze.Tessaging.TyperMediaApi.EventStore;
 
 public partial class EventStoreApi
 {
-   public QueryApi Queries => new();
+   public TueryApi Queries => new();
    public CommandApi Commands => new();
 
-   public partial class QueryApi
+   public partial class TueryApi
    {
       public AggregateLink<TAggregate> GetForUpdate<TAggregate>(Guid id) where TAggregate : class, IEventStored => new(id);
 

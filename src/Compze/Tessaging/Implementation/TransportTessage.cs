@@ -15,7 +15,7 @@ static class TransportTessage
       AtMostOnceCommand,
       AtMostOnceCommandWithReturnValue,
       ExactlyOnceCommand,
-      NonTransactionalQuery
+      NonTransactionalTuery
    }
 
    internal class InComing
@@ -56,7 +56,7 @@ static class TransportTessage
       static TransportTessageType GetTessageTypeEnum(Type tessageType)
       {
          if(typeof(IRemotableTuery<object>).IsAssignableFrom(tessageType))
-            return TransportTessageType.NonTransactionalQuery;
+            return TransportTessageType.NonTransactionalTuery;
          if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(tessageType))
             return TransportTessageType.AtMostOnceCommandWithReturnValue;
          if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(tessageType))

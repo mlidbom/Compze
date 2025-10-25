@@ -45,6 +45,6 @@ public static class TessageTypesInternal
    }
 
    public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
-      => registrar.ForQuery((EndpointInformationTuery _, TypeMapper _, ITessageHandlerRegistry registry, EndpointConfiguration configuration) =>
+      => registrar.ForTuery((EndpointInformationTuery _, TypeMapper _, ITessageHandlerRegistry registry, EndpointConfiguration configuration) =>
                                new EndpointInformation(registry.HandledRemoteTessageTypeIds(), configuration));
 }

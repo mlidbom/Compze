@@ -41,18 +41,18 @@ class HttpApiClient(
       await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.CommandNoResult}")).caf();
    }
 
-   public async Task<TResult> QueryAsync<TResult>(IRemotableTuery<TResult> tuery)
+   public async Task<TResult> TueryAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
       var tessage = TransportTessage.OutGoing.Create(tuery, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
-      return await _transportClient.PostAsync<TResult>(tessage, tuery, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.Query}")).caf();
+      return await _transportClient.PostAsync<TResult>(tessage, tuery, new Uri($"{_remoteAddress}{HttpConstants.Routes.Rpc.Tuery}")).caf();
    }
 
    internal static async Task<(HttpApiClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IRemoteApiTransportClient remoteApiTransportClient, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITessagesInFlightTracker tessagesInFlightTracker)
    {
-      var endpointInformationQuery = new TessageTypesInternal.EndpointInformationTuery();
-      var endpointInformationQueryTessage = TransportTessage.OutGoing.Create(endpointInformationQuery, typeMapper, serializer);
-      var endpointInformation = await remoteApiTransportClient.PostAsync<TessageTypesInternal.EndpointInformation>(endpointInformationQueryTessage, endpointInformationQuery, new Uri($"{remoteAddress.AspNetAddress}{HttpConstants.Routes.Rpc.Query}")).caf();
+      var endpointInformationTuery = new TessageTypesInternal.EndpointInformationTuery();
+      var endpointInformationTueryTessage = TransportTessage.OutGoing.Create(endpointInformationTuery, typeMapper, serializer);
+      var endpointInformation = await remoteApiTransportClient.PostAsync<TessageTypesInternal.EndpointInformation>(endpointInformationTueryTessage, endpointInformationTuery, new Uri($"{remoteAddress.AspNetAddress}{HttpConstants.Routes.Rpc.Tuery}")).caf();
       return (new HttpApiClient(remoteApiTransportClient, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
    }
 }

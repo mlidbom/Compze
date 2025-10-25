@@ -70,11 +70,11 @@ public class PolicyBased
                          new TessageHandler("command handler 3"),
                          new TessageHandler("command handler 4")),
                       new HandlerGroup(
-                         "Query model updaters",
-                         EndpointInternalEventCascadePolicy.Synchronous, //Domain query models should be immediatelly consistent if at all possible..
+                         "Tuery model updaters",
+                         EndpointInternalEventCascadePolicy.Synchronous, //Domain tuery models should be immediatelly consistent if at all possible..
                          TransactionBoundary.Tessage,                    //Setting anything else together with EndpointInternalEventCascadePolicy.Synchronous would be illegal.
 
-                         new TessageHandler("Account email query model updater")
+                         new TessageHandler("Account email tuery model updater")
                       ),
                       new HandlerGroup(
                          HandlerInvokation.InParallel,

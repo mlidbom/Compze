@@ -33,8 +33,8 @@ public abstract class PerformanceTestBase : UniversalTestBase
                    .AspNetCoreTransport()
                    .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
-                   .ForQuery((MyRemoteTuery _) => new MyQueryResult())
-                   .ForQuery((MyLocalStrictlyLocalTuery _) => new MyQueryResult());
+                   .ForTuery((MyRemoteTuery _) => new MyTueryResult())
+                   .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
          });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
@@ -44,7 +44,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await Host.DisposeAsync();
 
-   protected internal class MyRemoteTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyQueryResult>;
-   protected internal class MyLocalStrictlyLocalTuery : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<MyLocalStrictlyLocalTuery, MyQueryResult>;
-   protected internal class MyQueryResult;
+   protected internal class MyRemoteTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyTueryResult>;
+   protected internal class MyLocalStrictlyLocalTuery : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<MyLocalStrictlyLocalTuery, MyTueryResult>;
+   protected internal class MyTueryResult;
 }

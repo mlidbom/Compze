@@ -28,21 +28,21 @@ public abstract class NavigationSpecification<TResult>
    public TResult NavigateOn(IRemoteHypermediaNavigator busSession) => NavigateOnAsync(busSession).ResultUnwrappingException();
    public abstract Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession);
 
-   public NavigationSpecification<TNext> Select<TNext>(Func<TResult, TNext> select) => new NavigationSpecification<TNext>.SelectQuery<TResult>(this, select);
+   public NavigationSpecification<TNext> Select<TNext>(Func<TResult, TNext> select) => new NavigationSpecification<TNext>.SelectTuery<TResult>(this, select);
 
    public NavigationSpecification Post(Func<TResult, IAtMostOnceHypermediaTommand> next) => new PostVoidCommand<TResult>(this, next);
-   public NavigationSpecification<TNext> Get<TNext>(Func<TResult, IRemotableTuery<TNext>> next) => new NavigationSpecification<TNext>.ContinuationQuery<TResult>(this, next);
+   public NavigationSpecification<TNext> Get<TNext>(Func<TResult, IRemotableTuery<TNext>> next) => new NavigationSpecification<TNext>.ContinuationTuery<TResult>(this, next);
    public NavigationSpecification<TNext> Post<TNext>(Func<TResult, IAtMostOnceTommand<TNext>> next) => new NavigationSpecification<TNext>.PostCommand<TResult>(this, next);
 
-   internal static NavigationSpecification<TResult> Get(IRemotableTuery<TResult> tuery) => new StartQuery(tuery);
+   internal static NavigationSpecification<TResult> Get(IRemotableTuery<TResult> tuery) => new StartTuery(tuery);
    internal static NavigationSpecification<TResult> Post(IAtMostOnceTommand<TResult> tommand) => new StartCommand(tommand);
 
-   class SelectQuery<TPrevious> : NavigationSpecification<TResult>
+   class SelectTuery<TPrevious> : NavigationSpecification<TResult>
    {
       readonly NavigationSpecification<TPrevious> _previous;
       readonly Func<TPrevious, TResult> _select;
 
-      internal SelectQuery(NavigationSpecification<TPrevious> previous, Func<TPrevious, TResult> select)
+      internal SelectTuery(NavigationSpecification<TPrevious> previous, Func<TPrevious, TResult> select)
       {
          _previous = previous;
          _select = select;
@@ -55,11 +55,11 @@ public abstract class NavigationSpecification<TResult>
       }
    }
 
-   class StartQuery : NavigationSpecification<TResult>
+   class StartTuery : NavigationSpecification<TResult>
    {
       readonly IRemotableTuery<TResult> _start;
 
-      internal StartQuery(IRemotableTuery<TResult> start) => _start = start;
+      internal StartTuery(IRemotableTuery<TResult> start) => _start = start;
 
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.GetAsync(_start).caf();
    }
@@ -73,22 +73,22 @@ public abstract class NavigationSpecification<TResult>
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession) => await busSession.PostAsync(_start).caf();
    }
 
-   class ContinuationQuery<TPrevious> : NavigationSpecification<TResult>
+   class ContinuationTuery<TPrevious> : NavigationSpecification<TResult>
    {
       readonly NavigationSpecification<TPrevious> _previous;
-      readonly Func<TPrevious, IRemotableTuery<TResult>> _nextQuery;
+      readonly Func<TPrevious, IRemotableTuery<TResult>> _nextTuery;
 
-      internal ContinuationQuery(NavigationSpecification<TPrevious> previous, Func<TPrevious, IRemotableTuery<TResult>> nextQuery)
+      internal ContinuationTuery(NavigationSpecification<TPrevious> previous, Func<TPrevious, IRemotableTuery<TResult>> nextTuery)
       {
          _previous = previous;
-         _nextQuery = nextQuery;
+         _nextTuery = nextTuery;
       }
 
       public override async Task<TResult> NavigateOnAsync(IRemoteHypermediaNavigator busSession)
       {
          var previousResult = await _previous.NavigateOnAsync(busSession).caf();
-         var currentQuery = _nextQuery(previousResult);
-         return await busSession.GetAsync(currentQuery).caf();
+         var currentTuery = _nextTuery(previousResult);
+         return await busSession.GetAsync(currentTuery).caf();
       }
    }
 

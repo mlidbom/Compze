@@ -39,7 +39,7 @@ public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = n
 
       return registrationAttemptResult.Status switch
       {
-         RegistrationAttemptStatus.Successful => (registrationAttemptResult, Api.Query.AccountById(AccountId).ExecuteAsClientRequestOn(_clientEndpoint)),
+         RegistrationAttemptStatus.Successful => (registrationAttemptResult, Api.Tuery.AccountById(AccountId).ExecuteAsClientRequestOn(_clientEndpoint)),
          RegistrationAttemptStatus.EmailAlreadyRegistered => (registrationAttemptResult, null),
          _ => throw new ArgumentOutOfRangeException()
       };

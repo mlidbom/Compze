@@ -8,7 +8,7 @@ using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Teventive.EventStore.Query.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 
 namespace AccountManagement.UI.QueryModels;
@@ -37,16 +37,16 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountEve
    // ReSharper disable MemberCanBeMadeStatic.Global fluent composable APIs and statics do not mix
    internal class Api
    {
-      internal Query Queries => new();
-      internal class Query
+      internal Tuery Queries => new();
+      internal class Tuery
       {
          public TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
       }
 
       public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
 
-      static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForQuery(
-         (TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> query, IInProcessHypermediaNavigator navigator) =>
-            new AccountQueryModel(navigator.Execute(new EventStoreApi().Queries.GetHistory<AccountEvent.Root>(query.EntityId))));
+      static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+         (TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> tuery, IInProcessHypermediaNavigator navigator) =>
+            new AccountQueryModel(navigator.Execute(new EventStoreApi().Queries.GetHistory<AccountEvent.Root>(tuery.EntityId))));
    }
 }

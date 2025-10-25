@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_query_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_command_event_and_tuery_handler;
 
 public class Retry_policies_AtMostOnceCommand_when_command_handler_fails : EndpointHostTestBase
 {

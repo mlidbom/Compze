@@ -14,7 +14,7 @@ public static class TessageTypes
       public static class Queries
       {
 #pragma warning disable CA1724 //Class name conflicts with namespace name.
-         public abstract class StrictlyLocalTuery<TQuery, TResult> : IStrictlyLocalTuery<TQuery, TResult> where TQuery : StrictlyLocalTuery<TQuery, TResult>;
+         public abstract class StrictlyLocalTuery<TTuery, TResult> : IStrictlyLocalTuery<TTuery, TResult> where TTuery : StrictlyLocalTuery<TTuery, TResult>;
 #pragma warning restore CA1724 //
 
          public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Queries.StrictlyLocalTuery<EntityLink<TResult>, TResult>

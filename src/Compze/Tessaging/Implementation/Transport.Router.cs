@@ -19,7 +19,7 @@ partial class TransportClient
       readonly ITypeMapper _typeMapper = typeMapper;
 
       IReadOnlyDictionary<Type, IInboxConnection> _commandHandlerRoutes = new Dictionary<Type, IInboxConnection>();
-      IReadOnlyDictionary<Type, IInboxConnection> _queryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
+      IReadOnlyDictionary<Type, IInboxConnection> _tueryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
       IReadOnlyList<(Type EventType, IInboxConnection Connection)> _eventSubscriberRoutes = new List<(Type EventType, IInboxConnection Connection)>();
       IReadOnlyDictionary<Type, IReadOnlyList<IInboxConnection>> _eventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
 
@@ -27,7 +27,7 @@ partial class TransportClient
       {
          var eventSubscribers = new List<(Type EventType, IInboxConnection Connection)>();
          var commandHandlerRoutes = new Dictionary<Type, IInboxConnection>();
-         var queryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
+         var tueryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
          foreach(var typeId in handledTypeIds)
          {
             if(_typeMapper.TryGetType(typeId, out var tessageType))
@@ -38,12 +38,12 @@ partial class TransportClient
                } else if(IsRemoteCommand(tessageType))
                {
                   commandHandlerRoutes.Add(tessageType, inboxConnection);
-               } else if(IsRemoteQuery(tessageType))
+               } else if(IsRemoteTuery(tessageType))
                {
-                  queryHandlerRoutes.Add(tessageType, inboxConnection);
+                  tueryHandlerRoutes.Add(tessageType, inboxConnection);
                } else
                {
-                  throw new Exception($"Type {typeId} is neither a remote command, event or query.");
+                  throw new Exception($"Type {typeId} is neither a remote command, event or tuery.");
                }
             }
          }
@@ -59,8 +59,8 @@ partial class TransportClient
             if(commandHandlerRoutes.Count > 0)
                OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _commandHandlerRoutes, commandHandlerRoutes);
 
-            if(queryHandlerRoutes.Count > 0)
-               OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _queryHandlerRoutes, queryHandlerRoutes);
+            if(tueryHandlerRoutes.Count > 0)
+               OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _tueryHandlerRoutes, tueryHandlerRoutes);
          }
       }
 
@@ -69,8 +69,8 @@ partial class TransportClient
             ? connection
             : throw new NoHandlerForTessageTypeException(tommand.GetType());
 
-      internal IInboxConnection ConnectionToHandlerFor<TQuery>(IRemotableTuery<TQuery> tuery) =>
-         _queryHandlerRoutes.TryGetValue(tuery.GetType(), out var connection)
+      internal IInboxConnection ConnectionToHandlerFor<TTuery>(IRemotableTuery<TTuery> tuery) =>
+         _tueryHandlerRoutes.TryGetValue(tuery.GetType(), out var connection)
             ? connection
             : throw new NoHandlerForTessageTypeException(tuery.GetType());
 
@@ -93,6 +93,6 @@ partial class TransportClient
 
       static bool IsRemoteCommand(Type type) => typeof(IRemotableTommand).IsAssignableFrom(type);
       static bool IsRemoteEvent(Type type) => typeof(IExactlyOnceTevent).IsAssignableFrom(type);
-      static bool IsRemoteQuery(Type type) => typeof(IRemotableTuery<object>).IsAssignableFrom(type);
+      static bool IsRemoteTuery(Type type) => typeof(IRemotableTuery<object>).IsAssignableFrom(type);
    }
 }

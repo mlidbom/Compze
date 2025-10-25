@@ -34,6 +34,6 @@ public class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
    {
       Account.Commands.ChangeEmail.WithEmail(NewEmail).Post().ExecuteAsClientRequestOn(_clientEndpoint);
 
-      return Account = Api.Query.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
+      return Account = Api.Tuery.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
    }
 }
