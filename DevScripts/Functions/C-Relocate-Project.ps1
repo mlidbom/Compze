@@ -45,9 +45,15 @@ function C-Relocate-Project {
     $normalizedCurrent = $currentProjectDir.TrimEnd('\') + '\'
     $normalizedTarget = $targetProjectDir.TrimEnd('\') + '\'
     if ($normalizedTarget.StartsWith($normalizedCurrent, [StringComparison]::OrdinalIgnoreCase)) {
-        # Move to temp location first, then to final destination
+        # Move to temp location first, then to final destination.
+        # This is required when the target would be a subdirectory of the source.
         $tempDir = Join-Path $solutionDir ("temp_" + [Guid]::NewGuid().ToString())
         Move-Item -Path $currentProjectDir -Destination $tempDir -Force
+        # After the move the original parent directories may no longer exist - ensure target parent exists
+        $targetParentDir = Split-Path -Parent $targetProjectDir
+        if (-not (Test-Path $targetParentDir)) {
+            New-Item -ItemType Directory -Path $targetParentDir -Force | Out-Null
+        }
         Move-Item -Path $tempDir -Destination $targetProjectDir -Force
     } else {
         Move-Item -Path $currentProjectDir -Destination $targetProjectDir -Force
