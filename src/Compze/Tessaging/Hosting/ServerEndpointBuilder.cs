@@ -3,8 +3,6 @@ using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Time.Public;
-using Compze.Serialization.Newtonsoft;
-using Compze.Serialization.Newtonsoft.Private.Tessaging;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
@@ -85,8 +83,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       }
 
       //Transport
-      register.NewtonSoftRemotableTessageSerializer()
-              .Transport()
+      register.Transport()
               .RemoteHypermediaNavigator()
               .HttpClientFactoryCE()
               .HttpApiClient();

@@ -2,6 +2,7 @@ using AccountManagement.API;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Utilities.Threading.TasksCE;
 using JetBrains.Annotations;
@@ -21,7 +22,7 @@ public class Startup
    public Startup(IConfiguration configuration)
    {
       Configuration = configuration;
-      _host = EndpointHost.Production.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
+      _host = EndpointHost.Production.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
       _clientEndpoint = _host.RegisterClientEndpoint(AccountApi.RegisterWithClientEndpoint);
 
    }

@@ -14,7 +14,6 @@ public static class DocumentDbRegistrar
    public static DocumentDbRegistrationBuilder DocumentDb(this IComponentRegistrar registrar)
    {
       registrar.Register(Compze.DocumentDb.DocumentDb.RegisterWith,
-                         it => NewtonsoftDocumentDbSerializer.RegisterWith(it),
                          DocumentDbSession.RegisterWith);
 
       return new DocumentDbRegistrationBuilder();

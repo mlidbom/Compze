@@ -11,6 +11,7 @@ using Compze.Core.Tessaging.Teventive.TEventStore.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Core.Time.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
@@ -38,7 +39,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
-      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
 
       _userManagementDomainEndpoint = _host.RegisterEndpoint(
          "UserManagement.Domain",

@@ -6,6 +6,7 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Time.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
@@ -26,7 +27,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
    public When_scheduling_tommands_to_be_sent_in_the_future()
    {
-      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
       _receivedTommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
       _endpoint = _host.RegisterEndpoint(
          "endpoint",

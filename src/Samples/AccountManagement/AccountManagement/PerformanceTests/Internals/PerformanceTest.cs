@@ -30,7 +30,7 @@ public class PerformanceTest : UniversalTestBase
 
    protected override async Task InitializeAsyncInternal()
    {
-      _host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithRegisteredServiceLocator());
+      _host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       _clientEndpoint = _host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);

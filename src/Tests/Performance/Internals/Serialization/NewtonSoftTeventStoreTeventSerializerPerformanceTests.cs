@@ -2,24 +2,34 @@ using System;
 using System.Linq;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Serialization.Internal;
-using Compze.Serialization.Newtonsoft;
 using Compze.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Testing.XUnit.BDD;
 using Newtonsoft.Json;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
-public class NewtonSoftTeventStoreTeventSerializerPerformanceTests : UniversalTestBase
+public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 {
-   static ITeventStoreSerializer _teventSerializer = new NewtonsoftTeventStoreSerializer(TypeMapper.Instance);
-   
+   readonly IDependencyInjectionContainer _container;
+   readonly ITeventStoreSerializer _teventSerializer;
 
-   [XF] public void Should_roundtrip_simple_tevent_1000_times_in_25_milliseconds()
+   public TeventStoreTeventSerializerPerformanceTests()
+   {
+      _container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      _container.Register().TypeMapper();
+      _teventSerializer = _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
+   }
+
+   protected override void DisposeInternal() => _container.Dispose();
+
+   [PCT] public void Should_roundtrip_simple_tevent_1000_times_in_25_milliseconds()
    {
       var @tevent = new TestTevent(
          test1: "Test1",
@@ -42,7 +52,7 @@ public class NewtonSoftTeventStoreTeventSerializerPerformanceTests : UniversalTe
       );
    }
 
-   [XF] public void Should_roundtrip_simple_tevent_within_50_percent_of_default_serializer_performance()
+   [PCT] public void Should_roundtrip_simple_tevent_within_50_percent_of_default_serializer_performance()
    {
       const int iterations = 1000;
       const double allowedSlowdown = 1.5;

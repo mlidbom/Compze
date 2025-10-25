@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -26,7 +27,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
 
    public TaskRunnerExceptionHandlingTests()
    {
-      _host = TestingEndpointHost.Create(TestingContainerFactory.CreateWithRegisteredServiceLocator);
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
       var endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),

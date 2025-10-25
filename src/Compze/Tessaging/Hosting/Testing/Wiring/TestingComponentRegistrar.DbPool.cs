@@ -10,7 +10,7 @@ using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-public static class TestingComponentRegistrar_DbPool
+public static class TestingComponentRegistrarDbPool
 {
    public static IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this IComponentRegistrar register) => 
       register.CastTo<TestingComponentRegistrar>().CurrentTestsDbPoolIfNotAlreadyRegistered();

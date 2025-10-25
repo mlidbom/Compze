@@ -11,15 +11,18 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.Logging;
+using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class DiContainerExtensions
 {
-   public static IDependencyInjectionContainer CreateWithRegisteredServiceLocator(this DIContainer @this)
+   public static IDependencyInjectionContainer CreateWithServiceLocatorAndSerializer(this DIContainer @this)
    {
       var container = @this.CreateEmpty();
+      container.Register().CastTo<TestingComponentRegistrar>()
+               .CurrentTestsSerializer();
       container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
       return container;
    }
@@ -34,7 +37,7 @@ public static class DiContainerExtensions
 
    public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
    {
-      var container = @this.CreateWithRegisteredServiceLocator();
+      var container = @this.CreateWithServiceLocatorAndSerializer();
       container.Register()
                .TimeSource()
                .TypeMapper()
