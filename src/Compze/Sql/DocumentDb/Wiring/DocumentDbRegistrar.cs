@@ -1,7 +1,5 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Serialization.Newtonsoft;
-using Compze.Serialization.Newtonsoft.Private.DocumentDb;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.DocumentDb.Wiring;
