@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Utilities.DependencyInjection;
@@ -7,7 +6,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,11 +13,6 @@ using Microsoft.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
-
-class InternalControllerFeatureProvider : ControllerFeatureProvider
-{
-   protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Controller));
-}
 
 class AspNetInboxTransportServer : IInboxTransportServer
 {
