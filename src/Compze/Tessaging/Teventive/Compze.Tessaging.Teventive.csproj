@@ -21,9 +21,9 @@
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="EventStore\**" />
-    <EmbeddedResource Remove="EventStore\**" />
-    <None Remove="EventStore\**" />
-    <Content Remove="EventStore\**" />
+    <Compile Remove="TeventStore\**" />
+    <EmbeddedResource Remove="TeventStore\**" />
+    <None Remove="TeventStore\**" />
+    <Content Remove="TeventStore\**" />
   </ItemGroup>
 </Project>

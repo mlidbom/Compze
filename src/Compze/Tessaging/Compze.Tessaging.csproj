@@ -44,9 +44,9 @@
     <EmbeddedResource Remove="Teventive\**" />
     <None Remove="Teventive\**" />
     <Content Remove="Teventive\**" />
-    <Compile Remove="Teventive\EventStore\**" />
-    <EmbeddedResource Remove="Teventive\EventStore\**" />
-    <None Remove="Teventive\EventStore\**" />
-    <Content Remove="Teventive\EventStore\**" />
+    <Compile Remove="Teventive\TeventStore\**" />
+    <EmbeddedResource Remove="Teventive\TeventStore\**" />
+    <None Remove="Teventive\TeventStore\**" />
+    <Content Remove="Teventive\TeventStore\**" />
   </ItemGroup>
 </Project>
