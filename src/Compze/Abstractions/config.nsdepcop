@@ -16,6 +16,9 @@
    <Allowed From="Compze.Core.DocumentDb.Wiring"
             To="Compze.Core.DocumentDb.Private" />
 
+	<Allowed From="Compze.Core.DocumentDb.Private"
+            To="Compze.Core.DocumentDb.Infrastructure" />
+
 	<!--todo: review these-->
 	<Allowed From="Compze.Core.Tessaging.Teventive.Infrastructure.Validation"
             To="Compze.Core.Tessaging.Typermedia.Infrastructure.Validation" />

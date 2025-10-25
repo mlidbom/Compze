@@ -6,7 +6,7 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Core.Sql.Infrastructure;
+namespace Compze.Core.DocumentDb.Infrastructure;
 
 ///<summary>Tracks entities by the combination of their ID and type</summary>
 class EntitiesByIdAndTypeCache

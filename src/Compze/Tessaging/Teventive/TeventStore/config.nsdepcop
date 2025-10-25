@@ -6,5 +6,8 @@
 	<Allowed From="Compze.Tessaging.Teventive.TeventStore.*"
             To="Microsoft.Extensions.Caching.Memory" />
 
+	<!--We are implementing something very similar to a DocumentDb session here, and borrowing one utility class from the document db -->
+   <Allowed From="Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators"
+            To="Compze.Core.DocumentDb.Infrastructure" />
 
 </NsDepCopConfig>
