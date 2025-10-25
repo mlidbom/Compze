@@ -1,9 +1,3 @@
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.TasksCE;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
@@ -11,8 +5,14 @@ using Compze.Core.Serialization.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Client.Http;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading.TasksCE;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.Hosting.AspNetCore;
+namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 class RpcController : ControllerBase
 {

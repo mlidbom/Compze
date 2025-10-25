@@ -11,5 +11,8 @@
 
 	<Allowed From="Compze.Tessaging.Hosting.AspNetCore.*"
             To="Microsoft.Extensions.DependencyInjection.*" />
+
+	<Allowed From="Compze.Tessaging.Hosting.AspNetCore.Wiring"
+            To="Compze.Tessaging.Hosting.AspNetCore.Private.*" />
    
 </NsDepCopConfig>

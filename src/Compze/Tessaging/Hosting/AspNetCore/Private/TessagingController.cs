@@ -11,7 +11,7 @@ using Compze.Utilities.Threading.TasksCE;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.Hosting.AspNetCore;
+namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 class TessagingController : ControllerBase
 {

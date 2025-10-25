@@ -11,7 +11,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.Hosting.AspNetCore;
+namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
 {

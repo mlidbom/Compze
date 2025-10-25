@@ -1,3 +1,4 @@
+using Compze.Tessaging.Hosting.AspNetCore.Private;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Wiring;
