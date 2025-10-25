@@ -3,7 +3,6 @@ using Compze.Core.DocumentDb.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Utilities.Functional;
-using Newtonsoft.Json;
 
 namespace Compze.DocumentDb;
 
@@ -13,8 +12,8 @@ public partial class DocumentDbApi
    {
       public class GetDocumentForUpdate<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetDocumentForUpdate<TDocument>, TDocument>
       {
-         [JsonConstructor] internal GetDocumentForUpdate(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; set; }
+         internal GetDocumentForUpdate(Guid id) => Id = id;
+         Guid Id { get; set; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
@@ -22,8 +21,8 @@ public partial class DocumentDbApi
 
       public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<TryGetDocument<TDocument>, Option<TDocument>>
       {
-         [JsonConstructor] internal TryGetDocument(string id) => Id = id;
-         [JsonProperty] string Id { get; set; }
+         internal TryGetDocument(string id) => Id = id;
+         string Id { get; set; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? Option.Some(document) : Option.None<TDocument>());
@@ -31,8 +30,8 @@ public partial class DocumentDbApi
 
       public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>
       {
-         [JsonConstructor] internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; set; }
+         internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
+         Guid Id { get; set; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetReadonlyCopyOfDocument<TDocument> tuery, IDocumentDbReader reader) => reader.Get<TDocument>(tuery.Id));
