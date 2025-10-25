@@ -1,6 +1,5 @@
 using System;
 using Compze.Sql.Common.DbPool;
-using Compze.Sql.MicrosoftSql.DbPool.Databases;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.Data.SqlClient;

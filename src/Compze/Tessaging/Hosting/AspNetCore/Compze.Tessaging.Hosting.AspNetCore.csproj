@@ -13,5 +13,9 @@
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
    </ItemGroup>
 </Project>

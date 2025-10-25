@@ -13,6 +13,10 @@
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
    </ItemGroup>
    <ItemGroup>
       <Folder Include="Implementation\Transport\Server\" />

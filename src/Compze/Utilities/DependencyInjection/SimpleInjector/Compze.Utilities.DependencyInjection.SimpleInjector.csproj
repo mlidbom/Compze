@@ -5,6 +5,10 @@
    </PropertyGroup>
    <ItemGroup>
       <PackageReference Include="SimpleInjector" Version="5.5.0" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
    </ItemGroup>
    <ItemGroup>
    </ItemGroup>
