@@ -5,7 +5,6 @@ using System.Linq;
 using Compze.Core.Public;
 using Compze.Core.Sql.Infrastructure;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Sql.Common;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;

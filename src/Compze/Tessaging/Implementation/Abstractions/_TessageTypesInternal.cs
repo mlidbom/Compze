@@ -2,6 +2,7 @@
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
+using System;
 using System.Collections.Generic;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
@@ -9,7 +10,6 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Newtonsoft.Json;
 
 namespace Compze.Tessaging.Implementation.Abstractions;
 
@@ -21,14 +21,10 @@ public static class TessageTypesInternal
 
    internal class EndpointInformation
    {
-#pragma warning disable IDE0051 // Remove unused private members
-      [JsonConstructor] EndpointInformation(string name, EndpointId id, HashSet<TypeId> handledTessageTypes)
-#pragma warning restore IDE0051 // Remove unused private members
-      {
-         Name = name;
-         Id = id;
-         HandledTessageTypes = handledTessageTypes;
-      }
+      [Obsolete("Called by serializer", error: true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+      public EndpointInformation() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
       public EndpointInformation(IEnumerable<TypeId> handledRemoteTessageTypeIds, EndpointConfiguration configuration)
       {

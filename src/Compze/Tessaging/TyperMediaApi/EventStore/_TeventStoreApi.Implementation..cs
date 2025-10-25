@@ -25,8 +25,8 @@ public partial class TeventStoreApi
 
       public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : ITaggregateTevent
       {
-         [JsonConstructor] internal GetTaggregateHistory(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; }
+         internal GetTaggregateHistory(Guid id) => Id = id;
+         Guid Id { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
@@ -34,8 +34,8 @@ public partial class TeventStoreApi
 
       public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [JsonConstructor] internal GetReadonlyCopyOfTaggregate(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; }
+         internal GetReadonlyCopyOfTaggregate(Guid id) => Id = id;
+         Guid Id { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
@@ -43,14 +43,14 @@ public partial class TeventStoreApi
 
       public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [JsonConstructor] internal GetReadonlyCopyOfTaggregateVersion(Guid id, int version)
+         internal GetReadonlyCopyOfTaggregateVersion(Guid id, int version)
          {
             Id = id;
             Version = version;
          }
 
-         [JsonProperty] Guid Id { get; }
-         [JsonProperty] int Version { get; }
+         Guid Id { get; }
+         int Version { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
@@ -62,7 +62,7 @@ public partial class TeventStoreApi
       public class SaveTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
          where TTaggregate : class, ITaggregate
       {
-         [JsonConstructor] internal SaveTaggregate(TTaggregate entity) => Entity = entity;
+         internal SaveTaggregate(TTaggregate entity) => Entity = entity;
          TTaggregate Entity { get; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
