@@ -25,7 +25,7 @@ static class RemoteHypermediaNavigatorRegistrar
                                   .CreatedBy((ITransportClient transportClient) => new RemoteHypermediaNavigator(transportClient)));
 
    readonly ITransportClient _transportClient;
-   public RemoteHypermediaNavigator(ITransportClient transportClient) { _transportClient = transportClient; }
+   public RemoteHypermediaNavigator(ITransportClient transportClient) => _transportClient = transportClient;
 
    public void Post(IAtMostOnceHypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 
