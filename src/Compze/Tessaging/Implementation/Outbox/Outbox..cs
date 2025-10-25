@@ -97,15 +97,6 @@ partial class Outbox : IOutbox
    }
 
    bool _running = false;
-
-   public async Task StopAsync()
-   {
-      Assert.State.Is(_running);
-      _running = false;
-      _retryPoller.Stop();
-      await Task.CompletedTask.caf();
-   }
-
    public async Task StartAsync()
    {
       Assert.State.Is(!_running);
@@ -117,5 +108,13 @@ partial class Outbox : IOutbox
       }
 
       _running = true;
+   }
+
+   public async Task StopAsync()
+   {
+      Assert.State.Is(_running);
+      _running = false;
+      _retryPoller.Stop();
+      await Task.CompletedTask.caf();
    }
 }
