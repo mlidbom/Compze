@@ -12,7 +12,7 @@ namespace Compze.Tessaging.Implementation;
 
 partial class RoutingTransportClient
 {
-   class Router(ITypeMapper typeMapper)
+   class InboxConnectionRouter(ITypeMapper typeMapper)
    {
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
       readonly ITypeMapper _typeMapper = typeMapper;
