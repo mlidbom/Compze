@@ -59,8 +59,6 @@ public abstract class EventMigrationTestBase : UniversalTestBase
       }
       catch(Exception ex) when (expectedException != null && expectedException.IsInstanceOfType(ex))
       {
-         // Expected exception was thrown - this is success, suppress output
-         writer.WriteLine($"Expected exception {expectedException.Name} was thrown as expected");
          writer.TestSucceeded();
          throw; // Re-throw so the test framework can verify it
       }
