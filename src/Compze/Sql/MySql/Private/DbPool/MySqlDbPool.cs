@@ -1,19 +1,13 @@
 using System;
 using Compze.Sql.Common.DbPool;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Private.SystemExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.DbPool;
-
-static class MySqlDbPoolRegistrar
-{
-   public static IComponentRegistrar MySqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      MySqlDbPoolSqlLayer.RegisterWith(registrar);
-}
+namespace Compze.Sql.MySql.Private.DbPool;
 
 sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {

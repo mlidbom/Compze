@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Private.SystemExtensions;
 using MySql.Data.MySqlClient;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.MySql.TEventStore;
+namespace Compze.Sql.MySql.Private.TEventStore;
 
 internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connectionManager) : ITeventStoreSqlLayer
 {

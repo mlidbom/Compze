@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Sql.Common;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.SystemExtensions;
+namespace Compze.Sql.MySql.Private.SystemExtensions;
 
 internal static class MyMySqlCommandExtensions
 {

@@ -7,4 +7,10 @@
             To="Microsoft.Data.Sqlite"/>
 
 
+   <Allowed From="Compze.Sql.Sqlite.Wiring"
+            To="Compze.Sql.Sqlite.*"/>
+
+   <Allowed From="Compze.Sql.Sqlite.Wiring"
+            To="Compze.Core.*.Internal.SqlLayer.*"/>
+	
 </NsDepCopConfig>

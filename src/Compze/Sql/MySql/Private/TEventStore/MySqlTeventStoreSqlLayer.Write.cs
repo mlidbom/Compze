@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Private.SystemExtensions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
@@ -11,7 +11,7 @@ using MySql.Data.MySqlClient;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.MySql.TEventStore;
+namespace Compze.Sql.MySql.Private.TEventStore;
 
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the sql layer.
 partial class MySqlTeventStoreSqlLayer

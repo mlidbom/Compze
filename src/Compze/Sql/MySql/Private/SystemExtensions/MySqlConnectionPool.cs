@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+using Compze.Core.Configuration.Internal;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.DependencyInjection;
@@ -5,11 +8,8 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using MySql.Data.MySqlClient;
-using System;
-using System.Threading.Tasks;
-using Compze.Core.Configuration.Internal;
 
-namespace Compze.Sql.MySql.SystemExtensions;
+namespace Compze.Sql.MySql.Private.SystemExtensions;
 
 public static class MySqlConnectionPoolRegistrar
 {

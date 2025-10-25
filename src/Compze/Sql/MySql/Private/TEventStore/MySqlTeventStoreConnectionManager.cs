@@ -1,10 +1,10 @@
 using System;
 using System.Transactions;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Private.SystemExtensions;
 using JetBrains.Annotations;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.TEventStore;
+namespace Compze.Sql.MySql.Private.TEventStore;
 
 internal class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
 {

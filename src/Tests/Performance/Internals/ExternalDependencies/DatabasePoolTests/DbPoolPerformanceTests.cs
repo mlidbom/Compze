@@ -1,7 +1,7 @@
 using System;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Private.SystemExtensions;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;

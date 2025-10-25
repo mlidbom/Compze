@@ -1,9 +1,9 @@
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Private.SystemExtensions;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.MySql.DocumentDb;
+namespace Compze.Sql.MySql.Private.DocumentDb;
 
 partial class MySqlDocumentDbSqlLayer
 {

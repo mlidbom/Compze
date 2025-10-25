@@ -4,10 +4,8 @@ using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MicrosoftSql.Private.Tessaging;
 using Compze.Sql.MicrosoftSql.Private.TEventStore;
 using Compze.Sql.MicrosoftSql.Wiring;
-using Compze.Sql.MySql.DocumentDb.Wiring;
-using Compze.Sql.MySql.SystemExtensions;
-using Compze.Sql.MySql.Tessaging;
-using Compze.Sql.MySql.TEventStore;
+using Compze.Sql.MySql.Private.SystemExtensions;
+using Compze.Sql.MySql.Wiring;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.PostgreSql.DocumentDb.Wiring;
 using Compze.Sql.PostgreSql.Tessaging;
@@ -39,9 +37,7 @@ public static class TestingComponentRegistrarTestingSqlLayerRegistrar
                         .MsSqlSqlLayers();
          case SqlLayer.MySql:
             return @this.MySqlConnectionPool(connectionStringName)
-                        .MySqlDocumentDb()
-                        .MySqlTeventStore()
-                        .MySqlTessaging();
+                        .MySqlSqlLayers();
          case SqlLayer.PostgreSql:
             return @this.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
                         .PgSqlDocumentDb()

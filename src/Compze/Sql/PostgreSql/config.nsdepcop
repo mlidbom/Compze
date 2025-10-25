@@ -9,4 +9,10 @@
 	<Allowed From="*"
             To="NpgsqlTypes"/>
 
+	<Allowed From="Compze.Sql.PostgreSql.Wiring"
+            To="Compze.Sql.PostgreSql.*"/>
+
+   <Allowed From="Compze.Sql.PostgreSql.Wiring"
+            To="Compze.Core.*.Internal.SqlLayer.*"/>
+
 </NsDepCopConfig>

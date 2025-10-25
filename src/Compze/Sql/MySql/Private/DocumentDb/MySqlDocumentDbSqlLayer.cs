@@ -5,13 +5,13 @@ using System.Linq;
 using Compze.Core.DocumentDb.Internal.SqlLayer;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Sql.Common;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql.Private.SystemExtensions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.MySql.DocumentDb;
+namespace Compze.Sql.MySql.Private.DocumentDb;
 
 internal partial class MySqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {

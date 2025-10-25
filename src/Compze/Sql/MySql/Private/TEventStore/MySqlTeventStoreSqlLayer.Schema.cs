@@ -2,7 +2,7 @@ using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.MySql.TEventStore;
+namespace Compze.Sql.MySql.Private.TEventStore;
 
 partial class MySqlTeventStoreSqlLayer
 {
