@@ -4,7 +4,7 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Serialization\Compze.Serialization.Newtonsoft.csproj" />
+      <ProjectReference Include="..\Serialization\Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\Abstractions\Compze.Core.csproj" />

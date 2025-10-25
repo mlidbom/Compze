@@ -15,7 +15,7 @@
     <Project Path="Compze/Sql/DocumentDb/Compze.DocumentDb.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
-    <Project Path="Compze/Serialization/Compze.Serialization.Newtonsoft.csproj" />
+    <Project Path="Compze/Serialization/Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
   </Folder>
   <Folder Name="/Compze/Sql/">
     <Project Path="Compze/Sql/Common/Compze.Sql.Common.csproj" />

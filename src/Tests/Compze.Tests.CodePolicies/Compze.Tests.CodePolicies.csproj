@@ -11,7 +11,7 @@
       <ProjectReference Include="..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
       <ProjectReference Include="..\Unit\Compze.Tests.Unit.csproj" />
       <ProjectReference Include="..\..\Compze\Abstractions\Compze.Core.csproj" />
-      <ProjectReference Include="..\..\Compze\Serialization\Compze.Serialization.Newtonsoft.csproj" />
+      <ProjectReference Include="..\..\Compze\Serialization\Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />

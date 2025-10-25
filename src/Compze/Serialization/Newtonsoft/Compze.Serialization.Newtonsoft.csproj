@@ -11,6 +11,6 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Abstractions\Compze.Core.csproj" />
+      <ProjectReference Include="..\..\Abstractions\Compze.Core.csproj" />
    </ItemGroup>
 </Project>
