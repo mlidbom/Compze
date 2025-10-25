@@ -1,9 +1,12 @@
 using System;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MicrosoftSql.Private;
+using Compze.Sql.MySql;
 using Compze.Sql.MySql.Private;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.Sqlite;
+using Compze.Sql.Sqlite.Private;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Common.Testing.Sql;

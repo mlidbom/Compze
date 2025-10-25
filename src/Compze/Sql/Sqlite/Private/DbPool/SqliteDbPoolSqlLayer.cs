@@ -8,13 +8,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite.DbPool;
-
-static class SqliteDbPoolRegistrar
-{
-   public static IComponentRegistrar SqliteDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      SqliteDbPoolSqlLayer.RegisterWith(registrar);
-}
+namespace Compze.Sql.Sqlite.Private.DbPool;
 
 class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 {

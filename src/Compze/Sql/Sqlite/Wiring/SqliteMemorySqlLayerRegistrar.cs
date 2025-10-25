@@ -1,7 +1,7 @@
 using System;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.Sqlite;
+namespace Compze.Sql.Sqlite.Wiring;
 
 public static class SqliteMemoryConnectionPoolRegistrar
 {

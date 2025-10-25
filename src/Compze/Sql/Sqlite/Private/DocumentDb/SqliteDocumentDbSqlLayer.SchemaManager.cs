@@ -2,7 +2,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.Sqlite.DocumentDb;
+namespace Compze.Sql.Sqlite.Private.DocumentDb;
 
 partial class SqliteDocumentDbSqlLayer
 {

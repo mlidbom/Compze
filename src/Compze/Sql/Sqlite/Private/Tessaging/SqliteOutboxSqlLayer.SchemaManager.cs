@@ -3,7 +3,7 @@ using Compze.Utilities.Threading.TasksCE;
 using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 using D = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
-namespace Compze.Sql.Sqlite.Tessaging;
+namespace Compze.Sql.Sqlite.Private.Tessaging;
 
 partial class SqliteOutboxSqlLayer
 {

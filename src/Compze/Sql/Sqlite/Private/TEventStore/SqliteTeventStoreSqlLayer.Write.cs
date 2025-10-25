@@ -10,7 +10,7 @@ using Microsoft.Data.Sqlite;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.Sqlite.TEventStore;
+namespace Compze.Sql.Sqlite.Private.TEventStore;
 
 partial class SqliteTeventStoreSqlLayer
 {

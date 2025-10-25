@@ -9,9 +9,8 @@ using Compze.Sql.MySql.Wiring;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.PostgreSql.Wiring;
 using Compze.Sql.Sqlite;
-using Compze.Sql.Sqlite.DocumentDb.Wiring;
-using Compze.Sql.Sqlite.Tessaging;
-using Compze.Sql.Sqlite.TEventStore;
+using Compze.Sql.Sqlite.Private;
+using Compze.Sql.Sqlite.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
@@ -39,17 +38,12 @@ public static class TestingComponentRegistrarTestingSqlLayerRegistrar
          case SqlLayer.PostgreSql:
             return @this.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
                         .PgSqlSqlLayers();
-
          case SqlLayer.Sqlite:
             return @this.SqliteConnectionPool(connectionStringName)
-                        .SqliteDocumentDb()
-                        .SqliteTeventStore()
-                        .SqliteTessaging();
+                        .SqliteDSqliteSqlLayers();
          case SqlLayer.SqliteMemory:
             return @this.SqliteMemoryConnectionPool(connectionStringName)
-                        .SqliteDocumentDb()
-                        .SqliteTeventStore()
-                        .SqliteTessaging();
+                        .SqliteDSqliteSqlLayers();
          default:
             throw new ArgumentOutOfRangeException();
       }

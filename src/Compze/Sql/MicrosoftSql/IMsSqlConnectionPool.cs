@@ -1,10 +1,10 @@
+using System;
+using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Threading.Tasks;
 
 namespace Compze.Sql.MicrosoftSql;
 

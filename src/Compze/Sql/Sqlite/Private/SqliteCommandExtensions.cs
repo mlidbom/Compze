@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Sql.Common;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite;
+namespace Compze.Sql.Sqlite.Private;
 
 internal static class SqliteCommandExtensions
 {

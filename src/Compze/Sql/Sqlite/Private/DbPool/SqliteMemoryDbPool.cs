@@ -6,13 +6,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite.DbPool;
-
-static class SqliteMemoryDbPoolRegistrar
-{
-   public static IComponentRegistrar SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      SqliteMemoryDbPoolSqlLayer.RegisterWith(registrar);
-}
+namespace Compze.Sql.Sqlite.Private.DbPool;
 
 class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {

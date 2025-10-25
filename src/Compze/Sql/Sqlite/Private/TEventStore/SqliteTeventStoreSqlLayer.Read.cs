@@ -6,7 +6,7 @@ using Compze.Sql.Common;
 using Microsoft.Data.Sqlite;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Sql.Sqlite.TEventStore;
+namespace Compze.Sql.Sqlite.Private.TEventStore;
 
 partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager connectionManager) : ITeventStoreSqlLayer
 {

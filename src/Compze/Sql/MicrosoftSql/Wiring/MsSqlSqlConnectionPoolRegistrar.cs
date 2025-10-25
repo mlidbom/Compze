@@ -1,8 +1,9 @@
 using Compze.Core.Configuration.Internal;
+using Compze.Sql.MicrosoftSql.Private;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql.Wiring;
 
 public static class MsSqlSqlConnectionPoolRegistrar
 {

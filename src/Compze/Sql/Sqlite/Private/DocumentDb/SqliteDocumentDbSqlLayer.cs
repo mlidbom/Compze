@@ -12,7 +12,7 @@ using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
-namespace Compze.Sql.Sqlite.DocumentDb;
+namespace Compze.Sql.Sqlite.Private.DocumentDb;
 
 internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
