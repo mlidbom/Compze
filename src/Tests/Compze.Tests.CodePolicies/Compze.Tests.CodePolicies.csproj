@@ -23,7 +23,6 @@
       <ProjectReference Include="..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Common\Compze.Tessaging.Common.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
-      <ProjectReference Include="..\..\Compze\Common\Configuration\Compze.Common.Configuration.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Teventive\Compze.Tessaging.Teventive.csproj" />
       <ProjectReference Include="..\..\Compze\Tessaging\Teventive\EventStore\Compze.Tessaging.Teventive.EventStore.csproj" />

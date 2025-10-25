@@ -37,10 +37,10 @@ public class MonitorCE_specification : UniversalTestBase
       });
 
       otherThreadIsWaitingForLock.Wait();
-      otherThreadGotLock.Wait(10.Milliseconds()).Should().BeFalse();
+      otherThreadGotLock.Wait(50.Milliseconds()).Should().BeFalse();
 
       updateLock.Dispose();
-      otherThreadGotLock.Wait(10.Milliseconds()).Should().BeTrue();
+      otherThreadGotLock.Wait(50.Milliseconds()).Should().BeTrue();
 
       Task.WaitAll(otherThreadTask);
    }

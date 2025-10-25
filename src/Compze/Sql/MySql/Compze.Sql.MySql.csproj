@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\Configuration\Compze.Common.Configuration.csproj" />
-    <ProjectReference Include="..\Common\Compze.Sql.Common.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="9.4.0" />
-  </ItemGroup>
-  </Project>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\Abstractions\Compze.Abstractions.csproj" />
+      <ProjectReference Include="..\Common\Compze.Sql.Common.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="MySql.Data" Version="9.4.0" />
+   </ItemGroup>
+</Project>
