@@ -13,10 +13,10 @@ public interface IReadOnlyEntityCollection<TEntity, in TEntityId> : IEnumerable<
    TEntity this[TEntityId id] { get; }
 }
 
-interface IEntityCollectionManager<TEntity, in TEntityId,in TEntityEvent, in TEntityEventImplementation, in TEntityCreatedEvent>
-   where TEntityEvent : class
-   where TEntityCreatedEvent : TEntityEvent
+interface IEntityCollectionManager<TEntity, in TEntityId,in TEntityTevent, in TEntityTeventImplementation, in TEntityCreatedTevent>
+   where TEntityTevent : class
+   where TEntityCreatedTevent : TEntityTevent
 {
    IReadOnlyEntityCollection<TEntity, TEntityId> Entities { get; }
-   TEntity AddByPublishing<TCreationEvent>(TCreationEvent creationEvent) where TCreationEvent : TEntityEventImplementation, TEntityCreatedEvent;
+   TEntity AddByPublishing<TCreationTevent>(TCreationTevent creationTevent) where TCreationTevent : TEntityTeventImplementation, TEntityCreatedTevent;
 }

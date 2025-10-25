@@ -33,21 +33,21 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _tommandHandlers = new Dictionary<Type, Action<object>>();
-   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _eventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
+   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
-   IReadOnlyList<EventHandlerRegistration> _eventHandlerRegistrations = new List<EventHandlerRegistration>();
+   IReadOnlyList<TeventHandlerRegistration> _teventHandlerRegistrations = new List<TeventHandlerRegistration>();
 
    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForEvent<TEvent>(Action<TEvent> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _monitor.Update(() =>
    {
-      TessageInspector.AssertValid<TEvent>();
-      _eventHandlers.TryGetValue(typeof(TEvent), out var currentEventSubscribers);
-      currentEventSubscribers ??= new List<Action<ITevent>>();
+      TessageInspector.AssertValid<TTevent>();
+      _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
+      currentTeventSubscribers ??= new List<Action<ITevent>>();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlers, typeof(TEvent), ReadonlyCollectionsCE.AddToCopy(currentEventSubscribers, @event => handler((TEvent)@event)));
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventHandlerRegistrations, new EventHandlerRegistration(typeof(TEvent), registrar => registrar.For(handler)));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventHandlers, typeof(TTevent), ReadonlyCollectionsCE.AddToCopy(currentTeventSubscribers, @tevent => handler((TTevent)@tevent)));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventHandlerRegistrations, new TeventHandlerRegistration(typeof(TTevent), registrar => registrar.For(handler)));
       return this;
    });
 
@@ -97,7 +97,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
    public Func<ITuery<object>, object> GetTueryHandler(Type tueryType) => _tueryHandlers[tueryType].HandlerMethod;
 
    //performance: Use static caching trick.
-   public IReadOnlyList<Action<ITevent>> GetEventHandlers(Type eventType) => _eventHandlers.Where(it => it.Key.IsAssignableFrom(eventType)).SelectMany(it => it.Value).ToList();
+   public IReadOnlyList<Action<ITevent>> GetTeventHandlers(Type teventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType)).SelectMany(it => it.Value).ToList();
 
    public Func<IStrictlyLocalTuery<TTuery, TResult>, TResult> GetTueryHandler<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
    {
@@ -120,13 +120,13 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       throw new NoHandlerException(tommand.GetType());
    }
 
-   IEventDispatcher<ITevent> ITessageHandlerRegistry.CreateEventDispatcher()
+   ITeventDispatcher<ITevent> ITessageHandlerRegistry.CreateTeventDispatcher()
    {
-      var dispatcher = IMutableEventDispatcher<ITevent>.New();
+      var dispatcher = IMutableTeventDispatcher<ITevent>.New();
       var registrar = dispatcher.Register()
                                 .IgnoreUnhandled<ITevent>();
 
-      _eventHandlerRegistrations.ForEach(handlerRegistration => handlerRegistration.RegisterHandlerWithRegistrar(registrar));
+      _teventHandlerRegistrations.ForEach(handlerRegistration => handlerRegistration.RegisterHandlerWithRegistrar(registrar));
 
       return dispatcher;
    }
@@ -136,7 +136,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       var handledTypes = _tommandHandlers.Keys
                                          .Concat(_tommandHandlersReturningResults.Keys)
                                          .Concat(_tueryHandlers.Keys)
-                                         .Concat(_eventHandlerRegistrations.Select(reg => reg.Type))
+                                         .Concat(_teventHandlerRegistrations.Select(reg => reg.Type))
                                          .Where(tessageType => tessageType.Implements<IRemotableTessage>())
                                          .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
                                          .ToHashSet();
@@ -155,10 +155,10 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
                          .ToHashSet();
    }
 
-   class EventHandlerRegistration(Type type, Action<IEventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
+   class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
    {
       public Type Type { get; } = type;
-      public Action<IEventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
+      public Action<ITeventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
    }
 
    abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)

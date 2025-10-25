@@ -1,5 +1,5 @@
 using System;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Tevents;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
@@ -12,21 +12,21 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
         RemovableEntity.RemovableEntity<
             RemovableNestedEntity,
             Guid,
-            CompositeAggregateEvent.Entity.NestedEntity.IRoot,
-            CompositeAggregateEvent.Entity.NestedEntity.Implementation.Root,
-            CompositeAggregateEvent.Entity.NestedEntity.Created,
-            CompositeAggregateEvent.Entity.NestedEntity.Removed,
-            CompositeAggregateEvent.Entity.NestedEntity.Implementation.Root.IdGetterSetter>
+            CompositeAggregateTevent.Entity.NestedEntity.IRoot,
+            CompositeAggregateTevent.Entity.NestedEntity.Implementation.Root,
+            CompositeAggregateTevent.Entity.NestedEntity.Created,
+            CompositeAggregateTevent.Entity.NestedEntity.Removed,
+            CompositeAggregateTevent.Entity.NestedEntity.Implementation.Root.IdGetterSetter>
     {
         public string Name { get; private set; } = string.Empty;
 
         public RemovableNestedEntity(RemovableEntity removableEntity) : base(removableEntity)
         {
-            RegisterEventAppliers()
-               .For<CompositeAggregateEvent.Entity.NestedEntity.PropertyUpdated.Name>(e => Name = e.Name);
+            RegisterTeventAppliers()
+               .For<CompositeAggregateTevent.Entity.NestedEntity.PropertyUpdated.Name>(e => Name = e.Name);
         }
 
-        public void Rename(string name) => Publish(new CompositeAggregateEvent.Entity.NestedEntity.Implementation.Renamed(name: name));
-        public void Remove() => Publish(new CompositeAggregateEvent.Entity.NestedEntity.Implementation.Removed());
+        public void Rename(string name) => Publish(new CompositeAggregateTevent.Entity.NestedEntity.Implementation.Renamed(name: name));
+        public void Remove() => Publish(new CompositeAggregateTevent.Entity.NestedEntity.Implementation.Removed());
     }
 }

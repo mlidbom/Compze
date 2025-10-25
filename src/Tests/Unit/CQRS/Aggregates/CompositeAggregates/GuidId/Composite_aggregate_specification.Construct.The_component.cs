@@ -6,9 +6,9 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {
-   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
+   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_tevents
    {
-      public partial class The_component : After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
+      public partial class The_component : After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_tevents
       {
          readonly Component _component;
          readonly QueryModels.Component _qmComponent;

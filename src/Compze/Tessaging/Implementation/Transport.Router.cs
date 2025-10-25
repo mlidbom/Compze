@@ -20,21 +20,21 @@ partial class TransportClient
 
       IReadOnlyDictionary<Type, IInboxConnection> _tommandHandlerRoutes = new Dictionary<Type, IInboxConnection>();
       IReadOnlyDictionary<Type, IInboxConnection> _tueryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
-      IReadOnlyList<(Type EventType, IInboxConnection Connection)> _eventSubscriberRoutes = new List<(Type EventType, IInboxConnection Connection)>();
-      IReadOnlyDictionary<Type, IReadOnlyList<IInboxConnection>> _eventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
+      IReadOnlyList<(Type TeventType, IInboxConnection Connection)> _teventSubscriberRoutes = new List<(Type TeventType, IInboxConnection Connection)>();
+      IReadOnlyDictionary<Type, IReadOnlyList<IInboxConnection>> _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
 
       internal void RegisterRoutes(IInboxConnection inboxConnection, ISet<TypeId> handledTypeIds)
       {
-         var eventSubscribers = new List<(Type EventType, IInboxConnection Connection)>();
+         var teventSubscribers = new List<(Type TeventType, IInboxConnection Connection)>();
          var tommandHandlerRoutes = new Dictionary<Type, IInboxConnection>();
          var tueryHandlerRoutes = new Dictionary<Type, IInboxConnection>();
          foreach(var typeId in handledTypeIds)
          {
             if(_typeMapper.TryGetType(typeId, out var tessageType))
             {
-               if(IsRemoteEvent(tessageType))
+               if(IsRemoteTevent(tessageType))
                {
-                  eventSubscribers.Add((tessageType, inboxConnection));
+                  teventSubscribers.Add((tessageType, inboxConnection));
                } else if(IsRemoteTommand(tessageType))
                {
                   tommandHandlerRoutes.Add(tessageType, inboxConnection);
@@ -43,17 +43,17 @@ partial class TransportClient
                   tueryHandlerRoutes.Add(tessageType, inboxConnection);
                } else
                {
-                  throw new Exception($"Type {typeId} is neither a remote tommand, event or tuery.");
+                  throw new Exception($"Type {typeId} is neither a remote tommand, tevent or tuery.");
                }
             }
          }
 
          using(_monitor.TakeUpdateLock())
          {
-            if(eventSubscribers.Count > 0)
+            if(teventSubscribers.Count > 0)
             {
-               OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _eventSubscriberRoutes, eventSubscribers);
-               _eventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
+               OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _teventSubscriberRoutes, teventSubscribers);
+               _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
             }
 
             if(tommandHandlerRoutes.Count > 0)
@@ -76,23 +76,23 @@ partial class TransportClient
 
       internal IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent)
       {
-         if(_eventSubscriberRouteCache.TryGetValue(tevent.GetType(), out var connection)) return connection;
+         if(_teventSubscriberRouteCache.TryGetValue(tevent.GetType(), out var connection)) return connection;
 
-         var subscriberConnections = _eventSubscriberRoutes
-                                    .Where(route => route.EventType.IsInstanceOfType(tevent))
+         var subscriberConnections = _teventSubscriberRoutes
+                                    .Where(route => route.TeventType.IsInstanceOfType(tevent))
                                     .Select(route => route.Connection)
                                     .ToArray();
 
          using(_monitor.TakeUpdateLock())
          {
-             OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _eventSubscriberRouteCache, tevent.GetType(), subscriberConnections);
+             OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventSubscriberRouteCache, tevent.GetType(), subscriberConnections);
          }
 
          return subscriberConnections;
       }
 
       static bool IsRemoteTommand(Type type) => typeof(IRemotableTommand).IsAssignableFrom(type);
-      static bool IsRemoteEvent(Type type) => typeof(IExactlyOnceTevent).IsAssignableFrom(type);
+      static bool IsRemoteTevent(Type type) => typeof(IExactlyOnceTevent).IsAssignableFrom(type);
       static bool IsRemoteTuery(Type type) => typeof(IRemotableTuery<object>).IsAssignableFrom(type);
    }
 }

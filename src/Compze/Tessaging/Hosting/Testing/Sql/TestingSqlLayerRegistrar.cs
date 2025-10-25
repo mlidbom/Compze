@@ -12,10 +12,10 @@ using Compze.Tessaging.Sql.MicrosoftSql;
 using Compze.Tessaging.Sql.MySql;
 using Compze.Tessaging.Sql.PostgreSql;
 using Compze.Tessaging.Sql.Sqlite;
-using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
-using Compze.Tessaging.Teventive.EventStore.MySql;
-using Compze.Tessaging.Teventive.EventStore.PostgreSql;
-using Compze.Tessaging.Teventive.EventStore.Sqlite;
+using Compze.Tessaging.Teventive.TeventStore.MicrosoftSql;
+using Compze.Tessaging.Teventive.TeventStore.MySql;
+using Compze.Tessaging.Teventive.TeventStore.PostgreSql;
+using Compze.Tessaging.Teventive.TeventStore.Sqlite;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Testing.Sql;
@@ -32,31 +32,31 @@ public static class TestingSqlLayerRegistrar
          case SqlLayer.MicrosoftSqlServer:
             register.MsSqlConnectionPool(connectionStringName)
                     .MsSqlDocumentDb()
-                    .MsSqlEventStore()
+                    .MsSqlTeventStore()
                     .MsSqlTessaging();
             break;
          case SqlLayer.MySql:
             register.MySqlConnectionPool(connectionStringName)
                     .MySqlDocumentDb()
-                    .MySqlEventStore()
+                    .MySqlTeventStore()
                     .MySqlTessaging();
             break;
          case SqlLayer.PostgreSql:
             register.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
                     .PgSqlDocumentDb()
-                    .PgSqlEventStore()
+                    .PgSqlTeventStore()
                     .PgSqlTessaging();
             break;
          case SqlLayer.Sqlite:
             register.SqliteConnectionPool(connectionStringName)
                     .SqliteDocumentDb()
-                    .SqliteEventStore()
+                    .SqliteTeventStore()
                     .SqliteTessaging();
             break;
          case SqlLayer.SqliteMemory:
             register.SqliteMemoryConnectionPool(connectionStringName)
                     .SqliteDocumentDb()
-                    .SqliteEventStore()
+                    .SqliteTeventStore()
                     .SqliteTessaging();
             break;
          default:

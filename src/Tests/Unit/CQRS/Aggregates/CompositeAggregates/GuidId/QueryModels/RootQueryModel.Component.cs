@@ -1,17 +1,17 @@
 using System;
-using Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
+using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Tevents;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 
-partial class Component : RootQueryModel.Component<Component, CompositeAggregateEvent.Component.IRoot>
+partial class Component : RootQueryModel.Component<Component, CompositeAggregateTevent.Component.IRoot>
 {
    public Component(RootQueryModel root) : base(root)
    {
       _entities = Component.Entity.CreateSelfManagingCollection(this);
       CComponent = new NestedComponent(this);
-      RegisterEventAppliers()
-        .For<CompositeAggregateEvent.Component.PropertyUpdated.Name>(e => Name = e.Name);
+      RegisterTeventAppliers()
+        .For<CompositeAggregateTevent.Component.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
    readonly Component.Entity.CollectionManager _entities;

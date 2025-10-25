@@ -13,11 +13,11 @@ public class Testing
    public void Test()
    {
       var createAccountHandler = new TestTessageHandler<CreateAccountTommand>();
-      var accountQueryModelUpdater = new TestTessageHandler<AccountCreatedEvent>();
+      var accountQueryModelUpdater = new TestTessageHandler<AccountCreatedTevent>();
 
       var endpoint = new Endpoint(
          TommandHandler.For<CreateAccountTommand>("BE8B06E7-28BB-439D-BDD6-CF7E9454424B", createAccountHandler.Handle),
-         EventHandler.For<AccountCreatedEvent>("AD198D3E-5340-4CB3-8BDB-31AFD0C7FC9A", accountQueryModelUpdater.Handle)
+         TeventHandler.For<AccountCreatedTevent>("AD198D3E-5340-4CB3-8BDB-31AFD0C7FC9A", accountQueryModelUpdater.Handle)
       );
 
       //bus.SendAsyncAsync(new CreateAccountTommand)
@@ -29,13 +29,13 @@ public class Testing
 
 
 
-   class TestingResetEvent
+   class TestingResetTevent
    {
-      private readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
+      private readonly ManualResetEventSlim _tevent = new ManualResetEventSlim(false);
       private readonly TimeSpan timeout_;
       private readonly string name_;
 
-      public TestingResetEvent(string name, TimeSpan? timeout = null)
+      public TestingResetTevent(string name, TimeSpan? timeout = null)
       {
          timeout_ = timeout ?? TimeSpan.FromSeconds(1);
          name_ = name;
@@ -43,37 +43,37 @@ public class Testing
 
       public void Wait()
       {
-         if (!_event.Wait(timeout_))
+         if (!_tevent.Wait(timeout_))
          {
             throw new Exception($"Timed out waiting for lock: {name_}");
          }
       }
 
-      public void Set() => _event.Set();
-      public void Reset() => _event.Reset();
+      public void Set() => _tevent.Set();
+      public void Reset() => _tevent.Reset();
    }
 
 
-   class TestingResetEventCollection
+   class TestingResetTeventCollection
    {
-      private readonly ConcurrentDictionary<string, TestingResetEvent> _manuals = new ConcurrentDictionary<string, TestingResetEvent>();
+      private readonly ConcurrentDictionary<string, TestingResetTevent> _manuals = new ConcurrentDictionary<string, TestingResetTevent>();
 
       private TimeSpan timeout_;
-      public TestingResetEventCollection(TimeSpan? timeout = null)
+      public TestingResetTeventCollection(TimeSpan? timeout = null)
       {
          timeout_ = timeout ?? TimeSpan.FromSeconds(1);
       }
 
-      public TestingResetEvent Manual(string name)
+      public TestingResetTevent Manual(string name)
       {
          lock (_manuals)
          {
-            return _manuals.GetOrAdd(name, _ => new TestingResetEvent(name, timeout_));
+            return _manuals.GetOrAdd(name, _ => new TestingResetTevent(name, timeout_));
          }
       }
 
-      public TestingResetEvent Manual(int key) => Manual(key.ToString());
-      public TestingResetEvent Manual(Guid key) => Manual(key.ToString());
+      public TestingResetTevent Manual(int key) => Manual(key.ToString());
+      public TestingResetTevent Manual(Guid key) => Manual(key.ToString());
    }
 
 
@@ -82,9 +82,9 @@ public class Testing
    //This should give us full testability of invokation policies :)
    class TestTessageHandler<T>
    {
-      public readonly TestingResetEvent Started = new TestingResetEvent(nameof(Started));
-      public readonly  TestingResetEvent Completed = new TestingResetEvent(nameof(Completed));
-      public  readonly  TestingResetEvent AllowToComplete = new TestingResetEvent(nameof(AllowToComplete));
+      public readonly TestingResetTevent Started = new TestingResetTevent(nameof(Started));
+      public readonly  TestingResetTevent Completed = new TestingResetTevent(nameof(Completed));
+      public  readonly  TestingResetTevent AllowToComplete = new TestingResetTevent(nameof(AllowToComplete));
 
       public bool IsStarted = false;
       public bool IsCompleted = false;

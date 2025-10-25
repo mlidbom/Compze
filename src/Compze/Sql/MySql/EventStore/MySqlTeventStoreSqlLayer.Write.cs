@@ -1,0 +1,120 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Compze.Sql.Common;
+using Compze.Sql.Common.TeventStore.Abstractions;
+using Compze.Sql.MySql;
+using Compze.Sql.MySql.SystemExtensions;
+using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using MySql.Data.MySqlClient;
+using ReadOrder = Compze.Sql.Common.TeventStore.Abstractions.ReadOrder;
+using Tevent = Compze.Sql.Common.TeventStore.TeventTableSchemaStrings;
+
+namespace Compze.Tessaging.Teventive.TeventStore.MySql;
+
+//Performance: explore MySql alternatives to commented out MSSql hints throughout the sql layer.
+partial class MySqlTeventStoreSqlLayer
+{
+   public void InsertSingleAggregateTevents(IReadOnlyList<TeventDataRow> tevents)
+   {
+      _connectionManager.UseConnection(connection =>
+      {
+         foreach(var data in tevents)
+         {
+            try
+            {
+               connection.UseCommand(
+                  command => command.SetCommandText(
+                                        $"""
+
+                                         INSERT {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+                                         (       {Tevent.AggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrder},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
+                                         VALUES(@{Tevent.AggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrder}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
+
+                                         UPDATE {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+                                         SET {Tevent.ReadOrder} = cast({Tevent.InsertionOrder} as {Tevent.ReadOrderType})
+                                         WHERE {Tevent.TeventId} = @{Tevent.TeventId} 
+                                         AND @{Tevent.ReadOrder} = '0.0000000000000000000';
+
+                                         """)
+                                    .AddParameter(Tevent.AggregateId, data.AggregateId)
+                                    .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
+                                    .AddParameter(Tevent.TeventType, data.TeventType)
+                                    .AddParameter(Tevent.TeventId, data.TeventId)
+                                    .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
+                                    .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
+
+                                    .AddParameter(Tevent.ReadOrder, MySqlDbType.VarChar, data.StorageInformation.ReadOrder?.ToString() ?? ReadOrder.Zero.ToString())
+                                    .AddParameter(Tevent.EffectiveVersion, MySqlDbType.Int32, data.StorageInformation.EffectiveVersion)
+                                    .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent)
+                                    .AddNullableParameter(Tevent.RefactoringType, MySqlDbType.Byte, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
+                                    .ExecuteNonQuery());
+            }
+            catch(MySqlException e) when (SqlExceptions.MySql.IsPrimaryKeyViolation(e))
+            {
+               //todo: Make sure we have test coverage for this.
+               throw new TeventDuplicateKeyException(e);
+            }
+         }
+      });
+   }
+
+   public void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions)
+   {
+      var commandText = versions.Select((spec, _) =>
+                                           $"UPDATE {Tevent.TableName} SET {Tevent.EffectiveVersion} = {spec.EffectiveVersion} WHERE {Tevent.TeventId} = '{spec.TeventId}';").Join(Environment.NewLine);
+
+      _connectionManager.UseConnection(connection => connection.ExecuteNonQuery(commandText));
+
+   }
+
+   public TeventNeighborhood LoadTeventNeighborHood(Guid teventId)
+   {
+      //var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
+      const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
+
+      var selectStatement = $"""
+
+                             SELECT  CAST({Tevent.ReadOrder} AS char(39)),        
+                                     (select cast({Tevent.ReadOrder} as char(39)) from {Tevent.TableName} e1 where e1.{Tevent.ReadOrder} < {Tevent.TableName}.{Tevent.ReadOrder} order by {Tevent.ReadOrder} desc limit 1) PreviousReadOrder,
+                                     (select cast({Tevent.ReadOrder} as char(39)) from {Tevent.TableName} e1 where e1.{Tevent.ReadOrder} > {Tevent.TableName}.{Tevent.ReadOrder} order by {Tevent.ReadOrder} limit 1) NextReadOrder
+                             FROM    {Tevent.TableName} {lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead} 
+                             where {Tevent.TeventId} = @{Tevent.TeventId}
+                             """;
+
+      TeventNeighborhood? neighborhood = null;
+
+      _connectionManager.UseCommand(
+         command =>
+         {
+            command.CommandText = selectStatement;
+
+            command.Parameters.Add(new MySqlParameter(Tevent.TeventId, MySqlDbType.Guid) { Value = teventId });
+            using var reader = command.ExecuteReader();
+            reader.Read();
+
+            var effectiveReadOrder = reader.GetString(0).ReplaceInvariant(",", ".");
+            var previousTeventReadOrder = (reader[1] as string)?.ReplaceInvariant(",", ".");
+            var nextTeventReadOrder = (reader[2] as string)?.ReplaceInvariant(",", ".");
+            neighborhood = new TeventNeighborhood(effectiveReadOrder: ReadOrder.Parse(effectiveReadOrder),
+                                                 previousTeventReadOrder: previousTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(previousTeventReadOrder)),
+                                                 nextTeventReadOrder: nextTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextTeventReadOrder)));
+         });
+
+      return Assert.Result.NotNull(neighborhood).then(neighborhood);
+   }
+
+   public void DeleteAggregate(Guid aggregateId)
+   {
+      _connectionManager.UseCommand(
+         command =>
+         {
+            command.CommandText +=
+               $"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.AggregateId} = @{Tevent.AggregateId};";
+            command.Parameters.Add(new MySqlParameter(Tevent.AggregateId, MySqlDbType.Guid) { Value = aggregateId });
+            command.ExecuteNonQuery();
+         });
+   }
+}

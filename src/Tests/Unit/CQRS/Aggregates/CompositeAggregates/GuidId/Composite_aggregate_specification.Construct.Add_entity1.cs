@@ -8,9 +8,9 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {
-   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
+   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_tevents
    {
-      public partial class After_adding_entity_named_entity1 : After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
+      public partial class After_adding_entity_named_entity1 : After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_tevents
       {
          readonly RemovableEntity _entity1;
          readonly Entity _qmEntity1;

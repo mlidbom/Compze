@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Internal;
+namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Internal;
 
 interface IAggregateTypeValidator
 {

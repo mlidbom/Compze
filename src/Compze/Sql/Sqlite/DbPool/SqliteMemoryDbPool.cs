@@ -25,7 +25,7 @@ class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
                                          .DelegateToParentServiceLocatorWhenCloning());
    }
 
-   // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
+   // Keep one connection open per database to prtevent the in-memory database from disappearing when the last connection is closed
    readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = IThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());
 
    public string ConnectionStringFor(DbPoolDatabase db)

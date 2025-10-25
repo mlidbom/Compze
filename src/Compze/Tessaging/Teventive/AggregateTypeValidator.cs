@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Internal;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Internal;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -18,15 +18,15 @@ namespace Compze.Tessaging.Teventive;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 public sealed class AllowPublicSettersAttribute : Attribute;
 
-static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
+static class AggregateTypeValidator<TDomainClass, TTeventImplementation, TTevent>
 {
    public static void AssertStaticStructureIsValid()
    {
-      var typesToInspect = EnumerableCE.OfTypes<TDomainClass, TEventImplementation, TEvent>().ToList();
+      var typesToInspect = EnumerableCE.OfTypes<TDomainClass, TTeventImplementation, TTevent>().ToList();
 
       typesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(typeof(TDomainClass)));
-      typesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(typeof(TEventImplementation)));
-      typesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(typeof(TEvent)));
+      typesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(typeof(TTeventImplementation)));
+      typesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(typeof(TTevent)));
 
       typesToInspect = typesToInspect.Distinct().ToList();
 
@@ -38,7 +38,7 @@ static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
          var brokenMembers = illegalMembers.Select(illegal => $"{illegal.DeclaringType?.FullName ?? "No declaring type or unnamed declaring type"}.{illegal.Name}").Distinct().OrderBy(me => me).Join(Environment.NewLine);
          var tessage = $"""
                         Types used by aggregate contains types that have public setters or public  fields. This is a dangerous design. 
-                        If you ever mutate an event or an aggregate except by raising events your state is likely to become corrupt in our caches etc. 
+                        If you ever mutate an tevent or an aggregate except by raising tevents your state is likely to become corrupt in our caches etc. 
                         List of problem members:{Environment.NewLine}{brokenMembers}{Environment.NewLine}{Environment.NewLine}
                         """;
 
@@ -99,19 +99,19 @@ static class AggregateTypeValidator<TDomainClass, TEventImplementation, TEvent>
          var classInheritanceChain = typeof(TAggregate).ClassInheritanceChain().ToList();
          var inheritedAggregateType = classInheritanceChain.Single(baseClass => baseClass.IsConstructedGenericType && baseClass.GetGenericTypeDefinition() == typeof(Aggregate<,,,,>));
 
-         var detectedEventImplementationType = inheritedAggregateType.GenericTypeArguments[1];
-         var detectedEventType = inheritedAggregateType.GenericTypeArguments[2];
+         var detectedTeventImplementationType = inheritedAggregateType.GenericTypeArguments[1];
+         var detectedTeventType = inheritedAggregateType.GenericTypeArguments[2];
 
-         var eventTypesToInspect = new List<Type> {detectedEventType, detectedEventImplementationType};
+         var teventTypesToInspect = new List<Type> {detectedTeventType, detectedTeventImplementationType};
 
-         eventTypesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(detectedEventImplementationType));
-         eventTypesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(detectedEventType));
+         teventTypesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(detectedTeventImplementationType));
+         teventTypesToInspect.AddRange(GetAllInheritingClassesOrInterfaces(detectedTeventType));
 
-         eventTypesToInspect = eventTypesToInspect.Distinct().ToList();
+         teventTypesToInspect = teventTypesToInspect.Distinct().ToList();
 
-         typeMapper.AssertMappingsExistFor(eventTypesToInspect.Append(typeof(TAggregate)));
+         typeMapper.AssertMappingsExistFor(teventTypesToInspect.Append(typeof(TAggregate)));
 
-         TessageInspector.AssertValid(eventTypesToInspect);
+         TessageInspector.AssertValid(teventTypesToInspect);
       }
 
       static IReadOnlyList<Type> GetAllInheritingClassesOrInterfaces(Type type) => type.Assembly.GetTypes()

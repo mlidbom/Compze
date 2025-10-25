@@ -2,7 +2,7 @@
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
 namespace Compze.Tests.ScratchPad.APIDraft;
 
-interface IAccountEvent { }
+interface IAccountTevent { }
 
 class SendAccountRegistrationWelcomeEmailTommand { }
 
@@ -11,7 +11,7 @@ class AccountReadModel { }
 class EmailToAccountLookupModel { }
 
 class GetAccountTuery { }
-class AccountCreatedEvent { }
+class AccountCreatedTevent { }
 class CreateAccountTommand { }
 
 class AccountTueryHandler
@@ -21,7 +21,7 @@ class AccountTueryHandler
 
 class AccountQueryModelUpdater
 {
-   public void Handle(AccountCreatedEvent @event) { }
+   public void Handle(AccountCreatedTevent @tevent) { }
 }
 
 class AccountTommandHandler
@@ -32,6 +32,6 @@ class AccountTommandHandler
 class AccountController
 {
    public string Handle(GetAccountTuery tuery) => string.Empty;
-   public void Handle(AccountCreatedEvent @event) { }
+   public void Handle(AccountCreatedTevent @tevent) { }
    public void Handle(CreateAccountTommand tommand) { }
 }

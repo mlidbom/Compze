@@ -7,7 +7,7 @@ namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._4Component
 public sealed class ArgumentPassingFourComponentsPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer, EventStore>(
+   : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer, TeventStore>(
       configurationFileName: "TestUsingArgumentPassingFourComponentsPCTAttribute",
       useTestMethodArgument: true,
       sourceFilePath: sourceFilePath,

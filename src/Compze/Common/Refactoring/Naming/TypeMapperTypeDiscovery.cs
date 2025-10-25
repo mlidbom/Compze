@@ -129,7 +129,7 @@ static class TypeMapperTypeDiscovery
          return false;
       }
 
-      // Only map non-abstract types, or abstract types that are IRemotableEvent
+      // Only map non-abstract types, or abstract types that are IRemotableTevent
       if(type.IsAbstract && !typeof(IRemotableTevent).IsAssignableFrom(type))
       {
          return false;

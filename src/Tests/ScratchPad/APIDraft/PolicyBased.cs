@@ -41,8 +41,8 @@ public class PolicyBased
    enum HandlerFailurePolicy { ContinueWithOtherHandlers, StopInvokingHandlers }
 
    //When sending tommands the sender should specify if they wish in-transaction execution so no equivalent option for tommands is needed.
-   //Maybe the Synchronous option here should be a completely different type of  EventHandler / EventHandler-registration?
-   enum EndpointInternalEventCascadePolicy { Synchronous, Asynchronous }
+   //Maybe the Synchronous option here should be a completely different type of  TeventHandler / TeventHandler-registration?
+   enum EndpointInternalTeventCascadePolicy { Synchronous, Asynchronous }
 
    void IllustratateRegistration()
    {
@@ -63,7 +63,7 @@ public class PolicyBased
 
                          HandlerInvokation.InRegistrationOrder,           //Meaningless since there can only be one tommand handler.
                          TransactionBoundary.Tessage,                     //Meaningless since there can only be one tommand handler.
-                         EndpointInternalEventCascadePolicy.Asynchronous, //Invalid for tommands. Overriding the default async behavior should be done by the caller of send, Be part of the bus API
+                         EndpointInternalTeventCascadePolicy.Asynchronous, //Invalid for tommands. Overriding the default async behavior should be done by the caller of send, Be part of the bus API
 
                          new TessageHandler("tommand handler 1"),
                          new TessageHandler("tommand handler 2"),
@@ -71,14 +71,14 @@ public class PolicyBased
                          new TessageHandler("tommand handler 4")),
                       new HandlerGroup(
                          "Tuery model updaters",
-                         EndpointInternalEventCascadePolicy.Synchronous, //Domain tuery models should be immediatelly consistent if at all possible..
-                         TransactionBoundary.Tessage,                    //Setting anything else together with EndpointInternalEventCascadePolicy.Synchronous would be illegal.
+                         EndpointInternalTeventCascadePolicy.Synchronous, //Domain tuery models should be immediatelly consistent if at all possible..
+                         TransactionBoundary.Tessage,                    //Setting anything else together with EndpointInternalTeventCascadePolicy.Synchronous would be illegal.
 
                          new TessageHandler("Account email tuery model updater")
                       ),
                       new HandlerGroup(
                          HandlerInvokation.InParallel,
-                         new TessageHandler(TessageThreadingPolicy.Parallel, "Slow event handler that often receives batches of events from one aggregate. We have verified that handling tessages in parallel is safe and it is necessary for latency reasons.")
+                         new TessageHandler(TessageThreadingPolicy.Parallel, "Slow tevent handler that often receives batches of tevents from one aggregate. We have verified that handling tessages in parallel is safe and it is necessary for latency reasons.")
                       )
          );
    }

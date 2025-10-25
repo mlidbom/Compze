@@ -1,6 +1,6 @@
 // ReSharper disable All
 
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.TeventStore.Abstractions;
 
 #pragma warning disable
 
@@ -32,7 +32,7 @@ class TessageHandlingExamples
 
 class MyTommand {}
 
-interface IMyEvent : IAggregateEvent
+interface IMyTevent : IAggregateTevent
 {
 
 }

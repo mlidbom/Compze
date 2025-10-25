@@ -36,20 +36,20 @@ static class Policy
       public static ITessageHandlerPolicy AggregateRelatedToTessage;
       public static ITessageHandlerPolicy TessageProcessing => null;
       public static ITessageHandlerPolicy TommandProcessing => null;
-      public static ITessageHandlerPolicy EventProcessing => null;
+      public static ITessageHandlerPolicy TeventProcessing => null;
    }
 
    public class Inclusivelock
    {
       public static ITessageHandlerPolicy TessageProcessing => null;
       public static ITessageHandlerPolicy TommandProcessing => null;
-      public static ITessageHandlerPolicy EventProcessing => null;
+      public static ITessageHandlerPolicy TeventProcessing => null;
    }
 
    public static class Updates<T>
    {
       public static ITessageHandlerPolicy WithCurrentTessageAggregateId() => null;
-      public static ITessageHandlerPolicy WithId(ITessageDataExtractor extractEmailFromEmailUpdatedEvent) => null;
+      public static ITessageHandlerPolicy WithId(ITessageDataExtractor extractEmailFromEmailUpdatedTevent) => null;
    }
 
    public static class RequiresUpToDate<T>
@@ -66,7 +66,7 @@ static class Policy
 
 interface ISomeDependency { }
 interface ITessageDataExtractor { }
-class ExtractEmailFromEmailUpdatedEvent : ITessageDataExtractor { }
+class ExtractEmailFromEmailUpdatedTevent : ITessageDataExtractor { }
 
 interface ITessageHandler { }
 
@@ -76,7 +76,7 @@ class TessageHandler
    public static ITessageHandler For<T, D1>(string uniqueId, Action<T, D1> handler, params ITessageHandlerPolicy[] policies) => null;
    public static ITessageHandler For<T, D1, D2>(string uniqueId, Action<T, D1, D2> handler, params ITessageHandlerPolicy[] policies) => null;
 }
-class EventHandler : TessageHandler
+class TeventHandler : TessageHandler
 {
 }
 

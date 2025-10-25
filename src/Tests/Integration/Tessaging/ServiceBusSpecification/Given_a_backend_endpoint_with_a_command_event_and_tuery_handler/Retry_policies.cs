@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : EndpointHostTestBase
 {
@@ -23,14 +23,14 @@ public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : Endpo
       await Task.CompletedTask;
    }
 
-   [PCT] public void ExactlyOnce_Event_raised_in_handler_does_not_reach_remote_handler()
+   [PCT] public void ExactlyOnce_Tevent_raised_in_handler_does_not_reach_remote_handler()
    {
-      MyRemoteAggregateEventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, 1.Seconds())
+      MyRemoteAggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, 1.Seconds())
                                              .Should()
-                                             .Be(expected: false, because: "event should not reach handler");
+                                             .Be(expected: false, because: "tevent should not reach handler");
    }
 
    [PCT] public void Tommand_handler_is_tried_5_times() => MyCreateAggregateTommandHandlerThreadGate.Passed.Should().Be(expected: 5);
 
-   [PCT] public void ExactlyOnce_Event_raised_in_handler_reaches_local_handler_5_times() => MyLocalAggregateEventHandlerThreadGate.Passed.Should().Be(expected: 5);
+   [PCT] public void ExactlyOnce_Tevent_raised_in_handler_reaches_local_handler_5_times() => MyLocalAggregateTeventHandlerThreadGate.Passed.Should().Be(expected: 5);
 }

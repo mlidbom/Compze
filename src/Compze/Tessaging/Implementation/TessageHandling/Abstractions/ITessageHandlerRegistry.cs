@@ -14,13 +14,13 @@ interface ITessageHandlerRegistry
     Action<ITommand> GetTommandHandler(Type tommandType);
     Func<ITommand, object> GetTommandHandlerWithReturnValue(Type tommandType);
     Func<ITuery<object>, object> GetTueryHandler(Type tommandType);
-    IReadOnlyList<Action<ITevent>> GetEventHandlers(Type eventType);
+    IReadOnlyList<Action<ITevent>> GetTeventHandlers(Type teventType);
 
     Func<IStrictlyLocalTuery<TTuery, TResult>, TResult> GetTueryHandler<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>;
 
     Func<ITommand<TResult>, TResult> GetTommandHandler<TResult>(ITommand<TResult> tommand);
 
-    IEventDispatcher<ITevent> CreateEventDispatcher();
+    ITeventDispatcher<ITevent> CreateTeventDispatcher();
 
     ISet<TypeId> HandledRemoteTessageTypeIds();
 }

@@ -1,26 +1,26 @@
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
+namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
-   where TAggregateEvent : class, IAggregateTevent
+public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
+   where TAggregateTevent : class, IAggregateTevent
 {
-   public abstract partial class Component<TComponent, TComponentEvent>
-      where TComponentEvent : class, TAggregateEvent
-      where TComponent : Component<TComponent, TComponentEvent>
+   public abstract partial class Component<TComponent, TComponentTevent>
+      where TComponentTevent : class, TAggregateTevent
+      where TComponent : Component<TComponent, TComponentTevent>
    {
       [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-      public abstract class NestedComponent<TNestedComponent, TNestedComponentEvent> : Component<TNestedComponent, TNestedComponentEvent>
-         where TNestedComponentEvent : class, TComponentEvent
-         where TNestedComponent : NestedComponent<TNestedComponent, TNestedComponentEvent>
+      public abstract class NestedComponent<TNestedComponent, TNestedComponentTevent> : Component<TNestedComponent, TNestedComponentTevent>
+         where TNestedComponentTevent : class, TComponentTevent
+         where TNestedComponent : NestedComponent<TNestedComponent, TNestedComponentTevent>
       {
-         protected NestedComponent(TComponent parent) : base(parent.RegisterEventAppliers(), registerEventAppliers: true) {}
+         protected NestedComponent(TComponent parent) : base(parent.RegisterTeventAppliers(), registerTeventAppliers: true) {}
 
-         protected NestedComponent(IEventHandlerRegistrar<TNestedComponentEvent> appliersRegistrar,
-                                   bool registerEventAppliers) : base(appliersRegistrar, registerEventAppliers) {}
+         protected NestedComponent(ITeventHandlerRegistrar<TNestedComponentTevent> appliersRegistrar,
+                                   bool registerTeventAppliers) : base(appliersRegistrar, registerTeventAppliers) {}
       }
    }
 }

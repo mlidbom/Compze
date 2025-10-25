@@ -13,7 +13,7 @@ static class HttpConstants
 
       internal static class Tessaging
       {
-         internal const string Event = "/internal/tessaging/event";
+         internal const string Tevent = "/internal/tessaging/tevent";
          internal const string Tommand = "/internal/tessaging/tommand";
       }
    }

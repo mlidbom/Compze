@@ -37,6 +37,6 @@ class HttpRemoteTessageSender(
    {
       var tessage = TransportTessage.OutGoing.Create(tevent, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
-      await _transportClient.PostAsync(tessage, tevent, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Event}")).caf();
+      await _transportClient.PostAsync(tessage, tevent, new Uri($"{_remoteAddress}{HttpConstants.Routes.Tessaging.Tevent}")).caf();
    }
 }

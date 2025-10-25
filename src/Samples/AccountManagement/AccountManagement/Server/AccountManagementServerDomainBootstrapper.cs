@@ -1,6 +1,6 @@
 using System;
 using AccountManagement.Domain;
-using AccountManagement.Domain.Events;
+using AccountManagement.Domain.Tevents;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.Abstractions.Tessaging.Hosting.Public;
@@ -10,9 +10,9 @@ using Compze.Sql.DocumentDb.Wiring;
 using Compze.Sql.MicrosoftSql;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Sql.MicrosoftSql;
-using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
-using Compze.Tessaging.Teventive.EventStore.MicrosoftSql;
-using Compze.Tessaging.TyperMediaApi.EventStore;
+using Compze.Tessaging.Teventive.TeventStore.DependencyInjection;
+using Compze.Tessaging.Teventive.TeventStore.MicrosoftSql;
+using Compze.Tessaging.TyperMediaApi.TeventStore;
 
 namespace AccountManagement;
 
@@ -37,14 +37,14 @@ public class AccountManagementServerDomainBootstrapper
       var register = builder.Container.Register();
       register.MsSqlConnectionPool(connectionStringName)
               .MsSqlDocumentDb()
-              .MsSqlEventStore()
+              .MsSqlTeventStore()
               .MsSqlTessaging();
 
-      builder.RegisterEventStore()
-             .HandleAggregate<Account, AccountEvent.Root>();
+      builder.RegisterTeventStore()
+             .HandleAggregate<Account, AccountTevent.Root>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<EventStoreApi.TueryApi.AggregateLink<Account>>(builder.RegisterHandlers)
+             .HandleDocumentType<TeventStoreApi.TueryApi.AggregateLink<Account>>(builder.RegisterHandlers)
              .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterHandlers);
    }
 

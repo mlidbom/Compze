@@ -6,7 +6,7 @@ using System.Numerics;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Sql.Common.EventStore.Abstractions;
+namespace Compze.Sql.Common.TeventStore.Abstractions;
 
 public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {
@@ -61,9 +61,9 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public static ReadOrder FromSqlDecimal(SqlDecimal value) => Parse(value.ToString());
 
-   public static ReadOrder[] CreateOrdersForEventsBetween(int numberOfEvents, ReadOrder rangeStart, ReadOrder rangeEnd)
+   public static ReadOrder[] CreateOrdersForTeventsBetween(int numberOfTevents, ReadOrder rangeStart, ReadOrder rangeEnd)
    {
-      if(rangeEnd._integerPart - rangeStart._integerPart > 1) throw new ArgumentException("We should only ever insert between two adjacent events.");
+      if(rangeEnd._integerPart - rangeStart._integerPart > 1) throw new ArgumentException("We should only ever insert between two adjacent tevents.");
 
       BigInteger rangeSize;
       if(rangeEnd._integerPart > rangeStart._integerPart)
@@ -74,11 +74,11 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
          rangeSize = rangeEnd._fractionPart - rangeStart._fractionPart;
       }
 
-      var increment = rangeSize / (numberOfEvents + 1);
+      var increment = rangeSize / (numberOfTevents + 1);
       if(increment < 1)
-         throw new ArgumentException("Range too small to fit events.");
+         throw new ArgumentException("Range too small to fit tevents.");
 
-      var offSetsFromStartRange = 1.Through(numberOfEvents).Select(index => rangeStart._fractionPart + index * increment).ToArray();
+      var offSetsFromStartRange = 1.Through(numberOfTevents).Select(index => rangeStart._fractionPart + index * increment).ToArray();
       var result = offSetsFromStartRange.Select(offset =>
       {
          if(offset < MaxOffset) //We are still between the range start and the next integer Order value
@@ -94,7 +94,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
       Assert.Result.Is(result.All(order => order > rangeStart)) //We are staying within the specified range
             .Is(result.All(order => order < rangeEnd))          //We are staying within the specified range
-            .Is(result.Distinct().Count() == numberOfEvents);   //Each ReadOrder is unique
+            .Is(result.Distinct().Count() == numberOfTevents);   //Each ReadOrder is unique
 
       return result;
    }

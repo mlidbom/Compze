@@ -1,52 +1,52 @@
 using System;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.TeventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 using static System.Console;
 
-namespace Website.paradigms.semantic_events
+namespace Website.paradigms.semantic_tevents
 {
-   #region IUserEvent
-   interface IUserEvent : IAggregateEvent;
+   #region IUserTevent
+   interface IUserTevent : IAggregateTevent;
    #endregion
 
    namespace Introduction
    {
       namespace HideThisStuff
       {
-         #region IEvent
-         public interface IEvent;
+         #region ITevent
+         public interface ITevent;
          #endregion
 
-         #region IAggregateEvent
-         public interface IAggregateEvent : IEvent
+         #region IAggregateTevent
+         public interface IAggregateTevent : ITevent
          {
             Guid AggregateId { get; }
          }
          #endregion
 
-         #region IAggregateCreatedEvent
-         public interface IAggregateCreatedEvent : IAggregateEvent;
+         #region IAggregateCreatedTevent
+         public interface IAggregateCreatedTevent : IAggregateTevent;
          #endregion
       }
 
-      #region UserEvents1
-      interface IUserCreated : IUserEvent, IAggregateCreatedEvent;
+      #region UserTevents1
+      interface IUserCreated : IUserTevent, IAggregateCreatedTevent;
       interface IUserRegistered : IUserCreated;
       interface IUserImported : IUserRegistered;
       #endregion
 
       class Examples
       {
-         public void IllustrateEventListening()
+         public void IllustrateTeventListening()
          {
             TessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((TessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
 
-            #region UserEventRegistration
+            #region UserTeventRegistration
             registrar
-              .ForEvent<IUserEvent>(userEvent => WriteLine($"User: {userEvent.AggregateId} something happened"))
-              .ForEvent<IUserRegistered>(userRegistered => WriteLine($"User: {userRegistered.AggregateId} registered"))
-              .ForEvent<IUserImported>(userImported => WriteLine($"User: {userImported.AggregateId} imported"));
+              .ForTevent<IUserTevent>(userTevent => WriteLine($"User: {userTevent.AggregateId} something happened"))
+              .ForTevent<IUserRegistered>(userRegistered => WriteLine($"User: {userRegistered.AggregateId} registered"))
+              .ForTevent<IUserImported>(userImported => WriteLine($"User: {userImported.AggregateId} imported"));
             #endregion
          }
       }

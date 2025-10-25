@@ -20,7 +20,7 @@ public class NestedEntitiesTests : UniversalTestBase
    public void ConstructorWorks() => new Root("root").Name.Should().Be("root");
 
    [XF]
-   public void Createing_nested_entities_works_and_events_dispatch_correctly()
+   public void Createing_nested_entities_works_and_tevents_dispatch_correctly()
    {
       var root = new Root("root");
 

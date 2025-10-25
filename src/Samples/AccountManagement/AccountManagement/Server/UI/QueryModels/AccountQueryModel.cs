@@ -2,30 +2,30 @@ using System;
 using System.Collections.Generic;
 using AccountManagement.API;
 using AccountManagement.Domain;
-using AccountManagement.Domain.Events;
+using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
-using Compze.Tessaging.TyperMediaApi.EventStore;
+using Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.TyperMediaApi.TeventStore;
 
 namespace AccountManagement.UI.QueryModels;
 
-class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountEvent.Root>, IAccountResourceData
+class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTevent.Root>, IAccountResourceData
 {
    public Password Password { get; private set; } = null!; //Nullable status guaranteed by AssertInvariantsAreMet
    public Email Email { get; private set; } = null!;       //Nullable status guaranteed by AssertInvariantsAreMet
 
-   AccountQueryModel(IEnumerable<AccountEvent.Root> events)
+   AccountQueryModel(IEnumerable<AccountTevent.Root> tevents)
    {
-      RegisterEventAppliers()
-        .For<AccountEvent.PropertyUpdated.Email>(@event => Email = @event.Email)
-        .For<AccountEvent.PropertyUpdated.Password>(@event => Password = @event.Password)
-        .IgnoreUnhandled<AccountEvent.LoginAttempted>();
+      RegisterTeventAppliers()
+        .For<AccountTevent.PropertyUpdated.Email>(@tevent => Email = @tevent.Email)
+        .For<AccountTevent.PropertyUpdated.Password>(@tevent => Password = @tevent.Password)
+        .IgnoreUnhandled<AccountTevent.LoginAttempted>();
 
-      LoadFromHistory(events);
+      LoadFromHistory(tevents);
    }
 
    protected override void AssertInvariantsAreMet()
@@ -47,6 +47,6 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountEve
 
       static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
          (TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> tuery, IInProcessHypermediaNavigator navigator) =>
-            new AccountQueryModel(navigator.Execute(new EventStoreApi().Queries.GetHistory<AccountEvent.Root>(tuery.EntityId))));
+            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Queries.GetHistory<AccountTevent.Root>(tuery.EntityId))));
    }
 }

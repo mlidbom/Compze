@@ -14,12 +14,12 @@ static class JsonSettings
          ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
       };
 
-   public static readonly JsonSerializerSettings SqlEventStoreSerializerSettings =
+   public static readonly JsonSerializerSettings SqlTeventStoreSerializerSettings =
       new()
       {
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         ContractResolver = IgnoreAggregateEventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql.Instance
+         ContractResolver = IgnoreAggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql.Instance
       };
 
 }

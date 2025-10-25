@@ -140,12 +140,12 @@ class OutboxRetryPoller : IDisposable
 
          switch(tessage)
          {
-            case IExactlyOnceTevent exactlyOnceEvent:
+            case IExactlyOnceTevent exactlyOnceTevent:
             {
-               var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceEvent);
+               var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceTevent);
                connection = connections.FirstOrDefault(c => c.EndpointInformation.Id.GuidValue == endpointId)
                          ?? throw new InvalidOperationException($"No subscriber connection found for endpoint {endpointId}");
-               sendTask = connection.SendAsync(exactlyOnceEvent);
+               sendTask = connection.SendAsync(exactlyOnceTevent);
                break;
             }
             case IExactlyOnceTommand exactlyOnceTommand:

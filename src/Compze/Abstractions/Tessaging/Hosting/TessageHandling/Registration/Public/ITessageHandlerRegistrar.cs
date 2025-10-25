@@ -5,7 +5,7 @@ namespace Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Pub
 
 public interface ITessageHandlerRegistrar
 {
-    ITessageHandlerRegistrar ForEvent<TEvent>(Action<TEvent> handler) where TEvent : ITevent;
+    ITessageHandlerRegistrar ForTevent<TTevent>(Action<TTevent> handler) where TTevent : ITevent;
     ITessageHandlerRegistrar ForTommand<TTommand>(Action<TTommand> handler) where TTommand : ITommand;
     ITessageHandlerRegistrar ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) where TTommand : ITommand<TResult>;
     ITessageHandlerRegistrar ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) where TTuery : ITuery<TResult>;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
@@ -10,13 +10,13 @@ using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations
+namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 {
     public interface IRootTevent : IAggregateTevent;
 
     public abstract class RootTevent : AggregateTevent, IRootTevent;
 
-    namespace Events
+    namespace Tevents
     {
         public abstract class EcAbstract : RootTevent, IAggregateCreatedTevent;
 
@@ -39,19 +39,19 @@ namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations
 
     public class TestAggregate : Aggregate<TestAggregate, IRootTevent, RootTevent>
     {
-        public void Publish(params RootTevent[] events)
+        public void Publish(params RootTevent[] tevents)
         {
 #pragma warning disable 618 //Reviewed OK: This test class is allowed to use these "obsolete" methods.
-            if (GetIdBypassContractValidation() == Guid.Empty && events.First().AggregateId == Guid.Empty)
+            if (GetIdBypassContractValidation() == Guid.Empty && tevents.First().AggregateId == Guid.Empty)
             {
                 SetIdBeVerySureYouKnowWhatYouAreDoing(Guid.NewGuid());
-                events.Cast<IMutableAggregateTevent>().First().SetAggregateIdInternal(Id);
+                tevents.Cast<IMutableAggregateTevent>().First().SetAggregateIdInternal(Id);
 #pragma warning restore 618
             }
 
-            foreach (var @event in events)
+            foreach (var @tevent in tevents)
             {
-                base.Publish(@event);
+                base.Publish(@tevent);
             }
         }
 
@@ -63,32 +63,32 @@ namespace Compze.Tests.Common.CQRS.EventRefactoring.Migrations
 
         void SetupAppliers()
         {
-            RegisterEventAppliers()
+            RegisterTeventAppliers()
                 .For<IRootTevent>(e => _history.Add(e));
         }
 
-        public TestAggregate(IUtcTimeTimeSource timeSource, params RootTevent[] events):this(timeSource)
+        public TestAggregate(IUtcTimeTimeSource timeSource, params RootTevent[] tevents):this(timeSource)
         {
-           if(events.First() is not IAggregateCreatedTevent) throw new Exception($"First event must be {nameof(IAggregateCreatedTevent)}");
+           if(tevents.First() is not IAggregateCreatedTevent) throw new Exception($"First tevent must be {nameof(IAggregateCreatedTevent)}");
 
-            Publish(events);
+            Publish(tevents);
         }
 
-        public static TestAggregate FromEvents(IUtcTimeTimeSource timeSource, Guid? id, IEnumerable<Type> events)
+        public static TestAggregate FromTevents(IUtcTimeTimeSource timeSource, Guid? id, IEnumerable<Type> tevents)
         {
-            var rootEvents = events.ToEvents();
+            var rootTevents = tevents.ToTevents();
 #pragma warning disable CS0618 // Type or member is obsolete
-            rootEvents.Cast<IMutableAggregateTevent>().First().SetAggregateIdInternal(id ?? Guid.NewGuid());
+            rootTevents.Cast<IMutableAggregateTevent>().First().SetAggregateIdInternal(id ?? Guid.NewGuid());
 #pragma warning restore CS0618 // Type or member is obsolete
-            return new TestAggregate(timeSource, rootEvents);
+            return new TestAggregate(timeSource, rootTevents);
         }
 
         readonly List<IRootTevent> _history = [];
         public IReadOnlyList<IAggregateTevent> History => _history;
     }
 
-    static class EventSequenceGenerator
+    static class TeventSequenceGenerator
     {
-        public static RootTevent[] ToEvents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<RootTevent>().ToArray();
+        public static RootTevent[] ToTevents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<RootTevent>().ToArray();
     }
 }

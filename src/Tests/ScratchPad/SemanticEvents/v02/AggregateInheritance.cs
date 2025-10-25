@@ -5,79 +5,79 @@ using System;
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 #pragma warning disable IDE0051 // Remove unused private members
 
-//When persisting event we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage and maybe one could even move events between clases in the hierarchy?
-namespace Compze.Tests.ScratchPad.SemanticEvents.v02;
+//When persisting tevent we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage and maybe one could even move tevents between clases in the hierarchy?
+namespace Compze.Tests.ScratchPad.SemanticTevents.v02;
 
-interface IEvent {}
+interface ITevent {}
 
-interface IExactlyOnceEvent : IEvent
+interface IExactlyOnceTevent : ITevent
 {
-   Guid EventId { get; }
+   Guid TeventId { get; }
 }
 
-interface IAggregateEvent : IExactlyOnceEvent
+interface IAggregateTevent : IExactlyOnceTevent
 {
    Guid AggregateId { get; }
 }
 
-interface IEvent<out TEventInterface> : IEvent
+interface ITevent<out TTeventInterface> : ITevent
 {
-   TEventInterface Event { get; }
+   TTeventInterface Tevent { get; }
 }
 
-interface IExactlyOnceEvent<out TEventInterface> : IEvent<TEventInterface> where TEventInterface : IExactlyOnceEvent {}
-interface IAggregateEvent<out TAggregateEventInterface> : IExactlyOnceEvent<TAggregateEventInterface> where TAggregateEventInterface : IAggregateEvent {}
+interface IExactlyOnceTevent<out TTeventInterface> : ITevent<TTeventInterface> where TTeventInterface : IExactlyOnceTevent {}
+interface IAggregateTevent<out TAggregateTeventInterface> : IExactlyOnceTevent<TAggregateTeventInterface> where TAggregateTeventInterface : IAggregateTevent {}
 
-interface IUserEvent<out TUserEventInterface> : IAggregateEvent<TUserEventInterface> where TUserEventInterface : IUserEvent {}
-interface IManagerEvent<out TIBirdEventInterface> : IUserEvent<TIBirdEventInterface> where TIBirdEventInterface : IUserEvent {}
+interface IUserTevent<out TUserTeventInterface> : IAggregateTevent<TUserTeventInterface> where TUserTeventInterface : IUserTevent {}
+interface IManagerTevent<out TIBirdTeventInterface> : IUserTevent<TIBirdTeventInterface> where TIBirdTeventInterface : IUserTevent {}
 
 
-interface IUserEvent : IAggregateEvent {}
-interface IUserRegisteredEvent : IUserEvent {}
-interface IManagerEvent : IUserEvent {}
-interface IManagerHiredEvent : IManagerEvent {}
+interface IUserTevent : IAggregateTevent {}
+interface IUserRegisteredTevent : IUserTevent {}
+interface IManagerTevent : IUserTevent {}
+interface IManagerHiredTevent : IManagerTevent {}
 
 public class AggregateInheritance
 {
    public void DemonstrateSemanticRelationships()
    {
-      IUserEvent<IUserEvent> wrapperUserEvent = null!;
-      IUserEvent<IUserRegisteredEvent> wrapperUserRegisteredEvent = null!;
+      IUserTevent<IUserTevent> wrapperUserTevent = null!;
+      IUserTevent<IUserRegisteredTevent> wrapperUserRegisteredTevent = null!;
 
-      IManagerEvent<IUserEvent> wrapperManagerEvent = null!;
-      IManagerEvent<IUserRegisteredEvent> wrapperManagerUserRegisteredEvent = null!;
-      IManagerEvent<IManagerHiredEvent> wrappedManagerHiredEven = null!;
-      wrapperUserEvent = wrapperUserRegisteredEvent = wrapperManagerUserRegisteredEvent;
-      wrapperUserEvent = wrapperManagerEvent = wrapperManagerUserRegisteredEvent;
-      wrapperUserEvent = wrappedManagerHiredEven;
+      IManagerTevent<IUserTevent> wrapperManagerTevent = null!;
+      IManagerTevent<IUserRegisteredTevent> wrapperManagerUserRegisteredTevent = null!;
+      IManagerTevent<IManagerHiredTevent> wrappedManagerHiredEven = null!;
+      wrapperUserTevent = wrapperUserRegisteredTevent = wrapperManagerUserRegisteredTevent;
+      wrapperUserTevent = wrapperManagerTevent = wrapperManagerUserRegisteredTevent;
+      wrapperUserTevent = wrappedManagerHiredEven;
    }
 }
 
-interface IAddressEvent {}
-interface IAddressUpdatedEvent : IAddressEvent {}
-interface IMovedEvent : IAddressUpdatedEvent {}
+interface IAddressTevent {}
+interface IAddressUpdatedTevent : IAddressTevent {}
+interface IMovedTevent : IAddressUpdatedTevent {}
 
-//Should it be a specific IUserAddressEvent<T> or IUserComponent<T> for all component events? Or should IUserAddressEvent<T> inherit IUserComponent<T>?  
-interface IUserAddressEvent<out TAddressEventInterface> : IEvent<TAddressEventInterface>, IUserEvent {}
-interface IManagerAddressEvent<out TAddressEventInterface> : IUserAddressEvent<TAddressEventInterface> {}
+//Should it be a specific IUserAddressTevent<T> or IUserComponent<T> for all component tevents? Or should IUserAddressTevent<T> inherit IUserComponent<T>?  
+interface IUserAddressTevent<out TAddressTeventInterface> : ITevent<TAddressTeventInterface>, IUserTevent {}
+interface IManagerAddressTevent<out TAddressTeventInterface> : IUserAddressTevent<TAddressTeventInterface> {}
 
 public class ReUsableAggregateComponentsInInheritableAggregates
 {
    static void DemonstrateSemanticRelationships()
    {
-      IUserEvent<IUserAddressEvent<IAddressEvent>> userAddressEvent = null!;
-      IUserEvent<IUserAddressEvent<IAddressUpdatedEvent>> userAddressUpdatedEvent = null!;
-      IUserEvent<IUserAddressEvent<IMovedEvent>> userMovedEvent = null!;
+      IUserTevent<IUserAddressTevent<IAddressTevent>> userAddressTevent = null!;
+      IUserTevent<IUserAddressTevent<IAddressUpdatedTevent>> userAddressUpdatedTevent = null!;
+      IUserTevent<IUserAddressTevent<IMovedTevent>> userMovedTevent = null!;
 
-      IManagerEvent<IManagerAddressEvent<IAddressEvent>> managerAddressEvent = null!;
-      IManagerEvent<IManagerAddressEvent<IAddressUpdatedEvent>> managerAddressUpdatedEvent = null!;
-      IManagerEvent<IManagerAddressEvent<IMovedEvent>> managerMovedEvent = null!;
+      IManagerTevent<IManagerAddressTevent<IAddressTevent>> managerAddressTevent = null!;
+      IManagerTevent<IManagerAddressTevent<IAddressUpdatedTevent>> managerAddressUpdatedTevent = null!;
+      IManagerTevent<IManagerAddressTevent<IMovedTevent>> managerMovedTevent = null!;
 
       //Semantic relationships are maintained.
-      userAddressEvent = userAddressUpdatedEvent = userMovedEvent = managerMovedEvent;
-      managerAddressEvent = managerAddressUpdatedEvent = managerMovedEvent;
+      userAddressTevent = userAddressUpdatedTevent = userMovedTevent = managerMovedTevent;
+      managerAddressTevent = managerAddressUpdatedTevent = managerMovedTevent;
 
-      userAddressEvent = managerAddressEvent = managerAddressUpdatedEvent = managerMovedEvent;
-      userAddressUpdatedEvent = managerAddressUpdatedEvent;
+      userAddressTevent = managerAddressTevent = managerAddressUpdatedTevent = managerMovedTevent;
+      userAddressUpdatedTevent = managerAddressUpdatedTevent;
    }
 }

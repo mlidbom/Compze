@@ -20,10 +20,10 @@ public class HandlerDependencies
          //It can run in parallel with any other handler and itself.
          TommandHandler.For<SendAccountRegistrationWelcomeEmailTommand>("76773E2F-9E44-4150-8C3C-8A4FC93899C3", tommand => {}, Policy.NoRestrictions),
 
-         EventHandler.For<AccountCreatedEvent>(
+         TeventHandler.For<AccountCreatedTevent>(
             "E59B41A3-BF32-4B7A-B497-F29E3AF42D42",
-            @event => {},
-            Policy.Updates<EmailToAccountLookupModel>.WithId(new ExtractEmailFromEmailUpdatedEvent()))//Maybe use a lambda for extraction here instead of forcing a separate class?
+            @tevent => {},
+            Policy.Updates<EmailToAccountLookupModel>.WithId(new ExtractEmailFromEmailUpdatedTevent()))//Maybe use a lambda for extraction here instead of forcing a separate class?
       );
    }
 }

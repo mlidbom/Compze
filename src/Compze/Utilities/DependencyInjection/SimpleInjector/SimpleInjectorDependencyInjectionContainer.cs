@@ -19,11 +19,11 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       _container = new Container();
       _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
-      _container.ResolveUnregisteredType += (_, unregisteredTypeEventArgs) =>
+      _container.ResolveUnregisteredType += (_, unregisteredTypeTeventArgs) =>
       {
-         if(unregisteredTypeEventArgs is { Handled: false, UnregisteredServiceType.IsAbstract: false })
+         if(unregisteredTypeTeventArgs is { Handled: false, UnregisteredServiceType.IsAbstract: false })
          {
-            throw new InvalidOperationException(unregisteredTypeEventArgs.UnregisteredServiceType.ToFriendlyName() + " has not been registered.");
+            throw new InvalidOperationException(unregisteredTypeTeventArgs.UnregisteredServiceType.ToFriendlyName() + " has not been registered.");
          }
       };
    }

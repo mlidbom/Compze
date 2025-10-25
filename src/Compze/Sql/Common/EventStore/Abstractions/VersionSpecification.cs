@@ -1,9 +1,9 @@
 using System;
 
-namespace Compze.Sql.Common.EventStore.Abstractions;
+namespace Compze.Sql.Common.TeventStore.Abstractions;
 
-public class VersionSpecification(Guid eventId, int version)
+public class VersionSpecification(Guid teventId, int version)
 {
-   public Guid EventId { get; } = eventId;
+   public Guid TeventId { get; } = teventId;
    public int EffectiveVersion { get; } = version;
 }

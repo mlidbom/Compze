@@ -15,10 +15,10 @@ public interface IRequireAResponse : ICannotBeSentRemotelyFromWithinTransaction;
 public interface IHypermediaTessage : IRequireAResponse;
 public interface IHasReturnValue<out TResult> : IHypermediaTessage;
 public interface ITevent : ITessage;
-public interface IWrapperTevent<out TEvent> : ITevent //Todo: IWrapperEvent name is not great...
-   where TEvent : ITevent
+public interface IWrapperTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
+   where TTevent : ITevent
 {
-   TEvent Event { get; }
+   TTevent Tevent { get; }
 }
 public interface ITommand : ITessage;
 public interface ITommand<out TResult> : ITommand, IHasReturnValue<TResult>;
@@ -60,13 +60,13 @@ public interface IAtMostOnceHypermediaTommand : IAtMostOnceTessage, IRemotableTo
 public interface IAtMostOnceTommand<out TResult> : IAtMostOnceHypermediaTommand, IRemotableTommand<TResult>;
 
 
-//Todo: IRequireTransactionalReceiver seems too restrictive. Surely things such as maintaining in-memory caches, monitoring/debugging tooling etc should be allowed to listen transiently to events without the full exactly once delivery overhead?
-//For tommands it makes sense that the tessage-type dictates such things, but for events it seems like the subscriber should get to choose their preferred way of listening and level of delivery guarantee.
+//Todo: IRequireTransactionalReceiver seems too restrictive. Surely things such as maintaining in-memory caches, monitoring/debugging tooling etc should be allowed to listen transiently to tevents without the full exactly once delivery overhead?
+//For tommands it makes sense that the tessage-type dictates such things, but for tevents it seems like the subscriber should get to choose their preferred way of listening and level of delivery guarantee.
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
 
-public interface IExactlyOnceWrapperTevent<out TEventInterface> : IWrapperTevent<TEventInterface>
-   where TEventInterface : IExactlyOnceTevent
+public interface IExactlyOnceWrapperTevent<out TTeventInterface> : IWrapperTevent<TTeventInterface>
+   where TTeventInterface : IExactlyOnceTevent
 {
 }

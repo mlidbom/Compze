@@ -1,47 +1,47 @@
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
+namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateEvent>
-   where TAggregateEvent : class, IAggregateTevent
+public abstract partial class SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TAggregateTevent>
+   where TAggregateTevent : class, IAggregateTevent
 {
-   public abstract partial class Component<TComponent, TComponentEvent>
-      where TComponentEvent : class, TAggregateEvent
-      where TComponent : Component<TComponent, TComponentEvent>
+   public abstract partial class Component<TComponent, TComponentTevent>
+      where TComponentTevent : class, TAggregateTevent
+      where TComponent : Component<TComponent, TComponentTevent>
    {
-      public abstract class NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
-         : NestedComponent<TEntity, TEntityEvent>
+      public abstract class NestedEntity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>
+         : NestedComponent<TEntity, TEntityTevent>
          where TEntityId : struct
-         where TEntityEvent : class, TComponentEvent
-         where TEntityCreatedEvent : TEntityEvent
-         where TEntity : NestedEntity<TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
-         where TEventEntityIdGetter : IGetAggregateEntityEventEntityId<TEntityEvent, TEntityId>
+         where TEntityTevent : class, TComponentTevent
+         where TEntityCreatedTevent : TEntityTevent
+         where TEntity : NestedEntity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>
+         where TTeventEntityIdGetter : IGetAggregateEntityTeventEntityId<TEntityTevent, TEntityId>
       {
-         static readonly TEventEntityIdGetter IdGetter = Constructor.For<TEventEntityIdGetter>.DefaultConstructor.Instance();
+         static readonly TTeventEntityIdGetter IdGetter = Constructor.For<TTeventEntityIdGetter>.DefaultConstructor.Instance();
 
-         protected NestedEntity(TComponent parent) : this(parent.RegisterEventAppliers()) {}
+         protected NestedEntity(TComponent parent) : this(parent.RegisterTeventAppliers()) {}
 
 #pragma warning disable CS8618 //Reviewed OK-ish: We guarantee that we never deliver out a null or default value from the public property.
-         protected NestedEntity(IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(appliersRegistrar, registerEventAppliers: false)
+         protected NestedEntity(ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar) : base(appliersRegistrar, registerTeventAppliers: false)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
          {
-            RegisterEventAppliers()
-              .For<TEntityCreatedEvent>(e => _id = IdGetter.GetId(e));
+            RegisterTeventAppliers()
+              .For<TEntityCreatedTevent>(e => _id = IdGetter.GetId(e));
          }
 
          TEntityId _id;
          public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
 
          public static CollectionManager CreateSelfManagingCollection(TComponent parent) //todo:tests
-            => new(parent: parent, appliersRegistrar: parent.RegisterEventAppliers());
+            => new(parent: parent, appliersRegistrar: parent.RegisterTeventAppliers());
 
-         public class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityEvent, TEntityCreatedEvent, TEventEntityIdGetter>
+         public class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>
          {
-            internal CollectionManager(TComponent parent, IEventHandlerRegistrar<TEntityEvent> appliersRegistrar) : base(parent, appliersRegistrar) {}
+            internal CollectionManager(TComponent parent, ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
          }
       }
    }

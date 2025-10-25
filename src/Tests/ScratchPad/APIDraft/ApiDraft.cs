@@ -13,5 +13,5 @@ interface IConsistencyBoundary;
 
 
 interface ITessageHandler;
-interface IEventHandler;
+interface ITeventHandler;
 interface ITommandHandler;

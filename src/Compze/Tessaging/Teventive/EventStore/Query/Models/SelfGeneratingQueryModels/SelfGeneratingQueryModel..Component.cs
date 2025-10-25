@@ -1,35 +1,35 @@
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 
-namespace Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
+namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
-public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TAggregateEvent>
-   where TQueryModel : SelfGeneratingQueryModel<TQueryModel,  TAggregateEvent>
-   where TAggregateEvent : class, IAggregateTevent
+public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TAggregateTevent>
+   where TQueryModel : SelfGeneratingQueryModel<TQueryModel,  TAggregateTevent>
+   where TAggregateTevent : class, IAggregateTevent
 {
-   public abstract partial class Component<TComponent, TComponentEvent>
-      where TComponentEvent : class, TAggregateEvent
-      where TComponent : Component<TComponent, TComponentEvent>
+   public abstract partial class Component<TComponent, TComponentTevent>
+      where TComponentTevent : class, TAggregateTevent
+      where TComponent : Component<TComponent, TComponentTevent>
    {
-      readonly IMutableEventDispatcher<TComponentEvent> _eventAppliersEventDispatcher = IMutableEventDispatcher<TComponentEvent>.New();
+      readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersTeventDispatcher = IMutableTeventDispatcher<TComponentTevent>.New();
 
-      void ApplyEvent(TComponentEvent @event) => _eventAppliersEventDispatcher.Dispatch(@event);
+      void ApplyTevent(TComponentTevent @tevent) => _teventAppliersTeventDispatcher.Dispatch(@tevent);
 
       protected Component(TQueryModel queryModel)
          : this(
-            appliersRegistrar: queryModel.RegisterEventAppliers(),
-            registerEventAppliers: true)
+            appliersRegistrar: queryModel.RegisterTeventAppliers(),
+            registerTeventAppliers: true)
       {}
 
-      internal Component(IEventHandlerRegistrar<TComponentEvent> appliersRegistrar, bool registerEventAppliers)
+      internal Component(ITeventHandlerRegistrar<TComponentTevent> appliersRegistrar, bool registerTeventAppliers)
       {
-         if(registerEventAppliers)
+         if(registerTeventAppliers)
          {
             appliersRegistrar
-              .For<TComponentEvent>(ApplyEvent);
+              .For<TComponentTevent>(ApplyTevent);
          }
       }
 
-      protected IEventHandlerRegistrar<TComponentEvent> RegisterEventAppliers() => _eventAppliersEventDispatcher.Register();
+      protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersTeventDispatcher.Register();
    }
 }

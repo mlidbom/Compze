@@ -6,7 +6,7 @@ using Compze.Sql.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
+using Compze.Tessaging.Teventive.TeventStore.DependencyInjection;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
@@ -45,20 +45,20 @@ public static class DiContainerExtensions
                .DummyConfigurationParameterProvider()
                .CurrentTestsConfiguredSqlLayer()
                .TessageHandlerRegistry()
-               .InMemoryEventStoreEventPublisher();
+               .InMemoryTeventStoreTeventPublisher();
       setup(container.Register());
 
       return container.ServiceLocator;
    }
 
-   public const string EventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
+   public const string TeventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
    public static IServiceLocator SetupTestingServiceLocator(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
       CompzeLogger.For(typeof(DiContainerExtensions)).ExceptionsAndRethrow(() =>
                                                                               @this.CreateServiceLocatorForTesting(register =>
                                                                               {
                                                                                  register.DocumentDb();
-                                                                                 register.EventStore(EventStoreConnectionStringName);
+                                                                                 register.TeventStore(TeventStoreConnectionStringName);
                                                                                  configureContainer?.Invoke(register);
                                                                               }));
 }

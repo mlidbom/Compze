@@ -1,5 +1,5 @@
 using System;
 
-namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Public.Exceptions;
+namespace Compze.Abstractions.Tessaging.Teventive.TeventStore.Public.Exceptions;
 
 class AttemptToSaveEmptyAggregateException(object value) : Exception($"Attempting to save an: {value.GetType().FullName} that Version=0 and no history to persist.");

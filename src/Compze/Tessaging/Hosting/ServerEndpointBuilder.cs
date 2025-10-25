@@ -100,7 +100,7 @@ class ServerEndpointBuilder : IEndpointBuilder
                  .Outbox()
                  .Inbox()
                  .TommandScheduler()
-                 .ServiceBusEventStoreEventPublisher()
+                 .ServiceBusTeventStoreTeventPublisher()
                  .ServiceBusSession()
                  .InProcessHypermediaNavigator();
 

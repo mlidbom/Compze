@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time.Testing.Public;
 using Compze.Tessaging.Teventive;
@@ -14,7 +14,7 @@ namespace Compze.Tests.Unit.CQRS.Aggregates;
 public class AggregateTests : UniversalTestBase
 {
    [XF]
-   public void VersionIncreasesWithEachAppliedEvent()
+   public void VersionIncreasesWithEachAppliedTevent()
    {
       var user = new User();
       user.Version.Should().Be(0);
@@ -31,64 +31,64 @@ public class AggregateTests : UniversalTestBase
    }
 
    [XF]
-   public void ResetEmptiesOutListOfUncommittedEvents()
+   public void ResetEmptiesOutListOfUncommittedTevents()
    {
       var user = new User();
-      IEventStored userAseventStored = user;
+      ITeventStored userAsteventStored = user;
       user.Version.Should().Be(0);
 
       user.Register("email", "password", Guid.NewGuid());
-      userAseventStored.Commit(_ => {});
-      userAseventStored.Commit(events => events.Should().BeEmpty());
+      userAsteventStored.Commit(_ => {});
+      userAsteventStored.Commit(tevents => tevents.Should().BeEmpty());
 
       user.ChangeEmail("NewEmail");
-      userAseventStored.Commit(_ => {});
-      userAseventStored.Commit(events => events.Should().BeEmpty());
+      userAsteventStored.Commit(_ => {});
+      userAsteventStored.Commit(tevents => tevents.Should().BeEmpty());
 
       user.ChangePassword("NewPassword");
-      userAseventStored.Commit(_ => {});
-      userAseventStored.Commit(events => events.Should().BeEmpty());
+      userAsteventStored.Commit(_ => {});
+      userAsteventStored.Commit(tevents => tevents.Should().BeEmpty());
    }
 
 
 
 
    [XF]
-   public void When_Raising_event_that_triggers_another_event_both_events_are_outputted_on_the_observable_only_after_the_triggered_event_and_in_the_raised_order()
+   public void When_Raising_tevent_that_triggers_another_tevent_both_tevents_are_outputted_on_the_observable_only_after_the_triggered_tevent_and_in_the_raised_order()
    {
-      var aggregate = new CascadingEventsAggregate();
-      var receivedEvents = new List<IAggregateTevent>();
-      using(((IEventStored)aggregate).EventStream.Subscribe(@event =>
+      var aggregate = new CascadingTeventsAggregate();
+      var receivedTevents = new List<IAggregateTevent>();
+      using(((ITeventStored)aggregate).TeventStream.Subscribe(@tevent =>
             {
-               receivedEvents.Add(@event);
-               aggregate.TriggeringEventApplied.Should()
+               receivedTevents.Add(@tevent);
+               aggregate.TriggeringTeventApplied.Should()
                         .BeTrue();
-               aggregate.TriggeredEventApplied.Should()
+               aggregate.TriggeredTeventApplied.Should()
                         .BeTrue();
             }))
       {
-         aggregate.RaiseTriggeringEvent();
+         aggregate.RaiseTriggeringTevent();
       }
 
-      receivedEvents.Count.Should().Be(2);
-      receivedEvents[0].GetType().Should().Be<TriggeringTevent>();
-      receivedEvents[1].GetType().Should().Be<TriggeredTevent>();
+      receivedTevents.Count.Should().Be(2);
+      receivedTevents[0].GetType().Should().Be<TriggeringTevent>();
+      receivedTevents[1].GetType().Should().Be<TriggeredTevent>();
    }
 
-   class CascadingEventsAggregate : Aggregate<CascadingEventsAggregate, IAggregateTevent, AggregateTevent>
+   class CascadingTeventsAggregate : Aggregate<CascadingTeventsAggregate, IAggregateTevent, AggregateTevent>
    {
-      public CascadingEventsAggregate():base(TestingTimeSource.FrozenUtcNow())
+      public CascadingTeventsAggregate():base(TestingTimeSource.FrozenUtcNow())
       {
-         RegisterEventHandlers()
+         RegisterTeventHandlers()
            .For<ITriggeringTevent>(_ => Publish(new TriggeredTevent()));
 
-         RegisterEventAppliers()
-           .For<ITriggeringTevent>(_ => TriggeringEventApplied = true)
-           .For<ITriggeredTevent>(_ => TriggeredEventApplied = true);
+         RegisterTeventAppliers()
+           .For<ITriggeringTevent>(_ => TriggeringTeventApplied = true)
+           .For<ITriggeredTevent>(_ => TriggeredTeventApplied = true);
       }
-      public bool TriggeredEventApplied { get; private set; }
-      public bool TriggeringEventApplied { get; private set; }
-      public void RaiseTriggeringEvent() => Publish(new TriggeringTevent());
+      public bool TriggeredTeventApplied { get; private set; }
+      public bool TriggeringTeventApplied { get; private set; }
+      public void RaiseTriggeringTevent() => Publish(new TriggeringTevent());
    }
 
    interface ITriggeringTevent : IAggregateCreatedTevent;

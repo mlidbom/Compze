@@ -2,14 +2,14 @@ using System;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class EndpointHostTest_Tests : EndpointHostTestBase
 {
@@ -29,9 +29,9 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
-   [PCT]  public async Task If_event_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
+   [PCT]  public async Task If_tevent_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
-      MyRemoteAggregateEventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      MyRemoteAggregateTeventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }

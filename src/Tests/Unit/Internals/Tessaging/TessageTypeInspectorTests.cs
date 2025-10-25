@@ -18,7 +18,7 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
 
    public class Inspecting_type_for_subscription_ : UniversalTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
+      public class Type_implements_Wrapper_tevent_interface_but_ : UniversalTestBase
       {
          [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperTevent>();
 
@@ -28,7 +28,7 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
 
    public class Inspecting_type_for_sending_and_ : UniversalTestBase
    {
-      public class Type_implements_Wrapper_event_interface_but_ : UniversalTestBase
+      public class Type_implements_Wrapper_tevent_interface_but_ : UniversalTestBase
       {
          [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperTevent>();
 
@@ -39,7 +39,7 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
       [XF] public void Is_not_ITessage() => AssertInvalidForSending<INotTessage>();
 
       interface ITommandAndTevent : ITevent, ITommand;
-      [XF] public void Is_Both_tommand_and_event() => AssertInvalidForSending<ITommandAndTevent>();
+      [XF] public void Is_Both_tommand_and_tevent() => AssertInvalidForSending<ITommandAndTevent>();
 
       interface ITommandAndTuery : ITevent, ITuery<object>;
       [XF] public void Is_Both_tommand_and_tuery() => AssertInvalidForSending<ITommandAndTuery>();

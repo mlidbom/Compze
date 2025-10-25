@@ -54,13 +54,13 @@ partial class Outbox : IOutbox
       Assert.State.NotNull(Transaction.Current);
       var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
-                                  .ToArray(); //We dispatch events to ourselves synchronously so don't go doing it again here.;
+                                  .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
 
       //Urgent: bug. Our traceability thinking does not allow just discarding this tessage.But removing this if statement breaks a lot of tests that uses endpoint wiring but do not start an endpoint.
       if(connections.Length != 0)
       {
-         var eventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
-         _storage.SaveTessage(exactlyOnceTevent, eventHandlerEndpointIds);
+         var teventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
+         _storage.SaveTessage(exactlyOnceTevent, teventHandlerEndpointIds);
 
          Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
          {

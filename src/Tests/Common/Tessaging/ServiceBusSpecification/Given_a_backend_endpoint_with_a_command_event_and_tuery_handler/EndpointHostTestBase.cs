@@ -1,7 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Sql;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Teventive.EventStore.DependencyInjection;
+using Compze.Tessaging.Teventive.TeventStore.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
@@ -15,7 +15,7 @@ using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.TyperMediaApi.EventStore;
+using Compze.Tessaging.TyperMediaApi.TeventStore;
 using Compze.Tests.Infrastructure;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -25,7 +25,7 @@ using Compze.Tests.Infrastructure;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
@@ -35,9 +35,9 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public readonly IThreadGate TommandHandlerWithResultThreadGate;
    public readonly IThreadGate MyCreateAggregateTommandHandlerThreadGate;
    public readonly IThreadGate MyUpdateAggregateTommandHandlerThreadGate;
-   public readonly IThreadGate MyRemoteAggregateEventHandlerThreadGate;
-   public readonly IThreadGate MyLocalAggregateEventHandlerThreadGate;
-   public readonly IThreadGate EventHandlerThreadGate;
+   public readonly IThreadGate MyRemoteAggregateTeventHandlerThreadGate;
+   public readonly IThreadGate MyLocalAggregateTeventHandlerThreadGate;
+   public readonly IThreadGate TeventHandlerThreadGate;
    public readonly IThreadGate TueryHandlerThreadGate;
 
    public readonly IReadOnlyList<IThreadGate> AllGates;
@@ -60,9 +60,9 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          TommandHandlerWithResultThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TommandHandlerWithResultThreadGate)),
          MyCreateAggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyCreateAggregateTommandHandlerThreadGate)),
          MyUpdateAggregateTommandHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyUpdateAggregateTommandHandlerThreadGate)),
-         MyRemoteAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateEventHandlerThreadGate)),
-         MyLocalAggregateEventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateEventHandlerThreadGate)),
-         EventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(EventHandlerThreadGate)),
+         MyRemoteAggregateTeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyRemoteAggregateTeventHandlerThreadGate)),
+         MyLocalAggregateTeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(MyLocalAggregateTeventHandlerThreadGate)),
+         TeventHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TeventHandlerThreadGate)),
          TueryHandlerThreadGate = ThreadGate.CreateOpenWithTimeout(_timeout, nameof(TueryHandlerThreadGate))
       ];
    }
@@ -95,8 +95,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .AspNetCoreTransport()
                    .CurrentTestsConfiguredSqlLayer("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6");
 
-            builder.RegisterEventStore()
-                   .HandleAggregate<MyAggregate, MyAggregateEvent.IRoot>();
+            builder.RegisterTeventStore()
+                   .HandleAggregate<MyAggregate, MyAggregateTevent.IRoot>();
 
             builder.RegisterHandlers
                    .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
@@ -108,10 +108,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .ForTommand((MyUpdateAggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
                     {
                        MyUpdateAggregateTommandHandlerThreadGate.AwaitPassThrough();
-                       navigator.Execute(new EventStoreApi().Queries.GetForUpdate<MyAggregate>(tommand.AggregateId)).Update();
+                       navigator.Execute(new TeventStoreApi().Queries.GetForUpdate<MyAggregate>(tommand.AggregateId)).Update();
                     })
-                   .ForEvent((IMyExactlyOnceTevent _) => EventHandlerThreadGate.AwaitPassThrough())
-                   .ForEvent((MyAggregateEvent.IRoot _) => MyLocalAggregateEventHandlerThreadGate.AwaitPassThrough())
+                   .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
+                   .ForTevent((MyAggregateTevent.IRoot _) => MyLocalAggregateTeventHandlerThreadGate.AwaitPassThrough())
                    .ForTuery((MyTuery _) =>
                     {
                        TueryHandlerThreadGate.AwaitPassThrough();
@@ -131,7 +131,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                 builder.Container.Register()
                                                        .AspNetCoreTransport()
                                                        .CurrentTestsConfiguredSqlLayer("E72924D3-5279-44B5-B20D-D682E537672B");
-                                                builder.RegisterHandlers.ForEvent((MyAggregateEvent.IRoot _) => MyRemoteAggregateEventHandlerThreadGate.AwaitPassThrough());
+                                                builder.RegisterHandlers.ForTevent((MyAggregateTevent.IRoot _) => MyRemoteAggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();

@@ -15,13 +15,13 @@ partial class TessageTypeInspector
    static readonly TessageTypeDesignRule[] TessageTypeDesignRules =
    [
       new MustBeITessage(),
-      new CannotBeBothTommandAndEvent(),
+      new CannotBeBothTommandAndTevent(),
       new CannotBeBothTommandAndTuery(),
-      new CannotBeBothEventAndTuery(),
+      new CannotBeBothTeventAndTuery(),
       new CannotBeBothRemotableAndStrictlyLocal(),
       new CannotForbidAndRequireTransactionalSender(),
       new AtMostOnceTommandDefaultConstructorMustNotSetATessageId(),
-      new WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
+      new WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
    ];
 
    static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
@@ -34,7 +34,7 @@ partial class TessageTypeInspector
       Monitor.Update(() =>
       {
          if(!type.Is<ITevent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(ITevent).GetFullNameCompilable()}");
-         if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to event interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
+         if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to tevent interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
          AssertTypeIsValidInternal(type);
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _successfullyInspectedSubscribableTypes, type);
       });
@@ -89,17 +89,17 @@ partial class TessageTypeInspector
       protected override string CreateTessage(Type type) => $"{type.GetFullNameCompilable()} implements both {typeof(TInterface1).GetFullNameCompilable()} and {typeof(TInterface2).GetFullNameCompilable()}";
    }
 
-   class CannotBeBothTommandAndEvent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
+   class CannotBeBothTommandAndTevent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
 
    class CannotBeBothTommandAndTuery : MutuallyExclusiveInterfaces<ITommand, ITuery<object>>;
 
-   class CannotBeBothEventAndTuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
+   class CannotBeBothTeventAndTuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
 
    class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalTessage>;
 
    class CannotForbidAndRequireTransactionalSender : MutuallyExclusiveInterfaces<IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction>;
 
-   class WrapperEventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : TessageTypeDesignRule
+   class WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : TessageTypeDesignRule
    {
       internal override void AssertFulfilledBy(Type type)
       {

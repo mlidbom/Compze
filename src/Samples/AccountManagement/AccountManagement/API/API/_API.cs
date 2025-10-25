@@ -50,7 +50,7 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
       public NavigationSpecification<AccountResource.Tommand.LogIn.LoginAttemptResult> Login(string email, string password) => Tommands.Post(tommands => tommands.Login.WithValues(email, password));
    }
 
-   ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Eventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
+   ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Teventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
    public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
    {
       // No longer using InMemory sql layer - clients should configure their own sql

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -16,8 +16,8 @@ using FluentAssertions;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
-public interface IUserWrapperTevent<out TWrappedUserEvent> : IWrapperTevent<TWrappedUserEvent>
-   where TWrappedUserEvent : IUserTevent;
+public interface IUserWrapperTevent<out TWrappedUserTevent> : IWrapperTevent<TWrappedUserTevent>
+   where TWrappedUserTevent : IUserTevent;
 
 public interface IUserTevent : ITevent;
 
@@ -25,68 +25,68 @@ class UserTevent : IUserTevent;
 
 public class Example
 {
-   [XF] public void BuildWrapperEventType()
+   [XF] public void BuildWrapperTeventType()
    {
-      var genericWrapperEventType = CreateGenericWrapperEventType(typeof(IUserWrapperTevent<>));
+      var genericWrapperTeventType = CreateGenericWrapperTeventType(typeof(IUserWrapperTevent<>));
 
       //instantiate a concrete version.
-      var wrapperEventIUserEvent = genericWrapperEventType.MakeGenericType(typeof(IUserTevent));
+      var wrapperTeventIUserTevent = genericWrapperTeventType.MakeGenericType(typeof(IUserTevent));
 
-      var constructor = (Func<IUserTevent, IUserWrapperTevent<IUserTevent>>)Constructor.Compile.ForReturnType(wrapperEventIUserEvent).WithArgumentTypes(typeof(IUserTevent));
+      var constructor = (Func<IUserTevent, IUserWrapperTevent<IUserTevent>>)Constructor.Compile.ForReturnType(wrapperTeventIUserTevent).WithArgumentTypes(typeof(IUserTevent));
 
-      var userEvent = new UserTevent();
-      var instance = constructor(userEvent);
+      var userTevent = new UserTevent();
+      var instance = constructor(userTevent);
 
-      instance.Event.Should().Be(userEvent);
+      instance.Tevent.Should().Be(userTevent);
    }
 
 
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
    static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
-   static Type CreateGenericWrapperEventType(Type wrapperEventType)
+   static Type CreateGenericWrapperTeventType(Type wrapperTeventType)
    {
-      if(_createdWrapperTypes.TryGetValue(wrapperEventType, out var cachedWrapperImplementation))
+      if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out var cachedWrapperImplementation))
       {
          return cachedWrapperImplementation;
       }
 
       return Monitor.Update(() =>
       {
-         if(_createdWrapperTypes.TryGetValue(wrapperEventType, out cachedWrapperImplementation))
+         if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out cachedWrapperImplementation))
          {
             return cachedWrapperImplementation;
          }
 
-         if(!wrapperEventType.IsInterface) throw new ArgumentException("Must be an interface", $"{nameof(wrapperEventType)}");
-         if(wrapperEventType.GetInterfaces().All(iface => iface != typeof(IWrapperTevent<>).MakeGenericType(wrapperEventType.GetGenericArguments()[0])))
-            throw new ArgumentException($"Must implement {typeof(IWrapperTevent<>).FullName}", $"{nameof(wrapperEventType)}");
+         if(!wrapperTeventType.IsInterface) throw new ArgumentException("Must be an interface", $"{nameof(wrapperTeventType)}");
+         if(wrapperTeventType.GetInterfaces().All(iface => iface != typeof(IWrapperTevent<>).MakeGenericType(wrapperTeventType.GetGenericArguments()[0])))
+            throw new ArgumentException($"Must implement {typeof(IWrapperTevent<>).FullName}", $"{nameof(wrapperTeventType)}");
 
-         var wrappedEventType = wrapperEventType.GetGenericArguments()[0];
+         var wrappedTeventType = wrapperTeventType.GetGenericArguments()[0];
 
-         var requiredEventInterface = wrappedEventType.GetGenericParameterConstraints().Single(constraint => constraint.IsInterface && typeof(ITevent).IsAssignableFrom(constraint));
+         var requiredTeventInterface = wrappedTeventType.GetGenericParameterConstraints().Single(constraint => constraint.IsInterface && typeof(ITevent).IsAssignableFrom(constraint));
 
-         var genericWrapperEventType = AssemblyBuilderCE.Module.Update(module =>
+         var genericWrapperTeventType = AssemblyBuilderCE.Module.Update(module =>
          {
-            var wrapperEventBuilder = module.DefineType(
-               name: $"{wrapperEventType}_ilgen_impl",
+            var wrapperTeventBuilder = module.DefineType(
+               name: $"{wrapperTeventType}_ilgen_impl",
                attr: TypeAttributes.Public,
                parent: null,
-               interfaces: [wrapperEventType]);
+               interfaces: [wrapperTeventType]);
 
-            var wrappedEventTypeParameter = wrapperEventBuilder.DefineGenericParameters("TWrappedEvent")[0];
+            var wrappedTeventTypeParameter = wrapperTeventBuilder.DefineGenericParameters("TWrappedTevent")[0];
 
-            wrappedEventTypeParameter.SetInterfaceConstraints(requiredEventInterface);
+            wrappedTeventTypeParameter.SetInterfaceConstraints(requiredTeventInterface);
 
-            var (wrappedEventField, _) = wrapperEventBuilder.ImplementProperty(nameof(IWrapperTevent<IAggregateTevent>.Event), wrappedEventTypeParameter);
+            var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IWrapperTevent<IAggregateTevent>.Tevent), wrappedTeventTypeParameter);
 
-            wrapperEventBuilder.ImplementConstructor(wrappedEventField);
+            wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 
-            return wrapperEventBuilder.CreateType().NotNull();
+            return wrapperTeventBuilder.CreateType().NotNull();
          });
 
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperEventType, genericWrapperEventType);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperTeventType, genericWrapperTeventType);
 
-         return genericWrapperEventType;
+         return genericWrapperTeventType;
       });
    }
 }

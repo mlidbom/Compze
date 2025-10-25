@@ -16,7 +16,7 @@ interface ITypeMapper
 {
    //todo: Use static type and indexing trick to improve performance
    TypeId GetId(Type type);
-   Type GetType(TypeId eventTypeId);
+   Type GetType(TypeId teventTypeId);
    bool TryGetType(TypeId typeId, [NotNullWhen(true)]out Type? type);
    IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type);
    unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings);

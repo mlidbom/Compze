@@ -11,7 +11,7 @@ static class TransportTessage
 {
    internal enum TransportTessageType
    {
-      ExactlyOnceEvent,
+      ExactlyOnceTevent,
       AtMostOnceTommand,
       AtMostOnceTommandWithReturnValue,
       ExactlyOnceTommand,
@@ -62,7 +62,7 @@ static class TransportTessage
          if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(tessageType))
             return TransportTessageType.AtMostOnceTommand;
          else if(typeof(IExactlyOnceTevent).IsAssignableFrom(tessageType))
-            return TransportTessageType.ExactlyOnceEvent;
+            return TransportTessageType.ExactlyOnceTevent;
          if(typeof(IExactlyOnceTommand).IsAssignableFrom(tessageType))
             return TransportTessageType.ExactlyOnceTommand;
          else

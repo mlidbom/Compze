@@ -11,7 +11,7 @@ class APIDraft01
 {
    class TessageHandler<TImplementation>
    {
-      public TessageHandler<TImplementation> ForEvent<TEvent>(Action<TImplementation, TEvent> action) => this;
+      public TessageHandler<TImplementation> ForTevent<TTevent>(Action<TImplementation, TTevent> action) => this;
       public TessageHandler<TImplementation> ForTommand<TTommand>(Action<TImplementation, TTommand> action) => this;
       public TessageHandler<TImplementation> ForTuery<TTuery, TResult>(Func<TImplementation, TTuery, TResult> action) => this;
 
@@ -20,7 +20,7 @@ class APIDraft01
 
    class TessageHandler
    {
-      public TessageHandler ForEvent<TEvent>(Action<TEvent> action) => this;
+      public TessageHandler ForTevent<TTevent>(Action<TTevent> action) => this;
 
       public TessageHandler ForTommand<TTommand>(Action<TTommand> action) => this;
 
@@ -65,13 +65,13 @@ class APIDraft01
       {
          Add(new TessageHandlerGroup(
                 new TessageHandler<AccountQueryModelUpdater>()
-                  .ForEvent<AccountCreatedEvent>((handler, @event) => handler.Handle(@event)),
+                  .ForTevent<AccountCreatedTevent>((handler, @tevent) => handler.Handle(@tevent)),
                 new TessageHandler<AccountTommandHandler>()
                   .ForTommand<CreateAccountTommand>((handler, tommand) => handler.Handle(tommand)),
                 new TessageHandler<AccountTueryHandler>()
                   .ForTuery<GetAccountTuery, string>((handler, tuery) => handler.Handle(tuery)),
                 new TessageHandler<AccountController>()
-                  .ForEvent<AccountCreatedEvent>((handler, @event) => handler.Handle(@event))
+                  .ForTevent<AccountCreatedTevent>((handler, @tevent) => handler.Handle(@tevent))
                   .ForTommand<CreateAccountTommand>((handler, tommand) => handler.Handle(tommand))
                   .ForTuery<GetAccountTuery, string>((handler, tuery) => handler.Handle(tuery))
              ));

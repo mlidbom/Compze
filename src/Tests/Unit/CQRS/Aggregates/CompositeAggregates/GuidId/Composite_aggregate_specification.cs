@@ -1,8 +1,8 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Tevents;
 using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.QueryModels;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -19,20 +19,20 @@ namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId;
 
 public static partial class Composite_aggregate_specification
 {
-   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events
+   public partial class After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_tevents
    {
       readonly CompositeAggregate _aggregate;
       readonly RootQueryModel _queryModel;
       readonly Guid _aggregateId;
 
-      public After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_events()
+      public After_constructing_root_aggregate_with_name_root_and_slaving_a_tuery_model_to_the_aggregates_tevents()
       {
          _aggregateId = Guid.NewGuid();
          _aggregate = new CompositeAggregate("root", _aggregateId);
          _queryModel = new RootQueryModel();
-         IEventStored<CompositeAggregateEvent.ICompositeAggregateTevent> eventStored = _aggregate;
-         eventStored.EventStream.Subscribe(_queryModel.ApplyEvent);
-         eventStored.Commit(_queryModel.LoadFromHistory);
+         ITeventStored<CompositeAggregateTevent.ICompositeAggregateTevent> teventStored = _aggregate;
+         teventStored.TeventStream.Subscribe(_queryModel.ApplyTevent);
+         teventStored.Commit(_queryModel.LoadFromHistory);
       }
 
       [XF] public void Aggregate_name_is_root() => _aggregate.Name.Should().Be("root");

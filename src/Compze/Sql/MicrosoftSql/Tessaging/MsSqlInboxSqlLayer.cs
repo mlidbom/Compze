@@ -32,7 +32,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServ
                                 """)
                            .AddParameter(TessageTable.TessageId, tessageId)
                            .AddParameter(TessageTable.TypeId, typeId)
-                            //performance: Like with the event store, keep all framework properties out of the JSON and put it into separate columns instead. For events. Reuse a pre-serialized instance from the persisting to the event store.
+                            //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
                            .AddNVarcharMaxParameter(TessageTable.Body, serializedTessage)
                            .ExecuteNonQuery();
 

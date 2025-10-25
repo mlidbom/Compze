@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.TasksCE;
@@ -9,7 +9,7 @@ using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class Parallelism_policies : EndpointHostTestBase
 {
@@ -36,13 +36,13 @@ public class Parallelism_policies : EndpointHostTestBase
       await Task.WhenAll(tasks);
    }
 
-   [PCT] public void Two_event_handlers_cannot_execute_in_parallel()
+   [PCT] public void Two_tevent_handlers_cannot_execute_in_parallel()
    {
-      MyRemoteAggregateEventHandlerThreadGate.Close();
+      MyRemoteAggregateTeventHandlerThreadGate.Close();
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
 
-      MyRemoteAggregateEventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
+      MyRemoteAggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Should().Be(false);
    }
 

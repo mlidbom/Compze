@@ -1,11 +1,11 @@
 using System;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
-using Compze.Tessaging.TyperMediaApi.EventStore;
+using Compze.Tessaging.TyperMediaApi.TeventStore;
 using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class MyTommandResult;
 
@@ -51,25 +51,25 @@ public class MyCreateAggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMost
    public Guid AggregateId { get; set; }
 }
 
-public class MyAggregate : Aggregate<MyAggregate, MyAggregateEvent.IRoot, MyAggregateEvent.Implementation.Root>
+public class MyAggregate : Aggregate<MyAggregate, MyAggregateTevent.IRoot, MyAggregateTevent.Implementation.Root>
 {
    public MyAggregate() : base(new DateTimeNowTimeSource())
    {
-      RegisterEventAppliers()
-        .IgnoreUnhandled<MyAggregateEvent.IRoot>();
+      RegisterTeventAppliers()
+        .IgnoreUnhandled<MyAggregateTevent.IRoot>();
    }
 
-   public void Update() => Publish(new MyAggregateEvent.Implementation.Updated());
+   public void Update() => Publish(new MyAggregateTevent.Implementation.Updated());
 
    public static void Create(Guid id, IInProcessHypermediaNavigator bus)
    {
       var created = new MyAggregate();
-      created.Publish(new MyAggregateEvent.Implementation.Created(id));
-      bus.Execute(new EventStoreApi().Tommands.Save(created));
+      created.Publish(new MyAggregateTevent.Implementation.Created(id));
+      bus.Execute(new TeventStoreApi().Tommands.Save(created));
    }
 }
 
-public static class MyAggregateEvent
+public static class MyAggregateTevent
 {
    public interface IRoot : IAggregateTevent;
    public interface Created : IRoot, IAggregateCreatedTevent;
@@ -83,9 +83,9 @@ public static class MyAggregateEvent
       }
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Created(Guid aggregateId) : Root(aggregateId), MyAggregateEvent.Created;
+      public class Created(Guid aggregateId) : Root(aggregateId), MyAggregateTevent.Created;
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Updated : Root, MyAggregateEvent.Updated;
+      public class Updated : Root, MyAggregateTevent.Updated;
    }
 }

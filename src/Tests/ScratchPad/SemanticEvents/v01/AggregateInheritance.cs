@@ -1,23 +1,23 @@
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 
 // ReSharper disable All
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 #pragma warning disable IDE0051 // Remove unused private members
 
-namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
+namespace Compze.Tests.ScratchPad.SemanticTevents.v01;
 
 //todo: Try implementing inheritable aggregate and see how it goes.
-//When persisting event we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage.
-interface IInheritableAggregateEvent<out TInheritorEvent> where TInheritorEvent : IAggregateTevent
+//When persisting tevent we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage.
+interface IInheritableAggregateTevent<out TInheritorTevent> where TInheritorTevent : IAggregateTevent
 {
-   TInheritorEvent Event { get; }
+   TInheritorTevent Tevent { get; }
 }
 
-interface IAnimalWrapperEvent<out TInheritorEvent> : IInheritableAggregateEvent<TInheritorEvent> where TInheritorEvent : IAnimalTevent
+interface IAnimalWrapperTevent<out TInheritorTevent> : IInheritableAggregateTevent<TInheritorTevent> where TInheritorTevent : IAnimalTevent
 {}
 
-interface IBirdWrapperEvent<out TInheritorEvent> : IAnimalWrapperEvent<TInheritorEvent> where TInheritorEvent : IAnimalTevent
+interface IBirdWrapperTevent<out TInheritorTevent> : IAnimalWrapperTevent<TInheritorTevent> where TInheritorTevent : IAnimalTevent
 {}
 
 interface IAnimalTevent : IAggregateTevent{}
@@ -32,49 +32,49 @@ public class AggregateInheritance
 {
    public void DemonstrateSemanticRelationships()
    {
-      IAnimalWrapperEvent<IAnimalTevent> animalEventAnimalWrapped = null!;
-      IAnimalWrapperEvent<IAnimalBorn> animalBornEventAnimalWrapped = null!;
+      IAnimalWrapperTevent<IAnimalTevent> animalTeventAnimalWrapped = null!;
+      IAnimalWrapperTevent<IAnimalBorn> animalBornTeventAnimalWrapped = null!;
 
-      IBirdWrapperEvent<IAnimalTevent> animalEventBirdWrapped = null!;
-      IBirdWrapperEvent<IAnimalBorn> animalBornEventBirdWrapped = null!;
-      IBirdWrapperEvent<IBirdChirpsTevent> birdChirpsEventBirdWrapped = null!;
+      IBirdWrapperTevent<IAnimalTevent> animalTeventBirdWrapped = null!;
+      IBirdWrapperTevent<IAnimalBorn> animalBornTeventBirdWrapped = null!;
+      IBirdWrapperTevent<IBirdChirpsTevent> birdChirpsTeventBirdWrapped = null!;
 
-      //Semantic relationships and unique type identity for events is maintained without having to recreate the inheritance hierarchy for each inheritor.
-      //An inheritable aggregate would publish the inner event just like now, it would be automatically wrapped by the framework.
-      //Would that happen within the aggregate, or only once the event has been published?
-      //We would only persist the inner event in the store and bus. Thus changing ones mind in either direction would not break persisted data.
-      animalEventAnimalWrapped = animalBornEventAnimalWrapped = animalBornEventBirdWrapped;
-      animalEventAnimalWrapped = animalEventBirdWrapped = animalBornEventBirdWrapped;
-      animalEventAnimalWrapped = birdChirpsEventBirdWrapped;
+      //Semantic relationships and unique type identity for tevents is maintained without having to recreate the inheritance hierarchy for each inheritor.
+      //An inheritable aggregate would publish the inner tevent just like now, it would be automatically wrapped by the framework.
+      //Would that happen within the aggregate, or only once the tevent has been published?
+      //We would only persist the inner tevent in the store and bus. Thus changing ones mind in either direction would not break persisted data.
+      animalTeventAnimalWrapped = animalBornTeventAnimalWrapped = animalBornTeventBirdWrapped;
+      animalTeventAnimalWrapped = animalTeventBirdWrapped = animalBornTeventBirdWrapped;
+      animalTeventAnimalWrapped = birdChirpsTeventBirdWrapped;
 
       //For registering handlers we could enable registering via the wrapped type so that handlers need not always do the unwrapping.
-      //Listeners could listen to either the wrapped or the unwrapped event. They only _have_ to use the wrapped event if they want to get only inheritor events, and not the base types events.
+      //Listeners could listen to either the wrapped or the unwrapped tevent. They only _have_ to use the wrapped tevent if they want to get only inheritor tevents, and not the base types tevents.
       //Thus no code breaks when you decide to make your aggregate inheritable. All existing listeners still work just fine.
    }
 }
 
-interface IAnimalComponentTevent<out TComponentEvent> : IAnimalTevent{}
+interface IAnimalComponentTevent<out TComponentTevent> : IAnimalTevent{}
 
-interface IBirdComponentTevent<out TComponentEvent> : IAnimalComponentTevent<TComponentEvent>{}
+interface IBirdComponentTevent<out TComponentTevent> : IAnimalComponentTevent<TComponentTevent>{}
 
 public class ReUsableAggregateComponentsInInheritableAggregates
 {
    static void DemonstrateSemanticRelationships()
    {
 
-      IAnimalWrapperEvent<IAnimalComponentTevent<IComponentEventBase>> componentEventBaseAnimalWrapped = null!;
-      IAnimalWrapperEvent<IAnimalComponentTevent<IComponentEvent1>> componentEvent1AnimalWrapped = null!;
-      IAnimalWrapperEvent<IAnimalComponentTevent<IComponentEvent2>> componentEvent2AnimalWrapped = null!;
+      IAnimalWrapperTevent<IAnimalComponentTevent<IComponentTeventBase>> componentTeventBaseAnimalWrapped = null!;
+      IAnimalWrapperTevent<IAnimalComponentTevent<IComponentTevent1>> componentTevent1AnimalWrapped = null!;
+      IAnimalWrapperTevent<IAnimalComponentTevent<IComponentTevent2>> componentTevent2AnimalWrapped = null!;
 
-      IBirdWrapperEvent<IBirdComponentTevent<IComponentEventBase>> componentEventBaseBirdWrapped = null!;
-      IBirdWrapperEvent<IBirdComponentTevent<IComponentEvent1>> componentEvent1BirdWrapped = null!;
-      IBirdWrapperEvent<IBirdComponentTevent<IComponentEvent2>> componentEvent2BirdWrapped = null!;
+      IBirdWrapperTevent<IBirdComponentTevent<IComponentTeventBase>> componentTeventBaseBirdWrapped = null!;
+      IBirdWrapperTevent<IBirdComponentTevent<IComponentTevent1>> componentTevent1BirdWrapped = null!;
+      IBirdWrapperTevent<IBirdComponentTevent<IComponentTevent2>> componentTevent2BirdWrapped = null!;
 
       //Semantic relationships are maintained.
-      componentEventBaseAnimalWrapped = componentEvent1AnimalWrapped = componentEvent2AnimalWrapped;
-      componentEventBaseBirdWrapped = componentEvent1BirdWrapped = componentEvent2BirdWrapped;
+      componentTeventBaseAnimalWrapped = componentTevent1AnimalWrapped = componentTevent2AnimalWrapped;
+      componentTeventBaseBirdWrapped = componentTevent1BirdWrapped = componentTevent2BirdWrapped;
 
-      componentEventBaseAnimalWrapped = componentEventBaseBirdWrapped;
-      componentEvent1AnimalWrapped = componentEvent1BirdWrapped;
+      componentTeventBaseAnimalWrapped = componentTeventBaseBirdWrapped;
+      componentTevent1AnimalWrapped = componentTevent1BirdWrapped;
    }
 }

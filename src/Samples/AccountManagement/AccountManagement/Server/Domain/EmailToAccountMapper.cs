@@ -1,10 +1,10 @@
-using AccountManagement.Domain.Events;
+using AccountManagement.Domain.Tevents;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Sql.DocumentDb;
 using Compze.Utilities.Functional;
 using JetBrains.Annotations;
-using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.EventStoreApi.TueryApi.AggregateLink<AccountManagement.Domain.Account>;
+using AccountLink = Compze.Tessaging.TyperMediaApi.TeventStore.TeventStoreApi.TueryApi.AggregateLink<AccountManagement.Domain.Account>;
 
 namespace AccountManagement.Domain;
 
@@ -12,8 +12,8 @@ namespace AccountManagement.Domain;
 {
    static DocumentDbApi DocumentDb => new();
 
-   internal static void UpdateMappingWhenEmailChanges(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForEvent(
-      (AccountEvent.PropertyUpdated.Email emailUpdated, IInProcessHypermediaNavigator navigator) =>
+   internal static void UpdateMappingWhenEmailChanges(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
+      (AccountTevent.PropertyUpdated.Email emailUpdated, IInProcessHypermediaNavigator navigator) =>
       {
          if(emailUpdated.AggregateVersion > 1)
          {

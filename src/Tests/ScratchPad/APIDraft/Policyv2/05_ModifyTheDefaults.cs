@@ -8,7 +8,7 @@ public class ModifyTheDefaults
 {
    void IllustratateRegistration()
    {
-      var defaultEventHandlerPolicies = new CompositePolicy(
+      var defaultTeventHandlerPolicies = new CompositePolicy(
          Policy.LockExclusively.ThisHandler,   //Ensures that this handler is never invoked in parallel with itself.
          Policy.LockExclusively.CurrentTessage //Ensures that no other handler handle the same queuedTessageInformation in parallel with this handler.
          //Useless when applied to a tommand handler since there can only be one.
@@ -29,8 +29,8 @@ public class ModifyTheDefaults
          //It can run in parallel with any other handler and itself.
          TommandHandler.For<SendAccountRegistrationWelcomeEmailTommand>("76773E2F-9E44-4150-8C3C-8A4FC93899C3", tommand => {}, Policy.NoRestrictions),
 
-         //Event handlers
-         EventHandler.For<AccountCreatedEvent>("2E8642CA-6C60-4B91-A92E-54AD3753E7F2", @event => {}, defaultEventHandlerPolicies)
+         //Tevent handlers
+         TeventHandler.For<AccountCreatedTevent>("2E8642CA-6C60-4B91-A92E-54AD3753E7F2", @tevent => {}, defaultTeventHandlerPolicies)
       );
    }
 }

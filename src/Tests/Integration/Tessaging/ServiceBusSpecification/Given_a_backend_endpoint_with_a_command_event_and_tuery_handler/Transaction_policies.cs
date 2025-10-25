@@ -1,12 +1,12 @@
 using System.Linq;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_event_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class Transaction_policies : EndpointHostTestBase
 {
@@ -32,11 +32,11 @@ public class Transaction_policies : EndpointHostTestBase
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);
    }
 
-   [PCT] public void Event_handler_runs_in_transaction_with_isolation_level_Serializable()
+   [PCT] public void Tevent_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateAggregateTommand.Create()));
 
-      var transaction = MyRemoteAggregateEventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
+      var transaction = MyRemoteAggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                                .PassedThrough.Single().Transaction;
       transaction.Should().NotBeNull();
       transaction.IsolationLevel.Should().Be(IsolationLevel.Serializable);

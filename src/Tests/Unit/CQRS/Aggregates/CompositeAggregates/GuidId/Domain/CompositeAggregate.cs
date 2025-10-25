@@ -1,14 +1,14 @@
 using System;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Tevents;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
 class CompositeAggregate :
     Aggregate<CompositeAggregate,
-        CompositeAggregateEvent.ICompositeAggregateTevent,
-        CompositeAggregateEvent.Implementation.Root>
+        CompositeAggregateTevent.ICompositeAggregateTevent,
+        CompositeAggregateTevent.Implementation.Root>
 {
     public string Name { get; private set; } = string.Empty;
     readonly RemovableEntity.CollectionManager _entities;
@@ -19,12 +19,12 @@ class CompositeAggregate :
         Component = new Component(this);
         _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
-        RegisterEventAppliers()
-           .For<CompositeAggregateEvent.PropertyUpdated.Name>(e => Name = e.Name);
+        RegisterTeventAppliers()
+           .For<CompositeAggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
 
-        Publish(new CompositeAggregateEvent.Implementation.Created(id, name));
+        Publish(new CompositeAggregateTevent.Implementation.Created(id, name));
     }
 
     public IReadOnlyEntityCollection<RemovableEntity, Guid> Entities => _entities.Entities;
-    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeAggregateEvent.Entity.Implementation.Created(Guid.NewGuid(), name));
+    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeAggregateTevent.Entity.Implementation.Created(Guid.NewGuid(), name));
 }

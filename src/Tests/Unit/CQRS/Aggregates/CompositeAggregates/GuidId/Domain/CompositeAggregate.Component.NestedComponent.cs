@@ -1,4 +1,4 @@
-using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Events;
+using Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain.Tevents;
 
 namespace Compze.Tests.Unit.CQRS.Aggregates.CompositeAggregates.GuidId.Domain;
 
@@ -7,17 +7,17 @@ partial class Component
     public class NestedComponent :
         Component.Component<
             NestedComponent,
-            CompositeAggregateEvent.Component.NestedComponent.Implementation.Root,
-            CompositeAggregateEvent.Component.NestedComponent.IRoot>
+            CompositeAggregateTevent.Component.NestedComponent.Implementation.Root,
+            CompositeAggregateTevent.Component.NestedComponent.IRoot>
     {
         public NestedComponent(Component parent) : base(parent)
         {
-            RegisterEventAppliers()
-               .For<CompositeAggregateEvent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
+            RegisterTeventAppliers()
+               .For<CompositeAggregateTevent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
         }
 
         public string Name { get; private set; } = string.Empty;
 
-        public void Rename(string name) => Publish(new CompositeAggregateEvent.Component.NestedComponent.Implementation.Renamed(name));
+        public void Rename(string name) => Publish(new CompositeAggregateTevent.Component.NestedComponent.Implementation.Renamed(name));
     }
 }

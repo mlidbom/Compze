@@ -1,11 +1,11 @@
 using System;
 using System.Threading;
-using AccountManagement.Domain.Events;
+using AccountManagement.Domain.Tevents;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Sql.DocumentDb;
-using Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
+using Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;
 
@@ -14,18 +14,18 @@ namespace AccountManagement.UI.QueryModels;
 static class AccountStatistics
 {
    /// <summary>
-   /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TAggregateEvent}"/> even though we will store it in a document database.
-   /// Doing so lets the tuery model cleanly encapsulate how it maintains its own state when it receives events.
+   /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TAggregateTevent}"/> even though we will store it in a document database.
+   /// Doing so lets the tuery model cleanly encapsulate how it maintains its own state when it receives tevents.
    /// </summary>
-   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, AccountEvent.Root>
+   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, AccountTevent.Root>
    {
       public SingletonStatisticsQueryModel()
       {
-         RegisterEventAppliers()
-           .For<AccountEvent.Created>(_ => NumberOfAccounts++)
-           .For<AccountEvent.LoginAttempted>(_ => NumberOfLoginsAttempts++)
-           .For<AccountEvent.LoggedIn>(_ => NumberOfSuccessfulLogins++)
-           .For<AccountEvent.LoginFailed>(_ => NumberOfFailedLogins++);
+         RegisterTeventAppliers()
+           .For<AccountTevent.Created>(_ => NumberOfAccounts++)
+           .For<AccountTevent.LoginAttempted>(_ => NumberOfLoginsAttempts++)
+           .For<AccountTevent.LoggedIn>(_ => NumberOfSuccessfulLogins++)
+           .For<AccountTevent.LoginFailed>(_ => NumberOfFailedLogins++);
       }
 
       public int NumberOfAccounts { get; private set; }
@@ -33,27 +33,27 @@ static class AccountStatistics
       public int NumberOfSuccessfulLogins { get; private set; }
       public int NumberOfFailedLogins { get; private set; }
 
-      //Since this is a singleton tuery model and not bound to a specific Aggregate's events we override the Id member to always be the singleton Id.
+      //Since this is a singleton tuery model and not bound to a specific Aggregate's tevents we override the Id member to always be the singleton Id.
       public override Guid Id => StaticId;
       internal static Guid StaticId = Guid.Parse("93498554-5C2E-4D6A-862D-2DA7BCCAC747");
    }
 
-   static void MaintainStatisticsWhenRelevantEventsAreReceived(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForEvent(
-      (AccountEvent.Root @event, IInProcessHypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
+   static void MaintainStatisticsWhenRelevantTeventsAreReceived(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
+      (AccountTevent.Root @tevent, IInProcessHypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
 
-         if(new SingletonStatisticsQueryModel().HandlesEvent(@event))
+         if(new SingletonStatisticsQueryModel().HandlesTevent(@tevent))
          {
             navigator.Execute(new DocumentDbApi().Queries.GetForUpdate<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId))
-                     .ApplyEvent(@event);
+                     .ApplyTevent(@tevent);
          }
       });
 
    internal static void Register(IEndpointBuilder builder)
    {
       builder.Container.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
-      MaintainStatisticsWhenRelevantEventsAreReceived(builder.RegisterHandlers);
+      MaintainStatisticsWhenRelevantTeventsAreReceived(builder.RegisterHandlers);
    }
 
    class StatisticsSingletonInitializer

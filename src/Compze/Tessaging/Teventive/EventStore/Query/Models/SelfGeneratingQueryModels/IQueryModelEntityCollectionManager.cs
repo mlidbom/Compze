@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Teventive.EventStore.Tuery.Models.SelfGeneratingQueryModels;
+namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.SelfGeneratingQueryModels;
 
 interface IQueryModelEntityCollectionManager<TEntity, in TEntityId>
 {

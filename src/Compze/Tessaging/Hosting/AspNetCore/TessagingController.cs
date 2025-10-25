@@ -26,8 +26,8 @@ class TessagingController : ControllerBase
    public TessagingController(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) :
       base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
-   [HttpPost(HttpConstants.Routes.Tessaging.Event)]
-   public async Task<IActionResult> Event()
+   [HttpPost(HttpConstants.Routes.Tessaging.Tevent)]
+   public async Task<IActionResult> Tevent()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
       try

@@ -99,10 +99,10 @@ partial class Inbox
             Func<object, object?> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
-                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceEvent => tessage =>
+                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceTevent => tessage =>
                   {
-                     var eventHandlers = _handlerRegistry.GetEventHandlers(tessage.GetType());
-                     eventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
+                     var teventHandlers = _handlerRegistry.GetTeventHandlers(tessage.GetType());
+                     teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
                      return null;
                   },
                   Implementation.TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue => tessage =>

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Tuery.Models.Generators.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Tuery.Models.Generators.Public;
 using Compze.Sql.Common;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tessaging.Teventive.EventStore.Tuery.Models.Generators;
+namespace Compze.Tessaging.Teventive.TeventStore.Tuery.Models.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader

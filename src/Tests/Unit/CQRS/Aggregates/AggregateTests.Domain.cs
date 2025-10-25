@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
@@ -15,7 +15,7 @@ class User : Aggregate<User,IUserTevent, UserTevent>
 
    public User():base(new DateTimeNowTimeSource())
    {
-      RegisterEventAppliers()
+      RegisterTeventAppliers()
         .For<IUserRegistered>(e =>
          {
             Email = e.Email;
@@ -30,7 +30,7 @@ class User : Aggregate<User,IUserTevent, UserTevent>
 
    public void Register(string email, string password, Guid id) => Publish(new UserRegistered(id, email, password));
 
-   public static User Register(IEventStoreUpdater aggregates, string email, string password, Guid id)
+   public static User Register(ITeventStoreUpdater aggregates, string email, string password, Guid id)
    {
       var user = new User();
       user.Register(email, password, id);
@@ -84,18 +84,18 @@ class UserRegistered(Guid userId, string email, string password) : UserTevent(us
 
 interface IMigratedBeforeUserRegisteredTevent : IUserTevent, IAggregateCreatedTevent;
 [UsedImplicitly]
-#pragma warning disable CA1812 // Class is instantiated via reflection during event deserialization
+#pragma warning disable CA1812 // Class is instantiated via reflection during tevent deserialization
 class MigratedBeforeUserRegisteredTevent : UserTevent, IMigratedBeforeUserRegisteredTevent;
 #pragma warning restore CA1812
 
 interface IMigratedAfterUserChangedEmailTevent : IUserTevent, IAggregateCreatedTevent;
 [UsedImplicitly]
-#pragma warning disable CA1812 // Class is instantiated via reflection during event deserialization
+#pragma warning disable CA1812 // Class is instantiated via reflection during tevent deserialization
 class MigratedAfterUserChangedEmailTevent : UserTevent, IMigratedAfterUserChangedEmailTevent;
 #pragma warning restore CA1812
 
 interface IMigratedReplaceUserChangedPasswordTevent : IUserTevent, IAggregateCreatedTevent;
 [UsedImplicitly]
-#pragma warning disable CA1812 // Class is instantiated via reflection during event deserialization
+#pragma warning disable CA1812 // Class is instantiated via reflection during tevent deserialization
 class MigratedReplaceUserChangedPasswordTevent : UserTevent, IMigratedReplaceUserChangedPasswordTevent;
 #pragma warning restore CA1812

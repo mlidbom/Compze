@@ -1,27 +1,27 @@
 using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Teventive.EventStore.Abstractions;
+using Compze.Tessaging.Teventive.TeventStore.Abstractions;
 using Compze.Utilities.SystemCE;
 using static System.Console;
 // ReSharper disable NotAccessedVariable
 // ReSharper disable RedundantAssignment
 
 // ReSharper disable once CheckNamespace
-namespace Website.paradigms.semantic_events.InheritingAggregates;
+namespace Website.paradigms.semantic_tevents.InheritingAggregates;
 
 #region noises1
-interface IAnimalEvent : IAggregateEvent
+interface IAnimalTevent : IAggregateTevent
 {
-   interface IBorn : IAnimalEvent, IAggregateCreatedEvent;
+   interface IBorn : IAnimalTevent, IAggregateCreatedTevent;
 }
 
-interface ICatEvent : IAnimalEvent;
-interface IDogEvent : IAnimalEvent;
+interface ICatTevent : IAnimalTevent;
+interface IDogTevent : IAnimalTevent;
 #endregion
 #region noises1wrapped
-interface IAnimalEvent<out T> : IAggregateWrapperEvent<T> where T : IAnimalEvent;
-interface ICatEvent<out T> : IAnimalEvent<T> where T : IAnimalEvent;
-interface IDogEvent<out T> : IAnimalEvent<T> where T : IAnimalEvent;
+interface IAnimalTevent<out T> : IAggregateWrapperTevent<T> where T : IAnimalTevent;
+interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
+interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
 #endregion
 
 class Examples
@@ -41,21 +41,21 @@ class Examples
 
       #region doglistener
       registrar
-        .ForEvent<IDogEvent<IAnimalEvent.IBorn>>(born => WriteLine($"Dog Id:{born.Event.AggregateId} was born!"));
+        .ForTevent<IDogTevent<IAnimalTevent.IBorn>>(born => WriteLine($"Dog Id:{born.Tevent.AggregateId} was born!"));
       #endregion
       #region catlistener
       registrar
-        .ForEvent<ICatEvent<IAnimalEvent.IBorn>>(born => WriteLine($"Cat Id:{born.Event.AggregateId} was born!"));
+        .ForTevent<ICatTevent<IAnimalTevent.IBorn>>(born => WriteLine($"Cat Id:{born.Tevent.AggregateId} was born!"));
       #endregion
       #region animallistener
       registrar
-        .ForEvent<IAnimalEvent.IBorn>(born => WriteLine($"Animal Id:{born.AggregateId} was born!"));
+        .ForTevent<IAnimalTevent.IBorn>(born => WriteLine($"Animal Id:{born.AggregateId} was born!"));
       #endregion
 
       #region wrappedanimallistener
       registrar
-        .ForEvent<IAnimalEvent<IAnimalEvent.IBorn>>(
-            born => WriteLine($"{born.GetType().Name.Replace("Event", "")} Id: {born.Event.AggregateId}, was born!"));
+        .ForTevent<IAnimalTevent<IAnimalTevent.IBorn>>(
+            born => WriteLine($"{born.GetType().Name.Replace("Tevent", "")} Id: {born.Tevent.AggregateId}, was born!"));
       #endregion
    }
 }
