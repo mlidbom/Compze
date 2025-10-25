@@ -95,7 +95,6 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
    {
       if(!_disposed)
       {
-         //Don't even think about letting exceptions escape on the finalizer thread again.The day I spent trying to understand why test processes simply died without explanation was no fun. Once was plenty.
          try
          {
 #pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
@@ -125,6 +124,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
                   }
                }
             }
+            //Don't even think about letting exceptions escape on the finalizer thread again.The day I spent trying to understand why test processes simply died without explanation was no fun. Once was plenty.
             // ReSharper disable once EmptyGeneralCatchClause
             catch {}
          }
