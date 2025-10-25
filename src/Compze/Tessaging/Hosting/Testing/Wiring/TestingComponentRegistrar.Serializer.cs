@@ -1,3 +1,6 @@
+using System;
+using Compze.Core.Wiring.Testing.Internal;
+using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
@@ -7,4 +10,15 @@ public static class TestingComponentRegistrar_Serializer
 {
    public static IComponentRegistrar CurrentTestsSerializer(this IComponentRegistrar register) =>
       register.CastTo<TestingComponentRegistrar>().CurrentTestsSerializers();
+
+   public static IComponentRegistrar CurrentTestsSerializers(this TestingComponentRegistrar @this)
+   {
+      switch(TestEnv.Serializer)
+      {
+         case Serializer.Newtonsoft:
+            return @this.NewtonsoftSerializers();
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+   }
 }

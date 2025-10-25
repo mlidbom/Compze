@@ -45,37 +45,6 @@ public class TestingComponentRegistrar : ComponentRegistrar
       return null;
    }
 
-   public IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered()
-   {
-      this.DbPoolIfNotAlreadyRegistered();
-      switch(TestEnv.SqlLayer)
-      {
-         case SqlLayer.MicrosoftSqlServer:
-            return this.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.MySql:
-            return this.MySqlDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.PostgreSql:
-            return this.PgSqlDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.Sqlite:
-            return this.SqliteDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.SqliteMemory:
-            return  this.SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered();
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
-   }
-
-   public IComponentRegistrar CurrentTestsSerializers()
-   {
-      switch(TestEnv.Serializer)
-      {
-         case Serializer.Newtonsoft:
-            return this.NewtonsoftSerializers();
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
-   }
-
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();
 
    class TestingTimeSourceRegistrar(IComponentRegistrar registrar) : TimeSourceRegistrar.ITestingRegistrar
