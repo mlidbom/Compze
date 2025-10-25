@@ -7,28 +7,28 @@ namespace Compze.Utilities.Logging;
 
 interface ILevelLogger
 {
-   unit Log(string tessage);
+   unit Log(string message);
 }
 
 abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
    protected readonly ILogger Logger = logger;
-   public abstract unit Log(string tessage);
+   public abstract unit Log(string message);
 }
 
 class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override unit Log(string tessage) => Logger.Debug(tessage);
+   public override unit Log(string message) => Logger.Debug(message);
 }
 
 class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override unit Log(string tessage) => Logger.Info(tessage);
+   public override unit Log(string message) => Logger.Info(message);
 }
 
 class WarningLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override unit Log(string tessage) => Logger.Warning(tessage);
+   public override unit Log(string message) => Logger.Warning(message);
 }
 
 static class LevelLoggerILoggerExtensions

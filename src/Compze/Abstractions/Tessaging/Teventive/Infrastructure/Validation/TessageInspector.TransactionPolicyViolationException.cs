@@ -5,7 +5,7 @@ namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
 static partial class TessageInspector
 {
-   public class TransactionPolicyViolationException(string tessage) : Exception(tessage + TransactionPolicyRationale)
+   public class TransactionPolicyViolationException(string message) : Exception(message + TransactionPolicyRationale)
    {
       static readonly string TransactionPolicyRationale = $"""
 

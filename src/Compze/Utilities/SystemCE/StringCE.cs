@@ -32,8 +32,8 @@ static class StringCE
    public static bool StartsWithInvariant(this string @this, string ending) => @this.StartsWith(ending, StringComparison.InvariantCulture);
 
    [StringFormatMethod(formatParameterName:"tessage")]
-   public static string FormatInvariant(string tessage, params object[] arguments) =>
-      string.Format(CultureInfo.InvariantCulture,  tessage, arguments);
+   public static string FormatInvariant(string message, params object[] arguments) =>
+      string.Format(CultureInfo.InvariantCulture,  message, arguments);
 
    public static string RemoveLeadingLineBreak(this string @this)
    {

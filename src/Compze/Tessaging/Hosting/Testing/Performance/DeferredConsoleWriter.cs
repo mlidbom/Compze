@@ -33,15 +33,15 @@ sealed class DeferredConsoleWriter : IDisposable
       return result;
    }
 
-   public void WriteLine(string tessage) => _buffer.Update(buffer => buffer.Content.AppendLine(tessage));
+   public void WriteLine(string message) => _buffer.Update(buffer => buffer.Content.AppendLine(message));
 
    public void WriteLine() => _buffer.Update(buffer => buffer.Content.AppendLine());
 
-   public void WriteWarningLine(string tessage) =>
-      _buffer.Update(buffer => buffer.Content.AppendLine(System.Globalization.CultureInfo.InvariantCulture, $"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {tessage}"));
+   public void WriteWarningLine(string message) =>
+      _buffer.Update(buffer => buffer.Content.AppendLine(System.Globalization.CultureInfo.InvariantCulture, $"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {message}"));
 
-   public void WriteImportantLine(string tessage) =>
-      _buffer.Update(buffer => buffer.Content.AppendLine(System.Globalization.CultureInfo.InvariantCulture, $"############################## {tessage}"));
+   public void WriteImportantLine(string message) =>
+      _buffer.Update(buffer => buffer.Content.AppendLine(System.Globalization.CultureInfo.InvariantCulture, $"############################## {message}"));
 
    public void TestSucceeded() => _buffer.Update(buffer => buffer.TestSucceeded = true);
 

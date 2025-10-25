@@ -11,14 +11,14 @@ namespace Compze.Utilities.Logging;
 
 static class LevelLoggerExtensions
 {
-   public static IDisposable LogMethodEntryExit(this ILevelLogger @this, [CallerMemberName] string tessage = "") =>
-      @this.Log($"Entering {tessage}")
-           .then(new Disposable(() => @this.Log($"Exiting {tessage}")));
+   public static IDisposable LogMethodEntryExit(this ILevelLogger @this, [CallerMemberName] string message = "") =>
+      @this.Log($"Entering {message}")
+           .then(new Disposable(() => @this.Log($"Exiting {message}")));
 
-   public static IDisposable LogMethodExecutionTime(this ILevelLogger @this, [CallerMemberName] string tessage = "")
-      => Stopwatch.StartNew().select(it => new Disposable(() => @this.Log($"Executed {tessage} in {it.Elapsed}")));
+   public static IDisposable LogMethodExecutionTime(this ILevelLogger @this, [CallerMemberName] string message = "")
+      => Stopwatch.StartNew().select(it => new Disposable(() => @this.Log($"Executed {message} in {it.Elapsed}")));
 
-   public static IDisposable LogEntryExit(this ILevelLogger @this, string tessage = "") =>
-      @this.Log($"Entering {tessage}")
-           .then(new Disposable(() => @this.Log($"Exiting {tessage}")));
+   public static IDisposable LogEntryExit(this ILevelLogger @this, string message = "") =>
+      @this.Log($"Entering {message}")
+           .then(new Disposable(() => @this.Log($"Exiting {message}")));
 }

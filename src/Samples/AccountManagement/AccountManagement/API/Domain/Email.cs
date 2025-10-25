@@ -48,5 +48,5 @@ public record Email
 public class InvalidEmailException : ArgumentException
 {
    // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-   internal InvalidEmailException(string tessage) : base($"Supplied string: '{tessage ?? "[null]"}'") {}
+   internal InvalidEmailException(string message) : base($"Supplied string: '{message ?? "[null]"}'") {}
 }

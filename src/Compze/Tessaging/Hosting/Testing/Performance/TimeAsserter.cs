@@ -193,5 +193,5 @@ static class TimeAsserter
 
    static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
 
-   public class TimeOutException(string tessage) : Exception(tessage);
+   public class TimeOutException(string message) : Exception(message);
 }

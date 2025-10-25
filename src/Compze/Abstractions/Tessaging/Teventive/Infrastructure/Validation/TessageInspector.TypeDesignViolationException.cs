@@ -4,7 +4,7 @@ namespace Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
 
 static partial class TessageTypeInspector
 {
-   public class TessageTypeDesignViolationException(string tessage) : Exception(tessage + TypeDesignRationale)
+   public class TessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
    {
       const string TypeDesignRationale = """
 
