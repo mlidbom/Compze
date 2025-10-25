@@ -16,7 +16,7 @@ partial class Outbox
    internal class InboxConnection(ITessagesInFlightTracker tessagesInFlightTracker, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient) : IInboxConnection
    {
       TessageTypesInternal.EndpointInformation? _endpointInformation = null;
-      IRemoteApiClient? _rpcClient;
+      IRemoteApiClient? _remoteApiClient;
       IRemoteTessageSender? _tessageSender;
       readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
       readonly HttpEndPointAddress _remoteAddress = remoteAddress;
@@ -29,13 +29,13 @@ partial class Outbox
       public async Task SendAsync(IExactlyOnceTevent tevent) => await _tessageSender!.SendAsync(tevent).caf();
       public async Task SendAsync(IExactlyOnceTommand tommand) => await _tessageSender!.SendAsync(tommand).caf();
 
-      public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> tommand) => await _rpcClient!.PostAsync(tommand).caf();
-      public async Task PostAsync(IAtMostOnceHypermediaTommand tommand) => await _rpcClient!.PostAsync(tommand).caf();
-      public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery) => await _rpcClient!.GetAsync(tuery).caf();
+      public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> tommand) => await _remoteApiClient!.PostAsync(tommand).caf();
+      public async Task PostAsync(IAtMostOnceHypermediaTommand tommand) => await _remoteApiClient!.PostAsync(tommand).caf();
+      public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery) => await _remoteApiClient!.GetAsync(tuery).caf();
 
       internal async Task InitAsync()
       {
-         (_rpcClient, _endpointInformation) = await HttpApiClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
+         (_remoteApiClient, _endpointInformation) = await HttpApiClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
          _tessageSender = new HttpRemoteTessageSender(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
       }
 
