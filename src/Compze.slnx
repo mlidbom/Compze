@@ -16,6 +16,9 @@
   <Folder Name="/Compze/Common/">
     <Project Path="Compze/Common/Compze.Common.csproj" />
   </Folder>
+  <Folder Name="/Compze/DocumentDb/">
+    <Project Path="Compze/Sql/DocumentDb/Compze.DocumentDb.csproj" />
+  </Folder>
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze/Serialization/Compze.Serialization.Newtonsoft.csproj" />
   </Folder>
@@ -25,9 +28,6 @@
     <Project Path="Compze/Sql/MySql/Compze.Sql.MySql.csproj" />
     <Project Path="Compze/Sql/PostgreSql/Compze.Sql.PostgreSql.csproj" />
     <Project Path="Compze/Sql/Sqlite/Compze.Sql.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Sql/DocumentDb/">
-    <Project Path="Compze/Sql/DocumentDb/Compze.Sql.DocumentDb.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/">
     <Project Path="Compze/Tessaging/Compze.Tessaging.csproj" />
