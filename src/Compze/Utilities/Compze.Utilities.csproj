@@ -6,6 +6,10 @@
 	</PropertyGroup>
 	<ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
 	</ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
