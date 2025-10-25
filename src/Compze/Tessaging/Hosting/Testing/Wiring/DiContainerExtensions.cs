@@ -19,21 +19,18 @@ public static class DiContainerExtensions
 {
    public static IDependencyInjectionContainer CreateWithRegisteredServiceLocator(this DIContainer @this)
    {
-      var container = @this.Create();
+      var container = @this.CreateEmpty();
       container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
       return container;
    }
 
-   public static IDependencyInjectionContainer Create(this DIContainer @this)
-   {
-      IDependencyInjectionContainer container = @this switch
+   public static IDependencyInjectionContainer CreateEmpty(this DIContainer @this) =>
+      @this switch
       {
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(new TestingComponentRegistrar()),
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(new TestingComponentRegistrar()),
          _                          => throw new ArgumentOutOfRangeException()
       };
-      return container;
-   }
 
    public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
    {

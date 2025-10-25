@@ -48,7 +48,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    protected EndpointHostTestBase()
    {
-      _rootContainer = TestEnv.DIContainer.Create();
+      _rootContainer = TestEnv.DIContainer.CreateEmpty();
       _rootContainer.Register()
                     .CurrentTestsDbPoolIfNotAlreadyRegistered();
 
