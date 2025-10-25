@@ -151,7 +151,7 @@ public class TeventStoreTests : UniversalTestBase
 
       using(new TransactionScope())
       {
-         ((ITeventStored)user).Commit(teventStore.SaveSingleTaggregateTevents);
+         ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
          teventStore.GetTaggregateHistory(user.Id);
          teventStore.GetTaggregateHistory(user.Id).Should().NotBeEmpty();
       }
@@ -173,7 +173,7 @@ public class TeventStoreTests : UniversalTestBase
 
          TransactionScopeCe.Execute(() =>
          {
-            ((ITeventStored)user).Commit(teventStore.SaveSingleTaggregateTevents);
+            ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
             teventStore.GetTaggregateHistory(user.Id);
             teventStore.GetTaggregateHistory(user.Id).Should().NotBeEmpty();
          });

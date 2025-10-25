@@ -12,7 +12,7 @@ public interface ITeventStoreReader
    /// This instance is NOT tracked for changes.
    /// No changes to this entity vill be persisted.
    /// </summary>
-   TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(Guid taggregateId, int version) where TTaggregate : class, ITeventStored;
+   TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(Guid taggregateId, int version) where TTaggregate : class, ITaggregate;
 
-   TTaggregate GetReadonlyCopy<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITeventStored;
+   TTaggregate GetReadonlyCopy<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITaggregate;
 }

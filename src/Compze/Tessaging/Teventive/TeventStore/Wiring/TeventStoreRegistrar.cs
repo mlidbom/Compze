@@ -52,7 +52,7 @@ public class TeventStoreRegistrationBuilder
    internal TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
 
    public TeventStoreRegistrationBuilder HandleTaggregate<TTaggregate, TTevent>()
-      where TTaggregate : class, ITeventStored<TTevent>
+      where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
       TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>(_handlerRegistrar);

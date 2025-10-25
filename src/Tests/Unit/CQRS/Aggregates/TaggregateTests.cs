@@ -33,7 +33,7 @@ public class TaggregateTests : UniversalTestBase
    public void ResetEmptiesOutListOfUncommittedTevents()
    {
       var user = new User();
-      ITeventStored userAsteventStored = user;
+      ITaggregate userAsteventStored = user;
       user.Version.Should().Be(0);
 
       user.Register("email", "password", Guid.NewGuid());
@@ -57,7 +57,7 @@ public class TaggregateTests : UniversalTestBase
    {
       var taggregate = new CascadingTeventsTaggregate();
       var receivedTevents = new List<ITaggregateTevent>();
-      using(((ITeventStored)taggregate).TeventStream.Subscribe(@tevent =>
+      using(((ITaggregate)taggregate).TeventStream.Subscribe(@tevent =>
             {
                receivedTevents.Add(@tevent);
                taggregate.TriggeringTeventApplied.Should()

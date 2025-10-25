@@ -23,7 +23,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
    readonly ITeventStore _store;
    readonly ITaggregateTypeValidator _taggregateTypeValidator;
-   readonly IDictionary<Guid, ITeventStored> _idMap = new Dictionary<Guid, ITeventStored>();
+   readonly IDictionary<Guid, ITaggregate> _idMap = new Dictionary<Guid, ITaggregate>();
    readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
    IUtcTimeTimeSource TimeSource { get; set; }
@@ -45,7 +45,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       TimeSource = timeSource;
    }
 
-   public TTaggregate Get<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITeventStored
+   public TTaggregate Get<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
@@ -57,19 +57,19 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       return result;
    }
 
-   public bool TryGet<TTaggregate>(Guid taggregateId, [MaybeNullWhen(false)] out TTaggregate taggregate) where TTaggregate : class, ITeventStored
+   public bool TryGet<TTaggregate>(Guid taggregateId, [MaybeNullWhen(false)] out TTaggregate taggregate) where TTaggregate : class, ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
       return DoTryGet(taggregateId, out taggregate);
    }
 
-   public TTaggregate GetReadonlyCopy<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITeventStored => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
+   public TTaggregate GetReadonlyCopy<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
 
-   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(Guid taggregateId, int version) where TTaggregate : class, ITeventStored => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
+   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(Guid taggregateId, int version) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-   TTaggregate LoadSpecificVersionInternal<TTaggregate>(Guid taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITeventStored
+   TTaggregate LoadSpecificVersionInternal<TTaggregate>(Guid taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       Argument.IsGreaterThan(version, 0);
@@ -92,7 +92,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       return taggregate;
    }
 
-   public void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITeventStored
+   public void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
@@ -154,7 +154,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
          ? _store.GetTaggregateHistoryForUpdate(taggregateId)
          : _store.GetTaggregateHistory(taggregateId);
 
-   bool DoTryGet<TTaggregate>(Guid taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITeventStored
+   bool DoTryGet<TTaggregate>(Guid taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
    {
       if(_idMap.TryGetValue(taggregateId, out var teventStored))
       {
@@ -177,7 +177,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
    }
 
-   TTaggregate CreateInstance<TTaggregate>() where TTaggregate : ITeventStored
+   TTaggregate CreateInstance<TTaggregate>() where TTaggregate : ITaggregate
    {
       var taggregate = Constructor.For<TTaggregate>.DefaultConstructor.Instance();
       taggregate.SetTimeSource(TimeSource);

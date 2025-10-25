@@ -29,9 +29,9 @@ public static partial class Composite_taggregate_specification
          _taggregateId = Guid.NewGuid();
          _taggregate = new CompositeTaggregate("root", _taggregateId);
          _queryModel = new RootQueryModel();
-         ITeventStored<CompositeTaggregateTevent.ICompositeTaggregateTevent> teventStored = _taggregate;
-         teventStored.TeventStream.Subscribe(_queryModel.ApplyTevent);
-         teventStored.Commit(_queryModel.LoadFromHistory);
+         ITaggregate<CompositeTaggregateTevent.ICompositeTaggregateTevent> taggregate = _taggregate;
+         taggregate.TeventStream.Subscribe(_queryModel.ApplyTevent);
+         taggregate.Commit(_queryModel.LoadFromHistory);
       }
 
       [XF] public void Taggregate_name_is_root() => _taggregate.Name.Should().Be("root");

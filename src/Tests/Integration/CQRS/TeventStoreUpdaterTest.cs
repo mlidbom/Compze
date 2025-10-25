@@ -231,7 +231,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       user.Register("OriginalEmail", "password", Guid.NewGuid());
 
       UseInTransactionalScope(session => session.Save(user));
-      ((ITeventStored)user).Commit(tevents => tevents.Should().BeEmpty());
+      ((ITaggregate)user).Commit(tevents => tevents.Should().BeEmpty());
    }
 
    [PCT]

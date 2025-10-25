@@ -13,7 +13,7 @@ public partial class TeventStoreApi
 {
    public partial class TueryApi
    {
-      public class TaggregateLink<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<TaggregateLink<TTaggregate>, TTaggregate> where TTaggregate : class, ITeventStored
+      public class TaggregateLink<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<TaggregateLink<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
          [JsonConstructor] internal TaggregateLink(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
@@ -31,7 +31,7 @@ public partial class TeventStoreApi
             (GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
       }
 
-      public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITeventStored
+      public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
          [JsonConstructor] internal GetReadonlyCopyOfTaggregate(Guid id) => Id = id;
          [JsonProperty] Guid Id { get; }
@@ -40,7 +40,7 @@ public partial class TeventStoreApi
             (GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
       }
 
-      public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITeventStored
+      public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
          [JsonConstructor] internal GetReadonlyCopyOfTaggregateVersion(Guid id, int version)
          {
@@ -59,7 +59,7 @@ public partial class TeventStoreApi
    public partial class TommandApi
    {
       public class SaveTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
-         where TTaggregate : class, ITeventStored
+         where TTaggregate : class, ITaggregate
       {
          [JsonConstructor] internal SaveTaggregate(TTaggregate entity) => Entity = entity;
          TTaggregate Entity { get; }
@@ -70,7 +70,7 @@ public partial class TeventStoreApi
    }
 
    internal static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
-      where TTaggregate : class, ITeventStored<TTevent>
+      where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
       TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(registrar);

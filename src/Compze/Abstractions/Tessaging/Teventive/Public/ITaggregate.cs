@@ -4,7 +4,7 @@ using Compze.Abstractions.Time.Public;
 
 namespace Compze.Abstractions.Tessaging.Teventive.Public;
 
-public interface ITeventStored
+public interface ITaggregate
 {
    Guid Id { get; }
    int Version { get; }
@@ -15,7 +15,7 @@ public interface ITeventStored
    IObservable<ITaggregateTevent> TeventStream { get; }
 }
 
-public interface ITeventStored<out TTevent> : ITeventStored where TTevent : ITaggregateTevent
+public interface ITaggregate<out TTevent> : ITaggregate where TTevent : ITaggregateTevent
 {
    new IObservable<TTevent> TeventStream { get; }
 }

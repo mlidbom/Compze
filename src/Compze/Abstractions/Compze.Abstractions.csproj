@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -19,5 +19,29 @@
     <Compile Remove="Tessaging\_docs\**\*.cs" />
     <None Include="Tessaging\_docs\**\*.cs" />
     <Content Include="Tessaging\_docs\**\*.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\introduction.cs" />
+    <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\property-updated-tevents.cs" />
+    <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\reusable-components.cs" />
+    <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\shared.cs" />
+    <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\taggregate-inheritance.cs" />
+    <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\tevent-naming.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\aggregate-inheritance.md" />
+    <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\definition.md" />
+    <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\event-naming.md" />
+    <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\introduction.md" />
+    <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\property-updated-events.md" />
+    <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\reusable-components.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tessaging\Teventive\Public\Taggregates\_docs\introduction.cs" />
+    <None Include="Tessaging\Teventive\Public\Taggregates\_docs\property-updated-tevents.cs" />
+    <None Include="Tessaging\Teventive\Public\Taggregates\_docs\reusable-components.cs" />
+    <None Include="Tessaging\Teventive\Public\Taggregates\_docs\shared.cs" />
+    <None Include="Tessaging\Teventive\Public\Taggregates\_docs\taggregate-inheritance.cs" />
+    <None Include="Tessaging\Teventive\Public\Taggregates\_docs\tevent-naming.cs" />
   </ItemGroup>
 </Project>

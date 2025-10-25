@@ -25,7 +25,7 @@ public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImpleme
 
 public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
     VersionedPersistentEntity<TTaggregate>,
-    ITeventStored<TTaggregateTevent>,
+    ITaggregate<TTaggregateTevent>,
     ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
     where TWrapperTeventImplementation : TWrapperTeventInterface
     where TWrapperTeventInterface : ITaggregateWrapperTevent<TTaggregateTevent>
@@ -120,20 +120,20 @@ public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImpleme
     void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
     ITeventHandlerRegistrar<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
 
-    IObservable<ITaggregateTevent> ITeventStored.TeventStream => _teventStream;
-    IObservable<TTaggregateTevent> ITeventStored<TTaggregateTevent>.TeventStream => _teventStream;
+    IObservable<ITaggregateTevent> ITaggregate.TeventStream => _teventStream;
+    IObservable<TTaggregateTevent> ITaggregate<TTaggregateTevent>.TeventStream => _teventStream;
 
-    void ITeventStored.Commit(Action<IReadOnlyList<ITaggregateTevent>> commitTevents)
+    void ITaggregate.Commit(Action<IReadOnlyList<ITaggregateTevent>> commitTevents)
     {
         commitTevents(_unCommittedTevents);
         _unCommittedTevents.Clear();
     }
 
-    void ITeventStored.SetTimeSource(IUtcTimeTimeSource timeSource) => TimeSource = timeSource;
+    void ITaggregate.SetTimeSource(IUtcTimeTimeSource timeSource) => TimeSource = timeSource;
 
-    void ITeventStored.LoadFromHistory(IEnumerable<ITaggregateTevent> history)
+    void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent> history)
     {
-        Assert.State.Is(Version == 0, () => $"You can only call {nameof(ITeventStored.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
+        Assert.State.Is(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
         history.ForEach(theTevent => ApplyTevent((TTaggregateTevent)theTevent));
         AssertInvariantsAreMet();
     }
