@@ -1,4 +1,4 @@
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Tessaging.Common;
 
 namespace Compze.Tessaging.Teventive;

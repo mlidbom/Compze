@@ -1,6 +1,6 @@
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 
-namespace Compze.Tessaging.Teventive.EventStore.Refactoring.Migrations;
+namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Refactoring.Migrations.Public;
 
 public interface IEventModifier
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Query.Models.Generators.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Query.Models.Generators.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Utilities.Functional;

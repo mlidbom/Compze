@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

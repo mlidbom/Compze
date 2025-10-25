@@ -9,7 +9,7 @@ using FluentAssertions;
 using System;
 using System.Linq;
 using System.Transactions;
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS;

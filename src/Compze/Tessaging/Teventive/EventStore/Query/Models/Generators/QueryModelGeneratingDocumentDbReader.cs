@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Query.Models.Generators.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Query.Models.Generators.Public;
 using Compze.Sql.Common;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Threading;

@@ -1,5 +1,5 @@
 using System;
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Teventive;
 using Compze.Tests.Infrastructure;

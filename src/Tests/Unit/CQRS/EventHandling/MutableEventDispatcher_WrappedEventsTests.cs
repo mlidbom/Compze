@@ -1,5 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+using Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 using Compze.Tessaging.Common;
 using Compze.Tessaging.Common.Teventive;
 using Compze.Tests.Infrastructure;

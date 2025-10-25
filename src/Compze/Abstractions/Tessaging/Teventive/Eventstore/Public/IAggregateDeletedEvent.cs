@@ -1,3 +1,3 @@
-namespace Compze.Abstractions.Tessaging.Teventive.Eventstore.Public;
+namespace Compze.Abstractions.Tessaging.Teventive.EventStore.Public;
 
 public interface IAggregateDeletedEvent : IAggregateEvent;
